@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <CONFIG>
   <ProjectSession>
     <PathDelim Value="\"/>
@@ -11,8 +11,8 @@
         <UnitName Value="model_test"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="186"/>
-        <CursorPos X="1" Y="200"/>
+        <TopLine Value="8"/>
+        <CursorPos X="53" Y="54"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -29,10 +29,11 @@
         <Filename Value="vars.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="vars"/>
-        <EditorIndex Value="3"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="13"/>
-        <CursorPos X="66" Y="37"/>
+        <TopLine Value="33"/>
+        <CursorPos X="20" Y="46"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -47,28 +48,28 @@
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="..\..\..\..\..\..\..\..\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
+        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
         <Line Value="1185"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="..\..\..\..\..\..\..\..\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
+        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
         <Line Value="1204"/>
       </Item2>
       <Item3>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="..\..\..\..\..\..\..\..\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
+        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
         <Line Value="1193"/>
       </Item3>
       <Item4>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="..\..\..\..\..\..\..\..\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
+        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
         <Line Value="1161"/>
       </Item4>
     </BreakPoints>
@@ -79,4 +80,4 @@
     </Watches>
   </Debugging>
   <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>

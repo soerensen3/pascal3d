@@ -82,6 +82,10 @@ type
       Matrix: TMat4;
       Material: TMaterial;
       testTex: Integer;
+      glBuffer: GLuint;
+      glIBuffer: GLuint;
+      glVertexArray: GLuint;
+      glIndexArray: GLuint;
 //     BoundingBox: TBoundingBox;
 
 //      constructor Create( FName: String );
@@ -878,9 +882,17 @@ begin
 end;
 
 constructor TModel.Create;
+var
+  vertexLoc: GLuint;
 begin
   inherited;
   FChildren:= TModelList.Create;
+  glGenBuffers( 1, @glBuffer );
+
+  glGenVertexArrays(1, @glVertexArray );
+  glBindVertexArray( glVertexArray );
+
+  glGenBuffers( 1, @glIBuffer );
 end;
 
 destructor TModel.Destroy;
@@ -901,10 +913,26 @@ var
 begin
   for i:= 0 to high( Faces ) do
     begin
+      // bind buffer for positions and copy data into buffer
+      // GL_ARRAY_BUFFER is the buffer type we use to feed attributes
+      glBindBuffer( GL_ARRAY_BUFFER, glBuffer );
+
+      // feed the buffer, and let OpenGL know that we don't plan to
+      // change it (STATIC) and that it will be used for drawing (DRAW)
+      glBufferData( GL_ARRAY_BUFFER, sizeof( Vertices ), @Vertices[ 0 ], GL_STATIC_DRAW );
+
+      // Enable the attribute at that location
+      glEnableVertexAttribArray( glGetAttribLocation( ActiveShader, 'vertex' ) );
+      glEnableVertexAttribArray( glGetAttribLocation( ActiveShader, 'normal' ) );
+      // Tell OpenGL what the array contains:
+      // it is a set of 4 floats for each vertex
+      glVertexAttribPointer( glGetAttribLocation( ActiveShader, 'vertex' ), 4, GL_FLOAT, False, 0, nil );
+      glVertexAttribPointer( glGetAttribLocation( ActiveShader, 'normal' ), 4, GL_FLOAT, False, 0, nil );
+
       if ( Assigned( Material )) then
         begin
 //          glColor3f( Material.Diff.x, Material.Diff.y, Material.Diff.z );
-          glVertexAttrib4f( glGetUniformLocation( ActiveShader, 'in_color'),
+          glVertexAttrib4f( glGetAttribLocation( ActiveShader, 'color'),
             Material.Diff.R, Material.Diff.G, Material.Diff.B, 1.0 );
 
           if ( Material.Diff_Map > -1 ) then
@@ -939,27 +967,31 @@ begin
 //          glDisable( GL_TEXTURE_2D );
 //          glBindTexture( GL_TEXTURE_2D, 0 );
         end;
-
       _world:= world * Matrix;
 
       ShaderSetParameter4fv( ActiveShader, 'world', _world );
 
-      glBegin( GL_TRIANGLE_FAN );
+//      glBegin( GL_TRIANGLE_FAN );
 
       for j:= 0 to high( Faces[ i ].verts ) do
         begin
-          glVertexAttrib3f( glGetUniformLocation( ActiveShader, 'in_normal' ),
-                      normals[ faces[ i ].verts[ j ].n ].x,
-                      normals[ faces[ i ].verts[ j ].n ].y,
-                      normals[ faces[ i ].verts[ j ].n ].z );
+          // bind buffer for positions and copy data into buffer
+          //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, glIBuffer );
+          //glBufferData( GL_ELEMENT_ARRAY_BUFFER, SizeOf( Faces[ i ].verts ), @Faces[ i ].verts[ 0 ], GL_STATIC_DRAW);
+          glDrawElements(GL_TRIANGLE_FAN, Length( Faces[ i ].verts ), GL_UNSIGNED_INT, @Faces[ i ].verts[ 0 ]);
+
 //          if ( Length( Faces[ i ].verts[ j ].texc ) > 0 ) then
 //            for k:= 0 to high( Faces[ i ].verts[ j ].texc ) do
 //              glMultiTexCoord2f( GL_TEXTURE0 + k, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
-          glVertexAttrib4f( glGetUniformLocation( ActiveShader, 'in_vertex' ),
+(*          glVertexAttrib4f( glGetAttribLocation( ActiveShader, 'vertex' ),
                       vertices[ faces[ i ].verts[ j ].v ].x,
                       vertices[ faces[ i ].verts[ j ].v ].y,
-                      vertices[ faces[ i ].verts[ j ].v ].z, 1 );
+                      vertices[ faces[ i ].verts[ j ].v ].z, 1 );}
 
+          glVertexAttrib4f( glGetAttribLocation( ActiveShader, 'normal' ),
+                      normals[ faces[ i ].verts[ j ].n ].x,
+                      normals[ faces[ i ].verts[ j ].n ].y,
+                      normals[ faces[ i ].verts[ j ].n ].z, 1 );
 {          glNormal3f( normals[ faces[ i ].verts[ j ].n ].x,
                       normals[ faces[ i ].verts[ j ].n ].y,
                       normals[ faces[ i ].verts[ j ].n ].z );
@@ -968,10 +1000,10 @@ begin
               glMultiTexCoord2f( GL_TEXTURE0 + k, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
           glVertex3f( vertices[ faces[ i ].verts[ j ].v ].x,
                       vertices[ faces[ i ].verts[ j ].v ].y,
-                      vertices[ faces[ i ].verts[ j ].v ].z );}
+                      vertices[ faces[ i ].verts[ j ].v ].z );}*)
         end;
 
-      glEnd();
+//      glEnd();
     end;
   Children.Render( _world, view, proj );
   ShaderSetParameter4fv( ActiveShader, 'world', _world );

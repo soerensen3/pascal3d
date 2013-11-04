@@ -5,7 +5,7 @@ object Cube_001
      0.000000, 0.000000, 1.000000, 0.000000,
      1.277447,-0.000000, 1.209386, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/character.modelCube.001.revobj'
+  external 'character.modelCube.001.revobj'
     vertices 8
     normals 6
     texcoords 0
@@ -22,7 +22,7 @@ object Cube
      0.000000, 0.000000, 0.146095, 0.000000,
      0.000000, 0.000000, 0.546916, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/character.modelCube.revobj'
+  external 'character.modelCube.revobj'
     vertices 529
     normals 529
     texcoords 337

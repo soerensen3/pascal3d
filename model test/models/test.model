@@ -5,7 +5,7 @@ object Hut_008
     -0.006083, 0.003551, 0.018779, 0.000000,
     -0.074144, 0.939048, 0.159664, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.008.revobj'
+  external 'test.modelHut.008.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -22,7 +22,7 @@ object Hut_007
      0.007072, 0.005121, 0.018056, 0.000000,
      0.305580, 1.078054, 0.104025, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.007.revobj'
+  external 'test.modelHut.007.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -39,7 +39,7 @@ object Hut_006
      0.006744, 0.004637, 0.018310, 0.000000,
      0.215930, 1.051588, 0.142645, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.006.revobj'
+  external 'test.modelHut.006.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -56,7 +56,7 @@ object Hut_005
     -0.004140, 0.004632, 0.019070, 0.000000,
      0.012311, 1.091616, 0.150020, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.005.revobj'
+  external 'test.modelHut.005.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -73,7 +73,7 @@ object Hut_004
     -0.006006, 0.004984, 0.018475, 0.000000,
     -0.192808, 1.108568, 0.085064, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.004.revobj'
+  external 'test.modelHut.004.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -90,7 +90,7 @@ object Hut_003
      0.006778, 0.002932, 0.018647, 0.000000,
      0.220090, 1.279820, 0.063873, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.003.revobj'
+  external 'test.modelHut.003.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -107,7 +107,7 @@ object Hut_002
      0.000524, 0.005495, 0.019282, 0.000000,
      0.048034, 1.334029, 0.076797, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.002.revobj'
+  external 'test.modelHut.002.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -124,7 +124,7 @@ object Volcanoe
      0.000000, 0.000000, 1.000000, 0.000000,
      0.001781,-0.000186, 1.007805, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelVolcanoe.revobj'
+  external 'test.modelVolcanoe.revobj'
     vertices 1097
     normals 1097
     texcoords 1094
@@ -141,7 +141,7 @@ object Hut_001
     -0.002949, 0.002270, 0.019708, 0.000000,
     -0.134620, 1.273044, 0.058294, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelHut.001.revobj'
+  external 'test.modelHut.001.revobj'
     vertices 164
     normals 32
     texcoords 821
@@ -159,7 +159,7 @@ object Palm_Tree_baked
      0.000000, 0.000000, 0.009050, 0.000000,
      0.000000, 0.000000, 0.067995, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/test.modelPalm-Tree-baked.revobj'
+  external 'test.modelPalm-Tree-baked.revobj'
     vertices 896
     normals 894
     texcoords 61
