@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="baking_bread.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="vars"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="612"/>
+        <CursorPos X="1" Y="630"/>
+        <UsageCount Value="91"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="math3d.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Math3D"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="77"/>
+        <CursorPos X="1" Y="97"/>
+        <UsageCount Value="91"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="vars.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="vars"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="53"/>
+        <CursorPos X="8" Y="70"/>
+        <UsageCount Value="91"/>
+        <Loaded Value="True"/>
+      </Unit2>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+  </ProjectSession>
+  <Debugging>
+    <Watches Count="2">
+      <Item1>
+        <Expression Value="i"/>
+      </Item1>
+      <Item2 ClassAutoCast="True">
+        <Expression Value="bowl.Faces[ n ].v"/>
+      </Item2>
+    </Watches>
+  </Debugging>
+  <EditorMacros Count="0"/>
+</CONFIG>

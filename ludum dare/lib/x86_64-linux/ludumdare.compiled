@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Compiler Value="/usr/lib/codetyphon/fpc/bin/x86_64-linux/fpc" Date="1358601073"/>
+  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -Xg -vewnhi &quot;-Fi/media/soerensen/620D190759AC2EC4/Documents and Settings/soerensen/Desktop/ludum dare/lib/x86_64-linux&quot; -Fl/opt/gnome/lib -Fu/usr/lib/codetyphon/lazarus/lcl/units/x86_64-linux/gtk2 -Fu/usr/lib/codetyphon/lazarus/lcl/units/x86_64-linux -Fu/usr/lib/codetyphon/lazarus/components/lazutils/lib/x86_64-linux -Fu/usr/lib/codetyphon/lazarus/packager/units/x86_64-linux &quot;-Fu/media/soerensen/620D190759AC2EC4/Documents and Settings/soerensen/Desktop/ludum dare/&quot; &quot;-FU/media/soerensen/620D190759AC2EC4/Documents and Settings/soerensen/Desktop/ludum dare/lib/x86_64-linux/&quot; -l -dLCL -dLCLgtk2 ludumdare.lpr"/>
+</CONFIG>

@@ -1,0 +1,57 @@
+object Cube_001
+  matrix
+     1.000000, 0.000000, 0.000000, 0.000000,
+     0.000000, 1.000000, 0.000000, 0.000000,
+     0.000000, 0.000000, 1.000000, 0.000000,
+     1.277447,-0.000000, 1.209386, 1.000000;
+  end;
+  external '/home/johannes/Dokumente/Lazarus/model test/models/character.modelCube.001.revobj'
+    vertices 8
+    normals 6
+    texcoords 0
+    faces 6
+  end;
+  materials
+    material 'Material.002'
+  end;
+end;
+object Cube
+  matrix
+     0.146095, 0.000000, 0.000000, 0.000000,
+     0.000000, 0.146095, 0.000000, 0.000000,
+     0.000000, 0.000000, 0.146095, 0.000000,
+     0.000000, 0.000000, 0.546916, 1.000000;
+  end;
+  external '/home/johannes/Dokumente/Lazarus/model test/models/character.modelCube.revobj'
+    vertices 529
+    normals 529
+    texcoords 337
+    faces 512
+  end;
+  materials
+    material 'Material'
+    material 'Material.001'
+    material 'Body'
+  end;
+end;
+material 'Body'
+  ambient 0.000000, 0.000000, 0.000000
+  diffuse 0.640000, 0.640000, 0.640000
+  specular 0.000000, 0.000000, 0.000000
+  texture 'character_bk3.png'
+end;
+material 'Material'
+  ambient 0.000000, 0.000000, 0.000000
+  diffuse 0.640000, 0.640000, 0.640000
+  specular 0.500000, 0.500000, 0.500000
+end;
+material 'Material.001'
+  ambient 0.000000, 0.000000, 0.000000
+  diffuse 0.640000, 0.640000, 0.640000
+  specular 0.500000, 0.500000, 0.500000
+end;
+material 'Material.002'
+  ambient 0.000000, 0.000000, 0.000000
+  diffuse 0.640000, 0.024653, 0.057264
+  specular 0.500000, 0.500000, 0.500000
+end;

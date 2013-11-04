@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="engine"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <MsgFileName Value=""/>
+        </CompilerMessages>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <Files Count="15">
+      <Item1>
+        <Filename Value="math3d.pas"/>
+        <UnitName Value="Math3D"/>
+      </Item1>
+      <Item2>
+        <Filename Value="math3d_matrix.inc"/>
+        <Type Value="Include"/>
+      </Item2>
+      <Item3>
+        <Filename Value="math3d_vector.inc"/>
+        <Type Value="Include"/>
+      </Item3>
+      <Item4>
+        <Filename Value="shaders.pas"/>
+        <UnitName Value="shaders"/>
+      </Item4>
+      <Item5>
+        <Filename Value="wavefront.pas"/>
+        <UnitName Value="wavefront"/>
+      </Item5>
+      <Item6>
+        <Filename Value="engine.pas"/>
+        <UnitName Value="engine"/>
+      </Item6>
+      <Item7>
+        <Filename Value="math3d_vector_constructors.inc"/>
+        <Type Value="Include"/>
+      </Item7>
+      <Item8>
+        <Filename Value="math3d_vector_op.inc"/>
+        <Type Value="Include"/>
+      </Item8>
+      <Item9>
+        <Filename Value="math3d_matrix_constructors.inc"/>
+        <Type Value="Include"/>
+      </Item9>
+      <Item10>
+        <Filename Value="math3d_consts.inc"/>
+        <Type Value="Include"/>
+      </Item10>
+      <Item11>
+        <Filename Value="model.pas"/>
+        <UnitName Value="Model"/>
+      </Item11>
+      <Item12>
+        <Filename Value="custom_list.inc"/>
+        <Type Value="Include"/>
+      </Item12>
+      <Item13>
+        <Filename Value="shadernodes.pas"/>
+        <UnitName Value="shadernodes"/>
+      </Item13>
+      <Item14>
+        <Filename Value="engine.lrs"/>
+        <Type Value="LRS"/>
+      </Item14>
+      <Item15>
+        <Filename Value="shadernodes_constants.inc"/>
+        <Type Value="Include"/>
+      </Item15>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="3">
+      <Item1>
+        <PackageName Value="pl_zengl"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="pl_opengl"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="FCL"/>
+      </Item3>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

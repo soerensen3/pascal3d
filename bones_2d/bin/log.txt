@@ -1,0 +1,33 @@
+================================
+=== ZenGL 0.3.7 (2013.01.27) ===
+================================
+[00000004ms] Begin
+[00000009ms] Current mode: 1280 x 1024
+[00001311ms] wglChoosePixelFormatARB: zDepth = 24; stencil = 0; fsaa = 0
+[00001388ms] GL_VERSION: 3.3.0
+[00001388ms] GL_RENDERER: GeForce 9500 GT/PCIe/SSE2
+[00001388ms] GL_MAX_TEXTURE_SIZE: 8192
+[00001388ms] GL_EXT_TEXTURE_COMPRESSION_S3TC: TRUE
+[00001388ms] GL_SGIS_GENERATE_MIPMAP: TRUE
+[00001388ms] GL_MAX_TEXTURE_UNITS_ARB: 4
+[00001388ms] GL_EXT_TEXTURE_FILTER_ANISOTROPIC: TRUE
+[00001388ms] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16
+[00001389ms] GL_EXT_BLEND_FUNC_SEPARATE: TRUE
+[00001389ms] GL_MAX_RENDERBUFFER_SIZE: 8192
+[00001389ms] GL_EXT_FRAMEBUFFER_OBJECT: TRUE
+[00001389ms] WGL_PBUFFER: TRUE
+[00001389ms] Support WaitVSync: TRUE
+[00001389ms] Ogg: Initialized
+[00001389ms] Theora: Initialized
+[00001454ms] Texture loaded: "../data/Calibri-Regular-36pt-page0.tga"
+[00001495ms] Texture loaded: "../data/Calibri-Regular-36pt-page1.tga"
+[00001514ms] Texture loaded: "C:\Users\soerensen\Desktop\bones_2d\bin\../data/img//body.png"
+[00001536ms] Texture loaded: "C:\Users\soerensen\Desktop\bones_2d\bin\../data/img//ear.l.png"
+[00001547ms] Texture loaded: "C:\Users\soerensen\Desktop\bones_2d\bin\../data/img//ear.r.png"
+[00001559ms] Texture loaded: "C:\Users\soerensen\Desktop\bones_2d\bin\../data/img//leg.l.png"
+[00001573ms] Texture loaded: "C:\Users\soerensen\Desktop\bones_2d\bin\../data/img//leg.r.png"
+[00003268ms] Average FPS: 729
+[00003268ms] Timers to free: 2
+[00003268ms] Fonts to free: 1
+[00003269ms] Textures to free: 6
+[00003287ms] End

@@ -1,0 +1,22 @@
+object Landscape_001
+  matrix
+     1.000000, 0.000000, 0.000000, 0.000000,
+     0.000000, 1.000000, 0.000000, 0.000000,
+     0.000000, 0.000000, 1.000000, 0.000000,
+    -0.668450, 0.451757,-0.371676, 1.000000;
+  end;
+  external '/home/johannes/Dokumente/Lazarus/model test/models/moon.modelLandscape.001.revobj'
+    vertices 65536
+    normals 65354
+    texcoords 0
+    faces 65025
+  end;
+  materials
+    material 'Material.001'
+  end;
+end;
+material 'Material.001'
+  ambient 0.000000, 0.000000, 0.000000
+  diffuse 0.148772, 0.148772, 0.148772
+  specular 0.096491, 0.096491, 0.096491
+end;

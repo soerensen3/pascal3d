@@ -1,0 +1,28 @@
+=================================
+=== ZenGL 0.3.12 (2013.05.20) ===
+=================================
+[00000000ms] Begin
+[00000002ms] Current mode: 1280 x 1024
+[00000576ms] wglChoosePixelFormatARB: zDepth = 24; stencil = 0; fsaa = 0
+[00000669ms] GL_VERSION: 3.3.0
+[00000669ms] GL_RENDERER: GeForce 9500 GT/PCIe/SSE2
+[00000669ms] GL_MAX_TEXTURE_SIZE: 8192
+[00000669ms] GL_EXT_TEXTURE_COMPRESSION_S3TC: TRUE
+[00000669ms] GL_SGIS_GENERATE_MIPMAP: TRUE
+[00000669ms] GL_MAX_TEXTURE_UNITS_ARB: 4
+[00000669ms] GL_EXT_TEXTURE_FILTER_ANISOTROPIC: TRUE
+[00000669ms] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16
+[00000669ms] GL_EXT_BLEND_FUNC_SEPARATE: TRUE
+[00000670ms] GL_MAX_RENDERBUFFER_SIZE: 8192
+[00000670ms] GL_EXT_FRAMEBUFFER_OBJECT: TRUE
+[00000670ms] WGL_PBUFFER: TRUE
+[00000670ms] Support WaitVSync: TRUE
+[00000670ms] Ogg: Initialized
+[00000670ms] Theora: Initialized
+[00000795ms] Texture loaded: "Calibri-Regular-36pt-page0.tga"
+[00000820ms] Texture loaded: "Calibri-Regular-36pt-page1.tga"
+[00002558ms] Average FPS: 714
+[00002559ms] Timers to free: 2
+[00002559ms] Fonts to free: 1
+[00002559ms] Textures to free: 1
+[00002585ms] End

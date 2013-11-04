@@ -1,0 +1,14 @@
+LazarusResources.Add('simple','FRAG',[
+  'uniform sampler2D tex;'#13#10' '#13#10'void main()'#13#10'{'#13#10'    vec4 '
+  +'color = vec4( texture2D(tex,gl_TexCoord[0].st).rgb, 1 );'#13#10'    gl_Frag'
+  +'Color = gl_Color * color;'#13#10'}'#13#10
+]);
+LazarusResources.Add('simple','VERT',[
+  '#version 120'#13#10'uniform mat4 view;'#13#10'uniform mat4 world;'#13#10'uni'
+  +'form mat4 proj;'#13#10#13#10'void main() {'#13#10'    gl_TexCoord[0] = gl_T'
+  +'extureMatrix[0] * gl_MultiTexCoord0;'#13#10'    gl_TexCoord[1] = gl_Texture'
+  +'Matrix[1] * gl_MultiTexCoord1;'#13#10'    gl_Position = proj * view * world'
+  +' * gl_Vertex;'#13#10#9'vec3 normal = mat3( view * world ) * gl_Normal;'#13
+  +#10#9'gl_FrontColor = gl_Color * ( 0.5 + vec4( vec3( max(dot(normal, normali'
+  +'ze( vec3( 1.0, 1.0, 1.0))), 0.0)), 1 ) * 0.5 );'#13#10'}'
+]);

@@ -1,0 +1,39 @@
+=================================
+=== ZenGL 0.3.12 (2013.05.20) ===
+=================================
+[00000001ms] Begin
+[00000003ms] Current mode: 1280 x 1024
+[00000458ms] wglChoosePixelFormatARB: zDepth = 24; stencil = 0; fsaa = 0
+[00000531ms] GL_VERSION: 3.3.0
+[00000531ms] GL_RENDERER: GeForce 9500 GT/PCIe/SSE2
+[00000531ms] GL_MAX_TEXTURE_SIZE: 8192
+[00000532ms] GL_EXT_TEXTURE_COMPRESSION_S3TC: TRUE
+[00000532ms] GL_SGIS_GENERATE_MIPMAP: TRUE
+[00000532ms] GL_MAX_TEXTURE_UNITS_ARB: 4
+[00000532ms] GL_EXT_TEXTURE_FILTER_ANISOTROPIC: TRUE
+[00000532ms] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16
+[00000532ms] GL_EXT_BLEND_FUNC_SEPARATE: TRUE
+[00000532ms] GL_MAX_RENDERBUFFER_SIZE: 8192
+[00000532ms] GL_EXT_FRAMEBUFFER_OBJECT: TRUE
+[00000532ms] WGL_PBUFFER: TRUE
+[00000532ms] Support WaitVSync: TRUE
+[00000532ms] Ogg: Initialized
+[00000532ms] Theora: Initialized
+[00000634ms] Texture loaded: "Calibri-Regular-36pt-page0.tga"
+[00000656ms] Texture loaded: "Calibri-Regular-36pt-page1.tga"
+[00000709ms] Joy: Couldn't find joysticks
+[00000750ms] Texture loaded: "bread.png"
+[00000788ms] Texture loaded: "Kaisersemmel-.jpg"
+[00000854ms] Texture loaded: "kitchen_baked.png"
+[00000914ms] Texture loaded: "kitchen_baked.png"
+[00000984ms] Texture loaded: "oven_baked.png"
+[00001033ms] Texture loaded: "bowl_baked.png"
+[00001051ms] Texture loaded: "dough.png"
+[00001062ms] Texture loaded: "dough.png"
+[00001099ms] Texture loaded: "Baking Bread logo.png"
+[00914075ms] Average FPS: 339
+[00914077ms] Timers to free: 2
+[00914077ms] Fonts to free: 1
+[00914078ms] Render Targets to free: 1
+[00914080ms] Textures to free: 10
+[00914108ms] End

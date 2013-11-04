@@ -1,0 +1,16 @@
+Make a binky is a game where you control a rabbit by typing commands into a command line. The only tricky thing is that the screen keeps moving faster and you have to avoid to get outside of the screen on either side. To make it a bit harder there are three kind of enemies which you should avoid as well.
+
+List of possible commands:
+
+  start - will start a new game.
+  pause - will pause the current game or resume it if paused
+  set X Y - will set the rabbit to the position XY eg. set 500 50
+
+And that's it.
+
+As there are no skill levels you can change the difficulty by resizing the window. I didn't have much time, so there are probably lots of bugs, because i'm writing my bachelor thesis at the moment and im running out of time there but i wanted to submit a game anyway.
+Have fun playing my first (finished) game!
+
+P.S. Written with Lazarus (Free Pascal)
+no linux and mac os source code yet but i will upload at least linux code later.
+The source-code should work with other platforms though (not tested!)
