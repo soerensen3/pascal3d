@@ -1,8 +1,12 @@
 #version 150
-in vec4 out_color;
-out vec4 color;
+uniform sampler2D tex;
+ 
+in vec4 f_color;
 
+out vec4 frag_color;
+ 
 void main()
 {
-    color = out_color;
+//    vec4 color = texture2D(tex,gl_TexCoord[0].st);
+    frag_color = /*color * */ f_color;
 }

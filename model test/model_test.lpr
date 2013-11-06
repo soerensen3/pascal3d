@@ -47,13 +47,22 @@ uses
 
 procedure LoadShader;
 var
-  DefaultShader: TDefaultShader;
+  DefaultShader: TBaseShader;
+
+  F: TStringList;
 begin
   SetCurrentDir( ExtractFilePath( ParamStr( 0 )) +  '/../../../shaders' );
-  DefaultShader:= TDefaultShader.Create;
+  DefaultShader:= TBaseShader.Create;
 //  simpleshader:= CreateVertexAndFragmentShader( DefaultShader.GetVertexHeader + DefaultShader.GetVertexCode,
 //                                                DefaultShader.GetFragmentHeader + DefaultShader.GetFragmentCode );
-  simpleshader:= CreateVertexAndFragmentShader( LoadShaderToText( 'simple.vert' ), LoadShaderToText( 'simple.frag' ));
+
+  F:= TStringList.Create;
+  F.Text:= DefaultShader.GetVertexHeader + DefaultShader.GetVertexCode;
+//  F.SaveToFile( 'shader.vert');
+  F.Text:= DefaultShader.GetFragmentHeader + DefaultShader.GetFragmentCode;
+//  F.SaveToFile( 'shader.frag');
+  F.Free;
+  simpleshader:= CreateVertexAndFragmentShader( LoadShaderToText( 'shaders/mat_Body.vert' ), LoadShaderToText( 'shaders/mat_Body.frag' ));
   DefaultShader.Free;
 end;
 

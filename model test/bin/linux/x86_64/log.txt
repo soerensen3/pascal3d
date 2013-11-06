@@ -1,33 +1,33 @@
 =================================
 === ZenGL 0.3.12 (2013.08.12) ===
 =================================
-[00000000ms] Begin
-[00000323ms] XOpenIM - ok
-[00000323ms] XCreateIC - ok
-[00000323ms] Current mode: 1280 x 1024
-[00000331ms] GLX Extension - ok
-[00000331ms] glXChooseVisual: zDepth = 24; stencil = 0; fsaa = 0
-[00000395ms] GL_VERSION: 3.3.0 NVIDIA 310.44
-[00000395ms] GL_RENDERER: GeForce 9500 GT/PCIe/SSE2
-[00000395ms] GL_MAX_TEXTURE_SIZE: 8192
-[00000395ms] GL_EXT_TEXTURE_COMPRESSION_S3TC: TRUE
-[00000395ms] GL_SGIS_GENERATE_MIPMAP: TRUE
-[00000395ms] GL_MAX_TEXTURE_UNITS_ARB: 4
-[00000395ms] GL_EXT_TEXTURE_FILTER_ANISOTROPIC: TRUE
-[00000395ms] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16
-[00000395ms] GL_EXT_BLEND_FUNC_SEPARATE: TRUE
-[00000395ms] GL_MAX_RENDERBUFFER_SIZE: 8192
-[00000395ms] GL_EXT_FRAMEBUFFER_OBJECT: TRUE
-[00000395ms] GLX_PBUFFER: TRUE
-[00000396ms] Support WaitVSync: TRUE
-[00000396ms] Ogg: Initialized
-[00000396ms] Theora: Initialized
-[00000419ms] Texture loaded: "Calibri-Regular-36pt-page0.tga"
-[00000438ms] Texture loaded: "Calibri-Regular-36pt-page1.tga"
-[00000463ms] Texture loaded: "Kaisersemmel.jpg"
-[00000596ms] Texture loaded: "volcanoe_baked.png"
-[00003201ms] Average FPS: 358
-[00003202ms] Timers to free: 2
-[00003202ms] Fonts to free: 1
-[00003203ms] Textures to free: 3
-[00003207ms] End
+[00000001ms] Begin
+[00000318ms] XOpenIM - ok
+[00000318ms] XCreateIC - ok
+[00000318ms] Current mode: 1280 x 1024
+[00000328ms] GLX Extension - ok
+[00000328ms] glXChooseVisual: zDepth = 24; stencil = 0; fsaa = 0
+[00000390ms] GL_VERSION: 3.3.0 NVIDIA 310.44
+[00000390ms] GL_RENDERER: GeForce 9500 GT/PCIe/SSE2
+[00000390ms] GL_MAX_TEXTURE_SIZE: 8192
+[00000390ms] GL_EXT_TEXTURE_COMPRESSION_S3TC: TRUE
+[00000390ms] GL_SGIS_GENERATE_MIPMAP: TRUE
+[00000390ms] GL_MAX_TEXTURE_UNITS_ARB: 4
+[00000391ms] GL_EXT_TEXTURE_FILTER_ANISOTROPIC: TRUE
+[00000391ms] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16
+[00000391ms] GL_EXT_BLEND_FUNC_SEPARATE: TRUE
+[00000391ms] GL_MAX_RENDERBUFFER_SIZE: 8192
+[00000391ms] GL_EXT_FRAMEBUFFER_OBJECT: TRUE
+[00000391ms] GLX_PBUFFER: TRUE
+[00000392ms] Support WaitVSync: TRUE
+[00000392ms] Ogg: Initialized
+[00000392ms] Theora: Initialized
+[00000415ms] Texture loaded: "Calibri-Regular-36pt-page0.tga"
+[00000435ms] Texture loaded: "Calibri-Regular-36pt-page1.tga"
+[00000460ms] Texture loaded: "Kaisersemmel.jpg"
+[00000610ms] Texture loaded: "character_bk3.png"
+[00019066ms] Average FPS: 436
+[00019067ms] Timers to free: 2
+[00019067ms] Fonts to free: 1
+[00019068ms] Textures to free: 3
+[00019071ms] End

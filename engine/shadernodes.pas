@@ -57,22 +57,26 @@ type
   end;
 
 const
-  {$DEFINE DEFAULTSHADER}
+  {$DEFINE BASESHADER}
   {$DEFINE FRAGMENTHEADER}
-  DefaultShaderFragmentHeaderCode = {$INCLUDE shadernodes_constants.inc};
-  {$DEFINE DEFAULTSHADER}
+  BaseShaderFragmentHeaderCode = {$INCLUDE shadernodes_constants.inc};
+  {$DEFINE BASESHADER}
   {$DEFINE FRAGMENTCODE}
-  DefaultShaderFragmentCode = {$INCLUDE shadernodes_constants.inc};
+  BaseShaderFragmentCode = {$INCLUDE shadernodes_constants.inc};
 
-  {$DEFINE DEFAULTSHADER}
+  {$DEFINE BASESHADER}
   {$DEFINE VERTEXHEADER}
-  DefaultShaderVertexHeaderCode = {$INCLUDE shadernodes_constants.inc};
-  {$DEFINE DEFAULTSHADER}
+  BaseShaderVertexHeaderCode = {$INCLUDE shadernodes_constants.inc};
+  {$DEFINE BASESHADER}
   {$DEFINE VERTEXCODE}
-  DefaultShaderVertexCode = {$INCLUDE shadernodes_constants.inc};
+  BaseShaderVertexCode = {$INCLUDE shadernodes_constants.inc};
 
 type
-  TDefaultShader = class( TShaderNode )
+  TBaseShader = class( TShaderNode )
+
+  end;
+
+  TSimpleVShader = class( TShaderNode )
 
   end;
 
@@ -92,22 +96,22 @@ end;
 
 function TShaderNode.GetFragmentHeader: String;
 begin
-  Result:= DefaultShaderFragmentHeaderCode;
+  Result:= BaseShaderFragmentHeaderCode;
 end;
 
 function TShaderNode.GetFragmentCode: String;
 begin
-  Result:= DefaultShaderFragmentCode;
+  Result:= BaseShaderFragmentCode;
 end;
 
 function TShaderNode.GetVertexHeader: String;
 begin
-  Result:= DefaultShaderVertexHeaderCode;
+  Result:= BaseShaderVertexHeaderCode;
 end;
 
 function TShaderNode.GetVertexCode: String;
 begin
-  Result:= DefaultShaderVertexCode;
+  Result:= BaseShaderVertexCode;
 end;
 
 {

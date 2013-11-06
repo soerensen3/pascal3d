@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectSession>
     <PathDelim Value="\"/>
@@ -9,10 +9,11 @@
         <Filename Value="model_test.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="model_test"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="8"/>
-        <CursorPos X="53" Y="54"/>
+        <TopLine Value="37"/>
+        <CursorPos X="42" Y="61"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -29,11 +30,10 @@
         <Filename Value="vars.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="vars"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="33"/>
-        <CursorPos X="20" Y="46"/>
+        <TopLine Value="17"/>
+        <CursorPos X="16" Y="29"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -80,4 +80,4 @@
     </Watches>
   </Debugging>
   <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>

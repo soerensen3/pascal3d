@@ -83,6 +83,52 @@ var
   FragmentShaderObject,
   VertexShaderObject: GLHandleARB;
   len: Integer;
+
+  procedure DebugParams;
+  var
+    i: Integer;
+    cnt: Integer;
+    len, size, typ: Integer;
+    name: PChar;
+    str: array[ 0..255 ] of Char;
+
+    function GLAttrTypeToStr( Attr: GLenum ): String;
+    begin
+      case Attr of
+        GL_FLOAT: Result:= 'float';
+        GL_FLOAT_VEC2: Result:= 'vec2';
+        GL_FLOAT_VEC3: Result:= 'vec3';
+        GL_FLOAT_VEC4: Result:= 'vec4';
+        GL_FLOAT_MAT2: Result:= 'mat2';
+        GL_FLOAT_MAT3: Result:= 'mat3';
+        GL_FLOAT_MAT4: Result:= 'mat4';
+        GL_FLOAT_MAT2x3: Result:= 'mat2x3';
+        GL_FLOAT_MAT2x4: Result:= 'mat2x3';
+        GL_FLOAT_MAT3x2: Result:= 'mat3x2';
+        GL_FLOAT_MAT3x4: Result:= 'mat3x4';
+        GL_FLOAT_MAT4x2: Result:= 'mat4x2';
+        GL_FLOAT_MAT4x3: Result:= 'mat4x3';
+      end;
+    end;
+
+  begin
+    glGetObjectParameterivARB( Result, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, @cnt );
+    for i:= 0 to cnt - 1 do
+      begin
+        name:= @str[ 0 ];
+        glGetActiveAttrib( Result, i, 255, len, size, typ, PGLchar( name ));
+        WriteLn( 'attribute ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetAttribLocation( Result, name ));
+      end;
+    glGetObjectParameterivARB( Result, GL_OBJECT_ACTIVE_UNIFORMS_ARB, @cnt );
+    // for i in 0 to count:
+    for i:= 0 to cnt - 1 do
+      begin
+        name:= @str[ 0 ];
+        glGetActiveUniform( Result, i, 255, len, size, typ, PGLchar( name ));
+        WriteLn( 'uniform ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetUniformLocation( Result, name ));
+      end;
+  end;
+
 begin
   Result := glCreateProgramObjectARB();
 
@@ -106,6 +152,8 @@ begin
   glDeleteObjectARB( FragmentShaderObject );
   glDeleteObjectARB( VertexShaderObject );
   glLinkProgramARB( Result );
+
+  DebugParams;
 end;
 
 procedure ShaderSetParameteri( shader: GLHandleARB; const Name: String; Value: GLint );
