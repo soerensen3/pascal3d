@@ -52,7 +52,7 @@ var
   F: TStringList;
 begin
   SetCurrentDir( ExtractFilePath( ParamStr( 0 )) +  '/../../../shaders' );
-  DefaultShader:= TBaseShader.Create;
+{  DefaultShader:= TBaseShader.Create;
 //  simpleshader:= CreateVertexAndFragmentShader( DefaultShader.GetVertexHeader + DefaultShader.GetVertexCode,
 //                                                DefaultShader.GetFragmentHeader + DefaultShader.GetFragmentCode );
 
@@ -61,14 +61,14 @@ begin
 //  F.SaveToFile( 'shader.vert');
   F.Text:= DefaultShader.GetFragmentHeader + DefaultShader.GetFragmentCode;
 //  F.SaveToFile( 'shader.frag');
-  F.Free;
-  simpleshader:= CreateVertexAndFragmentShader( LoadShaderToText( 'shaders/mat_Body.vert' ), LoadShaderToText( 'shaders/mat_Body.frag' ));
-  DefaultShader.Free;
+  F.Free;}
+  simpleshader:= CreateVertexAndFragmentShader( LoadShaderToText( 'shader.vert' ), LoadShaderToText( 'shader.frag' ));
+//  DefaultShader.Free;
 end;
 
 procedure UnloadShader;
 begin
-  DeleteShader( simpleshader );
+  simpleshader.Free;
 end;
 
 procedure LoadModels;
@@ -201,11 +201,11 @@ begin
   //gluPerspective( 90, 4/3, 0.1, 100 );
   SetupMatrices;
 
-  ShaderEnable( simpleshader );
+  simpleshader.Enable;
 
-  ShaderSetParameter4fv( simpleshader, 'world', world );
-  ShaderSetParameter4fv( simpleshader, 'view', view );
-  ShaderSetParameter4fv( simpleshader, 'proj', proj );
+  ShaderSetParameter4fv( simpleshader.ShaderObj, 'world', world );
+  ShaderSetParameter4fv( simpleshader.ShaderObj, 'view', view );
+  ShaderSetParameter4fv( simpleshader.ShaderObj, 'proj', proj );
 
   {
   glBegin(GL_TRIANGLES);

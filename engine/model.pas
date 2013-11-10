@@ -609,7 +609,7 @@ begin
                WriteLn( 'Error: The specified texture "', param, '" could not be found!' )
             else
               begin
-                tex:= tex_LoadFromFile( Param );
+                tex:= tex_LoadFromFile( Param, TEX_NO_COLORKEY, TEX_CLAMP or TEX_FILTER_LINEAR or TEX_CALCULATE_ALPHA );
                 if ( Assigned( tex )) then
                   Mat.Diff_Map:= tex^.ID
                 else
@@ -942,6 +942,7 @@ begin
               glActiveTexture( GL_TEXTURE0 );
               glEnable( GL_TEXTURE_2D );
               glBindTexture( GL_TEXTURE_2D, Material.Diff_Map );
+              glUniform1i( glGetUniformLocation( ActiveShader, 'tex0'), 0 );
 
               glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
               glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -999,9 +1000,11 @@ begin
 //          glNormal3f( normals[ faces[ i ].verts[ j ].n ].x,
 //                      normals[ faces[ i ].verts[ j ].n ].y,
 //                      normals[ faces[ i ].verts[ j ].n ].z );
-//          if ( Length( Faces[ i ].verts[ j ].texc ) > 0 ) then
+          k:= 0;
+          if ( Length( Faces[ i ].verts[ j ].texc ) > 0 ) then
 //            for k:= 0 to high( Faces[ i ].verts[ j ].texc ) do
-//              glMultiTexCoord2f( GL_TEXTURE0 + k, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
+              glVertexAttrib2f( 3,//glGetAttribLocation( ActiveShader, PChar( 'in_texc' + IntToStr( k ))),
+                TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
 {          glVertex3f( vertices[ faces[ i ].verts[ j ].v ].x,
                       vertices[ faces[ i ].verts[ j ].v ].y,
                       vertices[ faces[ i ].verts[ j ].v ].z );}

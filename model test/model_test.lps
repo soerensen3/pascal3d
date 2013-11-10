@@ -9,11 +9,10 @@
         <Filename Value="model_test.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="model_test"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="37"/>
-        <CursorPos X="42" Y="61"/>
+        <TopLine Value="59"/>
+        <CursorPos X="1" Y="65"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -32,8 +31,8 @@
         <UnitName Value="vars"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="17"/>
-        <CursorPos X="16" Y="29"/>
+        <TopLine Value="18"/>
+        <CursorPos X="24" Y="45"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -43,7 +42,7 @@
     </General>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="4">
+    <BreakPoints Count="6">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -72,6 +71,20 @@
         <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
         <Line Value="1161"/>
       </Item4>
+      <Item5>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="model_test.lpr"/>
+        <Line Value="65"/>
+      </Item5>
+      <Item6>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="model_test.lpr"/>
+        <Line Value="67"/>
+      </Item6>
     </BreakPoints>
     <Watches Count="1">
       <Item1>

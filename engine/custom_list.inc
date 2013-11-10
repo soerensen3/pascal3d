@@ -9,9 +9,9 @@
       constructor Create;
       destructor Destroy; override;
 
-      function Add( Item: TCustomItem ): Integer;
-      procedure Delete( Index: Integer );
-      function IndexOf( Item: TCustomItem ): Integer;
+      function Add( Item: TCustomItem ): Integer; virtual;
+      procedure Delete( Index: Integer ); virtual;
+      function IndexOf( Item: TCustomItem ): Integer; virtual;
       procedure Clear; virtual;
 
       property Items[ Index: Integer ]: TCustomItem read GetItems; default;
@@ -65,4 +65,4 @@ begin
 end;
 
 {$UNDEF IMPLEMENTATION}
-{$ENDIF}
+{$ENDIF}

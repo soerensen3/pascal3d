@@ -10,15 +10,48 @@ uses
   dglOpenGL,
   Math3D;
 
+type
+  TShaderDecl = class
+    Name: String;
+    DeclType: Integer;
+    Addr: GLuint;
+  end;
+
+  {$MACRO ON}
+  {$DEFINE TCustomList:= TCustomShaderDeclList}
+  {$DEFINE TCustomItem:= TShaderDecl}
+  {$DEFINE INTERFACE}
+  {$INCLUDE custom_list.inc}
+
+  { TShaderDeclList }
+
+  TShaderDeclList = class ( TCustomShaderDeclList )
+    function FindByName( Name: String ): Integer;
+    procedure Delete(Index: Integer); override;
+    procedure Clear; override;
+  end;
+
+  TShader = class
+    ShaderObj: GLHandle;
+
+    procedure Enable;
+    procedure Disable;
+
+
+    destructor Destroy; override;
+  end;
+
   function LoadShaderToText( FName: String ): String;
-  function CreateVertexAndFragmentShader( VertexShader, Fragmentshader: String ): GLHandleARB;
+  function CreateVertexAndFragmentShader( VertexShader, Fragmentshader: String ): TShader;
   procedure DeleteShader( Shader: GLHandleARB );
   procedure ShaderEnable( Shader: GLHandleARB );
   procedure ShaderDisable;
 
   procedure ShaderSetParameteri( shader: GLHandleARB; const Name: String; Value: GLint );
   procedure ShaderSetParameterf( shader: GLHandleARB; const Name: String; Value: GLfloat );
-  procedure ShaderSetParameter3f( shader: GLHandleARB; const Name: String; Value1, Value2, Value3: GLfloat );
+  procedure ShaderSetParameter2f( shader: GLHandleARB; const Name: String; Vec2: TVec2 );
+  procedure ShaderSetParameter3f( shader: GLHandleARB; const Name: String; Vec3: TVec3 );
+  procedure ShaderSetParameter4f( shader: GLHandleARB; const Name: String; Vec4: TVec4 );
   procedure ShaderSetParameter4fv( shader: GLHandleARB; const Name: String; Value: TMat4 );
 
   function ShaderCheckForErrors( glObject: GLHandleARB ): String;
@@ -27,6 +60,11 @@ var
   ActiveShader: GLHandleARB;
 
 implementation
+
+{$DEFINE TCustomList:= TCustomShaderDeclList}
+{$DEFINE TCustomItem:= TShaderDecl}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE custom_list.inc}
 
 function LoadShaderToText(FName: String): String;
 var
@@ -78,7 +116,7 @@ begin
 end;
 
 function CreateVertexAndFragmentShader(VertexShader, FragmentShader: String
-  ): GLHandleARB;
+  ): TShader;
 var
   FragmentShaderObject,
   VertexShaderObject: GLHandleARB;
@@ -95,6 +133,11 @@ var
     function GLAttrTypeToStr( Attr: GLenum ): String;
     begin
       case Attr of
+        GL_INT: Result:= 'int';
+        GL_SAMPLER_1D: Result:= 'sampler1D';
+        GL_SAMPLER_2D: Result:= 'sampler2D';
+        GL_SAMPLER_3D: Result:= 'sampler3D';
+        GL_SAMPLER_CUBE: Result:= 'samplerCUBE';
         GL_FLOAT: Result:= 'float';
         GL_FLOAT_VEC2: Result:= 'vec2';
         GL_FLOAT_VEC3: Result:= 'vec3';
@@ -112,25 +155,26 @@ var
     end;
 
   begin
-    glGetObjectParameterivARB( Result, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, @cnt );
+    glGetObjectParameterivARB( Result.ShaderObj, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, @cnt );
     for i:= 0 to cnt - 1 do
       begin
         name:= @str[ 0 ];
-        glGetActiveAttrib( Result, i, 255, len, size, typ, PGLchar( name ));
-        WriteLn( 'attribute ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetAttribLocation( Result, name ));
+        glGetActiveAttrib( Result.ShaderObj, i, 255, len, size, typ, PGLchar( name ));
+        WriteLn( 'attribute ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetAttribLocation( Result.ShaderObj, name ));
       end;
-    glGetObjectParameterivARB( Result, GL_OBJECT_ACTIVE_UNIFORMS_ARB, @cnt );
+    glGetObjectParameterivARB( Result.ShaderObj, GL_OBJECT_ACTIVE_UNIFORMS_ARB, @cnt );
     // for i in 0 to count:
     for i:= 0 to cnt - 1 do
       begin
         name:= @str[ 0 ];
-        glGetActiveUniform( Result, i, 255, len, size, typ, PGLchar( name ));
-        WriteLn( 'uniform ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetUniformLocation( Result, name ));
+        glGetActiveUniform( Result.ShaderObj, i, 255, len, size, typ, PGLchar( name ));
+        WriteLn( 'uniform ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetUniformLocation( Result.ShaderObj, name ));
       end;
   end;
 
 begin
-  Result := glCreateProgramObjectARB();
+  Result := TShader.Create;
+  Result.ShaderObj:= glCreateProgramObjectARB();
 
 //  WriteLn( 'Loading shader: vshader: ' + ExtractFileName( VertexShader ) + ' ' + ' fshader: '+ ExtractFileName( FragmentShader ));
   FragmentShaderObject := glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
@@ -146,12 +190,12 @@ begin
   glCompileShaderARB( VertexShaderObject );
   WriteLn( 'Vertex shader: ' + #13#10, ShaderCheckForErrors( VertexShaderObject ));
 
-  glAttachObjectARB( Result, FragmentShaderObject );
-  glAttachObjectARB( Result, VertexShaderObject );
+  glAttachObjectARB( Result.ShaderObj, FragmentShaderObject );
+  glAttachObjectARB( Result.ShaderObj, VertexShaderObject );
 
   glDeleteObjectARB( FragmentShaderObject );
   glDeleteObjectARB( VertexShaderObject );
-  glLinkProgramARB( Result );
+  glLinkProgramARB( Result.ShaderObj );
 
   DebugParams;
 end;
@@ -174,22 +218,32 @@ begin
   glUniform1fARB(glGetUniformLocationARB( shader, p), Value);
 end;
 
-procedure ShaderSetParameter3f( shader: GLHandleARB; const Name: String; Value1, Value2, Value3: GLfloat );
+procedure ShaderSetParameter2f(shader: GLHandleARB; const Name: String;
+  Vec2: TVec2);
 var
   p: PGLcharARB;
   l: GLint;
 begin
   p := PGLCharARB(Name);
-  glUniform3f(glGetUniformLocationARB( shader, p), Value1, Value2, Value3);
+  glUniform2f( glGetUniformLocationARB( shader, p), Vec2.x, Vec2.y );
 end;
 
-procedure ShaderSetParameter4f( shader: GLHandleARB; const Name: String; Value1, Value2, Value3, Value4: GLfloat );
+procedure ShaderSetParameter3f( shader: GLHandleARB; const Name: String; Vec3: TVec3 );
 var
   p: PGLcharARB;
   l: GLint;
 begin
   p := PGLCharARB(Name);
-  glUniform4fARB(glGetUniformLocationARB( shader, p), Value1, Value2, Value3, Value4);
+  glUniform3f( glGetUniformLocationARB( shader, p), Vec3.x, Vec3.y, Vec3.z );
+end;
+
+procedure ShaderSetParameter4f( shader: GLHandleARB; const Name: String; Vec4: TVec4 );
+var
+  p: PGLcharARB;
+  l: GLint;
+begin
+  p := PGLCharARB(Name);
+  glUniform4f( glGetUniformLocationARB( shader, p), Vec4.x, Vec4.y, Vec4.z, Vec4.w );
 end;
 
 
@@ -201,6 +255,54 @@ var
 begin
   p := PGLCharARB(Name);
   glUniformMatrix4fvARB(glGetUniformLocationARB( shader, p), 1, False, @Value );
+end;
+
+{ TShaderDeclList }
+
+function TShaderDeclList.FindByName(Name: String): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Name = Items[ i ].Name ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+procedure TShaderDeclList.Delete(Index: Integer);
+begin
+  Items[ Index ].Free;
+  inherited Delete(Index);
+end;
+
+procedure TShaderDeclList.Clear;
+var
+  i: Integer;
+begin
+  for i:= Count - 1 downto 0 do
+    Items[ i ].Free;
+  inherited Clear;
+end;
+
+{ TShader }
+
+procedure TShader.Enable;
+begin
+  ShaderEnable( ShaderObj );
+end;
+
+procedure TShader.Disable;
+begin
+  ShaderDisable;
+end;
+
+destructor TShader.Destroy;
+begin
+  DeleteShader( ShaderObj );
+  inherited Destroy;
 end;
 
 end.

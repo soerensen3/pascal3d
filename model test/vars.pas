@@ -42,7 +42,7 @@ var
   xrot, yrot, Zoom: Single;
   CamPos: TVec3;
 
-  simpleshader: GLHandleARB;
+  simpleshader: TShader;
   world, view, proj,
     invview: TMat4;
   view3x3: TMat3;
