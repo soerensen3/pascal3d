@@ -11,8 +11,8 @@
         <UnitName Value="model_test"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="59"/>
-        <CursorPos X="1" Y="65"/>
+        <TopLine Value="61"/>
+        <CursorPos X="3" Y="80"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -31,8 +31,8 @@
         <UnitName Value="vars"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="18"/>
-        <CursorPos X="24" Y="45"/>
+        <TopLine Value="10"/>
+        <CursorPos X="33" Y="21"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -42,50 +42,6 @@
     </General>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="6">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
-        <Line Value="1185"/>
-      </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
-        <Line Value="1204"/>
-      </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
-        <Line Value="1193"/>
-      </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="Z:\usr\lib\codetyphon\fpcsrc\rtl\objpas\strutils.pp"/>
-        <Line Value="1161"/>
-      </Item4>
-      <Item5>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="model_test.lpr"/>
-        <Line Value="65"/>
-      </Item5>
-      <Item6>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="model_test.lpr"/>
-        <Line Value="67"/>
-      </Item6>
-    </BreakPoints>
     <Watches Count="1">
       <Item1>
         <Expression Value="Mdl"/>

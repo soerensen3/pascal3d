@@ -934,7 +934,7 @@ begin
         begin
 //          glColor3f( Material.Diff.x, Material.Diff.y, Material.Diff.z );
           color:= glGetAttribLocation( ActiveShader, 'in_color');
-          glVertexAttrib4f( glGetAttribLocation( ActiveShader, 'in_color'),
+          glVertexAttrib4f( ActShad.Attributes.AddrByName( 'in_color' ),
             Material.Diff.R, Material.Diff.G, Material.Diff.B, 1.0 );
 
           if ( Material.Diff_Map > -1 ) then
@@ -942,10 +942,12 @@ begin
               glActiveTexture( GL_TEXTURE0 );
               glEnable( GL_TEXTURE_2D );
               glBindTexture( GL_TEXTURE_2D, Material.Diff_Map );
-              glUniform1i( glGetUniformLocation( ActiveShader, 'tex0'), 0 );
+              glUniform1i( ActShad.Uniforms.AddrByName( 'tex0'), 0 );
 
               glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
               glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             end
           else
             begin
@@ -987,13 +989,13 @@ begin
 //            for k:= 0 to high( Faces[ i ].verts[ j ].texc ) do
 //              glMultiTexCoord2f( GL_TEXTURE0 + k, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
           vertex:= glGetAttribLocation( ActiveShader, 'in_vertex' );
-          glVertexAttrib4f( glGetAttribLocation( ActiveShader, 'in_vertex' ),
+          glVertexAttrib4f( ActShad.Attributes.AddrByName( 'in_vertex' ), //glGetAttribLocation( ActiveShader, 'in_vertex' ),
                       vertices[ faces[ i ].verts[ j ].v ].x,
                       vertices[ faces[ i ].verts[ j ].v ].y,
                       vertices[ faces[ i ].verts[ j ].v ].z, 1 );
 
           normal:= glGetAttribLocation( ActiveShader, 'in_normal' );
-          glVertexAttrib3f( 1,//glGetAttribLocation( ActiveShader, 'in_normal' ),
+          glVertexAttrib3f( ActShad.Attributes.AddrByName( 'in_normal' ),//glGetAttribLocation( ActiveShader, 'in_normal' ),
                       normals[ faces[ i ].verts[ j ].n ].x,
                       normals[ faces[ i ].verts[ j ].n ].y,
                       normals[ faces[ i ].verts[ j ].n ].z );
@@ -1003,7 +1005,7 @@ begin
           k:= 0;
           if ( Length( Faces[ i ].verts[ j ].texc ) > 0 ) then
 //            for k:= 0 to high( Faces[ i ].verts[ j ].texc ) do
-              glVertexAttrib2f( 3,//glGetAttribLocation( ActiveShader, PChar( 'in_texc' + IntToStr( k ))),
+              glVertexAttrib2f( ActShad.Attributes.AddrByName( 'in_texc' + IntToStr( k )),
                 TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
 {          glVertex3f( vertices[ faces[ i ].verts[ j ].v ].x,
                       vertices[ faces[ i ].verts[ j ].v ].y,

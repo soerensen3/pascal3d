@@ -344,8 +344,8 @@ def ExportMaterials(Config):
         Config.Whitespace += 1
         
         # COLORS
-        amb = mat.ambient
-        Config.File.write("{}ambient {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, *amb))  # Ambient, uses mirror color,
+#        amb = mat.ambient
+#        Config.File.write("{}ambient {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, *amb))  # Ambient, uses mirror color,
         Config.File.write("{}diffuse {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, *(mat.diffuse_intensity * mat.diffuse_color))) # Diffuse        
         Config.File.write("{}specular {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, *(mat.specular_intensity * mat.specular_color)))  # Specular        
         

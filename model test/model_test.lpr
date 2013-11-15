@@ -53,8 +53,8 @@ var
 begin
   SetCurrentDir( ExtractFilePath( ParamStr( 0 )) +  '/../../../shaders' );
 {  DefaultShader:= TBaseShader.Create;
-//  simpleshader:= CreateVertexAndFragmentShader( DefaultShader.GetVertexHeader + DefaultShader.GetVertexCode,
-//                                                DefaultShader.GetFragmentHeader + DefaultShader.GetFragmentCode );
+  simpleshader:= CreateVertexAndFragmentShader( DefaultShader.GetVertexHeader + DefaultShader.GetVertexCode,
+                                                DefaultShader.GetFragmentHeader + DefaultShader.GetFragmentCode );
 
   F:= TStringList.Create;
   F.Text:= DefaultShader.GetVertexHeader + DefaultShader.GetVertexCode;
@@ -63,6 +63,8 @@ begin
 //  F.SaveToFile( 'shader.frag');
   F.Free;}
   simpleshader:= CreateVertexAndFragmentShader( LoadShaderToText( 'shader.vert' ), LoadShaderToText( 'shader.frag' ));
+  if ( not Assigned( simpleshader )) then
+    zgl_Exit;
 //  DefaultShader.Free;
 end;
 
@@ -75,8 +77,8 @@ procedure LoadModels;
 begin
   SetCurrentDir( ExtractFilePath( ParamStr( 0 )) +  '/../../../models' );
 
-  testTex:= tex_LoadFromFile( 'Kaisersemmel.jpg' );
-  Mdl:= LoadModelFileFromFile( 'character.model' );
+//  testTex:= tex_LoadFromFile( 'Kaisersemmel.jpg' );
+  Mdl:= LoadModelFileFromFile( 'spaceship_shark.model' );
 //  Mdl.Children[ 0 ].testTex:= testTex^.ID;
 //  WriteLn( Mdl.Debug );
 end;

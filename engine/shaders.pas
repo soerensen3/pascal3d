@@ -27,18 +27,26 @@ type
 
   TShaderDeclList = class ( TCustomShaderDeclList )
     function FindByName( Name: String ): Integer;
+    function AddrByName( Name: String ): GLint;
     procedure Delete(Index: Integer); override;
     procedure Clear; override;
   end;
 
   TShader = class
-    ShaderObj: GLHandle;
-
+  private
+    FAttributes: TShaderDeclList;
+    FShaderObj: GLHandle;
+    FUniforms: TShaderDeclList;
+  public
     procedure Enable;
     procedure Disable;
 
-
+    constructor Create;
     destructor Destroy; override;
+
+    property ShaderObj: GLHandle read FShaderObj write FShaderObj;
+    property Uniforms: TShaderDeclList read FUniforms write FUniforms;
+    property Attributes: TShaderDeclList read FAttributes write FAttributes;
   end;
 
   function LoadShaderToText( FName: String ): String;
@@ -58,6 +66,7 @@ type
 
 var
   ActiveShader: GLHandleARB;
+  ActShad: TShader;
 
 implementation
 
@@ -122,12 +131,12 @@ var
   VertexShaderObject: GLHandleARB;
   len: Integer;
 
-  procedure DebugParams;
+  procedure DebugParams( Shader: TShader );
   var
     i: Integer;
-    cnt: Integer;
+    cnt: GLint;
     len, size, typ: Integer;
-    name: PChar;
+    pname: PChar;
     str: array[ 0..255 ] of Char;
 
     function GLAttrTypeToStr( Attr: GLenum ): String;
@@ -155,23 +164,43 @@ var
     end;
 
   begin
-    glGetObjectParameterivARB( Result.ShaderObj, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, @cnt );
+    cnt:= 0;
+    glGetProgramInterfaceiv( Shader.ShaderObj, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, @cnt );
+//    glGetObjectParameterivARB( Shader.ShaderObj, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, @cnt );
     for i:= 0 to cnt - 1 do
-      begin
-        name:= @str[ 0 ];
-        glGetActiveAttrib( Result.ShaderObj, i, 255, len, size, typ, PGLchar( name ));
-        WriteLn( 'attribute ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetAttribLocation( Result.ShaderObj, name ));
-      end;
-    glGetObjectParameterivARB( Result.ShaderObj, GL_OBJECT_ACTIVE_UNIFORMS_ARB, @cnt );
+      with ( Shader.Attributes[ Shader.Attributes.Add( TShaderDecl.Create )]) do
+        begin
+          pname:= @str[ 0 ];
+
+          glGetActiveAttrib( Shader.ShaderObj, i, 255, len, size, typ, pname );
+
+          Name:= pname;
+          DeclType:= typ;
+          Addr:= glGetAttribLocation( Shader.ShaderObj, pname );
+
+          WriteLn( 'attribute ', GLAttrTypeToStr( DeclType ), ' ', Name, ' @', Addr );
+        end;
+    glGetProgramInterfaceiv( Shader.ShaderObj, GL_UNIFORM, GL_ACTIVE_RESOURCES, @cnt );
+//    glGetObjectParameterivARB( Shader.ShaderObj, GL_OBJECT_ACTIVE_UNIFORMS_ARB, @cnt );
     // for i in 0 to count:
     for i:= 0 to cnt - 1 do
-      begin
-        name:= @str[ 0 ];
-        glGetActiveUniform( Result.ShaderObj, i, 255, len, size, typ, PGLchar( name ));
-        WriteLn( 'uniform ', GLAttrTypeToStr( typ ), ' ', name, ' @', glGetUniformLocation( Result.ShaderObj, name ));
-      end;
+      with ( Shader.Uniforms[ Shader.Uniforms.Add( TShaderDecl.Create )]) do
+        begin
+          pname:= @str[ 0 ];
+
+          glGetActiveUniform( Shader.ShaderObj, i, 255, len, size, typ, pname );
+
+          Name:= pname;
+          DeclType:= typ;
+          Addr:= glGetUniformLocation( Shader.ShaderObj, pname );
+
+          WriteLn( 'uniform ', GLAttrTypeToStr( DeclType ), ' ', Name, ' @', Addr );
+        end;
   end;
 
+  var
+    Res: Integer;
+    failed: Boolean;
 begin
   Result := TShader.Create;
   Result.ShaderObj:= glCreateProgramObjectARB();
@@ -186,18 +215,38 @@ begin
   glShaderSourceARB( FragmentShaderObject, 1, @FragmentShader, @len );
 
   glCompileShaderARB( FragmentShaderObject );
-  WriteLn( 'Fragment shader: ' + #13#10, ShaderCheckForErrors( FragmentShaderObject ));
   glCompileShaderARB( VertexShaderObject );
-  WriteLn( 'Vertex shader: ' + #13#10, ShaderCheckForErrors( VertexShaderObject ));
 
-  glAttachObjectARB( Result.ShaderObj, FragmentShaderObject );
-  glAttachObjectARB( Result.ShaderObj, VertexShaderObject );
+  Res:= 0;
+  glGetShaderiv( VertexShaderObject, GL_COMPILE_STATUS, @Res );
+  failed:= Res = GL_FALSE;
+  if ( Res <> GL_FALSE ) then
+    glAttachObjectARB( Result.ShaderObj, VertexShaderObject )
+  else
+    WriteLn( 'Vertex shader: ' + #13#10, ShaderCheckForErrors( VertexShaderObject ));
+
+  Res:= 0;
+  glGetShaderiv( FragmentShaderObject, GL_COMPILE_STATUS, @Res );
+  if ( not failed ) then
+    failed:= Res = GL_FALSE;
+  if ( Res <> GL_FALSE ) then
+    glAttachObjectARB( Result.ShaderObj, FragmentShaderObject )
+  else
+    WriteLn( 'Fragment shader: ' + #13#10, ShaderCheckForErrors( FragmentShaderObject ));
 
   glDeleteObjectARB( FragmentShaderObject );
   glDeleteObjectARB( VertexShaderObject );
-  glLinkProgramARB( Result.ShaderObj );
 
-  DebugParams;
+{  if ( failed ) then
+    begin
+      DeleteShader( Result.ShaderObj );
+      FreeAndNil( Result );
+    end
+  else}
+    begin
+      glLinkProgramARB( Result.ShaderObj );
+      DebugParams( Result );
+    end;
 end;
 
 procedure ShaderSetParameteri( shader: GLHandleARB; const Name: String; Value: GLint );
@@ -272,6 +321,17 @@ begin
       end;
 end;
 
+function TShaderDeclList.AddrByName(Name: String): GLint;
+var
+  n: Integer;
+begin
+  n:= FindByName( Name );
+  if ( n >= 0 ) then
+    Result:= Items[ n ].Addr
+  else
+    Result:= -1;
+end;
+
 procedure TShaderDeclList.Delete(Index: Integer);
 begin
   Items[ Index ].Free;
@@ -292,11 +352,20 @@ end;
 procedure TShader.Enable;
 begin
   ShaderEnable( ShaderObj );
+  ActShad:= Self;
 end;
 
 procedure TShader.Disable;
 begin
+  ActShad:= nil;
   ShaderDisable;
+end;
+
+constructor TShader.Create;
+begin
+  inherited;
+  FUniforms:= TShaderDeclList.Create;
+  FAttributes:= TShaderDeclList.Create;
 end;
 
 destructor TShader.Destroy;

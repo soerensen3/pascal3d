@@ -1,28 +1,33 @@
 =================================
 === ZenGL 0.3.12 (2013.08.12) ===
 =================================
-[00000000ms] Begin
-[00000323ms] XOpenIM - ok
-[00000323ms] XCreateIC - ok
-[00000323ms] Current mode: 1280 x 1024
-[00000327ms] GLX Extension - ok
-[00000327ms] glXChooseVisual: zDepth = 24; stencil = 0; fsaa = 0
-[00000679ms] GL_VERSION: 1.4 (2.1.2 NVIDIA 310.44)
-[00000679ms] GL_RENDERER: GeForce 9500 GT/PCIe/SSE2
-[00000700ms] GL_MAX_TEXTURE_SIZE: 8192
-[00000700ms] GL_EXT_TEXTURE_COMPRESSION_S3TC: TRUE
-[00000700ms] GL_SGIS_GENERATE_MIPMAP: TRUE
-[00000700ms] GL_MAX_TEXTURE_UNITS_ARB: 4
-[00000700ms] GL_EXT_TEXTURE_FILTER_ANISOTROPIC: TRUE
-[00000700ms] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16
-[00000700ms] GL_EXT_BLEND_FUNC_SEPARATE: TRUE
-[00000700ms] GL_MAX_RENDERBUFFER_SIZE: 8192
-[00000700ms] GL_EXT_FRAMEBUFFER_OBJECT: TRUE
-[00000701ms] GLX_PBUFFER: TRUE
-[00000701ms] Support WaitVSync: TRUE
-[00000701ms] Ogg: Initialized
-[00000701ms] Theora: Initialized
-[00000746ms] Texture loaded: "Calibri-Regular-36pt-page0.tga"
-[00000768ms] Texture loaded: "Calibri-Regular-36pt-page1.tga"
-[00000794ms] Texture loaded: "Kaisersemmel.jpg"
-[00000936ms] Texture loaded: "character_bk3.png"
+[00000001ms] Begin
+[00000335ms] XOpenIM - ok
+[00000335ms] XCreateIC - ok
+[00000335ms] Current mode: 1280 x 1024
+[00000341ms] GLX Extension - ok
+[00000341ms] glXChooseVisual: zDepth = 24; stencil = 0; fsaa = 0
+[00000375ms] GL_VERSION: 2.1.2 NVIDIA 310.44
+[00000375ms] GL_RENDERER: GeForce 9500 GT/PCIe/SSE2
+[00000386ms] GL_MAX_TEXTURE_SIZE: 8192
+[00000387ms] GL_EXT_TEXTURE_COMPRESSION_S3TC: TRUE
+[00000387ms] GL_SGIS_GENERATE_MIPMAP: TRUE
+[00000387ms] GL_MAX_TEXTURE_UNITS_ARB: 4
+[00000387ms] GL_EXT_TEXTURE_FILTER_ANISOTROPIC: TRUE
+[00000387ms] GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: 16
+[00000387ms] GL_EXT_BLEND_FUNC_SEPARATE: TRUE
+[00000387ms] GL_MAX_RENDERBUFFER_SIZE: 8192
+[00000387ms] GL_EXT_FRAMEBUFFER_OBJECT: TRUE
+[00000387ms] GLX_PBUFFER: TRUE
+[00000387ms] Support WaitVSync: TRUE
+[00000387ms] Ogg: Initialized
+[00000387ms] Theora: Initialized
+[00000417ms] Texture loaded: "Calibri-Regular-36pt-page0.tga"
+[00000441ms] Texture loaded: "Calibri-Regular-36pt-page1.tga"
+[00000646ms] Texture loaded: "shark_tex.png"
+[00000807ms] Texture loaded: "shark_tex.png"
+[00003322ms] Average FPS: 2
+[00003324ms] Timers to free: 2
+[00003324ms] Fonts to free: 1
+[00003324ms] Textures to free: 3
+[00003333ms] End
