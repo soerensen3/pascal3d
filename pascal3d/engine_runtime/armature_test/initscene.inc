@@ -6,6 +6,8 @@ var
   pathmodels: String = '../../../armature_test/media';
   pathfonts: String = '../../../fonts';
 
+  shadersimple: TShader;
+
   CatchMouse: Boolean = False;
 
   Mdl: TModelFile;
@@ -16,11 +18,19 @@ begin
   Result:= False;
   SetCurrentDir( pathshaders );
 
+  shadersimple:= CreateVertexAndFragmentShader( LoadShaderToText( 'simple.vert' ), LoadShaderToText( 'simple.frag' ));
+
+  InitGeom( CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )),
+            CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )));
+  mainscene.Shader:= shadersimple;
   //LOAD SHADERS
 end;
 
 procedure UnloadShader;
 begin
+  LineShader2D.Free;
+  LineShader3D.Free;
+  shadersimple.Free;
   //FREE SHADERS
 end;
 
@@ -31,7 +41,10 @@ begin
   Result:= False;
   SetCurrentDir( pathmodels );
 
-  Mdl:= LoadModelFileFromFile( 'character_bones_walk.model' )
+  Mdl:= LoadModelFileFromFile( 'character_bones_walk.model' );
+  TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
+  for i:= 0 to Mdl.Children.Count - 1 do
+    WriteLn( 'Object: ' + Mdl.Children[ i ].Name );
   //LOAD MODELS
 end;
 

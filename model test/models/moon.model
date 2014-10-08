@@ -1,3 +1,7 @@
+world
+  ambient 0.000000, 0.000000, 0.000000
+  horizon 0.010177, 0.027319, 0.016505
+end;
 object Landscape_001
   matrix
      1.000000, 0.000000, 0.000000, 0.000000,
@@ -5,9 +9,9 @@ object Landscape_001
      0.000000, 0.000000, 1.000000, 0.000000,
     -0.668450, 0.451757,-0.371676, 1.000000;
   end;
-  external '/home/johannes/Dokumente/Lazarus/model test/models/moon.modelLandscape.001.revobj'
+  external 'moon.modelLandscape.001.revobj'
     vertices 65536
-    normals 65354
+    normals 65353
     texcoords 0
     faces 65025
   end;
@@ -15,8 +19,26 @@ object Landscape_001
     material 'Material.001'
   end;
 end;
+object Plane_collision
+  matrix
+    10.000000, 0.000000, 0.000000, 0.000000,
+     0.000000,10.000000, 0.000000, 0.000000,
+     0.000000, 0.000000,10.000000, 0.000000,
+     0.000000, 0.000000,-0.320312, 1.000000;
+  end;
+  external 'moon.modelPlane.collision.revobj'
+    vertices 6309
+    normals 9673
+    texcoords 0
+    faces 12237
+  end;
+  materials
+  end;
+end;
 material 'Material.001'
-  ambient 0.000000, 0.000000, 0.000000
   diffuse 0.148772, 0.148772, 0.148772
-  specular 0.096491, 0.096491, 0.096491
+  specular 19.000000, 0.198564, 0.198564, 0.198564
+  texture 'material_moon_normal.png'
+    normal 1.0
+  end;
 end;

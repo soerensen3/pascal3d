@@ -315,10 +315,11 @@ end;
 procedure TMeshPhysics.UpdateCollision;
 begin
   if ( Mesh.Children.Count > 0 ) then
-    begin
-      TBodyMesh( Body ).UpdateMesh( Mesh.Children[ 0 ].Indices, Mesh.Children[ 0 ].Positions, Mesh.Children[ 0 ].Matrix );
-      Body.SetMatrix( mat4( 1 ));
-    end;
+    with ( Mesh.Children[ 0 ] as TModel ) do
+      begin
+        TBodyMesh( Body ).UpdateMesh( Indices, Positions, Matrix );
+        Body.SetMatrix( mat4( 1 ));
+      end;
 end;
 {
 procedure THeightMap.LoadHeightMap(FName: String; ScaleXY: Float; ScaleZ: Float );

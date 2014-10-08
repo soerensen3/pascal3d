@@ -3,7 +3,7 @@ var
   maincamera: tCamera;
 
   pathshaders: String = '../../../shaders';
-  pathmodels: String = '../../../physics_test/media';
+  pathmodels: String = '../../../template/media';
   pathfonts: String = '../../../fonts';
 
   CatchMouse: Boolean = False;

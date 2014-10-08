@@ -1,19 +1,6 @@
-object Cube_001
-  matrix
-     1.000000, 0.000000, 0.000000, 0.000000,
-     0.000000, 1.000000, 0.000000, 0.000000,
-     0.000000, 0.000000, 1.000000, 0.000000,
-     1.277447,-0.000000, 1.209386, 1.000000;
-  end;
-  external 'character.modelCube.001.revobj'
-    vertices 8
-    normals 6
-    texcoords 0
-    faces 6
-  end;
-  materials
-    material 'Material.002'
-  end;
+world
+  ambient 0.000000, 0.000000, 0.000000
+  horizon 0.050876, 0.050876, 0.050876
 end;
 object Cube
   matrix
@@ -35,23 +22,17 @@ object Cube
   end;
 end;
 material 'Body'
-  ambient 0.000000, 0.000000, 0.000000
   diffuse 0.640000, 0.640000, 0.640000
-  specular 0.000000, 0.000000, 0.000000
+  specular 10.000000, 0.000000, 0.000000, 0.000000
   texture 'character_bk3.png'
+    diffuse 1.0
+  end;
 end;
 material 'Material'
-  ambient 0.000000, 0.000000, 0.000000
   diffuse 0.640000, 0.640000, 0.640000
-  specular 0.500000, 0.500000, 0.500000
+  specular 50.000000, 0.500000, 0.500000, 0.500000
 end;
 material 'Material.001'
-  ambient 0.000000, 0.000000, 0.000000
   diffuse 0.640000, 0.640000, 0.640000
-  specular 0.500000, 0.500000, 0.500000
-end;
-material 'Material.002'
-  ambient 0.000000, 0.000000, 0.000000
-  diffuse 0.640000, 0.024653, 0.057264
-  specular 0.500000, 0.500000, 0.500000
+  specular 50.000000, 0.500000, 0.500000, 0.500000
 end;

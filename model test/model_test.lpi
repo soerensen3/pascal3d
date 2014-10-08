@@ -32,19 +32,22 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="engine"/>
+        <PackageName Value="LCL"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCL"/>
+        <PackageName Value="LCLBase"/>
       </Item2>
       <Item3>
         <PackageName Value="pl_opengl"/>
       </Item3>
       <Item4>
-        <PackageName Value="pl_zengl"/>
+        <PackageName Value="engine"/>
       </Item4>
+      <Item5>
+        <PackageName Value="pl_zengl"/>
+      </Item5>
     </RequiredPackages>
     <Units Count="3">
       <Unit0>
@@ -100,4 +103,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>

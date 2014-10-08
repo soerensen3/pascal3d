@@ -1,0 +1,28 @@
+world
+  ambient 0.000000, 0.000000, 0.000000
+  horizon 0.050876, 0.050876, 0.050876
+end;
+object Grid
+  matrix
+    1024.000000, 0.000000, 0.000000, 0.000000,
+     0.000000,1024.000000, 0.000000, 0.000000,
+     0.000000, 0.000000,1024.000000, 0.000000,
+     0.000000, 0.000000,120.000000, 1.000000;
+  end;
+  external 'terrain_collision.modelGrid.revobj'
+    vertices 65536
+    normals 36765
+    texcoords 65536
+    faces 65025
+  end;
+  materials
+    material 'Material.001'
+  end;
+end;
+material 'Material.001'
+  diffuse 0.640000, 0.640000, 0.640000
+  specular 50.000000, 0.500000, 0.500000, 0.500000
+  texture 'displace.jpg'
+    diffuse 1.0
+  end;
+end;

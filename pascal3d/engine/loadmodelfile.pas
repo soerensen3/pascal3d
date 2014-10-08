@@ -16,7 +16,7 @@ implementation
 
 
 function LoadObject( MdlFile: TModelFile; var Mdl: TModel; F: TStringList; const strpos: Integer ): Integer; forward;
-
+function LoadArmature( MdlFile: TModelFile; var Armature: TArmature; F: TStringList; const strpos: Integer ): Integer; forward;
 
 function RemoveComment( S: String ): String;
 var
@@ -145,7 +145,7 @@ begin
             UVs.Add( ParseUV( F[ i ]));
 //            UVs[ high( UVs )]:= ParseUV( F[ i ]);
             inc( i );
-          end;// Loading Vertices
+          end;// Loading UV's
       end;
     end;
   Result:= i + 1;
@@ -197,8 +197,7 @@ begin
         'end;': break;
         else
           begin
-//            SetLength( Vertices, Length( Vertices ) + 1 );
-            {Vertices[ high( Vertices )]:= }Vertices.Add( ParseVertex3f( F[ i ]));
+            Vertices.Add( ParseVertex3f( F[ i ]));
             inc( i );
           end;// Loading Vertices
       end;
@@ -213,8 +212,6 @@ var
   vert: TVec3;
 begin
   base:= Vertices.Count;
-  //SetLength( Vertices, base + count );
-  //Vertices.Count:= base + count;
   for i:= 0 to count - 1 do
     begin
       F.Read( vert, 3*SizeOf( Single ));
@@ -264,11 +261,11 @@ begin
     end;
 end;
 
-function LoadChildren( MdlFile: TModelFile; Children: TModelList; F: TStringList; const strpos: Integer ): Integer;
+function LoadChildren( MdlFile: TModelFile; Children: TRenderableObjectList; F: TStringList; const strpos: Integer ): Integer;
 var
   i: Integer;
   cmd: String;
-  Mdl: TModel;
+  Item: TRenderableObject;
 begin
   i:= strpos;
   while( i < F.Count ) do
@@ -278,18 +275,25 @@ begin
       writeln( 'LoadChildren[', i, ']' );
       {$ENDIF}
       case cmd of
+        'armature':
+          begin
+            Item:= TArmature.Create( Children );
+            Children.Add( Item );
+            Item.Name:= GetParams( F[ i ]);
+            i:= LoadArmature( MdlFile, TArmature( Item ), F, i + 1 );
+          end;
         'object':
           begin
-            Mdl:= TModel.Create;
-            Children.Add( Mdl );
-            Mdl.Name:= GetParams( F[ i ]);
-            i:= LoadObject( MdlFile, Mdl, F, i + 1 );
+            Item:= TModel.Create( Children );
+            Children.Add( Item );
+            Item.Name:= GetParams( F[ i ]);
+            i:= LoadObject( MdlFile, TModel( Item ), F, i + 1 );
           end;
         'end;': break;
         else
           begin
             inc( i );
-          end;// Loading Vertices
+          end;// Loading Children
       end;
     end;
   Result:= i + 1;
@@ -472,7 +476,7 @@ begin
           end
         else
           begin
-            WriteLn( Format( 'Error in LoadObject [%d]: unknown token "%s"', [ i, cmd ]));
+            WriteLn( Format( 'Error in LoadObjMaterials [%d]: unknown token "%s"', [ i, cmd ]));
           end;
       end;
       i:= i + 1;
@@ -518,6 +522,163 @@ begin
   Mdl.Calc_Tangent_Binormal;
   Mdl.UnpackBuffers;
   {.$ENDIF}
+  Result:= i + 1;
+end;
+
+function LoadBone( var Bone: TBone; F: TStringList; const strpos: Integer ): Integer;
+var
+  i: Integer;
+  cmd: String;
+  newbn: TBone;
+  Mat: TMat4;
+begin
+  i:= strpos;
+  while( i < F.Count ) do
+    begin
+      cmd:= GetCmd( F[ i ]);
+      {$IFDEF VERBOSE}
+      writeln( 'LoadBones[', i, ']' );
+      {$ENDIF}
+      case cmd of
+        'end;': break;
+        'bone':
+          begin
+            newbn:= TBone.Create;
+            Bone.Bones.Add( newbn );
+            i:= LoadBone( newbn, F, i + 1 );
+          end;
+        'matrix':
+          begin
+            i:= LoadMatrix( Mat, F, i + 1 );
+            Bone.Matrix:= Mat;
+          end
+        else
+          begin
+            WriteLn( Format( 'Error in LoadBone [%d]: unknown token "%s"', [ i, cmd ]));
+            i:= i + 1;
+          end;
+      end;
+    end;
+  Result:= i + 1;
+end;
+
+function LoadBones( Bones: TBoneList; F: TStringList; const strpos: Integer ): Integer;
+var
+  newbn: TBone;
+  i: Integer;
+  cmd: String;
+begin
+  i:= strpos;
+  while( i < F.Count ) do
+    begin
+      cmd:= GetCmd( F[ i ]);
+      {$IFDEF VERBOSE}
+      writeln( 'LoadBones[', i, ']' );
+      {$ENDIF}
+      case cmd of
+        'end;': break;
+        'bone':
+          begin
+            newbn:= TBone.Create;
+            Bones.Add( newbn );
+            i:= LoadBone( newbn, F, i + 1 );
+          end;
+        else
+          begin
+            WriteLn( Format( 'Error in LoadBones [%d]: unknown token "%s"', [ i, cmd ]));
+            i:= i + 1;
+          end;
+      end;
+    end;
+  Result:= i + 1;
+end;
+
+function LoadAction( Action: TArmatureAction; F: TStringList; const strpos: Integer ): Integer;
+var
+  newframe: TFrame;
+  i: Integer;
+  cmd: String;
+begin
+  i:= strpos;
+  while( i < F.Count ) do
+    begin
+      cmd:= GetCmd( F[ i ]);
+      {$IFDEF VERBOSE}
+      writeln( 'LoadAction[', i, ']' );
+      {$ENDIF}
+      case cmd of
+        'end;': break;
+        'frame':
+          begin
+            newframe:= TFrame.Create;
+            Action.Frames.Add( newframe );
+            i:= LoadBones( newframe.Bones, F, i + 1 );
+          end;
+        else
+          begin
+            WriteLn( Format( 'Error in LoadAction [%d]: unknown token "%s"', [ i, cmd ]));
+            i:= i + 1;
+          end;
+      end;
+    end;
+  Result:= i + 1;
+end;
+
+function LoadActions( Actions: TActionList; F: TStringList; const strpos: Integer ): Integer;
+var
+  action: TArmatureAction;
+  i: Integer;
+  cmd: String;
+begin
+  i:= strpos;
+  while( i < F.Count ) do
+    begin
+      cmd:= GetCmd( F[ i ]);
+      {$IFDEF VERBOSE}
+      writeln( 'LoadActions[', i, ']' );
+      {$ENDIF}
+      case cmd of
+        'end;': break;
+        'action':
+          begin
+            action:= TArmatureAction.Create;
+            Actions.Add( action );
+            i:= LoadAction( action, F, i + 1 );
+          end;
+        else
+          begin
+            WriteLn( Format( 'Error in LoadActions [%d]: unknown token "%s"', [ i, cmd ]));
+            i:= i + 1;
+          end;
+      end;
+    end;
+  Result:= i + 1;
+end;
+
+function LoadArmature( MdlFile: TModelFile; var Armature: TArmature; F: TStringList; const strpos: Integer ): Integer;
+var
+  i: Integer;
+  cmd, param: String;
+begin
+  i:= strpos;
+  while( i < F.Count ) do
+    begin
+      cmd:= GetCmd( F[ i ]);
+      {$IFDEF VERBOSE}
+      writeln( 'LoadArmature[', i, ']' );
+      {$ENDIF}
+      case cmd of
+        'end;': break;
+        'bones': i:= LoadBones( Armature.StillFrame.Bones, F, i + 1 );
+        'actions': i:= LoadActions( Armature.Actions, F, i + 1 );
+        'children': i:= LoadChildren( MdlFile, Armature.Children, F, i + 1 )
+        else
+          begin
+            WriteLn( Format( 'Error in LoadArmature [%d]: unknown token "%s"', [ i, cmd ]));
+            i:= i + 1;
+          end;
+      end;
+    end;
   Result:= i + 1;
 end;
 
@@ -639,7 +800,7 @@ function LoadModelFile(F: TStringList): TModelFile;
 var
   i: Integer;
   cmd: String;
-  Mdl: TModel;
+  Item: TRenderableObject;
   MatName: String;
   MatIdx: Integer;
   Material: TMaterial;
@@ -657,10 +818,17 @@ begin
       case cmd of
         'object':
           begin
-            Mdl:= TModel.Create;
-            Result.Children.Add( Mdl );
-            Mdl.Name:= GetParams( F[ i ]);
-            i:= LoadObject( Result, Mdl, F, i + 1 );
+            Item:= TModel.Create( Result.Children );
+            Result.Children.Add( Item );
+            Item.Name:= GetParams( F[ i ]);
+            i:= LoadObject( Result, TModel( Item ), F, i + 1 );
+          end;
+        'armature':
+          begin
+            Item:= TArmature.Create( Result.Children );
+            Result.Children.Add( Item );
+            Item.Name:= GetParams( F[ i ]);
+            i:= LoadArmature( Result, TArmature( Item ), F, i + 1 );
           end;
         'material':
           begin

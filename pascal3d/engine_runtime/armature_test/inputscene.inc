@@ -55,17 +55,17 @@ var
     Result:= ( Keys + LongInt( Key ))^ = 1;
   end;
 
-const speed = 0.1;
+const speed = 0.01;
 
 begin
   Keys:= SDL_GetKeyboardState( nil );
   if ( KeyPressed( SDL_SCANCODE_S )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad - PI ), cos( - maincamera.YawPitchRoll.Z * deg2rad - PI ), 0 ) * speed;
+    maincamera.Position:= maincamera.Position + vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad - PI ), cos( - maincamera.YawPitchRoll.Z * deg2rad - PI ), 0 ) * speed;
   if ( KeyPressed( SDL_SCANCODE_W )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad ), cos( - maincamera.YawPitchRoll.Z * deg2rad ), 0 ) * speed;
+    maincamera.Position:= maincamera.Position + vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad ), cos( - maincamera.YawPitchRoll.Z * deg2rad ), 0 ) * speed;
   if ( KeyPressed( SDL_SCANCODE_A )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad - PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad - PI /2), 0 ) * speed;
+    maincamera.Position:= maincamera.Position + vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad - PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad - PI /2), 0 ) * speed;
   if ( KeyPressed( SDL_SCANCODE_D )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad + PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad + PI /2), 0 ) * speed;
+    maincamera.Position:= maincamera.Position + vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad + PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad + PI /2), 0 ) * speed;
 end;
 

@@ -38,7 +38,7 @@ class RevelationExporterSettings:
                  IncludeFrameRate=False,
                  ExportBinaryData=True,  
                  ExportTextures=True,
-                 ExportArmatures=False,
+                 ExportArmatures=True,
                  ExportAnimation=0,
                  PathMode=2,
                  ExportMode=1,
@@ -133,7 +133,7 @@ class RevelationExporter(bpy.types.Operator):
     ExportArmatures = BoolProperty(
         name="Export Armatures",
         description="Export the bones of any armatures to deform meshes",
-        default=False)
+        default=True)
     ExportAnimation = EnumProperty(
         name="Animations",
         description="Select the type of animations to export. Only object " \

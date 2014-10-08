@@ -9,10 +9,11 @@
         <Filename Value="model_test.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="model_test"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="61"/>
-        <CursorPos X="3" Y="80"/>
+        <TopLine Value="128"/>
+        <CursorPos X="3" Y="154"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -29,10 +30,10 @@
         <Filename Value="vars.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="vars"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="10"/>
-        <CursorPos X="33" Y="21"/>
+        <TopLine Value="1"/>
+        <CursorPos X="16" Y="55"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -44,9 +45,9 @@
   <Debugging>
     <Watches Count="1">
       <Item1>
-        <Expression Value="Mdl"/>
+        <Expression Value="Length( Faces )"/>
       </Item1>
     </Watches>
   </Debugging>
   <EditorMacros Count="0"/>
-</CONFIG>
+</CONFIG>

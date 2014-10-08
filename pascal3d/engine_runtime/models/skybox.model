@@ -1,0 +1,52 @@
+world
+  ambient 0.000000, 0.000000, 0.000000
+  horizon 0.050876, 0.050876, 0.050876
+end;
+object SkyBoxBottom
+  matrix
+     1.000000, 0.000000, 0.000000, 0.000000,
+     0.000000, 1.000000, 0.000000, 0.000000,
+     0.000000, 0.000000, 1.000000, 0.000000,
+     0.000000, 0.000000, 0.000000, 1.000000;
+  end;
+  external 'skybox.modelSkyBoxBottom.revobj'
+    vertices 8
+    normals 5
+    texcoords 6
+    faces 5
+  end;
+  materials
+    material 'MatSkyBoxLRFRB'
+  end;
+end;
+object SkyBoxTop
+  matrix
+     1.000000, 0.000000, 0.000000, 0.000000,
+     0.000000, 1.000000, 0.000000, 0.000000,
+     0.000000, 0.000000, 1.000000, 0.000000,
+     0.000000, 0.000000, 0.000000, 1.000000;
+  end;
+  external 'skybox.modelSkyBoxTop.revobj'
+    vertices 4
+    normals 1
+    texcoords 4
+    faces 1
+  end;
+  materials
+    material 'MatSkyBoxTop'
+  end;
+end;
+material 'MatSkyBoxLRFRB'
+  diffuse 0.640000, 0.640000, 0.640000
+  specular 50.000000, 0.500000, 0.500000, 0.500000
+  texture 'starbox_lrfr.jpg'
+    diffuse 1.0
+  end;
+end;
+material 'MatSkyBoxTop'
+  diffuse 0.640000, 0.640000, 0.640000
+  specular 50.000000, 0.500000, 0.500000, 0.500000
+  texture 'starbox_tb.jpg'
+    diffuse 1.0
+  end;
+end;

@@ -1,0 +1,38 @@
+world
+  ambient 0.000000, 0.000000, 0.000000
+  horizon 1.000000, 1.000000, 1.000000
+end;
+object Terrain
+  matrix
+    1024.000000, 0.000000, 0.000000, 0.000000,
+     0.000000,1024.000000, 0.000000, 0.000000,
+     0.000000, 0.000000,1024.000000, 0.000000,
+     0.000000, 0.000000, 0.000000, 1.000000;
+  end;
+  external 'landscapegrid.modelTerrain.revobj'
+    vertices 37670
+    normals 2
+    texcoords 37670
+    faces 38007
+  end;
+  materials
+    material 'Terrain'
+  end;
+end;
+material 'Terrain'
+  diffuse 0.001613, 0.014286, 0.025393
+  specular 50.000000, 1.000000, 1.000000, 1.000000
+  texture 'height_normal.png'
+    diffuse 1.0
+  end;
+  texture 'multilayer3.jpg'
+    diffuse 1.0
+  end;
+  texture 'stencils.jpg'
+    diffuse 1.0
+  end;
+  texture 'lightmap.JPG'
+    diffuse 1.0
+  end;
+end;
+

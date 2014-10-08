@@ -17,7 +17,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="30">
+    <Files Count="33">
       <Item1>
         <Filename Value="math3d.pas"/>
         <UnitName Value="Math3D"/>
@@ -140,6 +140,18 @@
         <Filename Value="loadmodelfile.pas"/>
         <UnitName Value="loadmodelfile"/>
       </Item30>
+      <Item31>
+        <Filename Value="robjects.pas"/>
+        <UnitName Value="RObjects"/>
+      </Item31>
+      <Item32>
+        <Filename Value="math3d_quaternion.inc"/>
+        <Type Value="Binary"/>
+      </Item32>
+      <Item33>
+        <Filename Value="math3d_vector_swizzle.inc"/>
+        <Type Value="Binary"/>
+      </Item33>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="5">

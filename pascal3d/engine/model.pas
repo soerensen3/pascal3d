@@ -7,11 +7,11 @@ unit Model;
 
 interface
 uses
-  Classes, SysUtils, dglOpenGL, Math, Math3D, strutils, shaders, texture_sdl, geometry, LCLIntf, filewatch;
+  Classes, SysUtils, dglOpenGL, Math, Math3D, strutils, shaders, texture_sdl, geometry, LCLIntf, filewatch, RObjects;
 
 type
 
-  TRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowBoundingBox );
+  TRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowBoundingBox, rfDebugShowArmature );
   TRenderFlags = set of TRenderFlag;
 
   { TMaterial }
@@ -51,22 +51,12 @@ type
 
   { TBone }
 
-  TBone = class( TPersistent )
-    private
-      FMatrix: TMat4;
-      FName: String;
-
-    public
-      property Matrix: TMat4 read FMatrix write FMatrix;
-      property Name: String read FName write FName;
-  end;
-
   {$MACRO ON}
-  {$DEFINE TCustomList:= TCustomModelList}
+{  {$DEFINE TCustomList:= TCustomModelList}
   {$DEFINE TCustomListEnumerator:= TModelEnumerator}
   {$DEFINE TCustomItem:= TModel}
   {$DEFINE INTERFACE}
-  {$INCLUDE custom_list.inc}
+  {$INCLUDE custom_list.inc}}
 
   {$DEFINE TCustomList:= TCustomMaterialList}
   {$DEFINE TCustomListEnumerator:= TMaterialEnumerator}
@@ -74,9 +64,28 @@ type
   {$DEFINE INTERFACE}
   {$INCLUDE custom_list.inc}
 
+
+  TBone = class;
+
   {$DEFINE TCustomList:= TCustomBoneList}
   {$DEFINE TCustomListEnumerator:= TBoneEnumerator}
   {$DEFINE TCustomItem:= TBone}
+  {$DEFINE INTERFACE}
+  {$INCLUDE custom_list.inc}
+
+  TFrame = class;
+
+  {$DEFINE TCustomList:= TCustomFrameList}
+  {$DEFINE TCustomListEnumerator:= TFrameEnumerator}
+  {$DEFINE TCustomItem:= TFrame}
+  {$DEFINE INTERFACE}
+  {$INCLUDE custom_list.inc}
+
+  TArmatureAction = class;
+
+  {$DEFINE TCustomList:= TCustomActionList}
+  {$DEFINE TCustomListEnumerator:= TActionEnumerator}
+  {$DEFINE TCustomItem:= TArmatureAction}
   {$DEFINE INTERFACE}
   {$INCLUDE custom_list.inc}
 
@@ -88,6 +97,20 @@ type
       procedure Clear; override;
   end;
 
+  { TFrameList }
+
+  TFrameList = class( TCustomFrameList )
+    public
+      procedure Clear; override;
+  end;
+
+  { TActionList }
+
+  TActionList = class( TCustomActionList )
+    public
+      procedure Clear; override;
+  end;
+
   { TMaterialList }
 
   TMaterialList = class( TCustomMaterialList )
@@ -96,11 +119,10 @@ type
       procedure Clear; override;
   end;
 
-  { TModelList }
+  { TRenderableObjectList }
 
-  TModelList = class( TCustomModelList )
+  TRenderableObjectList = class( TObjectList )
     public
-      procedure Clear; override;
       procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []);
   end;
 
@@ -108,25 +130,94 @@ type
     Min, Max, Center: TVec3;
   end;
 
-  { TArmature }
+  { TRenderableObject }
 
-  TArmature = class
+  TRenderableObject = class ( TBaseObject )
     private
-      FBones: TBoneList;
-      FChildren: TModelList;
+      FChildren: TRenderableObjectList;
+      FVisible: Boolean;
+
+    public
+      constructor Create( AParentList: TObjectList );
+      destructor Destroy; override;
+      procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []); virtual;
 
     published
-      property Children: TModelList read FChildren;
+      property Children: TRenderableObjectList read FChildren;
+      property Visible: Boolean read FVisible write FVisible;
+  end;
+
+  TFrame = class
+    private
+      FBones: TBoneList;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+    published
+      property Bones: TBoneList read FBones write FBones;
+  end;
+
+  { TArmatureAction }
+
+  TArmatureAction = class
+    private
+      FFrames: TFrameList;
+      FName: String;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+    published
+      property Frames: TFrameList read FFrames write FFrames;
+      property Name: String read FName write FName;
+  end;
+
+  { TArmature }
+
+  TArmature = class ( TRenderableObject )
+    private
+      FActions: TActionList;
+      FCurrentAction: Integer;
+      FCurrentFrame: Integer;
+      FStillFrame: TFrame;
+      procedure SetCurrentAction(AValue: Integer);
+      procedure SetCurrentFrame(AValue: Integer);
+
+    public
+      constructor Create( AParentList: TObjectList );
+      destructor Destroy; override;
+
+      procedure Render( world: TMat4; const RenderFlag: TRenderFlags ); override;
+
+    published
+      property Actions: TActionList read FActions;
+      property CurrentAction: Integer read FCurrentAction write SetCurrentAction;
+      property CurrentFrame: Integer read FCurrentFrame write SetCurrentFrame;
+      property StillFrame: TFrame read FStillFrame;
+  end;
+
+  TBone = class( TPersistent )
+    private
+      FBones: TBoneList;
+      FMatrix: TMat4;
+      FName: String;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      property Matrix: TMat4 read FMatrix write FMatrix;
+      property Name: String read FName write FName;
       property Bones: TBoneList read FBones;
   end;
 
-
   { TModel }
-  TModel = class( TPersistent )
+  TModel = class( TRenderableObject )
     private
       FBoundingBox: TBoundingBox;
-      FChildren: TModelList;
-      FVisible: Boolean;
 
     public
       Positions: TVec3List;
@@ -136,7 +227,6 @@ type
       Faces: TFaceArray;
       TexCoords: TVec2List;
       Indices: TIntList;
-      Name: String;
       Matrix: TMat4;
       Material: TMaterial;
       testTex: Integer;
@@ -150,10 +240,10 @@ type
       glIndexArray: GLuint;
 
 //      constructor Create( FName: String );
-      constructor Create;
+      constructor Create(AParentList: TObjectList);
       destructor Destroy; override;
 
-      procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []);
+      procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []); override;
       procedure UnpackBuffers;
       procedure ClearVBO;
       procedure CreateVBO;
@@ -161,8 +251,6 @@ type
       procedure CalcBoundingBox;
       procedure ClearChildren;
 
-      property Children: TModelList read FChildren;
-      property Visible: Boolean read FVisible write FVisible;
       property BoundingBox: TBoundingBox read FBoundingBox write FBoundingBox;
   end;
 
@@ -172,7 +260,7 @@ type
   TModelFile = class( TPersistent )
     private
       FFileWatch: TFileWatch;
-      FModelList: TModelList;
+      FModelList: TRenderableObjectList;
       FMaterials: TMaterialList;
 
     public
@@ -185,12 +273,187 @@ type
 
       procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []);
 
-      property Children: TModelList read FModelList;
+      property Children: TRenderableObjectList read FModelList;
       property Materials: TMaterialList read FMaterials;
       property FileWatch: TFileWatch read FFileWatch write FFileWatch;
   end;
 
 implementation
+
+{ TFrame }
+
+constructor TFrame.Create;
+begin
+  inherited;
+  FBones:= TBoneList.Create;
+end;
+
+destructor TFrame.Destroy;
+begin
+  Bones.Free;
+  inherited Destroy;
+end;
+
+{ TActionList }
+
+procedure TActionList.Clear;
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].Free;
+  inherited Clear;
+end;
+
+{ TFrameList }
+
+procedure TFrameList.Clear;
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].Free;
+  inherited Clear;
+end;
+
+{ TArmatureAction }
+
+constructor TArmatureAction.Create;
+begin
+  inherited;
+  FFrames:= TFrameList.Create;
+end;
+
+destructor TArmatureAction.Destroy;
+begin
+  FFrames.Free;
+  inherited Destroy;
+end;
+
+{ TArmature }
+
+procedure TArmature.SetCurrentAction(AValue: Integer);
+begin
+  if ( FCurrentAction = AValue ) then
+    Exit;
+
+  FCurrentAction:= Min( Actions.Count - 1, Max( -1, AValue ));
+end;
+
+procedure TArmature.SetCurrentFrame(AValue: Integer);
+begin
+  if ( FCurrentFrame = AValue ) then
+    Exit;
+
+  if ( InRange( FCurrentAction, 0, Actions.Count - 1 )) then
+    begin
+      FCurrentFrame:= AValue mod FActions[ FCurrentAction ].Frames.Count;
+      if ( FCurrentFrame < 0 ) then
+        FCurrentFrame += FActions[ FCurrentAction ].Frames.Count;
+    end
+  else
+    FCurrentFrame:= 0;
+end;
+
+constructor TArmature.Create(AParentList: TObjectList);
+begin
+  inherited;
+  FActions:= TActionList.Create;
+  FStillFrame:= TFrame.Create;
+  FVisible:= True;
+  FCurrentFrame:= 0;
+  FCurrentAction:= -1;
+end;
+
+destructor TArmature.Destroy;
+begin
+  FStillFrame.Free;
+  FActions.Free;
+  inherited Destroy;
+end;
+
+procedure TArmature.Render(world: TMat4; const RenderFlag: TRenderFlags);
+var
+  Bone: TBone;
+  view, proj: TMat4;
+  BackupShader: TShader;
+
+  procedure RenderBone( ABone: TBone; Mat: TMat4; const RootBone: Boolean = False );
+  var
+    matNew: TMat4;
+    p1: TVec3;
+    p2: TVec3;
+  begin
+    matNew:= ABone.Matrix * Mat;
+    if ( not RootBone ) then
+      begin
+        p1:= vec3( vec4( 0 ) * Mat );
+        p2:= vec3( vec4( 0 ) * matNew );
+        RenderLines3D([ p1, p2 ], vec4( 1, 0, 0, 1 ));
+      end;
+    for Bone in ABone.Bones do
+      RenderBone( Bone, matNew );
+  end;
+
+begin
+  inherited Render(world, RenderFlag);
+  if ( rfDebugShowArmature in RenderFlag ) then
+    begin
+      glDisable( GL_DEPTH_TEST );
+      glGetUniformfv( ActShad.ShaderObj, ActShad.Uniforms.AddrByName( 'view' ), @view );
+      glGetUniformfv( ActShad.ShaderObj, ActShad.Uniforms.AddrByName( 'proj' ), @proj );
+
+      BackupShader:= ActShad;
+
+      Setup3D( view * proj );
+      if ( CurrentAction = -1 ) then
+        for Bone in StillFrame.Bones do
+          RenderBone( Bone, world, True )
+        else
+          if ( InRange( FCurrentAction, 0, Actions.Count - 1 )) then
+            if ( InRange( FCurrentFrame, 0, Actions[ FCurrentAction ].Frames.Count - 1 )) then
+              for Bone in Actions[ FCurrentAction ].Frames[ FCurrentFrame ].Bones do
+                RenderBone( Bone, world, True );
+
+      glEnable( GL_DEPTH_TEST );
+
+      BackupShader.Enable;
+    end;
+end;
+
+{ TBone }
+
+constructor TBone.Create;
+begin
+  inherited;
+  FBones:= TBoneList.Create;
+end;
+
+destructor TBone.Destroy;
+begin
+  FBones.Free;
+  inherited Destroy;
+end;
+
+{ TArmature }
+
+constructor TRenderableObject.Create( AParentList: TObjectList );
+begin
+  inherited;
+  FChildren:= TRenderableObjectList.Create;
+end;
+
+destructor TRenderableObject.Destroy;
+begin
+  FChildren.Clear;
+  FChildren.Free;
+  inherited Destroy;
+end;
+
+procedure TRenderableObject.Render(world: TMat4; const RenderFlag: TRenderFlags);
+begin
+  Children.Render( world, RenderFlag );
+end;
 
 { TBoneList }
 
@@ -251,24 +514,16 @@ begin
   inherited Clear;
 end;
 
-{ TModelList }
+{ TRenderableObjectList }
 
-procedure TModelList.Clear;
+procedure TRenderableObjectList.Render(world: TMat4; const RenderFlag: TRenderFlags = []);
 var
   i: Integer;
 begin
   for i:= 0 to Count - 1 do
-    Items[ i ].Free;
-  inherited Clear;
-end;
-
-procedure TModelList.Render(world: TMat4; const RenderFlag: TRenderFlags = []);
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    if ( Items[ i ].Visible ) then
-      Items[ i ].Render( world, RenderFlag );
+    if ( Items[ i ] is TRenderableObject ) then
+      if ( TRenderableObject( Items[ i ]).Visible ) then
+        TRenderableObject( Items[ i ]).Render( world, RenderFlag );
 end;
 
 { TModelFile }
@@ -278,7 +533,7 @@ constructor TModelFile.Create(const AFileName: String;
 begin
   inherited Create;
 
-  FModelList:= TModelList.Create;
+  FModelList:= TRenderableObjectList.Create;
   FMaterials:= TMaterialList.Create;
 end;
 
@@ -300,7 +555,7 @@ function TModelFile.Debug: String;
 var
   Indent: Integer;
 
-  function DebugList( Items: TModelList ): String;
+  function DebugList( Items: TRenderableObjectList ): String;
     function WriteVertices( Mdl: TModel ): String;
     var
       i: Integer;
@@ -377,7 +632,7 @@ var
     i: Integer;
   begin
     Result:= '';
-    for i:= 0 to Items.Count - 1 do
+{    for i:= 0 to Items.Count - 1 do
       begin
         Result += StringOfChar( ' ', Indent * 2 ) + 'object ' + Items[ i ].Name +  #13#10;
         Inc( Indent );
@@ -391,7 +646,7 @@ var
         Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
         Dec( Indent );
         Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
-      end;
+      end;}
   end;
 
 begin
@@ -411,7 +666,7 @@ begin
   FChildren.Clear;
 end;
 
-constructor TModel.Create;
+constructor TModel.Create( AParentList: TObjectList );
 var
   vertexLoc: GLuint;
 begin
@@ -424,7 +679,6 @@ begin
   Indices:= TIntList.Create;
   TexCoords:= TVec2List.Create;
 
-  FChildren:= TModelList.Create;
   FVisible:= True;
 end;
 
@@ -437,8 +691,6 @@ begin
   Indices.Free;
   TexCoords.Free;
 
-  ClearChildren;
-  FChildren.Free;
   inherited Destroy;
 end;
 
@@ -930,11 +1182,11 @@ begin
   FBoundingBox.Center:= ( BoundingBox.Min + BoundingBox.Max ) / 2;
 end;
 
-{$DEFINE TCustomList:= TCustomModelList}
+{{$DEFINE TCustomList:= TCustomModelList}
 {$DEFINE TCustomListEnumerator:= TModelEnumerator}
 {$DEFINE TCustomItem:= TModel}
 {$DEFINE IMPLEMENTATION}
-{$INCLUDE custom_list.inc}
+{$INCLUDE custom_list.inc}}
 
 {$DEFINE TCustomList:= TCustomMaterialList}
 {$DEFINE TCustomListEnumerator:= TMaterialEnumerator}
@@ -948,6 +1200,17 @@ end;
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE custom_list.inc}
 
+{$DEFINE TCustomList:= TCustomFrameList}
+{$DEFINE TCustomListEnumerator:= TFrameEnumerator}
+{$DEFINE TCustomItem:= TFrame}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE custom_list.inc}
+
+{$DEFINE TCustomList:= TCustomActionList}
+{$DEFINE TCustomListEnumerator:= TActionEnumerator}
+{$DEFINE TCustomItem:= TArmatureAction}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE custom_list.inc}
 
 
 end.

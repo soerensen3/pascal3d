@@ -9,7 +9,7 @@ interface
 uses
   Math3D, shaders, wavefront, Model, shadernodes, framebuffer, lighting, 
   camera, RPhysics, scene, window_sdl, texture_sdl, filewatch, skybox, 
-  geometry, charactercontroller, loadmodelfile, LazarusPackageIntf;
+  geometry, charactercontroller, loadmodelfile, RObjects, LazarusPackageIntf;
 
 implementation
 

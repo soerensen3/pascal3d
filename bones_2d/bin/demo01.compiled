@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<CONFIG>
-  <Compiler Value="C:\codetyphon\fpc\bin\x86_64-win64\fpc.exe" Date="1116444770"/>
-  <Params Value=" -MDelphi -Scghi -CX -O1 -gw2 -godwarfsets -Xg -Xs -XX -WG -vew -FiC:\Users\soerensen\Desktop\bones_2d\bin -FuC:\codetyphon\CodeOcean\ZenGL\xlib\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\jpeg\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\ogg\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\zlib\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\zip\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\theora\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\msvcrt\x86_64 -FuC:\codetyphon\lazarus\components\pl_ZenGL\source -FuC:\codetyphon\lazarus\components\pl_ZenGL\lib\x86_64-win64\win32 -FuC:\codetyphon\lazarus\lcl\units\x86_64-win64\win32 -FuC:\codetyphon\lazarus\lcl\units\x86_64-win64 -FuC:\codetyphon\lazarus\components\lazutils\lib\x86_64-win64 -FuC:\codetyphon\lazarus\packager\units\x86_64-win64 -FuC:\Users\soerensen\Desktop\bones_2d\ -FUC:\Users\soerensen\Desktop\bones_2d\bin\ -l -FEC:\Users\soerensen\Desktop\bones_2d\bin\ -dLCL -dLCLwin32 demo01.lpr"/>
-</CONFIG>
