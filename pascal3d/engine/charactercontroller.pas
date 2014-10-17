@@ -98,7 +98,7 @@ begin
                - cosy * sinz,   cosx * cosz - sinx * siny * sinz, sinx * cosz + cosx * siny * sinz, 0,
                  siny,        - sinx * cosy,                      cosx * cosy,                      0,
                  0,             0,                                0,                                1 );
-  MatrixInverse( view, view );
+  mat4inverse( view, view );
 
   Movement+= vec3( vec4( localAxis, 1 ) * view ) * speed;
 //  Movement+= vec3( view._10, view._11, view._12 ) * speed;

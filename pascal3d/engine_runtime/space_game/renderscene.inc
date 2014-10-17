@@ -75,7 +75,7 @@ begin
 
 
   for i:= 0 to LightSources.Count - 1 do
-    lightbulb.Render( MatrixTranslate( vec4( LightSources[ i ].Position, 1 )), []);
+    lightbulb.Render( mat4translate( vec4( LightSources[ i ].Position, 1 )), []);
   cell:= 32;
 
   terrainshader.Enable;
@@ -91,7 +91,7 @@ begin
 
   mainwnd.Title:= Format( 'uvX: %f, uvY: %f, mrot: %d, mx: %d, my: %d', [ Int( -maincamera.Position.X / cell ) * cell, Int( maincamera.Position.Y / cell ) * cell, mrot, mshiftx, mshifty ]);
   Mdl.Render(
-    MatrixTranslate( vec4(
+    mat4translate( vec4(
          Int( maincamera.Position.X / cell ) * cell,
          Int( maincamera.Position.Y / cell ) * cell,
       0, 1 )), RenderFlags );

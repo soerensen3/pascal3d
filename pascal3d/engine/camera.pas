@@ -153,15 +153,15 @@ begin
   matView._00:= vRight.x;
   matView._10:= vRight.y;
   matView._20:= vRight.z;
-  matView._30:= -VecDotProduct( vPos, vRight );
+  matView._30:= -dot( vPos, vRight );
   matView._01:= vUp.x;
   matView._11:= vUp.y;
   matView._21:= vUp.z;
-  matView._31:= -VecDotProduct( vPos, vUp );
+  matView._31:= -dot( vPos, vUp );
   matView._02:= vDir.x;
   matView._12:= vDir.y;
   matView._22:= vDir.z;
-  matView._32:= -VecDotProduct( vPos, vDir );
+  matView._32:= -dot( vPos, vDir );
   matView._03:= 0.0;
   matView._13:= 0.0;
   matView._23:= 0.0;
@@ -206,7 +206,7 @@ begin
       D3DXMatrixMultiply( matProj, matProj, Scal );
     end
   else}
-    matProj:= MatrixPerspectiveFOVLH( FOV, Aspect, Near, Far );
+    matProj:= mat4perspectiveFOVLH( FOV, Aspect, Near, Far );
 
 //  Engine.DisplayDriver.vCamRot:=
 //    Vector( DegToRad( vRot.Vec.x ), DegToRad( vRot.Vec.y ), DegToRad( vRot.Vec.z ));

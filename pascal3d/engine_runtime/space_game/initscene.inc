@@ -200,10 +200,10 @@ begin
   Lxrot1:= 1.22;
   Lyrot1:= -1.22;
   LZoom1:= 10;
-  LightSources[ 0 ].Position:= vec3( vec4( 0, 0, Lzoom1, 1 ) * Mat4Rot( vec3_Axis_PY, Lxrot1 ) * Mat4Rot( vec3_Axis_PX, Lyrot1 ));
+  LightSources[ 0 ].Position:= vec3( vec4( 0, 0, Lzoom1, 1 ) * mat4rotate( vec3_Axis_PY, Lxrot1 ) * mat4rotate( vec3_Axis_PX, Lyrot1 ));
   Lxrot2:= 0.2;
   Lyrot2:= -1.5;
   LZoom2:= 10;
-  LightSources[ 1 ].Position:= vec3( vec4( 0, 0, Lzoom2, 1 ) * Mat4Rot( vec3_Axis_PY, Lxrot2 ) * Mat4Rot( vec3_Axis_PX, Lyrot2 ));
+  LightSources[ 1 ].Position:= vec3( vec4( 0, 0, Lzoom2, 1 ) * mat4rotate( vec3_Axis_PY, Lxrot2 ) * mat4rotate( vec3_Axis_PX, Lyrot2 ));
   WatchTime:= GetTickCount;
 end;

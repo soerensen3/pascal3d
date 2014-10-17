@@ -12,13 +12,13 @@ begin
       begin
         Lxrot1:= Lxrot1 - Event.xrel / 1050;
         Lyrot1:= Lyrot1 - Event.yrel / 1050;
-        LightSources[ 0 ].Position:= vec3( vec4( 0, 0, Lzoom1, 1 ) * Mat4Rot( vec3_Axis_PY, Lxrot1 ) * Mat4Rot( vec3_Axis_PX, Lyrot1 ));
+        LightSources[ 0 ].Position:= vec3( vec4( 0, 0, Lzoom1, 1 ) * mat4rotate( vec3_Axis_PY, Lxrot1 ) * mat4rotate( vec3_Axis_PX, Lyrot1 ));
       end;
     2:
       begin
         Lxrot2:= Lxrot2 - Event.xrel / 1050;
         Lyrot2:= Lyrot2 - Event.yrel / 1050;
-        LightSources[ 1 ].Position:= vec3( vec4( 0, 0, Lzoom2, 1 ) * Mat4Rot( vec3_Axis_PY, Lxrot2 ) * Mat4Rot( vec3_Axis_PX, Lyrot2 ));
+        LightSources[ 1 ].Position:= vec3( vec4( 0, 0, Lzoom2, 1 ) * mat4rotate( vec3_Axis_PY, Lxrot2 ) * mat4rotate( vec3_Axis_PX, Lyrot2 ));
       end;
   end;
 //  SDL_WarpMouseInWindow( mainwnd.Window, 0, 0 );
@@ -38,12 +38,12 @@ begin
     1:
       begin
         LZoom1+= Event.y / 5;
-        LightSources[ 0 ].Position:= vec3( vec4( 0, 0, Lzoom1, 1 ) * Mat4Rot( vec3_Axis_PY, Lxrot1 ) * Mat4Rot( vec3_Axis_PX, Lyrot1 ));
+        LightSources[ 0 ].Position:= vec3( vec4( 0, 0, Lzoom1, 1 ) * mat4rotate( vec3_Axis_PY, Lxrot1 ) * mat4rotate( vec3_Axis_PX, Lyrot1 ));
       end;
     2:
       begin
         LZoom2+= Event.y / 5;
-        LightSources[ 1 ].Position:= vec3( vec4( 0, 0, Lzoom2, 1 ) * Mat4Rot( vec3_Axis_PY, Lxrot2 ) * Mat4Rot( vec3_Axis_PX, Lyrot2 ));
+        LightSources[ 1 ].Position:= vec3( vec4( 0, 0, Lzoom2, 1 ) * mat4rotate( vec3_Axis_PY, Lxrot2 ) * mat4rotate( vec3_Axis_PX, Lyrot2 ));
       end;
   end;
 end;

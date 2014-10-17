@@ -9,13 +9,12 @@ uses
   SysUtils,
   Math;
 
-const
-  deg2rad = 0.017453292;
-  epsilon = 1e-40;
 
 type
   {$MACRO ON}
   Float = Single;
+
+  {.$DEFINE COLUMN_MAJOR_ORDER}
 
   { TVec2 }
   {$DEFINE INTERFACE}

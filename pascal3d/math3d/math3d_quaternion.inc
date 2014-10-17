@@ -69,12 +69,12 @@ begin
   a23:= b[2] * b[3];
   a33:= b[3] * b[3];
 
-  c[0]:= v0 * ( +a00 + a11 - a22 - a33 )
-        + 2 * ( a12 * v1 + a13 * v2 + a02 * v2 - a03 * v1 );
-  c[1] = v1 * ( +a00 - a11 + a22 - a33 )
-        + 2 * ( a12 * v0 + a23 * v2 + a03 * v0 - a01 * v2 );
-  c[2] = v2 * ( +a00 - a11 - a22 + a33 )
-        + 2 * ( a13 * v0 + a23 * v1 - a02 * v0 + a01 * v1 );
+  c[0]:= b.x * ( +a00 + a11 - a22 - a33 )
+        + 2 * ( a12 * b.y + a13 * b.z + a02 * b.z - a03 * b.y );
+  c[1]:= b.y * ( +a00 - a11 + a22 - a33 )
+        + 2 * ( a12 * b.x + a23 * b.z + a03 * b.x - a01 * b.z );
+  c[2]:= b.z * ( +a00 - a11 - a22 + a33 )
+        + 2 * ( a13 * b.x + a23 * b.y - a02 * b.x + a01 * b.y );
 end;
 
 operator -( a: TQuaternion ) b: TQuaternion;

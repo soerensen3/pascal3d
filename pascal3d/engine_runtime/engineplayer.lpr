@@ -31,7 +31,8 @@ uses
   texture_sdl,
   filewatch,
   charactercontroller,
-  geometry;
+  geometry,
+  p3d_inter;
 //  zglHeader;
 
 {$DEFINE INTERFACE}

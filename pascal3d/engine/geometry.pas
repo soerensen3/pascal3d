@@ -165,7 +165,7 @@ begin
   if ( not Assigned( LineShader2D )) then
     Exit;
 
-  proj2D:= MatrixOrthoRH( Width, -Height, -1, 1 ) * MatrixTranslate( vec4( -1, 1, 0, 1 ));
+  proj2D:= mat4orthoRH( Width, -Height, -1, 1 ) * mat4translate( vec4( -1, 1, 0, 1 ));
 
   LineShader2D.Enable;
   glUniformMatrix4fv( LineShader2D.Uniforms.AddrByName( 'mat' ), 1, False, @proj2D );

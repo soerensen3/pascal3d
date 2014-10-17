@@ -121,7 +121,7 @@ var
   siny: ValReal;
   sinz: ValReal;
 begin
-  view:= MatrixTranslate( vec4( -Position, 1.0 ));
+  view:= mat4translate( vec4( -Position, 1.0 ));
 {  _mdlview:= Mat4Rot( vec3_Axis_PZ, deg2rad* YawPitchRoll.z );
   _mdlview*= Mat4Rot( vec3_Axis_PX, deg2rad* YawPitchRoll.x );
   _mdlview*= Mat4Rot( vec3_Axis_PY, deg2rad* YawPitchRoll.y );}
@@ -147,8 +147,8 @@ begin
   view:= view * _mdlview;
 
   case Handedness of
-    coLeft: proj:= MatrixPerspectiveFOVLH( deg2rad* 90, 4/3, near, far );
-    coRight: proj:= MatrixPerspectiveFOVRH( deg2rad* 90, 4/3, near, far );
+    coLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, 4/3, near, far );
+    coRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, 4/3, near, far );
   end;
 end;
 

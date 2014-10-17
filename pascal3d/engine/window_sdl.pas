@@ -6,6 +6,18 @@ interface
 uses
   Classes, SysUtils, sdl2, dglOpenGL;
 
+const
+  TMouseEvent: array [ 0..3 ] of Word = ( SDL_MOUSEMOTION, SDL_MOUSEBUTTONDOWN,
+                SDL_MOUSEBUTTONUP, SDL_MOUSEWHEEL );
+  TJoystickEvent: array [ 0..6 ] of Word = ( SDL_JOYAXISMOTION,
+                SDL_JOYBALLMOTION, SDL_JOYHATMOTION, SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP,
+                SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED );
+  TGameControllerEvent: array[ 0..5 ] of Word = ( SDL_CONTROLLERAXISMOTION,
+                SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLERBUTTONUP, SDL_CONTROLLERDEVICEADDED,
+                SDL_CONTROLLERDEVICEREMOVED, SDL_CONTROLLERDEVICEREMAPPED );
+  TTouchEvent: array [ 0..2 ] of Word = ( SDL_FINGERDOWN, SDL_FINGERUP, SDL_FINGERMOTION );
+  TGestureEvent: array [ 0..2 ] of Word = ( SDL_DOLLARGESTURE, SDL_DOLLARRECORD, SDL_MULTIGESTURE );
+
 type
 
   { TSDLWindow }
@@ -87,6 +99,7 @@ var
   MainWindow: TSDLWindow;
 
 implementation
+  uses Input;
 
 
 { TSDLWindow }
@@ -168,7 +181,7 @@ begin
   end;
   // Ein Fenster an Desktopposition 100, 100 erstellen, Fenstergröße ist
   // 640 mal 480 und veränderbar, OpenGL-Unterstützung ist aktiviert
-  fWindow:= SDL_CreateWindow('OpenGL 3.3 und SDL2', 100, 100, 640, 480,
+  fWindow:= SDL_CreateWindow('Main Window', 100, 100, 640, 480,
                              SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE );
   // Fenster korrekt erstellt?
   if window = nil then
@@ -216,7 +229,79 @@ begin
   glViewport( 0, 0, w, h );
 end;
 
+
+
 procedure TSDLWindow.HandleEvents_SDL;
+  procedure debug_printeventname( E: TSDL_Event );
+  begin
+    case E.type_ of
+      SDL_KEYDOWN: Write( 'SDL_KEYDOWN' );
+      SDL_KEYUP: Write( 'SDL_KEYUP' );
+      SDL_TEXTEDITING: Write( 'SDL_TEXTEDITING' );
+      SDL_TEXTINPUT: Write( 'SDL_TEXTINPUT' );
+
+      { Mouse events }
+      SDL_MOUSEMOTION: Write( 'SDL_MOUSEMOTION' );
+      SDL_MOUSEBUTTONDOWN: Write( 'SDL_MOUSEBUTTONDOWN' );
+      SDL_MOUSEBUTTONUP: Write( 'SDL_MOUSEBUTTONUP' );
+      SDL_MOUSEWHEEL: Write( 'SDL_MOUSEWHEEL' );
+
+      { Joystick events }
+      SDL_JOYAXISMOTION: Write( 'SDL_JOYAXISMOTION' );
+      SDL_JOYBALLMOTION: Write( 'SDL_JOYBALLMOTION' );
+      SDL_JOYHATMOTION: Write( 'SDL_JOYHATMOTION' );
+      SDL_JOYBUTTONDOWN: Write( 'SDL_JOYBUTTONDOWN' );
+      SDL_JOYBUTTONUP: Write( 'SDL_JOYBUTTONUP' );
+      SDL_JOYDEVICEADDED: Write( 'SDL_JOYDEVICEADDED' );
+      SDL_JOYDEVICEREMOVED: Write( 'SDL_JOYDEVICEREMOVED' );
+
+      { Game controller events }
+      SDL_CONTROLLERAXISMOTION: Write( 'SDL_CONTROLLERAXISMOTION' );
+      SDL_CONTROLLERBUTTONDOWN: Write( 'SDL_CONTROLLERBUTTONDOWN' );
+      SDL_CONTROLLERBUTTONUP: Write( 'SDL_CONTROLLERBUTTONUP' );
+      SDL_CONTROLLERDEVICEADDED: Write( 'SDL_CONTROLLERDEVICEADDED' );
+      SDL_CONTROLLERDEVICEREMOVED: Write( 'SDL_CONTROLLERDEVICEREMOVED' );
+      SDL_CONTROLLERDEVICEREMAPPED: Write( 'SDL_CONTROLLERDEVICEREMAPPED' );
+
+      { Touch events }
+      SDL_FINGERDOWN: Write( 'SDL_FINGERDOWN');
+      SDL_FINGERUP: Write( 'SDL_FINGERUP');
+      SDL_FINGERMOTION: Write( 'SDL_FINGERMOTION');
+
+      { Gesture events }
+      SDL_DOLLARGESTURE: Write( 'SDL_DOLLARGESTURE');
+      SDL_DOLLARRECORD: Write( 'SDL_DOLLARRECORD');
+      SDL_MULTIGESTURE: Write( 'SDL_MULTIGESTURE');
+    end;
+  end;
+
+  procedure debug_printmousemoveevent( E: TSDL_Event );
+  begin
+    WriteLn( 'windowID', E.motion.windowID );
+    WriteLn( 'which', E.motion.which );
+    WriteLn( 'state', E.motion.state );
+    WriteLn( 'padding1', E.motion.padding1 );
+    WriteLn( 'padding2', E.motion.padding2 );
+    WriteLn( 'padding3', E.motion.padding3 );
+    WriteLn( 'x', E.motion.x );
+    WriteLn( 'y', E.motion.y );
+    WriteLn( 'xrel', E.motion.xrel );
+    WriteLn( 'yrel', E.motion.yrel );
+  end;
+
+  procedure debug_printevent( E: TSDL_Event );
+  begin
+    WriteLn( '--- UNHANDLED SDL-EVENT ---' );
+    Write( '  Type: ' );
+    debug_printeventname( E );
+    WriteLn;
+    Write( '  Timestamp: ',  E.common.timestamp );
+    WriteLn;
+
+    case E.type_ of
+      SDL_MOUSEMOTION: debug_printmousemoveevent( E );
+    end;
+  end;
 var
   event: TSDL_Event;
 begin
@@ -239,10 +324,35 @@ begin
                   FOnClose( Self );
               end;
         end;
-      SDL_KEYDOWN, SDL_KEYUP:
-        if ( Assigned( FOnKey )) then
-          FOnKey( Self, event.key );
+      SDL_MOUSEMOTION:
+        begin
+          InputManager.Mouse.X:= event.motion.x;
+          InputManager.Mouse.Y:= event.motion.y;
+          InputManager.Mouse.DX:= event.motion.xrel;
+          InputManager.Mouse.DY:= event.motion.yrel;
+        end;
       SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP:
+        begin
+          InputManager.Mouse.Buttons[ event.button.button - 1 ]:= not Boolean( event.type_ - SDL_MOUSEBUTTONDOWN );
+          InputManager.Mouse.DButtons[ event.button.button - 1 ]:= True;
+        end;
+      SDL_KEYDOWN, SDL_KEYUP, SDL_TEXTINPUT:
+        begin
+          InputManager.Keyboard.Keys[ event.key.keysym.scancode ]:= Boolean( event.key.state );
+          InputManager.Keyboard.DKeys[ event.key.keysym.scancode ]:= True;
+        end
+      else
+        debug_printevent( event );
+      //SDL_KEYDOWN, SDL_KEYUP, SDL_TEXTEDITING, SDL_TEXTINPUT:
+      //  InputManager.KeyboardEvent( Self, event.key );
+      //SDL_MOUSEMOTION, SDL_MOUSEWHEEL:
+      //  InputManager.KeyboardEvent( Self, event.key );
+      //SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP:
+      //  InputManager.KeyboardEvent( Self, event.key );
+      //SDL_KEYDOWN, SDL_KEYUP:
+      //  if ( Assigned( FOnKey )) then
+      //    FOnKey( Self, event.key );
+      {SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP:
         if ( Assigned( FOnMouseButton )) then
           FOnMouseButton( Self, event.button );
       SDL_MOUSEMOTION:
@@ -250,7 +360,7 @@ begin
           FOnMouseMotion( Self, event.motion );
       SDL_MOUSEWHEEL:
         if ( Assigned( FOnMouseWheel )) then
-          FOnMouseWheel( Self, event.wheel );
+          FOnMouseWheel( Self, event.wheel );}
     end;
 end;
 

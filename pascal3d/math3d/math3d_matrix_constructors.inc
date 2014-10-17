@@ -1,3 +1,5 @@
+//Will create a two by two matrix using one float. The float is used in a diagonal
+//while all other values are 0. So mat2( 1 ) will generate a 2 by 2 identity matrix.
 function mat2( F: Float ): TMat2;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -8,16 +10,31 @@ begin
 end;
 {$ENDIF}
 
+//Will create a two by two matrix using four float. The letters in the parameters
+//stand for the rows and columns. So mat2( 1, 0, 0, 1 ) will generate an identity matrix.
+(*{$IFDEF COLUMN_MAJOR_ORDER}
 function mat2( aa, ab, ba, bb: Float ): TMat2;
-{$IFDEF IMPLEMENTATION}
+  {$IFDEF IMPLEMENTATION}
 begin
   Result._00:= aa;
   Result._01:= ab;
   Result._10:= ba;
   Result._11:= bb;
 end;
-{$ENDIF}
-
+  {$ENDIF}
+{$ELSE}*)
+function mat2( aa, ba, ab, bb: Float ): TMat2;
+  {$IFDEF IMPLEMENTATION}
+begin
+  Result._00:= aa;
+  Result._01:= ab;
+  Result._10:= ba;
+  Result._11:= bb;
+end;
+  {$ENDIF}
+(*{$ENDIF}*)
+//Will create a two by two matrix using two vectors. The vectors are used as rows.
+//So mat2( vec2( 1, 0 ), vec2( 0, 1 )) will generate an identity matrix.
 function mat2( c1, c2: TVec2 ): TMat2;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -26,6 +43,7 @@ begin
 end;
 {$ENDIF}
 
+//Will create a two by two matrix from a three by three matrix. The additional row and column are truncated.
 function mat2( mat: TMat3 ): TMat2;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -34,6 +52,7 @@ begin
 end;
 {$ENDIF}
 
+//Will create a two by two matrix from a four by four matrix. The additional rows and columns are truncated.
 function mat2( mat: TMat4 ): TMat2;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -42,6 +61,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a three by three matrix using one float. The float is used in a diagonal
+//while all other values are 0. So mat3( 1 ) will generate a 3 by 3 identity matrix.
 function mat3( F: Float ): TMat3;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -57,6 +78,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a three by three matrix using nine float. The letters in the parameters
+//stand for the rows and columns. So mat3( 1, 0, 0, 0, 1, 0, 0, 0, 1 ) will generate an identity matrix.
 function mat3( aa, ab, ac, ba, bb, bc, ca, cb, cc: Float ): TMat3;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -74,6 +97,7 @@ begin
 end;
 {$ENDIF}
 
+//Will create a three by three matrix from a four by four matrix. The additional row and column are truncated.
 function mat3( mat4: TMat4 ): TMat3;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -83,6 +107,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a three by three matrix using three vectors. The vectors are used as rows.
+//So mat3( vec3( 1, 0, 0 ), vec3( 0, 1, 0 ), vec3( 0, 0, 1 )) will generate an identity matrix.
 function mat3( c1, c2, c3: TVec3 ): TMat3;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -92,6 +118,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a three by three matrix from a two by two matrix.
+//The additional row and column are set to 0 except for _22 which is set to 1.
 function mat3( mat: TMat2 ): TMat3;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -102,7 +130,8 @@ begin
 end;
 {$ENDIF}
 
-
+//Will create a four by four matrix using one float. The float is used in a diagonal
+//while all other values are 0. So mat4( 1 ) will generate a 4 by 4 identity matrix.
 function mat4( F: Float ): TMat4;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -125,6 +154,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a four by four matrix using sixteen float. The letters in the parameters
+//stand for the rows and columns. So mat4( 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ) will generate an identity matrix.
 function mat4( aa, ab, ac, ad, ba, bb, bc, bd, ca, cb, cc, cd, da, db, dc, dd: Float ): TMat4;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -150,6 +181,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a four by four matrix using three vectors. The vectors are used as rows.
+//So mat4( vec4( 1, 0, 0, 0 ), vec4( 0, 1, 0, 0 ), vec4( 0, 0, 1, 0 ), vec4( 0, 0, 0, 1 )) will generate an identity matrix.
 function mat4( c1, c2, c3, c4: TVec4 ): TMat4;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -160,6 +193,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a four by four matrix from a two by two matrix.
+//The additional rows and columns are set to 0 except for _33 which is set to 1.
 function mat4( mat: TMat2 ): TMat4;
 {$IFDEF IMPLEMENTATION}
 begin
@@ -170,6 +205,8 @@ begin
 end;
 {$ENDIF}
 
+//Will create a four by four matrix from a three by three matrix.
+//The additional row and column are set to 0 except for _33 which is set to 1.
 function mat4( mat: TMat3 ): TMat4;
 {$IFDEF IMPLEMENTATION}
 begin

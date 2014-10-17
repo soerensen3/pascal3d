@@ -96,368 +96,368 @@ public
   {@exclude} property ZYY: TVec3 index 211 read GetVec3;
   {@exclude} property ZYZ: TVec3 index 212 read GetVec3;
   {$IF NUMFIELD>3}
-  {@exclude} property ZYW: TVec3 index 213 read GetVec3;
+   {@exclude} property ZYW: TVec3 index 213 read GetVec3;
   {$ENDIF}
 
-  {@exclude} property ZZX: TVec3 index 220 read GetVec3;
-  {@exclude} property ZZY: TVec3 index 221 read GetVec3;
-  {@exclude} property ZZZ: TVec3 index 222 read GetVec3;
+   {@exclude} property ZZX: TVec3 index 220 read GetVec3;
+   {@exclude} property ZZY: TVec3 index 221 read GetVec3;
+   {@exclude} property ZZZ: TVec3 index 222 read GetVec3;
   {$IF NUMFIELD>3}
-  {@exclude} property ZZW: TVec3 index 223 read GetVec3;
-
-  {@exclude} property WXX: TVec3 index 300 read GetVec3;
-  {@exclude} property WXY: TVec3 index 301 read GetVec3;
-  {@exclude} property WXZ: TVec3 index 302 read GetVec3;
-  {@exclude} property WXW: TVec3 index 303 read GetVec3;
-
-  {@exclude} property WYX: TVec3 index 310 read GetVec3;
-  {@exclude} property WYY: TVec3 index 311 read GetVec3;
-  {@exclude} property WYZ: TVec3 index 312 read GetVec3;
-  {@exclude} property WYW: TVec3 index 313 read GetVec3;
-
-  {@exclude} property WZX: TVec3 index 320 read GetVec3;
-  {@exclude} property WZY: TVec3 index 321 read GetVec3;
-  {@exclude} property WZZ: TVec3 index 322 read GetVec3;
-  {@exclude} property WZW: TVec3 index 323 read GetVec3;
-
-  {@exclude} property WWX: TVec3 index 330 read GetVec3;
-  {@exclude} property WWY: TVec3 index 331 read GetVec3;
-  {@exclude} property WWZ: TVec3 index 332 read GetVec3;
-  {@exclude} property WWW: TVec3 index 333 read GetVec3;
-
-  {@exclude} property XXXX: TVec4 index 0000 read GetVec4;
-  {@exclude} property XXXY: TVec4 index 0001 read GetVec4;
-  {@exclude} property XXXZ: TVec4 index 0002 read GetVec4;
-  {@exclude} property XXXW: TVec4 index 0003 read GetVec4;
-
-  {@exclude} property XXYX: TVec4 index 0010 read GetVec4;
-  {@exclude} property XXYY: TVec4 index 0011 read GetVec4;
-  {@exclude} property XXYZ: TVec4 index 0012 read GetVec4;
-  {@exclude} property XXYW: TVec4 index 0013 read GetVec4;
-
-  {@exclude} property XXZX: TVec4 index 0020 read GetVec4;
-  {@exclude} property XXZY: TVec4 index 0021 read GetVec4;
-  {@exclude} property XXZZ: TVec4 index 0022 read GetVec4;
-  {@exclude} property XXZW: TVec4 index 0023 read GetVec4;
-
-  {@exclude} property XXWX: TVec4 index 0030 read GetVec4;
-  {@exclude} property XXWY: TVec4 index 0031 read GetVec4;
-  {@exclude} property XXWZ: TVec4 index 0032 read GetVec4;
-  {@exclude} property XXWW: TVec4 index 0033 read GetVec4;
-
-
-  {@exclude} property XYXX: TVec4 index 0100 read GetVec4;
-  {@exclude} property XYXY: TVec4 index 0101 read GetVec4;
-  {@exclude} property XYXZ: TVec4 index 0102 read GetVec4;
-  {@exclude} property XYXW: TVec4 index 0103 read GetVec4;
-
-  {@exclude} property XYYX: TVec4 index 0110 read GetVec4;
-  {@exclude} property XYYY: TVec4 index 0111 read GetVec4;
-  {@exclude} property XYYZ: TVec4 index 0112 read GetVec4;
-  {@exclude} property XYYW: TVec4 index 0113 read GetVec4;
-
-  {@exclude} property XYZX: TVec4 index 0120 read GetVec4;
-  {@exclude} property XYZY: TVec4 index 0121 read GetVec4;
-  {@exclude} property XYZZ: TVec4 index 0122 read GetVec4;
-  {@exclude} property XYZW: TVec4 index 0123 read GetVec4;
-
-  {@exclude} property XYWX: TVec4 index 0130 read GetVec4;
-  {@exclude} property XYWY: TVec4 index 0131 read GetVec4;
-  {@exclude} property XYWZ: TVec4 index 0132 read GetVec4;
-  {@exclude} property XYWW: TVec4 index 0133 read GetVec4;
-
-
-  {@exclude} property XZXX: TVec4 index 0200 read GetVec4;
-  {@exclude} property XZXY: TVec4 index 0201 read GetVec4;
-  {@exclude} property XZXZ: TVec4 index 0202 read GetVec4;
-  {@exclude} property XZXW: TVec4 index 0203 read GetVec4;
-
-  {@exclude} property XZYX: TVec4 index 0210 read GetVec4;
-  {@exclude} property XZYY: TVec4 index 0211 read GetVec4;
-  {@exclude} property XZYZ: TVec4 index 0212 read GetVec4;
-  {@exclude} property XZYW: TVec4 index 0213 read GetVec4;
-
-  {@exclude} property XZZX: TVec4 index 0220 read GetVec4;
-  {@exclude} property XZZY: TVec4 index 0221 read GetVec4;
-  {@exclude} property XZZZ: TVec4 index 0222 read GetVec4;
-  {@exclude} property XZZW: TVec4 index 0223 read GetVec4;
-
-  {@exclude} property XZWX: TVec4 index 0230 read GetVec4;
-  {@exclude} property XZWY: TVec4 index 0231 read GetVec4;
-  {@exclude} property XZWZ: TVec4 index 0232 read GetVec4;
-  {@exclude} property XZWW: TVec4 index 0233 read GetVec4;
-
-
-  {@exclude} property XWXX: TVec4 index 0300 read GetVec4;
-  {@exclude} property XWXY: TVec4 index 0301 read GetVec4;
-  {@exclude} property XWXZ: TVec4 index 0302 read GetVec4;
-  {@exclude} property XWXW: TVec4 index 0303 read GetVec4;
-
-  {@exclude} property XWYX: TVec4 index 0310 read GetVec4;
-  {@exclude} property XWYY: TVec4 index 0311 read GetVec4;
-  {@exclude} property XWYZ: TVec4 index 0312 read GetVec4;
-  {@exclude} property XWYW: TVec4 index 0313 read GetVec4;
-
-  {@exclude} property XWZX: TVec4 index 0320 read GetVec4;
-  {@exclude} property XWZY: TVec4 index 0321 read GetVec4;
-  {@exclude} property XWZZ: TVec4 index 0322 read GetVec4;
-  {@exclude} property XWZW: TVec4 index 0323 read GetVec4;
-
-  {@exclude} property XWWX: TVec4 index 0330 read GetVec4;
-  {@exclude} property XWWY: TVec4 index 0331 read GetVec4;
-  {@exclude} property XWWZ: TVec4 index 0332 read GetVec4;
-  {@exclude} property XWWW: TVec4 index 0333 read GetVec4;
-
-
-
-  {@exclude} property YXXX: TVec4 index 1000 read GetVec4;
-  {@exclude} property YXXY: TVec4 index 1001 read GetVec4;
-  {@exclude} property YXXZ: TVec4 index 1002 read GetVec4;
-  {@exclude} property YXXW: TVec4 index 1003 read GetVec4;
-
-  {@exclude} property YXYX: TVec4 index 1010 read GetVec4;
-  {@exclude} property YXYY: TVec4 index 1011 read GetVec4;
-  {@exclude} property YXYZ: TVec4 index 1012 read GetVec4;
-  {@exclude} property YXYW: TVec4 index 1013 read GetVec4;
-
-  {@exclude} property YXZX: TVec4 index 1020 read GetVec4;
-  {@exclude} property YXZY: TVec4 index 1021 read GetVec4;
-  {@exclude} property YXZZ: TVec4 index 1022 read GetVec4;
-  {@exclude} property YXZW: TVec4 index 1023 read GetVec4;
-
-  {@exclude} property YXWX: TVec4 index 1030 read GetVec4;
-  {@exclude} property YXWY: TVec4 index 1031 read GetVec4;
-  {@exclude} property YXWZ: TVec4 index 1032 read GetVec4;
-  {@exclude} property YXWW: TVec4 index 1033 read GetVec4;
-
-
-  {@exclude} property YYXX: TVec4 index 1100 read GetVec4;
-  {@exclude} property YYXY: TVec4 index 1101 read GetVec4;
-  {@exclude} property YYXZ: TVec4 index 1102 read GetVec4;
-  {@exclude} property YYXW: TVec4 index 1103 read GetVec4;
-
-  {@exclude} property YYYX: TVec4 index 1110 read GetVec4;
-  {@exclude} property YYYY: TVec4 index 1111 read GetVec4;
-  {@exclude} property YYYZ: TVec4 index 1112 read GetVec4;
-  {@exclude} property YYYW: TVec4 index 1113 read GetVec4;
-
-  {@exclude} property YYZX: TVec4 index 1120 read GetVec4;
-  {@exclude} property YYZY: TVec4 index 1121 read GetVec4;
-  {@exclude} property YYZZ: TVec4 index 1122 read GetVec4;
-  {@exclude} property YYZW: TVec4 index 1123 read GetVec4;
-
-  {@exclude} property YYWX: TVec4 index 1130 read GetVec4;
-  {@exclude} property YYWY: TVec4 index 1131 read GetVec4;
-  {@exclude} property YYWZ: TVec4 index 1132 read GetVec4;
-  {@exclude} property YYWW: TVec4 index 1133 read GetVec4;
-
-
-  {@exclude} property YZXX: TVec4 index 1200 read GetVec4;
-  {@exclude} property YZXY: TVec4 index 1201 read GetVec4;
-  {@exclude} property YZXZ: TVec4 index 1202 read GetVec4;
-  {@exclude} property YZXW: TVec4 index 1203 read GetVec4;
-
-  {@exclude} property YZYX: TVec4 index 1210 read GetVec4;
-  {@exclude} property YZYY: TVec4 index 1211 read GetVec4;
-  {@exclude} property YZYZ: TVec4 index 1212 read GetVec4;
-  {@exclude} property YZYW: TVec4 index 1213 read GetVec4;
-
-  {@exclude} property YZZX: TVec4 index 1220 read GetVec4;
-  {@exclude} property YZZY: TVec4 index 1221 read GetVec4;
-  {@exclude} property YZZZ: TVec4 index 1222 read GetVec4;
-  {@exclude} property YZZW: TVec4 index 1223 read GetVec4;
-
-  {@exclude} property YZWX: TVec4 index 1230 read GetVec4;
-  {@exclude} property YZWY: TVec4 index 1231 read GetVec4;
-  {@exclude} property YZWZ: TVec4 index 1232 read GetVec4;
-  {@exclude} property YZWW: TVec4 index 1233 read GetVec4;
-
-
-  {@exclude} property YWXX: TVec4 index 1300 read GetVec4;
-  {@exclude} property YWXY: TVec4 index 1301 read GetVec4;
-  {@exclude} property YWXZ: TVec4 index 1302 read GetVec4;
-  {@exclude} property YWXW: TVec4 index 1303 read GetVec4;
-
-  {@exclude} property YWYX: TVec4 index 1310 read GetVec4;
-  {@exclude} property YWYY: TVec4 index 1311 read GetVec4;
-  {@exclude} property YWYZ: TVec4 index 1312 read GetVec4;
-  {@exclude} property YWYW: TVec4 index 1313 read GetVec4;
-
-  {@exclude} property YWZX: TVec4 index 1320 read GetVec4;
-  {@exclude} property YWZY: TVec4 index 1321 read GetVec4;
-  {@exclude} property YWZZ: TVec4 index 1322 read GetVec4;
-  {@exclude} property YWZW: TVec4 index 1323 read GetVec4;
-
-  {@exclude} property YWWX: TVec4 index 1330 read GetVec4;
-  {@exclude} property YWWY: TVec4 index 1331 read GetVec4;
-  {@exclude} property YWWZ: TVec4 index 1332 read GetVec4;
-  {@exclude} property YWWW: TVec4 index 1333 read GetVec4;
-
-  {@exclude} property ZXXX: TVec4 index 2000 read GetVec4;
-  {@exclude} property ZXXY: TVec4 index 2001 read GetVec4;
-  {@exclude} property ZXXZ: TVec4 index 2002 read GetVec4;
-  {@exclude} property ZXXW: TVec4 index 2003 read GetVec4;
-
-  {@exclude} property ZXYX: TVec4 index 2010 read GetVec4;
-  {@exclude} property ZXYY: TVec4 index 2011 read GetVec4;
-  {@exclude} property ZXYZ: TVec4 index 2012 read GetVec4;
-  {@exclude} property ZXYW: TVec4 index 2013 read GetVec4;
-
-  {@exclude} property ZXZX: TVec4 index 2020 read GetVec4;
-  {@exclude} property ZXZY: TVec4 index 2021 read GetVec4;
-  {@exclude} property ZXZZ: TVec4 index 2022 read GetVec4;
-  {@exclude} property ZXZW: TVec4 index 2023 read GetVec4;
-
-  {@exclude} property ZXWX: TVec4 index 2030 read GetVec4;
-  {@exclude} property ZXWY: TVec4 index 2031 read GetVec4;
-  {@exclude} property ZXWZ: TVec4 index 2032 read GetVec4;
-  {@exclude} property ZXWW: TVec4 index 2033 read GetVec4;
-
-
-  {@exclude} property ZYXX: TVec4 index 2100 read GetVec4;
-  {@exclude} property ZYXY: TVec4 index 2101 read GetVec4;
-  {@exclude} property ZYXZ: TVec4 index 2102 read GetVec4;
-  {@exclude} property ZYXW: TVec4 index 2103 read GetVec4;
-
-  {@exclude} property ZYYX: TVec4 index 2110 read GetVec4;
-  {@exclude} property ZYYY: TVec4 index 2111 read GetVec4;
-  {@exclude} property ZYYZ: TVec4 index 2112 read GetVec4;
-  {@exclude} property ZYYW: TVec4 index 2113 read GetVec4;
-
-  {@exclude} property ZYZX: TVec4 index 2120 read GetVec4;
-  {@exclude} property ZYZY: TVec4 index 2121 read GetVec4;
-  {@exclude} property ZYZZ: TVec4 index 2122 read GetVec4;
-  {@exclude} property ZYZW: TVec4 index 2123 read GetVec4;
-
-  {@exclude} property ZYWX: TVec4 index 2130 read GetVec4;
-  {@exclude} property ZYWY: TVec4 index 2131 read GetVec4;
-  {@exclude} property ZYWZ: TVec4 index 2132 read GetVec4;
-  {@exclude} property ZYWW: TVec4 index 2133 read GetVec4;
-
-
-  {@exclude} property ZZXX: TVec4 index 2200 read GetVec4;
-  {@exclude} property ZZXY: TVec4 index 2201 read GetVec4;
-  {@exclude} property ZZXZ: TVec4 index 2202 read GetVec4;
-  {@exclude} property ZZXW: TVec4 index 2203 read GetVec4;
-
-  {@exclude} property ZZYX: TVec4 index 2210 read GetVec4;
-  {@exclude} property ZZYY: TVec4 index 2211 read GetVec4;
-  {@exclude} property ZZYZ: TVec4 index 2212 read GetVec4;
-  {@exclude} property ZZYW: TVec4 index 2213 read GetVec4;
-
-  {@exclude} property ZZZX: TVec4 index 2220 read GetVec4;
-  {@exclude} property ZZZY: TVec4 index 2221 read GetVec4;
-  {@exclude} property ZZZZ: TVec4 index 2222 read GetVec4;
-  {@exclude} property ZZZW: TVec4 index 2223 read GetVec4;
-
-  {@exclude} property ZZWX: TVec4 index 2230 read GetVec4;
-  {@exclude} property ZZWY: TVec4 index 2231 read GetVec4;
-  {@exclude} property ZZWZ: TVec4 index 2232 read GetVec4;
-  {@exclude} property ZZWW: TVec4 index 2233 read GetVec4;
-
-
-  {@exclude} property ZWXX: TVec4 index 2300 read GetVec4;
-  {@exclude} property ZWXY: TVec4 index 2301 read GetVec4;
-  {@exclude} property ZWXZ: TVec4 index 2302 read GetVec4;
-  {@exclude} property ZWXW: TVec4 index 2303 read GetVec4;
-
-  {@exclude} property ZWYX: TVec4 index 2310 read GetVec4;
-  {@exclude} property ZWYY: TVec4 index 2311 read GetVec4;
-  {@exclude} property ZWYZ: TVec4 index 2312 read GetVec4;
-  {@exclude} property ZWYW: TVec4 index 2313 read GetVec4;
-
-  {@exclude} property ZWZX: TVec4 index 2320 read GetVec4;
-  {@exclude} property ZWZY: TVec4 index 2321 read GetVec4;
-  {@exclude} property ZWZZ: TVec4 index 2322 read GetVec4;
-  {@exclude} property ZWZW: TVec4 index 2323 read GetVec4;
-
-  {@exclude} property ZWWX: TVec4 index 2330 read GetVec4;
-  {@exclude} property ZWWY: TVec4 index 2331 read GetVec4;
-  {@exclude} property ZWWZ: TVec4 index 2332 read GetVec4;
-  {@exclude} property ZWWW: TVec4 index 2333 read GetVec4;
-
-  {@exclude} property WXXX: TVec4 index 3000 read GetVec4;
-  {@exclude} property WXXY: TVec4 index 3001 read GetVec4;
-  {@exclude} property WXXZ: TVec4 index 3002 read GetVec4;
-  {@exclude} property WXXW: TVec4 index 3003 read GetVec4;
-
-  {@exclude} property WXYX: TVec4 index 3010 read GetVec4;
-  {@exclude} property WXYY: TVec4 index 3011 read GetVec4;
-  {@exclude} property WXYZ: TVec4 index 3012 read GetVec4;
-  {@exclude} property WXYW: TVec4 index 3013 read GetVec4;
-
-  {@exclude} property WXZX: TVec4 index 3020 read GetVec4;
-  {@exclude} property WXZY: TVec4 index 3021 read GetVec4;
-  {@exclude} property WXZZ: TVec4 index 3022 read GetVec4;
-  {@exclude} property WXZW: TVec4 index 3023 read GetVec4;
-
-  {@exclude} property WXWX: TVec4 index 3030 read GetVec4;
-  {@exclude} property WXWY: TVec4 index 3031 read GetVec4;
-  {@exclude} property WXWZ: TVec4 index 3032 read GetVec4;
-  {@exclude} property WXWW: TVec4 index 3033 read GetVec4;
-
-
-  {@exclude} property WYXX: TVec4 index 3100 read GetVec4;
-  {@exclude} property WYXY: TVec4 index 3101 read GetVec4;
-  {@exclude} property WYXZ: TVec4 index 3102 read GetVec4;
-  {@exclude} property WYXW: TVec4 index 3103 read GetVec4;
-
-  {@exclude} property WYYX: TVec4 index 3110 read GetVec4;
-  {@exclude} property WYYY: TVec4 index 3111 read GetVec4;
-  {@exclude} property WYYZ: TVec4 index 3112 read GetVec4;
-  {@exclude} property WYYW: TVec4 index 3113 read GetVec4;
-
-  {@exclude} property WYZX: TVec4 index 3120 read GetVec4;
-  {@exclude} property WYZY: TVec4 index 3121 read GetVec4;
-  {@exclude} property WYZZ: TVec4 index 3122 read GetVec4;
-  {@exclude} property WYZW: TVec4 index 3123 read GetVec4;
-
-  {@exclude} property WYWX: TVec4 index 3130 read GetVec4;
-  {@exclude} property WYWY: TVec4 index 3131 read GetVec4;
-  {@exclude} property WYWZ: TVec4 index 3132 read GetVec4;
-  {@exclude} property WYWW: TVec4 index 3133 read GetVec4;
-
-
-  {@exclude} property WZXX: TVec4 index 3200 read GetVec4;
-  {@exclude} property WZXY: TVec4 index 3201 read GetVec4;
-  {@exclude} property WZXZ: TVec4 index 3202 read GetVec4;
-  {@exclude} property WZXW: TVec4 index 3203 read GetVec4;
-
-  {@exclude} property WZYX: TVec4 index 3210 read GetVec4;
-  {@exclude} property WZYY: TVec4 index 3211 read GetVec4;
-  {@exclude} property WZYZ: TVec4 index 3212 read GetVec4;
-  {@exclude} property WZYW: TVec4 index 3213 read GetVec4;
-
-  {@exclude} property WZZX: TVec4 index 3220 read GetVec4;
-  {@exclude} property WZZY: TVec4 index 3221 read GetVec4;
-  {@exclude} property WZZZ: TVec4 index 3222 read GetVec4;
-  {@exclude} property WZZW: TVec4 index 3223 read GetVec4;
-
-  {@exclude} property WZWX: TVec4 index 3230 read GetVec4;
-  {@exclude} property WZWY: TVec4 index 3231 read GetVec4;
-  {@exclude} property WZWZ: TVec4 index 3232 read GetVec4;
-  {@exclude} property WZWW: TVec4 index 3233 read GetVec4;
-
-
-  {@exclude} property WWXX: TVec4 index 3300 read GetVec4;
-  {@exclude} property WWXY: TVec4 index 3301 read GetVec4;
-  {@exclude} property WWXZ: TVec4 index 3302 read GetVec4;
-  {@exclude} property WWXW: TVec4 index 3303 read GetVec4;
-
-  {@exclude} property WWYX: TVec4 index 3310 read GetVec4;
-  {@exclude} property WWYY: TVec4 index 3311 read GetVec4;
-  {@exclude} property WWYZ: TVec4 index 3312 read GetVec4;
-  {@exclude} property WWYW: TVec4 index 3313 read GetVec4;
-
-  {@exclude} property WWZX: TVec4 index 3320 read GetVec4;
-  {@exclude} property WWZY: TVec4 index 3321 read GetVec4;
-  {@exclude} property WWZZ: TVec4 index 3322 read GetVec4;
-  {@exclude} property WWZW: TVec4 index 3323 read GetVec4;
-
-  {@exclude} property WWWX: TVec4 index 3330 read GetVec4;
-  {@exclude} property WWWY: TVec4 index 3331 read GetVec4;
-  {@exclude} property WWWZ: TVec4 index 3332 read GetVec4;
-  {@exclude} property WWWW: TVec4 index 3333 read GetVec4;
+   {@exclude} property ZZW: TVec3 index 223 read GetVec3;
+
+   {@exclude} property WXX: TVec3 index 300 read GetVec3;
+   {@exclude} property WXY: TVec3 index 301 read GetVec3;
+   {@exclude} property WXZ: TVec3 index 302 read GetVec3;
+   {@exclude} property WXW: TVec3 index 303 read GetVec3;
+
+   {@exclude} property WYX: TVec3 index 310 read GetVec3;
+   {@exclude} property WYY: TVec3 index 311 read GetVec3;
+   {@exclude} property WYZ: TVec3 index 312 read GetVec3;
+   {@exclude} property WYW: TVec3 index 313 read GetVec3;
+
+   {@exclude} property WZX: TVec3 index 320 read GetVec3;
+   {@exclude} property WZY: TVec3 index 321 read GetVec3;
+   {@exclude} property WZZ: TVec3 index 322 read GetVec3;
+   {@exclude} property WZW: TVec3 index 323 read GetVec3;
+
+   {@exclude} property WWX: TVec3 index 330 read GetVec3;
+   {@exclude} property WWY: TVec3 index 331 read GetVec3;
+   {@exclude} property WWZ: TVec3 index 332 read GetVec3;
+   {@exclude} property WWW: TVec3 index 333 read GetVec3;
+
+   {@exclude} property XXXX: TVec4 index 0000 read GetVec4;
+   {@exclude} property XXXY: TVec4 index 0001 read GetVec4;
+   {@exclude} property XXXZ: TVec4 index 0002 read GetVec4;
+   {@exclude} property XXXW: TVec4 index 0003 read GetVec4;
+
+   {@exclude} property XXYX: TVec4 index 0010 read GetVec4;
+   {@exclude} property XXYY: TVec4 index 0011 read GetVec4;
+   {@exclude} property XXYZ: TVec4 index 0012 read GetVec4;
+   {@exclude} property XXYW: TVec4 index 0013 read GetVec4;
+
+   {@exclude} property XXZX: TVec4 index 0020 read GetVec4;
+   {@exclude} property XXZY: TVec4 index 0021 read GetVec4;
+   {@exclude} property XXZZ: TVec4 index 0022 read GetVec4;
+   {@exclude} property XXZW: TVec4 index 0023 read GetVec4;
+
+   {@exclude} property XXWX: TVec4 index 0030 read GetVec4;
+   {@exclude} property XXWY: TVec4 index 0031 read GetVec4;
+   {@exclude} property XXWZ: TVec4 index 0032 read GetVec4;
+   {@exclude} property XXWW: TVec4 index 0033 read GetVec4;
+
+
+   {@exclude} property XYXX: TVec4 index 0100 read GetVec4;
+   {@exclude} property XYXY: TVec4 index 0101 read GetVec4;
+   {@exclude} property XYXZ: TVec4 index 0102 read GetVec4;
+   {@exclude} property XYXW: TVec4 index 0103 read GetVec4;
+
+   {@exclude} property XYYX: TVec4 index 0110 read GetVec4;
+   {@exclude} property XYYY: TVec4 index 0111 read GetVec4;
+   {@exclude} property XYYZ: TVec4 index 0112 read GetVec4;
+   {@exclude} property XYYW: TVec4 index 0113 read GetVec4;
+
+   {@exclude} property XYZX: TVec4 index 0120 read GetVec4;
+   {@exclude} property XYZY: TVec4 index 0121 read GetVec4;
+   {@exclude} property XYZZ: TVec4 index 0122 read GetVec4;
+   {@exclude} property XYZW: TVec4 index 0123 read GetVec4;
+
+   {@exclude} property XYWX: TVec4 index 0130 read GetVec4;
+   {@exclude} property XYWY: TVec4 index 0131 read GetVec4;
+   {@exclude} property XYWZ: TVec4 index 0132 read GetVec4;
+   {@exclude} property XYWW: TVec4 index 0133 read GetVec4;
+
+
+   {@exclude} property XZXX: TVec4 index 0200 read GetVec4;
+   {@exclude} property XZXY: TVec4 index 0201 read GetVec4;
+   {@exclude} property XZXZ: TVec4 index 0202 read GetVec4;
+   {@exclude} property XZXW: TVec4 index 0203 read GetVec4;
+
+   {@exclude} property XZYX: TVec4 index 0210 read GetVec4;
+   {@exclude} property XZYY: TVec4 index 0211 read GetVec4;
+   {@exclude} property XZYZ: TVec4 index 0212 read GetVec4;
+   {@exclude} property XZYW: TVec4 index 0213 read GetVec4;
+
+   {@exclude} property XZZX: TVec4 index 0220 read GetVec4;
+   {@exclude} property XZZY: TVec4 index 0221 read GetVec4;
+   {@exclude} property XZZZ: TVec4 index 0222 read GetVec4;
+   {@exclude} property XZZW: TVec4 index 0223 read GetVec4;
+
+   {@exclude} property XZWX: TVec4 index 0230 read GetVec4;
+   {@exclude} property XZWY: TVec4 index 0231 read GetVec4;
+   {@exclude} property XZWZ: TVec4 index 0232 read GetVec4;
+   {@exclude} property XZWW: TVec4 index 0233 read GetVec4;
+
+
+   {@exclude} property XWXX: TVec4 index 0300 read GetVec4;
+   {@exclude} property XWXY: TVec4 index 0301 read GetVec4;
+   {@exclude} property XWXZ: TVec4 index 0302 read GetVec4;
+   {@exclude} property XWXW: TVec4 index 0303 read GetVec4;
+
+   {@exclude} property XWYX: TVec4 index 0310 read GetVec4;
+   {@exclude} property XWYY: TVec4 index 0311 read GetVec4;
+   {@exclude} property XWYZ: TVec4 index 0312 read GetVec4;
+   {@exclude} property XWYW: TVec4 index 0313 read GetVec4;
+
+   {@exclude} property XWZX: TVec4 index 0320 read GetVec4;
+   {@exclude} property XWZY: TVec4 index 0321 read GetVec4;
+   {@exclude} property XWZZ: TVec4 index 0322 read GetVec4;
+   {@exclude} property XWZW: TVec4 index 0323 read GetVec4;
+
+   {@exclude} property XWWX: TVec4 index 0330 read GetVec4;
+   {@exclude} property XWWY: TVec4 index 0331 read GetVec4;
+   {@exclude} property XWWZ: TVec4 index 0332 read GetVec4;
+   {@exclude} property XWWW: TVec4 index 0333 read GetVec4;
+
+
+
+   {@exclude} property YXXX: TVec4 index 1000 read GetVec4;
+   {@exclude} property YXXY: TVec4 index 1001 read GetVec4;
+   {@exclude} property YXXZ: TVec4 index 1002 read GetVec4;
+   {@exclude} property YXXW: TVec4 index 1003 read GetVec4;
+
+   {@exclude} property YXYX: TVec4 index 1010 read GetVec4;
+   {@exclude} property YXYY: TVec4 index 1011 read GetVec4;
+   {@exclude} property YXYZ: TVec4 index 1012 read GetVec4;
+   {@exclude} property YXYW: TVec4 index 1013 read GetVec4;
+
+   {@exclude} property YXZX: TVec4 index 1020 read GetVec4;
+   {@exclude} property YXZY: TVec4 index 1021 read GetVec4;
+   {@exclude} property YXZZ: TVec4 index 1022 read GetVec4;
+   {@exclude} property YXZW: TVec4 index 1023 read GetVec4;
+
+   {@exclude} property YXWX: TVec4 index 1030 read GetVec4;
+   {@exclude} property YXWY: TVec4 index 1031 read GetVec4;
+   {@exclude} property YXWZ: TVec4 index 1032 read GetVec4;
+   {@exclude} property YXWW: TVec4 index 1033 read GetVec4;
+
+
+   {@exclude} property YYXX: TVec4 index 1100 read GetVec4;
+   {@exclude} property YYXY: TVec4 index 1101 read GetVec4;
+   {@exclude} property YYXZ: TVec4 index 1102 read GetVec4;
+   {@exclude} property YYXW: TVec4 index 1103 read GetVec4;
+
+   {@exclude} property YYYX: TVec4 index 1110 read GetVec4;
+   {@exclude} property YYYY: TVec4 index 1111 read GetVec4;
+   {@exclude} property YYYZ: TVec4 index 1112 read GetVec4;
+   {@exclude} property YYYW: TVec4 index 1113 read GetVec4;
+
+   {@exclude} property YYZX: TVec4 index 1120 read GetVec4;
+   {@exclude} property YYZY: TVec4 index 1121 read GetVec4;
+   {@exclude} property YYZZ: TVec4 index 1122 read GetVec4;
+   {@exclude} property YYZW: TVec4 index 1123 read GetVec4;
+
+   {@exclude} property YYWX: TVec4 index 1130 read GetVec4;
+   {@exclude} property YYWY: TVec4 index 1131 read GetVec4;
+   {@exclude} property YYWZ: TVec4 index 1132 read GetVec4;
+   {@exclude} property YYWW: TVec4 index 1133 read GetVec4;
+
+
+   {@exclude} property YZXX: TVec4 index 1200 read GetVec4;
+   {@exclude} property YZXY: TVec4 index 1201 read GetVec4;
+   {@exclude} property YZXZ: TVec4 index 1202 read GetVec4;
+   {@exclude} property YZXW: TVec4 index 1203 read GetVec4;
+
+   {@exclude} property YZYX: TVec4 index 1210 read GetVec4;
+   {@exclude} property YZYY: TVec4 index 1211 read GetVec4;
+   {@exclude} property YZYZ: TVec4 index 1212 read GetVec4;
+   {@exclude} property YZYW: TVec4 index 1213 read GetVec4;
+
+   {@exclude} property YZZX: TVec4 index 1220 read GetVec4;
+   {@exclude} property YZZY: TVec4 index 1221 read GetVec4;
+   {@exclude} property YZZZ: TVec4 index 1222 read GetVec4;
+   {@exclude} property YZZW: TVec4 index 1223 read GetVec4;
+
+   {@exclude} property YZWX: TVec4 index 1230 read GetVec4;
+   {@exclude} property YZWY: TVec4 index 1231 read GetVec4;
+   {@exclude} property YZWZ: TVec4 index 1232 read GetVec4;
+   {@exclude} property YZWW: TVec4 index 1233 read GetVec4;
+
+
+   {@exclude} property YWXX: TVec4 index 1300 read GetVec4;
+   {@exclude} property YWXY: TVec4 index 1301 read GetVec4;
+   {@exclude} property YWXZ: TVec4 index 1302 read GetVec4;
+   {@exclude} property YWXW: TVec4 index 1303 read GetVec4;
+
+   {@exclude} property YWYX: TVec4 index 1310 read GetVec4;
+   {@exclude} property YWYY: TVec4 index 1311 read GetVec4;
+   {@exclude} property YWYZ: TVec4 index 1312 read GetVec4;
+   {@exclude} property YWYW: TVec4 index 1313 read GetVec4;
+
+   {@exclude} property YWZX: TVec4 index 1320 read GetVec4;
+   {@exclude} property YWZY: TVec4 index 1321 read GetVec4;
+   {@exclude} property YWZZ: TVec4 index 1322 read GetVec4;
+   {@exclude} property YWZW: TVec4 index 1323 read GetVec4;
+
+   {@exclude} property YWWX: TVec4 index 1330 read GetVec4;
+   {@exclude} property YWWY: TVec4 index 1331 read GetVec4;
+   {@exclude} property YWWZ: TVec4 index 1332 read GetVec4;
+   {@exclude} property YWWW: TVec4 index 1333 read GetVec4;
+
+   {@exclude} property ZXXX: TVec4 index 2000 read GetVec4;
+   {@exclude} property ZXXY: TVec4 index 2001 read GetVec4;
+   {@exclude} property ZXXZ: TVec4 index 2002 read GetVec4;
+   {@exclude} property ZXXW: TVec4 index 2003 read GetVec4;
+
+   {@exclude} property ZXYX: TVec4 index 2010 read GetVec4;
+   {@exclude} property ZXYY: TVec4 index 2011 read GetVec4;
+   {@exclude} property ZXYZ: TVec4 index 2012 read GetVec4;
+   {@exclude} property ZXYW: TVec4 index 2013 read GetVec4;
+
+   {@exclude} property ZXZX: TVec4 index 2020 read GetVec4;
+   {@exclude} property ZXZY: TVec4 index 2021 read GetVec4;
+   {@exclude} property ZXZZ: TVec4 index 2022 read GetVec4;
+   {@exclude} property ZXZW: TVec4 index 2023 read GetVec4;
+
+   {@exclude} property ZXWX: TVec4 index 2030 read GetVec4;
+   {@exclude} property ZXWY: TVec4 index 2031 read GetVec4;
+   {@exclude} property ZXWZ: TVec4 index 2032 read GetVec4;
+   {@exclude} property ZXWW: TVec4 index 2033 read GetVec4;
+
+
+   {@exclude} property ZYXX: TVec4 index 2100 read GetVec4;
+   {@exclude} property ZYXY: TVec4 index 2101 read GetVec4;
+   {@exclude} property ZYXZ: TVec4 index 2102 read GetVec4;
+   {@exclude} property ZYXW: TVec4 index 2103 read GetVec4;
+
+   {@exclude} property ZYYX: TVec4 index 2110 read GetVec4;
+   {@exclude} property ZYYY: TVec4 index 2111 read GetVec4;
+   {@exclude} property ZYYZ: TVec4 index 2112 read GetVec4;
+   {@exclude} property ZYYW: TVec4 index 2113 read GetVec4;
+
+   {@exclude} property ZYZX: TVec4 index 2120 read GetVec4;
+   {@exclude} property ZYZY: TVec4 index 2121 read GetVec4;
+   {@exclude} property ZYZZ: TVec4 index 2122 read GetVec4;
+   {@exclude} property ZYZW: TVec4 index 2123 read GetVec4;
+
+   {@exclude} property ZYWX: TVec4 index 2130 read GetVec4;
+   {@exclude} property ZYWY: TVec4 index 2131 read GetVec4;
+   {@exclude} property ZYWZ: TVec4 index 2132 read GetVec4;
+   {@exclude} property ZYWW: TVec4 index 2133 read GetVec4;
+
+
+   {@exclude} property ZZXX: TVec4 index 2200 read GetVec4;
+   {@exclude} property ZZXY: TVec4 index 2201 read GetVec4;
+   {@exclude} property ZZXZ: TVec4 index 2202 read GetVec4;
+   {@exclude} property ZZXW: TVec4 index 2203 read GetVec4;
+
+   {@exclude} property ZZYX: TVec4 index 2210 read GetVec4;
+   {@exclude} property ZZYY: TVec4 index 2211 read GetVec4;
+   {@exclude} property ZZYZ: TVec4 index 2212 read GetVec4;
+   {@exclude} property ZZYW: TVec4 index 2213 read GetVec4;
+
+   {@exclude} property ZZZX: TVec4 index 2220 read GetVec4;
+   {@exclude} property ZZZY: TVec4 index 2221 read GetVec4;
+   {@exclude} property ZZZZ: TVec4 index 2222 read GetVec4;
+   {@exclude} property ZZZW: TVec4 index 2223 read GetVec4;
+
+   {@exclude} property ZZWX: TVec4 index 2230 read GetVec4;
+   {@exclude} property ZZWY: TVec4 index 2231 read GetVec4;
+   {@exclude} property ZZWZ: TVec4 index 2232 read GetVec4;
+   {@exclude} property ZZWW: TVec4 index 2233 read GetVec4;
+
+
+   {@exclude} property ZWXX: TVec4 index 2300 read GetVec4;
+   {@exclude} property ZWXY: TVec4 index 2301 read GetVec4;
+   {@exclude} property ZWXZ: TVec4 index 2302 read GetVec4;
+   {@exclude} property ZWXW: TVec4 index 2303 read GetVec4;
+
+   {@exclude} property ZWYX: TVec4 index 2310 read GetVec4;
+   {@exclude} property ZWYY: TVec4 index 2311 read GetVec4;
+   {@exclude} property ZWYZ: TVec4 index 2312 read GetVec4;
+   {@exclude} property ZWYW: TVec4 index 2313 read GetVec4;
+
+   {@exclude} property ZWZX: TVec4 index 2320 read GetVec4;
+   {@exclude} property ZWZY: TVec4 index 2321 read GetVec4;
+   {@exclude} property ZWZZ: TVec4 index 2322 read GetVec4;
+   {@exclude} property ZWZW: TVec4 index 2323 read GetVec4;
+
+   {@exclude} property ZWWX: TVec4 index 2330 read GetVec4;
+   {@exclude} property ZWWY: TVec4 index 2331 read GetVec4;
+   {@exclude} property ZWWZ: TVec4 index 2332 read GetVec4;
+   {@exclude} property ZWWW: TVec4 index 2333 read GetVec4;
+
+   {@exclude} property WXXX: TVec4 index 3000 read GetVec4;
+   {@exclude} property WXXY: TVec4 index 3001 read GetVec4;
+   {@exclude} property WXXZ: TVec4 index 3002 read GetVec4;
+   {@exclude} property WXXW: TVec4 index 3003 read GetVec4;
+
+   {@exclude} property WXYX: TVec4 index 3010 read GetVec4;
+   {@exclude} property WXYY: TVec4 index 3011 read GetVec4;
+   {@exclude} property WXYZ: TVec4 index 3012 read GetVec4;
+   {@exclude} property WXYW: TVec4 index 3013 read GetVec4;
+
+   {@exclude} property WXZX: TVec4 index 3020 read GetVec4;
+   {@exclude} property WXZY: TVec4 index 3021 read GetVec4;
+   {@exclude} property WXZZ: TVec4 index 3022 read GetVec4;
+   {@exclude} property WXZW: TVec4 index 3023 read GetVec4;
+
+   {@exclude} property WXWX: TVec4 index 3030 read GetVec4;
+   {@exclude} property WXWY: TVec4 index 3031 read GetVec4;
+   {@exclude} property WXWZ: TVec4 index 3032 read GetVec4;
+   {@exclude} property WXWW: TVec4 index 3033 read GetVec4;
+
+
+   {@exclude} property WYXX: TVec4 index 3100 read GetVec4;
+   {@exclude} property WYXY: TVec4 index 3101 read GetVec4;
+   {@exclude} property WYXZ: TVec4 index 3102 read GetVec4;
+   {@exclude} property WYXW: TVec4 index 3103 read GetVec4;
+
+   {@exclude} property WYYX: TVec4 index 3110 read GetVec4;
+   {@exclude} property WYYY: TVec4 index 3111 read GetVec4;
+   {@exclude} property WYYZ: TVec4 index 3112 read GetVec4;
+   {@exclude} property WYYW: TVec4 index 3113 read GetVec4;
+
+   {@exclude} property WYZX: TVec4 index 3120 read GetVec4;
+   {@exclude} property WYZY: TVec4 index 3121 read GetVec4;
+   {@exclude} property WYZZ: TVec4 index 3122 read GetVec4;
+   {@exclude} property WYZW: TVec4 index 3123 read GetVec4;
+
+   {@exclude} property WYWX: TVec4 index 3130 read GetVec4;
+   {@exclude} property WYWY: TVec4 index 3131 read GetVec4;
+   {@exclude} property WYWZ: TVec4 index 3132 read GetVec4;
+   {@exclude} property WYWW: TVec4 index 3133 read GetVec4;
+
+
+   {@exclude} property WZXX: TVec4 index 3200 read GetVec4;
+   {@exclude} property WZXY: TVec4 index 3201 read GetVec4;
+   {@exclude} property WZXZ: TVec4 index 3202 read GetVec4;
+   {@exclude} property WZXW: TVec4 index 3203 read GetVec4;
+
+   {@exclude} property WZYX: TVec4 index 3210 read GetVec4;
+   {@exclude} property WZYY: TVec4 index 3211 read GetVec4;
+   {@exclude} property WZYZ: TVec4 index 3212 read GetVec4;
+   {@exclude} property WZYW: TVec4 index 3213 read GetVec4;
+
+   {@exclude} property WZZX: TVec4 index 3220 read GetVec4;
+   {@exclude} property WZZY: TVec4 index 3221 read GetVec4;
+   {@exclude} property WZZZ: TVec4 index 3222 read GetVec4;
+   {@exclude} property WZZW: TVec4 index 3223 read GetVec4;
+
+   {@exclude} property WZWX: TVec4 index 3230 read GetVec4;
+   {@exclude} property WZWY: TVec4 index 3231 read GetVec4;
+   {@exclude} property WZWZ: TVec4 index 3232 read GetVec4;
+   {@exclude} property WZWW: TVec4 index 3233 read GetVec4;
+
+
+   {@exclude} property WWXX: TVec4 index 3300 read GetVec4;
+   {@exclude} property WWXY: TVec4 index 3301 read GetVec4;
+   {@exclude} property WWXZ: TVec4 index 3302 read GetVec4;
+   {@exclude} property WWXW: TVec4 index 3303 read GetVec4;
+
+   {@exclude} property WWYX: TVec4 index 3310 read GetVec4;
+   {@exclude} property WWYY: TVec4 index 3311 read GetVec4;
+   {@exclude} property WWYZ: TVec4 index 3312 read GetVec4;
+   {@exclude} property WWYW: TVec4 index 3313 read GetVec4;
+
+   {@exclude} property WWZX: TVec4 index 3320 read GetVec4;
+   {@exclude} property WWZY: TVec4 index 3321 read GetVec4;
+   {@exclude} property WWZZ: TVec4 index 3322 read GetVec4;
+   {@exclude} property WWZW: TVec4 index 3323 read GetVec4;
+
+   {@exclude} property WWWX: TVec4 index 3330 read GetVec4;
+   {@exclude} property WWWY: TVec4 index 3331 read GetVec4;
+   {@exclude} property WWWZ: TVec4 index 3332 read GetVec4;
+   {@exclude} property WWWW: TVec4 index 3333 read GetVec4;
   {$ENDIF}
 
   {$ENDIF}

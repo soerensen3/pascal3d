@@ -5,7 +5,7 @@
     <CompilerOptions>
       <Version Value="11"/>
       <SearchPaths>
-        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
         <CompilerMessages>
@@ -14,7 +14,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="11">
+    <Files Count="12">
       <Item1>
         <Filename Value="math3d_vector.inc"/>
         <Type Value="Include"/>
@@ -59,6 +59,10 @@
         <Filename Value="math3d.pas"/>
         <UnitName Value="Math3D"/>
       </Item11>
+      <Item12>
+        <Filename Value="math3d_vector_functions.inc"/>
+        <Type Value="Binary"/>
+      </Item12>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="1">

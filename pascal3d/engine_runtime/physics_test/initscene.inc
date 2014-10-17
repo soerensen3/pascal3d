@@ -175,7 +175,7 @@ begin
       cubes[ i ].Body:= TBodyCube.Create( Physics );
       cubes[ i ].Body.OnForceAndTorque:= @cubes[ i ].ForceAndTorque;
       TBodyCube( cubes[ i ].Body ).SetLengths( vec3( 1 ));
-      cubes[ i ].matInitial:= MatrixScale( vec4( 1 ));
+      cubes[ i ].matInitial:= mat4scale( vec4( 1 ));
       cubes[ i ].Body.Mass:= 10.0;
       cubes[ i ].Body.SetPosition( Random( 50 ), Random( 50 ), 150 + Random( 50 ));
       NewtonBodySetLinearDamping ( cubes[ i ].body.Body, 0.0);
@@ -188,7 +188,7 @@ begin
       spheres[ i ].Body:= TBodySphere.Create( Physics );
       spheres[ i ].Body.OnForceAndTorque:= @spheres[ i ].ForceAndTorque;
       TBodySphere( spheres[ i ].Body ).SetRadius( 1 );
-      spheres[ i ].matInitial:= MatrixScale( vec4( 1 ));
+      spheres[ i ].matInitial:= mat4scale( vec4( 1 ));
       spheres[ i ].Body.Mass:= 10.0;
       spheres[ i ].Body.SetPosition( Random( 50 ), Random( 50 ), Random( 50 ));
       spheres[ i ].Mdl:= sphereMdl;
@@ -306,7 +306,7 @@ begin
 
   //mainwnd.Title:= Format( 'uvX: %f, uvY: %f, mrot: %d, mx: %d, my: %d', [ Int( -maincamera.Position.X / cell ) * cell, Int( maincamera.Position.Y / cell ) * cell, mrot, mshiftx, mshifty ]);
   Mdl.Render(
-    MatrixTranslate( vec4(
+    mat4translate( vec4(
          Int( maincamera.Position.X / cell ) * cell,
          Int( maincamera.Position.Y / cell ) * cell,
       0, 1 )), []); //RenderFlags );

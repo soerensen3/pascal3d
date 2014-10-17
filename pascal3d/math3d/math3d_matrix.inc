@@ -11,6 +11,16 @@
 {$IFDEF INTERFACE}
 { TMatrix }
 type
+  //A Matrix which can be either 2 by 2, 3 by 3 or 4 by 4. It can be used for
+  //transformations.
+  //@br@br
+  //The array @bold(m) is for directly accessing the fields of the matrix.
+  //You can also use the properties for accessing columns and rows which consist
+  //of an "_" and one number for the row and another for the column. So if you
+  //want to let's say access row 0 and column 3 you use _03.
+  //The array is stored in row-major order but it only matters if you pass it
+  //to another library like OpenGL or Direct 3D or when you use the helper
+  //functions for generating a matrix.
   TMatrix = packed object
     private
       function GetIndex( index: Integer ): Float; inline;
@@ -19,9 +29,11 @@ type
       procedure SetMField( AIndex: Integer; AValue: Float );
 
     public
+      //Use this one dimensional array for directly accessing the fields in the matrix.
       m: array [0..NUMFIELD*NUMFIELD-1] of Float;
 
-      // First value indicates row, second value indicates column
+      //Use these properties to access the fields of matrix using row and column.
+      //The first value indicates the row, the second value indicates the column.
       property _00: Float index                0  read GetMField write SetMField;
       {$IF NUMFIELD > 1 }
       property _01: Float index                1  read GetMField write SetMField;
@@ -45,37 +57,78 @@ type
       property _33: Float index NUMFIELD * 3 + 3  read GetMField write SetMField;
       {$ENDIF}
 
+      //This property is only provided for the use with OnChange events if needed in the future.
       property _m[ index: Integer ]: Float read GetIndex write SetIndex; default;
   end;
+//Will generate a translation matrix of the size depending on the fields of @bold(Vec).
+//If the vector has 3 fields the corresponding matrix will be 3 by 3.
+function
+{$IF NUMFIELD = 2}
+  mat2translate
+{$ELSEIF NUMFIELD = 3}
+  mat3translate
+{$ELSEIF NUMFIELD = 4}
+  mat4translate
+{$ENDIF}
+  ( Vec: TVector ): TMatrix; overload;
+//Will generate a scale matrix of the size depending on the fields of @bold(Vec).
+//If the vector has 3 fields the corresponding matrix will be 3 by 3.
+function
+{$IF NUMFIELD = 2}
+  mat2scale
+{$ELSEIF NUMFIELD = 3}
+  mat3scale
+{$ELSEIF NUMFIELD = 4}
+  mat4scale
+{$ENDIF}
+  ( Vec: TVector ): TMatrix; overload;
 
-function MatrixTranslate( Vec: TVector ): TMatrix; overload;
-function MatrixScale( Vec: TVector ): TMatrix; overload;
-
+{$IF NUMFIELD = 3}
+//Will generate a 3 by 3 rotation matrix using an axis and an angle.
+function mat3rotate( Axis: TVec3; Angle: Float ): TMatrix; overload;
+{$ENDIF}
 {$IF NUMFIELD = 4}
-function Mat4Rot( Axis: TVec3; Angle: Float ): TMatrix; overload;
-//  function MatrixMirror( Plane: TPlane ): TMatrix;
-function MatrixDeterminant( Mat: TMatrix ): Float;
-function MatrixInverse( Mat: TMatrix; out MatInv: TMatrix ): Boolean;
-function MatrixTranspose( Matrix: TMatrix ): TMatrix;
-function MatrixPerspectiveFOVLH( FOV, Aspect, Near, Far: Float ): TMatrix;
-function MatrixPerspectiveFOVRH( FOV, Aspect, Near, Far: Float ): TMatrix;
-function MatrixOrthoLH( w, h, Near, Far: Float ): TMatrix;
-function MatrixOrthoRH( w, h, Near, Far: Float ): TMatrix;
-//  function MatrixCubeMap( Face: Cardinal ): TMatrix;
-function MatrixLookAtLH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
-function MatrixLookAtRH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
+//Will generate a 4 by 4 rotation matrix using an axis and an angle.
+function mat4rotate( Axis: TVec3; Angle: Float ): TMatrix; overload;
+
+//Will return the determinant of a 4 by 4 matrix.
+function mat4determinant( Mat: TMatrix ): Float;
+//Will calculate the the inverse of a 4 by 4 matrix and store the result in @bold(MatInv).
+//If the inverse could be calculated the function will return True.
+function mat4inverse( Mat: TMatrix; out MatInv: TMatrix ): Boolean;
+//Will return the the transpose of a 4 by 4 matrix which means it will swap
+//colums and rows.
+function mat4transpose( Matrix: TMatrix ): TMatrix;
+//Returns a left handed perspective 4 by 4 projection matrix.
+function mat4perspectiveFOVLH( FOV, Aspect, Near, Far: Float ): TMatrix;
+//Returns a right handed perspective 4 by 4 projection matrix.
+function mat4perspectiveFOVRH( FOV, Aspect, Near, Far: Float ): TMatrix;
+//Returns a left handed orthogonal 4 by 4 projection matrix.
+function mat4orthoLH( w, h, Near, Far: Float ): TMatrix;
+//Returns a right handed orthogonal 4 by 4 projection matrix.
+function mat4orthoRH( w, h, Near, Far: Float ): TMatrix;
+//Returns a left handed 4 by 4 lookat matrix which can be used for cameras.
+function mat4lookatLH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
+//Returns a right handed 4 by 4 lookat matrix which can be used for cameras.
+function mat4lookatRH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
+{function MatrixMirror( Plane: TPlane ): TMatrix;}
+{function MatrixCubeMap( Face: Cardinal ): TMatrix;}
+
 {$ENDIF}
 
+//Operator for multiplying a matrix with a float. All values are affected.
 operator * ( a: TMatrix; b: Float ) c: TMatrix; inline;
+//Operator for multiplying two matrices. If you multiply two transformations, the left value is the transformation applied first.
 operator * ( a: TMatrix; b: TMatrix ) c: TMatrix; inline; // left first - right last
+//Operator for transforming a vec using a matrix. The operation is Pre-Multiply in this order.
 operator * ( a: TVector; b: TMatrix ) c: TVector; inline; // PRE-Multiply
+//Operator for transforming a vec using a matrix. The operation is Post-Multiply in this order.
 operator * ( a: TMatrix; b: TVector ) c: TVector; inline; // POST-Multiply
 
 {$UNDEF INTERFACE}
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
-
 operator*(a: TMatrix; b: Float)c: TMatrix;
 var
   i: Integer;
@@ -296,7 +349,15 @@ begin
   {$ENDIF}
 end;
 
-function MatrixTranslate( Vec: TVector ): TMatrix;
+function
+{$IF NUMFIELD = 2}
+  mat2translate
+{$ELSEIF NUMFIELD = 3}
+  mat3translate
+{$ELSEIF NUMFIELD = 4}
+  mat4translate
+{$ENDIF}
+  ( Vec: TVector ): TMatrix;
 begin
   Result:= MatIdentity;
   {$IF NUMFIELD = 2}
@@ -314,7 +375,15 @@ begin
   {$ENDIF}
 end;
 
-function MatrixScale( Vec: TVector ): TMatrix;
+function
+{$IF NUMFIELD = 2}
+  mat2scale
+{$ELSEIF NUMFIELD = 3}
+  mat3scale
+{$ELSEIF NUMFIELD = 4}
+  mat4scale
+{$ENDIF}
+  ( Vec: TVector ): TMatrix;
 begin
   Result:= MatIdentity;
   {$IF NUMFIELD = 2}
@@ -332,8 +401,30 @@ begin
   {$ENDIF}
 end;
 
+{$IF NUMFIELD = 3}
+function mat3rotate(Axis: TVec3; Angle: Float): TMat3;
+var
+   cosine, sine, one_minus_cosine : Extended;
+begin
+   SinCos(Angle, Sine, Cosine);
+   one_minus_cosine:=1 - cosine;
+   Axis.Normalize;
+
+   Result._00:= (one_minus_cosine * Sqr(Axis.x)) + Cosine;
+   Result._01:= (one_minus_cosine * Axis.x * Axis.y) - (Axis.z * Sine);
+   Result._02:= (one_minus_cosine * Axis.z * Axis.x) + (Axis.y * Sine);
+
+   Result._10:= (one_minus_cosine * Axis.x * Axis.y) + (Axis.z * Sine);
+   Result._11:= (one_minus_cosine * Sqr(Axis.y)) + Cosine;
+   Result._12:= (one_minus_cosine * Axis.y * Axis.z) - (Axis.x * Sine);
+
+   Result._20:= (one_minus_cosine * Axis.z * Axis.x) - (Axis.y * Sine);
+   Result._21:= (one_minus_cosine * Axis.y * Axis.z) + (Axis.x * Sine);
+   Result._22:= (one_minus_cosine * Sqr(Axis.z)) + Cosine;
+end;
+{$ENDIF}
 {$IF NUMFIELD = 4}
-function Mat4Rot(Axis: TVec3; Angle: Float ): TMatrix;
+function mat4rotate(Axis: TVec3; Angle: Float ): TMatrix;
 const
   x = 0;
   y = 1;
@@ -374,7 +465,7 @@ begin
          + c1 * ( a2 * b3 - a3 * b2 );
 end;
 
-function MatrixDeterminant(Mat: TMatrix): Float;
+function mat4determinant(Mat: TMatrix): Float;
 begin
   Result:= Mat._00 * MatrixDet( Mat[ 5 ], Mat[ 9 ], Mat[ 13 ],
                                 Mat[ 6 ], Mat[ 10 ], Mat[ 14 ],
@@ -393,12 +484,12 @@ begin
                                 Mat[ 6 ], Mat[ 10 ], Mat[ 14 ]);
 end;
 
-function MatrixInverse( Mat: TMatrix; out MatInv: TMatrix ): Boolean;
+function mat4inverse( Mat: TMatrix; out MatInv: TMatrix ): Boolean;
 var
   det, a1, a2, a3, a4, b1, b2, b3, b4,
   c1, c2, c3, c4, d1, d2, d3, d4: Float;
 begin
-  det:= MatrixDeterminant( Mat );
+  det:= mat4determinant( Mat );
   if ( Abs( det ) < epsilon ) then
     Result:= False
   else
@@ -429,7 +520,7 @@ begin
     end;
 end;
 
-function MatrixTranspose(Matrix: TMatrix): TMatrix;
+function mat4transpose(Matrix: TMatrix): TMatrix;
 begin
   Result._00:= Matrix._00;
   Result._10:= Matrix._01;
@@ -452,7 +543,7 @@ begin
   Result._33:= Matrix._33;
 end;
 
-function MatrixPerspectiveFOVLH( FOV, Aspect, Near, Far: Float ): TMatrix;
+function mat4perspectiveFOVLH( FOV, Aspect, Near, Far: Float ): TMatrix;
 var
   w, h: Float;
 begin
@@ -466,7 +557,7 @@ begin
   Result._30:= 0; Result._31:= 0; Result._32:= (2 * Far * Near )/( Near - Far ); Result._33:= 0;
 end;
 
-function MatrixPerspectiveFOVRH( FOV, Aspect, Near, Far: Float ): TMatrix;
+function mat4perspectiveFOVRH( FOV, Aspect, Near, Far: Float ): TMatrix;
 var
   w, h: Float;
 begin
@@ -478,7 +569,7 @@ begin
   Result._30:= 0; Result._31:= 0; Result._32:= Near * Far/( Near - Far );  Result._33:= 0;
 end;
 
-function MatrixOrthoLH( w, h, Near, Far: Float ): TMatrix;
+function mat4orthoLH( w, h, Near, Far: Float ): TMatrix;
 begin
   Result._00:= 2/w; Result._01:= 0;   Result._02:= 0;                   Result._03:= 0;
   Result._10:= 0;   Result._11:= 2/h; Result._12:= 0;                   Result._13:= 0;
@@ -486,7 +577,7 @@ begin
   Result._30:= 0;   Result._31:= 0;   Result._32:= Near/( Near - Far ); Result._33:= 1;
 end;
 
-function MatrixOrthoRH( w, h, Near, Far: Float ): TMatrix;
+function mat4orthoRH( w, h, Near, Far: Float ): TMatrix;
 begin
   Result._00:= 2/w; Result._01:= 0;   Result._02:= 0;                   Result._03:= 0;
   Result._10:= 0;   Result._11:= 2/h; Result._12:= 0;                   Result._13:= 0;
@@ -494,39 +585,39 @@ begin
   Result._30:= 0;   Result._31:= 0;   Result._32:= Near/( Near - Far ); Result._33:= 1;
 end;
 
-function MatrixLookAtLH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
+function mat4lookatLH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
 var
   xa, ya, za: TVec3;
 begin
-  za:= VecNormalize ( LookAt - EyePt );
-  xa:= VecNormalize( VecCrossProduct( UpDir, za ));
-  ya:= VecCrossProduct( za, xa );
+  za:= Normalize ( LookAt - EyePt );
+  xa:= Normalize( cross( UpDir, za ));
+  ya:= cross( za, xa );
 
   Result._00:= xa.x; Result._01:= ya.x; Result._02:= za.x; Result._03:= 0;
   Result._10:= xa.y; Result._11:= ya.y; Result._12:= za.y; Result._13:= 0;
   Result._20:= xa.z; Result._21:= ya.z; Result._22:= za.z; Result._23:= 0;
 
-  Result._30:= -VecDotProduct( xa, EyePt );
-  Result._31:= -VecDotProduct( ya, EyePt );
-  Result._32:= -VecDotProduct( za, EyePt );
+  Result._30:= -Dot( xa, EyePt );
+  Result._31:= -Dot( ya, EyePt );
+  Result._32:= -Dot( za, EyePt );
   Result._33:= 1;
 end;
 
-function MatrixLookAtRH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
+function mat4lookatRH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
 var
   xa, ya, za: TVec3;
 begin
-  za:= VecNormalize( EyePt - LookAt );
-  xa:= VecNormalize( VecCrossProduct( UpDir, za ));
-  ya:= VecCrossProduct( za, xa );
+  za:= Normalize( EyePt - LookAt );
+  xa:= Normalize( cross( UpDir, za ));
+  ya:= cross( za, xa );
 
   Result._00:= xa.x; Result._01:= ya.x; Result._02:= za.x; Result._03:= 0;
   Result._10:= xa.y; Result._11:= ya.y; Result._12:= za.y; Result._13:= 0;
   Result._20:= xa.z; Result._21:= ya.z; Result._22:= za.z; Result._23:= 0;
 
-  Result._30:= -VecDotProduct( xa, EyePt );
-  Result._31:= -VecDotProduct( ya, EyePt );
-  Result._32:= -VecDotProduct( za, EyePt );
+  Result._30:= -Dot( xa, EyePt );
+  Result._31:= -Dot( ya, EyePt );
+  Result._32:= -Dot( za, EyePt );
   Result._33:= 1;
 end;
 

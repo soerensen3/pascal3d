@@ -1,0 +1,67 @@
+@title( Math3D library )
+
+@section( 1 whatismath3d What is math3d )
+
+Math3D is a 3D mathematics library for pascal.
+It supports vector types, matrices and quaternions so far.
+Like GLM (C++ only), the syntax tries to be as close to @bold( glsl ) as possible.
+
+Additionally there is support for quaternions.
+
+In Math3D, for convenience, vectors and matrices are defined as objects (not classes) so they
+can be used like normal variables so you don't have to take care of creating or freeing them.
+
+@bold(Note:) This library is quite new so it will probably undergo some major changes in the
+future. In this early stage it is probably not suitable for a productive use. However I would be
+happy to receive some feedback!
+
+@section( 1 typesdefined Types defined in math3d )
+
+@section( 2 vectortypes Vector Types )
+@unorderedList(
+@item @link( TVec2 )
+@item @link( TVec3 )
+@item @link( TVec4 )
+)
+
+@section( 2 matrices Matrices )
+@unorderedList(
+@item @link( TMat2 )
+@item @link( TMat3 )
+@item @link( TMat4 )
+)
+
+@section( 2 quaternions Quaternions )
+@unorderedList(
+@item @link( TQuaternion )
+)
+
+@section( 1 differences Differences to glsl )
+As already said math3d tries to be as close with the syntax to glsl as possible.
+However in some places, due to language restrictions or other reasons, it just can't
+be done.
+
+@section( 2 diff_matrix_order Matrix Order )
+There are two different orders when using matrices, one is colum-major and one is row-major.
+The order only defines how matrices are stored in memory.
+See this if you want to know more: http://fgiesen.wordpress.com/2012/02/12/row-major-vs-column-major-row-vectors-vs-column-vectors/
+When I started making my first library years ago I was using Direct3D while now
+I use OpenGL, but I was used to row-major-order so I left it at that.
+However the order in glsl is column-major. So in the future I will probably make
+a switch for changing the order if needed.
+
+@section( 2 diff_typenames Type names )
+In Pascal it is common to use a T as prefix for types. What is mat4 in glsl becomes
+TMat4 in Math3D. The prefix is not a must but there would be a conflict with the
+constructors for TMat4. In glsl you also use mat4(...) as a constructor. In Math3D
+the constructors are available as well though technically they are not real constructors
+in a pascal sense (like TMat4.Create(...)).
+
+@section( 2 diff_swizzling Swizzling )
+See @link(swizzling).
+
+@section( 2 diff_matrix_types Matrix Types )
+While glsl supports a lot of different sized matrices, Math3D currently only
+supports square matrix types, so they are only three defined.
+In most cases you only need square matrices so it will probably not change in the future.
+

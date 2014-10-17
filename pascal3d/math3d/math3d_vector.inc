@@ -1,8 +1,56 @@
-//math3d_vector.inc
-
 {$IFDEF INTERFACE}
-{ @classname serves as a generic class for all vector types. There are 3 vector types
-  regarding which differ in the amount of the fields.}
+{@abstract( @classname is a basic vector object wich can be modified with operators and functions
+and which provides some methods itself.
+There are provided different ways to access the fields of the vector.)
+@orderedList(
+@item Using Coord
+@item Using @bold( x,y,z,w r,g,b,a s,t,p,q ) properties
+@item Using Swizzling
+)
+@italic(1. Access the fields with the array @bold(Coord)) @br@br
+@bold(Coord) is the default property so using @bold( v[ 0 ]) is the same as @bold( v.Coord[ 0 ] ). @br@br
+@italic(2. Alternatively you can use it's properties @bold( X, Y, Z, W ).) @br@br
+However you can also write @bold( R, G, B, A ) if you use the vector for color values
+for example. Another alias is @bold( S, T, P, Q ) which is for texture coordinates.
+So all these code lines are equivalent:
+@longCode(
+v.Coords[ 0 ]:= 0.0;
+v[ 0 ]:= 0.0;
+v.x:= 0.0;
+v.r:= 0.0;
+v.s:= 0.0;
+)
+These different type of access are only for convenience but point to one and
+the same field. Except for the Coord alias everything works just like in @bold( glsl ).
+@br@br
+Depending on the vectors type some fields may not be availabe.@br
+For @link( TVec2 ) there is only @bold( X (R, S)) and @bold( Y (G, T)) defined.@br
+For @link( TVec3 ) there is only @bold( X (R, S)), @bold( Y (G, T)) and @bold( Z (B, P)) defined.@br
+For @link( TVec4 ) there is @bold( X (R, S)), @bold( Y (G, T)), @bold( Z (B, P)) and @bold( W (A, Q)) defined.@br
+@br@br
+@italic(3. Additionally math3d supports swizzling in @bold( glsl-style ).) @br@br
+This means you can write:
+@longCode(
+v2:= v1.xxy; // equivalent to vec3( v1.x, v1.x, v1.y )
+)
+Unlike @bold( glsl ) this is not yet supported:
+@longCode(
+var
+  v1: TVec2;
+  v2: TVec3;
+begin
+  v2:= v1.xxx; //Returns an error because v1 only has two members and cannot return a TVec3
+end;
+)
+This is due to an internal problem of how the math3d unit is written.
+In Pascal you can only forward declare classes and procedures but not objects.
+So it is not possible for TVec2 to return TVec3 because it's still undefined at that stage.
+There is no solution for that for now i fear.
+@br@br
+For more information on swizzling see this
+doc: https://www.opengl.org/wiki/Data_Type_%28GLSL%29#Swizzling
+
+}
 TVector = packed object
   private
     {@exclude} procedure SetCoord( AIndex: Integer; AValue: Float );
@@ -13,106 +61,85 @@ TVector = packed object
     FCoord: array[ 0..NUMFIELD-1 ] of Float;
 
   public
-    {Returns the length of the current vector.}
+    {Calculate the length of the current vector.
+    @returns The result of the function.}
     function GetDist: Float;
-    {Normalizes the current vector. For returning a normalized vector without
-    changing the current one use VecNormalize}
+    {Normalizes the current vector.
+    @returns The result of the function will be returned additionally.
+    @br@br
+    For returning a normalized vector without
+    changing the current one use Vecnormalize}
     function Normalize: TVector;
 
     {$IF NUMFIELD>2}
-    {Returns the cross product of the current vector and v, wheras the current
-    vector is the first and v is the second.}
+    {Calculate the cross product of the current vector and v, wheras the current
+    vector is the first and v is the second.
+    @returns The result of the function.}
     function CrossProduct( v: TVector ): TVector;
     {$ENDIF}
-    {Returns the dot product of the current vector and v, wheras the current
-    vector is the first and v is the second.}
+    {Calculate the dot product of the current vector and v, wheras the current
+    vector is the first and v is the second.
+    @returns The result of the function}
     function DotProduct( v: TVector ): Float;
-    {Returns the index of the biggest component (X, Y, Z, W)
-    which can be used with Coord
-    @longCode( s:= v.Coord[ v.GetBiggestComp ]; )}
+    {Determines the biggest component (X, Y, Z, W).
+    @returns( The the index of the biggest component which can be used with @bold( Coord )
+    @longCode( s:= v.Coord[ v.GetBiggestComp ]; ))}
     function GetBiggestComp: Integer;
 
 //    function RotateRad( Axis: TVec3; Angle: Float ): TVector;
 //    function RotateDeg( Axis: TVec3; Angle: Float ): TVector;
 //      function Transform( Matrix: TMatrix ): TVector;
 
-    {Returns the negative of the current vector without altering the current.
-    This is exivalent to @longCode( v2:= -v;)}
+    {Negates the current vector without altering it.
+    @returns( The result is only returned without altering the original vector.
+    This is exivalent to @longCode( v2:= -v;))}
     function Invert: TVector;
-    {Returns a pointer to the data of a vector. It can be used when passing to
+    {Function to get access to the first element (@bold(X)) of the vector.
+    @returns( The result is a pointer to the data of a vector. It can be used when passing to
     opengl for example. This is equivalent to
-    @longCode( ptr:= @v.Coord[ 0 ]; )}
+    @longCode( ptr:= @v.Coord[ 0 ]; ))}
     function Ptr: PFloat;
 //      function Mirror( Plane: pPlane ): TVector;
 
-    {Compares two vectors and returns if there field values are equal.}
+    {Compares two vectors and returns if there field values are equal.
+    @returns The result is a boolean and is True if the vectors are equal.}
     function Compare( v: TVector ): Boolean;
 
-    {Coord is one way to access the fields of a vector as a array.
-    It is the default property so using @bold( v[ 0 ]) is the same as @bold( v.Coord[ 0 ] ).
-    Alternatively you can use it's properties @bold( X, Y, Z, W ).
-    However you can also write @bold( R, G, B, A ) if you use the vector for color values
-    for example. Another alias is @bold( S, T, P, Q ) which is for texture coordinates.
-    So all these code lines are equivalent:
-    @longCode(
-    v.Coords[ 0 ]:= 0.0;
-    v[ 0 ]:= 0.0;
-    v.x:= 0.0;
-    v.r:= 0.0;
-    v.s:= 0.0;
-    )
-    These different type of access are only for convenience but point to one and
-    the same field. Except for the Coord alias everything works just like in @bold( glsl ).
-    @br@br
-    Depending on the vectors type some fields may not be availabe.@br
-    For @link( TVec2 ) there is only @bold( X (R, S)) and @bold( Y (G, T)) defined.@br
-    For @link( TVec3 ) there is only @bold( X (R, S)), @bold( Y (G, T)) and @bold( Z (B, P)) defined.@br
-    For @link( TVec4 ) there is @bold( X (R, S)), @bold( Y (G, T)), @bold( Z (B, P)) and @bold( W (A, Q)) defined.@br
-    @br@br
-    Additionally @bold( glsl ) math3d supports swizzling. This means you can write:
-    @longCode(
-    v2:= v1.xxy; // equivalent to vec3( v1.x, v1.x, v1.y )
-    )
-    Unlike @bold( glsl ) this is not yet supported:
-    @longCode(
-    var
-      v1: TVec2;
-      v2: TVec3;
-    begin
-      v2:= v1.xxx; //Returns an error because v1 only has two members and cannot return a TVec3
-    end;
-    )
-    This is due to an internal problem of how the math3d unit is written and is
-    likely to change in the future. For more information on swizzling see this
-    doc: https://www.opengl.org/wiki/Data_Type_%28GLSL%29#Swizzling
-    }
+
     property Coord[ Index: Integer ]: Float read GetCoord write SetCoord; default;
-    {This will return a string with the vector's values enclosed in <>. It can
-    be used for debugging or printing the values of a vector on screen.}
+    {This will generate a string with the vector's values enclosed in <>. It can
+    be used for debugging or printing the values of a vector on screen.
+    @returns( The string is return in the function's result )}
     function ToString: String;
 
   published
-    {@exclude} property X: Float index 0 read FCoord[ 0 ] write SetCoord;
-    {@exclude} property R: Float index 0 read FCoord[ 0 ] write SetCoord;
-    {@exclude} property S: Float index 0 read FCoord[ 0 ] write SetCoord;
+    property X: Float index 0 read FCoord[ 0 ] write SetCoord;
+    property R: Float index 0 read FCoord[ 0 ] write SetCoord;
+    property S: Float index 0 read FCoord[ 0 ] write SetCoord;
     {$IF NUMFIELD>1}
-    {@exclude} property Y: Float index 1 read FCoord[ 1 ] write SetCoord;
-    {@exclude} property G: Float index 1 read FCoord[ 1 ] write SetCoord;
-    {@exclude} property T: Float index 1 read FCoord[ 1 ] write SetCoord;
+    property Y: Float index 1 read FCoord[ 1 ] write SetCoord;
+    property G: Float index 1 read FCoord[ 1 ] write SetCoord;
+    property T: Float index 1 read FCoord[ 1 ] write SetCoord;
     {$ENDIF}
 
   published
     {$IF NUMFIELD>2}
-    {@exclude} property Z: Float index 2 read FCoord[ 2 ] write SetCoord;
-    {@exclude} property B: Float index 2 read FCoord[ 2 ] write SetCoord;
-    {@exclude} property P: Float index 2 read FCoord[ 2 ] write SetCoord;
+    //This field will only exist from TVec3 on.
+    property Z: Float index 2 read FCoord[ 2 ] write SetCoord;
+    //This field will only exist from TVec3 on.
+    property B: Float index 2 read FCoord[ 2 ] write SetCoord;
+    //This field will only exist from TVec3 on.
+    property P: Float index 2 read FCoord[ 2 ] write SetCoord;
 
     {$ENDIF}
   published
     {$IF NUMFIELD>3}
-    {@exclude} property W: Float index 3 read FCoord[ 3 ] write SetCoord;
-    {@exclude} property A: Float index 3 read FCoord[ 3 ] write SetCoord;
-    {@exclude} property Q: Float index 3 read FCoord[ 3 ] write SetCoord;
+    //This field will only exist from TVec4 on.
+    property W: Float index 3 read FCoord[ 3 ] write SetCoord;
+    //This field will only exist from TVec4 on.
+    property A: Float index 3 read FCoord[ 3 ] write SetCoord;
+    //This field will only exist from TVec4 on.
+    property Q: Float index 3 read FCoord[ 3 ] write SetCoord;
     {$ENDIF}
     {$INCLUDE math3d_vector_swizzle.inc}
 end;
@@ -292,36 +319,16 @@ function Vector(
 {$ENDIF}
 
 {$IFDEF HELPERFUNCT}
-{$IF NUMFIELD>2}
-// This will return the cross product of two vectors. This function is only defined for TVec3 and above.
-function VecCrossProduct( v1: TVector; v2: TVector ): TVector; overload;
-{$ENDIF}
 
-// This will return the dot product of two vectors.
-function VecDotProduct( v1: TVector; v2: TVector ): Float; overload;
-// This return a normalized vector leaving the original vector untouched.
-function VecNormalize( Vec: TVector ): TVector; overload;
-//  function VecMirror( Vec: TVector; Plane: TPlane ): TVector;
-
-// This will return a negated vector and is equivalent to -v.
-function VecInvert( Vec: TVector ): TVector; overload;
-{$IF NUMFIELD = 4}
-// This will unproject a vector using world, view and projection matrix. It will return the unprojected vector and the direction it is pointing to.
-function VecUnproject( Vec: TVector; matWorld, matView, matProj: TMatrix; Width, Height: Integer; out vDirection: TVector ): TVector;
-{$ENDIF}
-// This will return the bigger components of two vectors. It works component-wise.
-function Max( Vec1: TVector; Vec2: TVector ): TVector; overload;
-// This will return the smaller components of two vectors. It works component-wise.
-function Min( Vec1: TVector; Vec2: TVector ): TVector; overload;
-// This will return the bigger components of one vector and a scalar. It works component-wise.
-function Max( Vec1: TVector; s: Single ): TVector; overload;
-// This will return the smaller components of one vector and a scalar. It works component-wise.
-function Min( Vec1: TVector; s: Single ): TVector; overload;
-
+{$INCLUDE math3d_vector_functions.inc}
 //Operator for adding two vectors. Only same vector types can be added so far.
 operator + ( a, b: TVector ) c: TVector; inline;
+//Operator for adding one vector and a float. Only same vector types can be added so far.
+operator + ( a: TVector; b: Float ) c: TVector; inline;
 //Operator for subtracting two vectors. Only same vector types can be subtracted so far.
 operator - ( a, b: TVector ) c: TVector; inline;
+//Operator for subtracting one vector and a float. Only same vector types can be added so far.
+operator - ( a: TVector; b: Float ) c: TVector; inline;
 //Operator for multiplying two vectors component-wise. Only same vector types can be multiplied so far.
 operator * ( a, b: TVector ) c: Float; inline;
 //Operator for scaling a vector using a scalar (float).
@@ -486,6 +493,20 @@ begin
   {$ENDIF}
 end;
 
+operator+(a: TVector; b: Float)c: TVector;
+begin
+  c.x:= a.x + b;
+  {$IF NUMFIELD > 1}
+  c.y:= a.y + b;
+  {$ENDIF}
+  {$IF NUMFIELD > 2}
+  c.z:= a.z + b;
+  {$ENDIF}
+  {$IF NUMFIELD > 3}
+  c.w:= a.w + b;
+  {$ENDIF}
+end;
+
 operator-(a, b: TVector)c: TVector;
 begin
   c.x:= a.x - b.x;
@@ -497,6 +518,20 @@ begin
   {$ENDIF}
   {$IF NUMFIELD > 3}
   c.w:= a.w - b.w;
+  {$ENDIF}
+end;
+
+operator-(a: TVector; b: Float)c: TVector;
+begin
+  c.x:= a.x - b;
+  {$IF NUMFIELD > 1}
+  c.y:= a.y - b;
+  {$ENDIF}
+  {$IF NUMFIELD > 2}
+  c.z:= a.z - b;
+  {$ENDIF}
+  {$IF NUMFIELD > 3}
+  c.w:= a.w - b;
   {$ENDIF}
 end;
 
@@ -566,113 +601,7 @@ begin
   c:= a * -1;
 end;
 
-{$IF NUMFIELD > 2}
-function VecCrossProduct(v1: TVector; v2: TVector): TVector;
-begin
-  Result:= v1.CrossProduct( v2 );
-end;
-{$ENDIF}
-
-function VecDotProduct(v1: TVector; v2: TVector): Float;
-begin
-  Result:= v1.DotProduct( v2 );
-end;
-
-function VecNormalize(Vec: TVector): TVector;
-begin
-  Result:= Vec;
-  Result.Normalize;
-end;
-
-function VecInvert(Vec: TVector): TVector;
-begin
-  Result:= Vec * -1;
-end;
-
-{$IF NUMFIELD = 4}
-
-function VecUnproject( Vec: TVector; matWorld, matView, matProj: TMatrix; Width, Height: Integer; out vDirection: TVector ): TVector;
-var
-  m: TMatrix;
-begin
-  // Compute the vector of the pick ray in screen space
-  Result.x:=  ((( 2.0 * Vec.x ) / Width ) - 1 ) / matProj._00;
-  Result.y:= -((( 2.0 * Vec.y ) / Height ) - 1 ) / matProj._11;
-  Result.z:= -1.0; //TODO: Check if left or righthanded
-
-  // Get the inverse view matrix
-
-//  m:= MatrixMul( matWorld, matView );
-//  m:= MatrixMul( m, matView );
-  MatrixInverse( matWorld * matView, m );
-
-  // Transform the screen space pick ray into 3D space
-  vDirection.x:= Result.x * m._00 + Result.y * m._10 + Result.z * m._20;
-  vDirection.y:= Result.x * m._01 + Result.y * m._11 + Result.z * m._21;
-  vDirection.z:= Result.x * m._02 + Result.y * m._12 + Result.z * m._22;
-  vDirection.Normalize;
-  Result.x:= m._30;
-  Result.y:= m._31;
-  Result.z:= m._32;
-end;
-{$ENDIF}
-
-function Max(Vec1: TVector; Vec2: TVector): TVector;
-begin
-  Result.x:= Max( Vec1.x, Vec2.x );
-  {$IF NUMFIELD > 1}
-  Result.y:= Max( Vec1.y, Vec2.y );
-  {$ENDIF}
-  {$IF NUMFIELD > 2}
-  Result.z:= Max( Vec1.z, Vec2.z );
-  {$ENDIF}
-  {$IF NUMFIELD > 3}
-  Result.w:= Max( Vec1.w, Vec2.w );
-  {$ENDIF}
-end;
-
-function Min(Vec1: TVector; Vec2: TVector): TVector;
-begin
-  Result.x:= Min( Vec1.x, Vec2.x );
-  {$IF NUMFIELD > 1}
-  Result.y:= Min( Vec1.y, Vec2.y );
-  {$ENDIF}
-  {$IF NUMFIELD > 2}
-  Result.z:= Min( Vec1.z, Vec2.z );
-  {$ENDIF}
-  {$IF NUMFIELD > 3}
-  Result.w:= Min( Vec1.w, Vec2.w );
-  {$ENDIF}
-end;
-
-function Max(Vec1: TVector; s: Single): TVector;
-begin
-  Result.x:= Max( Vec1.x, s );
-  {$IF NUMFIELD > 1}
-  Result.y:= Max( Vec1.y, s );
-  {$ENDIF}
-  {$IF NUMFIELD > 2}
-  Result.z:= Max( Vec1.z, s );
-  {$ENDIF}
-  {$IF NUMFIELD > 3}
-  Result.w:= Max( Vec1.w, s );
-  {$ENDIF}
-end;
-
-function Min(Vec1: TVector; s: Single): TVector;
-begin
-  Result.x:= Min( Vec1.x, s );
-  {$IF NUMFIELD > 1}
-  Result.y:= Min( Vec1.y, s );
-  {$ENDIF}
-  {$IF NUMFIELD > 2}
-  Result.z:= Min( Vec1.z, s );
-  {$ENDIF}
-  {$IF NUMFIELD > 3}
-  Result.w:= Min( Vec1.w, s );
-  {$ENDIF}
-end;
-
+{$INCLUDE math3d_vector_functions.inc}
 
 {$UNDEF IMPLEMENTATION}
 {$ENDIF}
