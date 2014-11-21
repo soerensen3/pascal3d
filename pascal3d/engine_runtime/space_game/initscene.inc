@@ -156,7 +156,7 @@ begin
   shadowscene:= tScene.Create;
   skyboxscene:= tScene.Create;
   maincamera:= tCamera.Create;
-  maincamera.Position:= vec3( 4, -1.2+0.05, -4.5 );
+  maincamera.Position:= vec3( 4, -1.2+0.05, 10.5 );
   maincamera.YawPitchRoll.X:= 80;
   maincamera.far:= 1000;
 

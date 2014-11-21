@@ -7,16 +7,16 @@ interface
 uses
   Classes, SysUtils,
 
-  window_sdl,
+  p3dwindow,
 
-  Math3D,
+  p3dMath,
   dglOpenGL,
-  shaders,
-  Model,
-  scene,
-  framebuffer,
-  lighting,
-  filewatch;
+  p3dshaders,
+  p3dmodel,
+  p3dscene,
+  p3dframebuffer,
+  p3dlighting,
+  p3dfilewatch;
 
 var
   mainwnd: TSDLWindow;

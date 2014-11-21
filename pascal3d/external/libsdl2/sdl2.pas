@@ -5,14 +5,17 @@ unit SDL2;
   Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
 
   Pascal-Header-Conversion
-  Copyright (C) 2012/13 Tim Blume aka End/EV1313
+  Copyright (C) 2012-2014 Tim Blume aka End/EV1313
 
   SDL.pas is based on the files:
   "sdl.h",
   "sdl_audio.h",
   "sdl_blendmode.h",
+  "sdl_clipboard.h",
+  "sdl_cpuinfo.h",
   "sdl_events.h",
   "sdl_error.h",
+  "sdl_filesystem.h",
   "sdl_gamecontroller.h",
   "sdl_gesture.h",
   "sdl_haptic.h",
@@ -20,7 +23,8 @@ unit SDL2;
   "sdl_joystick.h",
   "sdl_keyboard.h",
   "sdl_keycode.h",
-  "sdl_loadso.h"
+  "sdl_loadso.h",
+  "sdl_log.h",
   "sdl_pixels.h",
   "sdl_power.h",
   "sdl_main.h",
@@ -82,6 +86,7 @@ unit SDL2;
 {
   Changelog:
   ----------
+  v.1.80-stable; 09.10.2014: added sdl_cpuinfo.h and sdl_clipboard.h
   v.1.74-stable; 10.11.2013: added sdl_gamecontroller.h
   v.1.73-stable; 08.11.2013: added sdl_hints.h and some keystate helpers
                              thx to Cybermonkey!
@@ -186,6 +191,10 @@ const
 {$I sdltouch.inc}
 {$I sdlgesture.inc}
 {$I sdlevents.inc}
+{$I sdlclipboard.inc}
+{$I sdlcpuinfo.inc}
+{$I sdlfilesystem.inc}
+{$I sdllog.inc}
 {$I sdl.inc}
 
 implementation
@@ -193,9 +202,9 @@ implementation
 //from "sdl_version.h"
 procedure SDL_VERSION(x: PSDL_Version);
 begin
-  x.major := SDL_MAJOR_VERSION;
-  x.minor := SDL_MINOR_VERSION;
-  x.patch := SDL_PATCHLEVEL;
+  x^.major := SDL_MAJOR_VERSION;
+  x^.minor := SDL_MINOR_VERSION;
+  x^.patch := SDL_PATCHLEVEL;
 end;
 
 function SDL_VERSIONNUM(X,Y,Z: UInt32): Cardinal;
@@ -365,6 +374,21 @@ end;
 function SDL_GetEventState(type_: UInt32): UInt8;
 begin
   Result := SDL_EventState(type_, SDL_QUERY);
+end;
+
+// from "sdl_timer.h"
+function SDL_TICKS_PASSED(Const A, B:UInt32):Boolean;
+begin
+   Result := ((Int64(B) - Int64(A)) <= 0)
+end;
+
+// from "sdl_gamecontroller.h"
+  {**
+   *  Load a set of mappings from a file, filtered by the current SDL_GetPlatform()
+   *}
+function SDL_GameControllerAddMappingsFromFile(Const FilePath:PAnsiChar):SInt32;
+begin
+  Result := SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(FilePath, 'rb'), 1)
 end;
 
 end.

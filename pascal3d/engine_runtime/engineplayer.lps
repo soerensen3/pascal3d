@@ -3,16 +3,17 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="p3dvcl"/>
-    <Units Count="20">
+    <BuildModes Active="shadernodes"/>
+    <Units Count="23">
       <Unit0>
         <Filename Value="engineplayer.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="model_test"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="5"/>
-        <CursorPos X="12" Y="35"/>
+        <TopLine Value="9"/>
+        <CursorPos X="4" Y="13"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -20,18 +21,20 @@
         <Filename Value="vars.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="vars"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="22" Y="23"/>
+        <CursorPos X="14" Y="13"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="space_game\initscene.inc"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="178"/>
-        <CursorPos X="111" Y="207"/>
-        <UsageCount Value="173"/>
+        <TopLine Value="149"/>
+        <CursorPos X="28" Y="159"/>
+        <UsageCount Value="202"/>
       </Unit2>
       <Unit3>
         <Filename Value="space_game\inputscene.inc"/>
@@ -39,7 +42,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="117" Y="46"/>
-        <UsageCount Value="173"/>
+        <UsageCount Value="202"/>
       </Unit3>
       <Unit4>
         <Filename Value="space_game\renderscene.inc"/>
@@ -47,7 +50,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="78"/>
         <CursorPos X="18" Y="94"/>
-        <UsageCount Value="173"/>
+        <UsageCount Value="202"/>
       </Unit4>
       <Unit5>
         <Filename Value="physics_test\renderscene.inc"/>
@@ -55,7 +58,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="45"/>
         <CursorPos X="31" Y="58"/>
-        <UsageCount Value="173"/>
+        <UsageCount Value="202"/>
       </Unit5>
       <Unit6>
         <Filename Value="physics_test\initscene.inc"/>
@@ -63,7 +66,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="308"/>
         <CursorPos X="36" Y="319"/>
-        <UsageCount Value="173"/>
+        <UsageCount Value="202"/>
       </Unit6>
       <Unit7>
         <Filename Value="physics_test\inputscene.inc"/>
@@ -71,15 +74,15 @@
         <WindowIndex Value="0"/>
         <TopLine Value="24"/>
         <CursorPos X="28" Y="55"/>
-        <UsageCount Value="173"/>
+        <UsageCount Value="202"/>
       </Unit7>
       <Unit8>
         <Filename Value="template\initscene.inc"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="42" Y="6"/>
-        <UsageCount Value="124"/>
+        <TopLine Value="60"/>
+        <CursorPos X="3" Y="92"/>
+        <UsageCount Value="200"/>
       </Unit8>
       <Unit9>
         <Filename Value="template\inputscene.inc"/>
@@ -87,7 +90,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="37"/>
         <CursorPos X="44" Y="56"/>
-        <UsageCount Value="124"/>
+        <UsageCount Value="200"/>
       </Unit9>
       <Unit10>
         <Filename Value="template\renderscene.inc"/>
@@ -95,15 +98,15 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="124"/>
+        <UsageCount Value="200"/>
       </Unit10>
       <Unit11>
         <Filename Value="line_test\initscene.inc"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2"/>
-        <CursorPos X="1" Y="21"/>
-        <UsageCount Value="123"/>
+        <TopLine Value="20"/>
+        <CursorPos X="24" Y="20"/>
+        <UsageCount Value="200"/>
       </Unit11>
       <Unit12>
         <Filename Value="line_test\inputscene.inc"/>
@@ -111,7 +114,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="55" Y="43"/>
-        <UsageCount Value="123"/>
+        <UsageCount Value="200"/>
       </Unit12>
       <Unit13>
         <Filename Value="line_test\renderscene.inc"/>
@@ -119,7 +122,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="19"/>
-        <UsageCount Value="123"/>
+        <UsageCount Value="200"/>
       </Unit13>
       <Unit14>
         <Filename Value="armature_test\initscene.inc"/>
@@ -127,7 +130,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="72"/>
         <CursorPos X="12" Y="86"/>
-        <UsageCount Value="42"/>
+        <UsageCount Value="141"/>
       </Unit14>
       <Unit15>
         <Filename Value="armature_test\inputscene.inc"/>
@@ -135,7 +138,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="16"/>
         <CursorPos X="69" Y="33"/>
-        <UsageCount Value="42"/>
+        <UsageCount Value="141"/>
       </Unit15>
       <Unit16>
         <Filename Value="armature_test\renderscene.inc"/>
@@ -143,33 +146,61 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="1" Y="29"/>
-        <UsageCount Value="42"/>
+        <UsageCount Value="141"/>
       </Unit16>
       <Unit17>
         <Filename Value="p3dlcl\initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="23"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="89"/>
+        <CursorPos X="49" Y="99"/>
+        <UsageCount Value="122"/>
+        <Loaded Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="p3dlcl\inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="38"/>
-        <CursorPos X="95" Y="52"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <TopLine Value="22"/>
+        <CursorPos X="41" Y="41"/>
+        <UsageCount Value="122"/>
       </Unit18>
       <Unit19>
         <Filename Value="p3dlcl\renderscene.inc"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="10" Y="13"/>
+        <UsageCount Value="122"/>
+        <Loaded Value="True"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="shadernodes\initscene.inc"/>
+        <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="29" Y="23"/>
-        <UsageCount Value="23"/>
+        <CursorPos X="24" Y="20"/>
+        <UsageCount Value="39"/>
         <Loaded Value="True"/>
-      </Unit19>
+      </Unit20>
+      <Unit21>
+        <Filename Value="shadernodes\inputscene.inc"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="39"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="shadernodes\renderscene.inc"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="36" Y="20"/>
+        <UsageCount Value="39"/>
+        <Loaded Value="True"/>
+      </Unit22>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
@@ -179,7 +210,7 @@
     </Build>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="1">
+    <BreakPoints Count="5">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -187,17 +218,42 @@
         <Source Value="G:\home\johannes\Downloads\newton-dynamics-3.11\coreLibrary_300\source\physics\dgCollisionHeightField.cpp"/>
         <Line Value="447"/>
       </Item1>
-    </BreakPoints>
-    <Watches Count="3">
-      <Item1>
-        <Expression Value="Self.BoundingBox.Min"/>
-      </Item1>
-      <Item2 ClassAutoCast="True">
-        <Expression Value="Self.BoundingBox.Center"/>
+      <Item2>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="..\math3d\p3dmath_matrix.inc"/>
+        <Line Value="4"/>
       </Item2>
-      <Item3 ClassAutoCast="True">
-        <Expression Value="Self.BoundingBox.Max"/>
+      <Item3>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="engineplayer.lpr"/>
+        <Line Value="64"/>
       </Item3>
+      <Item4>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="..\engine\p3dwindow.pas"/>
+        <Line Value="392"/>
+      </Item4>
+      <Item5>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="..\engine\p3dwindow.pas"/>
+        <Line Value="393"/>
+      </Item5>
+    </BreakPoints>
+    <Watches Count="2">
+      <Item1>
+        <Expression Value="Self.FName"/>
+      </Item1>
+      <Item2>
+        <Expression Value="Self.FParent"/>
+      </Item2>
     </Watches>
   </Debugging>
   <EditorMacros Count="0"/>

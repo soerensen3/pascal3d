@@ -7,7 +7,7 @@ unit p3d_math3d;
 interface
 
 uses
-  Math3D, LazarusPackageIntf;
+  p3dMath, LazarusPackageIntf;
 
 implementation
 

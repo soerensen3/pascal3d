@@ -8,32 +8,37 @@ program engineplayer;
 {.$DEFINE DEBUG_DEFERRED}
 
 uses
-//  {.$IFDEF USE_ZENGL_STATIC}
   strutils,
   LCLIntf,
+  SDL2,
   dglOpenGL,
-  window_sdl,
-  sdl2,
+  p3dwindow,
   sysutils,
   Classes,
   Interfaces, //crashes in linux without
-  shaders,
+  p3dshaders,
   Math,
-  Math3d,
-  Model,
-  loadmodelfile,
+  p3dMath,
+  p3dmodel,
+  p3dfiletypemodel,
   vars,
-  scene,
-  framebuffer,
-  lighting,
-  RPhysics,
-  Newton,
-  texture_sdl,
-  filewatch,
-  charactercontroller,
-  geometry,
-  p3d_inter;
-//  zglHeader;
+  p3dinput,
+  p3dscene,
+  p3dframebuffer,
+  p3dlighting,
+  //p3dphysics,
+  //Newton,
+  p3dtexture,
+  p3dfilewatch,
+  //p3dcharactercontroller,
+  p3dgeometry,
+  p3dobjects,
+  p3dgui,
+  p3dgui_buttons,
+  p3dgui_stdctrls,
+  p3dbmpfont,
+  p3dbmpfontfile,
+  p3dviewport;
 
 {$DEFINE INTERFACE}
          {$INCLUDE renderscene.inc}
@@ -45,10 +50,6 @@ uses
 {$INCLUDE inputscene.inc}
 
 Begin
-{  zgl_Reg( SYS_LOAD, @Init );
-  zgl_Reg( SYS_DRAW, @Render );
-  zgl_Reg( SYS_EXIT, @DeInit );
-  timer_Add( @Input, 16 );}
   mainwnd:= TSDLWindow.Create;
   mainwnd.OnInit:= @Init;
   mainwnd.OnDeinit:= @DeInit;
@@ -59,14 +60,7 @@ Begin
   mainwnd.OnKey:= @OnKey;
   mainwnd.OnInput:= @OnInput;
   mainwnd.OnResize:= @ResizeWnd;
-//  wnd_ShowCursor( False );
-//  wnd_SetCaption( 'model test' );
 
-//  wnd_ShowCursor( TRUE );
-
-//  scr_SetOptions( 800, 600, REFRESH_MAXIMUM, FALSE, FALSE );
-
-//  zgl_Init();
   mainwnd.Run;
   mainwnd.Free;
 End.
