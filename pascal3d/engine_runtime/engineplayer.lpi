@@ -57,7 +57,7 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);physics_test"/>
-            <Libraries Value="C:/MinGW/lib/"/>
+            <Libraries Value="C:/MinGW/lib"/>
             <UnitOutputDirectory Value="bin/$(TargetOS)/$(TargetCPU)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -409,4 +409,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>

@@ -84,7 +84,7 @@
         <Type Value="Include"/>
       </Item16>
       <Item17>
-        <Filename Value="sdl2_mixer.pas"/>
+        <Filename Value="SDL2_mixer.pas"/>
         <UnitName Value="SDL2_mixer"/>
       </Item17>
       <Item18>
@@ -92,7 +92,7 @@
         <Type Value="Include"/>
       </Item18>
       <Item19>
-        <Filename Value="sdl2_image.pas"/>
+        <Filename Value="SDL2_image.pas"/>
         <UnitName Value="sdl2_image"/>
       </Item19>
       <Item20>
@@ -152,7 +152,7 @@
         <Type Value="Include"/>
       </Item33>
       <Item34>
-        <Filename Value="sdl2_ttf.pas"/>
+        <Filename Value="SDL2_ttf.pas"/>
         <UnitName Value="sdl2_ttf"/>
       </Item34>
       <Item35>

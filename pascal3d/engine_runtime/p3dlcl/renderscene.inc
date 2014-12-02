@@ -118,6 +118,7 @@ begin
                                                                   Ord( InputManager.Mouse.Buttons[ 3 ]), Ord( InputManager.Mouse.Buttons[ 4 ]),
                                                                   Ord( InputManager.Mouse.DButtons[ 0 ]), Ord( InputManager.Mouse.DButtons[ 1 ]), Ord( InputManager.Mouse.DButtons[ 2 ]),
                                                                   Ord( InputManager.Mouse.DButtons[ 3 ]), Ord( InputManager.Mouse.DButtons[ 4 ])]);
+
   GUIManager.Input;
   GUIManager.Render;
 

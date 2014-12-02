@@ -237,16 +237,16 @@ var
 
 begin
   Result:= nil;
+  cx:= X - FScreenLeft;
+  cy:= Y - FScreenTop;
   if (( InputManager.Mouse.DX <> 0 ) or ( InputManager.Mouse.DY <> 0 )) then
-    MouseMove( X, Y );
+    MouseMove( cx, cy );
   if ( PtInRect( Rect( FScreenLeft, FScreenTop, FScreenLeft + FScreenWidth, FScreenTop + FScreenHeight ), Point( X, Y ))) then
     begin
       Result:= Controls.Input;
       if ( not Assigned( Result )) then
         begin
           InputState:= InputState + [ gcisMouseOver ];
-          cx:= X - FScreenLeft;
-          cy:= Y - FScreenTop;
           mdown_test:= ( mb1 AND dmb1 ) OR ( mb2 AND dmb2 ) OR ( mb3 AND dmb3 );
           mup_test:= (( not mb1 ) AND dmb1 ) OR (( not mb2 ) AND dmb2 ) OR (( not mb3 ) AND dmb3 );
           if ( mdown_test ) then
@@ -348,13 +348,14 @@ end;
 
 procedure TP3DGraphicControl.Render( BaseColor: TVec4 );
 begin
-  //P3DViewports.Push( FScreenLeft, FScreenTop, FScreenWidth, FScreenHeight );
+  P3DViewports.Push( FScreenLeft, FScreenTop, FScreenWidth, FScreenHeight );
   FScreenColor:= BaseColor;
 
-  Draw;
+  Canvas.RenderRect( vec2( 0, 0 ), vec2( FScreenWidth, FScreenHeight ), vec4( vec3( 1 ), 0.2 ));
+  //Draw;
 
   Controls.Render( BaseColor);
-  //P3DViewports.Pop();
+  P3DViewports.Pop();
 end;
 
 

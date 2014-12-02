@@ -7,6 +7,7 @@ interface
 uses
   Classes,
   SysUtils,
+  p3dgeometry,
   dglOpenGL;
 
 type
@@ -22,6 +23,7 @@ type
 
   TP3DViewportStack = class
     private
+      FWndHeight: Integer;
       VPs: array of TP3DViewport;
       function GetCount: Integer;
       function GetVP( Index: Integer ): TP3DViewport;
@@ -36,6 +38,7 @@ type
 
       property VP[ Index: Integer ]: TP3DViewport read GetVP write SetVP;
       property Count: Integer read GetCount;
+      property WndHeight: Integer read FWndHeight write FWndHeight;
   end;
 
 var
@@ -62,7 +65,8 @@ end;
 
 procedure TP3DViewportStack.ApplyVP(VP: TP3DViewport);
 begin
-  glViewport( VP.Left, VP.Top, VP.Width, VP.Height );
+  glViewport( VP.Left, WndHeight -VP.Top-VP.Height, VP.Width, VP.Height );
+  Setup2D( VP.Left, VP.Top, VP.Width, VP.Height );
 end;
 
 procedure TP3DViewportStack.Push(Left, Top, Width, Height: Integer);

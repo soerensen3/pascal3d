@@ -15,6 +15,8 @@ begin
 end;
 
 procedure DrawObjects( Scene: tScene );
+var
+  i: Integer;
 begin
   if ( not Assigned( ActShad )) then
     exit;
@@ -22,13 +24,18 @@ begin
   glDisable( GL_CULL_FACE );
   GUIManager.Input;
   GUIManager.Render;
+  for i:= 0 to GUIManager.Controls.Count - 1 do
+    begin
+      GUIManager.Controls[ i ].Left:= InputManager.Mouse.X;
+      GUIManager.Controls[ i ].Top:= InputManager.Mouse.Y;
+    end;
   InputManager.NextCycle;
   //DRAW CODE HERE
 end;
 
 procedure ResizeWnd( Sender: TSDLWindow );
 begin
-  Setup2D( Sender.Width, Sender.Height );
+  Setup2D( 0, 0, Sender.Width, Sender.Height );
 end;
 
 

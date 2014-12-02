@@ -99,11 +99,12 @@ type
   function ClientToScreen( Window: TSDLWindow; X, Y: Integer ): TPoint;
   function ScreenToClient( Window: TSDLWindow; X, Y: Integer ): TPoint;
 
+
 var
   MainWindow: TSDLWindow;
 
 implementation
-  uses p3dinput;
+  uses p3dinput, p3dviewport;
 
 function ClientToScreen(Window: TSDLWindow; X, Y: Integer): TPoint;
 begin
@@ -245,6 +246,7 @@ begin
   if w <= 0 then w := 1;
   if h <= 0 then h := 1;
   glViewport( 0, 0, w, h );
+  p3dviewport.P3DViewports.WndHeight:= h;
 end;
 
 

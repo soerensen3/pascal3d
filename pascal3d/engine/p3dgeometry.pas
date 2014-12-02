@@ -22,7 +22,7 @@ procedure RenderLine3D( p1, p2: TVec3; Color: TVec4; const Thickness: Single = 1
 procedure RenderLines3D( points: array of TVec3; Color: TVec4; const Thickness: Single = 1 );
 procedure RenderLines3D( points: TVec3List; Color: TVec4; const Thickness: Single = 1 );
 
-procedure Setup2D( Width, Height: Single );
+procedure Setup2D( Left, Top, Width, Height: Single );
 procedure Setup3D( Mat: TMat4 );
 
 procedure InitGeom( ALineShader2D: TShader; ALineShader3D: TShader );
@@ -351,12 +351,12 @@ begin
 
 end;
 
-procedure Setup2D( Width, Height: Single );
+procedure Setup2D(Left, Top, Width, Height: Single);
 begin
   if ( not Assigned( LineShader2D )) then
     Exit;
 
-  proj2D:= mat4orthoRH( Width, -Height, -1, 1 ) * mat4translate( vec4( -1, 1, 0, 1 ));
+  proj2D:= {mat4translate( vec4( -Left, Top, 0, 1 )) * }mat4orthoRH( Left, Left + Width, Top, Top + Height );// * mat4translate( vec4( 0, 1, 0, 1 ));
 
   LineShader2D.Enable;
   glUniformMatrix4fv( LineShader2D.Uniforms.AddrByName( 'mat' ), 1, False, @proj2D );

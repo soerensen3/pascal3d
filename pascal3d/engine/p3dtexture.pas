@@ -5,7 +5,7 @@ unit p3dtexture;
 interface
 
 uses
-  Classes, SysUtils, sdl2, sdl2_image, dglOpenGL;
+  Classes, SysUtils, SDL2, SDL2_image, dglOpenGL;
 
 type
   {PSDL_SW_YUVTexture = Pointer;

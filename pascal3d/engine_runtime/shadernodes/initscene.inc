@@ -86,6 +86,7 @@ begin
 
   Sender.Width:= 800;
   Sender.Height:= 600;
+  //Sender.FullScreen:= True;
 
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -103,7 +104,7 @@ begin
   mainscene.Cam:= maincamera;
 
   ParentList:= TObjectList.Create;
-  Setup2D( mainwnd.Width, mainwnd.Height );
+  Setup2D( 0, 0, mainwnd.Width, mainwnd.Height );
 
   p3dviewports.Push( 0, 0, mainwnd.Width, mainwnd.Height );
 

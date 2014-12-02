@@ -164,11 +164,13 @@ end;
 procedure TP3DEdit.SetSel1( AValue: Integer );
 begin
   FSel1:= Max( 0, Min( AValue, Length( FCaption )));
+  WriteLn( 'Selection 1: ', FSel1, ' Selection 2: ', FSel2 );
 end;
 
 procedure TP3DEdit.SetSel2( AValue: Integer );
 begin
   FSel2:= Max( 0, Min( AValue, Length( FCaption )));
+  WriteLn( 'Selection 1: ', FSel1, ' Selection 2: ', FSel2 );
 end;
 
 procedure TP3DEdit.SetSelStart(AValue: Integer);

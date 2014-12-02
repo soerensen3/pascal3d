@@ -104,9 +104,10 @@ function mat4perspectiveFOVLH( FOV, Aspect, Near, Far: Float ): TMatrix;
 //Returns a right handed perspective 4 by 4 projection matrix.
 function mat4perspectiveFOVRH( FOV, Aspect, Near, Far: Float ): TMatrix;
 //Returns a left handed orthogonal 4 by 4 projection matrix.
-function mat4orthoLH( w, h, Near, Far: Float ): TMatrix;
+//function mat4orthoLH( w, h, Near, Far: Float ): TMatrix;
 //Returns a right handed orthogonal 4 by 4 projection matrix.
-function mat4orthoRH( w, h, Near, Far: Float ): TMatrix;
+//function mat4orthoRH( w, h, Near, Far: Float ): TMatrix;
+function mat4orthoRH( left, right, top, bottom: Float ): TMatrix;
 //Returns a left handed 4 by 4 lookat matrix which can be used for cameras.
 function mat4lookatLH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
 //Returns a right handed 4 by 4 lookat matrix which can be used for cameras.
@@ -568,22 +569,31 @@ begin
   Result._20:= 0; Result._21:= 0; Result._22:= Far/( Near - Far );         Result._23:= -1;
   Result._30:= 0; Result._31:= 0; Result._32:= Near * Far/( Near - Far );  Result._33:= 0;
 end;
-
+{
 function mat4orthoLH( w, h, Near, Far: Float ): TMatrix;
 begin
   Result._00:= 2/w; Result._01:= 0;   Result._02:= 0;                   Result._03:= 0;
-  Result._10:= 0;   Result._11:= 2/h; Result._12:= 0;                   Result._13:= 0;
+  Result._10:= 0;   Result._11:= -2/h; Result._12:= 0;                   Result._13:= 0;
   Result._20:= 0;   Result._21:= 0;   Result._22:= 1/( Far - Near );    Result._23:= 0;
   Result._30:= 0;   Result._31:= 0;   Result._32:= Near/( Near - Far ); Result._33:= 1;
 end;
 
 function mat4orthoRH( w, h, Near, Far: Float ): TMatrix;
 begin
-  Result._00:= 2/w; Result._01:= 0;   Result._02:= 0;                   Result._03:= 0;
-  Result._10:= 0;   Result._11:= 2/h; Result._12:= 0;                   Result._13:= 0;
+  Result._00:= 2/w; Result._01:= 0;   Result._02:= 0;                   Result._03:= -1;
+  Result._10:= 0;   Result._11:= -2/h; Result._12:= 0;                   Result._13:= 0;
   Result._20:= 0;   Result._21:= 0;   Result._22:= 1/( Near - Far );    Result._23:= 0;
-  Result._30:= 0;   Result._31:= 0;   Result._32:= Near/( Near - Far ); Result._33:= 1;
+  Result._30:= 0;   Result._31:= 1;   Result._32:= Near/( Near - Far ); Result._33:= 1;
 end;
+}
+function mat4orthoRH( left, right, top, bottom: Float ): TMatrix;
+begin
+  Result._00:= 2/( right - left ); Result._01:= 0;   Result._02:= 0;     Result._03:= 0;
+  Result._10:= 0;   Result._11:= 2/( top - bottom ); Result._12:= 0;    Result._13:= 0;
+  Result._20:= 0;   Result._21:= 0;   Result._22:= -1;                    Result._23:= 0;
+  Result._30:= - (right + left) / (right - left);   Result._31:= - (top + bottom) / (top - bottom);   Result._32:= 0; Result._33:= 1;
+end;
+
 
 function mat4lookatLH( EyePt, LookAt, UpDir: TVec3 ): TMatrix;
 var
