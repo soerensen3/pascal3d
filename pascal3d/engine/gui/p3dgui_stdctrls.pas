@@ -12,6 +12,7 @@ uses
   p3dMath,
   p3dobjects,
   p3dinput,
+  p3dcanvas,
   p3dgui,
   p3dgui_buttons,
   p3dgui_focuscontrol;
@@ -260,7 +261,7 @@ begin
     end;
 
   if ( Assigned( FOnDraw )) then
-    FOnDraw( Self, FScreenLeft, FScreenTop, FScreenWidth, FScreenHeight );
+    FOnDraw( Self, Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height );
 end;
 
 function TP3DEdit.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer ): TP3DGraphicControl;

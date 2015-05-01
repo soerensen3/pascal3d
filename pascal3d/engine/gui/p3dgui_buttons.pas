@@ -8,6 +8,7 @@ interface
     p3dbmpfont,
     p3dgui_focuscontrol,
     p3dinput,
+    p3dcanvas,
     Types;
 
   type
@@ -31,8 +32,9 @@ interface
     end;
 
     TP3DButton = class( TP3DFocusControl )
-    private
-      FFont: TP3DCanvasFont;
+      private
+        FFont: TP3DCanvasFont;
+
       protected
         FCaption: String;
         FPresetDown: TP3DButtonPreset;

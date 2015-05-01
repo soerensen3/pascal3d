@@ -31,8 +31,8 @@ type
       procedure ApplyVP( VP: TP3DViewport );
 
     public
-      procedure Push( Left, Top, Width, Height: Integer );
-      procedure Push( VP: TP3DViewport );
+      function Push( Left, Top, Width, Height: Integer ): Integer;
+      function Push( VP: TP3DViewport ): Integer;
       function Pop: TP3DViewport;
       function Peek: TP3DViewport;
 
@@ -69,7 +69,7 @@ begin
   Setup2D( VP.Left, VP.Top, VP.Width, VP.Height );
 end;
 
-procedure TP3DViewportStack.Push(Left, Top, Width, Height: Integer);
+function TP3DViewportStack.Push(Left, Top, Width, Height: Integer): Integer;
 var
   len: Integer;
 begin
@@ -80,9 +80,10 @@ begin
   VPs[ len ].Width:= Width;
   VPs[ len ].Height:= Height;
   ApplyVP( VPs[ len ]);
+  Result:= len;
 end;
 
-procedure TP3DViewportStack.Push(VP: TP3DViewport);
+function TP3DViewportStack.Push(VP: TP3DViewport): Integer;
 var
   len: Integer;
 begin
@@ -90,6 +91,7 @@ begin
   SetLength( VPs, len + 1 );
   VPs[ len ]:= VP;
   ApplyVP( VP );
+  Result:= len;
 end;
 
 function TP3DViewportStack.Pop: TP3DViewport;

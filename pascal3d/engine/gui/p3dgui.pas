@@ -24,7 +24,8 @@ interface
     p3dinput,
     p3dbmpfont,
     p3dMath,
-    p3dviewport;
+    p3dviewport,
+    p3dcanvas;
 
   type
     TP3DGraphicControl = class;
@@ -38,30 +39,6 @@ interface
 
     TControlAlign = ( alNone, alLeft, alRight, alClient, alTop, alBottom );
 
-    { TP3DCanvasFont }
-
-    TP3DCanvasFont = class ( TPersistent )
-      private
-        FFontColor: TVec4;
-        FFontName: String;
-        FFontSize: Integer;
-        FOnChange: TNotifyEvent;
-
-        procedure SetFontColor(AValue: TVec4);
-        procedure SetFontName(AValue: String);
-        procedure SetFontSize(AValue: Integer);
-
-      public
-        procedure Assign( Font: TP3DCanvasFont );
-        constructor Create;
-
-        property Color: TVec4 read FFontColor write SetFontColor; //Object properties can't be published for some reason
-
-      published
-        property Name: String read FFontName write SetFontName;
-        property Size: Integer read FFontSize write SetFontSize;
-        property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    end;
 
     { TGUIManager }
 
@@ -104,7 +81,7 @@ interface
 
       public
         procedure Realign;
-        procedure Render( base: TVec4);
+        procedure Render(base: TVec4; ScrollAcc: TVec2);
         function Input: TP3DGraphicControl;
         constructor Create( AParent: TP3DGraphicControl; AManager: TGUIManager );
         destructor Destroy; override;
@@ -121,7 +98,7 @@ interface
 
 
   {$DEFINE INTERFACE}
-  {$INCLUDE p3dgui_canvas.inc}
+  {.$INCLUDE p3dgui_canvas.inc}
   {$INCLUDE p3dgui_graphiccontrol.inc}
 
   {$UNDEF INTERFACE}
@@ -135,54 +112,10 @@ uses
   StrUtils,
   Types;
 
-{ TP3DCanvasFont }
-
-procedure TP3DCanvasFont.SetFontName(AValue: String);
-begin
-  if FFontName=AValue then Exit;
-  FFontName:=AValue;
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
-end;
-
-procedure TP3DCanvasFont.SetFontColor(AValue: TVec4);
-begin
-  if FFontColor=AValue then Exit;
-  FFontColor:=AValue;
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
-end;
-
-procedure TP3DCanvasFont.SetFontSize(AValue: Integer);
-begin
-  if FFontSize=AValue then Exit;
-  FFontSize:=AValue;
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
-end;
-
-procedure TP3DCanvasFont.Assign(Font: TP3DCanvasFont);
-begin
-  if ( Assigned( Font )) then
-    begin
-      Name:= Font.Name;
-      Size:= Font.Size;
-      Color:= Font.Color;
-    end;
-end;
-
-constructor TP3DCanvasFont.Create;
-begin
-  inherited;
-  Size:= 16;
-  Color:= vec4( 0, 0, 0, 1 );
-  Name:= 'Deja Vu Sans';
-end;
-
 
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dgui_graphiccontrol.inc}
-{$INCLUDE p3dgui_canvas.inc}
+{.$INCLUDE p3dgui_canvas.inc}
 
 {$MACRO ON}
 {$DEFINE TCustomList:= TCustomControlList}
@@ -410,7 +343,7 @@ begin
     end;
 end;
 
-procedure TControlBuffer.Render(base: TVec4);
+procedure TControlBuffer.Render(base: TVec4; ScrollAcc: TVec2);
 var
   I: Integer;
 begin
@@ -420,7 +353,7 @@ begin
 
   for I:= 0 to Count - 1 do
     if ( Items[ I ].Visible ) then
-      Items[ I ].Render( base );
+      Items[ I ].Render( base, ScrollAcc );
 end;
 
 procedure TControlBuffer.BringToFront( Index: Integer );
@@ -564,7 +497,7 @@ end;
 
 procedure TGUIManager.Render;
 begin
-  Controls.Render( vec4( 1 ));
+  Controls.Render( vec4( 1 ), vec2(0));
 end;
 
 procedure TGUIManager.SetMouseX( const Value: Integer );

@@ -114,6 +114,8 @@ type
       destructor Destroy; override;
 
       procedure Render( p: TVec2; Color: TVec4 );
+      procedure Render( p: TVec2; Color: TVec4; proj: TMat4 );
+
       function WidthFromTo( idx1: Integer; idx2: Integer ): TVec4;
 
       property Text: String read FText;
@@ -275,7 +277,10 @@ var
   mat: GLint;
   mt: TMat4;
   m: TMat4;
+  OldShader: TShader;
+
 begin
+  OldShader:= ActShad;
   if ( Assigned( Font.FontManager.Shader )) then
     Font.FontManager.Shader.Enable;
   cl:= ActShad.Attributes.AddrByName( 'in_color' );
@@ -301,6 +306,50 @@ begin
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
   glUniformMatrix4fv( mat, 1, False, @p3dgeometry.proj2D );
+  if ( Assigned( OldShader )) then
+    OldShader.Enable
+  else
+    ActShad.Disable;
+end;
+
+procedure TP3DText.Render(p: TVec2; Color: TVec4; proj: TMat4);
+var
+  cl: GLint;
+  vt: GLint;
+  tc: GLint;
+  tx: GLint;
+  mat: GLint;
+  mt: TMat4;
+  m: TMat4;
+  OldShader: TShader;
+begin
+  OldShader:= ActShad;
+  if ( Assigned( Font.FontManager.Shader )) then
+    Font.FontManager.Shader.Enable;
+  cl:= ActShad.Attributes.AddrByName( 'in_color' );
+
+  tx:= ActShad.Uniforms.AddrByName( 'tex0' );
+  mat:= ActShad.Uniforms.AddrByName( 'mat' );
+
+  glActiveTexture( GL_TEXTURE0 );
+  glEnable( GL_TEXTURE_2D );
+  glBindTexture( GL_TEXTURE_2D, Font.Textures[ 0 ].fGLTexture );
+
+  mt:= mat4translate( vec4( p, 0, 1 ));
+  m:= mt * proj;
+  glUniform1i( tx, 0 );
+  glUniformMatrix4fv( mat, 1, False, @m );
+  glVertexAttrib4f( cl, Color.X, Color.Y, Color.Z, Color.A );
+  Vertices.SetAttribArray( 0 );
+  Vertices.Bind();
+  TexCoords.SetAttribArray( 4 );
+  TexCoords.Bind();
+  Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
+  glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
+  if ( Assigned( OldShader )) then
+    OldShader.Enable
+  else
+    ActShad.Disable;
 end;
 
 function TP3DText.WidthFromTo(idx1: Integer; idx2: Integer): TVec4;

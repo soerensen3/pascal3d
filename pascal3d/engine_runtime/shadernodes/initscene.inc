@@ -12,6 +12,8 @@ var
   ParentList: TObjectList;
   dejavu: TP3DFont;
 
+  canvas: TP3DCanvas2D;
+
 function LoadShader: Boolean;
 begin
   Result:= False;
@@ -79,7 +81,20 @@ end;
 procedure Init( Sender: TSDLWindow );
 var
   grpbx: TP3DGroupBox;
+  procedure MatrixTest;
+  var
+    a: TMat4;
+    b: TMat4;
+  begin
+    a:= mat4( 1 );
+    b:= a;
+    WriteLn( 'a = b: ', BoolToStr( a = b, True ));
+    b._12:= 5;
+    WriteLn( 'a = b: ', BoolToStr( a = b, True ));
+  end;
+
 begin
+  MatrixTest;
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
   pathfonts:= ExtractFilePath( ParamStr( 0 )) + pathfonts;
@@ -104,7 +119,7 @@ begin
   mainscene.Cam:= maincamera;
 
   ParentList:= TObjectList.Create;
-  Setup2D( 0, 0, mainwnd.Width, mainwnd.Height );
+  //Setup2D( 0, 0, mainwnd.Width, mainwnd.Height );
 
   p3dviewports.Push( 0, 0, mainwnd.Width, mainwnd.Height );
 
@@ -123,6 +138,8 @@ begin
         Align:= alTop;
       end;
     end;
+  LineShader2D.Enable;
+  canvas:= TP3DCanvas2D.Create( Nil );
 
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
 end;
@@ -132,6 +149,8 @@ procedure DeInit( Sender: TSDLWindow );
 begin
   mainscene.Free;
   maincamera.Free;
+
+  canvas.Free;
 
   DeInitPhysics;
 

@@ -8,6 +8,8 @@ TP3DGCInputFlags = set of TP3DGCInputState;
 TP3DGraphicControl = class ( TBaseObject )
   private
     FInputState: TP3DGCInputFlags;
+    function GetScroll: TVec2;
+    procedure SetScroll(AValue: TVec2);
   protected
     FLeft,
     FTop,
@@ -16,12 +18,7 @@ TP3DGraphicControl = class ( TBaseObject )
     //FIndex: Integer;
     FOwnerCtrlBuf: TControlBuffer;
     FControls: TControlBuffer;
-    FScreenLeft: Integer;
-    FScreenTop: Integer;
-    FScreenWidth: Integer;
-    FScreenHeight: Integer;
-    FScrollX: Integer;
-    FScrollY: Integer;
+
     FVisible,
     FEnabled: Boolean;
     FOnDraw: TGUIDrawProc;
@@ -41,15 +38,15 @@ TP3DGraphicControl = class ( TBaseObject )
     FLastClick: Integer;
     FOnParentRealign: TNotifyEvent;
     FTag: Integer;
-    FScreenColor: TVec4;
+    //FScreenColor: TVec4;
     FClientRect: TRect;
     FBoundsLeft: Integer;
     FBoundsTop: Integer;
     FBoundsBottom: Integer;
     FBoundsRight: Integer;
-    FCanvas: TP3DCanvas;
+    FCanvas: TP3DCanvas2D;
 
-    procedure Render( BaseColor: TVec4 ); virtual;
+    procedure Render( BaseColor: TVec4; ScrollAcc: TVec2 ); virtual;
     procedure SetAlign( const Value: TControlAlign ); virtual;
     procedure SetHeight( const Value: Integer ); virtual;
     procedure SetLeft( const Value: Integer ); virtual;
@@ -87,9 +84,10 @@ TP3DGraphicControl = class ( TBaseObject )
 
     property ParentCtrl: TControlBuffer read FOwnerCtrlBuf write FOwnerCtrlBuf;
     property Controls: TControlBuffer read FControls write FControls;
-    property Canvas: TP3DCanvas read FCanvas write FCanvas;
+    property Canvas: TP3DCanvas2D read FCanvas write FCanvas;
     property ClientRect: TRect read FClientRect;
     property InputState: TP3DGCInputFlags read FInputState write FInputState;
+    property Scroll: TVec2 read GetScroll write SetScroll;
 
   published
     property BoundsLeft: Integer index 0 read FBoundsLeft write SetBounds;
@@ -133,7 +131,7 @@ begin
   inherited Create( AOwner );
   Manager:= AManager;
   Controls:= TControlBuffer.Create( Self, Manager );
-  FCanvas:= TP3DCanvas.Create( Self );
+  FCanvas:= TP3DCanvas2D.Create( Self );
   if ( Assigned( Parent )) then
     ParentCtrl:= Parent.Controls
   else
@@ -142,8 +140,8 @@ begin
 
   Visible:= True;
   Enabled:= True;
-  FScrollX:= 0;
-  FScrollY:= 0;
+  Scroll.X:= 0;
+  Scroll.Y:= 0;
   Width:= 50;
   Height:= 50;
 end;
@@ -159,7 +157,7 @@ end;
 procedure TP3DGraphicControl.Draw;
 begin
   if ( Assigned( FOnDraw )) then
-    FOnDraw( Self, FScreenLeft, FScreenTop, FScreenWidth, FScreenHeight );
+    FOnDraw( Self, Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height );
 end;
 
 function TP3DGraphicControl.GetParent: TP3DGraphicControl;
@@ -176,7 +174,7 @@ end;
 
 procedure TP3DGraphicControl.MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer );
 begin
-  if (( X >= 0 ) and ( Y >= 0 ) and ( X <= FScreenWidth ) and ( Y <= FScreenHeight )) then
+  if (( X >= 0 ) and ( Y >= 0 ) and ( X <= Canvas.Width ) and ( Y <= Canvas.Height )) then
     if ( Assigned( FOnMouseClick )) then
       FOnMouseClick( Self, mb1, mb2, mb3, X, Y );
   if ( FLastClick >= SDL_GetTicks ) then
@@ -225,8 +223,8 @@ var
 
   procedure ReleaseButtons;
   begin
-    cx:= X - FScreenLeft;
-    cy:= Y - FScreenTop;
+    cx:= X - Canvas.Left;
+    cy:= Y - Canvas.Top;
     if ( gcisMouseBtn1Down in InputState ) then
       MouseUp( True, False, False, cx, cy );
     if ( gcisMouseBtn2Down in InputState ) then
@@ -237,11 +235,11 @@ var
 
 begin
   Result:= nil;
-  cx:= X - FScreenLeft;
-  cy:= Y - FScreenTop;
+  cx:= X - Canvas.Left;
+  cy:= Y - Canvas.Top;
   if (( InputManager.Mouse.DX <> 0 ) or ( InputManager.Mouse.DY <> 0 )) then
     MouseMove( cx, cy );
-  if ( PtInRect( Rect( FScreenLeft, FScreenTop, FScreenLeft + FScreenWidth, FScreenTop + FScreenHeight ), Point( X, Y ))) then
+  if ( PtInRect( Rect( Canvas.Left, Canvas.Top, Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), Point( X, Y ))) then
     begin
       Result:= Controls.Input;
       if ( not Assigned( Result )) then
@@ -323,39 +321,55 @@ begin
     begin
       if ( NoBounds ) then
         begin
-          FScreenLeft:= Left + Parent.FScreenLeft;
-          FScreenTop:= Top + Parent.FScreenTop;
-          FScreenWidth:= Min( Parent.Width - Left, Width );
-          FScreenHeight:= Min( Parent.Height - Top, Height );
+          Canvas.Left:= Left + Parent.Canvas.Left;
+          Canvas.Top:= Top + Parent.Canvas.Top;
+          Canvas.Width:= Min( Parent.Width - Left, Width );
+          Canvas.Height:= Min( Parent.Height - Top, Height );
         end
       else
         begin
-          FScreenLeft:= Left + Parent.FScreenLeft + Parent.ClientRect.Left;
-          FScreenTop:= Top + Parent.FScreenTop + Parent.ClientRect.Top;
-          FScreenWidth:= Min( Parent.ClientRect.Right - Left, Width );
-          FScreenHeight:= Min( Parent.ClientRect.Bottom - Top, Height );
+          Canvas.Left:= Left + Parent.Canvas.Left + Parent.ClientRect.Left;
+          Canvas.Top:= Top + Parent.Canvas.Top + Parent.ClientRect.Top;
+          Canvas.Width:= Min( Parent.ClientRect.Right - Left, Width );
+          Canvas.Height:= Min( Parent.ClientRect.Bottom - Top, Height );
         end;
     end
   else
     begin
-      FScreenLeft:= Left;
-      FScreenTop:= Top;
-      FScreenWidth:= Min( MainWindow.Width - Left, Width ); //TODO: Support for multiple windows
-      FScreenHeight:= Min( MainWindow.Height - Top, Height );
+      Canvas.Left:= Left;
+      Canvas.Top:= Top;
+      Canvas.Width:= Min( MainWindow.Width - Left, Width ); //TODO: Support for multiple windows
+      Canvas.Height:= Min( MainWindow.Height - Top, Height );
     end;
   UpdateClientRect;
 end;
 
-procedure TP3DGraphicControl.Render( BaseColor: TVec4 );
+function TP3DGraphicControl.GetScroll: TVec2;
 begin
-  P3DViewports.Push( FScreenLeft, FScreenTop, FScreenWidth, FScreenHeight );
-  FScreenColor:= BaseColor;
+  Result:= Canvas.Scroll;
+end;
 
-  Canvas.RenderRect( vec2( 0, 0 ), vec2( FScreenWidth, FScreenHeight ), vec4( vec3( 1 ), 0.2 ));
-  //Draw;
+procedure TP3DGraphicControl.SetScroll(AValue: TVec2);
+begin
+  Canvas.Scroll:= AValue;
+end;
 
-  Controls.Render( BaseColor);
-  P3DViewports.Pop();
+procedure TP3DGraphicControl.Render(BaseColor: TVec4; ScrollAcc: TVec2);
+var
+  OldScroll: TVec2;
+begin
+  //P3DViewports.Push( Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height );
+  Canvas.Lock;
+  OldScroll:= Scroll;
+  Canvas.Scroll:= ScrollAcc + Scroll;
+  Canvas.ScreenColor:= BaseColor;
+
+  Draw;
+
+  Canvas.Unlock();
+  Canvas.Scroll:= OldScroll;
+  Controls.Render( BaseColor, ScrollAcc + Scroll );
+  //P3DViewports.Pop();
 end;
 
 

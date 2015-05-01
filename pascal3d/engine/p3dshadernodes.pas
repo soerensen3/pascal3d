@@ -14,11 +14,11 @@ type
   TP3DShaderNodeVariableLink = class;
 
   { TP3DShaderNodeVariable }
-
+  // Base Type for all Nodes
   TP3DShaderNodeVariable = class
     private
       FVarType: String;
-
+      // Parse the node and return string output
       function GetStringOutput( const Link: TP3DShaderNodeVariableLink = nil ): String; virtual;
 
     published
@@ -38,9 +38,18 @@ type
     public
       function GetStringOutput( const Link: TP3DShaderNodeVariableLink = nil ): String;
       function FindVariableInput( Name: String ): Integer;
+      //function FindVariableLink( Name: String ): Integer;
   end;
 
   { TP3DShaderNodeVariableInline }
+  {
+   inline text is just written as a child element of any other node
+   ...
+   <node name="fshader">
+   #version 330
+   </node>
+   ...
+  }
 
   TP3DShaderNodeVariableInline = class( TP3DShaderNodeVariable )
     private
@@ -53,6 +62,14 @@ type
   end;
 
   { TP3DShaderNodeVariableInput }
+  {
+   input is just put as an empty element tag or with a child element which is
+   only visible if it is linked to another node.
+   ...
+   gl_Position = <input type="vec4" name="gl_position" required="yes"/>;<br/>
+   </node>
+   ...
+  }
 
   TP3DShaderNodeVariableInput = class( TP3DShaderNodeVariable )
     private
@@ -138,6 +155,11 @@ type
     procedure LoadLibrary( FileName: String );
     procedure LoadLibraryPath( PathName: String; const Ext: String = '*.*' );
     function FindReference( Ref: String ): TP3DShaderNode;
+    function FindNode( Name: String ): TP3DShaderNode;
+  end;
+
+  TP3DNodeShaderBase = class( TP3DShaderNodeLibrary )
+    //function Connect( LinkName: String; Target: String ): Boolean;
   end;
 
 var
@@ -239,6 +261,19 @@ begin
       Result:= Node;
 end;
 
+function TP3DShaderNodeLibrary.FindNode(Name: String): TP3DShaderNode;
+var
+  Item: TP3DShaderNode;
+begin
+  Result:= nil;
+  for Item in Self do
+    if ( Item.Name = Name ) then
+      begin
+        Result:= Item;
+        Break;
+      end;
+end;
+
 { TP3DShaderNodeVariableLink }
 
 constructor TP3DShaderNodeVariableLink.Create;
@@ -250,7 +285,6 @@ end;
 destructor TP3DShaderNodeVariableLink.Destroy;
 begin
   Fragments.Free;
-
 
   inherited Destroy;
 end;
@@ -360,145 +394,7 @@ end;
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
-procedure LoadVariableFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode );
-  var
-    Item: TP3DShaderNodeVariable;
-    name: TDOMNode;
-    vartype: TDOMNode;
-    required: TDOMNode;
-begin
-  Item:= nil;
-  case ( Node.NodeName ) of
-    '#text':
-      begin
-        Item:= TP3DShaderNodeVariableInline.Create;
-        //if ( Node.HasChildNodes ) then
-        //  if ( Node.FirstChild.NodeName = '#text' ) then
-        //     TP3DShaderNodeVariableInline( Item ).Text:= Node.FirstChild.NodeValue;
-        TP3DShaderNodeVariableInline( Item ).Text:= StringReplace( Node.NodeValue, LineEnding, '', [rfReplaceAll]);
-        WriteLn( 'inline: ' + Copy( TP3DShaderNodeVariableInline( Item ).Text, 1, 10 ) + '...' );
-      end;
-    'br':
-    begin
-      Item:= TP3DShaderNodeVariableInline.Create;
-      TP3DShaderNodeVariableInline( Item ).Text:= LineEnding;
-      WriteLn( 'inline: <br>' );
-    end;
-    'input':
-      begin
-        name:= Node.Attributes.GetNamedItem( 'name' );
-        required:= Node.Attributes.GetNamedItem( 'required' );
-        vartype:= Node.Attributes.GetNamedItem( 'type' );
-        Item:= TP3DShaderNodeVariableInput.Create;
-
-        if ( not ( Assigned( name ))) then
-          raise Exception.Create( Format( 'Error while compiling %s. Input must have a name!', [ Module ]));
-        TP3DShaderNodeVariableInput( Item ).Name:= name.NodeValue;
-
-        if ( not ( Assigned( vartype ))) then
-          TP3DShaderNodeVariableInput( Item ).VarType:= 'any'
-        else
-          TP3DShaderNodeVariableInput( Item ).VarType:= vartype.NodeValue;
-
-        if ( Assigned( required ) AND ( required.NodeValue = 'yes' )) then
-          TP3DShaderNodeVariableInput( Item ).Required:= True
-        else
-          TP3DShaderNodeVariableInput( Item ).Required:= False;
-
-        if( Node.HasChildNodes ) then
-          LoadVariablesFromDOMNode( Module, TP3DShaderNodeVariableInput( Item ).Fragments, Node );
-        WriteLn( 'input ', TP3DShaderNodeVariableInput( Item ).Name, ':', Item.VarType, ' required: ', BoolToStr( TP3DShaderNodeVariableInput( Item ).Required ));
-      end;
-    'exists':
-      begin
-        name:= Node.Attributes.GetNamedItem( 'name' );
-        if ( not ( Assigned( name ))) then
-          raise Exception.Create( Format( 'Error while compiling %s. Exists must have a name!', [ Module ]));
-        Item:= TP3DShaderNodeVariableExists.Create;
-        TP3DShaderNodeVariableExists( Item ).Name:= name.NodeValue;
-        if( Node.HasChildNodes ) then
-          LoadVariablesFromDOMNode( Module, TP3DShaderNodeVariableExists( Item ).Fragments, Node );
-        WriteLn( 'exists ', TP3DShaderNodeVariableExists( Item ).Name );
-      end;
-    'link':
-      begin
-        name:= Node.Attributes.GetNamedItem( 'name' );
-        if ( not ( Assigned( name ))) then
-          raise Exception.Create( Format( 'Error while compiling %s. Link must have a name!', [ Module ]));
-        Item:= TP3DShaderNodeVariableLink.Create;
-        TP3DShaderNodeVariableLink( Item ).Target:= name.NodeValue;
-        if( Node.HasChildNodes ) then
-          LoadVariablesFromDOMNode( Module, TP3DShaderNodeVariableLink( Item ).Fragments, Node );
-
-        WriteLn( 'link: ' + Copy( TP3DShaderNodeVariableLink( Item ).Target, 1, 10 ) + '...' );
-      end;
-    '#comment':
-      //DO NOTHING
-  else
-    raise Exception.Create( Format( 'Error while compiling %s. %s is not defined in this context!', [ Module, Node.NodeName ]));
-  end;
-  if ( Assigned( Item )) then
-    SNV.Add( Item );
-end;
-
-procedure LoadVariablesFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode );
-var
-  child: TDOMNode;
-begin
-  if ( Node.HasChildNodes ) then
-    begin
-      child:= Node.FirstChild;
-      while ( Assigned( child )) do
-        begin
-          LoadVariableFromDOMNode( Module, SNV, child );
-          child:= child.NextSibling;
-        end;
-    end;
-end;
-
-function ShaderNodeFromDOMNode( Module: String; Node: TDOMNode ): TP3DShaderNode;
-
-var
-  name: TDOMNode;
-begin
-  Result:= TP3DShaderNode.Create;
-  if ( Node.HasAttributes ) then
-    begin
-      name:= Node.Attributes.GetNamedItem( 'name' );
-      Result.Name:= name.NodeValue;
-    end
-  else
-    raise Exception.Create( Format( 'Error while compiling %s. Modules must have a name!', [ Module ]));
-  Result.Module:= Module;
-  WriteLn( 'Module: "', Module, '.', Result.Name, '"' );
-  LoadVariablesFromDOMNode( Module, Result.Fragments, Node );
-end;
-
-{ TForm1 }
-
-
-procedure ProcessFile( NodeList: TP3DShaderNodeList; FN: String );
-
-var
-  F: TXMLDocument;
-  i: Integer;
-  sn: TP3DShaderNode;
-  Module: String;
-begin
-  XMLRead.ReadXMLFile( F, FN );
-  Module:= ExtractFileNameOnly( FN );
-
-  if ( F.DocumentElement.NodeName = 'p3dshader' ) then
-    for i:= 0 to F.DocumentElement.ChildNodes.Count - 1 do
-      begin
-        if ( F.DocumentElement.ChildNodes[ i ].NodeName = 'node' ) then
-          begin
-            sn:= ShaderNodeFromDOMNode( Module, F.DocumentElement.ChildNodes[ i ]);
-            NodeList.Add( sn );
-          end;
-      end;
-  F.Free;
-end;
+{$INCLUDE p3dshadernodes_load.inc}
 
 initialization
   P3DShaderLib:= TP3DShaderNodeLibrary.Create;
@@ -507,4 +403,4 @@ finalization
   P3DShaderLib.Free;
 
 end.
-
+

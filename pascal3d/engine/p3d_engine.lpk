@@ -17,7 +17,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="29">
+    <Files Count="31">
       <Item1>
         <Filename Value="p3dinput.pas"/>
         <UnitName Value="p3dinput"/>
@@ -135,6 +135,14 @@
         <Filename Value="p3dgui_canvas.inc"/>
         <Type Value="Binary"/>
       </Item29>
+      <Item30>
+        <Filename Value="p3dcanvas.pas"/>
+        <UnitName Value="p3dcanvas"/>
+      </Item30>
+      <Item31>
+        <Filename Value="p3dcanvas_2d.inc"/>
+        <Type Value="Binary"/>
+      </Item31>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="5">

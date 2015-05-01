@@ -125,6 +125,7 @@ operator * ( a: TMatrix; b: TMatrix ) c: TMatrix; inline; // left first - right 
 operator * ( a: TVector; b: TMatrix ) c: TVector; inline; // PRE-Multiply
 //Operator for transforming a vec using a matrix. The operation is Post-Multiply in this order.
 operator * ( a: TMatrix; b: TVector ) c: TVector; inline; // POST-Multiply
+operator = ( a: TMatrix; b: TMatrix ) c: Boolean; inline;
 
 {$UNDEF INTERFACE}
 {$ENDIF}
@@ -348,6 +349,11 @@ begin
            + ( a._32 * b.z )
            + ( a._33 * b.w );
   {$ENDIF}
+end;
+
+operator=(a: TMatrix; b: TMatrix)c: Boolean;
+begin
+  Result:= CompareMem( @a.m, @b.m, SizeOf( a.m ));
 end;
 
 function

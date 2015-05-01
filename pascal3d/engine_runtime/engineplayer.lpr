@@ -38,6 +38,7 @@ uses
   p3dgui_stdctrls,
   p3dbmpfont,
   p3dbmpfontfile,
+  p3dcanvas,
   p3dviewport;
 
 {$DEFINE INTERFACE}

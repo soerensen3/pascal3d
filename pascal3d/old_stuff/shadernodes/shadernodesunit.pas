@@ -98,27 +98,27 @@ procedure TForm1.CreateBuffer(N: TP3DShaderNode);
 var
   sheet: TTabSheet;
   scrollbox: TScrollBox;
-  //ed: TSynEdit;
-  //lv: TTreeView;
-  //sp: TSplitter;
-  {
+  ed: TSynEdit;
+  sp: TSplitter;
+  lv: TTreeView;
+
   procedure AddList( Base: TTreeNode; List: TP3DShaderNodeVariableList );
   var
     frag: TP3DShaderNodeVariable;
   begin
     for frag in List do
-      if ( frag is TP3DShaderNodeVariableInput ) then
+      {if ( frag is TP3DShaderNodeVariableInput ) then
         AddList(
           lv.Items.AddChild( Base, Format( 'Input: %s (type: "%s", required: %d)',
             [ TP3DShaderNodeVariableInput( frag ).Name,
               TP3DShaderNodeVariableInput( frag ).VarType,
               Ord( TP3DShaderNodeVariableInput( frag ).Required )])), TP3DShaderNodeVariableInput( frag ).Fragments )
-      else if ( frag is TP3DShaderNodeVariableLink ) then
+      else }if ( frag is TP3DShaderNodeVariableLink ) then
         AddList(
         lv.Items.AddChild( Base, Format( 'Link: %s (type: "%s")',
           [ TP3DShaderNodeVariableLink( frag ).Target,
             TP3DShaderNodeVariableLink( frag ).VarType ])), TP3DShaderNodeVariableLink( frag ).Fragments )
-  end;}
+  end;
 
 
   procedure AddCtrl( Ctrl: TControl; Parent: TWinControl);
@@ -127,6 +127,7 @@ var
       Parent:= scrollbox;
 
     Ctrl.Parent:= Parent;
+    Ctrl.Top:= Parent.Height;
     Ctrl.Align:= alTop;
   end;
 
@@ -209,18 +210,18 @@ begin
   scrollbox.Parent:= sheet;
   scrollbox.Align:= alClient;
   AddFragments( scrollbox, N.Fragments );
-  {ed:= TSynEdit.Create( sheet );
+  ed:= TSynEdit.Create( sheet );
   ed.Parent:= sheet;
   ed.Text:= N.GetCode();
-  ed.Align:= alClient;
+  ed.Align:= alBottom;
   ed.Highlighter:= SynAnySyn1;
   lv:= TTreeView.Create( sheet );
   lv.Parent:= sheet;
   lv.Align:= alRight;
+  AddList( nil, N.Fragments );
   sp:= TSplitter.Create( sheet );
   sp.Parent:= sheet;
-  sp.Align:= alRight;
-  AddList( lv.Items.Add( nil, N.Name ), N.Fragments );}
+  sp.Align:= alBottom;
 end;
 
 procedure TForm1.ClearBuffers;

@@ -11,8 +11,8 @@
         <UnitName Value="model_test"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="33"/>
-        <CursorPos X="29" Y="64"/>
+        <TopLine Value="35"/>
+        <CursorPos X="26" Y="39"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -127,7 +127,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="72"/>
         <CursorPos X="12" Y="86"/>
-        <UsageCount Value="148"/>
+        <UsageCount Value="169"/>
       </Unit14>
       <Unit15>
         <Filename Value="armature_test\inputscene.inc"/>
@@ -135,7 +135,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="16"/>
         <CursorPos X="69" Y="33"/>
-        <UsageCount Value="148"/>
+        <UsageCount Value="169"/>
       </Unit15>
       <Unit16>
         <Filename Value="armature_test\renderscene.inc"/>
@@ -143,7 +143,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="1" Y="29"/>
-        <UsageCount Value="148"/>
+        <UsageCount Value="169"/>
       </Unit16>
       <Unit17>
         <Filename Value="p3dlcl\initscene.inc"/>
@@ -151,7 +151,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="92"/>
         <CursorPos X="24" Y="110"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="150"/>
       </Unit17>
       <Unit18>
         <Filename Value="p3dlcl\inputscene.inc"/>
@@ -159,7 +159,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
         <CursorPos X="41" Y="41"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="150"/>
       </Unit18>
       <Unit19>
         <Filename Value="p3dlcl\renderscene.inc"/>
@@ -167,23 +167,22 @@
         <WindowIndex Value="0"/>
         <TopLine Value="16"/>
         <CursorPos X="17" Y="125"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="150"/>
       </Unit19>
       <Unit20>
         <Filename Value="shadernodes\initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="93"/>
-        <CursorPos X="32" Y="109"/>
-        <UsageCount Value="46"/>
+        <TopLine Value="121"/>
+        <CursorPos X="29" Y="130"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="shadernodes\inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="67"/>
       </Unit21>
       <Unit22>
         <Filename Value="shadernodes\renderscene.inc"/>
@@ -191,8 +190,8 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="16" Y="14"/>
-        <UsageCount Value="46"/>
+        <CursorPos X="34" Y="32"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
       </Unit22>
     </Units>
