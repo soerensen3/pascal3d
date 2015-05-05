@@ -3,6 +3,7 @@
   <Package Version="4">
     <PathDelim Value="\"/>
     <Name Value="p3d_engine"/>
+    <Type Value="RunAndDesignTime"/>
     <CompilerOptions>
       <Version Value="11"/>
       <PathDelim Value="\"/>
@@ -10,14 +11,8 @@
         <OtherUnitFiles Value="scene;input"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
-      <Other>
-        <CompilerMessages>
-          <MsgFileName Value=""/>
-        </CompilerMessages>
-        <CompilerPath Value="$(CompPath)"/>
-      </Other>
     </CompilerOptions>
-    <Files Count="31">
+    <Files Count="32">
       <Item1>
         <Filename Value="p3dinput.pas"/>
         <UnitName Value="p3dinput"/>
@@ -143,8 +138,11 @@
         <Filename Value="p3dcanvas_2d.inc"/>
         <Type Value="Binary"/>
       </Item31>
+      <Item32>
+        <Filename Value="p3dshadernodes_load.inc"/>
+        <Type Value="Binary"/>
+      </Item32>
     </Files>
-    <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="5">
       <Item1>
         <PackageName Value="p3d_math"/>

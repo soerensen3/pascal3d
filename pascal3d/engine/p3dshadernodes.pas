@@ -5,7 +5,7 @@ unit p3dshadernodes;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, DOM, XMLRead, strutils, p3dfileutil;
+  Classes, SysUtils, FileUtil, Math, DOM, XMLRead, strutils, p3dfileutil;
 
 type
 
@@ -18,10 +18,15 @@ type
   TP3DShaderNodeVariable = class
     private
       FVarType: String;
+      FNode: TP3DShaderNode;
+
+      constructor Create( ANode: TP3DShaderNode );
+
       // Parse the node and return string output
       function GetStringOutput( const Link: TP3DShaderNodeVariableLink = nil ): String; virtual;
 
     published
+      property Node: TP3DShaderNode read FNode;
       property VarType: String read FVarType write FVarType;
   end;
 
@@ -37,7 +42,6 @@ type
   TP3DShaderNodeVariableList = class( TP3DCustomShaderNodeVariableList )
     public
       function GetStringOutput( const Link: TP3DShaderNodeVariableLink = nil ): String;
-      function FindVariableInput( Name: String ): Integer;
       //function FindVariableLink( Name: String ): Integer;
   end;
 
@@ -61,43 +65,16 @@ type
       property Text: String read FText write FText;
   end;
 
-  { TP3DShaderNodeVariableInput }
-  {
-   input is just put as an empty element tag or with a child element which is
-   only visible if it is linked to another node.
-   ...
-   gl_Position = <input type="vec4" name="gl_position" required="yes"/>;<br/>
-   </node>
-   ...
-  }
-
-  TP3DShaderNodeVariableInput = class( TP3DShaderNodeVariable )
-    private
-      FFragments: TP3DShaderNodeVariableList;
-      FName: String;
-      FRequired: Boolean;
-
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-      function GetStringOutput( const Link: TP3DShaderNodeVariableLink = nil ): String; override;
-
-      property Name: String read FName write FName;
-      property Required: Boolean read FRequired write FRequired;
-
-      property Fragments: TP3DShaderNodeVariableList read FFragments write FFragments;
-  end;
-
   { TP3DShaderNodeVariableLink }
 
   TP3DShaderNodeVariableLink = class( TP3DShaderNodeVariable )
     private
       FFragments: TP3DShaderNodeVariableList;
+      FList: Boolean;
       FTarget: String;
 
     public
-      constructor Create;
+      constructor Create( ANode: TP3DShaderNode );
       destructor Destroy; override;
 
       function GetStringOutput( const Link: TP3DShaderNodeVariableLink = nil ): String; override;
@@ -105,28 +82,39 @@ type
     published
       property Target: String read FTarget write FTarget;
       property Fragments: TP3DShaderNodeVariableList read FFragments write FFragments;
+      property List: Boolean read FList write FList;
   end;
 
-  { TP3DShaderNodeVariableExists }
+  { TP3DShaderNodeInput }
 
-  TP3DShaderNodeVariableExists = class( TP3DShaderNodeVariable )
+  TP3DShaderNodeInput = class
     private
-      FFragments: TP3DShaderNodeVariableList;
       FName: String;
-
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-      function GetStringOutput( const Link: TP3DShaderNodeVariableLink = nil ): String; override;
+      FTarget: String;
+      FVarType: String;
 
     published
-      property Name: String read FName write FName;
-      property Fragments: TP3DShaderNodeVariableList read FFragments write FFragments;
+      property Name: String read FName;
+      property Target: String read FTarget write FTarget;
+      property VarType: String read FVarType write FVarType;
+  end;
+
+  {$DEFINE TCustomList:= TP3DCustomShaderNodeInputList}
+  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
+  {$DEFINE TCustomItem:= TP3DShaderNodeInput}
+  {$DEFINE INTERFACE}
+  {$INCLUDE p3dcustomlist.inc}
+
+  { TP3DShaderNodeInputList }
+
+  TP3DShaderNodeInputList = class ( TP3DCustomShaderNodeInputList )
+    public
+      function Find( Name: String ): Integer;
   end;
 
   TP3DShaderNode = class
     private
+      FInputs: TP3DShaderNodeInputList;
       FModule: String;
       FName: String;
       FFragments: TP3DShaderNodeVariableList;
@@ -141,6 +129,7 @@ type
       property Name: String read FName write FName;
       property Fragments: TP3DShaderNodeVariableList read FFragments write FFragments;
       property Module: String read FModule write FModule;
+      property Inputs: TP3DShaderNodeInputList read FInputs write FInputs;
   end;
 
   {$DEFINE TCustomList:= TP3DShaderNodeList}
@@ -158,47 +147,24 @@ type
     function FindNode( Name: String ): TP3DShaderNode;
   end;
 
-  TP3DNodeShaderBase = class( TP3DShaderNodeLibrary )
-    //function Connect( LinkName: String; Target: String ): Boolean;
-  end;
-
 var
   P3DShaderLib: TP3DShaderNodeLibrary;
 
   procedure ProcessFile( NodeList: TP3DShaderNodeList; FN: String );
-  procedure LoadVariablesFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode );
+  procedure LoadVariablesFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode; SN: TP3DShaderNode );
 
 implementation
 
-{ TP3DShaderNodeVariableExists }
+{ TP3DShaderNodeInputList }
 
-constructor TP3DShaderNodeVariableExists.Create;
-begin
-  inherited;
-  Fragments:= TP3DShaderNodeVariableList.Create;
-end;
-
-destructor TP3DShaderNodeVariableExists.Destroy;
-begin
-  Fragments.Free;
-  inherited Destroy;
-end;
-
-function TP3DShaderNodeVariableExists.GetStringOutput(
-  const Link: TP3DShaderNodeVariableLink): String;
+function TP3DShaderNodeInputList.Find(Name: String): Integer;
 var
-  Item: TP3DShaderNodeVariable;
-  Exists: Boolean;
+  i: Integer;
 begin
-  inherited;
-  if ( Assigned( Link )) then
-    begin
-      Exists:= Link.Fragments.FindVariableInput( Name ) > -1;
-      if ( Exists ) then
-        Result:= Fragments.GetStringOutput();
-    end
-  else
-    Result:= '';
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Name = Items[ i ].Name ) then
+      Result:= i;
 end;
 
 { TP3DShaderNodeVariableList }
@@ -210,20 +176,6 @@ begin
   Result:= '';
   for Item in Self do
     Result:= Result + Item.GetStringOutput( Link );
-end;
-
-function TP3DShaderNodeVariableList.FindVariableInput(Name: String): Integer;
-var
-  i: Integer;
-begin
-  Result:= -1;
-  for i:= 0 to Count - 1 do
-     if ( Items[ i ] is TP3DShaderNodeVariableInput ) then
-       if ( TP3DShaderNodeVariableInput( Items[ i ]).Name = Name ) then
-         begin
-           Result:= i;
-           break;
-         end;
 end;
 
 { TP3DShaderNodeLibrary }
@@ -276,7 +228,7 @@ end;
 
 { TP3DShaderNodeVariableLink }
 
-constructor TP3DShaderNodeVariableLink.Create;
+constructor TP3DShaderNodeVariableLink.Create(ANode: TP3DShaderNode);
 begin
   inherited;
   Fragments:= TP3DShaderNodeVariableList.Create;
@@ -291,49 +243,86 @@ end;
 
 function TP3DShaderNodeVariableLink.GetStringOutput(
   const Link: TP3DShaderNodeVariableLink): String;
-var
-  Item: TP3DShaderNodeVariable;
-  Ref: TP3DShaderNode;
-begin
-  inherited;
-  Result:= '';
+//TODO: Cleanup Check Reference
+  function CheckReference( N: String ): String;
 
-  Ref:= P3DShaderLib.FindReference( Target );
-  if ( Assigned( Ref )) then
-    Result:= Ref.GetCode( Self )
-  else
-    Result:= '- Warning: Reference not found "' + Target + '" -';
-end;
-
-{ TP3DShaderNodeVariableInput }
-
-constructor TP3DShaderNodeVariableInput.Create;
-begin
-  inherited;
-  FFragments:= TP3DShaderNodeVariableList.Create;
-end;
-
-destructor TP3DShaderNodeVariableInput.Destroy;
-begin
-  FFragments.Free;
-  inherited Destroy;
-end;
-
-function TP3DShaderNodeVariableInput.GetStringOutput(
-  const Link: TP3DShaderNodeVariableLink): String;
-var
-  n: Integer;
-begin
-  inherited;
-  Result:= '';
-  if ( not Assigned( Link )) then
-    Result:= Fragments.GetStringOutput()
-  else
+    function CheckInput( Name: String ): String;
+    var
+      i: Integer;
+      S: String;
+      Ref: TP3DShaderNode;
+      Inp: TP3DShaderNodeInput;
     begin
-      n:= Link.Fragments.FindVariableInput( Name );
-      if ( n > -1 ) then
-        Result:= Link.Fragments[ n ].GetStringOutput();
+      Result:= '';
+      S:= Copy( N, 2, Min( Length( N ) - 1, Pos( '.', N ) - 2 ));
+      if (( Pos( '*', S ) > 0 ) or ( Pos( '?', S ) > 0 )) then
+        begin
+          for i:= 0 to Node.Inputs.Count - 1 do
+            if ( IsWild( Node.Inputs[ i ].Name, S, False )) then
+              begin
+                Ref:= P3DShaderLib.FindReference( ReplaceStr( N, ':' + S, Node.Inputs[ i ].Target ));
+                if ( Assigned( Ref )) then
+                  Result+= Ref.GetCode( Self );
+              end;
+        end
+      else
+        begin
+          i:= Node.Inputs.Find( S );
+          if ( i < 0 ) then
+            begin
+              Result:= '- Warning: Input "' + S + '" was not found -';
+              exit;
+            end;
+          Ref:= P3DShaderLib.FindReference( ReplaceStr( N, ':' + S, Node.Inputs[ i ].Target ));
+          Result:= Ref.GetCode( Self );
+          Inp:= Node.Inputs[ i ];
+          if ( Inp.Target = '' ) then
+            Result:= '- Warning: Input "' + Inp.Name + '" was not connected -'
+          else
+            Result:= Ref.GetCode( Self );
+      end;
     end;
+
+  var
+    Ref: TP3DShaderNode;
+    S: String;
+    Inp: TP3DShaderNodeInput;
+    i: Integer;
+    R: String;
+
+  begin
+    Ref:= nil;
+    if ( IsEmptyStr( N, [ $8, $10, $13, ' ', ';' ])) then
+      Result:= '- Warning: Reference was empty -'
+    else if ( N[ 1 ] = ':' ) then
+      Result:= CheckInput( N )
+    else
+      begin
+        Ref:= P3DShaderLib.FindReference( N );
+        if ( Assigned( Ref )) then
+          Result:= Ref.GetCode( Self )
+        else
+          Result:= '- Warning: Reference was not found "' + N + '" -';
+      end;
+  end;
+
+  function Explode( Input: String; Delim: Char ): TStringList;
+  begin
+    Result:= TStringList.Create;
+    Result.Delimiter:= Delim;
+    Result.DelimitedText:= Input;
+  end;
+
+var
+  Targets: TStringList;
+  ThisTarget: String;
+begin
+  inherited;
+  Result:= '';
+
+  Targets:= Explode( Target, ';' );
+  for ThisTarget in Targets do
+    Result+= CheckReference( ThisTarget );
 end;
 
 { TP3DShaderNodeVariableInline }
@@ -348,6 +337,11 @@ end;
 
 { TP3DShaderNodeVariable }
 
+constructor TP3DShaderNodeVariable.Create(ANode: TP3DShaderNode);
+begin
+  inherited Create;
+  FNode:= ANode;
+end;
 
 function TP3DShaderNodeVariable.GetStringOutput(const Link: TP3DShaderNodeVariableLink
   ): String;
@@ -366,11 +360,13 @@ constructor TP3DShaderNode.Create;
 begin
   inherited;
   FFragments:= TP3DShaderNodeVariableList.Create;
+  FInputs:= TP3DShaderNodeInputList.Create;
 end;
 
 destructor TP3DShaderNode.Destroy;
 begin
   FFragments.Free;
+  FInputs.Free;
   inherited Destroy;
 end;
 
@@ -391,6 +387,12 @@ end;
 {$DEFINE TCustomList:= TP3DCustomShaderNodeVariableList}
 {$DEFINE TCustomListEnumerator:= TP3DShaderNodeVariableEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderNodeVariable}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE p3dcustomlist.inc}
+
+{$DEFINE TCustomList:= TP3DCustomShaderNodeInputList}
+{$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
+{$DEFINE TCustomItem:= TP3DShaderNodeInput}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 

@@ -1,16 +1,18 @@
-
-procedure LoadVariableFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode );
+procedure LoadVariableFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode; SN: TP3DShaderNode );
   var
     Item: TP3DShaderNodeVariable;
     name: TDOMNode;
     vartype: TDOMNode;
     required: TDOMNode;
+    list: TDOMNode;
+    target: TDOMNode;
+    Inp: TP3DShaderNodeInput;
 begin
   Item:= nil;
   case ( Node.NodeName ) of
     '#text':
       begin
-        Item:= TP3DShaderNodeVariableInline.Create;
+        Item:= TP3DShaderNodeVariableInline.Create( SN );
         //if ( Node.HasChildNodes ) then
         //  if ( Node.FirstChild.NodeName = '#text' ) then
         //     TP3DShaderNodeVariableInline( Item ).Text:= Node.FirstChild.NodeValue;
@@ -19,55 +21,22 @@ begin
       end;
     'br':
     begin
-      Item:= TP3DShaderNodeVariableInline.Create;
+      Item:= TP3DShaderNodeVariableInline.Create( SN );
       TP3DShaderNodeVariableInline( Item ).Text:= LineEnding;
       WriteLn( 'inline: <br>' );
     end;
-    'input':
-      begin
-        name:= Node.Attributes.GetNamedItem( 'name' );
-        required:= Node.Attributes.GetNamedItem( 'required' );
-        vartype:= Node.Attributes.GetNamedItem( 'type' );
-        Item:= TP3DShaderNodeVariableInput.Create;
-
-        if ( not ( Assigned( name ))) then
-          raise Exception.Create( Format( 'Error while compiling %s. Input must have a name!', [ Module ]));
-        TP3DShaderNodeVariableInput( Item ).Name:= name.NodeValue;
-
-        if ( not ( Assigned( vartype ))) then
-          TP3DShaderNodeVariableInput( Item ).VarType:= 'any'
-        else
-          TP3DShaderNodeVariableInput( Item ).VarType:= vartype.NodeValue;
-
-        if ( Assigned( required ) AND ( required.NodeValue = 'yes' )) then
-          TP3DShaderNodeVariableInput( Item ).Required:= True
-        else
-          TP3DShaderNodeVariableInput( Item ).Required:= False;
-
-        if( Node.HasChildNodes ) then
-          LoadVariablesFromDOMNode( Module, TP3DShaderNodeVariableInput( Item ).Fragments, Node );
-        WriteLn( 'input ', TP3DShaderNodeVariableInput( Item ).Name, ':', Item.VarType, ' required: ', BoolToStr( TP3DShaderNodeVariableInput( Item ).Required ));
-      end;
-    'exists':
-      begin
-        name:= Node.Attributes.GetNamedItem( 'name' );
-        if ( not ( Assigned( name ))) then
-          raise Exception.Create( Format( 'Error while compiling %s. Exists must have a name!', [ Module ]));
-        Item:= TP3DShaderNodeVariableExists.Create;
-        TP3DShaderNodeVariableExists( Item ).Name:= name.NodeValue;
-        if( Node.HasChildNodes ) then
-          LoadVariablesFromDOMNode( Module, TP3DShaderNodeVariableExists( Item ).Fragments, Node );
-        WriteLn( 'exists ', TP3DShaderNodeVariableExists( Item ).Name );
-      end;
     'link':
       begin
-        name:= Node.Attributes.GetNamedItem( 'name' );
-        if ( not ( Assigned( name ))) then
-          raise Exception.Create( Format( 'Error while compiling %s. Link must have a name!', [ Module ]));
-        Item:= TP3DShaderNodeVariableLink.Create;
-        TP3DShaderNodeVariableLink( Item ).Target:= name.NodeValue;
+        target:= Node.Attributes.GetNamedItem( 'target' );
+        list:= Node.Attributes.GetNamedItem( 'list' );
+        if ( not ( Assigned( target ))) then
+          raise Exception.Create( Format( 'Error while compiling %s. Link must have a target!', [ Module ]));
+        Item:= TP3DShaderNodeVariableLink.Create( SN );
+        TP3DShaderNodeVariableLink( Item ).Target:= target.NodeValue;
+        if ( Assigned( list )) then
+          TP3DShaderNodeVariableLink( Item ).List:= list.NodeValue = 'yes';
         if( Node.HasChildNodes ) then
-          LoadVariablesFromDOMNode( Module, TP3DShaderNodeVariableLink( Item ).Fragments, Node );
+          LoadVariablesFromDOMNode( Module, TP3DShaderNodeVariableLink( Item ).Fragments, Node, SN );
 
         WriteLn( 'link: ' + Copy( TP3DShaderNodeVariableLink( Item ).Target, 1, 10 ) + '...' );
       end;
@@ -80,23 +49,55 @@ begin
     SNV.Add( Item );
 end;
 
-procedure LoadVariablesFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode );
+procedure LoadVariablesFromDOMNode( Module: String; SNV: TP3DShaderNodeVariableList; Node: TDOMNode; SN: TP3DShaderNode );
 var
   child: TDOMNode;
 begin
   if ( Node.HasChildNodes ) then
     begin
       child:= Node.FirstChild;
+      while ( Assigned( child) and ( child.NodeName = 'input' )) do
+        child:= child.NextSibling;
       while ( Assigned( child )) do
         begin
-          LoadVariableFromDOMNode( Module, SNV, child );
+          LoadVariableFromDOMNode( Module, SNV, child, SN );
+          child:= child.NextSibling;
+        end;
+    end;
+end;
+
+procedure LoadInputsFromDOMNode( Module: String; SN: TP3DShaderNode; Node: TDOMNode );
+var
+  child: TDOMNode;
+  name: TDOMNode;
+  vartype: TDOMNode;
+  target: TDOMNode;
+  Inp: TP3DShaderNodeInput;
+begin
+  if ( Node.HasChildNodes ) then
+    begin
+      child:= Node.FirstChild;
+      while ( Assigned( child) and ( child.NodeName = 'input' )) do
+        begin
+          name:= Child.Attributes.GetNamedItem( 'name' );
+          vartype:= Child.Attributes.GetNamedItem( 'type' );
+          target:= Child.Attributes.GetNamedItem( 'target' );
+          if ( not ( Assigned( name ))) then
+            raise Exception.Create( Format( 'Error while compiling %s. Input must have a name!', [ Module ]));
+          Inp:= TP3DShaderNodeInput.Create;
+          Inp.FName:= name.NodeValue;
+          if ( Assigned( vartype )) then
+            Inp.VarType:= vartype.NodeValue;
+          if ( Assigned( target )) then
+            Inp.Target:= target.NodeValue;
+          SN.Inputs.Add( Inp );
+
           child:= child.NextSibling;
         end;
     end;
 end;
 
 function ShaderNodeFromDOMNode( Module: String; Node: TDOMNode ): TP3DShaderNode;
-
 var
   name: TDOMNode;
 begin
@@ -110,7 +111,8 @@ begin
     raise Exception.Create( Format( 'Error while compiling %s. Modules must have a name!', [ Module ]));
   Result.Module:= Module;
   WriteLn( 'Module: "', Module, '.', Result.Name, '"' );
-  LoadVariablesFromDOMNode( Module, Result.Fragments, Node );
+  LoadInputsFromDOMNode( Module, Result, Node );
+  LoadVariablesFromDOMNode( Module, Result.Fragments, Node, Result );
 end;
 
 
@@ -125,7 +127,7 @@ begin
   XMLRead.ReadXMLFile( F, FN );
   Module:= ExtractFileNameOnly( FN );
 
-  if ( F.DocumentElement.NodeName = 'p3dshader' ) then
+  if ( F.DocumentElement.NodeName = 'p3dnodes' ) then
     for i:= 0 to F.DocumentElement.ChildNodes.Count - 1 do
       begin
         if ( F.DocumentElement.ChildNodes[ i ].NodeName = 'node' ) then
