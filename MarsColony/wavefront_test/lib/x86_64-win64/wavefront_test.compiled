@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<CONFIG>
-  <Compiler Value="C:\codetyphon\fpc\bin\x86_64-win64\fpc.exe" Date="1116444770"/>
-  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -vewnhi -FiC:\Users\soerensen\Desktop\MarsColony\wavefront_test\lib\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib -FuC:\codetyphon\CodeOcean\ZenGL\xlib\chipmunk\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\jpeg\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\msvcrt\x86_64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\ogg\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\theora\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\zip\x86_64-win64 -FuC:\codetyphon\CodeOcean\ZenGL\xlib\zlib\x86_64-win64 -FuC:\codetyphon\lazarus\components\pl_OpenGL\lib\x86_64-win64\win32 -FuC:\codetyphon\lazarus\ideintf\units\x86_64-win64\win32 -FuC:\codetyphon\lazarus\components\lazcontrols\lib\x86_64-win64\win32 -FuC:\codetyphon\lazarus\lcl\units\x86_64-win64\win32 -FuC:\codetyphon\lazarus\lcl\units\x86_64-win64 -FuC:\codetyphon\lazarus\components\lazutils\lib\x86_64-win64 -FuC:\codetyphon\lazarus\packager\units\x86_64-win64 -FuC:\Users\soerensen\Desktop\MarsColony\wavefront_test\ -FUC:\Users\soerensen\Desktop\MarsColony\wavefront_test\lib\x86_64-win64\ -l -dLCL -dLCLwin32 wavefront_test.lpr"/>
-  <Complete Value="False"/>
-</CONFIG>

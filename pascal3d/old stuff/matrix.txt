@@ -1,6 +1,0 @@
-view matrices: (row major)
-
-right.x     right.y       right.z       0
-up.x        up.y          up.z          0
-forward.x   forward.y     forward.z     0
-postition.x position.y    position.z    1

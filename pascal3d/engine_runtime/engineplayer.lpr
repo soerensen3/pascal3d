@@ -39,7 +39,10 @@ uses
   p3dbmpfont,
   p3dbmpfontfile,
   p3dcanvas,
-  p3dviewport;
+  p3dshadernodes,
+  p3dgui_shadernodes,
+  p3dviewport,
+  p3dgui_sceneviewer;
 
 {$DEFINE INTERFACE}
          {$INCLUDE renderscene.inc}
@@ -64,4 +67,4 @@ Begin
 
   mainwnd.Run;
   mainwnd.Free;
-End.
+End.

@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<CONFIG>
-  <Compiler Value="C:\codetyphon\fpc\bin\x86_64-win64\fpc.exe" Date="1116444770"/>
-  <Params Value=" -MObjFPC -Scghi -O1 -Twin64 -Px86_64 -g -gl -Xg -WG -vewnhi &quot;-FiC:\Users\soerensen\Desktop\ludum dare\lib\x86_64-win64&quot; -FuC:\codetyphon\lazarus\lcl\units\x86_64-win64\win32 -FuC:\codetyphon\lazarus\lcl\units\x86_64-win64 -FuC:\codetyphon\lazarus\components\lazutils\lib\x86_64-win64 -FuC:\codetyphon\lazarus\packager\units\x86_64-win64 &quot;-FuC:\Users\soerensen\Desktop\ludum dare\&quot; &quot;-FUC:\Users\soerensen\Desktop\ludum dare\lib\x86_64-win64\&quot; -l -dLCL -dLCLwin32 ludumdare.lpr"/>
-</CONFIG>

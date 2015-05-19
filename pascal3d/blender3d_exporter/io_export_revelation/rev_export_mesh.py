@@ -7,8 +7,11 @@ Created on Thu Sep 11 23:01:52 2014
 import bpy
 from . rev_helper import *
 
+from xml.etree import cElementTree as et
+
 def ExportMesh(Config, Object):
     print("Exporting Mesh")
+    
 
     if Config.ApplyModifiers:
         if Config.ExportArmatures:
@@ -23,76 +26,37 @@ def ExportMesh(Config, Object):
     else:
         Mesh = Object.to_mesh(bpy.context.scene, False, "PREVIEW")
 
-    WriteLocalMatrix(Config,Object);
+    meshEl = Config.DocStack[ -1 ]
+    
+    WriteMatrix(Config,Object.matrix_local);
+
 
     ## BINARY EXPORT
-    
+
+
     if ( Config.ExportBinaryData ):
         fn = Config.FilePath + Object.name + ".revobj"
        
-        Config.File.write("{}external \'{}\'\n".format("  " * Config.Whitespace, ExportPath( Config, fn )))
-        Config.Whitespace += 1
+        meshEl.attrib['binary'] = ExportPath( Config, fn )
         Config.objfile = open(fn, "wb")
-
         n = WriteMeshVertices(Config, Mesh)
-        Config.File.write("{}vertices {}\n".format("  " * Config.Whitespace, n))
+        meshEl.attrib['vertices'] = str( n )
 
         n = WriteMeshNormals(Config, Mesh)
-        Config.File.write("{}normals {}\n".format("  " * Config.Whitespace, n))
+        meshEl.attrib['normals'] = str( n )
 
         n = WriteMeshUVs(Config, Mesh)
-        Config.File.write("{}texcoords {}\n".format("  " * Config.Whitespace, n))
-
+        meshEl.attrib['texcoords'] = str( n )
 
         n = WriteMeshFaces(Config, Mesh)
-        Config.File.write("{}faces {}\n".format("  " * Config.Whitespace, n))
+        meshEl.attrib['faces'] = str( n )
 
-        Config.Whitespace -= 1
         Config.objfile.close()
-        Config.File.write("{}end;\n".format("  " * Config.Whitespace))
-    else: ## ASCII EXPORT
-        Config.File.write("{}vertices\n".format("  " * Config.Whitespace))
-        Config.Whitespace += 1
 
-        WriteMeshVertices(Config, Mesh)
-
-        Config.Whitespace -= 1
-        Config.File.write("{}end;\n".format("  " * Config.Whitespace))
-    
-        Config.File.write("{}normals\n".format("  " * Config.Whitespace))
-        Config.Whitespace += 1
-
-        WriteMeshNormals(Config, Mesh)
-
-        Config.Whitespace -= 1
-        Config.File.write("{}end;\n".format("  " * Config.Whitespace))  
-
-
-        Config.File.write("{}texcoords\n".format("  " * Config.Whitespace))
-        Config.Whitespace += 1
-
-        WriteMeshUVs(Config, Mesh)
-
-        Config.Whitespace -= 1
-        Config.File.write("{}end;\n".format("  " * Config.Whitespace))
-
-
-        Config.File.write("{}faces\n".format("  " * Config.Whitespace))
-        Config.Whitespace += 1
-
-        WriteMeshFaces(Config, Mesh)
-
-        Config.Whitespace -= 1
-        Config.File.write("{}end;\n".format("  " * Config.Whitespace))
-        
-    Config.File.write("{}materials\n".format("  " * Config.Whitespace))
-    Config.Whitespace += 1
 
     WriteMeshMaterials(Config, Mesh)
 
-    Config.Whitespace -= 1
-    Config.File.write("{}end;\n".format("  " * Config.Whitespace))
-
+    
 
 ## VERTICES
 
@@ -195,7 +159,9 @@ def WriteMeshFaces(Config, Mesh):
             Config.File.write(s[:-2] + "\n")
     return len( Mesh.polygons )
     
-def WriteMeshMaterials(Config, Mesh):
+def WriteMeshMaterials(Config, Mesh):    
     for mat in Mesh.materials:
-        Config.File.write("{}material \'{}\'\n".format("  " * Config.Whitespace, mat.name ))    
+        matEl= et.Element("material")
+        Config.DocStack[ -1 ].append( matEl )
+        matEl.attrib['name'] = mat.name    
     

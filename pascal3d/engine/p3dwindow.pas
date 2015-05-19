@@ -210,6 +210,7 @@ begin
   // Die gewünschte OpenGL-Version festlegen
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
   // OpenGL-Kontext erstellen
   context := SDL_GL_CreateContext( window );
   // Kontext korrekt erstellt?
@@ -241,7 +242,6 @@ procedure TSDLWindow.SetViewportOpenGL(w, h: Integer);
 begin
   // Wird beim Ändern der Fenstergröße aufgerufen, passt den OpenGL-Viewport
   // an die neue Fenstergröße an.
-//ToDo 1:  Nach Änderung der Fenstergröße sehen die Objekte stark verzerrt aus
 
   if w <= 0 then w := 1;
   if h <= 0 then h := 1;
@@ -364,7 +364,11 @@ begin
       SDL_TEXTINPUT:
         begin
           InputManager.Keyboard.InputText:= InputManager.Keyboard.InputText + event.text.text;
-        end
+        end;
+      SDL_RENDER_TARGETS_RESET:
+        WriteLn( 'The render targets have been reset and their contents need to be updated!' ){;
+      SDL_RENDER_DEVICE_RESET:
+        WriteLn( 'The device has been reset and all textures need to be recreated' )}
       else
         debug_printevent( event );
       //SDL_KEYDOWN, SDL_KEYUP, SDL_TEXTEDITING, SDL_TEXTINPUT:
@@ -394,8 +398,6 @@ begin
     Setup_SDL2();                    // Fenster und Kontext erstellen
     Setup_OpenGL();                  // OpenGL initialisieren
     SetViewportOpenGL( 640,480 );    // Viewport setzen
-    // Pfad zu den Shaderdateien ermitteln, diese liegen in einem Unterordner
-    // "Shader" im Programmordner
 
     if ( not Assigned( MainWindow )) then
       MainWindow:= Self;

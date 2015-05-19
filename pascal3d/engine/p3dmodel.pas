@@ -8,7 +8,7 @@ unit p3dmodel;
 interface
 uses
   Classes, SysUtils, dglOpenGL, Math, p3dMath, strutils, p3dshaders, p3dtexture,
-  p3dgeometry, LCLIntf, p3dfilewatch, p3dobjects;
+  p3dgeometry, LCLIntf, p3dfilewatch, p3dobjects, p3dbuffers;
 
 type
 
@@ -16,14 +16,14 @@ type
   TRenderFlags = set of TRenderFlag;
 
   { TMaterial }
-  TMap = record
+  TP3DMaterialMap = record
     Map: TP3DTexture;
     DiffuseFactor: Single;
     NormalFactor: Single;
   end;
 
-  TMaterial = class
-    Maps: array [ 0..7 ] of TMap;
+  TP3DMaterial = class
+    Maps: array [ 0..7 ] of TP3DMaterialMap;
     NumMaps: Integer;
     Diff: TVec3;
     Spec: TVec3;
@@ -36,19 +36,19 @@ type
     constructor Create;
   end;
 
-  TFaceVertex = record
+  TP3DFaceVertex = record
     v, n, t, b: Integer;
     texc: array of Integer;
   end;
 
-  TFace = record
-    verts: array of TFaceVertex;
-    mat: TMaterial;
+  TP3DFace = record
+    verts: array of TP3DFaceVertex;
+    mat: TP3DMaterial;
   end;
 
-  TFaceArray = array of TFace;
+  TP3DFaceArray = array of TP3DFace;
 //  TMaterialArray = array of TMaterial;
-  TModel = class;
+  TP3DMesh = class;
 
   { TBone }
 
@@ -59,9 +59,9 @@ type
   {$DEFINE INTERFACE}
   {$INCLUDE custom_list.inc}}
 
-  {$DEFINE TCustomList:= TCustomMaterialList}
-  {$DEFINE TCustomListEnumerator:= TMaterialEnumerator}
-  {$DEFINE TCustomItem:= TMaterial}
+  {$DEFINE TCustomList:= TP3DCustomMaterialList}
+  {$DEFINE TCustomListEnumerator:= TP3DMaterialEnumerator}
+  {$DEFINE TCustomItem:= TP3DMaterial}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
 
@@ -114,7 +114,7 @@ type
 
   { TMaterialList }
 
-  TMaterialList = class( TCustomMaterialList )
+  TP3DMaterialList = class( TP3DCustomMaterialList )
     public
       function FindByName( Name: String ): Integer;
       procedure Clear; override;
@@ -216,29 +216,33 @@ type
   end;
 
   { TModel }
-  TModel = class( TRenderableObject )
+
+  { TP3DMesh }
+
+  TP3DMesh = class( TRenderableObject )
     private
       FBoundingBox: TBoundingBox;
 
     public
-      Positions: TVec3List;
-      Normals: TVec3List;
-      Tangents: TVec3List;
-      Binormals: TVec3List;
-      Faces: TFaceArray;
-      TexCoords: TVec2List;
-      Indices: TIntList;
+      Positions: TP3DVec3BufferGL;
+      Normals: TP3DVec3BufferGL;
+      Tangents: TP3DVec3BufferGL;
+      Binormals: TP3DVec3BufferGL;
+      Faces: TP3DFaceArray;
+      TexCoords: TP3DVec2BufferGL;
+      Indices: TP3DIntBufferGL;
       Matrix: TMat4;
-      Material: TMaterial;
+      Material: TP3DMaterial;
       testTex: Integer;
-      glVBuffer: GLuint;
+      VBArray: TP3DVertexBufferArray;
+      {glVBuffer: GLuint;
       glIBuffer: GLuint;
       glPositionArray: GLuint;
       glNormalArray: GLuint;
       glTangentArray: GLuint;
       glBinormalArray: GLuint;
       glTCArray: GLuint;
-      glIndexArray: GLuint;
+      glIndexArray: GLuint;}
 
 //      constructor Create( FName: String );
       constructor Create(AParentList: TObjectList);
@@ -262,7 +266,7 @@ type
     private
       FFileWatch: TFileWatch;
       FModelList: TRenderableObjectList;
-      FMaterials: TMaterialList;
+      FMaterials: TP3DMaterialList;
 
     public
       constructor Create( const AFileName: String = ''; const AWatchFileForChanges: Boolean = False );
@@ -275,7 +279,7 @@ type
       procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []);
 
       property Children: TRenderableObjectList read FModelList;
-      property Materials: TMaterialList read FMaterials;
+      property Materials: TP3DMaterialList read FMaterials;
       property FileWatch: TFileWatch read FFileWatch write FFileWatch;
   end;
 
@@ -483,7 +487,7 @@ end;
 
 { TMaterial }
 
-constructor TMaterial.Create;
+constructor TP3DMaterial.Create;
 begin
   inherited;
   NumMaps:= 0;
@@ -492,7 +496,7 @@ end;
 
 { TMaterialList }
 
-function TMaterialList.FindByName(Name: String): Integer;
+function TP3DMaterialList.FindByName(Name: String): Integer;
 var
   i: Integer;
 begin
@@ -506,7 +510,7 @@ begin
       end;
 end;
 
-procedure TMaterialList.Clear;
+procedure TP3DMaterialList.Clear;
 var
   i: Integer;
 begin
@@ -535,7 +539,7 @@ begin
   inherited Create;
 
   FModelList:= TRenderableObjectList.Create;
-  FMaterials:= TMaterialList.Create;
+  FMaterials:= TP3DMaterialList.Create;
 end;
 
 destructor TModelFile.Destroy;
@@ -557,7 +561,7 @@ var
   Indent: Integer;
 
   function DebugList( Items: TRenderableObjectList ): String;
-    function WriteVertices( Mdl: TModel ): String;
+    function WriteVertices( Mdl: TP3DMesh ): String;
     var
       i: Integer;
     begin
@@ -575,7 +579,7 @@ var
       Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
     end;
 
-    function WriteNormals( Mdl: TModel ): String;
+    function WriteNormals( Mdl: TP3DMesh ): String;
     var
       i: Integer;
     begin
@@ -593,7 +597,7 @@ var
       Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
     end;
 
-    function WriteFaces( Mdl: TModel ): String;
+    function WriteFaces( Mdl: TP3DMesh ): String;
     var
       i: Integer;
       s: String;
@@ -633,21 +637,21 @@ var
     i: Integer;
   begin
     Result:= '';
-{    for i:= 0 to Items.Count - 1 do
+    for i:= 0 to Items.Count - 1 do
       begin
         Result += StringOfChar( ' ', Indent * 2 ) + 'object ' + Items[ i ].Name +  #13#10;
         Inc( Indent );
-        Result += WriteVertices( Items[ i ]);
-        Result += WriteNormals( Items[ i ]);
-        Result += WriteFaces( Items[ i ]);
+        Result += WriteVertices( Items[ i ] as TP3DMesh );
+        Result += WriteNormals( Items[ i ] as TP3DMesh );
+        Result += WriteFaces( Items[ i ] as TP3DMesh );
         Result += StringOfChar( ' ', Indent * 2 ) + 'children' + #13#10;
         Inc( Indent );
-        Result += DebugList( Items[ i ].Children );
+        Result += DebugList( ( Items[ i ] as TP3DMesh ).Children );
         Dec( Indent );
         Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
         Dec( Indent );
         Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
-      end;}
+      end;
   end;
 
 begin
@@ -660,30 +664,31 @@ begin
   Children.Render( world, RenderFlag );
 end;
 
-{ TModel }
+{ TP3DMesh }
 
-procedure TModel.ClearChildren;
+procedure TP3DMesh.ClearChildren;
 begin
   FChildren.Clear;
 end;
 
-constructor TModel.Create( AParentList: TObjectList );
+constructor TP3DMesh.Create( AParentList: TObjectList );
 var
   vertexLoc: GLuint;
 begin
   inherited;
 
-  Positions:= TVec3List.Create;
-  Normals:= TVec3List.Create;
-  Binormals:= TVec3List.Create;
-  Tangents:= TVec3List.Create;
-  Indices:= TIntList.Create;
-  TexCoords:= TVec2List.Create;
+  Positions:= TP3DVec3BufferGL.Create( True );
+  Normals:= TP3DVec3BufferGL.Create( True );
+  Binormals:= TP3DVec3BufferGL.Create( True );
+  Tangents:= TP3DVec3BufferGL.Create( True );
+  Indices:= TP3DIntBufferGL.Create( True );
+  TexCoords:= TP3DVec2BufferGL.Create( True );
+  VBArray:= TP3DVertexBufferArray.Create;
 
   FVisible:= True;
 end;
 
-destructor TModel.Destroy;
+destructor TP3DMesh.Destroy;
 begin
   Positions.Free;
   Normals.Free;
@@ -691,11 +696,12 @@ begin
   Tangents.Free;
   Indices.Free;
   TexCoords.Free;
+  VBArray.Free;
 
   inherited Destroy;
 end;
 
-procedure TModel.Render( world: TMat4; const RenderFlag: TRenderFlags = []);
+procedure TP3DMesh.Render( world: TMat4; const RenderFlag: TRenderFlags = []);
 var
   i: Integer;
   j: Integer;
@@ -725,15 +731,8 @@ begin
     exit;
   if ( Assigned( Material )) then
     begin
-      {if ( rfShadowMap in RenderFlag ) then
-        Res:= SetShader( Material.ShaderShadow )
-      else
-        Res:= SetShader( Material.Shader );}
-
-      glVertexAttrib4f( ActShad.Attributes.AddrByName( 'in_color' ),
+      glVertexAttrib4f( P3DAttribColor,
         Material.Diff.R, Material.Diff.G, Material.Diff.B, 1.0 );
-//      if ( not Res ) then
-//        exit;
       glUniform4f( ActShad.Uniforms.AddrByName( 'mat_diffuse' ), Material.Diff.r, Material.Diff.g, Material.Diff.b, 1 );
       glUniform4f( ActShad.Uniforms.AddrByName( 'mat_specular' ), Material.Spec.r, Material.Spec.g, Material.Spec.b, 1 );
       glUniform1f( ActShad.Uniforms.AddrByName( 'mat_hardness' ), Material.Spec_Hardness );
@@ -753,13 +752,12 @@ begin
               glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
               glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
               glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//              glUniform1i( ActShad.Uniforms.AddrByName( 'btex' + IntToStr( j )), 1 );
             end;
 
         end
       else
         begin
-          glColor3f( 1.0, 1.0, 1.0 );
+{          glColor3f( 1.0, 1.0, 1.0 );
           glActiveTexture( GL_TEXTURE0 );
           glEnable( GL_TEXTURE_2D );
           glBindTexture( GL_TEXTURE_2D, testTex );
@@ -769,40 +767,41 @@ begin
           {$IFDEF DEFAULT_TEX}
           glEnable( GL_TEXTURE_2D );
           glBindTexture( GL_TEXTURE_2D, DefaultTex^.ID );
-          {$ENDIF}
-//          glDisable( GL_TEXTURE_2D );
-//          glBindTexture( GL_TEXTURE_2D, 0 );
+          {$ENDIF}}
         end;
     end
   else
     begin
-      glColor3f( 1.0, 1.0, 1.0 );
+      {glColor3f( 1.0, 1.0, 1.0 );
       glActiveTexture( GL_TEXTURE0 );
       glEnable( GL_TEXTURE_2D );
       glBindTexture( GL_TEXTURE_2D, testTex );
       glActiveTexture( GL_TEXTURE1 );
       glEnable( GL_TEXTURE_2D );
-      glBindTexture( GL_TEXTURE_2D, testTex );
-//          glDisable( GL_TEXTURE_2D );
-//          glBindTexture( GL_TEXTURE_2D, 0 );
+      glBindTexture( GL_TEXTURE_2D, testTex );}
+      glVertexAttrib4f( P3DAttribColor,
+      1, 1, 1, 1.0 );
     end;
   _world:= Matrix * world;
 
+  //VBArray.Bind;  //Workaround for VAO not really working
+  if ( Positions.Count > 0 ) then
+    Positions.SetAttribArray( P3DAttribPosition );
+  if ( Normals.Count > 0 ) then
+    Normals.SetAttribArray( P3DAttribNormal );
+  if ( Tangents.Count > 0 ) then
+    Tangents.SetAttribArray( P3DAttribTangent );
+   if ( TexCoords.Count > 0 ) then
+    TexCoords.SetAttribArray( P3DAttribTexCoord0 );
+
+  Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
+
   glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'world' ), 1, False, @_world );
 
-//  _worldview:= world * view;
-
-//  glMatrixMode( GL_MODELVIEW );
-//  glLoadMatrixf( @_worldview );
-
-  {$IFDEF BUFFERS}
-  glBindVertexArray( glVBuffer );
-  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, glIndexArray );
-
-  if ( rfWireFrame in RenderFlag ) then
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+  {if ( rfWireFrame in RenderFlag ) then
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );}
   glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
-
+  {
   if ( rfDebugShowLocation in RenderFlag ) then
     begin
       glGetUniformfv( ActShad.ShaderObj, ActShad.Uniforms.AddrByName( 'view' ), @view );
@@ -833,77 +832,7 @@ begin
 
       BackupShader.Enable;
     end;
-
-{  n:= 0;
-  for i:= 0 to high( Faces ) do
-    begin
-      glDrawArrays( GL_TRIANGLE_FAN, n, ( Length( Faces[ i ].verts ) - 2 ) * 3 );
-      n:= n + Length( Faces[ i ].verts );
-    end;}
-  {$ELSE}
-  for i:= 0 to high( Faces ) do
-    begin
-      glBegin( GL_TRIANGLE_FAN );
-
-{      tangent:=
-
-      glVertexAttrib3f( ActShad.Attributes.AddrByName( 'in_tangent' ),//glGetAttribLocation( ActiveShader, 'in_normal' ),
-                  normals[ faces[ i ].verts[ j ].n ].x,
-                  normals[ faces[ i ].verts[ j ].n ].y,
-                  normals[ faces[ i ].verts[ j ].n ].z );
-      glVertexAttrib3f( ActShad.Attributes.AddrByName( 'in_binormal' ),//glGetAttribLocation( ActiveShader, 'in_normal' ),
-                  normals[ faces[ i ].verts[ j ].n ].x,
-                  normals[ faces[ i ].verts[ j ].n ].y,
-                  normals[ faces[ i ].verts[ j ].n ].z );}
-
-
-      for j:= 0 to high( Faces[ i ].verts ) do
-        begin
-          // bind buffer for positions and copy data into buffer
-          //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, glIBuffer );
-          //glBufferData( GL_ELEMENT_ARRAY_BUFFER, SizeOf( Faces[ i ].verts ), @Faces[ i ].verts[ 0 ], GL_STATIC_DRAW);
-//          glDrawElements(GL_TRIANGLE_FAN, Length( Faces[ i ].verts ), GL_UNSIGNED_INT, @Faces[ i ].verts[ 0 ]);
-
-//          if ( Length( Faces[ i ].verts[ j ].texc ) > 0 ) then
-//            for k:= 0 to high( Faces[ i ].verts[ j ].texc ) do
-//              glMultiTexCoord2f( GL_TEXTURE0 + k, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
-//          normal:= glGetAttribLocation( ActiveShader, 'in_normal' );
-//          k:= 0;
-          if ( Length( Faces[ i ].verts[ j ].texc ) > 0 ) then
-            for k:= 0 to high( Faces[ i ].verts[ j ].texc ) do
-              begin
-                glVertexAttrib2f( ActShad.Attributes.AddrByName( 'in_texc' + IntToStr( k )),
-                  TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].S, TexCoords[ Faces[ i ].verts[ j ].texc[ k ]].T );
-              end;
-          glVertexAttrib3f( ActShad.Attributes.AddrByName( 'in_normal' ),
-                      normals[ faces[ i ].verts[ j ].n ].x,
-                      normals[ faces[ i ].verts[ j ].n ].y,
-                      normals[ faces[ i ].verts[ j ].n ].z );
-          if ( faces[ i ].verts[ j ].t >= 0 ) then
-            glVertexAttrib3f( ActShad.Attributes.AddrByName( 'in_tangent' ),
-                        Tangents[ faces[ i ].verts[ j ].t ].x,
-                        Tangents[ faces[ i ].verts[ j ].t ].y,
-                        Tangents[ faces[ i ].verts[ j ].t ].z );
-          if ( faces[ i ].verts[ j ].b >= 0 ) then
-            glVertexAttrib3f( ActShad.Attributes.AddrByName( 'in_binormal' ),
-                        Binormals[ faces[ i ].verts[ j ].b ].x,
-                        Binormals[ faces[ i ].verts[ j ].b ].y,
-                        Binormals[ faces[ i ].verts[ j ].b ].z );
-          glVertexAttrib4f( ActShad.Attributes.AddrByName( 'in_vertex' ),
-                      Positions[ faces[ i ].verts[ j ].v ].x,
-                      Positions[ faces[ i ].verts[ j ].v ].y,
-                      Positions[ faces[ i ].verts[ j ].v ].z, 1 );
-//          glNormal3f( normals[ faces[ i ].verts[ j ].n ].x,
-//                      normals[ faces[ i ].verts[ j ].n ].y,
-//                      normals[ faces[ i ].verts[ j ].n ].z );
-{          glVertex3f( vertices[ faces[ i ].verts[ j ].v ].x,
-                      vertices[ faces[ i ].verts[ j ].v ].y,
-                      vertices[ faces[ i ].verts[ j ].v ].z );}
-        end;
-      glEnd();
-    end;
-  {$ENDIF}
-
+  }
   Children.Render( _world );
   glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'world'), 1, False, @_world );
   if ( rfWireFrame in RenderFlag ) then
@@ -916,7 +845,7 @@ const
   IDX_TAN: Integer = 2;
   IDX_BIN: Integer = 3;
 
-procedure TModel.UnpackBuffers;
+procedure TP3DMesh.UnpackBuffers;
 var
   i: Integer;
   j: Integer;
@@ -929,8 +858,8 @@ var
   _Positions,
   _Tangents,
   _Binormals,
-  _Normals: TVec3List;
-  _Texures: TVec2List;
+  _Normals: TP3DVec3BufferGL;
+  _Texures: TP3DVec2BufferGL;
 
   numTex: Integer;
   k: Integer;
@@ -938,16 +867,11 @@ var
 
 begin
   ClearVBO;
-  _Positions:= TVec3List.Create;
-  _Tangents:= TVec3List.Create;
-  _Binormals:= TVec3List.Create;
-  _Normals:= TVec3List.Create;
-  _Texures:= TVec2List.Create;
-{  SetLength( _Positions, 0 );
-  SetLength( _Binormals, 0 );
-  SetLength( _Normals,  0 );
-  SetLength( _Tangents, 0 );
-  SetLength( Indices, 0 );}
+  _Positions:= TP3DVec3BufferGL.Create( True );
+  _Tangents:= TP3DVec3BufferGL.Create( True );
+  _Binormals:= TP3DVec3BufferGL.Create( True );
+  _Normals:= TP3DVec3BufferGL.Create( True );
+  _Texures:= TP3DVec2BufferGL.Create( True );
 
   baseTex:= 0;
 
@@ -1016,81 +940,47 @@ begin
   CreateVBO;
 end;
 
-procedure TModel.ClearVBO;
+procedure TP3DMesh.ClearVBO;
 begin
-  glBindBuffer( GL_ARRAY_BUFFER, glPositionArray );
-  glDeleteBuffers( 1, @glPositionArray );
-  glBindBuffer( GL_ARRAY_BUFFER, glNormalArray );
-  glDeleteBuffers( 1, @glNormalArray );
-  glBindBuffer( GL_ARRAY_BUFFER, glTangentArray );
-  glDeleteBuffers( 1, @glTangentArray );
-  glBindBuffer( GL_ARRAY_BUFFER, glBinormalArray );
-  glDeleteBuffers( 1, @glBinormalArray );
-  glBindBuffer( GL_ARRAY_BUFFER, glTCArray );
-  glDeleteBuffers( 1, @glTCArray );
-  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, glIndexArray );
-  glDeleteBuffers( 1, @glIndexArray );
+  VBArray.Free;
+  VBArray:= TP3DVertexBufferArray.Create;
 end;
 
-procedure TModel.CreateVBO;
+procedure TP3DMesh.CreateVBO;
 begin
-  glGenBuffers( 1, @glPositionArray );
-  glGenBuffers( 1, @glNormalArray );
-  glGenBuffers( 1, @glBinormalArray );
-  glGenBuffers( 1, @glTangentArray );
-  glGenBuffers( 1, @glTCArray );
-  glGenBuffers( 1, @glIndexArray );
-
-
-  glGenVertexArrays( 1, @glVBuffer );
-  glBindVertexArray( glVBuffer );
-
-  glBindBuffer( GL_ARRAY_BUFFER, glPositionArray );
-  glBufferData( GL_ARRAY_BUFFER, SizeOf( TVec3 ) * Positions.Count, Positions.PtrTo( 0 ), GL_STATIC_DRAW );
-  glVertexAttribPointer( 0, 3, GL_FLOAT, False, 0, nil );
-//  glVertexPointer( 3, GL_FLOAT, 0, nil );
-  glEnableVertexAttribArray( 0 );
-
+  VBArray.Bind;
+  if ( Positions.Count > 0 ) then
+    begin
+      Positions.PushData;
+      Positions.SetAttribArray( P3DAttribPosition );
+    end;
   if ( Normals.Count > 0 ) then
     begin
-      glBindBuffer( GL_ARRAY_BUFFER, glNormalArray );
-      glBufferData( GL_ARRAY_BUFFER, SizeOf( TVec3 ) * Normals.Count, Normals.Ptr, GL_STATIC_DRAW );
-      glVertexAttribPointer( 1, 3, GL_FLOAT, False, 0, nil );
-//      glNormalPointer( GL_FLOAT, 0, Pointer( 12 ));
-
-      glEnableVertexAttribArray( 1 );
+      Normals.PushData;
+      Normals.SetAttribArray( P3DAttribNormal );
     end;
-
-  if ( Tangents.Count > 0 ) then
-    begin
-      glBindBuffer( GL_ARRAY_BUFFER, glTangentArray );
-      glBufferData( GL_ARRAY_BUFFER, SizeOf( TVec3 ) * Tangents.Count, Tangents.Ptr, GL_STATIC_DRAW );
-      glVertexAttribPointer( 2, 3, GL_FLOAT, False, 0, nil );
-      glEnableVertexAttribArray( 2 );
-    end;
-
   if ( Binormals.Count > 0 ) then
     begin
-      glBindBuffer( GL_ARRAY_BUFFER, glBinormalArray );
-      glBufferData( GL_ARRAY_BUFFER, SizeOf( TVec3 ) * Binormals.Count, Binormals.Ptr, GL_STATIC_DRAW );
-      glVertexAttribPointer( 3, 3, GL_FLOAT, False, 0, nil );
-      glEnableVertexAttribArray( 3 );
+      Binormals.PushData;
+      Binormals.SetAttribArray( P3DAttribBinormal );
     end;
-
+  if ( Tangents.Count > 0 ) then
+    begin
+      Tangents.PushData;
+      Tangents.SetAttribArray( P3DAttribTangent );
+    end;
   if ( TexCoords.Count > 0 ) then
     begin
-      glBindBuffer( GL_ARRAY_BUFFER, glTCArray );
-      glBufferData( GL_ARRAY_BUFFER, SizeOf( TVec2 ) * TexCoords.Count, TexCoords.Ptr, GL_STATIC_DRAW );
-      glVertexAttribPointer( 4, 2, GL_FLOAT, False, 0, nil );
-      glEnableVertexAttribArray( 4 );
+      TexCoords.PushData;
+      TexCoords.SetAttribArray( P3DAttribTexCoord0 );
     end;
 
-
-  glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, glIndexArray );
-  glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeOf( Cardinal ) * Indices.Count, Indices.Ptr, GL_STATIC_DRAW );
+  Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
+  Indices.PushData;
+  VBArray.Unbind;
 end;
 
-procedure TModel.Calc_Tangent_Binormal;
+procedure TP3DMesh.Calc_Tangent_Binormal;
   procedure CalcTriangleTB( f: Integer; v0, v1, v2: Integer );
   var
     deltaPos1: TVec3;  // Edges
@@ -1164,7 +1054,7 @@ begin
     end;
 end;
 
-procedure TModel.CalcBoundingBox;
+procedure TP3DMesh.CalcBoundingBox;
 var
   p: TVec3;
 begin
@@ -1189,9 +1079,9 @@ end;
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE custom_list.inc}}
 
-{$DEFINE TCustomList:= TCustomMaterialList}
-{$DEFINE TCustomListEnumerator:= TMaterialEnumerator}
-{$DEFINE TCustomItem:= TMaterial}
+{$DEFINE TCustomList:= TP3DCustomMaterialList}
+{$DEFINE TCustomListEnumerator:= TP3DMaterialEnumerator}
+{$DEFINE TCustomItem:= TP3DMaterial}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
@@ -1215,4 +1105,4 @@ end;
 
 
 end.
-
+

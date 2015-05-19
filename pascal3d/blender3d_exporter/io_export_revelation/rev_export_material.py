@@ -2,21 +2,20 @@ import bpy
 from . rev_helper import *
 
 #import bpy_extras
-def ExportMaterials(Config):
-#    world = bpy.data.scenes[0].world
-#    if world:
-#        world_amb = world.ambient_color
-#    else:
-#        world_amb = Color((0.0, 0.0, 0.0))    
-    for mat in bpy.data.materials:
-        Config.File.write("{}material \'{}\'\n".format("  " * Config.Whitespace, mat.name))
-        Config.Whitespace += 1
+def ExportMaterials(Config):   
+    materials = et.Element("materials")
+    Config.DocStack[ -1 ].append( materials )
+    Config.DocStack.append( materials )        
+    for mat in bpy.data.materials:    
+        matEl= et.Element("material")
+        Config.DocStack[ -1 ].append( matEl )
+        matEl.attrib['name'] = mat.name   
         
         # COLORS
 #        amb = mat.ambient
 #        Config.File.write("{}ambient {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, *amb))  # Ambient, uses mirror color,
-        Config.File.write("{}diffuse {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, *( mat.diffuse_color * mat.diffuse_intensity ))) # Diffuse        
-        Config.File.write("{}specular {:6f}, {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, mat.specular_hardness, *( mat.specular_color * mat.specular_intensity )))  # Specular        
+        matEl.attrib['diffuse'] = "{:6f}, {:6f}, {:6f}".format(*( mat.diffuse_color * mat.diffuse_intensity )) # Diffuse        
+        matEl.attrib['specular'] = "{:6f}, {:6f}, {:6f}, {:6f}".format( mat.specular_hardness, *( mat.specular_color * mat.specular_intensity ))  # Specular        
         
         # TEXTURES
         for tex in mat.texture_slots:
@@ -27,18 +26,16 @@ def ExportMaterials(Config):
                         if filepath:  # may be '' for generated images
                         # write relative image path
                             #filepath = bpy_extras.io_utils.path_reference(filepath, , Config.FilePath,
-                            #                                  'AUTO', "", copy_set, face_img.library)                        
-                            Config.File.write("{}texture \'{}\'\n".format("  " * Config.Whitespace, ExportPath( Config, filepath )))
-                            Config.Whitespace += 1
+                            #                                  'AUTO', "", copy_set, face_img.library)        
+                            texEl= et.Element("texture")
+                            Config.DocStack[ -1 ].append( texEl )
+                            texEl.attrib['file'] = ExportPath( Config, filepath )  
                             
                             if ( tex.use_map_color_diffuse ):
-                                Config.File.write("{}diffuse {}\n".format("  " * Config.Whitespace, tex.diffuse_color_factor ))
+                                texEl.attrib['diffuse'] = str( tex.diffuse_color_factor )
 
                             if ( tex.use_map_normal ):
-                                Config.File.write("{}normal {}\n".format("  " * Config.Whitespace, tex.normal_factor ))
+                                texEl.attrib['normal'] = str( tex.normal_factor )
                             
-                            Config.Whitespace -= 1
-                            Config.File.write("{}end;\n".format("  " * Config.Whitespace ))
         
-        Config.Whitespace -= 1
-        Config.File.write("{}end;\n".format("  " * Config.Whitespace))
+    Config.DocStack.pop()

@@ -83,6 +83,7 @@ interface
         procedure Realign;
         procedure Render(base: TVec4; ScrollAcc: TVec2);
         function Input: TP3DGraphicControl;
+        function MouseRay( X,Y: Integer; const Recurse: Boolean = True; UpdateInpState: Boolean = False ): TP3DGraphicControl;
         constructor Create( AParent: TP3DGraphicControl; AManager: TGUIManager );
         destructor Destroy; override;
         procedure Clear( DestroyObjects: Boolean = False ); reintroduce;
@@ -412,15 +413,67 @@ begin
   mx:= GUIManager.MouseX;
   my:= GUIManager.MouseY;
 
-  Result:= nil;
+  Result:= MouseRay( mx, my, True, True );
+  if ( Assigned( Result )) then
+    with InputManager.Mouse do
+      Result.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
 
   for Control in Self do
     begin
       //Handle Mouse
-      with InputManager.Mouse do
-        Result:= Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
+      //with InputManager.Mouse do
+      //  Result:= Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
       Control.KeyboardAction();
     end;
+end;
+
+function TControlBuffer.MouseRay( X, Y: Integer; const Recurse: Boolean;
+  UpdateInpState: Boolean ): TP3DGraphicControl;
+
+  function SetFlag( Flag: TP3DGCInputState; Yes: Boolean ): TP3DGCInputFlags;
+  begin
+    if ( Yes ) then
+      Result:= [ Flag ]
+    else
+      Result:= [];
+  end;
+
+  function SetIS( MOver: TP3DGCInputState ): TP3DGCInputFlags;
+  begin
+    Result:= [ Mover ] + SetFlag( gcisMouseBtn1Down, InputManager.Mouse.Buttons[ 0 ])
+                       + SetFlag( gcisMouseBtn1Down, InputManager.Mouse.Buttons[ 1 ])
+                       + SetFlag( gcisMouseBtn1Down, InputManager.Mouse.Buttons[ 2 ]);
+  end;
+
+var
+  i: Integer;
+begin
+  Result:= nil;
+  for i:= Count - 1 downto 0 do
+    if ( PtInRect( Rect( Items[ i ].Canvas.Left, Items[ i ].Canvas.Top, Items[ i ].Canvas.Left + Items[ i ].Canvas.Width, Items[ i ].Canvas.Top + Items[ i ].Canvas.Height ), Point( X, Y ))) then
+      begin
+        if ( not Assigned( Result )) then
+          begin
+            if ( Recurse ) then //TODO: FINISH THIS!
+              Result:= Items[ i ].Controls.MouseRay( X, Y, Recurse, UpdateInpState );
+            if ( UpdateInpState ) then
+              begin
+                if ( not Assigned( Result )) then
+                  begin
+                    Result:= Items[ i ];
+                    Items[ i ].InputState:= SetIS( gcisMouseOver )
+                  end
+                else
+                  Items[ i ].InputState:= SetIS( gcisMouseOverOccl );
+              end
+            else
+              Break;
+          end
+        else
+          Result.InputState:= SetIS( gcisMouseOverOccl );
+      end
+    else
+      Items[ i ].InputState:= SetIS( gcisMouseOverOccl ) - [ gcisMouseOverOccl ];
 end;
 
 procedure TP3DGraphicControl.UpdateClientRect;
@@ -490,9 +543,11 @@ end;
 
 procedure TGUIManager.Input;
 var
-  Control: Pointer;
+  Ctrl: TP3DGraphicControl;
 begin
-  Controls.Input;
+  Ctrl:= Controls.Input;
+  if (( Assigned( Ctrl )) AND ( gcisMouseOverOccl in Ctrl.InputState )) then
+    Ctrl.InputState:= ( Ctrl.InputState + [ gcisMouseOver ]) - [ gcisMouseOverOccl ];
 end;
 
 procedure TGUIManager.Render;

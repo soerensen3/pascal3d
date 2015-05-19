@@ -61,6 +61,32 @@ type
       property CursorRight: Boolean read FCursorRight write FCursorRight;
   end;
 
+  { TP3DLabel }
+
+  TP3DLabel = class ( TP3DGraphicControl )
+    private
+      FAlignment: TAlignment;
+      FAutoSize: Boolean;
+      FCaption: String;
+      FCaptionTxt: TP3DText;
+      FFont: TP3DCanvasFont;
+
+      procedure SetAutoSize(AValue: Boolean);
+      procedure SetCaption( AValue: String );
+      procedure Resize;
+      procedure Draw; override;
+
+    public
+      constructor Create( AOwner: TObjectList; AManager: TGUIManager; const AParent: TP3DGraphicControl = nil );
+      destructor Destroy; override;
+
+    published
+      property Caption: String read FCaption write SetCaption;
+      property AutoSize: Boolean read FAutoSize write SetAutoSize;
+      property Font: TP3DCanvasFont read FFont write FFont;
+      property Alignment: TAlignment read FAlignment write FAlignment;
+  end;
+
   { TP3DGroupBox }
 
   TP3DGroupBox = class( TP3DGraphicControl )
@@ -86,6 +112,62 @@ type
   end;
 
 implementation
+
+{ TP3DLabel }
+
+procedure TP3DLabel.SetCaption(AValue: String);
+begin
+  if FCaption=AValue then Exit;
+  FCaption:=AValue;
+  FCaptionTxt.Free;
+  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name ], Font.Size );
+end;
+
+procedure TP3DLabel.SetAutoSize(AValue: Boolean);
+begin
+  if FAutoSize=AValue then Exit;
+  FAutoSize:=AValue;
+  if ( AutoSize ) then
+    Resize;
+end;
+
+procedure TP3DLabel.Resize;
+begin
+  Width:= Round( FCaptionTxt.Width );
+  Height:= Round( FCaptionTxt.Height );
+end;
+
+procedure TP3DLabel.Draw;
+var
+  P: TVec2;
+begin
+  inherited Draw;
+  Canvas.Font.Color:= Font.Color;
+  Canvas.Font.Size:= Font.Size;
+  Canvas.Font.Name:= Font.Name;
+  case Alignment of
+    taLeftJustify: P:= vec2( 0 );
+    taRightJustify: P:= vec2( Width - FCaptionTxt.Width, 0 );
+    taCenter: P:= vec2(( Width - FCaptionTxt.Width ) / 2, 0 );
+  end;
+  Canvas.RenderText( FCaptionTxt, P );
+end;
+
+constructor TP3DLabel.Create(AOwner: TObjectList; AManager: TGUIManager;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AManager, AParent );
+  Font:= TP3DCanvasFont.Create;
+  Font.Color:= vec4( vec3( 0 ), 1 );
+  Caption:= Name;
+end;
+
+destructor TP3DLabel.Destroy;
+begin
+  FCaptionTxt.Free;
+  Font.Free;
+  inherited Destroy;
+end;
 
 { TP3DGroupBox }
 

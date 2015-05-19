@@ -105,11 +105,11 @@ var
   cmb: TComboBox;
   N: TP3DShaderNode;
   ed: TSynEdit;
-  L: TP3DShaderNodeVariableLink;
+  L: TP3DShaderNodeFragmentLink;
 begin
   if ( Sender is TSynEdit ) then
     begin
-      TP3DShaderNodeVariableLink( TSynEdit( Sender ).Tag ).Target:= Trim( TSynEdit( Sender ).Text );
+      TP3DShaderNodeFragmentLink( TSynEdit( Sender ).Tag ).Target:= Trim( TSynEdit( Sender ).Text );
       UpdateBuffers;
     end
   else
@@ -117,7 +117,7 @@ begin
       cmb:= TComboBox( Sender );
       if ( Pointer( cmb.Tag ) <> nil ) then
         begin
-          L:= TP3DShaderNodeVariableLink( cmb.Tag );
+          L:= TP3DShaderNodeFragmentLink( cmb.Tag );
           if ( L.List ) then
             begin
               if ( L.Target > '' ) then
@@ -145,7 +145,7 @@ begin
   syn:= TSynEdit( Sender );
   if ( Pointer( syn.Tag ) <> nil ) then
     begin
-      TP3DShaderNodeVariableInline( syn.Tag ).Text:= syn.Text;
+      TP3DShaderNodeFragmentInline( syn.Tag ).Text:= syn.Text;
       UpdateBuffers;
     end;
 end;
@@ -161,9 +161,9 @@ var
   cnt: Integer;
   inp: TP3DShaderNodeInput;
 
-  procedure AddList( Base: TTreeNode; List: TP3DShaderNodeVariableList );
+  procedure AddList( Base: TTreeNode; List: TP3DShaderNodeFragmentList );
   var
-    frag: TP3DShaderNodeVariable;
+    frag: TP3DShaderNodeFragment;
   begin
     for frag in List do
       {if ( frag is TP3DShaderNodeVariableInput ) then
@@ -172,11 +172,11 @@ var
             [ TP3DShaderNodeVariableInput( frag ).Name,
               TP3DShaderNodeVariableInput( frag ).VarType,
               Ord( TP3DShaderNodeVariableInput( frag ).Required )])), TP3DShaderNodeVariableInput( frag ).Fragments )
-      else }if ( frag is TP3DShaderNodeVariableLink ) then
+      else }if ( frag is TP3DShaderNodeFragmentLink ) then
         AddList(
         lv.Items.AddChild( Base, Format( 'Link: %s (type: "%s")',
-          [ TP3DShaderNodeVariableLink( frag ).Target,
-            TP3DShaderNodeVariableLink( frag ).VarType ])), TP3DShaderNodeVariableLink( frag ).Fragments )
+          [ TP3DShaderNodeFragmentLink( frag ).Target,
+            TP3DShaderNodeFragmentLink( frag ).VarType ])), TP3DShaderNodeFragmentLink( frag ).Fragments )
   end;
 
 
@@ -202,8 +202,8 @@ var
   end;
 
 
-  procedure AddFragments( Parent: TWinControl; Fragments: TP3DShaderNodeVariableList );
-    procedure AddInline( Parent: TWinControl; I: TP3DShaderNodeVariableInline );
+  procedure AddFragments( Parent: TWinControl; Fragments: TP3DShaderNodeFragmentList );
+    procedure AddInline( Parent: TWinControl; I: TP3DShaderNodeFragmentInline );
     var
       grp: TGroupBox;
       ctrl: TSynEdit;
@@ -227,7 +227,7 @@ var
         end;
     end;
 
-    procedure AddLink( Parent: TWinControl; I: TP3DShaderNodeVariableLink );
+    procedure AddLink( Parent: TWinControl; I: TP3DShaderNodeFragmentLink );
     var
       grp: TGroupBox;
       ctrl: TComboBox;
@@ -270,7 +270,7 @@ var
     end;
 
   var
-    frag: TP3DShaderNodeVariable;
+    frag: TP3DShaderNodeFragment;
   begin
     if ( Parent = nil ) then
       Parent:= scrollbox;
@@ -279,11 +279,11 @@ var
       begin
         Inc( cnt );
         case frag.ClassName of
-          'TP3DShaderNodeVariableInline':
-            AddInline( Parent, TP3DShaderNodeVariableInline( frag ));
+          'TP3DShaderNodeFragmentInline':
+            AddInline( Parent, TP3DShaderNodeFragmentInline( frag ));
 
-          'TP3DShaderNodeVariableLink':
-            AddLink( Parent, TP3DShaderNodeVariableLink( frag ));
+          'TP3DShaderNodeFragmentLink':
+            AddLink( Parent, TP3DShaderNodeFragmentLink( frag ));
         end;
       end;
   end;

@@ -16,6 +16,7 @@
       procedure Delete( Index: Integer ); virtual;
       function IndexOf( Item: TCustomItem ): Integer; virtual;
       procedure Clear(); virtual;
+      procedure Empty(); virtual;
       function GetEnumerator(): TCustomListEnumerator;
       procedure Insert( Index: Integer; Item: TCustomItem );
 
@@ -102,6 +103,11 @@ begin
   FItems.Clear;
 end;
 
+procedure TCustomList.Empty;
+begin
+  FItems.Clear;
+end;
+
 function TCustomList.GetEnumerator(): TCustomListEnumerator;
 begin
   Result:= TCustomListEnumerator.Create( Self );
@@ -128,4 +134,4 @@ end;
 
 
 {$UNDEF IMPLEMENTATION}
-{$ENDIF}
+{$ENDIF}

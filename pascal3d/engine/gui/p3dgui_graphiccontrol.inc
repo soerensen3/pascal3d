@@ -8,8 +8,11 @@ TP3DGCInputFlags = set of TP3DGCInputState;
 TP3DGraphicControl = class ( TBaseObject )
   private
     FInputState: TP3DGCInputFlags;
+
     function GetScroll: TVec2;
+    procedure SetInputState(AValue: TP3DGCInputFlags);
     procedure SetScroll(AValue: TVec2);
+
   protected
     FLeft,
     FTop,
@@ -63,7 +66,7 @@ TP3DGraphicControl = class ( TBaseObject )
     Manager: TGUIManager;
 
     constructor Create(AOwner: TObjectList; AManager: TGUIManager;
-      const Parent: TP3DGraphicControl=nil);
+      const AParent: TP3DGraphicControl=nil);
     destructor Destroy; override;
 
     procedure Draw; virtual;
@@ -86,7 +89,7 @@ TP3DGraphicControl = class ( TBaseObject )
     property Controls: TControlBuffer read FControls write FControls;
     property Canvas: TP3DCanvas2D read FCanvas write FCanvas;
     property ClientRect: TRect read FClientRect;
-    property InputState: TP3DGCInputFlags read FInputState write FInputState;
+    property InputState: TP3DGCInputFlags read FInputState write SetInputState;
     property Scroll: TVec2 read GetScroll write SetScroll;
 
   published
@@ -126,14 +129,14 @@ end;
 {$IFDEF IMPLEMENTATION}
 { TP3DGraphicControl }
 
-constructor TP3DGraphicControl.Create( AOwner: TObjectList; AManager: TGUIManager; const Parent: TP3DGraphicControl = nil );
+constructor TP3DGraphicControl.Create( AOwner: TObjectList; AManager: TGUIManager; const AParent: TP3DGraphicControl = nil );
 begin
   inherited Create( AOwner );
   Manager:= AManager;
   Controls:= TControlBuffer.Create( Self, Manager );
   FCanvas:= TP3DCanvas2D.Create( Self );
-  if ( Assigned( Parent )) then
-    ParentCtrl:= Parent.Controls
+  if ( Assigned( AParent )) then
+    ParentCtrl:= AParent.Controls
   else
     ParentCtrl:= AManager.Controls;
   ParentCtrl.Add( Self );
@@ -191,12 +194,13 @@ end;
 function TP3DGraphicControl.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer
   ): TP3DGraphicControl;
 begin
+  {
   if ( mb1 ) then
     InputState:= InputState + [ gcisMouseBtn1Down ];
   if ( mb2 ) then
     InputState:= InputState + [ gcisMouseBtn2Down ];
   if ( mb3 ) then
-    InputState:= InputState + [ gcisMouseBtn3Down ];
+    InputState:= InputState + [ gcisMouseBtn3Down ];}
   if ( Assigned( FOnMouseDown )) then
     FOnMouseDown( Self, mb1, mb2, mb3, X, Y );
 end;
@@ -239,12 +243,14 @@ begin
   cy:= Y - Canvas.Top;
   if (( InputManager.Mouse.DX <> 0 ) or ( InputManager.Mouse.DY <> 0 )) then
     MouseMove( cx, cy );
+  {
   if ( PtInRect( Rect( Canvas.Left, Canvas.Top, Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), Point( X, Y ))) then
     begin
       Result:= Controls.Input;
       if ( not Assigned( Result )) then
         begin
           InputState:= InputState + [ gcisMouseOver ];
+          //InputState:= InputState + [ gcisMouseOverOccl ];
           mdown_test:= ( mb1 AND dmb1 ) OR ( mb2 AND dmb2 ) OR ( mb3 AND dmb3 );
           mup_test:= (( not mb1 ) AND dmb1 ) OR (( not mb2 ) AND dmb2 ) OR (( not mb3 ) AND dmb3 );
           if ( mdown_test ) then
@@ -264,7 +270,7 @@ begin
     begin
       InputState:= InputState - [ gcisMouseOver, gcisMouseOverOccl ];
       ReleaseButtons;
-    end;
+    end;}
 end;
 
 procedure TP3DGraphicControl.MouseMove( X, Y: Integer );
@@ -278,14 +284,14 @@ end;
 function TP3DGraphicControl.MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer
   ): TP3DGraphicControl;
 begin
-  if ( mb1 ) then
+  {if ( mb1 ) then
     InputState:= InputState - [ gcisMouseBtn1Down ];
   if ( mb2 ) then
     InputState:= InputState - [ gcisMouseBtn2Down ];
   if ( mb3 ) then
     InputState:= InputState - [ gcisMouseBtn3Down ];
   if ( Assigned( FOnMouseUp )) then
-    FOnMouseUp( Self, mb1, mb2, mb3, X, Y );
+    FOnMouseUp( Self, mb1, mb2, mb3, X, Y );}
   MouseClick( mb1, mb2, mb3, X, Y );
 end;
 
@@ -349,6 +355,50 @@ begin
   Result:= Canvas.Scroll;
 end;
 
+procedure TP3DGraphicControl.SetInputState(AValue: TP3DGCInputFlags);
+var
+  mx: Integer;
+  my: Integer;
+  DIS: TP3DGCInputFlags;
+
+  function FlagSet( Flag: TP3DGCInputState ): Boolean;
+  begin
+    Result:= Flag in ( AValue * DIS );
+  end;
+
+  function MDwn: Boolean;
+  begin
+    Result:= ( DIS * AValue ) * [ gcisMouseBtn1Down, gcisMouseBtn2Down, gcisMouseBtn3Down ] <> [];
+  end;
+
+  function MUp(): Boolean;
+  begin
+    Result:= ( DIS * InputState ) * [ gcisMouseBtn1Down, gcisMouseBtn2Down, gcisMouseBtn3Down ] <> [];
+  end;
+
+begin
+  if FInputState=AValue then Exit;
+  FInputState:=AValue;
+
+  mx:= GUIManager.MouseX - Canvas.Left;
+  my:= GUIManager.MouseY - Canvas.Top;
+
+  DIS:= AValue * InputState;
+
+  if ( gcisMouseOver in DIS ) then
+    if ( gcisMouseOver in AValue ) then
+      MouseEnter( mx, my )
+    else
+      MouseLeave( mx, my );
+  if ([ gcisMouseBtn1Down, gcisMouseBtn2Down, gcisMouseBtn3Down ] * DIS <> []) then
+    begin
+      if ( MUp()) then
+        MouseDown( FlagSet( gcisMouseBtn1Down ), FlagSet( gcisMouseBtn2Down ), FlagSet( gcisMouseBtn3Down ), mx, my );
+      if ( MDwn()) then
+        MouseUp( not FlagSet( gcisMouseBtn1Down ), not FlagSet( gcisMouseBtn2Down ), not FlagSet( gcisMouseBtn3Down ), mx, my );
+    end;
+end;
+
 procedure TP3DGraphicControl.SetScroll(AValue: TVec2);
 begin
   Canvas.Scroll:= AValue;
@@ -358,18 +408,17 @@ procedure TP3DGraphicControl.Render(BaseColor: TVec4; ScrollAcc: TVec2);
 var
   OldScroll: TVec2;
 begin
-  //P3DViewports.Push( Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height );
   Canvas.Lock;
   OldScroll:= Scroll;
   Canvas.Scroll:= ScrollAcc + Scroll;
-  Canvas.ScreenColor:= BaseColor;
+
+  Canvas.ScreenColor:= vec4( 1 * Ord( gcisMouseBtn1Down in InputState ), 1 * Ord( gcisMouseBtn2Down in InputState ), 1 * Ord( gcisMouseBtn3Down in InputState ), 0.25 + 0.75 * Ord( gcisMouseOver in InputState ) + 0.25 * Ord( gcisMouseOverOccl in InputState ));
 
   Draw;
 
   Canvas.Unlock();
   Canvas.Scroll:= OldScroll;
   Controls.Render( BaseColor, ScrollAcc + Scroll );
-  //P3DViewports.Pop();
 end;
 
 

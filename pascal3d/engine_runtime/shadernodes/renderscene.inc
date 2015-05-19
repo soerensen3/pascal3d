@@ -25,12 +25,12 @@ begin
   glDisable( GL_CULL_FACE );
   GUIManager.Input;
   GUIManager.Render;
-  GUIManager.Controls[ 0 ].Scroll:= vec2( SDL_GetTicks div 10 mod 100 );
+  {GUIManager.Controls[ 0 ].Scroll:= vec2( SDL_GetTicks div 10 mod 100 );
   for i:= 0 to GUIManager.Controls.Count - 1 do
     begin
       GUIManager.Controls[ i ].Left:= InputManager.Mouse.X;
       GUIManager.Controls[ i ].Top:= InputManager.Mouse.Y;
-    end;
+    end;}
   {canvas.Left:= 150;
   canvas.Top:= 300;
   canvas.Width:= InputManager.Mouse.X - 150;
@@ -50,6 +50,8 @@ end;
 procedure ResizeWnd( Sender: TSDLWindow );
 begin
   Setup2D( 0, 0, Sender.Width, Sender.Height );
+//  canvas.Width:= Sender.Width;
+//  canvas.Height:= Sender.Height;
 end;
 
 

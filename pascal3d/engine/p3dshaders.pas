@@ -504,14 +504,15 @@ begin
     end;}
   glLinkProgram( Result.ShaderObj ); // link the shader program
 
-  glGetShaderiv( Result.ShaderObj, GL_LINK_STATUS, @Res );
-  if ( Res = GL_FALSE ) then // clean up if linking failed
+  //glGetShaderiv( Result.ShaderObj, GL_LINK_STATUS, @Res );
+  //CAUSING INVALID OPERATION ERRORS
+  {if ( Res = GL_FALSE ) then // clean up if linking failed
     begin
       WriteLn( 'Linking failed: ', ProgramCheckForErrors( Result.ShaderObj ));
       DeleteShader( Result.ShaderObj );
       FreeAndNil( Result );
     end
-  else
+  else}
     begin // shader compiled successfully
       glUseProgram( Result.ShaderObj );
       DebugParams( Result ); // show attributes and uniforms
@@ -720,4 +721,4 @@ begin
 end;
 
 end.
-
+

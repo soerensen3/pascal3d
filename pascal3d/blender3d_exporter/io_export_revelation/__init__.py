@@ -11,14 +11,14 @@ bl_info = {
     "category": "Import-Export"}
 
 #__all__ = [ "rev_export", "rev_helper" ]
-if "bpy" in locals():
-    import imp
-    if "rev_export" in locals():
-        imp.reload( rev_export )
+#if "bpy" in locals():
+#    import importlib
+#    if "rev_export" in locals():
+#        importlib.reload( rev_export, rev_export_mesh, rev_helper )
     #if "rev_helper" in locals():
     #    imp.reload( rev_helper )
-else:        
-    from . import rev_export
+#else:        
+from . import rev_export
 
 import bpy
 

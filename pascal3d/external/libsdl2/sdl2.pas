@@ -38,12 +38,14 @@ unit SDL2;
   "sdl_shape.h",
   "sdl_stdinc.h",
   "sdl_surface.h",
+  "sdl_system.h",
+  "sdl_syswm.h",
   "sdl_thread.h",
   "sdl_timer.h",
   "sdl_touch.h",
   "sdl_version.h",
   "sdl_video.h",
-  "sdltype_s.h"
+  "sdl_types.h"
 
   I will not translate:
   "sdl_opengl.h",
@@ -137,6 +139,13 @@ interface
       X,
       XLib;
   {$ENDIF}
+  
+  {$IFDEF DARWIN}
+    uses
+      X,
+      XLib,
+      CocoaAll;
+  {$ENDIF}
 
 const
 
@@ -180,6 +189,7 @@ const
 {$I sdlshape.inc}
 {$I sdlvideo.inc}
 {$I sdlhints.inc}
+{$I sdlloadso.inc}
 {$I sdlmessagebox.inc}
 {$I sdlrenderer.inc}
 {$I sdlscancode.inc}
@@ -190,11 +200,13 @@ const
 {$I sdlhaptic.inc}
 {$I sdltouch.inc}
 {$I sdlgesture.inc}
+{$I sdlsyswm.inc}
 {$I sdlevents.inc}
 {$I sdlclipboard.inc}
 {$I sdlcpuinfo.inc}
 {$I sdlfilesystem.inc}
 {$I sdllog.inc}
+{$I sdlsystem.inc}
 {$I sdl.inc}
 
 implementation
@@ -222,6 +234,12 @@ end;
 function SDL_VERSION_ATLEAST(X,Y,Z: Cardinal): Boolean;
 begin
   Result := SDL_COMPILEDVERSION >= SDL_VERSIONNUM(X,Y,Z);
+end;
+
+//from "sdl_mouse.h"
+function SDL_Button(button: SInt32): SInt32;
+begin
+  Result := 1 shl (button - 1); 
 end;
 
 {$IFDEF WINDOWS}
@@ -356,6 +374,19 @@ end;
 function SDL_LoadBMP(_file: PAnsiChar): PSDL_Surface;
 begin
   Result := SDL_LoadBMP_RW(SDL_RWFromFile(_file, 'rb'), 1);
+end;
+
+function SDL_SaveBMP(Const surface:PSDL_Surface; Const filename:AnsiString):sInt32;
+begin
+   Result := SDL_SaveBMP_RW(surface, SDL_RWFromFile(PAnsiChar(filename), 'wb'), 1)
+end;
+
+{**
+ *  Evaluates to true if the surface needs to be locked before access.
+ *}
+function SDL_MUSTLOCK(Const S:PSDL_Surface):Boolean;
+begin
+  Result := ((S^.flags and SDL_RLEACCEL) <> 0)
 end;
 
 //from "sdl_video.h"

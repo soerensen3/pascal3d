@@ -314,9 +314,6 @@ end;
 
 procedure TP3DText.Render(p: TVec2; Color: TVec4; proj: TMat4);
 var
-  cl: GLint;
-  vt: GLint;
-  tc: GLint;
   tx: GLint;
   mat: GLint;
   mt: TMat4;
@@ -326,7 +323,6 @@ begin
   OldShader:= ActShad;
   if ( Assigned( Font.FontManager.Shader )) then
     Font.FontManager.Shader.Enable;
-  cl:= ActShad.Attributes.AddrByName( 'in_color' );
 
   tx:= ActShad.Uniforms.AddrByName( 'tex0' );
   mat:= ActShad.Uniforms.AddrByName( 'mat' );
@@ -339,10 +335,10 @@ begin
   m:= mt * proj;
   glUniform1i( tx, 0 );
   glUniformMatrix4fv( mat, 1, False, @m );
-  glVertexAttrib4f( cl, Color.X, Color.Y, Color.Z, Color.A );
-  Vertices.SetAttribArray( 0 );
+  glVertexAttrib4f( P3DAttribColor, Color.X, Color.Y, Color.Z, Color.A );
+  Vertices.SetAttribArray( P3DAttribPosition );
   Vertices.Bind();
-  TexCoords.SetAttribArray( 4 );
+  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
   TexCoords.Bind();
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));

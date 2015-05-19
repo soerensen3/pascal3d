@@ -6,7 +6,39 @@ interface
   uses
     Classes, SysUtils, p3dMath, dglOpenGL;
 
+
+  const //predefined attribute locations (https://www.opengl.org/sdk/docs/tutorials/ClockworkCoders/attributes.php)
+    P3DAttribPosition           = 0;
+    P3DAttribNormal             = 2;
+    P3DAttribColor              = 3;
+    P3DAttribBinormal           = 4;
+    P3DAttribTangent            = 5;
+    P3DAttribTexCoord0          = 8;
+    P3DAttribTexCoord1          = 9;
+    P3DAttribTexCoord2          = 10;
+    P3DAttribTexCoord3          = 11;
+    P3DAttribTexCoord4          = 12;
+    P3DAttribTexCoord5          = 13;
+    P3DAttribTexCoord6          = 14;
+    P3DAttribTexCoord7          = 15;
+
+
   type
+
+    { TP3DVertexBufferArray }
+
+    TP3DVertexBufferArray = class ( TPersistent )
+      private
+        VBA: GLuint;
+
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        procedure Bind;
+        procedure Unbind;
+    end;
+
     {$MACRO ON}
     {$DEFINE INTERFACE}
 
@@ -56,6 +88,32 @@ interface
 
 
 implementation
+
+{ TP3DVertexBufferArray }
+
+constructor TP3DVertexBufferArray.Create;
+begin
+  glGenVertexArrays( 1, @VBA );
+  if ( VBA = 0 ) then
+
+    glGetError( );
+end;
+
+destructor TP3DVertexBufferArray.Destroy;
+begin
+  glDeleteVertexArrays( 1, @VBA );
+  inherited Destroy;
+end;
+
+procedure TP3DVertexBufferArray.Bind;
+begin
+  glBindVertexArray( VBA );
+end;
+
+procedure TP3DVertexBufferArray.Unbind;
+begin
+  glBindVertexArray( 0 );
+end;
 
 {$DEFINE IMPLEMENTATION}
 

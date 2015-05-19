@@ -6,21 +6,24 @@ TP3DBufferObjectGL = class ( TItemList )
   private
     FBufferObject: GLuint;
     FStatic: Boolean;
+    FIdx: Integer;
     procedure GenBufferObject;
     procedure DeleteBufferObject;
     procedure SetStatic(AValue: Boolean);
 
   public
-    constructor Create(const Static: Boolean);
+    constructor Create(const AStatic: Boolean);
     destructor Destroy; override;
 
     procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );
+    procedure UnsetAttribArray();
     procedure PushData;
     {$IFDEF USE_ATTRIB}
     procedure SetAttribArray( idx: Integer );
     {$ENDIF}
 
     property Static: Boolean read FStatic write SetStatic;
+    property BufferObject: GLuint read FBufferObject write FBufferObject;
 end;
 
 {$ENDIF}
@@ -65,13 +68,16 @@ begin
   glBindBuffer( GL_ARRAY_BUFFER, FBufferObject );
   glVertexAttribPointer( idx, GLNUMCOMPONENTS, GLTYPE, False, 0, nil );
   glEnableVertexAttribArray( idx );
+  FIdx:= idx;
 end;
 {$ENDIF}
 
-constructor TP3DBufferObjectGL.Create( const Static: Boolean );
+constructor TP3DBufferObjectGL.Create( const AStatic: Boolean );
 begin
   inherited Create;
   GenBufferObject;
+  FIdx:= -1;
+  FStatic:= AStatic;
 end;
 
 destructor TP3DBufferObjectGL.Destroy;
@@ -84,5 +90,12 @@ procedure TP3DBufferObjectGL.Bind( const Target: GLenum );
 begin
   glBindBuffer( Target, FBufferObject );
 end;
+
+procedure TP3DBufferObjectGL.UnsetAttribArray();
+begin
+  glDisableVertexAttribArray( Fidx );
+  FIdx:= -1;
+end;
+
 
 {$ENDIF}

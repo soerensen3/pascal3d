@@ -5,7 +5,7 @@ unit p3dfiletypemodel;
 interface
 
 uses
-  Classes, SysUtils, p3dmodel, strutils, p3dMath, p3dtexture;
+  Classes, SysUtils, p3dmodel, strutils, p3dMath, p3dtexture, p3dbuffers;
 
 
 function LoadModelFile( F: TStringList ): TModelFile;
@@ -15,7 +15,7 @@ function LoadModelFileFromFile( FName: String ): TModelFile;
 implementation
 
 
-function LoadObject( MdlFile: TModelFile; var Mdl: TModel; F: TStringList; const strpos: Integer ): Integer; forward;
+function LoadObject( MdlFile: TModelFile; var Mdl: TP3DMesh; F: TStringList; const strpos: Integer ): Integer; forward;
 function LoadArmature( MdlFile: TModelFile; var Armature: TArmature; F: TStringList; const strpos: Integer ): Integer; forward;
 
 function RemoveComment( S: String ): String;
@@ -111,7 +111,7 @@ begin
   Result:= i + 1;
 end;
 
-function LoadUV( var UVs: TVec2List; F: TStringList; const strpos: Integer ): Integer;
+function LoadUV( var UVs: TP3DVec2BufferGL; F: TStringList; const strpos: Integer ): Integer;
   function ParseUV( S: String ): TVec2;
   var
     i, n: Integer;
@@ -181,7 +181,7 @@ begin
     end;
 end;
 
-function LoadVertices( var Vertices: TVec3List; F: TStringList; const strpos: Integer ): Integer;
+function LoadVertices( var Vertices: TP3DVec3BufferGL; F: TStringList; const strpos: Integer ): Integer;
 var
   i: Integer;
   cmd: String;
@@ -205,7 +205,7 @@ begin
   Result:= i + 1;
 end;
 
-function LoadVerticesBin( var Vertices: TVec3List; F: TFileStream; count: Integer ): Integer;
+function LoadVerticesBin( var Vertices: TP3DVec3BufferGL; F: TFileStream; count: Integer ): Integer;
 var
   i: Integer;
   base: Integer;
@@ -219,7 +219,7 @@ begin
     end;
 end;
 
-function LoadUVBin( var UVs: TVec2List; F: TFileStream; count: Integer ): Integer;
+function LoadUVBin( var UVs: TP3DVec2BufferGL; F: TFileStream; count: Integer ): Integer;
 var
   i: Integer;
   base: Integer;
@@ -234,7 +234,7 @@ begin
     end;
 end;
 
-function LoadFacesBin( var Faces: TFaceArray; F: TFileStream; count: Integer ): Integer;
+function LoadFacesBin( var Faces: TP3DFaceArray; F: TFileStream; count: Integer ): Integer;
 var
   i: Integer;
   base: Integer;
@@ -284,10 +284,10 @@ begin
           end;
         'object':
           begin
-            Item:= TModel.Create( Children );
+            Item:= TP3DMesh.Create( Children );
             Children.Add( Item );
             Item.Name:= GetParams( F[ i ]);
-            i:= LoadObject( MdlFile, TModel( Item ), F, i + 1 );
+            i:= LoadObject( MdlFile, TP3DMesh( Item ), F, i + 1 );
           end;
         'end;': break;
         else
@@ -344,8 +344,8 @@ begin
 end;
 }
 
-function LoadFaces( var Faces: TFaceArray; F: TStringList; const strpos: Integer ): Integer;
-  function ParseFace( S: String ): TFace;
+function LoadFaces( var Faces: TP3DFaceArray; F: TStringList; const strpos: Integer ): Integer;
+  function ParseFace( S: String ): TP3DFace;
   var
     i, n: Integer;
     chunk: String;
@@ -399,7 +399,7 @@ begin
   Result:= i + 1;
 end;
 
-function LoadExternalObjectFile( var Mdl: TModel; fname: String; F: TStringList; const strpos: Integer ): Integer;
+function LoadExternalObjectFile( var Mdl: TP3DMesh; fname: String; F: TStringList; const strpos: Integer ): Integer;
 var
   i: Integer;
   cmd: String;
@@ -440,12 +440,12 @@ begin
   Result:= i + 1;
 end;
 
-function LoadObjMaterials( MdlFile: TModelFile; var Mdl: TModel; F: TStringList; const strpos: Integer ): Integer;
+function LoadObjMaterials( MdlFile: TModelFile; var Mdl: TP3DMesh; F: TStringList; const strpos: Integer ): Integer;
 var
   i: Integer;
   cmd: String;
   param: String;
-  Material: TMaterial;
+  Material: TP3DMaterial;
   MatIdx: Integer;
 begin
   i:= strpos;
@@ -468,7 +468,7 @@ begin
               Material:= MdlFile.Materials[ MatIdx ]
             else
               begin
-                Material:= TMaterial.Create;
+                Material:= TP3DMaterial.Create;
                 Material.Name:= param;
                 MdlFile.Materials.Add( Material );
               end;
@@ -484,7 +484,7 @@ begin
   Result:= i + 1;
 end;
 
-function LoadObject( MdlFile: TModelFile; var Mdl: TModel; F: TStringList; const strpos: Integer ): Integer;
+function LoadObject( MdlFile: TModelFile; var Mdl: TP3DMesh; F: TStringList; const strpos: Integer ): Integer;
 var
   i: Integer;
   cmd, param: String;
@@ -682,13 +682,13 @@ begin
   Result:= i + 1;
 end;
 
-function LoadTexture( Mat: TMaterial; TexName: String; F: TStringList; strpos: Integer ): Integer;
+function LoadTexture( Mat: TP3DMaterial; TexName: String; F: TStringList; strpos: Integer ): Integer;
 var
   i: Integer;
   cmd: String;
   tex: TP3DTexture;
   tmpVec: TVec4;
-  Map: ^TMap;
+  Map: ^TP3DMaterialMap;
 begin
   i:= strpos;
 
@@ -743,7 +743,7 @@ begin
 end;
 
 
-function LoadMaterial( Mat: TMaterial; F: TStringList; strpos: Integer ): Integer;
+function LoadMaterial( Mat: TP3DMaterial; F: TStringList; strpos: Integer ): Integer;
 var
   i: Integer;
   cmd: String;
@@ -803,7 +803,7 @@ var
   Item: TRenderableObject;
   MatName: String;
   MatIdx: Integer;
-  Material: TMaterial;
+  Material: TP3DMaterial;
 begin
   DecimalSeparator:= '.';
   i:= 0;
@@ -818,10 +818,10 @@ begin
       case cmd of
         'object':
           begin
-            Item:= TModel.Create( Result.Children );
+            Item:= TP3DMesh.Create( Result.Children );
             Result.Children.Add( Item );
             Item.Name:= GetParams( F[ i ]);
-            i:= LoadObject( Result, TModel( Item ), F, i + 1 );
+            i:= LoadObject( Result, TP3DMesh( Item ), F, i + 1 );
           end;
         'armature':
           begin
@@ -841,7 +841,7 @@ begin
               end
             else
               begin
-                Material:= TMaterial.Create;
+                Material:= TP3DMaterial.Create;
                 Material.Name:= ExtractWord( 1, GetParams( F[ i ]), [ '''' ]);
                 Result.Materials.Add( Material );
               end;
@@ -859,15 +859,19 @@ end;
 function LoadModelFileFromFile(FName: String): TModelFile;
 var
   F: TStringList;
+  OldDir: String;
 begin
   if ( FileExists( FName )) then
     begin
       {$IFDEF VERBOSE}
       writeln( 'LoadModelFileFromFile ''', FName , ''']' );
       {$ENDIF}
+      OldDir:= GetCurrentDir;
+      SetCurrentDir( ExtractFilePath( FName ));
       F:= TStringList.Create;
-      F.LoadFromFile( FName );
+      F.LoadFromFile( ExtractFileName( FName ));
       Result:= LoadModelFile( F );
+      SetCurrentDir( OldDir );
       F.Free;
     end
   else

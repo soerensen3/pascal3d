@@ -4,7 +4,7 @@ unit p3dscene;
 interface
 
 uses
-  Classes, SysUtils, p3dMath, p3dshaders, dglOpenGL;
+  Classes, SysUtils, p3dMath, p3dshaders, dglOpenGL, p3dviewport;
 
 
 type
@@ -14,6 +14,7 @@ type
   tCamHandedness = ( coLeft, coRight );
   tCamera = class
     private
+      FAspect: Single;
       ffar: Single;
       fHandedness: tCamHandedness;
       fmdlview: tMat3;
@@ -36,17 +37,20 @@ type
       property proj: tMat4 read fproj write fproj;
       property near: Single read fnear write fnear;
       property far: Single read ffar write ffar;
+      property Aspect: Single read FAspect write FAspect;
   end;
 
   { tScene }
   tScene = class;
 
   tSceneEvent = procedure ( Scene: tScene );
+  tSceneEventObj = procedure ( Scene: tScene ) of object;
   tRenderMode = ( rmDefault, rmShadow );
   tScene = class
     private
       fCamera: tCamera;
       fDrawObjects: tSceneEvent;
+      fDrawObjectsObj: tSceneEventObj;
       fmdlview: tMat3;
       fproj: tMat4;
       fRenderMode: tRenderMode;
@@ -60,6 +64,7 @@ type
       procedure UpdateMatrices;
 
       property DrawObjects: tSceneEvent read fDrawObjects write fDrawObjects;
+      property DrawObjectsObj: tSceneEventObj read fDrawObjectsObj write FDrawObjectsObj;
       property RenderMode: tRenderMode read fRenderMode write fRenderMode;
       property view: tMat4 read fview write fview;
       property mdlview: tMat3 read fmdlview write fmdlview;
@@ -93,15 +98,20 @@ end;
 
 procedure tScene.RenderFromCamera( Cam: tCamera );
 begin
+  if ( P3DViewports.Count > 0 ) then
+    Cam.Aspect:= P3DViewports.Peek.Width/P3DViewports.Peek.Height;
   Cam.UpdateMatrices;
   UpdateMatrices;
 
-  RenderMode:= rmShadow;
+  //RenderMode:= rmShadow;
 
   if ( Assigned( DrawObjects )) then
     DrawObjects( Self );
+  if ( Assigned( DrawObjectsObj )) then
+    DrawObjectsObj( Self );
 
-  Shader.Disable;
+  if ( Assigned( Shader )) then
+    Shader.Disable;
 end;
 
 procedure tScene.Render;
@@ -147,14 +157,15 @@ begin
   view:= view * _mdlview;
 
   case Handedness of
-    coLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, 4/3, near, far );
-    coRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, 4/3, near, far );
+    coLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, Aspect, near, far );
+    coRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, Aspect, near, far );
   end;
 end;
 
 constructor tCamera.Create;
 begin
   inherited;
+  Aspect:= 4/3;
   fnear:= 0.1;
   ffar:= 100;
 end;

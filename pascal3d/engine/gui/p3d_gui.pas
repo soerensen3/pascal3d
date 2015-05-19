@@ -8,7 +8,7 @@ interface
 
 uses
   p3dgui, p3dgui_buttons, p3dgui_focuscontrol, p3dgui_stdctrls, 
-  LazarusPackageIntf;
+  p3dgui_shadernodes, p3dgui_sceneviewer, LazarusPackageIntf;
 
 implementation
 

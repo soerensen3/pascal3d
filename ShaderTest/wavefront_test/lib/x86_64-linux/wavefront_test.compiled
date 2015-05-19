@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<CONFIG>
-  <Compiler Value="/usr/lib/codetyphon/fpc/bin/x86_64-linux/fpc" Date="1358601073"/>
-  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -vewnhi -Fi/home/soerensen/Dokumente/MarsColony/wavefront_test/lib/x86_64-linux -Fl/opt/gnome/lib -Fu/home/soerensen/Dokumente/MarsColony -Fu/usr/lib/codetyphon/lazarus/components/pl_OpenGL/lib/x86_64-linux/gtk2 -Fu/usr/lib/codetyphon/lazarus/ideintf/units/x86_64-linux/gtk2 -Fu/usr/lib/codetyphon/lazarus/components/lazcontrols/lib/x86_64-linux/gtk2 -Fu/usr/lib/codetyphon/lazarus/lcl/units/x86_64-linux/gtk2 -Fu/usr/lib/codetyphon/lazarus/lcl/units/x86_64-linux -Fu/usr/lib/codetyphon/lazarus/components/lazutils/lib/x86_64-linux -Fu/usr/lib/codetyphon/lazarus/packager/units/x86_64-linux -Fu/home/soerensen/Dokumente/MarsColony/wavefront_test/ -FU/home/soerensen/Dokumente/MarsColony/wavefront_test/lib/x86_64-linux/ -l -dLCL -dLCLgtk2 wavefront_test.lpr"/>
-</CONFIG>

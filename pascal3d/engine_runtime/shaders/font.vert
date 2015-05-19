@@ -3,8 +3,8 @@ uniform mat4 mat;
 //uniform sampler2D tex0;
 
 layout ( location = 0 ) in vec4 in_vertex;
-layout ( location = 1 ) in vec4 in_color;
-layout ( location = 4 ) in vec2 in_texc0;
+layout ( location = 3 ) in vec4 in_color;
+layout ( location = 8 ) in vec2 in_texc0;
 
 out vec4 out_color;
 out vec2 out_texc0;

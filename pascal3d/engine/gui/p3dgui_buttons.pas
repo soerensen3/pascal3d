@@ -13,8 +13,6 @@ interface
 
   type
 
-    { TP3DButton }
-
     { TP3DButtonPreset }
 
     TP3DButtonPreset = class
@@ -30,6 +28,8 @@ interface
         property OutlineColor: TVec4 read FOutlineColor write FOutlineColor;
         property FontColor: TVec4 read FFontColor write FFontColor;
     end;
+
+    { TP3DButton }
 
     TP3DButton = class( TP3DFocusControl )
       private
@@ -129,6 +129,7 @@ begin
   PresetHover:= TP3DButtonPreset.Create;
   PresetNormal:= TP3DButtonPreset.Create;
   Font:= TP3DCanvasFont.Create;
+  Caption:= Name;
 
   PresetNormal.Color:= vec4( vec3( 0.93 ), 1 );
   PresetNormal.OutlineColor:= vec4( vec3( 0.4 ), 1 );
@@ -153,4 +154,4 @@ initialization
   //Rev_RegisterClass( TRevButton );
 
 end.
- 
+ 

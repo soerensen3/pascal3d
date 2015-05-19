@@ -12,7 +12,7 @@ end;
 procedure OnMouseWheel( Sender: TSDLWindow; Event: TSDL_MouseWheelEvent );
 const speed = 1;
 begin
-  maincamera.Position:= maincamera.Position + vec3( 0, 0, Event.y * speed );
+  ;//maincamera.Position:= maincamera.Position + vec3( 0, 0, Event.y * speed );
 end;
 
 procedure OnKey( Sender: TSDLWindow; Event: TSDL_KeyboardEvent );
@@ -49,6 +49,7 @@ type
   KeyState = array of PUInt8;
 var
   Keys: PUInt8;
+  Mesh: TP3DMesh;
 
   function KeyPressed( Key: Integer ): Boolean;
   begin
@@ -59,13 +60,27 @@ const speed = 0.1;
 
 begin
   Keys:= SDL_GetKeyboardState( nil );
-  if ( KeyPressed( SDL_SCANCODE_S )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad - PI ), cos( - maincamera.YawPitchRoll.Z * deg2rad - PI ), 0 ) * speed;
-  if ( KeyPressed( SDL_SCANCODE_W )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad ), cos( - maincamera.YawPitchRoll.Z * deg2rad ), 0 ) * speed;
-  if ( KeyPressed( SDL_SCANCODE_A )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad - PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad - PI /2), 0 ) * speed;
-  if ( KeyPressed( SDL_SCANCODE_D )) then
-    maincamera.Position:= maincamera.Position - vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad + PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad + PI /2), 0 ) * speed;
+end;
+
+{ TEventsHandler }
+
+procedure TEventsHandler.CompileBtnClick(Sender: TP3DGraphicControl; mb1, mb2,
+  mb3: Boolean; X, Y: Integer);
+var
+  frag: TP3DShaderNodeOutlineFragment;
+  res: TP3DShaderCompiled;
+  buffer: TP3DShaderBuffer;
+begin
+  if ( Sender.InputState = [ gcisMouseOver ]) then
+    begin
+      for frag in shadernodeoutline.Fragments do
+        begin
+          res:= frag.Compile;
+          for buffer in res.Buffers do
+            WriteLn( 'result of node "', buffer.Name, '"' + #13#10, buffer.Code );
+          res.Free;
+        end;
+      guiscene.Shader:= shadernodeoutline;
+    end;
 end;
 

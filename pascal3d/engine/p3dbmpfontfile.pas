@@ -1,6 +1,7 @@
 unit p3dbmpfontfile;
 
 {$mode objfpc}{$H+}
+{.$DEFINE DEBUG}
 
 interface
 
@@ -37,9 +38,11 @@ begin
             letter.Letter:= child.Attributes.GetNamedItem( 'code' ).NodeValue[ 1 ];
             letter.uv1.FromString( child.Attributes.GetNamedItem( 'uv1' ).NodeValue );
             letter.uv2.FromString( child.Attributes.GetNamedItem( 'uv2' ).NodeValue );
+            {$IFDEF DEBUG}
             WriteLn( 'letter ''' + letter.Letter + '''' );
             WriteLn( 'uv1 ''' + letter.uv1.ToString() + '''' );
             WriteLn( 'uv2 ''' + letter.uv2.ToString() + '''' );
+            {$ENDIF}
             tex:= child.Attributes.GetNamedItem( 'tex' ).NodeValue;
             txIdx:= Result.Textures.Find( tex );
             if ( txIdx > -1 ) then
@@ -49,7 +52,9 @@ begin
                 txIdx:= Result.Textures.Add( TP3DTexture.Create( tex ));
                 letter.Texture:= Result.Textures[ txIdx ];
               end;
+            {$IFDEF DEBUG}
             WriteLn( 'tex ''' + tex + ''' = $' + IntToHex( Integer( Pointer( @letter.Texture )), 16 ));
+            {$ENDIF}
           end;
     WriteXML( F, FName );
   finally

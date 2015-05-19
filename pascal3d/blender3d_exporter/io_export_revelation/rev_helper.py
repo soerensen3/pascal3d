@@ -7,6 +7,8 @@ Created on Thu Sep 11 15:17:10 2014
 
 import os
 
+from xml.etree import cElementTree as et
+
 def LegalName(Name):
 
     def ReplaceSet(String, OldSet, NewChar):
@@ -34,21 +36,15 @@ def ExportPath( Config, Path ):
   else:
     return os.path.abspath( Path )
 
-def WriteLocalMatrix( Config, Object ):
-    
-    LocalMatrix = Object.matrix_local
-    WriteMatrix( Config, LocalMatrix )
     
 def WriteMatrix( Config, Matrix ):
-
-    Config.File.write("{}matrix\n".format("  " * Config.Whitespace))
-    Config.Whitespace += 1
-    Config.File.write("{}{:9f},{:9f},{:9f},{:9f},\n".format("  " * Config.Whitespace, Matrix[0][0], Matrix[1][0], Matrix[2][0], Matrix[3][0]))
-    Config.File.write("{}{:9f},{:9f},{:9f},{:9f},\n".format("  " * Config.Whitespace, Matrix[0][1], Matrix[1][1], Matrix[2][1], Matrix[3][1]))
-    Config.File.write("{}{:9f},{:9f},{:9f},{:9f},\n".format("  " * Config.Whitespace, Matrix[0][2], Matrix[1][2], Matrix[2][2], Matrix[3][2]))
-    Config.File.write("{}{:9f},{:9f},{:9f},{:9f};\n".format("  " * Config.Whitespace, Matrix[0][3], Matrix[1][3], Matrix[2][3], Matrix[3][3]))
-    Config.Whitespace -= 1
-    Config.File.write("{}end;\n".format("  " * Config.Whitespace))   
+    matrix = et.Element("matrix")
+    Config.DocStack[ -1 ].append( matrix )
+    
+    matrix.attrib['[0]'] = "{:9f},{:9f},{:9f},{:9f}".format(Matrix[0][0], Matrix[1][0], Matrix[2][0], Matrix[3][0])
+    matrix.attrib['[1]'] = "{:9f},{:9f},{:9f},{:9f}".format(Matrix[0][1], Matrix[1][1], Matrix[2][1], Matrix[3][1]) 
+    matrix.attrib['[2]'] = "{:9f},{:9f},{:9f},{:9f}".format(Matrix[0][2], Matrix[1][2], Matrix[2][2], Matrix[3][2])  
+    matrix.attrib['[3]'] = "{:9f},{:9f},{:9f},{:9f}".format(Matrix[0][3], Matrix[1][3], Matrix[2][3], Matrix[3][3])
     
 ## HELPER
 globalNormals = {}

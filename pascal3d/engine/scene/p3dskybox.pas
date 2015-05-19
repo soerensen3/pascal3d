@@ -15,7 +15,7 @@ type
     private
       FTextureRLFR: TP3DTexture;
       FTextureTB: TP3DTexture;
-      Cube: TModel;
+      Cube: TP3DMesh;
 
     public
       constructor Create;
@@ -40,7 +40,7 @@ var
 begin
   inherited;
 
-  Cube:= TModel.Create( nil );
+  Cube:= TP3DMesh.Create( nil );
 
   n:= 0;
   Cube.Positions.Add( vec3( -1, -1, -1 )); Cube.TexCoords.Add( vec2( 0.0, 0.0 ));
