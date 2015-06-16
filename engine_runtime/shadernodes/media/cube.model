@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<p3dscene>
+  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
+  <mesh binary="cube.modelCube.p3dobj" faces="726" name="Cube" normals="19" texcoords="144" vertices="728">
+    <matrix c0=" 1.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 1.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+    <material name="Material" />
+    <mesh binary="cube.modelCube.002.p3dobj" faces="726" name="Cube_002" normals="19" texcoords="144" vertices="728">
+      <matrix c0=" 0.366785, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 0.366785, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 0.366785, 0.000000" c3=" 0.120786, 1.501587, 1.848868, 1.000000" />
+      <material name="Material" />
+    </mesh>
+    <mesh binary="cube.modelCube.003.p3dobj" faces="726" name="Cube_003" normals="19" texcoords="144" vertices="728">
+      <matrix c0=" 0.366785, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 0.366785, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 0.366785, 0.000000" c3="-2.294257,-2.169362, 0.385241, 1.000000" />
+      <material name="Material" />
+    </mesh>
+    <mesh binary="cube.modelCube.004.p3dobj" faces="726" name="Cube_004" normals="19" texcoords="144" vertices="728">
+      <matrix c0=" 0.366785, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 0.366785, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 0.366785, 0.000000" c3=" 1.763934,-2.246700,-0.646934, 1.000000" />
+      <material name="Material" />
+    </mesh>
+  </mesh>
+  <material diffuse="0.640000, 0.640000, 0.640000" name="Material" specular="50.000000, 0.500000, 0.500000, 0.500000">
+    <texture diffuse="1.0" file="rock.jpg" />
+  </material>
+</p3dscene>
