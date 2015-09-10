@@ -21,8 +21,8 @@
         testTex: Integer;
         VBArray: TP3DVertexBufferArray;
 
-        constructor Create(AParentList: TObjectList);
-        constructor CreateFromDOM( AParentList: TObjectList; Scene: TP3DScene; ADOMNode: TDOMElement );
+        constructor Create(AParentList: TP3DObjectList);
+        constructor CreateFromDOM( AParentList: TP3DObjectList; Scene: TP3DScene; ADOMNode: TDOMElement );
 
         destructor Destroy; override;
 
@@ -136,7 +136,7 @@ begin
     end;
 end;
 
-constructor TP3DMesh.Create( AParentList: TObjectList );
+constructor TP3DMesh.Create( AParentList: TP3DObjectList );
 begin
   inherited;
 
@@ -151,7 +151,7 @@ begin
   FVisible:= True;
 end;
 
-constructor TP3DMesh.CreateFromDOM(AParentList: TObjectList; Scene: TP3DScene;
+constructor TP3DMesh.CreateFromDOM(AParentList: TP3DObjectList; Scene: TP3DScene;
   ADOMNode: TDOMElement);
 var
   Element: TDOMElement;
@@ -164,8 +164,8 @@ begin
   if ( ADOMNode.hasAttribute( 'binary' )) then
     begin
       Ext:= ADOMNode.GetAttribute( 'binary' );
-      F:= TFileStream.Create( Ext, fmOpenRead );
       try
+        F:= TFileStream.Create( Ext, fmOpenRead );
         Idx:= StrToInt( ADOMNode.GetAttribute( 'vertices' ));
         LoadVec3FromStream( Positions, F, Idx );
         Idx:= StrToInt( ADOMNode.GetAttribute( 'normals' ));

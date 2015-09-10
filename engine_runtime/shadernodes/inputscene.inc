@@ -20,7 +20,7 @@ begin
   if ( Event.type_ = SDL_KEYDOWN ) then
     begin
       if ( Event.keysym.scancode = SDL_SCANCODE_ESCAPE ) then
-        mainwnd.Running:= False;
+        P3DApplication.Running:= False;
       if ( Event.keysym.scancode = SDL_SCANCODE_F5 ) then
         begin
           UnloadShader;
@@ -33,7 +33,7 @@ begin
         end;
       if ( Event.keysym.scancode = SDL_SCANCODE_RETURN ) then
         if ( Event.keysym._mod = 256 ) then
-          MainWindow.FullScreen:= not MainWindow.FullScreen;
+          ActiveWindow.FullScreen:= not ActiveWindow.FullScreen;
 
       if ( Event.keysym.scancode in [ SDL_SCANCODE_LCTRL, SDL_SCANCODE_RCTRL ]) then
         begin
@@ -78,6 +78,6 @@ begin
         WriteLn( 'result of node "', buffer.Name, '"' + #13#10, buffer.Code );
       res.Free;
     end;
-  guiscene.Shader:= shadernodeoutline;
+  //guiscene.Shader:= shadernodeoutline;
 end;
 

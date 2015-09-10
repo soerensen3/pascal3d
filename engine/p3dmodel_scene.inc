@@ -41,13 +41,17 @@ constructor TP3DScene.Create( AFileName: String;
   const AWatchFileForChanges: Boolean);
 var
   xml: TXMLDocument;
+  dir: String;
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
   ReadXMLFile( xml, AFileName );
+  dir:= GetCurrentDir;
   try
+    SetCurrentDir( ExtractFilePath( AFileName ));
     CreateFromDOM( xml.DocumentElement );
   finally
+    SetCurrentDir( dir );
     xml.Free;
   end;
 end;

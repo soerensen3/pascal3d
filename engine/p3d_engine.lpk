@@ -9,11 +9,11 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="."/>
-        <OtherUnitFiles Value="scene;input"/>
+        <OtherUnitFiles Value="scene;input;."/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="34">
+    <Files Count="39">
       <Item1>
         <Filename Value="p3dinput.pas"/>
         <UnitName Value="p3dinput"/>
@@ -151,6 +151,26 @@
         <Filename Value="p3dmodel_armature.inc"/>
         <Type Value="Binary"/>
       </Item34>
+      <Item35>
+        <Filename Value="p3dsdlapplication.pas"/>
+        <UnitName Value="p3dSDLApplication"/>
+      </Item35>
+      <Item36>
+        <Filename Value="p3dshader_core.inc"/>
+        <Type Value="Binary"/>
+      </Item36>
+      <Item37>
+        <Filename Value="p3dnodes.pas"/>
+        <UnitName Value="p3dNodes"/>
+      </Item37>
+      <Item38>
+        <Filename Value="p3dgenerics_customlist.inc"/>
+        <Type Value="Binary"/>
+      </Item38>
+      <Item39>
+        <Filename Value="p3dgenerics.pas"/>
+        <UnitName Value="p3dgenerics"/>
+      </Item39>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>
@@ -175,5 +195,8 @@
     <PublishOptions>
       <Version Value="2"/>
     </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
   </Package>
 </CONFIG>

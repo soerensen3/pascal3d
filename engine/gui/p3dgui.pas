@@ -18,6 +18,7 @@ interface
     clipbrd,
 //    GlobalVars,
     SDL2,
+    p3dgenerics,
     p3dgeometry,
     p3dwindow,
     p3dobjects,
@@ -46,6 +47,8 @@ interface
 
     TGUIManager = class
       private
+        FCanvas: TP3DCanvas2D;
+        FControls: TControlBuffer;
         FWindow: TSDLWindow;
 
         function GetMouseX: Integer;
@@ -54,29 +57,28 @@ interface
         procedure SetMouseY( const Value: Integer );
 
       public
-        Controls: TControlBuffer;
-
         constructor Create;
         destructor Destroy; override;
+
         procedure Render;
         procedure Input;
+        procedure UpdateExtents;
 
       published
         property MouseX: Integer read GetMouseX write SetMouseX;
         property MouseY: Integer read GetMouseY write SetMouseY;
         property Window: TSDLWindow read FWindow write FWindow;
+        property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
+        property Controls: TControlBuffer read FControls write FControls;
     end;
 
-    {$MACRO ON}
-    {$DEFINE TCustomList:= TCustomControlList}
-    {$DEFINE TCustomListEnumerator:= TControlEnumerator}
-    {$DEFINE TCustomItem:= TP3DGraphicControl}
-    {$DEFINE INTERFACE}
-    {$INCLUDE p3dcustomlist.inc}
+    TCustomControlList = specialize TP3DCustomObjectList < TP3DGraphicControl >;
 
     { TControlBuffer }
 
     TControlBuffer = class( TCustomControlList )
+    private
+      FLastMouseInputCtrl: TP3DGraphicControl;
       protected
         Manager: TGUIManager;
         FParent: TP3DGraphicControl;
@@ -86,7 +88,7 @@ interface
         procedure Render(base: TVec4; ScrollAcc: TVec2);
         function Input: TP3DGraphicControl;
         function MouseRay( X,Y: Integer; const Recurse: Boolean = True; UpdateInpState: Boolean = False ): TP3DGraphicControl;
-        procedure Clear( DestroyObjects: Boolean = False ); reintroduce;
+        procedure Clear( const FreeObjects: Boolean = False ); override;
         procedure Delete( Itm: TP3DGraphicControl ); overload;
         procedure MoveTo( Index: Integer; Controls: TControlBuffer );
         procedure BringToFront( Index: Integer );
@@ -98,6 +100,7 @@ interface
         destructor Destroy; override;
 
         property Parent: TP3DGraphicControl read FParent;
+        property LastMouseInputCtrl: TP3DGraphicControl read FLastMouseInputCtrl write FLastMouseInputCtrl;
     end;
 
 
@@ -124,22 +127,16 @@ var
 {$INCLUDE p3dgui_graphiccontrol.inc}
 {.$INCLUDE p3dgui_canvas.inc}
 
-{$MACRO ON}
-{$DEFINE TCustomList:= TCustomControlList}
-{$DEFINE TCustomListEnumerator:= TControlEnumerator}
-{$DEFINE TCustomItem:= TP3DGraphicControl}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
 
 { TControlBuffer }
 
 
-procedure TControlBuffer.Clear(DestroyObjects: Boolean);
+procedure TControlBuffer.Clear(const FreeObjects: Boolean);
 var
   i: Integer;
 begin
   for i:= Count - 1 downto 0 do
-    if ( DestroyObjects ) then
+    if ( FreeObjects ) then
       Items[ i ].Free
     else
       begin
@@ -425,7 +422,10 @@ begin
       //Handle Mouse
       if ( Control <> Result ) then //We already called that before
         with InputManager.Mouse do
-          Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
+          begin
+            Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
+            Control.Controls.Input;
+          end;
       Control.KeyboardAction();
     end;
 end;
@@ -495,10 +495,13 @@ begin
 
 //  DefaultFont:= FontManager[ FontManager.Add( '..\Fonts\Arial.fnt' )];
   Controls:= TControlBuffer.Create( nil, Self );
+  ScreenCanvas:= TP3DCanvas2D.Create( nil );
+  UpdateExtents;
 end;
 
 destructor TGUIManager.Destroy;
 begin
+  ScreenCanvas.Free;
   Controls.Clear( True );
   Controls.Free;
   inherited;
@@ -529,21 +532,33 @@ end;
 
 procedure TGUIManager.Render;
 begin
-  Controls.Render( vec4( 1 ), vec2(0));
+  Controls.Render( vec4( 1 ), vec2( 0 ));
 end;
 
 procedure TGUIManager.SetMouseX( const Value: Integer );
 var
   cpos: TPoint;
 begin
-  InputManager.Mouse.X:= MainWindow.Left + Value;
+  InputManager.Mouse.X:= ActiveWindow.Left + Value;
 end;
 
 procedure TGUIManager.SetMouseY(const Value: Integer);
 var
   cpos: TPoint;
 begin
-  InputManager.Mouse.Y:= MainWindow.Top + Value
+  InputManager.Mouse.Y:= ActiveWindow.Top + Value
+end;
+
+procedure TGUIManager.UpdateExtents;
+begin
+  if ( P3DViewports.Count > 0 ) then
+    begin
+      ScreenCanvas.Left:= P3DViewports.VP[ 0 ].Left;
+      ScreenCanvas.Top:= P3DViewports.VP[ 0 ].Top;
+      ScreenCanvas.Width:= P3DViewports.VP[ 0 ].Width;
+      ScreenCanvas.Height:= P3DViewports.VP[ 0 ].Height;
+    end;
+  Controls.Realign;
 end;
 
 

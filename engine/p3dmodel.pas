@@ -128,7 +128,7 @@ type
 
   { TRenderableObjectList }
 
-  TRenderableObjectList = class( TObjectList )
+  TRenderableObjectList = class( TP3DObjectList )
     public
       procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []);
   end;
@@ -139,13 +139,13 @@ type
 
   { TRenderableObject }
 
-  TRenderableObject = class ( TBaseObject )
+  TRenderableObject = class ( TP3DObject )
     private
       FChildren: TRenderableObjectList;
       FVisible: Boolean;
 
     public
-      constructor Create( AParentList: TObjectList );
+      constructor Create( AParentList: TP3DObjectList );
       destructor Destroy; override;
       procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []); virtual;
 
@@ -250,7 +250,7 @@ begin
   inherited Clear;
 end;
 
-constructor TRenderableObject.Create( AParentList: TObjectList );
+constructor TRenderableObject.Create( AParentList: TP3DObjectList );
 begin
   inherited;
   FChildren:= TRenderableObjectList.Create;

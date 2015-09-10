@@ -4,97 +4,56 @@ unit p3dobjects;
 
 interface
   uses
-    Classes, SysUtils;
+    Classes, SysUtils, p3dgenerics;
 
-  const
-    ELogUnitName = '(RObjects.pas)';
   type
-    TRevFileWriter = class;
-    TRevFileReader = class;
+    TP3DFileWriter = class;
+    TP3DFileReader = class;
 
-    TBaseObject = class;
-    //restricted to TBaseObject and above -> see create for this
-
-    { TObjectList }
-
-{    generic gObjectList <T> = class( TList )
-      private
-        FEngine: TREngine;
-
-      protected
-        function Get( Index: Integer ): T;
-        procedure Put( Index: Integer; Item: T );
-
-      public
-        constructor Create( AEngine: TREngine );
-        destructor Destroy; override;
-
-        function GetByName( Name: String ): T;
-        procedure KillAll;
-        procedure Kill( Item: T );
-        procedure DeleteItm( Item: T );
-        procedure MoveTo( Index: Integer; Dest: gObjectList );
-        function AddItm( Item: T ): Integer;
-        function FindUniqueName( BaseStr: String ): String;
-
-        procedure SaveToStream( Writer: TRevFileWriter );
-        procedure LoadFromStream( Reader: TRevFileReader );
-        function SaveToFile( FileName: String ): Boolean;
-
-        property Items[ Index: Integer ]: T read Get write Put; default;
-    end;}
-
-
-//    TObjectBuffer = specialize gObjectList <TBaseObject>;
+    TP3DObject = class;
 
     //TODO: Implement Rendering
     //TODO: Implement File and Stream Read/Write         +
     //TODO: Write RegisterClass
 
-    {$MACRO ON}
-    {$DEFINE TCustomList:= TCustomObjectList}
-    {$DEFINE TCustomListEnumerator:= TObjectEnumerator}
-    {$DEFINE TCustomItem:= TBaseObject}
-    {$DEFINE INTERFACE}
-    {$INCLUDE p3dcustomlist.inc}
 
-    TObjectList = class( TCustomObjectList )
-      procedure Clear; override;
+    { TP3DObjectList }
+
+    TP3DObjectList = class( specialize TP3DCustomObjectList < TP3DObject >)
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
+      procedure Clear(const FreeObjects: Boolean = True ); override;
     end;
 
-    { TBaseObject }
+    TP3DObjectClass = class of TP3DObject;
 
-    TBaseObjectClass = class of TBaseObject;
-
-      TObjectHeader = record
+      TP3DObjectHeader = record
         ObjName: String;
         ObjClass: String;
         _Start,
         _End: Integer;
       end;
 
-    TBaseObject = class( TPersistent )
+    TP3DObject = class( TPersistent )
       private
         FName: TComponentName;
-        FParentList: TObjectList;
+        FParentList: TP3DObjectList;
 //        FVisible: Boolean;
 
         procedure SetName( const NewName: TComponentName );
 
       public
-        constructor Create( AParentList: TObjectList ); //TODO: Replace AParentList Param by something else
+        constructor Create( AParentList: TP3DObjectList ); //TODO: Replace AParentList Param by something else
         destructor Destroy; override;
 
 //        procedure Render; virtual;
 //        procedure Process; virtual;
 
-        procedure SaveToStream( Writer: TRevFileWriter );
-        procedure LoadFromStream( Reader: TRevFileReader );
+        procedure SaveToStream( Writer: TP3DFileWriter );
+        procedure LoadFromStream( Reader: TP3DFileReader );
         function SaveToFile( FileName: String ): Boolean;
-        procedure OnLoad( Reader: TRevFileReader ); virtual;
-        procedure OnSave( Writer: TRevFileWriter ); virtual;
+        procedure OnLoad( Reader: TP3DFileReader ); virtual;
+        procedure OnSave( Writer: TP3DFileWriter ); virtual;
         procedure OnAutoCreate; virtual;
         procedure AfterLoad; virtual;
 
@@ -102,27 +61,26 @@ interface
 
       published
         property Name: TComponentName read FName write SetName stored False;
-        property ParentList: TObjectList read FParentList;
+        property ParentList: TP3DObjectList read FParentList;
 //        property Visible: Boolean read FVisible write FVisible;
     end;
 
-    { TRevFileWriter }
+    { TP3DFileWriter }
 
-    TRevFileWriter = class( TPersistent )
+    TP3DFileWriter = class( TPersistent )
       private
         HeaderPointer: Integer;
-//        Engine: TEngine;
 
       public
-        Header: array [ 0..2047 ] of TObjectHeader;
+        Header: array [ 0..2047 ] of TP3DObjectHeader;
         HeaderCount: Integer;
 
         S: TFileStream;
 
-        constructor Create( {AEngine: TEngine; }FileName: String );
+        constructor Create( FileName: String );
         destructor Destroy; override;
 
-        function SaveObjectToFile( Obj: TBaseObject ): Boolean;
+        function SaveObjectToFile( Obj: TP3DObject ): Boolean;
         function SaveIntToFile( Val: Integer ): Boolean;
         function SaveFloatToFile( Val: Single ): Boolean;
         function SaveByteToFile( Val: Byte ): Boolean;
@@ -130,14 +88,14 @@ interface
         function SaveStringToFile( Val: String ): Boolean;
     end;
 
-    { TRevFileReader }
+    { TP3DFileReader }
 
-    TRevFileReader = class( TPersistent )
+    TP3DFileReader = class( TPersistent )
       private
         HeaderPointer: Integer;
 
       public
-        Header: array [ 0..2047 ] of TObjectHeader;
+        Header: array [ 0..2047 ] of TP3DObjectHeader;
         HeaderCount: Integer;
         S: TFileStream;
 
@@ -145,7 +103,7 @@ interface
         destructor Destroy; override;
 
         function CreateHeaderObjects(): Boolean;
-        function LoadObjectFromFile( Obj: TBaseObject ): Boolean;
+        function LoadObjectFromFile( Obj: TP3DObject ): Boolean;
         function LoadIntFromFile( out Val: Integer ): Boolean;
         function LoadFloatFromFile( out Val: Single ): Boolean;
         function LoadByteFromFile( out Val: Byte ): Boolean;
@@ -155,18 +113,9 @@ interface
 
 implementation
 
-{ TObjectList }
+{ TP3DObjectList }
 
-procedure TObjectList.Clear;
-var
-  Item: TBaseObject;
-begin
-  for Item in Self do
-    Item.Free;
-  inherited Clear;
-end;
-
-function TObjectList.FindUniqueName( BaseStr: String ): String;
+function TP3DObjectList.FindUniqueName( BaseStr: String ): String;
 var
   I: Integer;
 begin
@@ -177,7 +126,7 @@ begin
   until ( FindByName( Result ) = -1 );
 end;
 
-function TObjectList.FindByName(AName: String): Integer;
+function TP3DObjectList.FindByName(AName: String): Integer;
 var
   i: Integer;
 begin
@@ -190,21 +139,31 @@ begin
       end;
 end;
 
-{ TRevFileReader }
+procedure TP3DObjectList.Clear(const FreeObjects: Boolean);
+var
+  i: Integer;
+begin
+  if ( FreeObjects ) then
+    for i:= Count - 1 downto 0 do
+      Items[ i ].Free;
+  Count:= 0;
+end;
 
-constructor TRevFileReader.Create( FileName: String );
+{ TP3DFileReader }
+
+constructor TP3DFileReader.Create( FileName: String );
 begin
   inherited Create;
   S:= TFileStream.Create( FileName, fmOpenRead );
 end;
 
-destructor TRevFileReader.Destroy;
+destructor TP3DFileReader.Destroy;
 begin
   S.Free;
   inherited;
 end;
 
-function TRevFileReader.CreateHeaderObjects(): Boolean;
+function TP3DFileReader.CreateHeaderObjects(): Boolean;
 var
   i: Integer;
 begin
@@ -226,7 +185,7 @@ begin
             ELogUnitName + '.' + ClassName + '.CreateHeaderObjects'} );
           exit;
         end;
-      with ( TBaseObjectClass( GetClass( Header[ I ].ObjClass )).Create( nil )) do
+      with ( TP3DObjectClass( GetClass( Header[ I ].ObjClass )).Create( nil )) do
         begin
           Name:= Header[ I ].ObjName;
           OnAutoCreate;
@@ -235,39 +194,39 @@ begin
   S.Position:= Header[ 0 ]._Start;
 end;
 
-function TRevFileReader.LoadObjectFromFile(Obj: TBaseObject): Boolean;
+function TP3DFileReader.LoadObjectFromFile(Obj: TP3DObject): Boolean;
 begin
 
 end;
 
-function TRevFileReader.LoadIntFromFile(out Val: Integer): Boolean;
+function TP3DFileReader.LoadIntFromFile(out Val: Integer): Boolean;
 begin
 
 end;
 
-function TRevFileReader.LoadFloatFromFile(out Val: Single): Boolean;
+function TP3DFileReader.LoadFloatFromFile(out Val: Single): Boolean;
 begin
 
 end;
 
-function TRevFileReader.LoadByteFromFile(out Val: Byte): Boolean;
+function TP3DFileReader.LoadByteFromFile(out Val: Byte): Boolean;
 begin
 
 end;
 
-function TRevFileReader.LoadBoolFromFile(out Val: Boolean): Boolean;
+function TP3DFileReader.LoadBoolFromFile(out Val: Boolean): Boolean;
 begin
 
 end;
 
-function TRevFileReader.LoadStringFromFile(out Val: String): Boolean;
+function TP3DFileReader.LoadStringFromFile(out Val: String): Boolean;
 begin
 
 end;
 
-{ TRevFileWriter }
+{ TP3DFileWriter }
 
-constructor TRevFileWriter.Create( FileName: String );
+constructor TP3DFileWriter.Create( FileName: String );
 begin
   inherited Create;
 
@@ -276,7 +235,7 @@ begin
   SaveIntToFile( 0 ); // Reserve 1 Int for Headerpointer
 end;
 
-destructor TRevFileWriter.Destroy;
+destructor TP3DFileWriter.Destroy;
 var
   i, SPos: Integer;
 begin
@@ -299,7 +258,7 @@ begin
   inherited;
 end;
 
-function TRevFileWriter.SaveObjectToFile(Obj: TBaseObject): Boolean;
+function TP3DFileWriter.SaveObjectToFile(Obj: TP3DObject): Boolean;
 begin
    with( Header[ HeaderCount ]) do
     begin
@@ -324,31 +283,31 @@ begin
   Inc( HeaderCount );
 end;
 
-function TRevFileWriter.SaveIntToFile(Val: Integer): Boolean;
+function TP3DFileWriter.SaveIntToFile(Val: Integer): Boolean;
 begin
   S.WriteBuffer( Val, SizeOf( Val ));
   Result:= True;
 end;
 
-function TRevFileWriter.SaveFloatToFile(Val: Single): Boolean;
+function TP3DFileWriter.SaveFloatToFile(Val: Single): Boolean;
 begin
   S.WriteBuffer( Val, SizeOf( Val ));
   Result:= True;
 end;
 
-function TRevFileWriter.SaveByteToFile(Val: Byte): Boolean;
+function TP3DFileWriter.SaveByteToFile(Val: Byte): Boolean;
 begin
   S.WriteBuffer( Val, SizeOf( Val ));
   Result:= True;
 end;
 
-function TRevFileWriter.SaveBoolToFile(Val: Boolean): Boolean;
+function TP3DFileWriter.SaveBoolToFile(Val: Boolean): Boolean;
 begin
   S.WriteBuffer( Val, SizeOf( Val ));
   Result:= True;
 end;
 
-function TRevFileWriter.SaveStringToFile(Val: String): Boolean;
+function TP3DFileWriter.SaveStringToFile(Val: String): Boolean;
 var
   Len,
   i: Integer;
@@ -360,14 +319,14 @@ begin
   Result:= True;
 end;
 
-{ TBaseObject }
+{ TP3DObject }
 
-procedure TBaseObject.SetName(const NewName: TComponentName);
+procedure TP3DObject.SetName(const NewName: TComponentName);
 begin
 
 end;
 
-constructor TBaseObject.Create( AParentList: TObjectList );
+constructor TP3DObject.Create( AParentList: TP3DObjectList );
 var
   BaseName: String;
 begin
@@ -385,42 +344,42 @@ begin
 //  SaveChilds:= True;
 end;
 
-destructor TBaseObject.Destroy;
+destructor TP3DObject.Destroy;
 begin
   inherited Destroy;
 end;
 
-procedure TBaseObject.SaveToStream(Writer: TRevFileWriter);
+procedure TP3DObject.SaveToStream(Writer: TP3DFileWriter);
 begin
 
 end;
 
-procedure TBaseObject.LoadFromStream(Reader: TRevFileReader);
+procedure TP3DObject.LoadFromStream(Reader: TP3DFileReader);
 begin
 
 end;
 
-function TBaseObject.SaveToFile(FileName: String): Boolean;
+function TP3DObject.SaveToFile(FileName: String): Boolean;
 begin
 
 end;
 
-procedure TBaseObject.OnLoad(Reader: TRevFileReader);
+procedure TP3DObject.OnLoad(Reader: TP3DFileReader);
 begin
 
 end;
 
-procedure TBaseObject.OnSave(Writer: TRevFileWriter);
+procedure TP3DObject.OnSave(Writer: TP3DFileWriter);
 begin
 
 end;
 
-procedure TBaseObject.OnAutoCreate;
+procedure TP3DObject.OnAutoCreate;
 begin
 
 end;
 
-procedure TBaseObject.AfterLoad;
+procedure TP3DObject.AfterLoad;
 begin
 
 end;
@@ -439,8 +398,8 @@ end;
 
 constructor gObjectList.Create( AEngine: TREngine );
 begin
-  if ( T <> TBaseObject ) then
-    raise Exception.Create( 'Only TBaseObject and above classes supported!' ); //TODO: Implement better mechanism for catching unwanted types
+  if ( T <> TP3DObject ) then
+    raise Exception.Create( 'Only TP3DObject and above classes supported!' ); //TODO: Implement better mechanism for catching unwanted types
   FEngine:= AEngine;
   inherited Create;
 end;
@@ -456,9 +415,9 @@ var
 begin
   Result:= nil;
   for i:= 0 to Count - 1 do
-    if ( TBaseObject( Items[ i ]).Name = Name ) then
+    if ( TP3DObject( Items[ i ]).Name = Name ) then
       begin
-        Result:= TBaseObject( Items[ i ]);
+        Result:= TP3DObject( Items[ i ]);
         break;
       end;
 end;
@@ -468,14 +427,14 @@ var
   i: Integer;
 begin
   for i:= Count - 1 downto 0 do
-    TBaseObject( Get( i )).Free;
+    TP3DObject( Get( i )).Free;
   Count:= 0;
 end;
 
 procedure gObjectList.Kill( Item: T );
 begin
   DeleteItm( Item );
-  TBaseObject( Item ).Free;
+  TP3DObject( Item ).Free;
 end;
 
 
@@ -493,8 +452,8 @@ end;
 function gObjectList.AddItm( Item: T ): Integer;
 begin
   Result:= inherited Add( Item );
-  if ( T = TBaseObject ) then
-    TBaseObject( Item ).FParentList:= TObjectBuffer( Self ); //TODO: Add Notifiers instead of typecasting
+  if ( T = TP3DObject ) then
+    TP3DObject( Item ).FParentList:= TObjectBuffer( Self ); //TODO: Add Notifiers instead of typecasting
 end;
 
 function gObjectList.FindUniqueName( BaseStr: String ): String;
@@ -508,7 +467,7 @@ begin
   until ( GetByName( Result ) = nil );
 end;
 
-procedure gObjectList.SaveToStream( Writer: TRevFileWriter );
+procedure gObjectList.SaveToStream( Writer: TP3DFileWriter );
 var
   i: Integer;
 begin
@@ -516,7 +475,7 @@ begin
     Writer.SaveObjectToFile( Items[ i ]);
 end;
 
-procedure gObjectList.LoadFromStream(Reader: TRevFileReader);
+procedure gObjectList.LoadFromStream(Reader: TP3DFileReader);
 begin
 
 end;
@@ -524,9 +483,9 @@ end;
 function gObjectList.SaveToFile(FileName: String): Boolean;
 var
   i: Integer;
-  Writer: TRevFileWriter;
+  Writer: TP3DFileWriter;
 begin
-  Writer:= TRevFileWriter.Create( FileName );
+  Writer:= TP3DFileWriter.Create( FileName );
 
   for i:= 0 to Count - 1 do
     Writer.SaveObjectToFile( Items[ i ]);
@@ -535,11 +494,6 @@ begin
   Result:= True;
 end;
 }
-{$DEFINE TCustomList:= TCustomObjectList}
-{$DEFINE TCustomListEnumerator:= TObjectEnumerator}
-{$DEFINE TCustomItem:= TBaseObject}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
 
 end.
-
+

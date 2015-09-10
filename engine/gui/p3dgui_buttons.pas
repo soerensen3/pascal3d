@@ -29,11 +29,23 @@ interface
         property FontColor: TVec4 read FFontColor write FFontColor;
     end;
 
+    THorizontalAlignment = (
+        haLeft,
+        haCenter,
+        haRight);
+
+      TVerticalAlignment = (
+        vaTop,
+        vaCenter,
+        vaBottom);
+
     { TP3DButton }
 
     TP3DButton = class( TP3DFocusControl )
       private
         FFont: TP3DCanvasFont;
+        FHAlignment: THorizontalAlignment;
+        FVAlignment: TVerticalAlignment;
 
       protected
         FCaption: String;
@@ -46,7 +58,7 @@ interface
         procedure SetCaption( AValue: String );
 
       public
-        constructor Create(AOwner: TObjectList; AManager: TGUIManager;
+        constructor Create(AOwner: TP3DObjectList; AManager: TGUIManager;
           const AParent: TP3DGraphicControl=nil);
         destructor Destroy; override;
 
@@ -58,6 +70,8 @@ interface
         property PresetHover: TP3DButtonPreset read FPresetHover write FPresetHover;
         property Font: TP3DCanvasFont read FFont write FFont;
         property Caption: String read FCaption write SetCaption;
+        property HAlignment: THorizontalAlignment read FHAlignment write FHAlignment;
+        property VAlignment: TVerticalAlignment read FVAlignment write FVAlignment;
     end;
 
 implementation
@@ -90,6 +104,7 @@ procedure TP3DButton.Draw;
 var
   Preset: TP3DButtonPreset;
   clf: TVec4;
+  P: TVec2;
 begin
   if ( gcisMouseBtn1Down in InputState ) then
     Preset:= PresetDown
@@ -107,10 +122,23 @@ begin
       clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
       Canvas.RenderLineRect( vec2( 4 ), vec2( Width, Height ) - 4, clf, clf, clf, clf );
     end;
+
+  case HAlignment of
+    haLeft: P.x:= 0;
+    haRight: P.x:= Width - FCaptionTxt.Width;
+    haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
+  end;
+  case VAlignment of
+    vaTop: P.y:= 0;
+    vaBottom: P.y:= Height - FCaptionTxt.Height;
+    vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
+  end;
+
+  Canvas.RenderText( FCaptionTxt, P );
   Canvas.Font.Color:= Preset.FontColor;
   Canvas.Font.Size:= Font.Size;
   Canvas.Font.Name:= Font.Name;
-  Canvas.RenderText( FCaptionTxt, ( vec2( Width, Height ) - vec2( FCaptionTxt.Width, FCaptionTxt.Height )) / 2 );
+  Canvas.RenderText( FCaptionTxt, P );
 end;
 
 function TP3DButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer
@@ -121,7 +149,7 @@ begin
     Focused:= True;
 end;
 
-constructor TP3DButton.Create(AOwner: TObjectList; AManager: TGUIManager;
+constructor TP3DButton.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner, AManager, AParent );
@@ -140,6 +168,8 @@ begin
   PresetDown.Color:= vec4( 1 );
   PresetDown.OutlineColor:= vec4( 0.875, 0.27, 0.07, 1 );
   PresetDown.FontColor:= vec4( vec3( 0 ), 1 );
+  HAlignment:= haCenter;
+  VAlignment:= vaCenter;
 end;
 
 destructor TP3DButton.Destroy;

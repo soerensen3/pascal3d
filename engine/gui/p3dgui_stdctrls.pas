@@ -30,6 +30,7 @@ type
       FSel2: Integer;
       function GetSelLength(): Integer;
       function GetSelStart(): Integer;
+      procedure SetCaption(AValue: String);
       procedure SetSel1(AValue: Integer);
       procedure SetSel2(AValue: Integer);
       procedure SetSelLength(AValue: Integer);
@@ -44,7 +45,7 @@ type
       procedure Insert( S: String );
 
     public
-      constructor Create( AOwner: TObjectList; AManager: TGUIManager;
+      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager;
          const AParent: TP3DGraphicControl = nil );
       procedure Draw(); override;
       function MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ): TP3DGraphicControl; override;
@@ -65,26 +66,29 @@ type
 
   TP3DLabel = class ( TP3DGraphicControl )
     private
-      FAlignment: TAlignment;
       FAutoSize: Boolean;
       FCaption: String;
       FCaptionTxt: TP3DText;
       FFont: TP3DCanvasFont;
+      FHAlignment: THorizontalAlignment;
+      FVAlignment: TVerticalAlignment;
 
       procedure SetAutoSize(AValue: Boolean);
       procedure SetCaption( AValue: String );
       procedure Resize;
-      procedure Draw; override;
 
     public
-      constructor Create( AOwner: TObjectList; AManager: TGUIManager; const AParent: TP3DGraphicControl = nil );
+      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager; const AParent: TP3DGraphicControl = nil );
       destructor Destroy; override;
+
+      procedure Draw; override;
 
     published
       property Caption: String read FCaption write SetCaption;
       property AutoSize: Boolean read FAutoSize write SetAutoSize;
       property Font: TP3DCanvasFont read FFont write FFont;
-      property Alignment: TAlignment read FAlignment write FAlignment;
+      property HAlignment: THorizontalAlignment read FHAlignment write FHAlignment;
+      property VAlignment: TVerticalAlignment read FVAlignment write FVAlignment;
   end;
 
   { TP3DGroupBox }
@@ -100,7 +104,7 @@ type
       procedure SetCaption(AValue: String);
 
     public
-      constructor Create( AOwner: TObjectList; AManager: TGUIManager;
+      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager;
          const AParent: TP3DGraphicControl = nil );
       destructor Destroy; override;
       procedure Draw(); override;
@@ -145,15 +149,20 @@ begin
   Canvas.Font.Color:= Font.Color;
   Canvas.Font.Size:= Font.Size;
   Canvas.Font.Name:= Font.Name;
-  case Alignment of
-    taLeftJustify: P:= vec2( 0 );
-    taRightJustify: P:= vec2( Width - FCaptionTxt.Width, 0 );
-    taCenter: P:= vec2(( Width - FCaptionTxt.Width ) / 2, 0 );
+  case HAlignment of
+    haLeft: P.x:= 0;
+    haRight: P.x:= Width - FCaptionTxt.Width;
+    haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
+  end;
+  case VAlignment of
+    vaTop: P.y:= 0;
+    vaBottom: P.y:= Height - FCaptionTxt.Height;
+    vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
   end;
   Canvas.RenderText( FCaptionTxt, P );
 end;
 
-constructor TP3DLabel.Create(AOwner: TObjectList; AManager: TGUIManager;
+constructor TP3DLabel.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner, AManager, AParent );
@@ -180,7 +189,7 @@ begin
   FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name ], Font.Size );
 end;
 
-constructor TP3DGroupBox.Create(AOwner: TObjectList; AManager: TGUIManager;
+constructor TP3DGroupBox.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited;
@@ -244,6 +253,12 @@ begin
   Result:= Min( FSel1, FSel2 );
 end;
 
+procedure TP3DEdit.SetCaption(AValue: String);
+begin
+  if FCaption=AValue then Exit;
+  FCaption:=AValue;
+end;
+
 procedure TP3DEdit.SetSel1( AValue: Integer );
 begin
   FSel1:= Max( 0, Min( AValue, Length( FCaption )));
@@ -300,7 +315,7 @@ begin
   Sel2:= Sel1;
 end;
 
-constructor TP3DEdit.Create(AOwner: TObjectList; AManager: TGUIManager;
+constructor TP3DEdit.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited;

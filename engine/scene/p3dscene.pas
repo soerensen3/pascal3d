@@ -8,7 +8,7 @@ uses
 
 
 type
-
+  //TODO: do a rename of all classes with p3d prefix and find a new name for tScene
   { tCamera }
 
   tCamHandedness = ( coLeft, coRight );
@@ -59,7 +59,7 @@ type
 
     public
       procedure RenderFromCamera( Cam: tCamera );
-      procedure Render;
+      procedure Render; virtual;
 
       procedure UpdateMatrices;
 

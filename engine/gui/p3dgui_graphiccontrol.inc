@@ -21,7 +21,7 @@ TP3DGCInputFlags = set of TP3DGCInputState;
 // 14 = MO + M2 + M3
 // 15 = MO + M1 + M2 + M3
 //...
-TP3DGraphicControl = class ( TBaseObject )
+TP3DGraphicControl = class ( TP3DObject )
   private
     FInputState: TP3DGCInputFlags;
     FOnDragDrop: TGUIDragDropProc;
@@ -86,7 +86,7 @@ TP3DGraphicControl = class ( TBaseObject )
   public
     Manager: TGUIManager;
 
-    constructor Create(AOwner: TObjectList; AManager: TGUIManager;
+    constructor Create(AOwner: TP3DObjectList; AManager: TGUIManager;
       const AParent: TP3DGraphicControl=nil);
     destructor Destroy; override;
 
@@ -151,7 +151,7 @@ end;
 {$IFDEF IMPLEMENTATION}
 { TP3DGraphicControl }
 
-constructor TP3DGraphicControl.Create( AOwner: TObjectList; AManager: TGUIManager; const AParent: TP3DGraphicControl = nil );
+constructor TP3DGraphicControl.Create( AOwner: TP3DObjectList; AManager: TGUIManager; const AParent: TP3DGraphicControl = nil );
 begin
   inherited Create( AOwner );
   Manager:= AManager;
@@ -327,8 +327,8 @@ begin
     begin
       Canvas.Left:= Left;
       Canvas.Top:= Top;
-      Canvas.Width:= Min( MainWindow.Width - Left, Width ); //TODO: Support for multiple windows
-      Canvas.Height:= Min( MainWindow.Height - Top, Height );
+      Canvas.Width:= Min( ActiveWindow.Width - Left, Width ); //TODO: Support for multiple windows
+      Canvas.Height:= Min( ActiveWindow.Height - Top, Height );
     end;
   UpdateClientRect;
 end;
@@ -400,7 +400,7 @@ begin
   OldScroll:= Scroll;
   Canvas.Scroll:= ScrollAcc + Scroll;
 
-  Canvas.ScreenColor:= vec4( 1 * Ord( gcisMouseBtn1Down in InputState ), 1 * Ord( gcisMouseBtn2Down in InputState ), 1 * Ord( gcisMouseBtn3Down in InputState ), 0.25 + 0.75 * Ord( gcisMouseOver in InputState ) + 0.25 * Ord( gcisMouseOverOccl in InputState ));
+  //Canvas.ScreenColor:= vec4( 1 * Ord( gcisMouseBtn1Down in InputState ), 1 * Ord( gcisMouseBtn2Down in InputState ), 1 * Ord( gcisMouseBtn3Down in InputState ), 0.25 + 0.75 * Ord( gcisMouseOver in InputState ) + 0.25 * Ord( gcisMouseOverOccl in InputState ));
 
   Draw;
 
@@ -427,14 +427,12 @@ begin
     Val:= Min( FMaxHeight, Val );
   FHeight:= Val;
   ParentCtrl.Realign;
-  Controls.Realign;
 end;
 
 procedure TP3DGraphicControl.SetLeft( const Value: Integer );
 begin
   FLeft:= Value;
   ParentCtrl.Realign;
-  Controls.Realign;
 end;
 
 procedure TP3DGraphicControl.SetParent( const Value: TP3DGraphicControl );
@@ -454,7 +452,6 @@ procedure TP3DGraphicControl.SetTop( const Value: Integer );
 begin
   FTop:= Value;
   ParentCtrl.Realign;
-  Controls.Realign;
 end;
 
 procedure TP3DGraphicControl.SetVisible( const Value: Boolean );
@@ -477,7 +474,6 @@ begin
     Val:= Min( FMaxWidth, Val );
   FWidth:= Val;
   ParentCtrl.Realign;
-  Controls.Realign;
 end;
 
 

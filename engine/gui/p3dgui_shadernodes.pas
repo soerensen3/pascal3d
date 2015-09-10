@@ -12,78 +12,54 @@ interface
     p3dgui_stdctrls,
     p3dgui_buttons,
     p3dshaders,
-    p3dshadernodes,
+    p3dNodes,
     p3dmodel,
     p3dscene,
     p3dgui_sceneviewer,
     p3dbuffers,
+    p3dgenerics,
     dglOpenGL,
     Classes,
     math,
     Types;
 
 type
+  {$DEFINE INTERFACE}
+  {$INCLUDE p3dgui_shadernodes_controls.inc}
+  {$UNDEF INTERFACE}
 
-  { TP3DGUIShaderOutlineConnector }
 
-  TP3DGUIShaderOutlineConnector = class ( TP3DGraphicControl )
+
+  { TP3DNodeControl }
+
+  TP3DNodeControl = class ( TP3DGroupBox )
     private
-      FColor: TVec4;
-      FPEnd: TVec2;
-      FPStart: TVec2;
-
-      property PStart: TVec2 read FPStart write FPStart;
-      property PEnd: TVec2 read FPEnd write FPEnd;
-
-    protected
-      function MouseRay(X, Y: Integer): Boolean; override;
-
-    public
-      constructor Create(AOwner: TObjectList; AManager: TGUIManager;
-        const AParent: TP3DGraphicControl=nil);
-      procedure Draw; override;
-      procedure Update( S: TVec2; E: TVec2 );
-      procedure UpdateS( S: TVec2 );
-      procedure UpdateE( E: TVec2 );
-
-      property Color: TVec4 read FColor write FColor;
-  end;
-
-
-  { TP3DGUIShaderOutlineFragment }
-
-  TP3DGUIShaderOutlineFragment = class ( TP3DGroupBox )
-    private
-      FConnectors: TObjectList;
-      FOutlineFragment: TP3DShaderNodeOutlineFragment;
+      FNode: TP3DNode;
       FIsMoving: Boolean;
-      FParentConnector: TP3DGUIShaderOutlineConnector;
+      FSockets: TP3DNodeSocketControlSimpleList;
 
-      procedure SetOutlineFragment(AValue: TP3DShaderNodeOutlineFragment);
+      procedure SetNode(AValue: TP3DNode);
       procedure Update;
       procedure OnChange( Sender: TObject );
       procedure MouseMove( X, Y: Integer ); override;
       procedure MouseDownEvnt( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
-      procedure UpdatePC( Sender: TObject ); //Update Parent Connector Callback
       procedure BtnDragDrop( Sender: TP3DGraphicControl; Source: TP3DGraphicControl; X, Y: Integer );
       procedure BtnMouseDown( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
+      procedure Render( BaseColor: TVec4; ScrollAcc: TVec2 ); override;
 
     public
       procedure Draw; override;
 
-      constructor Create(AOwner: TObjectList; AManager: TGUIManager;
-        const AParent: TP3DGraphicControl=nil);
+      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager;
+        const AParent: TP3DGraphicControl=nil );
       destructor Destroy; override;
 
-      property Connectors: TObjectList read FConnectors write FConnectors;
-      property ParentConnector: TP3DGUIShaderOutlineConnector read FParentConnector write FParentConnector;
-
-    published
-      property OutlineFragment: TP3DShaderNodeOutlineFragment read FOutlineFragment write SetOutlineFragment;
+      property Sockets: TP3DNodeSocketControlSimpleList read FSockets;
+      property Node: TP3DNode read FNode write SetNode;
   end;
 
   { TP3DGUIShaderPreview }
-
+  {
   TP3DGUIShaderPreview = class ( TP3DGUISceneViewer )
     private
       Fworld: TMat4;
@@ -111,7 +87,7 @@ type
       property world: TMat4 read Fworld write Fworld;
 
     public
-      constructor Create(AOwner: TObjectList; AManager: TGUIManager;
+      constructor Create(AOwner: TP3DObjectList; AManager: TGUIManager;
         const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
       procedure Update;
@@ -120,13 +96,57 @@ type
 
       property ModelCube: TP3DScene read FModelCube write SetModelCube;
       property Shader: TP3DShaderNodeOutline read FShader write SetShader;
-  end;
+  end; }
 
 
 implementation
 
-{ TP3DGUIShaderPreview }
+{ TP3DNodeSocketButton }
 
+constructor TP3DNodeSocketButton.Create(AOwner: TP3DObjectList;
+  AManager: TGUIManager; const AParent: TP3DGraphicControl);
+begin
+  inherited;
+  BoundsLeft:= 10;
+  BoundsRight:= 10;
+end;
+
+procedure TP3DNodeSocketButton.Draw;
+var
+  Preset: TP3DButtonPreset;
+  c: TVec2;
+begin
+  if ( gcisMouseBtn1Down in InputState ) then
+    Preset:= PresetDown
+  else if ( gcisMouseOver in InputState ) then
+    Preset:= PresetHover
+  else
+    Preset:= PresetNormal;
+
+  c:= vec2( ClientRect.Left + ClientRect.Right / 2, ClientRect.Top + ClientRect.Bottom / 2 );
+  Canvas.RenderCircle( c, ClientRect.Right / 2, 16, Preset.Color );
+  Canvas.RenderLineCircle( c, ClientRect.Right / 2, 16, Preset.OutlineColor );
+end;
+
+function TP3DNodeSocketButton.MouseRay(X, Y: Integer): Boolean;
+var
+  c: TVec2;
+begin
+  if ( inherited MouseRay( X, Y )) then
+    begin
+      c:= vec2( ClientRect.Left + ClientRect.Right / 2, ClientRect.Top + ClientRect.Bottom / 2 );
+      Result:= ( c - vec2( x - Canvas.Left, y - Canvas.Top )).GetDist() <= ClientRect.Right / 2; //r = Width / 2
+    end
+  else
+    Result:= False;
+end;
+
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE p3dgui_shadernodes_controls.inc}
+{$UNDEF IMPLEMENTATION}
+
+{ TP3DGUIShaderPreview }
+{
 procedure TP3DGUIShaderPreview.SetModelCube(AValue: TP3DScene);
 begin
   if FModelCube=AValue then Exit;
@@ -176,7 +196,7 @@ begin
     FMoving:= True;
 end;
 
-constructor TP3DGUIShaderPreview.Create(AOwner: TObjectList;
+constructor TP3DGUIShaderPreview.Create(AOwner: TP3DObjectList;
   AManager: TGUIManager; const AParent: TP3DGraphicControl);
 begin
   inherited;
@@ -224,11 +244,10 @@ begin
       Canvas.Unlock();
     end;
 end;
-
+}
 { TP3DGUIShaderOutlineConnector }
 
-function TP3DGUIShaderOutlineConnector.MouseRay(X, Y: Integer): Boolean;
-var
+{var
   n: Integer;
 
 const
@@ -258,148 +277,82 @@ begin
     Result:= EqualTolerance( Y, round( FPStart.Y ))
   else if ( InSection( X, n, round( FPEnd.X ))) then
     Result:= EqualTolerance( Y, round( FPEnd.Y ));
-end;
-
-constructor TP3DGUIShaderOutlineConnector.Create(AOwner: TObjectList;
-  AManager: TGUIManager; const AParent: TP3DGraphicControl);
-begin
-  inherited;
-  Color:= vec4( 0, 0, 0, 1 );
-end;
-
-procedure TP3DGUIShaderOutlineConnector.Draw;
-var
-  cl: TVec4;
-begin
-  inherited Draw;
-  if ( gcisMouseOver in InputState ) then
-    cl:= vec4( 1, 0, 0, 1 )
-  else
-    cl:= Color;
-  Canvas.RenderLines([ FPStart, vec2(( FPStart.X + FPEnd.X ) / 2, FPStart.Y ),
-                       vec2(( FPStart.X + FPEnd.X ) / 2, FPEnd.Y ), FPEnd ], cl );
-end;
-
-procedure TP3DGUIShaderOutlineConnector.Update(S: TVec2; E: TVec2);
-begin
-  Left:= round( min( S.X, E.X ));
-  Top:= round( min( S.Y, E.Y ));
-  FPStart:= S - vec2( Left, Top );
-  FPEnd:= E - vec2( Left, Top );
-  Width:= round( FPStart.x + FPEnd.x ) + 2;
-  Height:= round( FPStart.y + FPEnd.y ) + 2;
-end;
-
-procedure TP3DGUIShaderOutlineConnector.UpdateS(S: TVec2);
-var
-  E: TVec2;
-begin
-  E:= PEnd + vec2( Left, Top );
-  Update( S, E );
-end;
-
-procedure TP3DGUIShaderOutlineConnector.UpdateE(E: TVec2);
-var
-  S: TVec2;
-begin
-  S:= PStart + vec2( Left, Top );
-  Update( S, E );
-end;
+end;}
 
 { TP3DGUIShaderOutlineFragment }
 
-procedure TP3DGUIShaderOutlineFragment.SetOutlineFragment(
-  AValue: TP3DShaderNodeOutlineFragment);
+procedure TP3DNodeControl.SetNode(AValue: TP3DNode);
 begin
-  if FOutlineFragment=AValue then Exit;
-  FOutlineFragment:=AValue;
-  FOutlineFragment.OnChange:= @OnChange;
-  FOutlineFragment.OnUpdateChild:= @UpdatePC;
+  if FNode=AValue then Exit;
+  FNode:=AValue;
+  FNode.OnChange:= @OnChange;
+  //FNode.OnUpdateChild:= @UpdatePC;
   Update;
 end;
 
-procedure TP3DGUIShaderOutlineFragment.Draw;
+procedure TP3DNodeControl.Draw;
+var
+  p1: TVec2;
 begin
+
   inherited Draw;
 end;
 
-procedure TP3DGUIShaderOutlineFragment.Update;
+procedure TP3DNodeControl.Update;
 var
   i: Integer;
   lbl: TP3DLabel;
-  Connector: TP3DGUIShaderOutlineConnector;
+  socket: TP3DNodeSocketControlSimple;
   j: Integer;
   btn: TP3DButton;
 begin
+  Sockets.Clear( False );
   Controls.Clear( True );
-  Connectors.Clear;
-  Caption:= OutlineFragment.Name;
+  Caption:= Node.Name;
 
-  Left:= Round( OutlineFragment.X );
-  Top:= Round( OutlineFragment.Y );
+  Left:= Round( Node.X );
+  Top:= Round( Node.Y );
   Width:= 200;
+  Height:= 200;
 
-  btn:= TP3DButton.Create( ParentList, Manager, Self );
-  btn.Left:= 0;
-  btn.Top:= 40 - ClientRect.Top - 5;
-  btn.Width:= 10;
-  btn.Height:= 10;
-  btn.Caption:= '';
-  btn.OnMouseDown:= @BtnMouseDown;
-  btn.OnDragDrop:= @BtnDragDrop;
-
-  if ( Assigned( ParentConnector )) then
-    ParentConnector.UpdateE( vec2( OutlineFragment.X, OutlineFragment.Y + 40 ));
-  for i:= 0 to OutlineFragment.Inputs.Count - 1 do
+  for i:= 0 to Node.Outputs.Count - 1 do
     begin
-      lbl:= TP3DLabel.Create( ParentList, Manager, Self );
-      lbl.Caption:= OutlineFragment.Inputs[ i ].Name;
-      lbl.Height:= lbl.Font.Size + 4;
-      lbl.Width:= ClientRect.Right - ClientRect.Left - 10;
-      lbl.Top:= i * 50;
-      lbl.Left:= 0;
-      lbl.Alignment:= taRightJustify;
-      btn:= TP3DButton.Create( ParentList, Manager, Self );
-      btn.Left:= ClientRect.Right - 10;
-      btn.Top:= lbl.Top + lbl.Height div 2 - 5;
-      btn.Width:= 10;
-      btn.Height:= 10;
-      btn.Caption:= '';
-      btn.OnMouseDown:= @BtnMouseDown;
-      btn.OnDragDrop:= @BtnDragDrop;
-      for j:= 0 to OutlineFragment.Inputs[ i ].Fragments.Count - 1 do
-        begin
-          Connector:= TP3DGUIShaderOutlineConnector.Create( ParentList, Manager, Self.Parent );
-          Connector.Update( vec2( Left + Width, i * 50 + Top + 30 ),
-                            vec2( OutlineFragment.Inputs[ i ].Fragments[ j ].X,
-                                  OutlineFragment.Inputs[ i ].Fragments[ j ].Y + 40 ));
-          if ( Assigned( OutlineFragment.Inputs[ i ].Fragments[ j ].OnUpdateChild )) then
-            OutlineFragment.Inputs[ i ].Fragments[ j ].OnUpdateChild( Connector );
-          Connectors.Add( Connector );
-        end;
+      socket:= TP3DNodeSocketControlSimple.Create( ParentList, Manager, Node.Outputs[ i ], nsdOutput, Self );
+      socket.Align:= alTop;
+      Sockets.Add( socket );
+    end;
+  for i:= 0 to Node.Inputs.Count - 1 do
+    begin
+      socket:= TP3DNodeSocketControlSimple.Create( ParentList, Manager, Node.Inputs[ i ], nsdInput, Self );
+      socket.Align:= alTop;
+      Sockets.Add( socket );
     end;
 
-  Height:= i * 50 + 70;
+  if ( Sockets.Count > 0 ) then
+    with ( Sockets[ Sockets.Count - 1 ]) do
+      Self.Height:= Top + Height + 40
+  else
+    Height:= 40;
 end;
 
-procedure TP3DGUIShaderOutlineFragment.OnChange(Sender: TObject);
+procedure TP3DNodeControl.OnChange(Sender: TObject);
 begin
   Update;
 end;
 
-procedure TP3DGUIShaderOutlineFragment.MouseMove(X, Y: Integer);
+procedure TP3DNodeControl.MouseMove(X, Y: Integer);
 begin
   inherited MouseMove( X, Y );
   if ( FIsMoving and InputManager.Mouse.Buttons[ 0 ]) then
     begin
-      OutlineFragment.X:= Left + InputManager.Mouse.DX;
-      OutlineFragment.Y:= Top + InputManager.Mouse.DY;
+      Node.X:= Left + InputManager.Mouse.DX;
+      Node.Y:= Top + InputManager.Mouse.DY;
     end
   else
     FIsMoving:= False;
 end;
 
-procedure TP3DGUIShaderOutlineFragment.MouseDownEvnt(
+procedure TP3DNodeControl.MouseDownEvnt(
   Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   if ( mb1 and ( gcisMouseOver in InputState )) then
@@ -409,36 +362,42 @@ begin
     end;
 end;
 
-procedure TP3DGUIShaderOutlineFragment.UpdatePC(Sender: TObject);
-begin
-  if ( Sender is TP3DGUIShaderOutlineConnector ) then
-    ParentConnector:= TP3DGUIShaderOutlineConnector( Sender );
-end;
-
-procedure TP3DGUIShaderOutlineFragment.BtnDragDrop(Sender: TP3DGraphicControl;
+procedure TP3DNodeControl.BtnDragDrop(Sender: TP3DGraphicControl;
   Source: TP3DGraphicControl; X, Y: Integer);
 begin
 
 end;
 
-procedure TP3DGUIShaderOutlineFragment.BtnMouseDown(Sender: TP3DGraphicControl;
+procedure TP3DNodeControl.BtnMouseDown(Sender: TP3DGraphicControl;
   mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   if (( mb1 ) and ( gcisMouseOver in Sender.InputState )) then
     BeginDrag();
 end;
 
-constructor TP3DGUIShaderOutlineFragment.Create(AOwner: TObjectList;
+procedure TP3DNodeControl.Render(BaseColor: TVec4; ScrollAcc: TVec2);
+var
+  p1: TVec2;
+begin
+  p1:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
+  Manager.ScreenCanvas.Lock;
+  Manager.ScreenCanvas.RenderRectShadow( p1, p1 + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
+  Manager.ScreenCanvas.Unlock();
+  inherited Render(BaseColor, ScrollAcc);
+end;
+
+constructor TP3DNodeControl.Create(AOwner: TP3DObjectList;
   AManager: TGUIManager; const AParent: TP3DGraphicControl);
 begin
   inherited;
   FOnMouseDown:= @MouseDownEvnt;
-  FConnectors:= TObjectList.Create;
+  FSockets:= TP3DNodeSocketControlSimpleList.Create;
+  BorderColor:= vec4( 0, 0, 0, 0.2 );
 end;
 
-destructor TP3DGUIShaderOutlineFragment.Destroy;
+destructor TP3DNodeControl.Destroy;
 begin
-  FConnectors.Free;
+  FSockets.Free;
   inherited Destroy;
 end;
 

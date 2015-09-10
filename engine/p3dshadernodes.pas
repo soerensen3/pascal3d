@@ -5,7 +5,7 @@ unit p3dshadernodes;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Math, DOM, XMLRead, strutils, p3dfileutil;
+  Classes, SysUtils, FileUtil, Math, p3dMath, DOM, XMLRead, strutils, p3dfileutil;
 
 type
   { TP3DShaderNode }
@@ -36,7 +36,7 @@ type
 
   {$MACRO ON}
   {$DEFINE TCustomList:= TP3DCustomShaderNodeFragmentList}
-  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeFragmentEnumerator}
+//  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeFragmentEnumerator}
   {$DEFINE TCustomItem:= TP3DShaderNodeFragment}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
@@ -92,7 +92,7 @@ type
   TP3DShaderNodeOutlineFragmentList = class;
   { TP3DShaderNodeInput }
 
-  TP3DShaderNodeInput = class
+  TP3DShaderNodeInput = class  //NodeSocket - in Blender Input and Output at the same time
     private
       FFragments: TP3DShaderNodeOutlineFragmentList;
       FName: String;
@@ -111,7 +111,7 @@ type
   end;
 
   {$DEFINE TCustomList:= TP3DCustomShaderNodeInputList}
-  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
+  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
   {$DEFINE TCustomItem:= TP3DShaderNodeInput}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
@@ -136,7 +136,7 @@ type
       constructor Create;
       destructor Destroy; override;
 
-      function GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String;
+      function GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String; virtual;
 
     published
       property Name: String read FName write FName;
@@ -147,7 +147,7 @@ type
   end;
 
   {$DEFINE TCustomList:= TP3DCustomShaderNodeList}
-  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeListEnumerator}
+  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeListEnumerator}
   {$DEFINE TCustomItem:= TP3DShaderNode}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
@@ -178,7 +178,7 @@ type
   end;
 
   {$DEFINE TCustomList:= TP3DShaderModuleList}
-  {$DEFINE TCustomListEnumerator:= TP3DShaderModuleListEnumerator}
+  {.$DEFINE TCustomListEnumerator:= TP3DShaderModuleListEnumerator}
   {$DEFINE TCustomItem:= TP3DShaderModule}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
@@ -205,7 +205,7 @@ type
   end;
 
   {$DEFINE TCustomList:= TP3DShaderBufferList}
-  {$DEFINE TCustomListEnumerator:= TP3DShaderBufferListEnumerator}
+  {.$DEFINE TCustomListEnumerator:= TP3DShaderBufferListEnumerator}
   {$DEFINE TCustomItem:= TP3DShaderBuffer}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
@@ -262,7 +262,7 @@ type
   end;
 
   {$DEFINE TCustomList:= TP3DCustomShaderNodeOutlineFragmentList}
-  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineFragmentListEnumerator}
+  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineFragmentListEnumerator}
   {$DEFINE TCustomItem:= TP3DShaderNodeOutlineFragment}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
@@ -294,10 +294,14 @@ type
   end;
 
   {$DEFINE TCustomList:= TP3DShaderNodeOutlineList}
-  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineListEnumerator}
+  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineListEnumerator}
   {$DEFINE TCustomItem:= TP3DShaderNodeOutline}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
+  {.$DEFINE INTERFACE}
+  {.$INCLUDE p3dshader_core.inc}
+
+  {$UNDEF INTERFACE}
 
 var
   P3DShaderLib: TP3DShaderNodeLibrary;
@@ -832,48 +836,51 @@ end;
 
 {$DEFINE OBJECTLIST}
 {$DEFINE TCustomList:= TP3DCustomShaderNodeList}
-{$DEFINE TCustomListEnumerator:= TP3DShaderNodeListEnumerator}
+{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeListEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderNode}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
 {$DEFINE TCustomList:= TP3DCustomShaderNodeFragmentList}
-{$DEFINE TCustomListEnumerator:= TP3DShaderNodeFragmentEnumerator}
+{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeFragmentEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderNodeFragment}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
 {$DEFINE TCustomList:= TP3DCustomShaderNodeInputList}
-{$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
+{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderNodeInput}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
 {$DEFINE TCustomList:= TP3DCustomShaderNodeOutlineFragmentList}
-{$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineFragmentListEnumerator}
+{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineFragmentListEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderNodeOutlineFragment}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
 {$DEFINE TCustomList:= TP3DShaderNodeOutlineList}
-{$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineListEnumerator}
+{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineListEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderNodeOutline}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
 {$DEFINE TCustomList:= TP3DShaderBufferList}
-{$DEFINE TCustomListEnumerator:= TP3DShaderBufferListEnumerator}
+{.$DEFINE TCustomListEnumerator:= TP3DShaderBufferListEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderBuffer}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
 {$DEFINE TCustomList:= TP3DShaderModuleList}
-{$DEFINE TCustomListEnumerator:= TP3DShaderModuleListEnumerator}
+{.$DEFINE TCustomListEnumerator:= TP3DShaderModuleListEnumerator}
 {$DEFINE TCustomItem:= TP3DShaderModule}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
 {$INCLUDE p3dshadernodes_load.inc}
+
+{.$DEFINE IMPLEMENTATION}
+{.$INCLUDE p3dshader_core.inc}
 
 initialization
   P3DShaderLib:= TP3DShaderNodeLibrary.Create;

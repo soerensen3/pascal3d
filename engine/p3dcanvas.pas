@@ -79,6 +79,40 @@ type
 
 implementation
 
+{ TP3DPen }
+
+procedure TP3DPen.SetWidth(AValue: Single);
+begin
+  if FWidth=AValue then Exit;
+  FWidth:=AValue;
+  if ( Assigned( FOnChange )) then
+    OnChange( Self );
+end;
+
+procedure TP3DPen.SetStyle(AValue: TP3DPenStyle);
+begin
+  if FStyle=AValue then Exit;
+  FStyle:=AValue;
+  if ( Assigned( FOnChange )) then
+    OnChange( Self );
+end;
+
+constructor TP3DPen.Create(AColor: TVec4; AWidth: Single; AStyle: TP3DPenStyle);
+begin
+  inherited Create;
+  Color:= AColor;
+  Width:= AWidth;
+  Style:= AStyle;
+end;
+
+{ TP3DBrush }
+
+constructor TP3DBrush.Create(AColor: TVec4);
+begin
+  inherited Create;
+  Color:= AColor;
+end;
+
 { TP3DCanvasFont }
 
 procedure TP3DCanvasFont.SetFontName(AValue: String);

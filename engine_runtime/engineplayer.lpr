@@ -13,6 +13,7 @@ uses
   SDL2,
   dglOpenGL,
   p3dwindow,
+  p3dSDLApplication,
   sysutils,
   Classes,
   Interfaces, //crashes in linux without
@@ -41,6 +42,7 @@ uses
   p3dcanvas,
   p3dshadernodes,
   p3dgui_shadernodes,
+  p3dNodes,
   p3dviewport,
   p3dgui_sceneviewer;
 
@@ -54,9 +56,14 @@ uses
 {$INCLUDE inputscene.inc}
 
 Begin
+  P3DApplication.Initialize;
+
   mainwnd:= TSDLWindow.Create;
+  P3DApplication.MainWindow:= mainwnd;
   mainwnd.OnInit:= @Init;
   mainwnd.OnDeinit:= @DeInit;
+  Init( mainwnd );
+
   mainwnd.OnRender:= @Render;
   mainwnd.OnMouseButton:= @OnMouseButton;
   mainwnd.OnMouseMotion:= @OnMouseMotion;
@@ -65,6 +72,7 @@ Begin
   mainwnd.OnInput:= @OnInput;
   mainwnd.OnResize:= @ResizeWnd;
 
-  mainwnd.Run;
+
+  P3DApplication.Run;
   mainwnd.Free;
 End.

@@ -9,6 +9,7 @@ uses
   SysUtils,
   dglOpenGL,
   strutils,
+  p3dgenerics,
   p3dMath;
 
 type
@@ -61,19 +62,12 @@ type
       property Addr: GLuint read FAddr write FAddr;
   end;
 
-  {$MACRO ON}
-  {$DEFINE TCustomList:= TCustomShaderDeclList}
-  {$DEFINE TCustomListEnumerator:= TShaderDeclEnumerator}
-  {$DEFINE TCustomItem:= TShaderDecl}
-  {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
-
   { TShaderDeclList }
-  TShaderDeclList = class ( TCustomShaderDeclList )
+  TShaderDeclList = class ( specialize TP3DCustomObjectList < TShaderDecl >)
     function FindByName( Name: String ): Integer;
     function AddrByName( Name: String ): GLint;
     procedure Delete( Index: Integer ); override;
-    procedure Clear; override;
+    procedure Clear( const FreeObjects: Boolean = True ); override;
   end;
 
   TShader = class
@@ -248,11 +242,6 @@ begin
   Name:= AName;
   Addr:= AAddr;
 end;
-
-{$DEFINE TCustomList:= TCustomShaderDeclList}
-{$DEFINE TCustomItem:= TShaderDecl}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
 
 function LoadShaderToText(FName: String; const do_replace: Boolean = True ): String;
 var
@@ -676,13 +665,14 @@ begin
   inherited Delete(Index);
 end;
 
-procedure TShaderDeclList.Clear;
+procedure TShaderDeclList.Clear(const FreeObjects: Boolean);
 var
   i: Integer;
 begin
-  for i:= Count - 1 downto 0 do
-    Items[ i ].Free;
-  inherited Clear;
+  if ( FreeObjects ) then
+    for i:= Count - 1 downto 0 do
+      Items[ i ].Free;
+  Count:= 0;
 end;
 
 { TShader }

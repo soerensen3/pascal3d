@@ -17,17 +17,19 @@ var
   CatchMouse: Boolean = False;
 
   font_shader: TShader;
-  ParentList: TObjectList;
+  ParentList: TP3DObjectList;
   dejavu: TP3DFont;
 
-  canvas: TP3DCanvas2D;
+  //canvas: TP3DCanvas2D;
 
   shadernodeoutline: TP3DShaderNodeOutline;
   compileBtn: TP3DButton;
   events: TEventsHandler;
 
-  guiscene: TP3DGUIShaderPreview;
+  //guiscene: TP3DGUIShaderPreview;
   mdlCube: TP3DScene;
+
+  NodeTree: TP3DNodeTree;
   //guisno: TP3DGUIShaderOutlineFragment;
 
 function LoadShader: Boolean;
@@ -119,18 +121,18 @@ procedure DeInitPhysics;
 begin
   //FREE PHYSICS
 end;
-
+{
 procedure LoadOutlineFragment( snof: TP3DShaderNodeOutlineFragment );
 var
-  guisno: TP3DGUIShaderOutlineFragment;
+  guisno: TP3DNodeControl;
   inp: TP3DShaderNodeInput;
   frag: TP3DShaderNodeOutlineFragment;
 begin
-  guisno:= TP3DGUIShaderOutlineFragment.Create( ParentList, GUIManager );
+  guisno:= TP3DNodeControl.Create( ParentList, GUIManager );
   for inp in snof.Inputs do
     for frag in inp.Fragments do
       LoadOutlineFragment( frag );
-  guisno.OutlineFragment:= snof;
+  guisno.Node:= snof;
 end;
 
 procedure LoadOutline( sno: TP3DShaderNodeOutline );
@@ -139,6 +141,65 @@ var
 begin
   for frag in sno.Fragments do
     LoadOutlineFragment( frag );
+end;
+}
+
+procedure NodeTest;
+  procedure CreateNodeCtrl( ANode: TP3DNode );
+  var
+    guisno: TP3DNodeControl;
+  begin
+    guisno:= TP3DNodeControl.Create( ParentList, GUIManager );
+    guisno.Node:= ANode;
+  end;
+var
+  socket: TP3DNodeSocket;
+  Node: TP3DNode;
+begin
+  NodeTree:= TP3DNodeTree.Create;
+  NodeTree.X:= 400;
+  NodeTree.Y:= 400;
+  NodeTree.Name:= 'VertexShader';
+  socket:= TP3DNodeSocket.Create( NodeTree );
+  socket.Name:= 'Position';
+  NodeTree.Inputs.Add( socket );
+  socket:= TP3DNodeSocket.Create( NodeTree );
+  socket.Name:= 'Color';
+  NodeTree.Inputs.Add( socket );
+  CreateNodeCtrl( NodeTree );
+
+  Node:= TP3DNode.Create;
+  Node.X:= 400;
+  Node.Y:= 600;
+  Node.Name:= 'FragmentShader';
+  socket:= TP3DNodeSocket.Create( Node );
+  socket.Name:= 'Position';
+  Node.Inputs.Add( socket );
+  socket:= TP3DNodeSocket.Create( Node );
+  socket.Name:= 'Color';
+  Node.Inputs.Add( socket );
+  NodeTree.Nodes.Add( Node );
+  CreateNodeCtrl( Node );
+
+  Node:= TP3DNode.Create;
+  Node.X:= 400;
+  Node.Y:= 600;
+  Node.Name:= 'Material';
+  socket:= TP3DNodeSocket.Create( Node );
+  socket.Name:= 'Color';
+  Node.Inputs.Add( socket );
+  socket:= TP3DNodeSocket.Create( Node );
+  socket.Name:= 'Normal';
+  Node.Inputs.Add( socket );
+  socket:= TP3DNodeSocket.Create( Node );
+  socket.Name:= 'Color';
+  Node.Outputs.Add( socket );
+  socket:= TP3DNodeSocket.Create( Node );
+  socket.Name:= 'Normal';
+  Node.Outputs.Add( socket );
+
+  NodeTree.Nodes.Add( Node );
+  CreateNodeCtrl( Node );
 end;
 
 procedure Init( Sender: TSDLWindow );
@@ -157,17 +218,19 @@ begin
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
+  glEnable( GL_LINE_SMOOTH );
+
   mainscene:= tScene.Create;
   maincamera:= tCamera.Create;
 
   mainscene.DrawObjects:= @DrawObjects;
   mainscene.Cam:= maincamera;
 
-  Setup2D( 0, 0, mainwnd.Width, mainwnd.Height );
+  Setup2D( 0, 0, Sender.Width, Sender.Height );
 
-  p3dviewports.Push( 0, 0, mainwnd.Width, mainwnd.Height );
+  p3dviewports.Push( 0, 0, Sender.Width, Sender.Height );
 
-  ParentList:= TObjectList.Create;
+  ParentList:= TP3DObjectList.Create;
 
   LoadModels;
   InitPhysics;
@@ -195,23 +258,25 @@ begin
   compileBtn.Caption:= 'Compile';
   compileBtn.OnMouseClick:= @events.CompileBtnClick;
   LineShader2D.Enable;
-  canvas:= TP3DCanvas2D.Create( Nil );
+
+  NodeTest;
+  //canvas:= TP3DCanvas2D.Create( Nil );
 
   //guisno:= TP3DGUIShaderOutlineFragment.Create( ParentList, GUIManager );
   //guisno.OutlineFragment:= shadernodeoutline.Fragments[ 0 ];
 
-  guiscene:= TP3DGUIShaderPreview.Create( ParentList, GUIManager );
+  {guiscene:= TP3DGUIShaderPreview.Create( ParentList, GUIManager );
   guiscene.Width:= 300;
-  guiscene.Height:= 300;
+  guiscene.Height:= 300;}
 
-  LoadOutline( shadernodeoutline );
+  //LoadOutline( shadernodeoutline );
 
-  guiscene.ModelCube:= mdlCube;
+  {guiscene.ModelCube:= mdlCube;
   guiscene.Left:= 50; guiscene.Top:= 70;
   guiscene.Shader:= shadernodeoutline;
   //guiscene.Scene.Shader:= TriangleScene.Shader;
   guiscene.Color:= vec4( 1, 0.5, 0.5, 1 );
-
+  }
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
 end;
 
@@ -221,12 +286,13 @@ begin
   mainscene.Free;
   maincamera.Free;
 
-  canvas.Free;
+  //canvas.Free;
 
   DeInitPhysics;
 
   UnloadShader;
   UnloadModels;
   UnloadFonts;
+  NodeTree.Free;
 end;
 

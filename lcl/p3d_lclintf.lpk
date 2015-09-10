@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="p3d_lclintf"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <IncludeFiles Value="../engine"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files Count="4">
+      <Item1>
+        <Filename Value="p3deditormainwindow.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="P3DEditorMainWindow"/>
+      </Item1>
+      <Item2>
+        <Filename Value="../engine/p3dcustomlist.inc"/>
+        <Type Value="Include"/>
+      </Item2>
+      <Item3>
+        <Filename Value="p3dlcleditorfile.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="p3dlcleditorfile"/>
+      </Item3>
+      <Item4>
+        <Filename Value="p3dlclceditorscene.pas"/>
+        <UnitName Value="p3dlclceditorscene"/>
+      </Item4>
+    </Files>
+    <RequiredPkgs Count="5">
+      <Item1>
+        <PackageName Value="LazOpenGLContext"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="p3d_engine"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="IDEIntf"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="FCL"/>
+      </Item5>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

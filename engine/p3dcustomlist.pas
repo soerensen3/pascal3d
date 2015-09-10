@@ -1,21 +1,7 @@
 {$IFDEF INTERFACE}
-  //deprecated
+  TCustomListEnumerator = class;
+
   TCustomList = class ( TPersistent )
-    private
-      { TCustomListEnumerator }
-      type TCustomListEnumerator = class
-        private
-          FCurrent: TCustomItem;
-          FCurrentIdx: Integer;
-          FCustomList: TCustomList;
-
-        public
-          constructor Create( CustomList: TCustomList );
-          function MoveNext: Boolean;
-          property Current: TCustomItem read FCurrent;
-          property CurrentIdx: Integer read FCurrentIdx;
-      end;
-
     private
       FItems: TList;
       function GetCount: Integer;
@@ -23,7 +9,7 @@
       function GetItems( Index: Integer ): TCustomItem;
 
     public
-      constructor Create; deprecated 'Use p3dgenerics.TP3DCustomList instead';
+      constructor Create;
       destructor Destroy; override;
 
       function Add( Item: TCustomItem ): Integer; virtual;
@@ -36,8 +22,22 @@
 
       property Items[ Index: Integer ]: TCustomItem read GetItems; default;
       property Count: Integer read GetCount write SetCount;
-  end; //deprecated 'Use p3dgenerics.TP3DCustomList instead';
+  end;
 
+  { TCustomListEnumerator }
+
+  TCustomListEnumerator = class
+    private
+      FCurrent: TCustomItem;
+      FCurrentIdx: Integer;
+      FCustomList: TCustomList;
+
+    public
+      constructor Create( CustomList: TCustomList );
+      function MoveNext: Boolean;
+      property Current: TCustomItem read FCurrent;
+      property CurrentIdx: Integer read FCurrentIdx;
+  end;
 {$UNDEF INTERFACE}
 {$ENDIF}
 
@@ -116,7 +116,7 @@ end;
 
 { TCustomListEnumerator }
 
-constructor TCustomList.TCustomListEnumerator.Create( CustomList: TCustomList );
+constructor TCustomListEnumerator.Create( CustomList: TCustomList );
 begin
   inherited Create;
   FCurrentIdx:= -1;
@@ -124,7 +124,7 @@ begin
   FCustomList:= CustomList;
 end;
 
-function TCustomList.TCustomListEnumerator.MoveNext: Boolean;
+function TCustomListEnumerator.MoveNext: Boolean;
 begin
   Inc( FCurrentIdx );
   Result:= FCurrentIdx < FCustomList.Count;

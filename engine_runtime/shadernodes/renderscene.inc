@@ -8,7 +8,7 @@ procedure Render( Sender: TSDLWindow );
 var
   p: TVec4;
 begin
-  glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
+  glClearColor($EB / 255, $75 / 255, $6B / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
 
   mainscene.Render;
@@ -25,7 +25,6 @@ begin
   glDisable( GL_CULL_FACE );
   GUIManager.Input;
   GUIManager.Render;
-  //TriangleScene.Render;
   {GUIManager.Controls[ 0 ].Scroll:= vec2( SDL_GetTicks div 10 mod 100 );
   for i:= 0 to GUIManager.Controls.Count - 1 do
     begin
@@ -49,8 +48,18 @@ begin
 end;
 
 procedure ResizeWnd( Sender: TSDLWindow );
+var
+  vp: TP3DViewport;
 begin
   Setup2D( 0, 0, Sender.Width, Sender.Height );
+  if ( P3DViewports.Count > 0 ) then
+    begin
+      vp:= P3DViewports.VP[ 0 ];
+      vp.Width:= Sender.Width;
+      vp.Height:= Sender.Height;
+      P3DViewports.VP[ 0 ] := vp;
+    end;
+  GUIManager.UpdateExtents;
 //  canvas.Width:= Sender.Width;
 //  canvas.Height:= Sender.Height;
 end;

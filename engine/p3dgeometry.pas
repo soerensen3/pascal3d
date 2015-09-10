@@ -17,6 +17,8 @@ procedure RenderRect2D(p1, p2: TVec2; c1, c2, c3, c4: TVec4);
 procedure RenderRect2D(p1, p2: TVec2; Color: TVec4);
 procedure RenderQuad2D(p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TVec4);
 procedure RenderQuad2D(p1, p2, p3, p4: TVec2; Color: TVec4);
+procedure RenderLineCircle2D( C: TVec2; R: Single; num_segments: Integer; Color: TVec4 );
+procedure RenderCircle2D( C: TVec2; R: Single; num_segments: Integer; Color: TVec4 );
 
 procedure RenderLine3D( p1, p2: TVec3; Color: TVec4; const Thickness: Single = 1 );
 procedure RenderLines3D( points: array of TVec3; Color: TVec4; const Thickness: Single = 1 );
@@ -349,6 +351,56 @@ end;
 procedure RenderLines3D( points: TVec3List; Color: TVec4; const Thickness: Single );
 begin
 
+end;
+
+procedure RenderLineCircle2D(C: TVec2; R: Single; num_segments: Integer;
+  Color: TVec4);
+var
+  theta, co, si, t: Single;
+  p: TVec2;
+  i: Integer;
+begin
+  theta:= 2 * PI / num_segments;
+  co:= cos( theta );//precalculate the sine and cosine
+  si:= sin( theta );
+
+  p:= vec2( r, 0 );//we start at angle = 0
+
+  glBegin(GL_LINE_LOOP);
+  for i:= 0 to num_segments - 1 do
+    begin
+      glVertex2f( p.x + c.x, p.y + c.y);//output vertex
+
+		//apply the rotation matrix
+      t:= p.x;
+      p:= vec2( co * p.x - si * p.y, si * t + co * p.y );
+    end;
+  glEnd();
+end;
+
+procedure RenderCircle2D( C: TVec2; R: Single; num_segments: Integer; Color: TVec4 );
+var
+  theta, co, si, t: Single;
+  p: TVec2;
+  i: Integer;
+begin
+  theta:= 2 * PI / num_segments;
+  co:= cos( theta );//precalculate the sine and cosine
+  si:= sin( theta );
+
+  p:= vec2( r, 0 );//we start at angle = 0
+
+  glBegin(GL_TRIANGLE_FAN);
+  glVertex2f( c.x, c.y );//start with center
+  for i:= 0 to num_segments do
+    begin
+      glVertex2f( p.x + c.x, p.y + c.y);//output vertex
+
+		//apply the rotation matrix
+      t:= p.x;
+      p:= vec2( co * p.x - si * p.y, si * t + co * p.y );
+    end;
+  glEnd();
 end;
 
 procedure Setup2D(Left, Top, Width, Height: Single);
