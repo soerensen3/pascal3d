@@ -45,10 +45,10 @@ type
       procedure Insert( S: String );
 
     public
-      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager;
+      constructor Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager;
          const AParent: TP3DGraphicControl = nil );
       procedure Draw(); override;
-      function MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ): TP3DGraphicControl; override;
+      procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
       procedure MouseMove( X, Y: Integer ); override;
       function CursorToSelPos( X: Integer ): Cardinal;
       procedure KeyboardAction; override;
@@ -78,7 +78,7 @@ type
       procedure Resize;
 
     public
-      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager; const AParent: TP3DGraphicControl = nil );
+      constructor Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager; const AParent: TP3DGraphicControl = nil );
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -104,7 +104,7 @@ type
       procedure SetCaption(AValue: String);
 
     public
-      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager;
+      constructor Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager;
          const AParent: TP3DGraphicControl = nil );
       destructor Destroy; override;
       procedure Draw(); override;
@@ -162,7 +162,7 @@ begin
   Canvas.RenderText( FCaptionTxt, P );
 end;
 
-constructor TP3DLabel.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+constructor TP3DLabel.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner, AManager, AParent );
@@ -189,7 +189,7 @@ begin
   FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name ], Font.Size );
 end;
 
-constructor TP3DGroupBox.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+constructor TP3DGroupBox.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited;
@@ -198,7 +198,7 @@ begin
   Color:= vec4( 1 );
   BorderColor:= vec4( 0, 0, 0, 1 );
   BoundsLeft:= 15;
-  BoundsTop:= 20;
+  BoundsTop:= 15;
   BoundsBottom:= 15;
   BoundsRight:= 15;
 end;
@@ -315,7 +315,7 @@ begin
   Sel2:= Sel1;
 end;
 
-constructor TP3DEdit.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+constructor TP3DEdit.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited;
@@ -361,9 +361,9 @@ begin
     FOnDraw( Self, Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height );
 end;
 
-function TP3DEdit.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer ): TP3DGraphicControl;
+procedure TP3DEdit.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
-  Result:= inherited MouseDown( mb1, mb2, mb3, X, Y );
+  inherited MouseDown( mb1, mb2, mb3, X, Y );
   if ( InputManager.Mouse.Buttons[ 0 ]) then
     if ( InputManager.Mouse.DButtons[ 0 ]) then
       begin

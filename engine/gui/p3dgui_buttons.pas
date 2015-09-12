@@ -58,12 +58,12 @@ interface
         procedure SetCaption( AValue: String );
 
       public
-        constructor Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+        constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
           const AParent: TP3DGraphicControl=nil);
         destructor Destroy; override;
 
         procedure Draw; override;
-        function MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ): TP3DGraphicControl; override;
+        procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
 
         property PresetNormal: TP3DButtonPreset read FPresetNormal write FPresetNormal;
         property PresetDown: TP3DButtonPreset read FPresetDown write FPresetDown;
@@ -141,15 +141,14 @@ begin
   Canvas.RenderText( FCaptionTxt, P );
 end;
 
-function TP3DButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer
-  ): TP3DGraphicControl;
+procedure TP3DButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
-  Result:= inherited MouseDown( mb1, mb2, mb3, X, Y );
+  inherited MouseDown( mb1, mb2, mb3, X, Y );
   if ( gcisMouseOver in InputState ) then
     Focused:= True;
 end;
 
-constructor TP3DButton.Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+constructor TP3DButton.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
   const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner, AManager, AParent );

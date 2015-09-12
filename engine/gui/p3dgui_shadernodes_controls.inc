@@ -4,7 +4,7 @@
   { TP3DNodeSocketButton }
 
   TP3DNodeSocketButton = class ( TP3DButton )
-    constructor Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+    constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
     const AParent: TP3DGraphicControl=nil);
     procedure Draw; override;
     function MouseRay(X, Y: Integer): Boolean; override;
@@ -21,10 +21,11 @@
       FSocket: TP3DNodeSocket;
 
       procedure BtnMouseDown(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
-      procedure BtnDragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer );
+      procedure BtnDragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean );
+      procedure BtnDragDropCancel( Sender: TP3DGraphicControl; X, Y: Integer );
 
     public
-      constructor Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+      constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
         ASocket: TP3DNodeSocket; ADirection: TP3DNodeSocketDirection;
         const AParent: TP3DGraphicControl);
 
@@ -50,21 +51,47 @@ procedure TP3DNodeSocketControlSimple.BtnMouseDown(Sender: TP3DGraphicControl;
 begin
   if (( mb1 ) and ( gcisMouseOver in Sender.InputState )) then
     begin
-      BeginDrag();
+      Sender.BeginDrag();
       Editing:= True;
     end;
 end;
 
 procedure TP3DNodeSocketControlSimple.BtnDragDrop(Sender,
-  Source: TP3DGraphicControl; X, Y: Integer);
+  Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean);
+var
+  ConnectTo: TP3DNodeSocketControlSimple;
 begin
   Editing:= False;
+  Accept:= False;
   if ( Source is TP3DNodeSocketControlSimple ) then
-    TP3DNodeSocketControlSimple( Source ).Editing:= False;
+    ConnectTo:= TP3DNodeSocketControlSimple( Source )
+  else if ( Source.Parent is TP3DNodeSocketControlSimple ) then
+    ConnectTo:= TP3DNodeSocketControlSimple( Source.Parent )
+  else
+    ConnectTo:= nil;
+  if ( Assigned( ConnectTo )) then
+    begin
+      ConnectTo.Editing:= False;
+      if ( ConnectTo.Socket.Node = Socket.Node ) then
+        exit;
+      if (( ConnectTo.Direction <> Direction ){ and ( ConnectTo.Socket <> Socket )}) then
+        if ( ConnectTo.Direction = nsdInput ) then
+          ConnectTo.Socket.Connected:= Socket
+        else
+          Socket.Connected:= ConnectTo.Socket;
+      Accept:= True;
+    end;
+end;
+
+procedure TP3DNodeSocketControlSimple.BtnDragDropCancel(
+  Sender: TP3DGraphicControl; X, Y: Integer);
+begin
+  Editing:= False;
+  Socket.Connected:= nil;
 end;
 
 constructor TP3DNodeSocketControlSimple.Create(AOwner: TP3DObjectList;
-  AManager: TGUIManager; ASocket: TP3DNodeSocket;
+  AManager: TP3DGUIManager; ASocket: TP3DNodeSocket;
   ADirection: TP3DNodeSocketDirection; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner, AManager, AParent );
@@ -76,11 +103,16 @@ begin
   Lbl.Align:= alClient;
   Lbl.VAlignment:= vaCenter;
   FDirection:= ADirection;
+  Lbl.OnDragDrop:= @BtnDragDrop;
+  Lbl.OnMouseDown:= @BtnMouseDown;
+  Lbl.OnDragDropCancel:= @BtnDragDropCancel;
   FBtn:= TP3DNodeSocketButton.Create( ParentList, Manager, Self );
   Btn.OnDragDrop:= @BtnDragDrop;
   Btn.OnMouseDown:= @BtnMouseDown;
+  Btn.OnDragDropCancel:= @BtnDragDropCancel;
   Btn.Width:= 30;
   Btn.Height:= 30;
+  Socket.UserData:= Self;
   if ( Direction = nsdOutput ) then
     Btn.Align:= alRight
   else
@@ -95,47 +127,58 @@ end;
 procedure TP3DNodeSocketControlSimple.Draw;
   procedure RenderConnector;
   var
-    i: Integer;
-    S: TVec2;
-    E: TVec2;
+    S, E, M1, M2: TVec2;
     d: Single;
+    Connected: TP3DNodeSocketControlSimple;
+    cl: TVec4;
   begin
-    S:= vec2( Canvas.Left + Canvas.Width + 5, Canvas.Top + Canvas.Height / 2 );
+    if ( Direction = nsdOutput ) then
+      S:= vec2( Canvas.Left + Canvas.Width + 5, Canvas.Top + Canvas.Height / 2 )
+    else
+      S:= vec2( Canvas.Left - 5, Canvas.Top + Canvas.Height / 2 );
 
     if ( Editing ) then
       begin
         E:= vec2( InputManager.Mouse.X, InputManager.Mouse.Y );
-        Manager.ScreenCanvas.Lock();
-
         d:= ( S - E ).GetDist();
-        Manager.ScreenCanvas.Pen.Width:= 3;
-        Manager.ScreenCanvas.RenderBezier( S, vec2( S.X + d / 3, S.Y ),
-                             vec2( E.X - d / 3, E.Y ), E, round( sqrt( d )), vec4( 0, 0, 0, 1 ));
-        Manager.ScreenCanvas.Pen.Width:= 1;
-        Manager.ScreenCanvas.RenderBezier( S, vec2( S.X + d / 3, S.Y ),
-                             vec2( E.X - d / 3, E.Y ), E, round( sqrt( d )), vec4( 1 ));
-        Manager.ScreenCanvas.Unlock();
-      end;
+        cl:= vec4( 0.6, 0.3, 0.5, 1 );
+        if ( Direction = nsdOutput ) then
+          begin
+            M1:= vec2( S.X + d / 3, S.Y );
+            M2:= vec2( E.X - d / 3, E.Y );
+          end
+        else
+          begin
+            M1:= vec2( S.X - d / 3, S.Y );
+            M2:= vec2( E.X + d / 3, E.Y );
+          end;
+      end
+    else
+      if ( Assigned( Socket.Connected ) and ( Direction = nsdInput )) then
+        begin
+          cl:= vec4( 1 );
 
-    {for i:= 0 to Socket.Fragments.Count - 1 do
-      begin
-        E:= vec2( Socket.Fragments[ i ].X, Socket.Fragments[ i ].Y );
-        Manager.ScreenCanvas.Lock();
+          Connected:= TP3DNodeSocketControlSimple( Socket.Connected.UserData );
+          E:= vec2( Connected.Canvas.Left + Connected.Canvas.Width + 5, Connected.Canvas.Top + Connected.Canvas.Height / 2 );
+          d:= ( S - E ).GetDist();
+          M1:= vec2( S.X - d / 3, S.Y );
+          M2:= vec2( E.X + d / 3, E.Y );
+        end
+    else
+      exit;
 
-        d:= ( S - E ).GetDist();
-        Manager.ScreenCanvas.Pen.Width:= 3;
-        Manager.ScreenCanvas.RenderBezier( S, vec2( S.X + d / 3, S.Y ),
-                             vec2( E.X - d / 3, E.Y ), E, round( sqrt( d )), vec4( 0, 0, 0, 1 ));
-        Manager.ScreenCanvas.Pen.Width:= 1;
-        Manager.ScreenCanvas.RenderBezier( S, vec2( S.X + d / 3, S.Y ),
-                             vec2( E.X - d / 3, E.Y ), E, round( sqrt( d )), vec4( 1 ));
-        Manager.ScreenCanvas.Unlock();
-      end;}
+    Manager.ScreenCanvas.Lock();
+    Manager.ScreenCanvas.Pen.Width:= 3;
+    Manager.ScreenCanvas.RenderBezier( S, M1, M2, E, round( sqrt( d )), vec4( 0, 0, 0, 1 ));
+    Manager.ScreenCanvas.Pen.Width:= 1;
+    Manager.ScreenCanvas.RenderBezier( S, M1, M2, E, round( sqrt( d )), cl );
+    Manager.ScreenCanvas.Unlock();
   end;
 begin
   inherited Draw;
-  if ( Direction = nsdOutput ) then
-    RenderConnector;
+  if (( gcisMouseOver in InputState ) and ( DragDropSrc <> nil )) then
+    Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ), vec4( 1, 0, 0, 1 ));
+  RenderConnector;
 end;
 
 destructor TP3DNodeSocketControlSimple.Destroy;

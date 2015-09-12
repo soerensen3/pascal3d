@@ -20,6 +20,7 @@ type
       FName: String;
       FNode: TP3DNode;
       FOnConnect: TNotifyEvent;
+      FUserData: Pointer;
       class function GetSocketType: String; static;
       procedure SetConnected(AValue: TP3DNodeSocket);
       procedure SetNode(AValue: TP3DNode);
@@ -39,6 +40,7 @@ type
       property Connected: TP3DNodeSocket read FConnected write SetConnected;
       property Node: TP3DNode read FNode write SetNode;
       property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
+      property UserData: Pointer read FUserData write FUserData;
   end;
 
   TP3DNodeSocketList = specialize TP3DCustomObjectList < TP3DNodeSocket >;
@@ -49,6 +51,7 @@ type
       FName: String;
       FOnChange: TNotifyEvent;
       FOutputs: TP3DNodeSocketList;
+      FUserData: Pointer;
       FX: Single;
       FY: Single;
       procedure SetName(AValue: String);
@@ -66,6 +69,7 @@ type
       property X: Single read FX write SetX;
       property Y: Single read FY write SetY;
       property OnChange: TNotifyEvent read FOnChange write FOnChange;
+      property UserData: Pointer read FUserData write FUserData;
   end;
 
   TP3DNodeList = specialize TP3DCustomObjectList < TP3DNode >;

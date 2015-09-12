@@ -26,11 +26,11 @@ var
   compileBtn: TP3DButton;
   events: TEventsHandler;
 
-  //guiscene: TP3DGUIShaderPreview;
+  guiscene: TP3DGUIShaderPreview;
   mdlCube: TP3DScene;
 
   NodeTree: TP3DNodeTree;
-  //guisno: TP3DGUIShaderOutlineFragment;
+  guisno: TP3DShaderNodeOutlineFragment;
 
 function LoadShader: Boolean;
 var
@@ -124,7 +124,7 @@ end;
 {
 procedure LoadOutlineFragment( snof: TP3DShaderNodeOutlineFragment );
 var
-  guisno: TP3DNodeControl;
+  guisno: TP3DSNodeControl;
   inp: TP3DShaderNodeInput;
   frag: TP3DShaderNodeOutlineFragment;
 begin
@@ -205,6 +205,7 @@ end;
 procedure Init( Sender: TSDLWindow );
 var
   grpbx: TP3DGroupBox;
+  Obj: TP3DObject;
 
 begin
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
@@ -253,10 +254,10 @@ begin
         Align:= alTop;
       end;
     end; }
-  compileBtn:= TP3DButton.Create( ParentList, GUIManager );
+  {compileBtn:= TP3DButton.Create( ParentList, GUIManager );
   compileBtn.Width:= 200;
   compileBtn.Caption:= 'Compile';
-  compileBtn.OnMouseClick:= @events.CompileBtnClick;
+  compileBtn.OnMouseClick:= @events.CompileBtnClick;}
   LineShader2D.Enable;
 
   NodeTest;
@@ -265,19 +266,24 @@ begin
   //guisno:= TP3DGUIShaderOutlineFragment.Create( ParentList, GUIManager );
   //guisno.OutlineFragment:= shadernodeoutline.Fragments[ 0 ];
 
-  {guiscene:= TP3DGUIShaderPreview.Create( ParentList, GUIManager );
+  guiscene:= TP3DGUIShaderPreview.Create( ParentList, GUIManager );
   guiscene.Width:= 300;
-  guiscene.Height:= 300;}
+  guiscene.Height:= 300;
 
   //LoadOutline( shadernodeoutline );
 
-  {guiscene.ModelCube:= mdlCube;
+  guiscene.ModelCube:= mdlCube;
   guiscene.Left:= 50; guiscene.Top:= 70;
   guiscene.Shader:= shadernodeoutline;
+  guiscene.Canvas.Pen.Style:= psStippled3;
   //guiscene.Scene.Shader:= TriangleScene.Shader;
-  guiscene.Color:= vec4( 1, 0.5, 0.5, 1 );
-  }
+  //guiscene.Color:= vec4( 1, 0.5, 0.5, 1 );
+
+  for Obj in ParentList do
+    WriteLn( Obj.Name );
+
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
+  ResizeWnd( mainwnd );
 end;
 
 

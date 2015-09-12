@@ -27,12 +27,12 @@ interface
 
     TP3DObjectClass = class of TP3DObject;
 
-      TP3DObjectHeader = record
-        ObjName: String;
-        ObjClass: String;
-        _Start,
-        _End: Integer;
-      end;
+    TP3DObjectHeader = record
+      ObjName: String;
+      ObjClass: String;
+      _Start,
+      _End: Integer;
+    end;
 
     TP3DObject = class( TPersistent )
       private
@@ -340,12 +340,14 @@ begin
     BaseName:= ClassName;
 
   FName:= ParentList.FindUniqueName( BaseName );
+  ParentList.Add( Self );
 //  Visible:= True;
 //  SaveChilds:= True;
 end;
 
 destructor TP3DObject.Destroy;
 begin
+  ParentList.Delete( ParentList.IndexOf( Self ));
   inherited Destroy;
 end;
 

@@ -5,7 +5,7 @@ unit p3dshadernodes;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Math, p3dMath, DOM, XMLRead, strutils, p3dfileutil;
+  Classes, SysUtils, FileUtil, Math, p3dMath, DOM, XMLRead, strutils, p3dfileutil, p3dNodes;
 
 type
   { TP3DShaderNode }

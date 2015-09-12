@@ -10,7 +10,7 @@
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="10">
+    <Files Count="12">
       <Item1>
         <Filename Value="p3d_gui.pas"/>
         <UnitName Value="p3d_gui"/>
@@ -51,6 +51,14 @@
         <Filename Value="p3dgui_shadernodes_controls.inc"/>
         <Type Value="Binary"/>
       </Item10>
+      <Item11>
+        <Filename Value="p3dgui_controllist.inc"/>
+        <Type Value="Binary"/>
+      </Item11>
+      <Item12>
+        <Filename Value="p3dgui_manager.inc"/>
+        <Type Value="Binary"/>
+      </Item12>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

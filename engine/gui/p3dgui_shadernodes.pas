@@ -18,6 +18,7 @@ interface
     p3dgui_sceneviewer,
     p3dbuffers,
     p3dgenerics,
+    p3dshadernodes,
     dglOpenGL,
     Classes,
     math,
@@ -50,7 +51,7 @@ type
     public
       procedure Draw; override;
 
-      constructor Create( AOwner: TP3DObjectList; AManager: TGUIManager;
+      constructor Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager;
         const AParent: TP3DGraphicControl=nil );
       destructor Destroy; override;
 
@@ -59,7 +60,7 @@ type
   end;
 
   { TP3DGUIShaderPreview }
-  {
+
   TP3DGUIShaderPreview = class ( TP3DGUISceneViewer )
     private
       Fworld: TMat4;
@@ -76,7 +77,7 @@ type
       procedure SetShader( AValue: TP3DShaderNodeOutline );
       procedure DrawObjects( AScene: tScene );
       procedure MouseMove( X, Y: Integer ); override;
-      function MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ): TP3DGraphicControl; override;
+      procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
 
       property ShaderCompiled: TP3DShaderCompiled read FShaderCompiled write FShaderCompiled;
       property ShaderObject: TShader read FShaderObject write FShaderObject;
@@ -87,7 +88,7 @@ type
       property world: TMat4 read Fworld write Fworld;
 
     public
-      constructor Create(AOwner: TP3DObjectList; AManager: TGUIManager;
+      constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
         const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
       procedure Update;
@@ -96,7 +97,7 @@ type
 
       property ModelCube: TP3DScene read FModelCube write SetModelCube;
       property Shader: TP3DShaderNodeOutline read FShader write SetShader;
-  end; }
+  end;
 
 
 implementation
@@ -104,7 +105,7 @@ implementation
 { TP3DNodeSocketButton }
 
 constructor TP3DNodeSocketButton.Create(AOwner: TP3DObjectList;
-  AManager: TGUIManager; const AParent: TP3DGraphicControl);
+  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
 begin
   inherited;
   BoundsLeft:= 10;
@@ -146,7 +147,7 @@ end;
 {$UNDEF IMPLEMENTATION}
 
 { TP3DGUIShaderPreview }
-{
+
 procedure TP3DGUIShaderPreview.SetModelCube(AValue: TP3DScene);
 begin
   if FModelCube=AValue then Exit;
@@ -189,15 +190,15 @@ begin
   world:= mat4rotate( vec3_Axis_PX, deg2rad * FXRot ) * mat4rotate( vec3_Axis_PY, deg2rad * FYRot ) * mat4scale( vec4( Zoom )) * mat4translate( vec4( 0, 0, -1, 1 ));
 end;
 
-function TP3DGUIShaderPreview.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer
-  ): TP3DGraphicControl;
+procedure TP3DGUIShaderPreview.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   if (( gcisMouseOver in InputState ) and ( mb1 )) then
     FMoving:= True;
 end;
 
+
 constructor TP3DGUIShaderPreview.Create(AOwner: TP3DObjectList;
-  AManager: TGUIManager; const AParent: TP3DGraphicControl);
+  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
 begin
   inherited;
   Scene:= tScene.Create;
@@ -205,6 +206,7 @@ begin
   FZoom:= 1;
   //Scene.Cam.Position:= vec3( 0, 0, 4 );
   Scene.DrawObjectsObj:= @DrawObjects;
+  Color:= vec4( $86 / 255, $A0 / 255, $CA / 255, 1.0 );
 end;
 
 destructor TP3DGUIShaderPreview.Destroy;
@@ -235,16 +237,23 @@ begin
 end;
 
 procedure TP3DGUIShaderPreview.Render(BaseColor: TVec4; ScrollAcc: TVec2);
+var
+  p1: TVec2;
 begin
+  p1:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
+  Manager.ScreenCanvas.Lock;
+  Manager.ScreenCanvas.RenderRectShadow( p1, p1 + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
+  Manager.ScreenCanvas.Unlock();
+
   inherited Render(BaseColor, ScrollAcc);
-  if ( FMoving ) then
+  {if ( FMoving ) then
     begin
       Canvas.Lock;
       Canvas.RenderRect( vec2( 10 ), vec2( 50 ), vec4( vec3( 0 ), 1 ));
       Canvas.Unlock();
-    end;
+    end;}
 end;
-}
+
 { TP3DGUIShaderOutlineConnector }
 
 {var
@@ -343,7 +352,7 @@ end;
 procedure TP3DNodeControl.MouseMove(X, Y: Integer);
 begin
   inherited MouseMove( X, Y );
-  if ( FIsMoving and InputManager.Mouse.Buttons[ 0 ]) then
+  if ( gcisMouseBtn1Down in InputState ) then
     begin
       Node.X:= Left + InputManager.Mouse.DX;
       Node.Y:= Top + InputManager.Mouse.DY;
@@ -387,11 +396,12 @@ begin
 end;
 
 constructor TP3DNodeControl.Create(AOwner: TP3DObjectList;
-  AManager: TGUIManager; const AParent: TP3DGraphicControl);
+  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
 begin
   inherited;
   FOnMouseDown:= @MouseDownEvnt;
   FSockets:= TP3DNodeSocketControlSimpleList.Create;
+  Color:= vec4( $EB / 255, $75 / 255, $6B / 255, 1.0 );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
 end;
 
