@@ -17,6 +17,7 @@ type
     protected
       function GetFocused: Boolean;
       procedure SetFocused( AValue: Boolean ); virtual;
+      procedure SetInputState(AValue: TP3DGCInputFlags); override;
 
     published
       property Focused: Boolean read GetFocused write SetFocused;
@@ -36,10 +37,21 @@ end;
 
 procedure TP3DFocusControl.SetFocused(AValue: Boolean);
 begin
+  if ( AValue = Focused ) then
+    exit;
   if ( AValue ) then
     FocusedControl:= Self
   else
     FocusedControl:= nil;
+end;
+
+procedure TP3DFocusControl.SetInputState(AValue: TP3DGCInputFlags);
+begin
+  if ( not Focused ) then
+    if ( gcisMouseBtn1Down in AValue ) then
+      Focused:= True;
+
+  inherited SetInputState(AValue);
 end;
 
 end.

@@ -10,7 +10,7 @@ uses
   p3dMath,
   p3dviewport,
   p3dshaders,
-  p3dbmpfont,
+  p3dtext,
   math,
   dglOpenGL;
 
@@ -69,7 +69,7 @@ type
       property Height: Integer index 3 read FHeight write SetExtent;
       property LockID: Integer read FLockID write FLockID;
       property Owner: TPersistent read FOwner write FOwner;
-      property Font: TP3DCanvasFont read FFont write FFont;
+      property Font: TP3DCanvasFont read FFont write FFont; //TODO: OnChange event for font will fire redraw of texts in components
       property ScreenColor: TVec4 read FScreenColor write FScreenColor;
   end;
 
@@ -154,7 +154,7 @@ begin
   inherited;
   Size:= 16;
   Color:= vec4( 0, 0, 0, 1 );
-  Name:= 'Deja Vu Sans';
+  Name:= 'DejaVuSans';
 end;
 
 

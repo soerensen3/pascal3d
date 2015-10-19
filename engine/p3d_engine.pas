@@ -8,10 +8,10 @@ interface
 
 uses
   p3dinput, p3dshaders, p3dwavefront, p3dmodel, p3dshadernodes, 
-  p3dframebuffer, p3dlighting, p3dcamera, p3dscene, p3dwindow, p3dtexture, 
-  p3dfilewatch, p3dskybox, p3dgeometry, p3dfiletypemodel, p3dobjects, 
-  p3dbmpfont, p3dbmpfontfile, p3dbuffers, p3dviewport, p3dfileutil, p3dcanvas, 
-  p3dSDLApplication, p3dNodes, p3dgenerics, LazarusPackageIntf;
+  p3dframebuffer, p3dcamera, p3dscene, p3dwindow, p3dtexture, p3dfilewatch, 
+  p3dskybox, p3dgeometry, p3dobjects, p3dbmpfont, p3dbmpfontfile, p3dbuffers, 
+  p3dviewport, p3dfileutil, p3dcanvas, p3dSDLApplication, p3dNodes, 
+  p3dgenerics, p3dtext, LazarusPackageIntf;
 
 implementation
 

@@ -2,6 +2,8 @@
 
   { TCustomList }
 
+  { TP3DCustomObjectList }
+
   generic TCustomList <TCustomItem> = class ( TPersistent )
     private
       { TCustomListEnumerator }
@@ -24,6 +26,7 @@
 
     private
       FItems: TList;
+      FOnChange: TNotifyEvent;
       function GetCount: Integer;
       procedure SetCount( AValue: Integer );
       function GetItems( Index: Integer ): TCustomItem;
@@ -42,6 +45,7 @@
 
       property Items[ Index: Integer ]: TCustomItem read GetItems; default;
       property Count: Integer read GetCount write SetCount;
+      property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
 {$UNDEF INTERFACE}
@@ -78,17 +82,27 @@ end;
 
 function TCustomList.Add( Item: TCustomItem ): Integer;
 begin
-  Result:= FItems.Add( Item );
+  Result:= IndexOf( Item );
+  if ( Result = -1 ) then
+    begin
+      Result:= FItems.Add( Item );
+      if ( Assigned( OnChange )) then
+        OnChange( Self );
+    end;
 end;
 
 procedure TCustomList.Insert( Index: Integer; Item: TCustomItem );
 begin
   FItems.Insert( Index, Item );
+  if ( Assigned( OnChange )) then
+    OnChange( Self );
 end;
 
 procedure TCustomList.Delete( Index: Integer );
 begin
   FItems.Delete( Index );
+  if ( Assigned( OnChange )) then
+    OnChange( Self );
 end;
 
 function TCustomList.IndexOf( Item: TCustomItem ): Integer;
@@ -108,6 +122,8 @@ begin
       Itm.Free;
   {$ENDIF}
   FItems.Clear;
+  if ( Assigned( OnChange )) then
+    OnChange( Self );
 end;
 
 function TCustomList.GetEnumerator(): TCustomListEnumerator;

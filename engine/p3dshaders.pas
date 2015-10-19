@@ -63,11 +63,19 @@ type
   end;
 
   { TShaderDeclList }
-  TShaderDeclList = class ( specialize TP3DCustomObjectList < TShaderDecl >)
+  TP3DCustomShaderDeclList = specialize gP3DCustomObjectList < TShaderDecl >;
+  TShaderDeclList = class ( TP3DCustomShaderDeclList )
+  private
+    function GetNames( Name: String ): TShaderDecl;
+    procedure SetNames( Name: String ; AValue: TShaderDecl);
+  published
     function FindByName( Name: String ): Integer;
     function AddrByName( Name: String ): GLint;
     procedure Delete( Index: Integer ); override;
     procedure Clear( const FreeObjects: Boolean = True ); override;
+
+  public
+    property Names[ AName: String ]: TShaderDecl read GetNames write SetNames;
   end;
 
   TShader = class
@@ -106,7 +114,7 @@ type
   }
 
   function ProgramCheckForErrors( glProgram: GLHandle ): String;
-  function ShaderCheckForErrors( glShader: GLHandle ): String;
+  function ShaderCheckForErrors( glShader: GLHandle; Shader: String ): String;
 
 var
   ActiveShader: GLHandle;
@@ -328,10 +336,26 @@ begin
     end;
 end;
 
-function ShaderCheckForErrors( glShader: GLHandle ): String;
+function ExtractText(const Str: string; const Delim1, Delim2: String ): string;
+var
+  pos1, pos2: integer;
+begin
+  result := '';
+  pos1 := Pos(Delim1, Str);
+  pos2 := Pos(Delim2, Str);
+  if (pos1 > 0) and (pos2 > pos1) then
+    result := Copy(Str, pos1 + 1, pos2 - pos1 - 1);
+end;
+
+function ShaderCheckForErrors( glShader: GLHandle; Shader: String ): String;
 var
   blen, slen: GLInt;
   InfoLog : PGLChar;
+  E: TStringList; //Errors
+  C: TStringList; //Code
+  line: Integer;
+  i: Integer;
+  msg: String;
 begin
   glGetShaderiv( glShader, GL_INFO_LOG_LENGTH, @blen );
   if ( blen > 1 ) then
@@ -340,8 +364,25 @@ begin
 
       glGetShaderInfoLog( glShader, blen , slen, InfoLog );
 
-      Result:= PChar( InfoLog );
+      E:= TStringList.Create;
+      E.Text:= PChar( InfoLog );
       Dispose( InfoLog );
+
+      C:= TStringList.Create;
+      C.Text:= Shader;
+
+      for i:= E.Count - 1 downto 0 do
+        begin
+          line:= StrToIntDef( ExtractText( E[ i ], '(', ') : error' ), -1 );
+          if ( line > -1 ) then
+            begin
+              msg:= '(' + IntToStr( line ) + ') >>> "' + C[ line - 1 ] + '"';
+              E.Insert( i + 1, msg );
+            end;
+        end;
+      Result:= E.Text;
+      E.Free;
+      C.Free;
     end;
 end;
 
@@ -371,7 +412,7 @@ begin
         GL_FRAGMENT_SHADER: typeN:= 'Fragment Shader';
         GL_GEOMETRY_SHADER: typeN:= 'Geometry Shader';
       end;
-      WriteLn( Format( 'Compilation failed (%s): "%s"', [ typeN, ShaderCheckForErrors( shader )]));
+      WriteLn( Format( 'Compilation failed (%s): "%s"', [ typeN, ShaderCheckForErrors( shader, Source )]));
       glDeleteShader( shader );
     end
   else
@@ -634,6 +675,26 @@ begin
 end;
 
 { TShaderDeclList }
+
+function TShaderDeclList.GetNames( Name: String ): TShaderDecl;
+var
+  i: Integer;
+begin
+  i:= FindByName( Name );
+  if ( i > -1 ) then
+    Result:= Items[ i ]
+  else
+    Result:= nil;
+end;
+
+procedure TShaderDeclList.SetNames( Name: String ; AValue: TShaderDecl);
+var
+  i: Integer;
+begin
+  i:= FindByName( Name );
+  if ( i > -1 ) then
+    FItems[ i ]:= AValue;
+end;
 
 function TShaderDeclList.FindByName(Name: String): Integer;
 var

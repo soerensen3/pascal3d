@@ -22,7 +22,7 @@ interface
     p3dwindow,
     p3dobjects,
     p3dinput,
-    p3dbmpfont,
+    p3dtext,
     p3dMath,
     p3dviewport,
     p3dcanvas;
@@ -54,13 +54,11 @@ var
 implementation
 
 uses
-  StrUtils,
   Types;
 
 var
   LastMouseOverCtrl: TP3DGraphicControl;
   LastMouseDownCtrl: array[ 0..2 ] of TP3DGraphicControl;
-
 
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dgui_manager.inc}
@@ -74,6 +72,7 @@ initialization
   LastMouseDownCtrl[ 0 ]:= nil;
   LastMouseDownCtrl[ 1 ]:= nil;
   LastMouseDownCtrl[ 2 ]:= nil;
+
 
 finalization
   GUIManager.Free;

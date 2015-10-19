@@ -5,12 +5,12 @@ interface
     p3dgui,
     p3dobjects,
     p3dMath,
-    p3dbmpfont,
-    p3dgui_focuscontrol,
+    p3dtext,
     p3dinput,
     p3dcanvas,
     p3dgui_stdctrls,
     p3dgui_buttons,
+    p3dgui_menus,
     p3dshaders,
     p3dNodes,
     p3dmodel,
@@ -36,9 +36,11 @@ type
   TP3DNodeControl = class ( TP3DGroupBox )
     private
       FNode: TP3DNode;
-      FIsMoving: Boolean;
+      FOnDelete: TNotifyEvent;
       FSockets: TP3DNodeSocketControlSimpleList;
+      DeleteBtn: TP3DButton;
 
+    protected
       procedure SetNode(AValue: TP3DNode);
       procedure Update;
       procedure OnChange( Sender: TObject );
@@ -47,6 +49,7 @@ type
       procedure BtnDragDrop( Sender: TP3DGraphicControl; Source: TP3DGraphicControl; X, Y: Integer );
       procedure BtnMouseDown( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
       procedure Render( BaseColor: TVec4; ScrollAcc: TVec2 ); override;
+      procedure BtnDeleteClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
 
     public
       procedure Draw; override;
@@ -57,50 +60,179 @@ type
 
       property Sockets: TP3DNodeSocketControlSimpleList read FSockets;
       property Node: TP3DNode read FNode write SetNode;
+      property OnDelete: TNotifyEvent read FOnDelete write FOnDelete;
   end;
 
-  { TP3DGUIShaderPreview }
+  { TP3DShaderPreview }
 
-  TP3DGUIShaderPreview = class ( TP3DGUISceneViewer )
+  TP3DShaderPreview = class ( TP3DGroupBox )
     private
+      FOnDrawScene: TNotifyEvent;
+      FSceneViewer: TP3DGUISceneViewer;
+      FShaderTree: TP3DShaderNodeTree;
       Fworld: TMat4;
-      FShaderCompiled: TP3DShaderCompiled;
-      FShaderObject: TShader;
-      FModelCube: TP3DScene;
-      FShader: TP3DShaderNodeOutline;
-      FMoving: Boolean;
+      FModelCube: TP3DModelScene;
       FXRot: Single;
       FYRot: Single;
       FZoom: Single;
+      //vshader: TP3DShaderNodeSocket;
+      //fshader: TP3DShaderNodeSocket;
 
-      procedure SetModelCube( AValue: TP3DScene );
-      procedure SetShader( AValue: TP3DShaderNodeOutline );
-      procedure DrawObjects( AScene: tScene );
-      procedure MouseMove( X, Y: Integer ); override;
-      procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+      procedure SetModelCube( AValue: TP3DModelScene );
+      procedure DrawObjects(AScene: TP3DScene);
+      procedure PreviewMouseMove( Sender: TP3DGraphicControl; X, Y: Integer );
 
-      property ShaderCompiled: TP3DShaderCompiled read FShaderCompiled write FShaderCompiled;
-      property ShaderObject: TShader read FShaderObject write FShaderObject;
-      property Scene;
       property XRot: Single read FXRot write FXRot;
       property YRot: Single read FYRot write FYRot;
       property Zoom: Single read FZoom write FZoom;
       property world: TMat4 read Fworld write Fworld;
 
+    protected
+      procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+      procedure MouseMove( X, Y: Integer ); override;
+
     public
       constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
         const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
-      procedure Update;
+
+      procedure UpdateShader;
 
       procedure Render(BaseColor: TVec4; ScrollAcc: TVec2); override;
 
-      property ModelCube: TP3DScene read FModelCube write SetModelCube;
-      property Shader: TP3DShaderNodeOutline read FShader write SetShader;
+      property ModelCube: TP3DModelScene read FModelCube write SetModelCube;
+      property SceneViewer: TP3DGUISceneViewer read FSceneViewer write FSceneViewer;
+      property ShaderTree: TP3DShaderNodeTree read FShaderTree write FShaderTree;
+      property OnDrawScene: TNotifyEvent read FOnDrawScene write FOnDrawScene;
   end;
 
 
 implementation
+
+{ TP3DNodeSocketVectorEdit }
+
+procedure TP3DNodeSocketVectorEdit.SetSocket( AValue: TP3DShaderNodeSocketVector );
+begin
+  if FSocket=AValue then Exit;
+  FSocket:=AValue;
+  Caption:= AValue.Name;
+end;
+
+function TP3DNodeSocketVectorEdit.GetValue(Sender: TP3DEventValueEdit): Single;
+var
+  i: Integer;
+begin
+  for i:= 0 to high( FValueEdits ) do
+    if ( FValueEdits[ i ] = Sender ) then
+      break;
+  Result:= Socket.Value[ i ];
+end;
+
+procedure TP3DNodeSocketVectorEdit.SetValue(Sender: TP3DEventValueEdit;
+  AValue: Single);
+var
+  i: Integer;
+begin
+  for i:= 0 to high( FValueEdits ) do
+    if ( FValueEdits[ i ] = Sender ) then
+      break;
+  Socket.Value[ i ]:= AValue;
+end;
+
+function TP3DNodeSocketVectorEdit.GetValueName(Sender: TP3DEventValueEdit): String;
+const
+  E: array [ 0..3 ] of String = ( 'X', 'Y', 'Z', 'W' );
+var
+  i: Integer;
+begin
+  for i:= 0 to high( FValueEdits ) do
+    if ( FValueEdits[ i ] = Sender ) then
+      break;
+  Result:= E[ i ];
+end;
+
+constructor TP3DNodeSocketVectorEdit.Create(AOwner: TP3DObjectList;
+  AManager: TP3DGUIManager; ASocket: TP3DShaderNodeSocketVector;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AManager, AParent );
+  FDropDown:= TP3DCustomPopupMenu.Create( ParentList, Manager, nil );
+  FDropDown.Visible:= False;
+  SetLength( FValueEdits, 4 );
+  Socket:= ASocket;
+  Update;
+end;
+
+destructor TP3DNodeSocketVectorEdit.Destroy;
+begin
+  if ( ParentList.IndexOf( FDropDown ) > -1 ) then //Prevent error on freeing of already destroyed Control when destroying ParentList
+    FDropDown.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DNodeSocketVectorEdit.Update;
+var
+  i: Integer;
+begin
+  FDropDown.Height:= 1024;
+  for i:= 0 to Length( FValueEdits ) - 1 do
+    begin
+      if ( Assigned( FValueEdits[ i ])) then
+        FValueEdits[ i ].Free;
+      if ( Socket = nil ) then
+        continue;
+      FValueEdits[ i ]:= TP3DEventValueEdit.Create( ParentList, Manager, FDropDown );
+      FValueEdits[ i ].Align:= alTop;
+      FValueEdits[ i ].SetValueEvent:= @SetValue;
+      FValueEdits[ i ].GetValueEvent:= @GetValue;
+      FValueEdits[ i ].GetValueNameEvent:= @GetValueName;
+    end;
+  if ( Socket <> nil ) then
+    FDropDown.Height:= FValueEdits[ i ].Top + FValueEdits[ i ].Height;
+end;
+
+procedure TP3DNodeSocketVectorEdit.MouseClick(mb1, mb2, mb3: Boolean; X,
+  Y: Integer);
+begin
+  inherited MouseClick(mb1, mb2, mb3, X, Y);
+  FDropDown.Width:= Canvas.Width;
+  FDropDown.PopUp( Canvas.Left, Canvas.Top + Canvas.Height );
+end;
+
+{ TP3DNodeSocketControlVector }
+
+procedure TP3DNodeSocketControlVector.SetCanEdit(AValue: Boolean);
+begin
+  if FCanEdit=AValue then Exit;
+  FCanEdit:=AValue;
+  if ( CanEdit ) then
+    begin
+      Lbl.Visible:= False;
+      VecEdit.Visible:= True;
+      //VecEdit.ValueName:= Socket.Name;
+    end
+  else
+    begin
+      Lbl.Visible:= True;
+      VecEdit.Visible:= False;
+    end
+end;
+
+procedure TP3DNodeSocketControlVector.Draw;
+begin
+  inherited Draw;
+  CanEdit:= not Assigned( Socket.Connected );
+end;
+
+constructor TP3DNodeSocketControlVector.Create(AOwner: TP3DObjectList;
+  AManager: TP3DGUIManager; ASocket: TP3DNodeSocket;
+  ADirection: TP3DNodeSocketDirection; const AParent: TP3DGraphicControl);
+begin
+  inherited;
+  FVecEdit:= TP3DNodeSocketVectorEdit.Create( ParentList, Manager, Socket as TP3DShaderNodeSocketVector, Self );
+  CanEdit:= False;
+  FVecEdit.Align:= alClient;
+end;
 
 { TP3DNodeSocketButton }
 
@@ -146,82 +278,119 @@ end;
 {$INCLUDE p3dgui_shadernodes_controls.inc}
 {$UNDEF IMPLEMENTATION}
 
-{ TP3DGUIShaderPreview }
+{ TP3DShaderPreview }
 
-procedure TP3DGUIShaderPreview.SetModelCube(AValue: TP3DScene);
+procedure TP3DShaderPreview.SetModelCube(AValue: TP3DModelScene);
 begin
   if FModelCube=AValue then Exit;
   FModelCube:=AValue;
-  Update;
 end;
 
-procedure TP3DGUIShaderPreview.SetShader(AValue: TP3DShaderNodeOutline);
-begin
-  //if FShader=AValue then Exit;
-  FShader:=AValue;
-  Update;
-end;
-
-procedure TP3DGUIShaderPreview.DrawObjects(AScene: tScene);
-var
-  Mesh: TP3DMesh;
+procedure TP3DShaderPreview.DrawObjects(AScene: TP3DScene);
 begin
   glClear( GL_DEPTH_BUFFER_BIT);
   glEnable( GL_DEPTH_TEST );
+  if ( Assigned( OnDrawScene )) then
+    OnDrawScene( Self );
+  if ( Assigned( AScene.Shader )) then
+    begin
+      glUniform1i( AScene.Shader.Uniforms.AddrByName( 'tex0' ), 0 );
+      glUniform1i( AScene.Shader.Uniforms.AddrByName( 'tex1' ), 1 );
+      glUniform1i( AScene.Shader.Uniforms.AddrByName( 'tex2' ), 2 );
+      glUniform1i( AScene.Shader.Uniforms.AddrByName( 'tex3' ), 3 );
+      glUniform1i( AScene.Shader.Uniforms.AddrByName( 'tex4' ), 4 );
+    end;
   if ( Assigned( ModelCube )) then
-    ModelCube.Render( world );
+    ModelCube.Render;//( world, AScene );
   glDisable( GL_DEPTH_TEST );
 end;
 
-procedure TP3DGUIShaderPreview.MouseMove(X, Y: Integer);
+procedure TP3DShaderPreview.PreviewMouseMove(Sender: TP3DGraphicControl; X,
+  Y: Integer);
 begin
-  inherited MouseMove(X, Y);
-  if ( FMoving and InputManager.Keyboard.Keys[ P3DK_LCTRL ] AND InputManager.Mouse.Buttons[ 0 ]) then
+  if ( gcisMouseBtn1Down in Sender.InputState ) then
     begin
-      FZoom:= Max( 0.05, FZoom - InputManager.Mouse.DY / 50 );
-    end
-  else if ( InputManager.Mouse.Buttons[ 0 ] and FMoving ) then
-    begin
-      FXRot+= InputManager.Mouse.DY / 2;
-      FYRot+= InputManager.Mouse.DX / 2;
-    end
-  else
-    FMoving:= False;
-  world:= mat4rotate( vec3_Axis_PX, deg2rad * FXRot ) * mat4rotate( vec3_Axis_PY, deg2rad * FYRot ) * mat4scale( vec4( Zoom )) * mat4translate( vec4( 0, 0, -1, 1 ));
+      if ( InputManager.Keyboard.Keys[ P3DK_LCTRL ]) then
+        FZoom:= Max( 0.05, FZoom - InputManager.Mouse.DY / 50 )
+      else
+        begin
+          FXRot+= InputManager.Mouse.DY / 2;
+          FYRot+= InputManager.Mouse.DX / 2;
+        end;
+      world:= mat4rotate( vec3_Axis_PX, deg2rad * FXRot ) * mat4rotate( vec3_Axis_PY, deg2rad * FYRot ) * mat4scale( vec4( Zoom )) * mat4translate( vec4( 0, 0, -1, 1 ));
+    end;
 end;
 
-procedure TP3DGUIShaderPreview.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
+procedure TP3DShaderPreview.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
-  if (( gcisMouseOver in InputState ) and ( mb1 )) then
-    FMoving:= True;
+  if ( mb1 and ( gcisMouseOver in InputState )) then
+    BringToFront;
 end;
 
+procedure TP3DShaderPreview.MouseMove(X, Y: Integer);
+begin
+  inherited MouseMove( X, Y );
+  if ( gcisMouseBtn1Down in InputState ) then
+    begin
+      Left:= Left + InputManager.Mouse.DX;
+      Top:= Top + InputManager.Mouse.DY;
+    end;
+end;
 
-constructor TP3DGUIShaderPreview.Create(AOwner: TP3DObjectList;
+constructor TP3DShaderPreview.Create(AOwner: TP3DObjectList;
   AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
 begin
   inherited;
-  Scene:= tScene.Create;
-  Scene.Cam:= tCamera.Create;
+  Width:= 200;
+  Height:= 200;
+  SceneViewer:= TP3DGUISceneViewer.Create( ParentList, Manager, Self );
+  SceneViewer.Scene:= TP3DScene.Create;
+  SceneViewer.Scene.Cam:= TP3DCamera.Create;
   FZoom:= 1;
-  //Scene.Cam.Position:= vec3( 0, 0, 4 );
-  Scene.DrawObjectsObj:= @DrawObjects;
+  SceneViewer.Scene.Cam.Position:= vec3( 0, 0, 4 );
+  SceneViewer.Scene.DrawObjectsObj:= @DrawObjects;
+  SceneViewer.OnMouseMove:= @PreviewMouseMove;
+  SceneViewer.Caption:= 'Preview';
+  SceneViewer.Align:= alClient;
+  SceneViewer.Color:= vec4( $86 / 255, $A0 / 255, $CA / 255, 1.0 );
   Color:= vec4( $86 / 255, $A0 / 255, $CA / 255, 1.0 );
 end;
 
-destructor TP3DGUIShaderPreview.Destroy;
+destructor TP3DShaderPreview.Destroy;
 begin
-  Scene.Cam.Free;
-  Scene.Free;
+  //Scene.Cam.Free;
+  //Scene.Free;
   inherited Destroy;
 end;
 
-procedure TP3DGUIShaderPreview.Update;
+procedure TP3DShaderPreview.UpdateShader;
+var
+  ShaderCompiled: TP3DShaderCompiled;
+  v_shader: TP3DShaderBuffer;
+  f_shader: TP3DShaderBuffer;
+begin
+  if ( Assigned( SceneViewer.Scene ) and ( Assigned( ShaderTree ))) then
+    with ( SceneViewer.Scene ) do
+      begin
+        Shader.Free;
+
+        ShaderCompiled:= ShaderTree.Compile;
+
+        v_shader:= ShaderCompiled.FindBuffer( 'vshader' );
+        f_shader:= ShaderCompiled.FindBuffer( 'fshader' );
+
+        Shader:= CreateVertexAndFragmentShader( v_shader.Code, f_shader.Code );
+
+        ShaderCompiled.Free;
+      end;
+end;
+
+{procedure TP3DShaderPreview.Update;
 var
   v_shader: TP3DShaderBuffer;
   f_shader: TP3DShaderBuffer;
 begin
-  if ( not Assigned( Shader )) then
+  {if ( not Assigned( Shader )) then
     Exit;
   ShaderCompiled.Free;
   ShaderObject.Free;
@@ -233,10 +402,10 @@ begin
 
   ShaderObject:= CreateVertexAndFragmentShader( v_shader.Code, f_shader.Code );
   if ( Assigned( Scene )) then
-    Scene.Shader:= ShaderObject;
-end;
+    Scene.Shader:= ShaderObject;}
+end;}
 
-procedure TP3DGUIShaderPreview.Render(BaseColor: TVec4; ScrollAcc: TVec2);
+procedure TP3DShaderPreview.Render(BaseColor: TVec4; ScrollAcc: TVec2);
 var
   p1: TVec2;
 begin
@@ -246,47 +415,8 @@ begin
   Manager.ScreenCanvas.Unlock();
 
   inherited Render(BaseColor, ScrollAcc);
-  {if ( FMoving ) then
-    begin
-      Canvas.Lock;
-      Canvas.RenderRect( vec2( 10 ), vec2( 50 ), vec4( vec3( 0 ), 1 ));
-      Canvas.Unlock();
-    end;}
 end;
 
-{ TP3DGUIShaderOutlineConnector }
-
-{var
-  n: Integer;
-
-const
-  Tolerance = 2;
-
-  function EqualTolerance( Val: Integer; EqualTo: Integer ): Boolean;
-  begin
-    Result:= ( Val + Tolerance >= EqualTo ) and ( Val - Tolerance <= EqualTo );
-  end;
-
-  function InSection( Val: Integer; B1, B2: Integer ): Boolean;
-  begin
-    Result:= InRange( Val, Min( B1 - Tolerance, B2 - Tolerance ), Max( B1 + Tolerance, B2 + Tolerance ));
-  end;
-
-begin
-  Result:= inherited MouseRay(X, Y);
-  if ( not Result ) then
-    exit;
-
-  X:= X - Canvas.Left;
-  Y:= Y - Canvas.Top;
-  n:= Round( FPStart.X + FPEnd.X ) div 2;
-  if ( EqualTolerance( X, n )) then
-    Result:= InSection( Y, round( FPStart.Y ), round( FPEnd.Y ))
-  else if ( InSection( X, n, round( FPStart.X ))) then
-    Result:= EqualTolerance( Y, round( FPStart.Y ))
-  else if ( InSection( X, n, round( FPEnd.X ))) then
-    Result:= EqualTolerance( Y, round( FPEnd.Y ));
-end;}
 
 { TP3DGUIShaderOutlineFragment }
 
@@ -294,14 +424,13 @@ procedure TP3DNodeControl.SetNode(AValue: TP3DNode);
 begin
   if FNode=AValue then Exit;
   FNode:=AValue;
-  FNode.OnChange:= @OnChange;
+  if ( Assigned( FNode )) then
+    FNode.OnChange:= @OnChange;
   //FNode.OnUpdateChild:= @UpdatePC;
   Update;
 end;
 
 procedure TP3DNodeControl.Draw;
-var
-  p1: TVec2;
 begin
 
   inherited Draw;
@@ -310,13 +439,12 @@ end;
 procedure TP3DNodeControl.Update;
 var
   i: Integer;
-  lbl: TP3DLabel;
   socket: TP3DNodeSocketControlSimple;
-  j: Integer;
-  btn: TP3DButton;
 begin
-  Sockets.Clear( False );
-  Controls.Clear( True );
+  Sockets.Clear( True );
+  if ( not Assigned( Node )) then
+    exit;
+  //Controls.Clear( True );
   Caption:= Node.Name;
 
   Left:= Round( Node.X );
@@ -326,13 +454,19 @@ begin
 
   for i:= 0 to Node.Outputs.Count - 1 do
     begin
+      if ( Node.Outputs[ i ].SocketType = 'shader' ) then
+        continue;
       socket:= TP3DNodeSocketControlSimple.Create( ParentList, Manager, Node.Outputs[ i ], nsdOutput, Self );
       socket.Align:= alTop;
       Sockets.Add( socket );
     end;
   for i:= 0 to Node.Inputs.Count - 1 do
     begin
-      socket:= TP3DNodeSocketControlSimple.Create( ParentList, Manager, Node.Inputs[ i ], nsdInput, Self );
+      case Node.Inputs[ i ].SocketType of
+        'vec4': socket:= TP3DNodeSocketControlVector.Create( ParentList, Manager, Node.Inputs[ i ], nsdInput, Self );
+        else
+          socket:= TP3DNodeSocketControlSimple.Create( ParentList, Manager, Node.Inputs[ i ], nsdInput, Self );
+      end;
       socket.Align:= alTop;
       Sockets.Add( socket );
     end;
@@ -352,23 +486,18 @@ end;
 procedure TP3DNodeControl.MouseMove(X, Y: Integer);
 begin
   inherited MouseMove( X, Y );
-  if ( gcisMouseBtn1Down in InputState ) then
+  if (( gcisMouseBtn1Down in InputState ) and ( Assigned( Node ))) then
     begin
       Node.X:= Left + InputManager.Mouse.DX;
       Node.Y:= Top + InputManager.Mouse.DY;
-    end
-  else
-    FIsMoving:= False;
+    end;
 end;
 
 procedure TP3DNodeControl.MouseDownEvnt(
   Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   if ( mb1 and ( gcisMouseOver in InputState )) then
-    begin
-      FIsMoving:= True;
-      BringToFront;
-    end;
+    BringToFront;
 end;
 
 procedure TP3DNodeControl.BtnDragDrop(Sender: TP3DGraphicControl;
@@ -395,6 +524,13 @@ begin
   inherited Render(BaseColor, ScrollAcc);
 end;
 
+procedure TP3DNodeControl.BtnDeleteClick(Sender: TP3DGraphicControl; mb1, mb2,
+  mb3: Boolean; X, Y: Integer);
+begin
+  if ( Assigned( OnDelete )) then
+    OnDelete( Self );
+end;
+
 constructor TP3DNodeControl.Create(AOwner: TP3DObjectList;
   AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
 begin
@@ -403,6 +539,18 @@ begin
   FSockets:= TP3DNodeSocketControlSimpleList.Create;
   Color:= vec4( $EB / 255, $75 / 255, $6B / 255, 1.0 );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
+  DeleteBtn:= TP3DButton.Create( ParentList, Manager, Self );
+  DeleteBtn.PresetNormal.Color:= vec4( 0, 0, 0, 0 );
+  DeleteBtn.PresetHover.Color:= vec4( 0, 0, 0, 0 );
+  DeleteBtn.PresetDown.Color:= vec4( 0, 0, 0, 0 );
+
+  DeleteBtn.Top:= -BoundsTop;
+  DeleteBtn.Left:= -BoundsLeft;
+  DeleteBtn.Width:= 20;
+  DeleteBtn.Height:= 20;
+  DeleteBtn.Font.Name:= 'Pascal3D-Symbols';
+  DeleteBtn.Caption:= 'M';
+  DeleteBtn.OnMouseClick:= @BtnDeleteClick;
 end;
 
 destructor TP3DNodeControl.Destroy;

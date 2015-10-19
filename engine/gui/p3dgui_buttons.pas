@@ -5,8 +5,7 @@ interface
     p3dgui,
     p3dobjects,
     p3dMath,
-    p3dbmpfont,
-    p3dgui_focuscontrol,
+    p3dtext,
     p3dinput,
     p3dcanvas,
     Types;
@@ -41,11 +40,13 @@ interface
 
     { TP3DButton }
 
-    TP3DButton = class( TP3DFocusControl )
+    TP3DButton = class( TP3DGraphicControl )
       private
         FFont: TP3DCanvasFont;
         FHAlignment: THorizontalAlignment;
         FVAlignment: TVerticalAlignment;
+        function GetTextHeight: Single;
+        function GetTextWidth: Single;
 
       protected
         FCaption: String;
@@ -55,7 +56,7 @@ interface
         FState: Integer;
         FCaptionTxt: TP3DText;
 
-        procedure SetCaption( AValue: String );
+        procedure SetCaption( AValue: String ); virtual;
 
       public
         constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
@@ -65,6 +66,8 @@ interface
         procedure Draw; override;
         procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
 
+        class function IsFocusControl: Boolean; override;
+
         property PresetNormal: TP3DButtonPreset read FPresetNormal write FPresetNormal;
         property PresetDown: TP3DButtonPreset read FPresetDown write FPresetDown;
         property PresetHover: TP3DButtonPreset read FPresetHover write FPresetHover;
@@ -72,6 +75,8 @@ interface
         property Caption: String read FCaption write SetCaption;
         property HAlignment: THorizontalAlignment read FHAlignment write FHAlignment;
         property VAlignment: TVerticalAlignment read FVAlignment write FVAlignment;
+        property TextWidth: Single read GetTextWidth;
+        property TextHeight: Single read GetTextHeight;
     end;
 
 implementation
@@ -85,13 +90,23 @@ begin
   OutlineColor:= Preset.OutlineColor;
 end;
 
+function TP3DButton.GetTextHeight: Single;
+begin
+  Result:= FCaptionTxt.Height;
+end;
+
+function TP3DButton.GetTextWidth: Single;
+begin
+  Result:= FCaptionTxt.Width;
+end;
+
 procedure TP3DButton.SetCaption(AValue: String);
 begin
   if FCaption=AValue then Exit;
 
   FCaption:=AValue;
   FCaptionTxt.Free;
-  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name ], Font.Size );
+  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
 
@@ -146,6 +161,11 @@ begin
   inherited MouseDown( mb1, mb2, mb3, X, Y );
   if ( gcisMouseOver in InputState ) then
     Focused:= True;
+end;
+
+class function TP3DButton.IsFocusControl: Boolean;
+begin
+  Result:= True;
 end;
 
 constructor TP3DButton.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;

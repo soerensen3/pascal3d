@@ -21,6 +21,8 @@ TP3DControlList = class( TP3DCustomControlList )
     procedure SendToBack( Index: Integer );
     procedure OneLayerUp( Index: Integer );
     procedure OneLayerDown( Index: Integer );
+    function IndexOf( Name: String ): Integer; overload;
+    function ChildOf( AControl: TP3DGraphicControl ): Boolean;
 
     constructor Create( AParent: TP3DGraphicControl; AManager: TP3DGUIManager );
     destructor Destroy; override;
@@ -66,7 +68,7 @@ end;
 
 destructor TP3DControlList.Destroy;
 begin
-  Clear;
+  Clear( True );
   inherited;
 end;
 
@@ -91,7 +93,7 @@ var
     if ( BoundaryShift < 0 ) then
       ControlPos:= Boundary + BoundaryShift
     else
-      ControlPos:= Boundary;
+      ControlPos:= Boundary - R.Left;
     ControlLength:= BoundaryLength;
     Boundary+= BoundaryShift;
   end;
@@ -99,20 +101,26 @@ var
 begin
   if ( Parent <> nil ) then
     begin
-      Parent.UpdateClientRect;
+      Parent.Realign;
       R:= Parent.ClientRect;
-      R.Right+= R.Left;
-      R.Bottom+= R.Top;
+      R.Left:= 0;
+      R.Top:= 0; //Left/Top start already at the Client Rect
     end
   else
     with ( Manager.ScreenCanvas ) do
-      R:= Rect( Left, Top, Width + Left, Height + Top );
+      R:= Rect( 0, 0, Width, Height );
   for Control in Self do
     if ( Control.Visible ) then
       begin
-        case Control.Align of
+        case Control.Align of //TODO: Fix Bug that Controls positioned at the ClientRect should have a zero position value not the R.TopLeft
           alClient: continue;
-          alLeft: UpdateControlAndBoundary( R.Left, Control.FLeft, Control.FHeight, R.Bottom - R.Top, Control.Width );
+          alLeft:
+            begin
+              Control.FLeft:= R.Left;
+              Control.FHeight:= R.Bottom - R.Top;
+              R.Left+= Control.Width;
+            end;
+          //UpdateControlAndBoundary( R.Left, Control.FLeft, Control.FHeight, R.Bottom - R.Top, Control.Width );
           alRight: UpdateControlAndBoundary( R.Right, Control.FLeft, Control.FHeight, R.Bottom - R.Top, -Control.Width );
           alTop: UpdateControlAndBoundary( R.Top, Control.FTop, Control.FWidth, R.Right - R.Left, Control.Height );
           alBottom: UpdateControlAndBoundary( R.Bottom, Control.FTop, Control.FWidth, R.Right - R.Left, -Control.Height );
@@ -166,6 +174,32 @@ begin
   Insert( Index - 1, Item );
   if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
     Realign;
+end;
+
+function TP3DControlList.IndexOf(Name: String): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Name = Name ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+function TP3DControlList.ChildOf(AControl: TP3DGraphicControl): Boolean;
+var
+  Control: TP3DGraphicControl;
+begin
+  Result:= False;
+  for Control in Self do
+    if (( Control = AControl ) or ( Control.Controls.ChildOf( AControl ))) then
+      begin
+        Result:= True;
+        break;
+      end;
 end;
 
 procedure TP3DControlList.OneLayerUp( Index: Integer );
@@ -222,6 +256,11 @@ begin
         Result.InputState:= Result.InputState + [ gcisMouseOver ];
       LastMouseOverCtrl:= Result;
     end;
+  if ( not Assigned( Result ) and ( Manager.Cursor <> curArrow )) then
+    Manager.Cursor:= curArrow
+  else if (( Assigned( Result )) and ( Result.Cursor <> Manager.Cursor )) then
+    Manager.Cursor:= Result.Cursor;
+
 
   for i:= 0 to 2 do
     with InputManager.Mouse do
@@ -231,6 +270,7 @@ begin
             LastMouseDownCtrl[ i ]:= LastMouseOverCtrl;
             if ( Assigned( LastMouseDownCtrl[ i ])) then
               LastMouseDownCtrl[ i ].InputState:= LastMouseDownCtrl[ i ].InputState + BtnInpState( i );
+            Manager.FocusedControl:= LastMouseOverCtrl;
           end
         else                    //released
           begin

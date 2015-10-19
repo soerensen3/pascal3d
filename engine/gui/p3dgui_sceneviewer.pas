@@ -10,24 +10,22 @@ uses
 
 type
 
-{ TP3DGUIShaderPreview }
-
   { TP3DGUISceneViewer }
 
   TP3DGUISceneViewer = class ( TP3DGroupBox )
     private
-      FScene: tScene;
+      FScene: TP3DScene;
 
     public
       procedure Render(BaseColor: TVec4; ScrollAcc: TVec2); override;
-      property Scene: tScene read FScene write FScene;
+      property Scene: TP3DScene read FScene write FScene;
   end;
 
   procedure InitTriangle;
 
   var
-    TriangleScene: tScene;
-    TriangleCam: tCamera;
+    TriangleScene: TP3DScene;
+    TriangleCam: TP3DCamera;
     TrianglePoints: TP3DVec3BufferGL;
     TriangleColors: TP3DVec4BufferGL;
 
@@ -48,7 +46,7 @@ begin
 end;
 
 
-procedure RenderTriangle(Scene: tScene);
+procedure RenderTriangle(Scene: TP3DScene);
 begin
   if ( not Assigned( TrianglePoints )) then
     InitTriangle;
@@ -83,9 +81,9 @@ begin
 end;
 
 initialization
-  TriangleCam:= tCamera.Create;
+  TriangleCam:= TP3DCamera.Create;
   TriangleCam.Position:= vec3( 0, 0, 2 );
-  TriangleScene:= tScene.Create;
+  TriangleScene:= TP3DScene.Create;
   TriangleScene.Cam:= TriangleCam;
   TriangleScene.DrawObjects:= @RenderTriangle;
 

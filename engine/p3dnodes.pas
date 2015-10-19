@@ -11,22 +11,25 @@ type
 
   {$MACRO ON}
 
+  TP3DNodeSocketDirection = ( nsdInput, nsdOutput );
+  TP3DNode = class;
+
   { TP3DNodeSocket }
 
-  TP3DNode = class;
   TP3DNodeSocket = class
-    private
+    protected
+      FDirection: TP3DNodeSocketDirection;
       FConnected: TP3DNodeSocket;
       FName: String;
       FNode: TP3DNode;
       FOnConnect: TNotifyEvent;
       FUserData: Pointer;
-      class function GetSocketType: String; static;
-      procedure SetConnected(AValue: TP3DNodeSocket);
+      class function GetSocketType: String; static; virtual;
+      procedure SetConnected(AValue: TP3DNodeSocket); virtual;
       procedure SetNode(AValue: TP3DNode);
 
     public
-      constructor Create( ANode: TP3DNode );
+      constructor Create( ANode: TP3DNode; ADirection: TP3DNodeSocketDirection ); virtual;
       procedure AcceptConnection( ATarget: TP3DNodeSocket; const Accept: Boolean = False ); virtual;
   { - Procedure to check if socket connection is accepted  }
       class property SocketType: String read GetSocketType;
@@ -41,9 +44,16 @@ type
       property Node: TP3DNode read FNode write SetNode;
       property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
       property UserData: Pointer read FUserData write FUserData;
+      property Direction: TP3DNodeSocketDirection read FDirection;
   end;
 
-  TP3DNodeSocketList = specialize TP3DCustomObjectList < TP3DNodeSocket >;
+  TP3DCustomNodeSocketList = specialize gP3DCustomObjectList < TP3DNodeSocket >;
+
+  { TP3DNodeSocketList }
+
+  TP3DNodeSocketList = class ( TP3DCustomNodeSocketList )
+    function FindSocketByName( Name: String ): Integer;
+  end;
 
   TP3DNode = class
     private
@@ -57,6 +67,8 @@ type
       procedure SetName(AValue: String);
       procedure SetX(AValue: Single);
       procedure SetY(AValue: Single);
+
+      procedure SocketsChange( Sender: TObject ); virtual;
 
     public
       constructor Create;
@@ -72,11 +84,11 @@ type
       property UserData: Pointer read FUserData write FUserData;
   end;
 
-  TP3DNodeList = specialize TP3DCustomObjectList < TP3DNode >;
+  TP3DNodeList = specialize gP3DCustomObjectList < TP3DNode >;
 
   { TP3DNodeTree }
 
-  TP3DNodeTree = class( TP3DNode ) //NodeTree
+  TP3DNodeTree = class //NodeTree
     private
       FNodes: TP3DNodeList;
 
@@ -97,6 +109,21 @@ type
   end;
 
 implementation
+
+{ TP3DNodeSocketList }
+
+function TP3DNodeSocketList.FindSocketByName(Name: String): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Name = Name ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
 
 { TP3DNodeTree }
 
@@ -138,11 +165,19 @@ begin
     OnChange( Self );
 end;
 
+procedure TP3DNode.SocketsChange(Sender: TObject);
+begin
+  if ( Assigned( OnChange )) then
+    OnChange( Self );
+end;
+
 constructor TP3DNode.Create;
 begin
   inherited;
   FInputs:= TP3DNodeSocketList.Create;
   FOutputs:= TP3DNodeSocketList.Create;
+  FInputs.OnChange:= @SocketsChange;
+  FOutputs.OnChange:= @SocketsChange;
 end;
 
 destructor TP3DNode.Destroy;
@@ -173,9 +208,11 @@ begin
   FNode:=AValue;
 end;
 
-constructor TP3DNodeSocket.Create(ANode: TP3DNode);
+constructor TP3DNodeSocket.Create(ANode: TP3DNode;
+			ADirection: TP3DNodeSocketDirection);
 begin
   inherited Create;
+  FDirection:= ADirection;
   FNode:= ANode;
 end;
 

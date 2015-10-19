@@ -7,15 +7,14 @@ interface
 uses
   Classes,
   SysUtils,
-  p3dbmpfont,
+  p3dtext,
   math,
   p3dMath,
   p3dobjects,
   p3dinput,
   p3dcanvas,
   p3dgui,
-  p3dgui_buttons,
-  p3dgui_focuscontrol;
+  p3dgui_buttons;
 
 type
 
@@ -30,13 +29,13 @@ type
       FSel2: Integer;
       function GetSelLength(): Integer;
       function GetSelStart(): Integer;
-      procedure SetCaption(AValue: String);
       procedure SetSel1(AValue: Integer);
       procedure SetSel2(AValue: Integer);
       procedure SetSelLength(AValue: Integer);
       procedure SetSelStart(AValue: Integer);
 
     protected
+      procedure SetCaption(AValue: String); override;
       procedure SetFocused(AValue: Boolean); override;
 
       property Caption;
@@ -74,7 +73,7 @@ type
       FVAlignment: TVerticalAlignment;
 
       procedure SetAutoSize(AValue: Boolean);
-      procedure SetCaption( AValue: String );
+      procedure SetCaption( AValue: String ); virtual;
       procedure Resize;
 
     public
@@ -101,6 +100,7 @@ type
       FColor: TVec4;
       FFont: TP3DCanvasFont;
 
+      class function IsFocusControl: Boolean; override;
       procedure SetCaption(AValue: String);
 
     public
@@ -115,7 +115,261 @@ type
       property BorderColor: TVec4 read FBorderColor write FBorderColor;
   end;
 
+	{ TP3DValueEdit }
+
+  TP3DCustomValueEdit = class ( TP3DEdit )
+	  private
+      FStep: Single;
+      FTransmission: Single;
+    	FTyping: Boolean;
+      FCursorMoved: Boolean;
+      FValueNameText: TP3DText;
+      FValueText: TP3DText;
+
+    protected
+      function GetValue: Single; virtual;
+      procedure SetValue(AValue: Single); virtual;
+
+      procedure SetTyping(AValue: Boolean);
+      procedure SetValueName(AValue: String); virtual;
+      function GetValueName: String; virtual;
+
+    public
+      constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
+        const AParent: TP3DGraphicControl=nil);
+      destructor Destroy; override;
+      procedure Draw; override;
+      procedure MouseMove(X, Y: Integer); override;
+      procedure MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
+      procedure MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
+      procedure KeyboardAction; override;
+
+	  published
+  	  property ValueName: String read GetValueName write SetValueName;
+	    property Value: Single read GetValue write SetValue;
+	    property Typing: Boolean read FTyping write SetTyping;
+      property Step: Single read FStep write FStep;
+      property Transmission: Single read FTransmission write FTransmission;
+	end;
+
+  { TP3DEventValueEdit }
+
+  TP3DEventValueEdit = class ( TP3DCustomValueEdit )
+    private type
+      TGetValue = function ( Sender: TP3DEventValueEdit ): Single of object;
+      TSetValue = procedure ( Sender: TP3DEventValueEdit; AValue: Single ) of object;
+      TGetValueName = function ( Sender: TP3DEventValueEdit ): String of object;
+      TSetValueName = procedure ( Sender: TP3DEventValueEdit; AValue: String ) of object;
+
+    private
+      FGetValueEvent: TGetValue;
+      FGetValueNameEvent: TGetValueName;
+      FSetValueEvent: TSetValue;
+      FSetValueNameEvent: TSetValueName;
+
+    protected
+      function GetValue: Single; override;
+      procedure SetValue(AValue: Single); override;
+      procedure SetValueName(AValue: String); override;
+      function GetValueName: String; override;
+
+    public
+      property GetValueEvent: TGetValue read FGetValueEvent write FGetValueEvent;
+      property SetValueEvent: TSetValue read FSetValueEvent write FSetValueEvent;
+      property GetValueNameEvent: TGetValueName read FGetValueNameEvent write FGetValueNameEvent;
+      property SetValueNameEvent: TSetValueName read FSetValueNameEvent write FSetValueNameEvent;
+  end;
+
+  TP3DValueEdit = class ( TP3DCustomValueEdit )
+    protected
+	    FValue: Single;
+	    FValueName: String;
+
+      function GetValue: Single; override;
+      procedure SetValue(AValue: Single); override;
+      procedure SetValueName(AValue: String); override;
+      function GetValueName: String; override;
+  end;
+
 implementation
+
+{ TP3DEventValueEdit }
+
+function TP3DEventValueEdit.GetValue: Single;
+begin
+  if ( not Assigned( FGetValueEvent )) then
+    Result:= inherited GetValue
+  else
+    Result:= FGetValueEvent( Self );
+end;
+
+procedure TP3DEventValueEdit.SetValue(AValue: Single);
+begin
+  if ( Assigned( FSetValueEvent )) then
+    FSetValueEvent( Self, AValue );
+  inherited SetValue(AValue);
+end;
+
+procedure TP3DEventValueEdit.SetValueName(AValue: String);
+begin
+  if ( Assigned( FSetValueNameEvent )) then
+    FSetValueNameEvent( Self, AValue );
+  inherited SetValueName(AValue);
+end;
+
+function TP3DEventValueEdit.GetValueName: String;
+begin
+  if ( not Assigned( FGetValueNameEvent )) then
+    Result:= inherited GetValueName
+  else
+    Result:= FGetValueNameEvent( Self );
+end;
+
+{ TP3DValueEdit }
+
+function TP3DValueEdit.GetValue: Single;
+begin
+  Result:= FValue;
+end;
+
+procedure TP3DValueEdit.SetValue(AValue: Single);
+begin
+  if FValue= AValue then Exit;
+  FValue:= AValue;
+
+  inherited SetValue( FValue );
+end;
+
+procedure TP3DValueEdit.SetValueName(AValue: String);
+begin
+  if ( FValueName <> AValue ) then
+    FValueName:= AValue;
+end;
+
+function TP3DValueEdit.GetValueName: String;
+begin
+  Result:= FValueName;
+end;
+
+{ TP3DValueEdit }
+
+procedure TP3DCustomValueEdit.SetTyping(AValue: Boolean);
+begin
+  if FTyping=AValue then Exit;
+  FTyping:=AValue;
+  Text:= FloatToStr( Value );
+end;
+
+function TP3DCustomValueEdit.GetValueName: String;
+begin
+  Result:= '';
+end;
+
+function TP3DCustomValueEdit.GetValue: Single;
+begin
+  Result:= 0;
+end;
+
+procedure TP3DCustomValueEdit.SetValue(AValue: Single);
+begin
+  if ( Assigned( FValueText )) then
+    FValueText.Free;
+  FValueText:= p3dTextSimple( FloatToStrF( AValue, ffGeneral, 4, 0 ), P3DFontManager[ Font.Name, Font.Size ]);
+end;
+
+procedure TP3DCustomValueEdit.SetValueName(AValue: String);
+begin
+  if ( Assigned( FValueNameText )) then
+    FValueNameText.Free;
+  FValueNameText:= p3dTextSimple( AValue + ':', P3DFontManager[ Font.Name, Font.Size ]);
+end;
+
+constructor TP3DCustomValueEdit.Create(AOwner: TP3DObjectList;
+  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
+begin
+  inherited;
+  ValueName:= GetValueName;//Self.Name;
+  FValueText:= p3dTextSimple( FloatToStrF( Value, ffGeneral, 4, 0 ), P3DFontManager[ Font.Name, Font.Size ]);
+  FStep:= 0.1;
+  FTransmission:= 0.1;
+end;
+
+destructor TP3DCustomValueEdit.Destroy;
+begin
+  FValueNameText.Free;
+  FValueText.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DCustomValueEdit.Draw;
+var
+  tp: TVec2;
+begin
+  if ( not Focused ) then
+    Typing:= False;
+  if ( Typing ) then
+    inherited Draw
+  else
+    begin
+      if ( GetValueName <> FValueNameText.Text ) then
+        ValueName:= GetValueName;
+      tp:= vec2( 5, Height / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
+      Canvas.Font.Color:= Font.Color;
+      Canvas.RenderText( FValueNameText, tp );
+      Canvas.RenderText( FValueText, tp + vec2( Width - 5 - FValueText.Width, 0 ));
+    end;
+end;
+
+procedure TP3DCustomValueEdit.MouseMove(X, Y: Integer);
+begin
+  inherited MouseMove(X, Y);
+
+  if (( InputManager.Mouse.DX <> 0 ) or ( InputManager.Mouse.DY <> 0 )) then
+    begin
+      FCursorMoved:= True;
+      Cursor:= curMoveLeftRight;
+    end;
+  if ( FCursorMoved ) then
+    begin
+      if ( gcisMouseBtn1Down in InputState ) then
+        begin
+          Value:= Value + Round( InputManager.Mouse.DX * Transmission / Step ) * Step;
+        end
+      else
+        begin
+          FCursorMoved:= False;
+          Cursor:= curArrow;
+        end;
+    end;
+end;
+
+procedure TP3DCustomValueEdit.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  inherited MouseDown(mb1, mb2, mb3, X, Y);
+  if ( InputManager.Mouse.Buttons[ 0 ] and InputManager.Mouse.DButtons[ 0 ]) then
+    FCursorMoved:= False;
+end;
+
+procedure TP3DCustomValueEdit.MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  inherited MouseUp(mb1, mb2, mb3, X, Y);
+  if ( not FCursorMoved and not InputManager.Mouse.Buttons[ 0 ] and InputManager.Mouse.DButtons[ 0 ]) then
+    Typing:= True;
+end;
+
+procedure TP3DCustomValueEdit.KeyboardAction;
+begin
+  inherited KeyboardAction;
+  if ( Typing AND InputManager.Keyboard.Keys[ P3DK_RETURN ]) then
+    begin
+      try
+        Value:= StrToFloat( Text );
+        Typing:= False;
+      except
+        On E: Exception do;
+      end;
+    end;
+end;
 
 { TP3DLabel }
 
@@ -124,7 +378,7 @@ begin
   if FCaption=AValue then Exit;
   FCaption:=AValue;
   FCaptionTxt.Free;
-  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name ], Font.Size );
+  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
 procedure TP3DLabel.SetAutoSize(AValue: Boolean);
@@ -186,7 +440,7 @@ begin
 
   FCaption:=AValue;
   FCaptionTxt.Free;
-  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name ], Font.Size );
+  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
 constructor TP3DGroupBox.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
@@ -198,7 +452,7 @@ begin
   Color:= vec4( 1 );
   BorderColor:= vec4( 0, 0, 0, 1 );
   BoundsLeft:= 15;
-  BoundsTop:= 15;
+  BoundsTop:= 25;
   BoundsBottom:= 15;
   BoundsRight:= 15;
 end;
@@ -233,6 +487,11 @@ begin
   Canvas.RenderText( FCaptionTxt, vec2( hw * 2, 2 ));
 end;
 
+class function TP3DGroupBox.IsFocusControl: Boolean;
+begin
+  Result:= True;
+end;
+
 { TP3DEdit }
 
 procedure TP3DEdit.SetSelLength(AValue: Integer );
@@ -256,19 +515,18 @@ end;
 procedure TP3DEdit.SetCaption(AValue: String);
 begin
   if FCaption=AValue then Exit;
-  FCaption:=AValue;
+  inherited;
+  FCaptionTxt.BuildIndex();
 end;
 
 procedure TP3DEdit.SetSel1( AValue: Integer );
 begin
   FSel1:= Max( 0, Min( AValue, Length( FCaption )));
-  WriteLn( 'Selection 1: ', FSel1, ' Selection 2: ', FSel2 );
 end;
 
 procedure TP3DEdit.SetSel2( AValue: Integer );
 begin
   FSel2:= Max( 0, Min( AValue, Length( FCaption )));
-  WriteLn( 'Selection 1: ', FSel1, ' Selection 2: ', FSel2 );
 end;
 
 procedure TP3DEdit.SetSelStart(AValue: Integer);
@@ -306,10 +564,7 @@ begin
 end;
 
 procedure TP3DEdit.Insert( S: String );
-var
-  str: String;
 begin
-  str:= FCaption;
   Text:= Copy( FCaption, 1, SelStart ) + S + Copy( FCaption, SelStart + abs( SelLength ) + 1, Length( FCaption ));
   Sel1:= SelStart + Length( S );
   Sel2:= Sel1;
@@ -327,9 +582,10 @@ end;
 procedure TP3DEdit.Draw;
 var
   Preset: TP3DButtonPreset;
-  clf: TVec4;
-  tp: TVec2;
-  s: TVec4;
+  tp: TVec2; //Text Position
+  s: TVec2; //Cursor Position
+  soff: TPoint; //Offset to the beginning of the selection
+  swidth: TPoint; //Length of the selection
 begin
   if ( gcisMouseBtn1Down in InputState ) then
     Preset:= PresetDown
@@ -348,13 +604,23 @@ begin
   Canvas.RenderText( FCaptionTxt, tp );
   if ( Focused ) then
     begin
-      s:= vec4( tp, 0, 0 ) + FCaptionTxt.WidthFromTo( Sel1, Sel2 );
-      Canvas.RenderRect( s.XY, s.XY + s.ZW,
-        Preset.FontColor * 0.3, Preset.FontColor * 0.3, Preset.FontColor * 0.3, Preset.FontColor * 0.3 );
+      if ( Sel1 > 0 ) then
+        soff:= FCaptionTxt.WidthFromTo( 1, Sel1 + 1 )
+      else
+        soff:= Point( 0, 0 );
 
-      s:= vec4( tp, 0, 0 ) + FCaptionTxt.WidthFromTo( Sel1, Sel1 );
-      Canvas.RenderRect( s.XY, s.XY + vec2( 2, s.W ),
-        Preset.FontColor, Preset.FontColor, Preset.FontColor, Preset.FontColor );
+      if ( Sel1 <> Sel2 ) then
+        begin
+          swidth:= FCaptionTxt.WidthFromTo( Min( Sel1, Sel2 ) + 1, Max( Sel1, Sel2 ) + 1 );
+
+          s:= tp;
+          if ( Sel1 > Sel2 ) then
+            s.x:= s.x - swidth.x;
+          Canvas.RenderRect( s + vec2( soff.X, 0 ), s + vec2( soff.X + swidth.X, swidth.Y ), Preset.FontColor * 0.3 );
+        end;
+
+      swidth:= p3dTextSize( 'W', FCaptionTxt.Font );
+      Canvas.RenderRect( tp + vec2( soff.X, 0 ), tp + vec2( soff.X + 2, soff.Y ), Preset.FontColor );
     end;
 
   if ( Assigned( FOnDraw )) then
@@ -405,8 +671,6 @@ begin
 end;
 
 procedure TP3DEdit.KeyboardAction;
-var
-  S: String;
 begin
   if ( Focused ) then
     begin

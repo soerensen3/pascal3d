@@ -10,23 +10,7 @@ import os
 from xml.etree import cElementTree as et
 
 def LegalName(Name):
-
-    def ReplaceSet(String, OldSet, NewChar):
-        for OldChar in OldSet:
-            String = String.replace(OldChar, NewChar)
-        return String
-
-    import string
-
-    NewName = ReplaceSet(Name, string.punctuation + " ", "_")
-    if NewName[0].isdigit() or NewName in ["BEGIN",
-                                           "END",
-                                           "MATRIX",
-                                           "MATERIAL",
-                                           "MATERIALS",
-                                           "EXTERNAL"]:
-        NewName = "_" + NewName
-    return NewName
+    return Name
 
 def ExportPath( Config, Path ):
   if ( Config.PathMode == 1 ):
@@ -49,6 +33,11 @@ def WriteMatrix( Config, Matrix ):
 ## HELPER
 globalNormals = {}
 globalUVs = {}
+globalUVLayerNames = {}
+globalTangents = {}
+globalCotangents = {}
+globalMaterials = set([])
+globalLoopVertex = {}
 
 def veckey3d(v):
     return round(v.x, 6), round(v.y, 6), round(v.z, 6)
@@ -59,14 +48,5 @@ def veckey2d(v):
 import struct
 
 def WriteVecToFile( Config, Vec ):
-    if Config.ExportBinaryData:
-        bin = struct.pack( "f" * len( Vec ), *Vec)
-        Config.objfile.write( bin )
-    else:
-      Config.File.write("  " * Config.Whitespace + (", {:9f}" * len( Vec )).format( *Vec )[2:] + ";\n") #[2:] Strips away the first comma
-
-def WriteFaceToFile( Config, idx1, idx2, idx3 ):
-    if not Config.ExportBinaryData:
-        return "{}/{}/{}, ".format( idx1, idx2, idx3 )
-##      Config.File.write("  " * Config.Whitespace + (", {:9f}" * len( Vec )).format( *Vec )[2:] + ";\n") 
-    
+    bin = struct.pack( "f" * len( Vec ), *Vec)
+    Config.objfile.write( bin )

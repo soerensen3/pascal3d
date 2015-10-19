@@ -3,7 +3,11 @@ type
   { TEventsHandler }
 
   TEventsHandler = object
-    procedure CompileBtnClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
+    procedure OptionsBtnClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
+    procedure NodeDeleteClick( Sender: TObject );
+    procedure CompileItmClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
+    procedure AddItmClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
+    procedure DrawScene( Sender: TObject );
   end;
 
 var
@@ -22,15 +26,17 @@ var
 
   //canvas: TP3DCanvas2D;
 
-  shadernodeoutline: TP3DShaderNodeOutline;
-  compileBtn: TP3DButton;
+  //shadernodeoutline: TP3DShaderNodeOutline;
+  optionsBtn: TP3DButton;
   events: TEventsHandler;
 
-  guiscene: TP3DGUIShaderPreview;
+  guiscene: TP3DShaderPreview;
+  TestPopupMenu: p3dgui_menus.TP3DPopupMenu;
   mdlCube: TP3DScene;
 
-  NodeTree: TP3DNodeTree;
-  guisno: TP3DShaderNodeOutlineFragment;
+  NodeTree: TP3DShaderNodeTree;
+  tex1,tex2,tex3,tex4,tex5: TP3DTexture;
+  //guisno: TP3DShaderNodeOutlineFragment;
 
 function LoadShader: Boolean;
 var
@@ -46,24 +52,26 @@ begin
   TriangleScene.Shader:= CreateVertexAndFragmentShader( LoadShaderToText( 'default3d.vert' ), LoadShaderToText( 'default3d.frag' ));
   P3DFontManager.Shader:= font_shader;
   P3DShaderLib.LoadLibraryPath( 'nodes/core/', '*.xml' );
-  shadernodeoutline:= TP3DShaderNodeOutline.CreateFromFile( 'nodes/shader_test2.xml' );
+  //shadernodeoutline:= TP3DShaderNodeOutline.CreateFromFile( 'nodes/shader_test2.xml' );
 
   //LOAD SHADERS
 end;
 
 procedure UnloadShader;
 begin
+  P3DShaderLib.Nodes.Clear( True );
   font_shader.Free;
-  shadernodeoutline.Free;
+  //shadernodeoutline.Free;
   //FREE SHADERS
 end;
 
 procedure LoadFonts;
 begin
-  SetCurrentDir( pathfonts );
-  dejavu:= LoadP3DFont( 'Deja Vu Sans.p3dfont' );
-  dejavu.SizeFactor:= 10;
-  P3DFontManager.Add( dejavu );
+  //SetCurrentDir( pathfonts );
+  //dejavu:= LoadP3DFont( 'Deja Vu Sans.p3dfont' );
+  //dejavu.SizeFactor:= 10;
+  //P3DFontManager.Add( dejavu );
+  P3DFontManager.DefaultFontsPath:= pathfonts;
 end;
 
 procedure UnloadFonts;
@@ -109,8 +117,20 @@ end;
 procedure LoadTextures;
 begin
   //LOAD TEXTURES
+  SetCurrentDir( pathmodels );
+  tex1:= TP3DTexture.Create( 'rock.jpg' );
+  tex2:= TP3DTexture.Create( 'rock_displace.jpg' );
+  tex3:= TP3DTexture.Create( 'rock_normal.jpg' );
+  tex4:= TP3DTexture.Create( 'bark.JPG' );
 end;
 
+procedure UnloadTextures;
+begin
+  tex1.Free;
+  tex2.Free;
+  tex3.Free;
+  tex4.Free;
+end;
 
 procedure InitPhysics;
 begin
@@ -145,61 +165,24 @@ end;
 }
 
 procedure NodeTest;
-  procedure CreateNodeCtrl( ANode: TP3DNode );
-  var
-    guisno: TP3DNodeControl;
-  begin
-    guisno:= TP3DNodeControl.Create( ParentList, GUIManager );
-    guisno.Node:= ANode;
-  end;
 var
-  socket: TP3DNodeSocket;
   Node: TP3DNode;
+  i: Integer;
 begin
-  NodeTree:= TP3DNodeTree.Create;
-  NodeTree.X:= 400;
-  NodeTree.Y:= 400;
-  NodeTree.Name:= 'VertexShader';
-  socket:= TP3DNodeSocket.Create( NodeTree );
-  socket.Name:= 'Position';
-  NodeTree.Inputs.Add( socket );
-  socket:= TP3DNodeSocket.Create( NodeTree );
-  socket.Name:= 'Color';
-  NodeTree.Inputs.Add( socket );
-  CreateNodeCtrl( NodeTree );
+  NodeTree:= TP3DShaderNodeTree.Create;
 
-  Node:= TP3DNode.Create;
-  Node.X:= 400;
-  Node.Y:= 600;
-  Node.Name:= 'FragmentShader';
-  socket:= TP3DNodeSocket.Create( Node );
-  socket.Name:= 'Position';
-  Node.Inputs.Add( socket );
-  socket:= TP3DNodeSocket.Create( Node );
-  socket.Name:= 'Color';
-  Node.Inputs.Add( socket );
-  NodeTree.Nodes.Add( Node );
-  CreateNodeCtrl( Node );
-
-  Node:= TP3DNode.Create;
-  Node.X:= 400;
-  Node.Y:= 600;
-  Node.Name:= 'Material';
-  socket:= TP3DNodeSocket.Create( Node );
-  socket.Name:= 'Color';
-  Node.Inputs.Add( socket );
-  socket:= TP3DNodeSocket.Create( Node );
-  socket.Name:= 'Normal';
-  Node.Inputs.Add( socket );
-  socket:= TP3DNodeSocket.Create( Node );
-  socket.Name:= 'Color';
-  Node.Outputs.Add( socket );
-  socket:= TP3DNodeSocket.Create( Node );
-  socket.Name:= 'Normal';
-  Node.Outputs.Add( socket );
-
-  NodeTree.Nodes.Add( Node );
-  CreateNodeCtrl( Node );
+  TestPopupMenu:= TP3DPopupMenu.Create( ParentList, GUIManager );
+  TestPopupMenu.Left:= 600;
+  TestPopupMenu.Width:= 200;
+  TestPopupMenu.Height:= 200;
+  i:= TestPopupMenu.Items.Add( 'Update shader' );
+  TestPopupMenu.Items[ i ].OnMouseDown:= @events.CompileItmClick;
+  for Node in P3DShaderLib.Nodes do
+    begin
+      i:= TestPopupMenu.Items.Add( 'Add ' + Node.Name + '...' );
+      TestPopupMenu.Items[ i ].OnMouseDown:= @events.AddItmClick;
+      TestPopupMenu.Items[ i ].UserData:= Node;
+    end;
 end;
 
 procedure Init( Sender: TSDLWindow );
@@ -212,8 +195,8 @@ begin
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
   pathfonts:= ExtractFilePath( ParamStr( 0 )) + pathfonts;
 
-  //Sender.Width:= 800;
-  //Sender.Height:= 600;
+  Sender.Width:= 1024;
+  Sender.Height:= 768;
   //Sender.FullScreen:= True;
 
   glEnable( GL_BLEND );
@@ -254,10 +237,11 @@ begin
         Align:= alTop;
       end;
     end; }
-  {compileBtn:= TP3DButton.Create( ParentList, GUIManager );
-  compileBtn.Width:= 200;
-  compileBtn.Caption:= 'Compile';
-  compileBtn.OnMouseClick:= @events.CompileBtnClick;}
+  OptionsBtn:= TP3DButton.Create( ParentList, GUIManager );
+  OptionsBtn.Width:= 50;
+  optionsBtn.Font.Name:= 'Pascal3D-Symbols';
+  OptionsBtn.Caption:= 'L';
+  OptionsBtn.OnMouseClick:= @events.OptionsBtnClick;
   LineShader2D.Enable;
 
   NodeTest;
@@ -266,24 +250,27 @@ begin
   //guisno:= TP3DGUIShaderOutlineFragment.Create( ParentList, GUIManager );
   //guisno.OutlineFragment:= shadernodeoutline.Fragments[ 0 ];
 
-  guiscene:= TP3DGUIShaderPreview.Create( ParentList, GUIManager );
-  guiscene.Width:= 300;
-  guiscene.Height:= 300;
+  guiscene:= TP3DShaderPreview.Create( ParentList, GUIManager );
+  //guiscene.Width:= 300;
+  //guiscene.Height:= 300;
 
   //LoadOutline( shadernodeoutline );
 
   guiscene.ModelCube:= mdlCube;
   guiscene.Left:= 50; guiscene.Top:= 70;
-  guiscene.Shader:= shadernodeoutline;
+  //guiscene.Shader:= shadernodeoutline;
   guiscene.Canvas.Pen.Style:= psStippled3;
-  //guiscene.Scene.Shader:= TriangleScene.Shader;
-  //guiscene.Color:= vec4( 1, 0.5, 0.5, 1 );
+  guiscene.SceneViewer.Scene.Shader:= TriangleScene.Shader;
+  guiscene.ShaderTree:= NodeTree;
+  guiscene.OnDrawScene:= @events.DrawScene;
 
-  for Obj in ParentList do
-    WriteLn( Obj.Name );
+  //guiscene.Color:= vec4( 1, 0.5, 0.5, 1 );
 
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
   ResizeWnd( mainwnd );
+
+  SDL_ShowCursor( 0 );
+  GUIManager.ShowCursor:= True;
 end;
 
 
@@ -299,6 +286,7 @@ begin
   UnloadShader;
   UnloadModels;
   UnloadFonts;
+  UnloadTextures;
   NodeTree.Free;
 end;
 

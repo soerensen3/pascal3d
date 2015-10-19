@@ -18,8 +18,8 @@ interface
 
 
     { TP3DObjectList }
-
-    TP3DObjectList = class( specialize TP3DCustomObjectList < TP3DObject >)
+    TP3DCustomObjectList = specialize gP3DCustomObjectList < TP3DObject >;
+    TP3DObjectList = class( TP3DCustomObjectList )
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
       procedure Clear(const FreeObjects: Boolean = True ); override;
@@ -38,7 +38,6 @@ interface
       private
         FName: TComponentName;
         FParentList: TP3DObjectList;
-//        FVisible: Boolean;
 
         procedure SetName( const NewName: TComponentName );
 

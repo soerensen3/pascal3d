@@ -7,8 +7,8 @@ unit p3d_gui;
 interface
 
 uses
-  p3dgui, p3dgui_buttons, p3dgui_focuscontrol, p3dgui_stdctrls, 
-  p3dgui_shadernodes, p3dgui_sceneviewer, LazarusPackageIntf;
+  p3dgui, p3dgui_buttons, p3dgui_stdctrls, p3dgui_shadernodes, 
+  p3dgui_sceneviewer, p3dgui_menus, LazarusPackageIntf;
 
 implementation
 

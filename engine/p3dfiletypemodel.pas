@@ -427,7 +427,7 @@ begin
           break;
         'vertices': LoadVerticesBin( Mdl.Positions, bin, StrToInt( param ));
         'normals': LoadVerticesBin( Mdl.Normals, bin, StrToInt( param ));
-        'texcoords': LoadUVBin( Mdl.TexCoords, bin, StrToInt( param ));
+        //'texcoords': LoadUVBin( Mdl.TexCoords, bin, StrToInt( param )); deprecated;
         'faces': LoadFacesBin( Mdl.Faces, bin, StrToInt( param ));
       else
         begin
@@ -472,7 +472,7 @@ begin
                 Material.Name:= param;
                 MdlFile.Materials.Add( Material );
               end;
-            Mdl.Material:= Material;
+            //Mdl.Material:= Material; deprecated
           end
         else
           begin
@@ -503,7 +503,7 @@ begin
         'normals': i:= LoadVertices( Mdl.Normals, F, i + 1 );
         'faces': i:= LoadFaces( Mdl.Faces, F, i + 1 );
 //        'materials': i:= LoadMaterials( Mdl.Materials, F, i + 1 );
-        'texcoords': i:= LoadUV( Mdl.TexCoords, F, i + 1 );
+        //'texcoords': i:= LoadUV( Mdl.TexCoords, F, i + 1 ); deprecated
         'children': i:= LoadChildren( MdlFile, Mdl.Children, F, i + 1 );
         'materials': i:= LoadObjMaterials( MdlFile, Mdl, F, i + 1 );
         'external':
@@ -518,8 +518,8 @@ begin
           end;
       end;
     end;
+  //Mdl.CalcCotangentsFromTangents;
   {.$IFDEF BUFFERS}
-  Mdl.Calc_Tangent_Binormal;
   Mdl.UnpackBuffers;
   {.$ENDIF}
   Result:= i + 1;

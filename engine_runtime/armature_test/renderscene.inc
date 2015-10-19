@@ -1,5 +1,5 @@
 {$IFDEF INTERFACE}
-procedure DrawObjects( Scene: tScene ); forward;
+procedure DrawObjects( Scene: TP3DScene ); forward;
 {$UNDEF INTERFACE}
 {$ELSE}
 
@@ -13,17 +13,17 @@ begin
   mainscene.Render;
 end;
 
-procedure DrawObjects( Scene: tScene );
+procedure DrawObjects( Scene: TP3DScene );
 begin
   if ( not Assigned( ActShad )) then
     exit;
 
 
-  TArmature( Mdl.Children[ 1 ]).CurrentFrame:= Round( SDL_GetTicks / 1000 );
+  //TArmature( Mdl.Children[ 1 ]).CurrentFrame:= Round( SDL_GetTicks / 1000 );
 
-  mainwnd.Title:= Format( 'Current Action: %d - Current frame: %d', [ TArmature( Mdl.Children[ 1 ]).CurrentAction, TArmature( Mdl.Children[ 1 ]).CurrentFrame ]);
+  //mainwnd.Title:= Format( 'Current Action: %d - Current frame: %d', [ TArmature( Mdl.Children[ 1 ]).CurrentAction, TArmature( Mdl.Children[ 1 ]).CurrentFrame ]);
 
-  Mdl.Render( mat4( 1 ), [ rfDebugShowArmature ]);
+//  n.Render({ Scene.view * Scene.proj, [ rfDebugShowArmature ]});
   //DRAW CODE HERE
 end;
 

@@ -1,6 +1,6 @@
 var
-  mainscene: tScene;
-  maincamera: tCamera;
+  mainscene: TP3DModelScene;
+  maincamera: TP3DCamera;
 
   pathshaders: String = '../../../shaders';
   pathmodels: String = '../../../armature_test/media';
@@ -10,10 +10,12 @@ var
 
   CatchMouse: Boolean = False;
 
-  Mdl: TModelFile;
+  //Mdl: TP3DModelScene;
 
 
 function LoadShader: Boolean;
+var
+  mat: TP3DMaterial;
 begin
   Result:= False;
   SetCurrentDir( pathshaders );
@@ -23,6 +25,9 @@ begin
   InitGeom( CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )),
             CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )));
   mainscene.Shader:= shadersimple;
+  P3DShaderLib.LoadLibraryPath( 'nodes/core/', '*.xml' );
+  for mat in mainscene.Materials do
+    mat.BuildShader;
   //LOAD SHADERS
 end;
 
@@ -31,6 +36,7 @@ begin
   LineShader2D.Free;
   LineShader3D.Free;
   shadersimple.Free;
+  P3DShaderLib.Nodes.Clear( True );
   //FREE SHADERS
 end;
 
@@ -41,16 +47,24 @@ begin
   Result:= False;
   SetCurrentDir( pathmodels );
 
-  Mdl:= LoadModelFileFromFile( 'character_bones_walk.model' );
-  TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
-  for i:= 0 to Mdl.Children.Count - 1 do
-    WriteLn( 'Object: ' + Mdl.Children[ i ].Name );
+  mainscene.AppendFile( 'island.blend.p3d' );
+  //TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
+  WriteLn( mainscene.Children.OutputDebugInfo );
+  //for i:= 0 to mainscene.Children.Count - 1 do
+  //  WriteLn( mainscene.Children[ i ].ClassName + ': ' + mainscene.Children[ i ].Name );
+  for i:= 0 to mainscene.Lights.Count - 1 do
+    begin
+      WriteLn( mainscene.Lights[ i ].Direction.ToString());
+      //mainscene.Lights[ i ].Position:= -mainscene.Lights[ i ].Direction * 10;
+      mainscene.Lights[ i ].LinearAttenuation:= 0;
+      mainscene.AppendFile( 'bulb.p3d', mainscene.Lights[ i ]);
+    end;
   //LOAD MODELS
 end;
 
 procedure UnloadModels;
 begin
-  Mdl.Free;
+  mainscene.Clear;
   //FREE MODELS
 end;
 
@@ -82,18 +96,20 @@ begin
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-  mainscene:= tScene.Create;
-  maincamera:= tCamera.Create;
+  mainscene:= TP3DModelScene.Create;
+  maincamera:= TP3DCamera.Create;
 
+  LoadShader;
   LoadModels;
   InitPhysics;
   LoadTextures;
-  LoadShader;
 
   mainscene.DrawObjects:= @DrawObjects;
   mainscene.Cam:= maincamera;
 
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
+  glEnable( GL_DEPTH_TEST );
+  glCullFace( GL_BACK );
 end;
 
 procedure DeInit( Sender: TSDLWindow );

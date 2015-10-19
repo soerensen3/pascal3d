@@ -7,10 +7,11 @@
       <Version Value="11"/>
       <SearchPaths>
         <IncludeFiles Value=".."/>
+        <OtherUnitFiles Value="."/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="12">
+    <Files Count="11">
       <Item1>
         <Filename Value="p3d_gui.pas"/>
         <UnitName Value="p3d_gui"/>
@@ -24,41 +25,37 @@
         <Type Value="Include"/>
       </Item3>
       <Item4>
-        <Filename Value="../p3dcustomlist.inc"/>
-        <Type Value="Include"/>
-      </Item4>
-      <Item5>
         <Filename Value="p3dgui_buttons.pas"/>
         <UnitName Value="p3dgui_buttons"/>
-      </Item5>
-      <Item6>
-        <Filename Value="p3dgui_focuscontrol.pas"/>
-        <UnitName Value="p3dgui_focuscontrol"/>
-      </Item6>
-      <Item7>
+      </Item4>
+      <Item5>
         <Filename Value="p3dgui_stdctrls.pas"/>
         <UnitName Value="p3dgui_stdctrls"/>
-      </Item7>
-      <Item8>
+      </Item5>
+      <Item6>
         <Filename Value="p3dgui_shadernodes.pas"/>
         <UnitName Value="p3dgui_shadernodes"/>
-      </Item8>
-      <Item9>
+      </Item6>
+      <Item7>
         <Filename Value="p3dgui_sceneviewer.pas"/>
         <UnitName Value="p3dgui_sceneviewer"/>
+      </Item7>
+      <Item8>
+        <Filename Value="p3dgui_shadernodes_controls.inc"/>
+        <Type Value="Binary"/>
+      </Item8>
+      <Item9>
+        <Filename Value="p3dgui_controllist.inc"/>
+        <Type Value="Binary"/>
       </Item9>
       <Item10>
-        <Filename Value="p3dgui_shadernodes_controls.inc"/>
+        <Filename Value="p3dgui_manager.inc"/>
         <Type Value="Binary"/>
       </Item10>
       <Item11>
-        <Filename Value="p3dgui_controllist.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dgui_menus.pas"/>
+        <UnitName Value="p3dgui_menus"/>
       </Item11>
-      <Item12>
-        <Filename Value="p3dgui_manager.inc"/>
-        <Type Value="Binary"/>
-      </Item12>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

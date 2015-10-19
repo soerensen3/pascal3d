@@ -11,8 +11,8 @@ interface
     P3DAttribPosition           = 0;
     P3DAttribNormal             = 2;
     P3DAttribColor              = 3;
-    P3DAttribBinormal           = 4;
-    P3DAttribTangent            = 5;
+    P3DAttribCotangent          = 6;
+    P3DAttribTangent            = 7;
     P3DAttribTexCoord0          = 8;
     P3DAttribTexCoord1          = 9;
     P3DAttribTexCoord2          = 10;

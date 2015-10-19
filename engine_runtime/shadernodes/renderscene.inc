@@ -20,13 +20,18 @@ var
   i: Integer;
   txt: TP3DText;
 begin
+  for i:= ParentList.Count - 1 downto 0 do
+    if ( ParentList[ i ] is TP3DNodeControl ) then
+      if ( not Assigned( TP3DNodeControl( ParentList[ i ]).Node )) then
+        ParentList[ i ].Free;
   if ( not Assigned( ActShad )) then
     exit;
+
   glDisable( GL_DEPTH_TEST );
   glDisable( GL_CULL_FACE );
   GUIManager.Input;
   GUIManager.Render;
-  if ( DragDropSrc <> nil ) then
+  {if ( DragDropSrc <> nil ) then
     begin
       GUIManager.ScreenCanvas.Lock;
       txt:= p3dTextSimple( DragDropSrc.Name, dejavu, 16 );
@@ -34,13 +39,8 @@ begin
       GUIManager.ScreenCanvas.RenderText( txt, vec2( 10, 10 ));
       txt.Free;
       GUIManager.ScreenCanvas.Unlock();
-    end;
-  {GUIManager.Controls[ 0 ].Scroll:= vec2( SDL_GetTicks div 10 mod 100 );
-  for i:= 0 to GUIManager.Controls.Count - 1 do
-    begin
-      GUIManager.Controls[ i ].Left:= InputManager.Mouse.X;
-      GUIManager.Controls[ i ].Top:= InputManager.Mouse.Y;
     end;}
+
   {canvas.Left:= 150;
   canvas.Top:= 300;
   canvas.Width:= InputManager.Mouse.X - 150;

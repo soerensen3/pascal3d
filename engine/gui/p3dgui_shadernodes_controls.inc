@@ -1,11 +1,10 @@
 {$IFDEF INTERFACE}
-  TP3DNodeSocketDirection = ( nsdInput, nsdOutput );
 
   { TP3DNodeSocketButton }
 
   TP3DNodeSocketButton = class ( TP3DButton )
     constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-    const AParent: TP3DGraphicControl=nil);
+      const AParent: TP3DGraphicControl=nil);
     procedure Draw; override;
     function MouseRay(X, Y: Integer): Boolean; override;
   end;
@@ -15,7 +14,6 @@
   TP3DNodeSocketControlSimple = class ( TP3DGraphicControl )
     private
       Editing: Boolean;
-      FDirection: TP3DNodeSocketDirection;
       FLbl: TP3DLabel;
       FBtn: TP3DNodeSocketButton;
       FSocket: TP3DNodeSocket;
@@ -34,11 +32,47 @@
 
       property Lbl: TP3DLabel read FLbl;
       property Btn: TP3DNodeSocketButton read FBtn;
-      property Direction: TP3DNodeSocketDirection read FDirection;
       property Socket: TP3DNodeSocket read FSocket write FSocket;
   end;
 
   TP3DNodeSocketControlSimpleList = specialize TP3DCustomObjectList < TP3DNodeSocketControlSimple >;
+
+  { TP3DNodeSocketVectorEdit }
+
+  TP3DNodeSocketVectorEdit = class ( TP3DButton )
+    private
+      FDropDown: TP3DCustomPopupMenu;
+      FSocket: TP3DShaderNodeSocketVector;
+      FValueEdits: array of TP3DEventValueEdit;
+      procedure SetSocket(AValue: TP3DShaderNodeSocketVector);
+      function GetValue( Sender: TP3DEventValueEdit ): Single;
+      procedure SetValue( Sender: TP3DEventValueEdit; AValue: Single );
+      function GetValueName( Sender: TP3DEventValueEdit ): String;
+
+    public
+      constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager; ASocket: TP3DShaderNodeSocketVector;
+        const AParent: TP3DGraphicControl=nil);
+      destructor Destroy; override;
+      procedure Update;
+      procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
+      property Socket: TP3DShaderNodeSocketVector read FSocket write SetSocket;
+  end;
+
+	{ TP3DNodeSocketControlVector }
+
+  TP3DNodeSocketControlVector = class ( TP3DNodeSocketControlSimple )
+    private
+      FCanEdit: Boolean;
+      FVecEdit: TP3DNodeSocketVectorEdit;
+
+      procedure SetCanEdit(AValue: Boolean);
+      property CanEdit: Boolean read FCanEdit write SetCanEdit;
+
+    published
+      property VecEdit: TP3DNodeSocketVectorEdit read FVecEdit write FVecEdit;
+      procedure Draw; override;
+      constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager; ASocket: TP3DNodeSocket; ADirection: TP3DNodeSocketDirection; const AParent: TP3DGraphicControl);
+	end;
 
 {$ENDIF}
 
@@ -74,8 +108,8 @@ begin
       ConnectTo.Editing:= False;
       if ( ConnectTo.Socket.Node = Socket.Node ) then
         exit;
-      if (( ConnectTo.Direction <> Direction ){ and ( ConnectTo.Socket <> Socket )}) then
-        if ( ConnectTo.Direction = nsdInput ) then
+      if (( ConnectTo.Socket.Direction <> Socket.Direction ){ and ( ConnectTo.Socket <> Socket )}) then
+        if ( ConnectTo.Socket.Direction = nsdInput ) then
           ConnectTo.Socket.Connected:= Socket
         else
           Socket.Connected:= ConnectTo.Socket;
@@ -102,7 +136,7 @@ begin
   //Lbl.AutoSize:= True;
   Lbl.Align:= alClient;
   Lbl.VAlignment:= vaCenter;
-  FDirection:= ADirection;
+  //FDirection:= ADirection;
   Lbl.OnDragDrop:= @BtnDragDrop;
   Lbl.OnMouseDown:= @BtnMouseDown;
   Lbl.OnDragDropCancel:= @BtnDragDropCancel;
@@ -112,13 +146,14 @@ begin
   Btn.OnDragDropCancel:= @BtnDragDropCancel;
   Btn.Width:= 30;
   Btn.Height:= 30;
+  Btn.Cursor:= curNodeEdit;
   Socket.UserData:= Self;
-  if ( Direction = nsdOutput ) then
+  if ( Socket.Direction = nsdOutput ) then
     Btn.Align:= alRight
   else
     Btn.Align:= alLeft;
   Btn.Caption:= '';
-  if ( Direction = nsdOutput ) then
+  if ( Socket.Direction = nsdOutput ) then
     Lbl.HAlignment:= haRight
   else
     Lbl.HAlignment:= haLeft;
@@ -132,7 +167,7 @@ procedure TP3DNodeSocketControlSimple.Draw;
     Connected: TP3DNodeSocketControlSimple;
     cl: TVec4;
   begin
-    if ( Direction = nsdOutput ) then
+    if ( Socket.Direction = nsdOutput ) then
       S:= vec2( Canvas.Left + Canvas.Width + 5, Canvas.Top + Canvas.Height / 2 )
     else
       S:= vec2( Canvas.Left - 5, Canvas.Top + Canvas.Height / 2 );
@@ -142,7 +177,7 @@ procedure TP3DNodeSocketControlSimple.Draw;
         E:= vec2( InputManager.Mouse.X, InputManager.Mouse.Y );
         d:= ( S - E ).GetDist();
         cl:= vec4( 0.6, 0.3, 0.5, 1 );
-        if ( Direction = nsdOutput ) then
+        if ( Socket.Direction = nsdOutput ) then
           begin
             M1:= vec2( S.X + d / 3, S.Y );
             M2:= vec2( E.X - d / 3, E.Y );
@@ -154,7 +189,7 @@ procedure TP3DNodeSocketControlSimple.Draw;
           end;
       end
     else
-      if ( Assigned( Socket.Connected ) and ( Direction = nsdInput )) then
+      if ( Assigned( Socket.Connected ) and ( Socket.Direction = nsdInput )) then
         begin
           cl:= vec4( 1 );
 

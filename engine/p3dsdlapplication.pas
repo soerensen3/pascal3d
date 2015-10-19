@@ -216,16 +216,25 @@ begin
           InputManager.Mouse.Y:= event.motion.y;
           InputManager.Mouse.DX:= event.motion.xrel;
           InputManager.Mouse.DY:= event.motion.yrel;
+          if ( Assigned( FOnMouseMotion )) then
+            FOnMouseMotion( Self, event.motion );
         end;
       SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP:
         begin
           InputManager.Mouse.Buttons[ event.button.button - 1 ]:= not Boolean( event.type_ - SDL_MOUSEBUTTONDOWN );
           InputManager.Mouse.DButtons[ event.button.button - 1 ]:= True;
+          if ( Assigned( FOnMouseButton )) then
+            FOnMouseButton( Self, event.button );
         end;
+      SDL_MOUSEWHEEL:
+        if ( Assigned( FOnMouseWheel )) then
+          FOnMouseWheel( Self, event.wheel );
       SDL_KEYDOWN, SDL_KEYUP:
         begin
           InputManager.Keyboard.Keys[ event.key.keysym.scancode ]:= Boolean( event.key.state );
           InputManager.Keyboard.DKeys[ event.key.keysym.scancode ]:= True;
+          if ( Assigned( FOnKey )) then
+            FOnKey( Self, event.key );
         end;
       SDL_TEXTINPUT, SDL_TEXTEDITING:
         begin

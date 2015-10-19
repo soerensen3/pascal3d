@@ -9,99 +9,105 @@ uses
 
 type
   //TODO: do a rename of all classes with p3d prefix and find a new name for tScene
-  { tCamera }
+  { TP3DCamera }
 
-  tCamHandedness = ( coLeft, coRight );
-  tCamera = class
+  TP3DCameraHandedness = ( p3dchLeft, p3dchRight );
+  TP3DCamera = class
     private
       FAspect: Single;
-      ffar: Single;
-      fHandedness: tCamHandedness;
-      fmdlview: tMat3;
-      fnear: Single;
-      fPosition: tVec3;
-      fproj: tMat4;
-      fview: tMat4;
-      fYawPitchRoll: tVec3;
+      FFar: Single;
+      FForward: TVec3;
+      FHandedness: TP3DCameraHandedness;
+      FLeft: TVec3;
+      FMatNormal: TMat3;
+      FNear: Single;
+      FPosition: TVec3;
+      FProj: TMat4;
+      FUp: TVec3;
+      FView: TMat4;
+      FYawPitchRoll: TVec3;
 
     public
       procedure UpdateMatrices;
+      procedure PassToShader;
 
       constructor Create;
 
-      property Position: tVec3 read fPosition write fPosition;
-      property YawPitchRoll: tVec3 read fYawPitchRoll write fYawPitchRoll;
-      property Handedness: tCamHandedness read fHandedness write fHandedness;
-      property view: tMat4 read fview write fview;
-      property mdlview: tMat3 read fmdlview write fmdlview;
-      property proj: tMat4 read fproj write fproj;
-      property near: Single read fnear write fnear;
-      property far: Single read ffar write ffar;
+      property Position: TVec3 read FPosition write FPosition;
+      property Forward: TVec3 read FForward;
+      property Up: TVec3 read FUp;
+      property Left: TVec3 read FLeft;
+      property YawPitchRoll: TVec3 read FYawPitchRoll write FYawPitchRoll;
+      property Handedness: TP3DCameraHandedness read fHandedness write fHandedness;
+      property View: TMat4 read FView write FView;
+      property MatNormal: TMat3 read FMatNormal write FMatNormal;
+      property Proj: TMat4 read FProj write FProj;
+      property Near: Single read FNear write FNear;
+      property Far: Single read FFar write FFar;
       property Aspect: Single read FAspect write FAspect;
   end;
 
-  { tScene }
-  tScene = class;
+  { TP3DScene }
+  TP3DScene = class;
 
-  tSceneEvent = procedure ( Scene: tScene );
-  tSceneEventObj = procedure ( Scene: tScene ) of object;
-  tRenderMode = ( rmDefault, rmShadow );
-  tScene = class
+  TP3DSceneEvent = procedure ( Scene: TP3DScene );
+  TP3DSceneEventObj = procedure ( Scene: TP3DScene ) of object;
+  TP3DRenderMode = ( rmDefault, rmShadow );
+  TP3DScene = class
     private
-      fCamera: tCamera;
-      fDrawObjects: tSceneEvent;
-      fDrawObjectsObj: tSceneEventObj;
-      fmdlview: tMat3;
-      fproj: tMat4;
-      fRenderMode: tRenderMode;
-      fShader: tShader;
-      fview: tMat4;
+      FCamera: TP3DCamera;
+      FDrawObjects: TP3DSceneEvent;
+      FDrawObjectsObj: TP3DSceneEventObj;
+      FMatNormal: TMat3;
+      FProj: TMat4;
+      FRenderMode: TP3DRenderMode;
+      FShader: TShader;
+      FView: TMat4;
 
     public
-      procedure RenderFromCamera( Cam: tCamera );
+      procedure RenderFromCamera( Cam: TP3DCamera );
       procedure Render; virtual;
 
-      procedure UpdateMatrices;
+      procedure UpdateMatrices; virtual;
+      procedure PassToShader; virtual;
 
-      property DrawObjects: tSceneEvent read fDrawObjects write fDrawObjects;
-      property DrawObjectsObj: tSceneEventObj read fDrawObjectsObj write FDrawObjectsObj;
-      property RenderMode: tRenderMode read fRenderMode write fRenderMode;
-      property view: tMat4 read fview write fview;
-      property mdlview: tMat3 read fmdlview write fmdlview;
-      property proj: tMat4 read fproj write fproj;
-      property Cam: tCamera read fCamera write fCamera;
-      property Shader: tShader read fShader write fShader;
+      property DrawObjects: TP3DSceneEvent read FDrawObjects write FDrawObjects;
+      property DrawObjectsObj: TP3DSceneEventObj read FDrawObjectsObj write FDrawObjectsObj;
+      property RenderMode: TP3DRenderMode read FRenderMode write FRenderMode;
+      property View: TMat4 read FView write FView;
+      property MatNormal: TMat3 read FMatNormal write FMatNormal;
+      property Proj: TMat4 read FProj write FProj;
+      property Cam: TP3DCamera read FCamera write FCamera;
+      property Shader: TShader read FShader write FShader;
   end;
 
 
 implementation
 
-{ tScene }
+{ TP3DScene }
 
-procedure tScene.UpdateMatrices;
+procedure TP3DScene.UpdateMatrices;
 begin
   if ( Assigned( fCamera )) then
     begin
       fview:= fCamera.view;
       fproj:= fCamera.proj;
-      mdlview:= fCamera.mdlview;
-    end;
-  if ( Assigned( Shader )) then
-    begin
-      Shader.Enable;
-
-//      ShaderSetParameter4fv( Shader.ShaderObj, 'world', Mat4Identity );//world );
-      glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'view'), 1, False, @view );
-      glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'proj'), 1, False, @proj );
+      MatNormal:= fCamera.MatNormal;
     end;
 end;
 
-procedure tScene.RenderFromCamera( Cam: tCamera );
+procedure TP3DScene.PassToShader;
+begin
+  Cam.PassToShader;
+end;
+
+procedure TP3DScene.RenderFromCamera( Cam: TP3DCamera );
 begin
   if ( P3DViewports.Count > 0 ) then
     Cam.Aspect:= P3DViewports.Peek.Width/P3DViewports.Peek.Height;
   Cam.UpdateMatrices;
   UpdateMatrices;
+  PassToShader;
 
   //RenderMode:= rmShadow;
 
@@ -114,16 +120,16 @@ begin
     Shader.Disable;
 end;
 
-procedure tScene.Render;
+procedure TP3DScene.Render;
 begin
   RenderFromCamera( Cam );
 end;
 
-{ tCamera }
+{ TP3DCamera }
 
-procedure tCamera.UpdateMatrices;
+procedure TP3DCamera.UpdateMatrices;
 var
-  _mdlview: tMat4;
+  _mdlview: TMat4;
   cosx: ValReal;
   cosy: ValReal;
   cosz: ValReal;
@@ -131,7 +137,7 @@ var
   siny: ValReal;
   sinz: ValReal;
 begin
-  view:= mat4translate( vec4( -Position, 1.0 ));
+  View:= mat4translate( vec4( -Position, 1.0 ));
 {  _mdlview:= Mat4Rot( vec3_Axis_PZ, deg2rad* YawPitchRoll.z );
   _mdlview*= Mat4Rot( vec3_Axis_PX, deg2rad* YawPitchRoll.x );
   _mdlview*= Mat4Rot( vec3_Axis_PY, deg2rad* YawPitchRoll.y );}
@@ -153,22 +159,37 @@ begin
                    - cosy * sinz,   cosx * cosz - sinx * siny * sinz, sinx * cosz + cosx * siny * sinz, 0,
                      siny,        - sinx * cosy,                      cosx * cosy,                      0,
                      0,             0,                                0,                                1 );
-  mdlview:= mat3( _mdlview );
-  view:= view * _mdlview;
+  MatNormal:= mat3( _mdlview );
+  View:= View * _mdlview;
+
+  FLeft:= vec3( MatNormal._00, MatNormal._01, MatNormal._02 );
+  FUp:= vec3( MatNormal._10, MatNormal._11, MatNormal._12 );
+  FForward:= vec3( MatNormal._20, MatNormal._21, MatNormal._22 );
 
   case Handedness of
-    coLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, Aspect, near, far );
-    coRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, Aspect, near, far );
+    p3dchLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, Aspect, Near, Far );
+    p3dchRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, Aspect, Near, Far );
   end;
 end;
 
-constructor tCamera.Create;
+procedure TP3DCamera.PassToShader;
+begin
+  if ( Assigned( ActShad )) then
+    begin
+      glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'view'), 1, False, @View );
+      glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'proj'), 1, False, @Proj );
+      glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'MatNormal'), 1, False, @MatNormal ); // contains left, up, forward vectors
+      glUniform3fv( ActShad.Uniforms.AddrByName( 'campos'), 1, @Position );
+    end;
+end;
+
+constructor TP3DCamera.Create;
 begin
   inherited;
   Aspect:= 4/3;
-  fnear:= 0.1;
-  ffar:= 100;
-  //fHandedness:= coRight;
+  FNear:= 0.1;
+  FFar:= 100;
+  //FHandedness:= coRight;
 end;
 
 end.

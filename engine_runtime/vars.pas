@@ -15,7 +15,6 @@ uses
   p3dmodel,
   p3dscene,
   p3dframebuffer,
-  p3dlighting,
   p3dfilewatch;
 
 var
@@ -25,4 +24,4 @@ implementation
 
 
 end.
-
+

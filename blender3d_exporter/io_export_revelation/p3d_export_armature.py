@@ -6,9 +6,9 @@ Created on Thu Sep 11 23:44:04 2014
 """
 
 import bpy
-from . rev_helper import *
+from . p3d_helper import *
 from mathutils import *
-from . rev_export_anim import *
+from . p3d_export_anim import *
 
 def ExportBonesActions( Config, Bones ):
         for Bone in Bones:

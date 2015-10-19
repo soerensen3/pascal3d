@@ -11,11 +11,11 @@ interface
     {$DEFINE INTERFACE}
 
     {$DEFINE OBJECTLIST}
-    {$DEFINE TCustomList:= TP3DCustomObjectList}
+    {$DEFINE TCustomList:= gP3DCustomObjectList}
     {$INCLUDE p3dgenerics_customlist.inc}
     {$UNDEF OBJECTLIST}
 
-    {.$DEFINE TCustomList:= TP3DCustomList}
+    {.$DEFINE TCustomList:= gP3DCustomList}
     {.$INCLUDE p3dgenerics_customlist.inc}
 
     {$UNDEF INTERFACE}
@@ -24,11 +24,11 @@ implementation
 
 {$DEFINE IMPLEMENTATION}
 
-{.$DEFINE TCustomList:= TP3DCustomList}
+{.$DEFINE TCustomList:= gP3DCustomList}
 {.$INCLUDE p3dgenerics_customlist.inc}
 
 {$DEFINE OBJECTLIST}
-{$DEFINE TCustomList:= TP3DCustomObjectList}
+{$DEFINE TCustomList:= gP3DCustomObjectList}
 {$INCLUDE p3dgenerics_customlist.inc}
 {$UNDEF OBJECTLIST}
 

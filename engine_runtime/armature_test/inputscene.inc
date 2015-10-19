@@ -1,26 +1,26 @@
-procedure OnMouseMotion( Sender: TSDLWindow; Event: TSDL_MouseMotionEvent );
+procedure OnMouseMotion( Sender: TP3DApplication; Event: TSDL_MouseMotionEvent );
 begin
   maincamera.YawPitchRoll.X:= ( min( 180, max( 0, maincamera.YawPitchRoll.X - Event.yrel / 5 )));
   maincamera.YawPitchRoll.Z:= ( maincamera.YawPitchRoll.Z - Event.xrel / 5 );
 end;
 
-procedure OnMouseButton( Sender: TSDLWindow; Event: TSDL_MouseButtonEvent );
+procedure OnMouseButton( Sender: TP3DApplication; Event: TSDL_MouseButtonEvent );
 begin
 
 end;
 
-procedure OnMouseWheel( Sender: TSDLWindow; Event: TSDL_MouseWheelEvent );
-const speed = 1;
+procedure OnMouseWheel( Sender: TP3DApplication; Event: TSDL_MouseWheelEvent );
+const speed = 0.2;
 begin
   maincamera.Position:= maincamera.Position + vec3( 0, 0, Event.y * speed );
 end;
 
-procedure OnKey( Sender: TSDLWindow; Event: TSDL_KeyboardEvent );
+procedure OnKey( Sender: TP3DApplication; Event: TSDL_KeyboardEvent );
 begin
   if ( Event.type_ = SDL_KEYDOWN ) then
     begin
       if ( Event.keysym.scancode = SDL_SCANCODE_ESCAPE ) then
-        mainwnd.Running:= False;
+        P3DApplication.Running:= False;
       if ( Event.keysym.scancode = SDL_SCANCODE_F5 ) then
         begin
           UnloadShader;
@@ -33,7 +33,7 @@ begin
         end;
       if ( Event.keysym.scancode = SDL_SCANCODE_RETURN ) then
         if ( Event.keysym._mod = 256 ) then
-          MainWindow.FullScreen:= not MainWindow.FullScreen;
+          P3DApplication.MainWindow.FullScreen:= not P3DApplication.MainWindow.FullScreen;
 
       if ( Event.keysym.scancode in [ SDL_SCANCODE_LCTRL, SDL_SCANCODE_RCTRL ]) then
         begin
@@ -43,7 +43,7 @@ begin
     end;
 end;
 
-procedure OnInput( Sender: TSDLWindow );
+procedure OnInput( Sender: TP3DApplication );
 
 type
   KeyState = array of PUInt8;
@@ -67,5 +67,9 @@ begin
     maincamera.Position:= maincamera.Position + vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad - PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad - PI /2), 0 ) * speed;
   if ( KeyPressed( SDL_SCANCODE_D )) then
     maincamera.Position:= maincamera.Position + vec3( sin( - maincamera.YawPitchRoll.Z * deg2rad + PI/2 ), cos( - maincamera.YawPitchRoll.Z * deg2rad + PI /2), 0 ) * speed;
+  if ( KeyPressed( SDL_SCANCODE_SPACE )) then
+    maincamera.Position.Z:= maincamera.Position.Z + speed;
+  if ( KeyPressed( SDL_SCANCODE_LSHIFT )) then
+    maincamera.Position.Z:= maincamera.Position.Z - speed;
 end;
 

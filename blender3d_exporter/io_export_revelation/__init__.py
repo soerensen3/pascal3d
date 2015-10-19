@@ -1,24 +1,38 @@
 bl_info = {
-    "name": "Revelation Model Format (.model)",
+    "name": "Pascal3D Scene (.p3d)",
     "author": "Johannes Rosleff Sörensen",
     "version": (1, 0, 0),
     "blender": (2, 63, 0),
-    "location": "File > Export > Revelation Model (.model)",
-    "description": "Export Revelation Model Format (.model)",
+    "location": "File > Export > Pascal3D Scene (.p3d)",
+    "description": "Export Pascal3D Scene (.p3d)",
     "warning": "",
     "wiki_url": "",
     "tracker_url": "",
     "category": "Import-Export"}
 
-#__all__ = [ "rev_export", "rev_helper" ]
+#__all__ = [ "p3d_export", "p3d_helper" ]
 #if "bpy" in locals():
 #    import importlib
-#    if "rev_export" in locals():
-#        importlib.reload( rev_export, rev_export_mesh, rev_helper )
-    #if "rev_helper" in locals():
-    #    imp.reload( rev_helper )
+#    if "p3d_export" in locals():
+#        importlib.reload( p3d_export, p3d_export_mesh, p3d_helper )
+    #if "p3d_helper" in locals():
+    #    imp.reload( p3d_helper )
 #else:        
-from . import rev_export
+from . import p3d_export
+        
+if "bpy" in locals():
+    import importlib
+    if "p3d_export" in locals():
+        importlib.reload(p3d_export)
+    if "p3d_export_material" in locals():
+        importlib.reload(p3d_export_material)
+    if "p3d_export_mesh" in locals():
+        importlib.reload(p3d_export_mesh)
+    if "p3d_export_misc" in locals():
+        importlib.reload(p3d_export_misc)
+    if "p3d_helper" in locals():
+        importlib.reload(p3d_helper)
+        
 
 import bpy
 
@@ -27,7 +41,7 @@ from bpy.utils import (
         unregister_module,
         )
 
-class RevelationExporterSettings:
+class P3DExporterSettings:
     def __init__(self,
                  context,
                  FilePath,
@@ -35,8 +49,7 @@ class RevelationExporterSettings:
                  RotateX=True,
                  FlipNormals=False,
                  ApplyModifiers=False,
-                 IncludeFrameRate=False,
-                 ExportBinaryData=True,  
+                 IncludeFrameRate=False,  
                  ExportTextures=True,
                  ExportArmatures=True,
                  ExportAnimation=0,
@@ -50,7 +63,6 @@ class RevelationExporterSettings:
         self.FlipNormals = FlipNormals
         self.ApplyModifiers = ApplyModifiers
         self.IncludeFrameRate = IncludeFrameRate
-        self.ExportBinaryData = ExportBinaryData
         self.ExportTextures = ExportTextures
         self.ExportArmatures = ExportArmatures
         self.ExportAnimation = int(ExportAnimation)
@@ -84,11 +96,10 @@ PathModes = (
 
 from bpy.props import StringProperty, EnumProperty, BoolProperty
 
-class RevelationExporter(bpy.types.Operator):
-    """Export to the Revelation model format (.model)"""
+class P3DExporter(bpy.types.Operator):
 
-    bl_idname = "export.revelation"
-    bl_label = "Export Revelation Model"
+    bl_idname = "export.p3d"
+    bl_label = "Export Pascal3D Scene"
 
     filepath = StringProperty(subtype='FILE_PATH')
 
@@ -100,10 +111,6 @@ class RevelationExporter(bpy.types.Operator):
         default="1")
 
     #General Options
-    ExportBinaryData = BoolProperty(
-        name="Export Data in Binary Mode",
-        description="Export the meshes data binary instead of text",
-        default=True)
     PathMode = EnumProperty(
         name="Path Mode",
         description="Export links to external files like textures and objects in relative or absolute mode or just export file names",
@@ -157,36 +164,35 @@ class RevelationExporter(bpy.types.Operator):
 
     def execute(self, context):
         #Append .model
-        FilePath = bpy.path.ensure_ext(self.filepath, ".model")
+        FilePath = bpy.path.ensure_ext(self.filepath, ".p3d")
 
-        Config = RevelationExporterSettings(context,
-                                         FilePath,
-                                         CoordinateSystem=self.CoordinateSystem,
-                                         RotateX=self.RotateX,
-                                         FlipNormals=self.FlipNormals,
-                                         ApplyModifiers=self.ApplyModifiers,
-                                         IncludeFrameRate=self.IncludeFrameRate,
-                                         ExportBinaryData=self.ExportBinaryData,
-                                         ExportTextures=self.ExportTextures,
-                                         ExportArmatures=self.ExportArmatures,
-                                         ExportAnimation=self.ExportAnimation,
-                                         PathMode=self.PathMode,
-                                         ExportMode=self.ExportMode,
-                                         Verbose=self.Verbose)
+        Config = P3DExporterSettings(context,
+                                     FilePath,
+                                     CoordinateSystem=self.CoordinateSystem,
+                                     RotateX=self.RotateX,
+                                     FlipNormals=self.FlipNormals,
+                                     ApplyModifiers=self.ApplyModifiers,
+                                     IncludeFrameRate=self.IncludeFrameRate,
+                                     ExportTextures=self.ExportTextures,
+                                     ExportArmatures=self.ExportArmatures,
+                                     ExportAnimation=self.ExportAnimation,
+                                     PathMode=self.PathMode,
+                                     ExportMode=self.ExportMode,
+                                     Verbose=self.Verbose)
 
-        rev_export.ExportRevelation(Config)
+        p3d_export.ExportP3DScene(Config)
         return {'FINISHED'}
 
     def invoke(self, context, event):
         if not self.filepath:
-            self.filepath = bpy.path.ensure_ext(bpy.data.filepath, ".model")
+            self.filepath = bpy.path.ensure_ext(bpy.data.filepath, ".p3d")
         WindowManager = context.window_manager
         WindowManager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
 
 def menu_func(self, context):
-    self.layout.operator(RevelationExporter.bl_idname, text="Revelation (.model)")
+    self.layout.operator(P3DExporter.bl_idname, text="Pascal3D Scene (.p3d)")
 
 
 def register():

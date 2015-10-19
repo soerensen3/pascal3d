@@ -1,18 +1,21 @@
 import bpy
 import struct
-from . rev_helper import *
-from . rev_export_material import *
-from . rev_export_mesh import *
-from . rev_export_armature import *
+from . p3d_helper import *
+from . p3d_export_material import *
+from . p3d_export_mesh import *
+from . p3d_export_armature import *
+from . p3d_export_misc import *
 
 from xml.etree import cElementTree as et
 
 export_type = {
     "MESH",
-    "ARMATURE"
+    "ARMATURE",
+    "LAMP",
+    "CAMERA"
 }
 
-def ExportRevelation(Config):
+def ExportP3DScene(Config):
     Config.Whitespace = 0
     print("----------\nExporting to {}".format(Config.FilePath))
 #    if Config.Verbose:
@@ -29,12 +32,17 @@ def ExportRevelation(Config):
     if Config.Verbose:
         for Object in Config.context.scene.objects:
             print(Object)
-            print(Object.type)
+            print(Object.type) 
             print(Object.parent)
     if Config.ExportMode == 1:
         Config.ExportList = [Object for Object in Config.context.scene.objects
                              if Object.type in export_type
                              and Object.parent is None
+                             and not Object.hide]
+    elif Config.ExportMode == 2:
+        Config.ExportList = [Object for Object in Config.context.selected_objects
+                             if Object.type in export_type
+                             #and Object.parent is None
                              and not Object.hide]
 
     WriteWorld(Config)
@@ -55,22 +63,37 @@ def ExportObjects(Config, ObjectList):
         if ( not Object.type in export_type ):
             exit
         if Object.type == 'MESH':
-            meshEl = et.Element("mesh")
-            Config.DocStack[ -1 ].append( meshEl )
-            Config.DocStack.append( meshEl )
-            meshEl.attrib['name'] = LegalName(Object.name)            
-#            Config.File.write("{}object {}\n".format("  " * Config.Whitespace, LegalName(Object.name)))
+            objEl = et.Element("mesh")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)            
             ExportMesh(Config, Object)
-#        if Object.type == 'ARMATURE':
-#            Config.File.write("{}armature {}\n".format("  " * Config.Whitespace, LegalName(Object.name)))
+        
+        if Object.type == 'LAMP':
+            objEl = et.Element("light")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)            
+            ExportLight(Config, Object)
+
+        if Object.type == 'CAMERA':
+            objEl = et.Element("camera")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)            
+            ExportCamera(Config, Object)
+            
+        if Object.type == 'ARMATURE':
+            objEl = et.Element("armature")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)  
 #            ExportArmature(Config, Object)
 
-#        if len( GetObjectChildren(Object)):
-#            Config.File.write("{}children\n".format("  " * Config.Whitespace))
-#            Config.Whitespace += 1
+        ExportObjects(Config,GetObjectChildren(Object))
 
-            ExportObjects(Config,GetObjectChildren(Object))
-            Config.DocStack.pop()
+        Config.DocStack.pop()
+
 
 ## MATERIALS
 

@@ -5,49 +5,46 @@ unit p3dshadernodes;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Math, p3dMath, DOM, XMLRead, strutils, p3dfileutil, p3dNodes;
+  Classes, SysUtils, FileUtil, Math, p3dMath, DOM, XMLRead, strutils, p3dfileutil, p3dgenerics, p3dNodes;
 
 type
   { TP3DShaderNode }
   TP3DShaderNode = class;
-  TP3DShaderNodeFragmentLink = class;
+  TP3DShaderNodeTree = class;
 
 
   TP3DShaderCompiled = class;
+  TP3DShaderBuffer = class;
+  TP3DShaderNodeSocket = class;
   TP3DInputCallback = function ( Sender: TP3DShaderNode; Ref: String; Context: TP3DShaderCompiled ): String of object;
+
+  TP3DCustomShaderNodeSocketList = specialize gP3DCustomObjectList < TP3DShaderNodeSocket >;
+
+  { TP3DShaderNodeSocketList }
+
+  TP3DShaderNodeSocketList = class ( TP3DCustomShaderNodeSocketList )
+    function GetStringOutput(Buffer: TP3DShaderBuffer): String;
+    function FindSocketByName( Name: String ): Integer;
+  end;
 
   { TP3DShaderNodeFragment }
   // Base Type for all Nodes
   TP3DShaderNodeFragment = class
     private
       FVarType: String;
-      FNode: TP3DShaderNode;
 
     public
-      constructor Create( ANode: TP3DShaderNode );
+      constructor Create;
 
       // Parse the node and return string output
-      function GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String; virtual;
+      function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String; virtual;
+      function MakeCopy( ANode: TP3DShaderNode ): TP3DShaderNodeFragment; virtual;
 
     published
-      property Node: TP3DShaderNode read FNode;
       property VarType: String read FVarType write FVarType;
   end;
 
-  {$MACRO ON}
-  {$DEFINE TCustomList:= TP3DCustomShaderNodeFragmentList}
-//  {$DEFINE TCustomListEnumerator:= TP3DShaderNodeFragmentEnumerator}
-  {$DEFINE TCustomItem:= TP3DShaderNodeFragment}
-  {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
-
-  { TP3DShaderNodeFragmentList }
-
-  TP3DShaderNodeFragmentList = class( TP3DCustomShaderNodeFragmentList )
-    public
-      function GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String;
-      //function FindVariableLink( Name: String ): Integer;
-  end;
+  TP3DShaderNodeFragmentList = specialize gP3DCustomObjectList < TP3DShaderNodeFragment >;
 
   { TP3DShaderNodeFragmentInline }
   {
@@ -59,137 +56,91 @@ type
    ...
   }
 
+  { TP3DShaderNodeFragmentInput }
+
+  TP3DShaderNodeFragmentInput = class( TP3DShaderNodeFragment )
+    private
+      FInputName: String;
+
+    public
+      function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String; override;
+
+      function MakeCopy(ANode: TP3DShaderNode): TP3DShaderNodeFragment; override;
+
+      property InputName: String read FInputName write FInputName;
+  end;
+
   TP3DShaderNodeFragmentInline = class( TP3DShaderNodeFragment )
     private
       FText: String;
 
     public
-      function GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String; override;
+      function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String; override;
+
+      function MakeCopy(ANode: TP3DShaderNode): TP3DShaderNodeFragment; override;
 
       property Text: String read FText write FText;
   end;
 
-  { TP3DShaderNodeFragmentLink }
+  { TP3DShaderNodeFragmentIfDef }
 
-  TP3DShaderNodeFragmentLink = class( TP3DShaderNodeFragment )
+  TP3DShaderNodeFragmentIfDef = class( TP3DShaderNodeFragment )
+    private
+      FCaption: String;
+      FFragments: TP3DShaderNodeFragmentList;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String; override;
+
+      property Caption: String read FCaption write FCaption;
+      property Fragments: TP3DShaderNodeFragmentList read FFragments write FFragments;
+  end;
+
+  TP3DShaderNode = class ( TP3DNode )
+    public
+      constructor CreateFromDOM(DomNode: TDOMElement);
+
+      function MakeCopy: TP3DShaderNode;
+  end;
+
+  { TP3DShaderNodeSocket }
+
+  TP3DShaderNodeSocket = class ( TP3DNodeSocket )
     private
       FFragments: TP3DShaderNodeFragmentList;
-      FList: Boolean;
-      FTarget: String;
+      FIsCopy: Boolean;
+      procedure SetConnected( AValue: TP3DNodeSocket); override;
 
     public
-      constructor Create( ANode: TP3DShaderNode );
+      constructor Create( ANode: TP3DNode; ADirection: TP3DNodeSocketDirection ); override;
       destructor Destroy; override;
 
-      function GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String; override;
+      //function GetMainOutput( Buffer: TP3DShaderBuffer ): String; virtual;
+      //function GetDeclarationOutput( Buffer: TP3DShaderBuffer ): String; virtual;
+      function GetOutput( Buffer: TP3DShaderBuffer ): String; virtual;
+
+      function MakeCopy( ANode: TP3DNode ): TP3DShaderNodeSocket;
 
     published
-      property Target: String read FTarget write FTarget;
       property Fragments: TP3DShaderNodeFragmentList read FFragments write FFragments;
-      property List: Boolean read FList write FList;
+      property IsCopy: Boolean read FIsCopy;
   end;
 
-  TP3DShaderNodeOutlineFragmentList = class;
-  { TP3DShaderNodeInput }
+  { TP3DShaderNodeDynamic }
 
-  TP3DShaderNodeInput = class  //NodeSocket - in Blender Input and Output at the same time
-    private
-      FFragments: TP3DShaderNodeOutlineFragmentList;
-      FName: String;
-      //FTarget: String;
-      FVarType: String;
-
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-    published
-      property Name: String read FName;
-      //property Target: String read FTarget write FTarget;
-      property VarType: String read FVarType write FVarType;
-      property Fragments: TP3DShaderNodeOutlineFragmentList read FFragments write FFragments;
+  TP3DShaderNodeDynamic = class ( TP3DShaderNode )
+    procedure SocketChanged( ASocket: TP3DShaderNodeSocket );
   end;
-
-  {$DEFINE TCustomList:= TP3DCustomShaderNodeInputList}
-  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
-  {$DEFINE TCustomItem:= TP3DShaderNodeInput}
-  {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
-
-  { TP3DShaderNodeInputList }
-
-  TP3DShaderNodeInputList = class ( TP3DCustomShaderNodeInputList )
-    public
-      function Find( Name: String ): Integer;
-  end;
-
-  TP3DShaderModule = class;
-  TP3DShaderNode = class
-    private
-      //FInputs: TP3DShaderNodeInputList;
-      FModule: TP3DShaderModule;
-      FName: String;
-      FFragments: TP3DShaderNodeFragmentList;
-      FUnique: Boolean;
-
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-      function GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String; virtual;
-
-    published
-      property Name: String read FName write FName;
-      property Fragments: TP3DShaderNodeFragmentList read FFragments write FFragments;
-      property Module: TP3DShaderModule read FModule write FModule;
-      property Unique: Boolean read FUnique write FUnique;
-      //property Inputs: TP3DShaderNodeInputList read FInputs write FInputs;
-  end;
-
-  {$DEFINE TCustomList:= TP3DCustomShaderNodeList}
-  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeListEnumerator}
-  {$DEFINE TCustomItem:= TP3DShaderNode}
-  {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
-
-  { TP3DShaderNodeList }
-
-  TP3DShaderNodeList = class ( TP3DCustomShaderNodeList )
-    public
-      function FindNode( Name: String ): TP3DShaderNode;
-  end;
-
-  { TP3DShaderModule }
-
-  TP3DShaderModule = class
-    private
-      FInputs: TP3DShaderNodeInputList;
-      FName: String;
-      FNodes: TP3DShaderNodeList;
-
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-    published
-      property Nodes: TP3DShaderNodeList read FNodes write FNodes;
-      property Name: String read FName write FName;
-      property Inputs: TP3DShaderNodeInputList read FInputs write FInputs;
-  end;
-
-  {$DEFINE TCustomList:= TP3DShaderModuleList}
-  {.$DEFINE TCustomListEnumerator:= TP3DShaderModuleListEnumerator}
-  {$DEFINE TCustomItem:= TP3DShaderModule}
-  {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
 
   { TP3DShaderNodeLibrary }
 
-  TP3DShaderNodeLibrary = class( TP3DShaderModuleList )
+  TP3DShaderNodeLibrary = class( TP3DNodeTree )
     procedure LoadLibrary( FileName: String );
     procedure LoadLibraryPath( PathName: String; const Ext: String = '*.*' );
-    function FindReference( Ref: String ): TP3DShaderNode;
-    function FindModule( Name: String ): TP3DShaderModule;
+    function FindNode( ANode: String ): TP3DShaderNode;
   end;
 
   { TP3DShaderBuffer }
@@ -197,25 +148,30 @@ type
   TP3DShaderBuffer = class
     private
       FCode: String;
+      FDeclarations: TP3DShaderNodeSocketList;
+      FDefines: TStringList;
       FName: String;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      procedure RegisterSocket( Socket: TP3DShaderNodeSocket );
 
     published
       property Code: String read FCode write FCode;
       property Name: String read FName write FName;
+      property Defines: TStringList read FDefines write FDefines;
+      property Declarations: TP3DShaderNodeSocketList read FDeclarations write FDeclarations;
   end;
 
-  {$DEFINE TCustomList:= TP3DShaderBufferList}
-  {.$DEFINE TCustomListEnumerator:= TP3DShaderBufferListEnumerator}
-  {$DEFINE TCustomItem:= TP3DShaderBuffer}
-  {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
+  TP3DShaderBufferList = specialize gP3DCustomObjectList < TP3DShaderBuffer >;
 
   { TP3DShaderCompiled }
 
   TP3DShaderCompiled = class
     private
       FBuffers: TP3DShaderBufferList;
-      BlackList: TP3DShaderNodeList;
 
     public
       constructor Create;
@@ -227,105 +183,314 @@ type
       property Buffers: TP3DShaderBufferList read FBuffers write FBuffers;
   end;
 
-  { TP3DShaderNodeOutlineFragment }
+  { TP3DShaderNodeTree }
 
-  TP3DShaderNodeOutlineFragment = class
+  TP3DShaderNodeTree = class ( TP3DNodeTree )
     private
-      FInputs: TP3DShaderNodeInputList;
-      FName: String;
-      FOnChange: TNotifyEvent;
-      FOnUpdateChild: TNotifyEvent;
-      FX: Float;
-      FY: Float;
-
-      procedure LoadInputsFromDOMNode( Node: TDOMNode );
-      procedure LoadAttributesFromDOMNode( Node: TDOMNode );
-      procedure SetName(AValue: String);
-      procedure SetX(AValue: Float);
-      procedure SetY(AValue: Float);
-      function InputCallback( Sender: TP3DShaderNode; Ref: String; Context: TP3DShaderCompiled ): String;
+      function GetShaderOutputFromNodes( Buffer: TP3DShaderBuffer ): String;
 
     public
-      constructor CreateFromDOMNode( Node: TDOMNode );
-      constructor Create;
-      destructor Destroy; override;
-
       function Compile: TP3DShaderCompiled;
-
-    published
-      property Name: String read FName write SetName;
-      property Inputs: TP3DShaderNodeInputList read FInputs write FInputs;
-      property X: Float read FX write SetX;
-      property Y: Float read FY write SetY;
-      property OnChange: TNotifyEvent read FOnChange write FOnChange;
-      property OnUpdateChild: TNotifyEvent read FOnUpdateChild write FOnUpdateChild;
+      function CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
   end;
 
-  {$DEFINE TCustomList:= TP3DCustomShaderNodeOutlineFragmentList}
-  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineFragmentListEnumerator}
-  {$DEFINE TCustomItem:= TP3DShaderNodeOutlineFragment}
   {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
-
-  { TP3DShaderNodeOutlineFragmentList }
-
-  TP3DShaderNodeOutlineFragmentList = class ( TP3DCustomShaderNodeOutlineFragmentList )
-    public
-      procedure LoadFromDOMNode( Node: TDOMNode );
-  end;
-
-  TP3DShaderNodeOutline = class
-    private
-      FFragments: TP3DShaderNodeOutlineFragmentList;
-      FName: String;
-
-    public
-      constructor Create;
-      constructor CreateFromDOMElement( Element: TDOMElement );
-      constructor CreateFromFile( FileName: String );
-
-      destructor Destroy; override;
-
-      function Compile: TP3DShaderCompiled;
-
-    published
-      property Name: String read FName write FName;
-      property Fragments: TP3DShaderNodeOutlineFragmentList read FFragments write FFragments;
-  end;
-
-  {$DEFINE TCustomList:= TP3DShaderNodeOutlineList}
-  {.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineListEnumerator}
-  {$DEFINE TCustomItem:= TP3DShaderNodeOutline}
-  {$DEFINE INTERFACE}
-  {$INCLUDE p3dcustomlist.inc}
-  {.$DEFINE INTERFACE}
-  {.$INCLUDE p3dshader_core.inc}
-
+  {$INCLUDE p3dshader_core.inc}
   {$UNDEF INTERFACE}
 
 var
   P3DShaderLib: TP3DShaderNodeLibrary;
 
-  function ProcessFile( FN: String ): TP3DShaderModule;
-  procedure LoadVariablesFromDOMNode( Module: TP3DShaderModule; SNV: TP3DShaderNodeFragmentList; Node: TDOMNode; SN: TP3DShaderNode );
-
 implementation
 
-{ TP3DShaderModule }
 
-constructor TP3DShaderModule.Create;
+
+{ TP3DShaderNodeTree }
+
+function TP3DShaderNodeTree.GetShaderOutputFromNodes(Buffer: TP3DShaderBuffer ): String;
+var
+  Node: TP3DNode;
+  Socket: TP3DNodeSocket;
+begin
+  Result:= '';
+  for Node in Nodes do
+    if ( Node is TP3DShaderNode ) then
+      for Socket in Node.Outputs do
+        if ( Socket.SocketType = 'shader' ) then
+          begin
+            Result+= TP3DShaderNodeSocket( Socket ).GetOutput( Buffer );
+            Buffer.RegisterSocket( TP3DShaderNodeSocket( Socket ));
+          end;
+end;
+
+function TP3DShaderNodeTree.Compile: TP3DShaderCompiled;
+var
+  Defines: TStringList;
+begin
+  Result:= TP3DShaderCompiled.Create;
+  Defines:= TStringList.Create;
+  Defines.Text:= 'vshader';
+  Result.Buffers[ Result.Buffers.Add( CompileToBuffer( Defines ))].Name:= 'vshader';
+  Defines.Text:= 'fshader';
+  Result.Buffers[ Result.Buffers.Add( CompileToBuffer( Defines ))].Name:= 'fshader';
+  Defines.Free;
+end;
+
+function TP3DShaderNodeTree.CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
+var
+  s: String;
+begin
+  Result:= TP3DShaderBuffer.Create;
+
+  Result.Defines.Text:= Definitions.Text;
+  Result.Defines.Add( 'main' );
+  s:= GetShaderOutputFromNodes( Result );
+
+
+  Result.Defines.Text:= Definitions.Text;
+  Result.Defines.Add( 'declaration' );
+
+  Result.Code:= '#version 330' + LineEnding
+                + Result.Declarations.GetStringOutput( Result )
+                + 'void main(){' + LineEnding
+                + s + '}';
+  WriteLn( 'Shader: <<' ,LineEnding, Result.Code, LineEnding, '>>' );
+end;
+
+{ TP3DShaderNodeDynamic }
+
+procedure TP3DShaderNodeDynamic.SocketChanged(ASocket: TP3DShaderNodeSocket);
+begin
+  //i:= Inputs.IndexOf( ASocket );
+  //if ( Inputs.Sockets.
+end;
+
+{ TP3DShaderNodeSocketList }
+
+function TP3DShaderNodeSocketList.GetStringOutput( Buffer: TP3DShaderBuffer): String;
+var
+  Socket: TP3DShaderNodeSocket;
+	noduplicate: Boolean;
+	S: String;
+begin
+  Result:= '';
+  noduplicate:= Buffer.Defines.IndexOf( 'declaration' ) > -1;
+  for Socket in Self do
+    begin
+      S:= Socket.GetOutput( Buffer );
+      if ( noduplicate ) then
+        if ( Pos( S, Result ) = 0 ) then
+          Result+= S;
+		end;
+end;
+
+function TP3DShaderNodeSocketList.FindSocketByName(Name: String): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Name = Name ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+{ TP3DShaderBuffer }
+
+constructor TP3DShaderBuffer.Create;
 begin
   inherited;
-  FInputs:= TP3DShaderNodeInputList.Create;
-  FNodes:= TP3DShaderNodeList.Create;
+  Defines:= TStringList.Create;
+  Defines.Sorted:= True;
+  Defines.Duplicates:= dupIgnore;
+  Declarations:= TP3DShaderNodeSocketList.Create;
 end;
 
-destructor TP3DShaderModule.Destroy;
+destructor TP3DShaderBuffer.Destroy;
 begin
-  FInputs.Free;
-  FNodes.Free;
+  Defines.Free;
+  FDeclarations.Free;
   inherited Destroy;
 end;
+
+procedure TP3DShaderBuffer.RegisterSocket(Socket: TP3DShaderNodeSocket);
+begin
+  if ( Declarations.IndexOf( Socket ) < 0 ) then
+    Declarations.Add( Socket );
+end;
+
+{ TP3DShaderNodeFragmentIfDef }
+
+constructor TP3DShaderNodeFragmentIfDef.Create;
+begin
+  inherited;
+  Fragments:= TP3DShaderNodeFragmentList.Create;
+end;
+
+destructor TP3DShaderNodeFragmentIfDef.Destroy;
+begin
+  Fragments.Free;
+  inherited Destroy;
+end;
+
+function TP3DShaderNodeFragmentIfDef.GetStringOutput(ANode: TP3DShaderNode;
+  Buffer: TP3DShaderBuffer): String;
+var
+  Frag: TP3DShaderNodeFragment;
+begin
+  Result:= '';
+  if ( Buffer.Defines.IndexOf( Caption ) > -1 ) then
+    for Frag in Fragments do
+      Result+= Frag.GetStringOutput( ANode, Buffer )
+end;
+
+{ TP3DShaderNodeLibrary }
+
+procedure TP3DShaderNodeLibrary.LoadLibrary(FileName: String);
+var
+  F: TXMLDocument;
+  i: Integer;
+  Node: TP3DShaderNode;
+begin
+  XMLRead.ReadXMLFile( F, FileName );
+
+  for i:= 0 to F.DocumentElement.ChildNodes.Count - 1 do
+    if ( F.DocumentElement.ChildNodes[ i ].NodeName = 'node' ) then
+      begin
+        Node:= TP3DShaderNode.CreateFromDOM( TDOMElement( F.DocumentElement.ChildNodes[ i ]));
+        Nodes.Add( Node );
+      end;
+
+  F.Free;
+end;
+
+procedure TP3DShaderNodeLibrary.LoadLibraryPath(PathName: String; const Ext: String );
+var
+  Files: TStringList;
+  line: String;
+begin
+  PathName:= IncludeTrailingPathDelimiter( PathName );
+  Files:= P3DListFolderFiles( PathName + Ext, True, True );
+  for line in Files do
+    LoadLibrary( line );
+end;
+
+function TP3DShaderNodeLibrary.FindNode(ANode: String): TP3DShaderNode;
+var
+  Node: TP3DNode;
+begin
+  Result:= nil;
+  for Node in Nodes do
+    if ( Node.Name = ANode ) then
+      begin
+        Result:= TP3DShaderNode( Node );
+        break;
+      end;
+end;
+
+{ TP3DShaderNodeFragmentInput }
+
+function TP3DShaderNodeFragmentInput.GetStringOutput(ANode: TP3DShaderNode;
+  Buffer: TP3DShaderBuffer): String;
+var
+  S: Integer;
+begin
+  S:= ANode.Inputs.FindSocketByName( InputName );
+  if ( S > -1 ) then
+    if ( ANode.Inputs[ S ] is TP3DShaderNodeSocket ) then
+      Result:= TP3DShaderNodeSocket( ANode.Inputs[ S ]).GetOutput( Buffer );
+end;
+
+function TP3DShaderNodeFragmentInput.MakeCopy(ANode: TP3DShaderNode
+  ): TP3DShaderNodeFragment;
+begin
+  Result:=inherited MakeCopy(ANode);
+  TP3DShaderNodeFragmentInput( Result ).InputName:= InputName;
+end;
+
+{ TP3DShaderNodeSocket }
+
+procedure TP3DShaderNodeSocket.SetConnected(AValue: TP3DNodeSocket);
+begin
+  inherited SetConnected(AValue);
+  if ( Node is TP3DShaderNodeDynamic ) then
+    TP3DShaderNodeDynamic( Node ).SocketChanged( Self );
+end;
+
+constructor TP3DShaderNodeSocket.Create(ANode: TP3DNode;
+			ADirection: TP3DNodeSocketDirection);
+begin
+  inherited;
+  FFragments:= TP3DShaderNodeFragmentList.Create;
+end;
+
+destructor TP3DShaderNodeSocket.Destroy;
+begin
+  if ( not FIsCopy ) then
+    FFragments.Free
+  else
+    FFragments:= nil;
+  inherited Destroy;
+end;
+
+function TP3DShaderNodeSocket.GetOutput( Buffer: TP3DShaderBuffer ): String;
+var
+  i: Integer;
+  s: String;
+begin
+  Result:= '';
+  if ( Assigned( Connected )) then
+    begin
+      if ( Connected is TP3DShaderNodeSocket ) then
+        Result:= TP3DShaderNodeSocket( Connected ).GetOutput( Buffer );
+      {s:= '';
+      if ( Fragments.Count > 0 ) then
+        for i:= 0 to Fragments.Count - 1 do
+          s+= Fragments[ i ].GetStringOutput( TP3DShaderNode( Node ), Buffer );
+      if ( s > '' ) then
+        Result:= ReplaceStr( s, '%i', Result );}
+    end
+  else
+    begin
+      Buffer.RegisterSocket( Self );
+      for i:= 0 to Fragments.Count - 1 do
+        Result+= Fragments[ i ].GetStringOutput( TP3DShaderNode( Node ), Buffer );
+    end;
+end;
+
+function TP3DShaderNodeSocket.MakeCopy(ANode: TP3DNode): TP3DShaderNodeSocket;
+type
+  TP3DShaderNodeSocketClass = class of TP3DShaderNodeSocket;
+var
+  Frag: TP3DShaderNodeFragment;
+begin
+  Result:= TP3DShaderNodeSocketClass( ClassType ).Create( ANode, Direction );
+  Result.Name:= Name;
+  Result.Fragments.Free;
+  Result.Fragments:= Fragments;
+end;
+
+{ TP3DShaderNodeSocketShader }
+
+class function TP3DShaderNodeSocketShader.GetSocketType: String;
+begin
+  Result:= 'shader'
+end;
+
+function TP3DShaderNodeSocketShader.GetStringOutput(Buffer: TP3DShaderBuffer
+  ): String;
+begin
+  inherited;
+  Result:= GetOutput( Buffer );
+end;
+
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE p3dshader_core.inc}
+{$UNDEF IMPLEMENTATION}
+
+
 
 { TP3DShaderCompiled }
 
@@ -354,533 +519,142 @@ begin
       end;
 end;
 
-{ TP3DShaderNodeInput }
-
-constructor TP3DShaderNodeInput.Create;
-begin
-  inherited;
-  FFragments:= TP3DShaderNodeOutlineFragmentList.Create;
-end;
-
-destructor TP3DShaderNodeInput.Destroy;
-begin
-  FFragments.Free;
-  inherited Destroy;
-end;
-
-{ TP3DShaderNodeOutline }
-
-constructor TP3DShaderNodeOutline.Create;
-begin
-  inherited;
-  FFragments:= TP3DShaderNodeOutlineFragmentList.Create;
-end;
-
-constructor TP3DShaderNodeOutline.CreateFromDOMElement(Element: TDOMElement);
-var
-  sno: TP3DShaderNodeOutlineFragment;
-  i: Integer;
-begin
-  Create;
-  if ( Element.NodeName <> 'p3dshader' ) then
-    raise Exception.Create( 'Cannot create shader node outline from element. Not a shader outline file!' );
-  for i:= 0 to Element.ChildNodes.Count - 1 do
-    begin
-      if ( Element.ChildNodes[ i ].NodeName <> ':input' ) then
-        begin
-          sno:= TP3DShaderNodeOutlineFragment.CreateFromDOMNode( Element.ChildNodes[ i ]);
-          Fragments.Add( sno );
-        end
-      else
-        raise Exception.Create( 'Cannot create shader node outline from element. Input not allowed here!' );
-    end;
-end;
-
-constructor TP3DShaderNodeOutline.CreateFromFile(FileName: String);
-var
-  F: TXMLDocument;
-begin
-  XMLRead.ReadXMLFile( F, FileName );
-
-  CreateFromDOMElement( F.DocumentElement );
-  Name:= ExtractFileNameOnly( FileName );
-  F.Free;
-end;
-
-destructor TP3DShaderNodeOutline.Destroy;
-begin
-  FFragments.Free;
-  inherited Destroy;
-end;
-
-function TP3DShaderNodeOutline.Compile: TP3DShaderCompiled;
-var
-  Node: TP3DShaderNode;
-  Buffer: TP3DShaderBuffer;
-  Module: TP3DShaderModule;
-  frag: TP3DShaderNodeOutlineFragment;
-begin
-   Result:= TP3DShaderCompiled.Create;
-   Result.BlackList:= TP3DShaderNodeList.Create;
-   for frag in Fragments do
-     begin
-       Module:= P3DShaderLib.FindModule( frag.Name );
-       if ( Assigned( Module )) then
-         for Node in Module.Nodes do
-           begin
-             Buffer:= TP3DShaderBuffer.Create;
-             Buffer.Name:= Node.Name;
-             Buffer.Code:= Node.GetStringOutput( @frag.InputCallback, Result );
-             Result.Buffers.Add( Buffer );
-             Result.BlackList.Empty();
-           end
-       else
-         raise Exception.Create( 'Error: Module "' + Name + '" was not found!' );
-     end;
-   Result.BlackList.Free;
-end;
-
-{ TP3DShaderNodeOutlineFragment }
-
-procedure TP3DShaderNodeOutlineFragment.LoadInputsFromDOMNode(Node: TDOMNode);
-  procedure LoadInputFromDOMNode( Node: TDOMNode );
-  var
-    itm: TP3DShaderNodeInput;
-    InpName: TDOMNode;
-  begin
-    InpName:= Node.Attributes.GetNamedItem( 'name' );
-    if ( not Assigned( InpName )) then
-      raise Exception.Create( 'Error: inputs must have a name!' );
-    itm:= TP3DShaderNodeInput.Create;
-    itm.FName:= InpName.NodeValue;
-    {$IFDEF DEBUG}
-    WriteLn( 'input: ' + itm.Name );
-    {$ENDIF}
-    if ( Node.HasChildNodes ) then
-      itm.Fragments.LoadFromDOMNode( Node );
-    Inputs.Add( itm );
-  end;
-
-var
-  Child: TDOMNode;
-  i: Integer;
-begin
-  for i:= 0 to Node.ChildNodes.Count - 1 do
-    begin
-      Child:= Node.ChildNodes[ i ];
-      if ( Child.NodeName = ':input' ) then
-        LoadInputFromDOMNode( Child )
-      else
-        raise Exception.Create( 'Can only define inputs here!' );
-    end;
-end;
-
-procedure TP3DShaderNodeOutlineFragment.LoadAttributesFromDOMNode(Node: TDOMNode
-  );
-var
-  Child: TDOMNode;
-  i: Integer;
-begin
-  for i:= 0 to Node.Attributes.Length - 1 do
-    begin
-      Child:= Node.Attributes[ i ];
-      if ( Child.NodeName = 'X' ) then
-        X:= StrToFloat( Child.NodeValue )
-      else if ( Child.NodeName = 'Y' ) then
-        Y:= StrToFloat( Child.NodeValue )
-      else
-        raise Exception.Create( 'Unknown attribute: ' + Child.NodeName );
-    end;
-end;
-
-procedure TP3DShaderNodeOutlineFragment.SetName(AValue: String);
-begin
-  if FName=AValue then Exit;
-  FName:=AValue;
-  if ( Assigned( FOnChange )) then
-    OnChange( Self );
-end;
-
-procedure TP3DShaderNodeOutlineFragment.SetX(AValue: Float);
-begin
-  if FX=AValue then Exit;
-  FX:=AValue;
-  if ( Assigned( FOnChange )) then
-    OnChange( Self );
-end;
-
-procedure TP3DShaderNodeOutlineFragment.SetY(AValue: Float);
-begin
-  if FY=AValue then Exit;
-  FY:=AValue;
-  if ( Assigned( FOnChange )) then
-    OnChange( Self );
-end;
-
-function TP3DShaderNodeOutlineFragment.InputCallback(Sender: TP3DShaderNode;
-  Ref: String; Context: TP3DShaderCompiled): String;
-  function CheckInput( Name: String ): String;
-  var
-    i: Integer;
-    S: String;
-    Ref: TP3DShaderNode;
-    Inp: TP3DShaderNodeInput;
-    frag: TP3DShaderNodeOutlineFragment;
-  begin
-    Result:= '';
-    S:= Copy( Name, 2, Min( Length( Name ) - 1, Pos( '.', Name ) - 2 ));
-    if (( Pos( '*', S ) > 0 ) or ( Pos( '?', S ) > 0 )) then
-      begin
-        for i:= 0 to Inputs.Count - 1 do
-          if ( IsWild( Inputs[ i ].Name, S, False )) then
-            for frag in Inputs[ i ].Fragments do
-              begin
-                Ref:= P3DShaderLib.FindReference( ReplaceStr( Name, ':' + S, frag.Name ));
-                if ( Assigned( Ref )) then
-                  Result+= Ref.GetStringOutput( @frag.InputCallback, Context );
-              end;
-      end
-    else
-      begin
-        i:= Inputs.Find( S );
-        if ( i < 0 ) then
-          begin
-            Result:= '- Warning: Input "' + S + '" was not found -';
-            exit;
-          end;
-        Inp:= Inputs[ i ];
-
-        if ( Inp.Fragments.Count = 0 ) then
-          Result:= '- Warning: Input "' + Inp.Name + '" was not connected -'
-        else
-          for frag in Inputs[ i ].Fragments do
-            begin
-              Ref:= P3DShaderLib.FindReference( ReplaceStr( Name, ':' + S, frag.Name ));
-              if ( Assigned( Ref )) then
-                Result+= Ref.GetStringOutput( @frag.InputCallback, Context )
-              else
-                Result:= '- Warning: Node "' + Sender.Name + '" was not found in module "' + frag.Name + '" -';
-            end;
-    end;
-  end;
-
-begin
-  Result:= CheckInput( Ref );
-end;
-
-constructor TP3DShaderNodeOutlineFragment.CreateFromDOMNode( Node: TDOMNode );
-begin
-  Create;
-
-  if ( Node.NodeName <> ':input' ) then
-    begin
-      if ( Node.HasAttributes ) then
-        LoadAttributesFromDOMNode( Node );
-
-      Name:= Node.NodeName;
-      {$IFDEF DEBUG}
-      WriteLn( 'outline: ' + Name );
-      {$ENDIF}
-      if ( Node.HasChildNodes ) then
-        LoadInputsFromDOMNode( Node );
-    end
-  else
-    raise Exception.Create( 'Error: Cannot create outline fragment from input node!' );
-end;
-
-constructor TP3DShaderNodeOutlineFragment.Create;
-begin
-  inherited;
-  FInputs:= TP3DShaderNodeInputList.Create;
-end;
-
-destructor TP3DShaderNodeOutlineFragment.Destroy;
-begin
-  FInputs.Free;
-  inherited Destroy;
-end;
-
-function TP3DShaderNodeOutlineFragment.Compile: TP3DShaderCompiled;
-var
-  Node: TP3DShaderNode;
-  Buffer: TP3DShaderBuffer;
-  Module: TP3DShaderModule;
-begin
-   Result:= TP3DShaderCompiled.Create;
-   Module:= P3DShaderLib.FindModule( Name );
-   Result.BlackList:= TP3DShaderNodeList.Create;
-   if ( Assigned( Module )) then
-     for Node in Module.Nodes do
-       begin
-         Buffer:= TP3DShaderBuffer.Create;
-         Buffer.Name:= Node.Name;
-         Buffer.Code:= Node.GetStringOutput( @InputCallback, Result );
-         Result.Buffers.Add( Buffer );
-         Result.BlackList.Empty();
-       end
-   else
-     raise Exception.Create( 'Error: Module "' + Name + '" was not found!' );
-   Result.BlackList.Free;
-end;
-
-{ TP3DShaderNodeInputList }
-
-function TP3DShaderNodeInputList.Find(Name: String): Integer;
-var
-  i: Integer;
-begin
-  Result:= -1;
-  for i:= 0 to Count - 1 do
-    if ( Name = Items[ i ].Name ) then
-      Result:= i;
-end;
-
-{ TP3DShaderNodeFragmentList }
-function TP3DShaderNodeFragmentList.GetStringOutput(
-  InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String;
-var
-  Item: TP3DShaderNodeFragment;
-begin
-  Result:= '';
-  for Item in Self do
-    Result:= Result + Item.GetStringOutput( InputCallback, Context );
-end;
-
-function TP3DShaderNodeList.FindNode(Name: String): TP3DShaderNode;
-var
-  Item: TP3DShaderNode;
-begin
-  Result:= nil;
-  for Item in Self do
-    if ( Item.Name = Name ) then
-      begin
-        Result:= Item;
-        Break;
-      end;
-end;
-
-{ TP3DShaderNodeLibrary }
-
-procedure TP3DShaderNodeLibrary.LoadLibrary(FileName: String);
-var
-  Module: TP3DShaderModule;
-begin
-  Module:= ProcessFile( FileName );
-  Add( Module );
-end;
-
-procedure TP3DShaderNodeLibrary.LoadLibraryPath(PathName: String; const Ext: String
-  );
-var
-  Files: TStringList;
-  line: String;
-begin
-  PathName:= IncludeTrailingPathDelimiter( PathName );
-  Files:= P3DListFolderFiles( PathName + Ext, True, True );
-  for line in Files do
-    LoadLibrary( line );
-end;
-
-function TP3DShaderNodeLibrary.FindReference( Ref: String ): TP3DShaderNode;
-var
-  namemodule: String;
-  namenode: String;
-  Node: TP3DShaderNode;
-  Module: TP3DShaderModule;
-begin
-  Result:= nil;
-  if ( WordCount( Ref, [ '.' ]) <> 2 ) then
-    exit;
-  namemodule:= ExtractWord( 1, Ref, [ '.' ]);
-  namenode:= ExtractWord( 2, Ref, [ '.' ]);
-  Module:= FindModule( namemodule );
-  if ( Assigned( Module )) then
-    begin
-      Node:= Module.Nodes.FindNode( namenode );
-      if ( Assigned( Node )) then
-        Result:= Node;
-    end;
-end;
-
-function TP3DShaderNodeLibrary.FindModule(Name: String): TP3DShaderModule;
-var
-  Item: TP3DShaderModule;
-begin
-  Result:= nil;
-  for Item in Self do
-    if ( Item.Name = Name ) then
-      begin
-        Result:= Item;
-        Break;
-      end;
-end;
-
-{ TP3DShaderNodeFragmentLink }
-
-constructor TP3DShaderNodeFragmentLink.Create(ANode: TP3DShaderNode);
-begin
-  inherited;
-  Fragments:= TP3DShaderNodeFragmentList.Create;
-end;
-
-destructor TP3DShaderNodeFragmentLink.Destroy;
-begin
-  Fragments.Free;
-
-  inherited Destroy;
-end;
-
-function TP3DShaderNodeFragmentLink.GetStringOutput(
-  InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled): String;
-//TODO: Cleanup Check Reference
-  function CheckReference( N: String ): String;
-  var
-    Ref: TP3DShaderNode;
-    S: String;
-    Inp: TP3DShaderNodeInput;
-    i: Integer;
-    R: String;
-
-  begin
-    Ref:= nil;
-    if ( IsEmptyStr( N, [ $8, $10, $13, ' ', ';' ])) then
-      Result:= '- Warning: Reference was empty -'
-    else if ( N[ 1 ] = ':' ) then
-      Result:= InputCallback( Node, N, Context )
-    else
-      begin
-        Ref:= P3DShaderLib.FindReference( N );
-        if ( Assigned( Ref )) then
-          Result:= Ref.GetStringOutput( InputCallback, Context )
-        else
-          Result:= '- Warning: Reference was not found "' + N + '" -';
-      end;
-  end;
-
-  function Explode( Input: String; Delim: Char ): TStringList;
-  begin
-    Result:= TStringList.Create;
-    Result.Delimiter:= Delim;
-    Result.DelimitedText:= Input;
-  end;
-
-var
-  Targets: TStringList;
-  ThisTarget: String;
-begin
-  inherited;
-  Result:= '';
-
-  Targets:= Explode( Target, ';' );
-  for ThisTarget in Targets do
-    Result+= CheckReference( ThisTarget );
-end;
-
 { TP3DShaderNodeFragmentInline }
 
-function TP3DShaderNodeFragmentInline.GetStringOutput(
-  InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String;
+function TP3DShaderNodeFragmentInline.GetStringOutput(ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer): String;
 begin
   inherited;
   Result:= Text;
 end;
 
-{ TP3DShaderNodeFragment }
-
-constructor TP3DShaderNodeFragment.Create(ANode: TP3DShaderNode);
+function TP3DShaderNodeFragmentInline.MakeCopy(ANode: TP3DShaderNode): TP3DShaderNodeFragment;
 begin
-  inherited Create;
-  FNode:= ANode;
+  Result:=inherited MakeCopy(ANode);
+  TP3DShaderNodeFragmentInline( Result ).Text:= Text;
 end;
 
-function TP3DShaderNodeFragment.GetStringOutput(
-  InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled): String;
+{ TP3DShaderNodeFragment }
+
+constructor TP3DShaderNodeFragment.Create;
+begin
+  inherited Create;
+end;
+
+function TP3DShaderNodeFragment.GetStringOutput(ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer): String;
 begin
   Result:= '';
 end;
 
+function TP3DShaderNodeFragment.MakeCopy(ANode: TP3DShaderNode
+  ): TP3DShaderNodeFragment;
+type
+  TP3DShaderNodeFragmentClass = class of TP3DShaderNodeFragment;
+begin
+  Result:= TP3DShaderNodeFragmentClass( ClassType ).Create();
+  Result.VarType:= VarType;
+end;
+
 { TP3DShaderNode }
 
-constructor TP3DShaderNode.Create;
-begin
-  inherited;
-  FFragments:= TP3DShaderNodeFragmentList.Create;
-end;
+constructor TP3DShaderNode.CreateFromDOM( DomNode: TDOMElement );
+  procedure CreateFragmentsFromDom( AFragments: TP3DShaderNodeFragmentList; Node: TDOMElement );
+  var
+    Item: TP3DShaderNodeFragment;
+    i: Integer;
+  begin
+    for i:= 0 to Node.ChildNodes.Count - 1 do
+      begin
+        case ( Node.ChildNodes[ i ].NodeName ) of //only manual line breaks
+          '#text':
+            begin
+              Item:= TP3DShaderNodeFragmentInline.Create();
+              TP3DShaderNodeFragmentInline( Item ).Text:= StringReplace( Node.ChildNodes[ i ].NodeValue, LineEnding, '', [rfReplaceAll]);
+            end;
+          'br':
+            begin
+              Item:= TP3DShaderNodeFragmentInline.Create();
+              TP3DShaderNodeFragmentInline( Item ).Text:= LineEnding;
+            end;
+          'input':
+            begin
+              Item:= TP3DShaderNodeFragmentInput.Create();
+              TP3DShaderNodeFragmentInput( Item ).InputName:= TDOMElement( Node.ChildNodes[ i ]).AttribStrings[ 'name' ];
+            end;
+          else
+            begin
+              Item:= TP3DShaderNodeFragmentIfDef.Create();
+              TP3DShaderNodeFragmentIfDef( Item ).Caption:= TDOMElement( Node.ChildNodes[ i ]).NodeName;
+              CreateFragmentsFromDom( TP3DShaderNodeFragmentIfDef( Item ).Fragments, TDOMElement( Node.ChildNodes[ i ]));
+            end;
 
-destructor TP3DShaderNode.Destroy;
-begin
-  FFragments.Free;
-  inherited Destroy;
-end;
 
-function TP3DShaderNode.GetStringOutput( InputCallback: TP3DInputCallback; Context: TP3DShaderCompiled ): String;
+            //raise Exception.Create( 'Error: Unknown section for output socket''s code: "' + Node.ChildNodes[ i ].NodeName + '". Plain text, "input" or "br" expected.' );
+        end;
+        if ( Assigned( Item )) then
+          AFragments.Add( Item );
+      end;
+  end;
+
+  function CreateSocketFromDOM( Node: TDOMElement ): TP3DShaderNodeSocket;
+  var
+    AName: TDOMAttr;
+    AType: TDOMAttr;
+    i: Integer;
+		Dir: TP3DNodeSocketDirection;
+  begin
+    if ( lowercase( Node.NodeName ) = 'input' ) then
+      Dir:= nsdInput
+    else
+      Dir:= nsdOutput;
+    AName:= Node.GetAttributeNode( 'name' );
+    if ( not Assigned( AName )) then
+      raise Exception.Create( 'Error: Sockets must have a name.' );
+    AType:= Node.GetAttributeNode( 'type' );
+    if ( Assigned( AType )) then
+      case AType.NodeValue of
+        'vec4': Result:= TP3DShaderNodeSocketVector.Create( Self, Dir );
+        'float': Result:= TP3DShaderNodeSocketFloat.Create( Self, Dir );
+        'int': Result:= TP3DShaderNodeSocketInt.Create( Self, Dir );
+        'shader': Result:= TP3DShaderNodeSocketShader.Create( Self, Dir );
+      else
+        Result:= TP3DShaderNodeSocket.Create( Self, Dir );
+      end;
+    Result.Name:= AName.NodeValue;
+
+    CreateFragmentsFromDom( Result.Fragments, TDOMElement( Node ))
+  end;
+
+var
+  AName: TDOMAttr;
+  i: Integer;
 begin
-  if ( Context.BlackList.FItems.IndexOf( Self ) > -1 ) then
-    Result:= ''
-  else
-    begin
-      Result:= Fragments.GetStringOutput( InputCallback, Context );
-      if ( Unique ) then
-        Context.BlackList.Add( Self );
+  AName:= DomNode.GetAttributeNode( 'name' );
+  if ( not Assigned( AName )) then
+    raise Exception.Create( 'Error: Nodes must have a name.' );
+  Create;
+
+  Name:= AName.NodeValue;
+  for i:= 0 to DomNode.ChildNodes.Count - 1 do
+    case lowercase( DomNode.ChildNodes[ i ].NodeName ) of
+      'input': Inputs.Add(CreateSocketFromDOM( TDOMElement( DomNode.ChildNodes[ i ])));
+      'output': Outputs.Add(CreateSocketFromDOM( TDOMElement( DomNode.ChildNodes[ i ])));
+      else
+        raise Exception.Create( 'Error: Unknown section for nodes: "' + DomNode.ChildNodes[ i ].NodeName + '". "input" or "output" expected.' );
     end;
 end;
 
-procedure TP3DShaderNodeOutlineFragmentList.LoadFromDOMNode(Node: TDOMNode);
+function TP3DShaderNode.MakeCopy: TP3DShaderNode;
 var
-  i: Integer;
+  Socket: TP3DNodeSocket;
 begin
-  for i:= 0 to Node.ChildNodes.Count - 1 do
-    Add( TP3DShaderNodeOutlineFragment.CreateFromDOMNode( Node.ChildNodes[ i ]));
+  Result:= TP3DShaderNode.Create;
+  Result.Name:= Name;
+  for Socket in Inputs do
+    Result.Inputs.Add( TP3DShaderNodeSocket( Socket ).MakeCopy( Result ));
+  for Socket in Outputs do
+    Result.Outputs.Add( TP3DShaderNodeSocket( Socket ).MakeCopy( Result ));
 end;
 
-
-{$DEFINE OBJECTLIST}
-{$DEFINE TCustomList:= TP3DCustomShaderNodeList}
-{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeListEnumerator}
-{$DEFINE TCustomItem:= TP3DShaderNode}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
-
-{$DEFINE TCustomList:= TP3DCustomShaderNodeFragmentList}
-{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeFragmentEnumerator}
-{$DEFINE TCustomItem:= TP3DShaderNodeFragment}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
-
-{$DEFINE TCustomList:= TP3DCustomShaderNodeInputList}
-{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeInputEnumerator}
-{$DEFINE TCustomItem:= TP3DShaderNodeInput}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
-
-{$DEFINE TCustomList:= TP3DCustomShaderNodeOutlineFragmentList}
-{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineFragmentListEnumerator}
-{$DEFINE TCustomItem:= TP3DShaderNodeOutlineFragment}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
-
-{$DEFINE TCustomList:= TP3DShaderNodeOutlineList}
-{.$DEFINE TCustomListEnumerator:= TP3DShaderNodeOutlineListEnumerator}
-{$DEFINE TCustomItem:= TP3DShaderNodeOutline}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
-
-{$DEFINE TCustomList:= TP3DShaderBufferList}
-{.$DEFINE TCustomListEnumerator:= TP3DShaderBufferListEnumerator}
-{$DEFINE TCustomItem:= TP3DShaderBuffer}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
-
-{$DEFINE TCustomList:= TP3DShaderModuleList}
-{.$DEFINE TCustomListEnumerator:= TP3DShaderModuleListEnumerator}
-{$DEFINE TCustomItem:= TP3DShaderModule}
-{$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dcustomlist.inc}
-
-{$INCLUDE p3dshadernodes_load.inc}
-
-{.$DEFINE IMPLEMENTATION}
-{.$INCLUDE p3dshader_core.inc}
 
 initialization
   P3DShaderLib:= TP3DShaderNodeLibrary.Create;

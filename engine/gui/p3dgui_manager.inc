@@ -1,17 +1,27 @@
 {$IFDEF INTERFACE}
 
+TP3DCursor = ( curArrow = 'A', curHourGlass = 'B', curHResize = 'C', curVResize = 'D', curMoveLeftRight = 'E', curMoveTopBottom = 'F', curNodeEdit = 'G' );
+
 { TP3DGUIManager }
 
 TP3DGUIManager = class
   private
     FCanvas: TP3DCanvas2D;
     FControls: TP3DControlList;
+    FCursor: TP3DCursor;
+    FFocusedControl: TP3DGraphicControl;
+    FShowCursor: Boolean;
     FWindow: TSDLWindow;
+    FCursorTxt: TP3DText;
 
     function GetMouseX: Integer;
     function GetMouseY: Integer;
+    procedure SetCursor(AValue: TP3DCursor);
+    procedure SetFocusedControl(AValue: TP3DGraphicControl);
     procedure SetMouseX( const Value: Integer );
     procedure SetMouseY( const Value: Integer );
+    procedure CtrlDeleteNotifier( Ctrl: TP3DGraphicControl );
+    procedure SetShowCursor(AValue: Boolean);
 
   public
     constructor Create;
@@ -27,6 +37,9 @@ TP3DGUIManager = class
     property Window: TSDLWindow read FWindow write FWindow;
     property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
     property Controls: TP3DControlList read FControls write FControls;
+    property Cursor: TP3DCursor read FCursor write SetCursor;
+    property ShowCursor: Boolean read FShowCursor write SetShowCursor;
+    property FocusedControl: TP3DGraphicControl read FFocusedControl write SetFocusedControl;
 end;
 
 {$ENDIF}
@@ -39,60 +52,97 @@ constructor TP3DGUIManager.Create();
 begin
   inherited Create;
 
-//  DefaultFont:= FontManager[ FontManager.Add( '..\Fonts\Arial.fnt' )];
+  P3DFontManager.DefaultFontsPath:= '../../../fonts';
   Controls:= TP3DControlList.Create( nil, Self );
   ScreenCanvas:= TP3DCanvas2D.Create( nil );
+  Cursor:= curArrow;
   UpdateExtents;
 end;
 
 destructor TP3DGUIManager.Destroy;
 begin
   ScreenCanvas.Free;
+  FCursorTxt.Free;
   Controls.Clear( True );
   Controls.Free;
   inherited;
 end;
 
 function TP3DGUIManager.GetMouseX: Integer;
-var
-  cpos: TPoint;
 begin
   Result:= InputManager.Mouse.X;
 end;
 
 function TP3DGUIManager.GetMouseY: Integer;
-var
-  cpos: TPoint;
 begin
   Result:= InputManager.Mouse.Y;
 end;
 
-procedure TP3DGUIManager.Input;
-var
-  Ctrl: TP3DGraphicControl;
+procedure TP3DGUIManager.SetCursor(AValue: TP3DCursor);
 begin
-  Ctrl:= Controls.Input;
-  //if (( Assigned( Ctrl )) AND ( gcisMouseOverOccl in Ctrl.InputState )) then
-  //  Ctrl.InputState:= ( Ctrl.InputState + [ gcisMouseOver ]) - [ gcisMouseOverOccl ];
+  FCursor:=AValue;
+  if ( Assigned( FCursorTxt )) then
+    FreeAndNil( FCursorTxt );
+  if ( ShowCursor ) then
+    FCursorTxt:= p3dTextSimple( Char( FCursor ), P3DFontManager[ 'Pascal3D-Cursors', 16 ]);
+end;
+
+procedure TP3DGUIManager.SetFocusedControl(AValue: TP3DGraphicControl);
+begin
+  if FFocusedControl=AValue then Exit;
+
+  FFocusedControl:=AValue;
+end;
+
+procedure TP3DGUIManager.Input;
+begin
+  Controls.Input;
 end;
 
 procedure TP3DGUIManager.Render;
 begin
   Controls.Render( vec4( 1 ), vec2( 0 ));
+  if ( ShowCursor and Assigned( FCursorTxt )) then
+    begin
+      ScreenCanvas.Font.Color:= vec4( 1 );
+      ScreenCanvas.RenderText( FCursorTxt, vec2( MouseX-1, MouseY-1 ));
+      ScreenCanvas.RenderText( FCursorTxt, vec2( MouseX-1, MouseY+1 ));
+      ScreenCanvas.RenderText( FCursorTxt, vec2( MouseX+1, MouseY-1 ));
+      ScreenCanvas.RenderText( FCursorTxt, vec2( MouseX+1, MouseY+1 ));
+      ScreenCanvas.Font.Color:= vec4( 0 );
+      ScreenCanvas.RenderText( FCursorTxt, vec2( MouseX, MouseY ));
+    end;
 end;
 
 procedure TP3DGUIManager.SetMouseX( const Value: Integer );
-var
-  cpos: TPoint;
 begin
   InputManager.Mouse.X:= ActiveWindow.Left + Value;
 end;
 
 procedure TP3DGUIManager.SetMouseY(const Value: Integer);
-var
-  cpos: TPoint;
 begin
   InputManager.Mouse.Y:= ActiveWindow.Top + Value
+end;
+
+procedure TP3DGUIManager.CtrlDeleteNotifier(Ctrl: TP3DGraphicControl);
+begin
+  if ( DragDropSrc = Ctrl ) then
+    DragDropSrc:= nil;
+  if ( LastMouseOverCtrl = Ctrl ) then
+    LastMouseOverCtrl:= nil;
+  if ( LastMouseDownCtrl[ 0 ] = Ctrl ) then
+    LastMouseDownCtrl[ 0 ]:= nil;
+  if ( LastMouseDownCtrl[ 1 ] = Ctrl ) then
+    LastMouseDownCtrl[ 1 ]:= nil;
+  if ( LastMouseDownCtrl[ 2 ] = Ctrl ) then
+    LastMouseDownCtrl[ 2 ]:= nil;
+end;
+
+procedure TP3DGUIManager.SetShowCursor(AValue: Boolean);
+begin
+  if FShowCursor=AValue then Exit;
+  FShowCursor:=AValue;
+  SetCursor( Cursor );
 end;
 
 procedure TP3DGUIManager.UpdateExtents;

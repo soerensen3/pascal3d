@@ -1,12 +1,13 @@
 {$IFDEF INTERFACE}
 type
 
-  { TP3DScene }
+  { TP3DModelScene }
 
-  TP3DScene = class( TPersistent )
+  TP3DModelScene = class( TP3DScene )
     private
       FFileWatch: TFileWatch;
-      FModelList: TRenderableObjectList;
+      FLights: TP3DLightList;
+      FModelList: TP3DRenderableObjectList;
       FMaterials: TP3DMaterialList;
 
     public
@@ -19,44 +20,40 @@ type
 
       function Debug: String;
 
-      procedure Render( world: TMat4; const RenderFlag: TRenderFlags = []);
+      procedure Render; override;
+      procedure AppendFromDom(ADOMNode: TDOMElement;
+        const AParent: TP3DRenderableObject = nil );
+      procedure AppendFile( AFileName: String; const AParent: TP3DRenderableObject = nil );
+      procedure PassToShader; override;
 
-      property Children: TRenderableObjectList read FModelList;
+      property Children: TP3DRenderableObjectList read FModelList;
       property Materials: TP3DMaterialList read FMaterials;
       property FileWatch: TFileWatch read FFileWatch write FFileWatch;
+      property Lights: TP3DLightList read FLights write FLights;
   end;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
-{ TP3DScene }
+{ TP3DModelScene }
 
-constructor TP3DScene.Create;
+constructor TP3DModelScene.Create;
 begin
   inherited Create();
-  FModelList:= TRenderableObjectList.Create;
+  FModelList:= TP3DRenderableObjectList.Create;
   FMaterials:= TP3DMaterialList.Create;
+  FLights:= TP3DLightList.Create;
 end;
 
-constructor TP3DScene.Create( AFileName: String;
+constructor TP3DModelScene.Create( AFileName: String;
   const AWatchFileForChanges: Boolean);
-var
-  xml: TXMLDocument;
-  dir: String;
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
-  ReadXMLFile( xml, AFileName );
-  dir:= GetCurrentDir;
-  try
-    SetCurrentDir( ExtractFilePath( AFileName ));
-    CreateFromDOM( xml.DocumentElement );
-  finally
-    SetCurrentDir( dir );
-    xml.Free;
-  end;
+  inherited Create;
+  AppendFile( AFileName );
 end;
 
-constructor TP3DScene.CreateFromDOM( ADOMNode: TDOMElement );
+constructor TP3DModelScene.CreateFromDOM( ADOMNode: TDOMElement );
 var
   Element: TDOMElement;
 
@@ -81,19 +78,13 @@ begin
 
   Create();
 
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'mesh': Children.Add( TP3DMesh.CreateFromDOM( Children, Self, Element ));
-        'material': LoadMaterial;
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
+  AppendFromDom( ADOMNode );
 end;
 
-destructor TP3DScene.Destroy;
+destructor TP3DModelScene.Destroy;
 begin
+  Lights.Clear( False );
+  Lights.Free;
   Clear;
 
   FModelList.Free;
@@ -101,16 +92,16 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DScene.Clear;
+procedure TP3DModelScene.Clear;
 begin
   FModelList.Clear;
 end;
 
-function TP3DScene.Debug: String;
+function TP3DModelScene.Debug: String;
 var
   Indent: Integer;
 
-  function DebugList( Items: TRenderableObjectList ): String;
+  function DebugList( Items: TP3DRenderableObjectList ): String;
     function WriteVertices( Mdl: TP3DMesh ): String;
     var
       i: Integer;
@@ -209,8 +200,77 @@ begin
   Result:= DebugList( Children );
 end;
 
-procedure TP3DScene.Render(world: TMat4; const RenderFlag: TRenderFlags);
+procedure TP3DModelScene.Render;
 begin
-  Children.Render( world, RenderFlag );
+  inherited;
+  Children.Render( Mat4Identity, Self );
 end;
+
+procedure TP3DModelScene.AppendFromDom(ADOMNode: TDOMElement;
+  const AParent: TP3DRenderableObject);
+var
+  Element: TDOMElement;
+  Parent: TP3DRenderableObjectList;
+
+  procedure LoadMaterial;
+  var
+    AName: DOMString;
+    matIdx: Integer;
+  begin
+    AName:= Element.GetAttribute( 'name' );
+    matIdx:= Materials.FindByName( AName );
+    if ( matIdx = -1 ) then
+      matIdx:= Materials.Add( TP3DMaterial.Create );
+    Materials[ matIdx ].LoadFromDOM( Element, Self );
+  end;
+
+begin
+  if ( not Assigned( ADOMNode )) then
+    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Not Assigned!' );
+
+  if ( not ( ADOMNode.NodeName = 'p3dscene' )) then
+    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dscene!' );
+
+  Element:= TDOMElement( ADOMNode.FirstChild );
+  if ( Assigned( AParent )) then
+    Parent:= AParent.Children
+  else
+    Parent:= Children;
+
+  while ( Assigned( Element )) do
+    begin
+      case Element.NodeName of
+        'mesh': Parent.Add( TP3DMesh.CreateFromDOM( Parent, Self, Element ));
+        'material': LoadMaterial;
+        'light': Parent.Add( TP3DLight.CreateFromDOM( Parent, Self, Element ));
+      end;
+      Element:= TDOMElement( Element.NextSibling );
+    end;
+end;
+
+procedure TP3DModelScene.AppendFile(AFileName: String;
+  const AParent: TP3DRenderableObject);
+var
+  xml: TXMLDocument;
+  dir: String;
+begin
+  if ( not FileExists( AFileName )) then
+    raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
+  ReadXMLFile( xml, AFileName );
+  dir:= GetCurrentDir;
+  try
+    SetCurrentDir( ExtractFilePath( AFileName ));
+    AppendFromDom( xml.DocumentElement, AParent );
+  finally
+    SetCurrentDir( dir );
+    xml.Free;
+  end;
+end;
+
+procedure TP3DModelScene.PassToShader;
+begin
+  inherited PassToShader;
+  Lights.PassToActiveShader( Cam.Position, 0, Cam.View * Mat4Identity, [ liPosition, liLightParams ]);
+end;
+
 {$ENDIF}

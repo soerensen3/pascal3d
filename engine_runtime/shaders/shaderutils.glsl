@@ -69,6 +69,16 @@ void util_PointLight( in int i, in float shininess,
 	  diffuse += LightSource[ i ].diffuse * sDotN * attenuation;
 }
 
+vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Bitangent, vec4 BumpMapNormal)
+{
+    BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
+    vec4 NewNormal;
+    mat3 TBN = mat3(Tangent.xyz, Bitangent.xyz, Normal.xyz);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 1 );
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+
 /*
 vec2 DoubleToVec2( double val ){
   vec2 valv;

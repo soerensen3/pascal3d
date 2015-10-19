@@ -327,7 +327,8 @@ end;
 
 procedure TP3DCanvas2D.RenderText(Text: TP3DText; P: TVec2);
 begin
-  Text.Render( P, ScreenColor * Font.Color, Proj );
+  if ( Assigned( Text )) then
+    Text.Render( P, ScreenColor * Font.Color, Proj );
 end;
 
 procedure TP3DCanvas2D.RenderBezier(p1, p2, p3, p4: TVec2;

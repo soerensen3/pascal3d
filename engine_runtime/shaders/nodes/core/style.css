@@ -1,0 +1,126 @@
+node:before{
+  content: 'NODE ' attr(name);
+  font-family: Arial;
+}
+
+output *{
+  background-color: rosybrown;
+  -webkit-box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  -moz-box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  white-space: pre;
+  font-family: Courier;
+}
+
+output:before{
+  font-family: Arial;
+  content: attr(type) ' ' attr(name);
+  display: block;
+}
+
+output[type="shader"]:before{
+  background-color: blanchedalmond;
+}
+
+input:before{
+  content: attr( type ) ' ' attr( name );
+  background-color: orange;
+  display: block;
+  border: 1px solid darkorange;
+}
+
+
+node {
+  display: block;
+  color: black;
+  background-color: #81a37c;
+  -webkit-box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  -moz-box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  border-color: black;
+  border-width: 2px;
+  padding: 5px;
+  margin: 30pt;
+  border: 2px solid darkgreen;
+}
+
+output {
+  display: block;
+  
+  background-color: aliceblue;
+  -webkit-box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  -moz-box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  box-shadow: 2px 0px 15px -4px rgba(0,0,0,0.62);
+  white-space: pre;
+  font-family: Courier;
+  padding: 5px;
+  border: 2px solid lightblue;
+}
+
+
+fshader:before{ 
+  content: 'Fragment Shader';
+  display: block;
+  font-size: large;
+  background-color: darkkhaki;
+  font-family: Arial;
+}
+
+fshader {
+  display: block;
+  background-color: khaki;
+  white-space: pre;
+  font-family: Courier;
+}
+vshader:before{ 
+  content: 'Vertex Shader';
+  display: block;
+  font-size: large;
+  background-color: darkseagreen;
+  font-family: Arial;
+}
+
+vshader {
+  display: block;
+  background-color: seagreen;
+  white-space: pre;
+  font-family: Courier;
+}
+
+declaration:before{ 
+  content: 'Declaration';
+  display: block;
+  font-size: large;
+  background-color: darkslateblue;
+  font-family: Arial;
+}
+declaration {
+  display: block;
+  background-color: slateblue;
+}
+
+main:before{ 
+  content: 'Main';
+  display: block;
+  font-size: large;
+  background-color: gray;
+  font-family: Arial;
+}
+main {
+  display: block;
+  background-color: silver;
+}
+
+output input:before{
+  content: attr( name );
+  display: inline;
+}
+
+//br {
+//    display: block;
+//}
+//
+//br:before {
+//    content: "";
+//}
+
