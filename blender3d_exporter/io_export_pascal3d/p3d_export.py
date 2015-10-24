@@ -34,6 +34,7 @@ def ExportP3DScene(Config):
             print(Object)
             print(Object.type) 
             print(Object.parent)
+            
     if Config.ExportMode == 1:
         Config.ExportList = [Object for Object in Config.context.scene.objects
                              if Object.type in export_type
@@ -49,7 +50,7 @@ def ExportP3DScene(Config):
 
 
     ExportObjects(Config, Config.ExportList)
-    ExportMaterials(Config)
+    ExportData(Config)
     CloseFile(Config)
     print("Finished")
 
@@ -59,41 +60,47 @@ def GetObjectChildren(Parent):
 
 
 def ExportObjects(Config, ObjectList):
+    print("Exporting Objects")
+    
     for Object in ObjectList:
         if ( not Object.type in export_type ):
             exit
-        if Object.type == 'MESH':
-            objEl = et.Element("mesh")
-            Config.DocStack[ -1 ].append( objEl )
-            Config.DocStack.append( objEl )
-            objEl.attrib['name'] = LegalName(Object.name)            
-            ExportMesh(Config, Object)
-        
-        if Object.type == 'LAMP':
-            objEl = et.Element("light")
-            Config.DocStack[ -1 ].append( objEl )
-            Config.DocStack.append( objEl )
-            objEl.attrib['name'] = LegalName(Object.name)            
-            ExportLight(Config, Object)
-
-        if Object.type == 'CAMERA':
-            objEl = et.Element("camera")
-            Config.DocStack[ -1 ].append( objEl )
-            Config.DocStack.append( objEl )
-            objEl.attrib['name'] = LegalName(Object.name)            
-            ExportCamera(Config, Object)
             
-        if Object.type == 'ARMATURE':
-            objEl = et.Element("armature")
-            Config.DocStack[ -1 ].append( objEl )
-            Config.DocStack.append( objEl )
-            objEl.attrib['name'] = LegalName(Object.name)  
-#            ExportArmature(Config, Object)
+        objEl = et.Element("object")
+        Config.DocStack[ -1 ].append( objEl )
+        Config.DocStack.append( objEl )   
+        objEl.attrib['name'] = LegalName(Object.name)            
+        ExportObject(Config, Object)
 
         ExportObjects(Config,GetObjectChildren(Object))
 
         Config.DocStack.pop()
+        
+        if Object.type == 'MESH':
+            print("mesh")
+            global globalMeshes
+            globalMeshes.add( Object ) #modifiers can't be applied if data is exported
+        
+        if Object.type == 'LAMP':
+            print("lamp")
+            global globalLamps
+            globalLamps.add( Object.data )
 
+        if Object.type == 'CAMERA':
+            print("cam")
+            global globalCameras
+            globalCameras.add( Object.data )
+            
+    print("Finished Objects")
+
+def ExportData(Config):
+    print("Exporting Data")
+    
+    ExportMeshes(Config)
+    ExportLights(Config)
+    ExportCameras(Config)
+    ExportMaterials(Config)
+    print("Finished Data")
 
 ## MATERIALS
 
@@ -148,3 +155,32 @@ def CloseFile(Config):
     fileObject.close()
     if Config.Verbose:
         print("Done")
+        
+        
+'''        if Object.type == 'MESH':
+            objEl = et.Element("mesh")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)            
+            ExportMesh(Config, Object)
+        
+        if Object.type == 'LAMP':
+            objEl = et.Element("light")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)            
+            ExportLight(Config, Object)
+
+        if Object.type == 'CAMERA':
+            objEl = et.Element("camera")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)            
+            ExportCamera(Config, Object)
+            
+        if Object.type == 'ARMATURE':
+            objEl = et.Element("armature")
+            Config.DocStack[ -1 ].append( objEl )
+            Config.DocStack.append( objEl )
+            objEl.attrib['name'] = LegalName(Object.name)  
+#            ExportArmature(Config, Object)'''

@@ -18,13 +18,13 @@
     public
       constructor Create( AParentList: TP3DObjectList );
       constructor CreateFromDOM( AParentList: TP3DObjectList; Scene: TP3DModelScene; ADOMNode: TDOMElement );
-      procedure Render(world: TMat4; Scene: TP3DModelScene); override;
+      procedure Render( world: TMat4; Scene: TP3DModelScene ); override;
 
-      property Position: TVec3 read FPosition write FPosition;
-      property Direction: TVec3 read FDirection write FDirection;
+      //property Position: TVec3 read FPosition write FPosition;
+      //property Direction: TVec3 read FDirection write FDirection;
       property Color: TVec3 read FColor write FColor;
       property Energy: Float read FEnergy write FEnergy;
-      property HalfVector: TVec3 read FHalfVector write FHalfVector;
+      //property HalfVector: TVec3 read FHalfVector write FHalfVector;
       property LinearAttenuation: Float read FLinearAttenuation write FLinearAttenuation;
       property QuadraticAttenuation: Float read FQuadraticAttenuation write FQuadraticAttenuation;
       property LightRange: Float read GetLightRange;
@@ -95,17 +95,17 @@ begin
       raise Exception.Create( 'Cannot create light from DOM. Either no or an unsupported light type was specified: "' + ADOMNode.GetAttribute( 'type' ) + '"' );
   end;
 
-  AttrS:= ADOMNode.GetAttribute( 'position' );
-  if ( AttrS > '' ) then
-    Position.FromString( AttrS );
+//  AttrS:= ADOMNode.GetAttribute( 'position' );
+//  if ( AttrS > '' ) then
+//    Position.FromString( AttrS );
   AttrS:= ADOMNode.GetAttribute( 'color' );
   if ( AttrS > '' ) then
     Color.FromString( AttrS );
   if ( AttrS > '' ) then
     Position.FromString( AttrS );
-  AttrS:= ADOMNode.GetAttribute( 'direction' );
-  if ( AttrS > '' ) then
-    Direction.FromString( AttrS );
+//  AttrS:= ADOMNode.GetAttribute( 'direction' );
+//  if ( AttrS > '' ) then
+//    Direction.FromString( AttrS );
   AttrS:= ADOMNode.GetAttribute( 'energy' );
   if ( AttrS > '' ) then
     Energy:= StrToFloatDef( AttrS, 0.0 );
@@ -117,11 +117,11 @@ procedure TP3DLight.Render(world: TMat4; Scene: TP3DModelScene);
 begin
   if ( LightType = p3dltSun ) then
     begin
-      world:= world * mat4translate( vec4( Direction * 3, 1 ));
-
+ //     world:= world * mat4translate( vec4( -Direction * 3, 1 ));
+ //     RenderLine3D( vec3( 0 ), Direction * 10, vec4( 0, 1, 1, 1 ));
     end
   else
-    world:= world * mat4translate( vec4( Position * 3, 1 ));
+//    world:= world * mat4translate( vec4( Position, 1 ));
 
   inherited Render( world, Scene );
 end;
@@ -176,12 +176,12 @@ begin
       if ( liPosition in Params ) then
         begin
           //position in viewspace
-          pos:= vec4( Items[ i ].Position, 1 ) * matWorldView;
+{          pos:= vec4( Items[ i ].Position, 1 ) * matWorldView;
           glUniform4f( ActShad.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W );
           pos:= vec4( Items[ i ].Direction, 0 ) * matWorldView;
           glUniform4f( ActShad.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W );
-          pos:= normalize( pos + vec4( 0, 0, 1, 0 ));
-          glUniform4f( ActShad.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W );
+          pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
+          glUniform4f( ActShad.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W );}
           //light_vect = light_position - face_center_position
           //cam_vect = cam_position - face_center_position
           //halfangle_vect = (light_vect.normal() + cam_vect.normal()).normal()

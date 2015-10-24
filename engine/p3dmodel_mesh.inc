@@ -2,7 +2,7 @@
   { TP3DMesh }
 
   type
-    TP3DMesh = class( TP3DRenderableObject )
+    TP3DMesh = class( TP3DDataBlock )
       private
         FBoundingBox: TP3DBoundingBox;
 
@@ -17,7 +17,6 @@
         TexCoords: array of TP3DVec2BufferGL;
 
         Indices: TP3DIntBufferGL;
-        Matrix: TMat4;
         testTex: Integer;
         VBArray: TP3DVertexBufferArray;
         MaterialGroups: TP3DMaterialGroupList;
@@ -35,10 +34,11 @@
         procedure CalcCotangentsFromTangents;
         procedure Calc_Tangents_Cotangents;
         procedure CalcBoundingBox;
-        procedure ClearChildren;
+//        procedure ClearChildren;
 
         property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
     end;
+    TP3DMeshList = specialize gP3DCustomObjectList < TP3DMesh >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -127,12 +127,12 @@ begin
       Vectors.Add( vert );
     end;
 end;
-
+{
 procedure TP3DMesh.ClearChildren;
 begin
   FChildren.Clear;
 end;
-
+}
 procedure TP3DMesh.LoadMaterialFromDOM(DOM: TDOMElement; Scene: TP3DModelScene);
 var
   MatIdx: Integer;
@@ -172,7 +172,7 @@ begin
   VBArray:= TP3DVertexBufferArray.Create;
   MaterialGroups:= TP3DMaterialGroupList.Create;
 
-  FVisible:= True;
+  //FVisible:= True;
 end;
 
 constructor TP3DMesh.CreateFromDOM(AParentList: TP3DObjectList; Scene: TP3DModelScene;
@@ -220,9 +220,9 @@ begin
   while ( Assigned( Element )) do
     begin
       case Element.NodeName of
-        'matrix': Matrix:= LoadMat4FromDOM( Element );
+        'matrix': ;//Matrix:= LoadMat4FromDOM( Element );
         'material': LoadMaterialFromDOM( Element, Scene );
-        'mesh': Children.Add( TP3DMesh.CreateFromDOM( Children, Scene, Element ));
+        'mesh': ;//Children.Add( TP3DMesh.CreateFromDOM( Children, Scene, Element ));
       else
         raise Exception.Create( 'Unknown tag inside Mesh Element: '+ Element.NodeName );
       end;
@@ -277,9 +277,6 @@ var
   end;
 
 begin
-  if ( not Visible ) then
-    exit;
-
   for i:= 0 to MaterialGroups.Count - 1 do
     RenderMaterialGroup( world, i, Scene );
 end;
@@ -305,7 +302,7 @@ var
   end;
 
 begin
-  if (( not Visible ) or ( Idx < 0 ) or ( Idx >= MaterialGroups.Count )) then
+  if (( Idx < 0 ) or ( Idx >= MaterialGroups.Count )) then
     exit;
   Material:= MaterialGroups[ Idx ].Material;
   SetShader( Material.Shader );
@@ -330,7 +327,7 @@ begin
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       end;
-  _world:= Matrix * world;
+  _world:= world;
 
   if ( Positions.Count > 0 ) then
     Positions.SetAttribArray( P3DAttribPosition );

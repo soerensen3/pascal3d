@@ -322,13 +322,18 @@ end;
 
 procedure TP3DObject.SetName(const NewName: TComponentName);
 begin
-
+  if ( ParentList.FindByName( NewName ) < 0 ) then
+    Name:= NewName
+  else
+    raise Exception.Create( Format('Error in TP3DObject.SetName(''%s''). An object with that name already exists!', [NewName ]));
 end;
 
 constructor TP3DObject.Create( AParentList: TP3DObjectList );
 var
   BaseName: String;
 begin
+  if ( AParentList = nil ) then
+    raise Exception.Create( 'Error in TP3DObject.Create(nil). AParentList cant be nil!' );
   inherited Create;
 //  FEngine:= AEngine;
   FParentList:= AParentList;

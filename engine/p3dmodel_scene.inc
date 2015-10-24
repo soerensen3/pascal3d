@@ -5,10 +5,15 @@ type
 
   TP3DModelScene = class( TP3DScene )
     private
+      FDataBlocks: TP3DObjectList;
       FFileWatch: TFileWatch;
       FLights: TP3DLightList;
-      FModelList: TP3DRenderableObjectList;
+      FMeshes: TP3DMeshList;
+      FObjects: TP3DRenderableObjectList;
       FMaterials: TP3DMaterialList;
+
+    protected
+      property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
 
     public
       constructor Create();
@@ -18,7 +23,7 @@ type
 
       procedure Clear;
 
-      function Debug: String;
+//      function Debug: String;
 
       procedure Render; override;
       procedure AppendFromDom(ADOMNode: TDOMElement;
@@ -26,10 +31,11 @@ type
       procedure AppendFile( AFileName: String; const AParent: TP3DRenderableObject = nil );
       procedure PassToShader; override;
 
-      property Children: TP3DRenderableObjectList read FModelList;
+      property Objects: TP3DRenderableObjectList read FObjects;
       property Materials: TP3DMaterialList read FMaterials;
       property FileWatch: TFileWatch read FFileWatch write FFileWatch;
       property Lights: TP3DLightList read FLights write FLights;
+      property Meshes: TP3DMeshList read FMeshes write FMeshes;
   end;
 {$ENDIF}
 
@@ -39,9 +45,11 @@ type
 constructor TP3DModelScene.Create;
 begin
   inherited Create();
-  FModelList:= TP3DRenderableObjectList.Create;
+  FObjects:= TP3DRenderableObjectList.Create;
   FMaterials:= TP3DMaterialList.Create;
   FLights:= TP3DLightList.Create;
+  FMeshes:= TP3DMeshList.Create;
+  FDataBlocks:= TP3DObjectList.Create;
 end;
 
 constructor TP3DModelScene.Create( AFileName: String;
@@ -83,20 +91,24 @@ end;
 
 destructor TP3DModelScene.Destroy;
 begin
-  Lights.Clear( False );
-  Lights.Free;
   Clear;
-
-  FModelList.Free;
-  FMaterials.Free;
+  Lights.Free;
+  Objects.Free;
+  Materials.Free;
+  Meshes.Free;
+  DataBlocks.Free;
   inherited Destroy;
 end;
 
 procedure TP3DModelScene.Clear;
 begin
-  FModelList.Clear;
+  Objects.Clear( True );
+  Lights.Clear( False );
+  Materials.Clear( False );
+  Meshes.Clear( False );
+  DataBlocks.Clear( True );
 end;
-
+{
 function TP3DModelScene.Debug: String;
 var
   Indent: Integer;
@@ -199,11 +211,11 @@ begin
   Indent:= 0;
   Result:= DebugList( Children );
 end;
-
+}
 procedure TP3DModelScene.Render;
 begin
   inherited;
-  Children.Render( Mat4Identity, Self );
+  Objects.Render( Mat4Identity, Self );
 end;
 
 procedure TP3DModelScene.AppendFromDom(ADOMNode: TDOMElement;
@@ -235,14 +247,17 @@ begin
   if ( Assigned( AParent )) then
     Parent:= AParent.Children
   else
-    Parent:= Children;
+    Parent:= Objects;
 
   while ( Assigned( Element )) do
     begin
       case Element.NodeName of
-        'mesh': Parent.Add( TP3DMesh.CreateFromDOM( Parent, Self, Element ));
-        'material': LoadMaterial;
-        'light': Parent.Add( TP3DLight.CreateFromDOM( Parent, Self, Element ));
+        'object': Parent.Add( TP3DRenderableObject.CreateFromDOM( Parent, Self, Element ));
+        //'mesh': Meshes.Add( TP3DMesh.CreateFromDOM( DataBlocks, Self, Element ));
+        //'material': LoadMaterial;
+        //'light': Lights.Add( TP3DLight.CreateFromDOM( DataBlocks, Self, Element ));
+      else
+        WriteLn( Format( 'Warning unsupported type "%s". Skipping.', [ Element.NodeName ]));
       end;
       Element:= TDOMElement( Element.NextSibling );
     end;

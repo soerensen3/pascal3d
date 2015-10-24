@@ -1,6 +1,6 @@
 {$IFDEF INTERFACE}
 
-TP3DCustomControlList = specialize TP3DCustomObjectList < TP3DGraphicControl >;
+TP3DCustomControlList = specialize gP3DCustomObjectList < TP3DGraphicControl >;
 
 { TP3DControlList }
 

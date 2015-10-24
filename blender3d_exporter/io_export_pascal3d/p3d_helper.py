@@ -37,6 +37,9 @@ globalUVLayerNames = {}
 globalTangents = {}
 globalCotangents = {}
 globalMaterials = set([])
+globalMeshes = set([])
+globalLamps = set([])
+globalCameras = set([])
 globalLoopVertex = {}
 
 def veckey3d(v):

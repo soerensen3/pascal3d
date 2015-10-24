@@ -21,7 +21,6 @@ uses
   Math,
   p3dMath,
   p3dmodel,
-  vars,
   p3dinput,
   p3dscene,
   p3dframebuffer,
@@ -54,23 +53,25 @@ uses
 {$INCLUDE inputscene.inc}
 
 Begin
+  SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
+                    exOverflow, exUnderflow, exPrecision]);
+
   P3DApplication.Initialize;
 
-  mainwnd:= TSDLWindow.Create;
-  P3DApplication.MainWindow:= mainwnd;
-  mainwnd.OnInit:= @Init;
-  mainwnd.OnDeinit:= @DeInit;
-  Init( mainwnd );
+  P3DApplication.MainWindow:= TSDLWindow.Create;
+  P3DApplication.MainWindow.OnInit:= @Init;
+  P3DApplication.MainWindow.OnDeinit:= @DeInit;
+  Init( P3DApplication.MainWindow );
 
-  mainwnd.OnRender:= @Render;
+  P3DApplication.MainWindow.OnRender:= @Render;
   P3DApplication.OnMouseButton:= @OnMouseButton;
   P3DApplication.OnMouseMotion:= @OnMouseMotion;
   P3DApplication.OnMouseWheel:= @OnMouseWheel;
   P3DApplication.OnKey:= @OnKey;
   P3DApplication.OnInput:= @OnInput;
-  mainwnd.OnResize:= @ResizeWnd;
+  P3DApplication.MainWindow.OnResize:= @ResizeWnd;
 
 
   P3DApplication.Run;
-  mainwnd.Free;
+  P3DApplication.MainWindow.Free;
 End.

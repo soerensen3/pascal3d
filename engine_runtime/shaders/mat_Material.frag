@@ -2375,11 +2375,11 @@ const float cons60 = float(1.000000);
 void main(void)
 {
 	vec3 facingnormal = (gl_FrontFacing)? varnormal: -varnormal;
-	vec3 tmp2;
+	vec3 tmp2;//Normal
 	vec3 tmp4;
-	vec3 tmp5;
+	vec3 tmp5;//ColorBase
 	vec3 tmp6;
-	vec3 tmp9;
+	vec3 tmp9;//Light
 	float tmp10;
 	float tmp11;
 	float tmp14;

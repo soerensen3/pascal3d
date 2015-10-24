@@ -17,6 +17,8 @@ end;
 
 procedure OnKey( Sender: TP3DApplication; Event: TSDL_KeyboardEvent );
 begin
+  if ( Boolean( Event._repeat )) then
+    exit;
   if ( Event.type_ = SDL_KEYDOWN ) then
     begin
       if ( Event.keysym.scancode = SDL_SCANCODE_ESCAPE ) then
@@ -38,6 +40,7 @@ begin
       if ( Event.keysym.scancode in [ SDL_SCANCODE_LCTRL, SDL_SCANCODE_RCTRL ]) then
         begin
           CatchMouse:= not CatchMouse;
+          WriteLn( 'Catch mouse: ', BoolToStr( CatchMouse, 'Yes', 'No' ));
           SDL_SetRelativeMouseMode( TSDL_BOOL( CatchMouse ));
         end;
     end;

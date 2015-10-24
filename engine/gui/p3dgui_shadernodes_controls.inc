@@ -35,7 +35,7 @@
       property Socket: TP3DNodeSocket read FSocket write FSocket;
   end;
 
-  TP3DNodeSocketControlSimpleList = specialize TP3DCustomObjectList < TP3DNodeSocketControlSimple >;
+  TP3DNodeSocketControlSimpleList = specialize gP3DCustomObjectList < TP3DNodeSocketControlSimple >;
 
   { TP3DNodeSocketVectorEdit }
 

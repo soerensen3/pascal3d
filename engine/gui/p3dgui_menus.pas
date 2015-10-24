@@ -12,7 +12,7 @@ interface
 
     { TP3DMenuItemList }
 
-    TP3DCustomMenuItemList = specialize TP3DCustomObjectList < TP3DMenuItem >;
+    TP3DCustomMenuItemList = specialize gP3DCustomObjectList < TP3DMenuItem >;
     TP3DMenuItemList = class( TP3DCustomMenuItemList )
       private
         FParent: TP3DGraphicControl;

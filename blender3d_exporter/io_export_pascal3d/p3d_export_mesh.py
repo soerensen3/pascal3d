@@ -11,6 +11,20 @@ from . p3d_helper import *
 
 from xml.etree import cElementTree as et
 
+def ExportMeshes(Config):
+    global globalMeshes
+    print("exporting meshes")
+    print( globalMeshes )
+    for mesh in globalMeshes:
+        print(mesh.name)
+        objEl = et.Element("mesh")
+        Config.DocStack[ -1 ].append( objEl )
+        Config.DocStack.append( objEl )
+        objEl.attrib['name'] = LegalName(mesh.name)  
+        ExportMesh(Config,mesh)
+
+        Config.DocStack.pop()
+
 def ExportMesh(Config, Object):
     print("Exporting Mesh: " + Object.name )
     
@@ -31,8 +45,6 @@ def ExportMesh(Config, Object):
     #Mesh.quadToTriangle( 0 )
 
     meshEl = Config.DocStack[ -1 ]
-    
-    WriteMatrix(Config,Object.matrix_local);
     
     #bmesh.ops.triangulate(Mesh, faces=Mesh.polygons)
 

@@ -57,7 +57,7 @@ type
     Material: TP3DMaterial;
   end;
 
-  TP3DMaterialGroupList = specialize TP3DCustomObjectList < TP3DMaterialGroup >;
+  TP3DMaterialGroupList = specialize gP3DCustomObjectList < TP3DMaterialGroup >;
 
   TP3DFaceVertex = record
     v, n, t, c: Integer;
@@ -150,23 +150,40 @@ type
     Min, Max, Center: TVec3;
   end;
 
+  { TP3DDataBlock }
+
+  TP3DDataBlock = class ( TP3DObject )
+    procedure Render( world: TMat4; Scene: TP3DModelScene ); virtual; abstract;
+  end;
+
   { TP3DRenderableObject }
 
   TP3DRenderableObject = class ( TP3DObject )
     private
       FChildren: TP3DRenderableObjectList;
+      FData: TP3DDataBlock;
       FVisible: Boolean;
 
+      function GetPosition: TVec3;
+      procedure SetPosition(AValue: TVec3);
+
     public
+      Matrix: TMat4;
+
       constructor Create( AParentList: TP3DObjectList );
+      constructor CreateFromDOM( AParentList: TP3DObjectList; Scene: TP3DModelScene; ADOMNode: TDOMElement);
 
       destructor Destroy; override;
       procedure Render( world: TMat4; Scene: TP3DModelScene ); virtual;
 
+      property Position: TVec3 read GetPosition write SetPosition;
+
     published
       property Children: TP3DRenderableObjectList read FChildren;
       property Visible: Boolean read FVisible write FVisible;
+      property Data: TP3DDataBlock read FData write FData;
   end;
+
 
  {$DEFINE INTERFACE}
  {$INCLUDE p3dmodel_mesh.inc}
@@ -377,10 +394,45 @@ begin
       end;
 end;
 
+function TP3DRenderableObject.GetPosition: TVec3;
+begin
+  Result:= vec3( Matrix._20, Matrix._21, Matrix._22 );
+end;
+
+procedure TP3DRenderableObject.SetPosition(AValue: TVec3);
+begin
+  Matrix._20:= AValue.X;
+  Matrix._21:= AValue.Y;
+  Matrix._22:= AValue.Z;
+end;
+
 constructor TP3DRenderableObject.Create( AParentList: TP3DObjectList );
 begin
   inherited;
   FChildren:= TP3DRenderableObjectList.Create;
+end;
+
+constructor TP3DRenderableObject.CreateFromDOM(AParentList: TP3DObjectList;
+  Scene: TP3DModelScene; ADOMNode: TDOMElement);
+var
+  Element: TDOMElement;
+  Ext: String;
+  Idx: Integer;
+  F: TFileStream;
+begin
+  Create( AParentList );
+  Name:= ADOMNode.GetAttribute( 'name' );
+
+  Element:= TDOMElement( ADOMNode.FirstChild );
+  while ( Assigned( Element )) do
+    begin
+      case Element.NodeName of
+        'matrix': Matrix:= LoadMat4FromDOM( Element );
+      else
+        raise Exception.Create( 'Unknown tag inside Object Element: '+ Element.NodeName );
+      end;
+      Element:= TDOMElement( Element.NextSibling );
+    end;
 end;
 
 

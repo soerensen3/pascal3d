@@ -315,7 +315,7 @@ end;}
 
 procedure RenderLine3D(p1, p2: TVec3; Color: TVec4; const Thickness: Single);
 begin
-
+  RenderLines3D([ p1, p2 ], Color, Thickness );
 end;
 
 procedure RenderLines3D(points: array of TVec3; Color: TVec4;

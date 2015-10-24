@@ -47,18 +47,18 @@ begin
   Result:= False;
   SetCurrentDir( pathmodels );
 
-  mainscene.AppendFile( 'island.blend.p3d' );
+  mainscene.AppendFile( 'rocks.p3d' ); //'island.blend.p3d' );
   //TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
-  WriteLn( mainscene.Children.OutputDebugInfo );
+  WriteLn( mainscene.Objects.OutputDebugInfo );
   //for i:= 0 to mainscene.Children.Count - 1 do
   //  WriteLn( mainscene.Children[ i ].ClassName + ': ' + mainscene.Children[ i ].Name );
-  for i:= 0 to mainscene.Lights.Count - 1 do
+  {for i:= 0 to mainscene.Lights.Count - 1 do
     begin
       WriteLn( mainscene.Lights[ i ].Direction.ToString());
       //mainscene.Lights[ i ].Position:= -mainscene.Lights[ i ].Direction * 10;
       mainscene.Lights[ i ].LinearAttenuation:= 0;
       mainscene.AppendFile( 'bulb.p3d', mainscene.Lights[ i ]);
-    end;
+    end;}
   //LOAD MODELS
 end;
 
