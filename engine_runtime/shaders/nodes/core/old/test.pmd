@@ -1,0 +1,35 @@
+---
+node: lib_maps
+---
+```{name="CODE", type="shader", restrict=declaration}
+uniform mat4 world;
+uniform mat4 view;
+uniform mat3 matnormal;
+uniform mat4 proj;
+uniform vec3 campos;
+vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec4 BumpMapNormal)
+{
+    //BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
+    vec4 NewNormal;
+    mat3 TBN = mat3(Tangent.xyz, Cotangent.xyz, Normal.xyz);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 1 );
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+vec4 color_add( vec4 v1, vec4 v2 ){
+  return v1 + v2;
+}
+vec4 color_sub( vec4 v1, vec4 v2 ){
+  return v1 - v2;
+}
+vec4 color_mul( vec4 v1, vec4 v2 ){
+  return v1 * v2;
+}
+vec4 color_div( vec4 v1, vec4 v2 ){
+  return v1 / v2;
+}
+vec4 color_mix( vec4 v1, vec4 v2 ){
+  return v2;
+}
+```
+

@@ -34,7 +34,7 @@ if "bpy" in locals():
         importlib.reload(p3d_helper)
         
 
-import bpy
+import bpy, os
 
 from bpy.utils import (
         register_module,
@@ -164,7 +164,7 @@ class P3DExporter(bpy.types.Operator):
 
     def execute(self, context):
         #Append .model
-        FilePath = bpy.path.ensure_ext(self.filepath, ".p3d")
+        FilePath = self.filepath
 
         Config = P3DExporterSettings(context,
                                      FilePath,
@@ -185,7 +185,7 @@ class P3DExporter(bpy.types.Operator):
 
     def invoke(self, context, event):
         if not self.filepath:
-            self.filepath = bpy.path.ensure_ext(bpy.data.filepath, ".p3d")
+            self.filepath = os.path.splitext( bpy.data.filepath )[ 0 ] + ".p3d"
         WindowManager = context.window_manager
         WindowManager.fileselect_add(self)
         return {"RUNNING_MODAL"}

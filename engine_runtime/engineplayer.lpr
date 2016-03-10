@@ -39,8 +39,10 @@ uses
   p3dNodes,
   p3dviewport,
   p3dgenerics,
+  p3dmarkdown,
   XMLRead,
   DOM,
+  p3dlogging,
   p3dgui_sceneviewer;
 
 {$DEFINE INTERFACE}
@@ -53,15 +55,12 @@ uses
 {$INCLUDE inputscene.inc}
 
 Begin
-  SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
-                    exOverflow, exUnderflow, exPrecision]);
-
-  P3DApplication.Initialize;
-
+  //SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
+  //                  exOverflow, exUnderflow, exPrecision]);
+  P3DLog.FileName:= 'engineplayer.xml';
   P3DApplication.MainWindow:= TSDLWindow.Create;
-  P3DApplication.MainWindow.OnInit:= @Init;
-  P3DApplication.MainWindow.OnDeinit:= @DeInit;
-  Init( P3DApplication.MainWindow );
+  P3DApplication.OnInit:= @Init;
+  P3DApplication.OnDeinit:= @DeInit;
 
   P3DApplication.MainWindow.OnRender:= @Render;
   P3DApplication.OnMouseButton:= @OnMouseButton;
@@ -71,7 +70,9 @@ Begin
   P3DApplication.OnInput:= @OnInput;
   P3DApplication.MainWindow.OnResize:= @ResizeWnd;
 
+  P3DApplication.Initialize;
 
   P3DApplication.Run;
+
   P3DApplication.MainWindow.Free;
 End.

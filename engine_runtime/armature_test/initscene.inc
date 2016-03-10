@@ -1,3 +1,7 @@
+//TODO: LOAD DATABLOCKS FIRST, THEN LOAD OBJECTS
+
+//TODO: CHECK IF BOUNDING BOX IS CALCULATED CORRECTLY
+
 var
   mainscene: TP3DModelScene;
   maincamera: TP3DCamera;
@@ -25,7 +29,8 @@ begin
   InitGeom( CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )),
             CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )));
   mainscene.Shader:= shadersimple;
-  P3DShaderLib.LoadLibraryPath( 'nodes/core/', '*.xml' );
+  P3DShaderLib.LoadLibraryPath( 'nodes/core/', '*.pmd' );
+
   for mat in mainscene.Materials do
     mat.BuildShader;
   //LOAD SHADERS
@@ -42,23 +47,42 @@ end;
 
 function LoadModels: Boolean;
 var
-  i: Integer;
+  Obj, i: Integer;
+  BBox: TP3DBoundingBox;
 begin
   Result:= False;
   SetCurrentDir( pathmodels );
 
-  mainscene.AppendFile( 'rocks.p3d' ); //'island.blend.p3d' );
+  //mainscene.AppendFile( 'lights.p3d' );
+
+  //mainscene.AppendFile( 'makehuman.p3d' );
+  mainscene.AppendFile( 'rocks.p3d' );
+
+  BBox:= mainscene.Objects.CalcBoundingBox();
+  //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
+
+  mainscene.AppendFile( 'bbox.p3d' );
+
+  mainscene.AppendFile( 'grid.p3d' );
+
+  Obj:= mainscene.Objects.FindByName( 'BBox' );
+  if ( Obj >= 0 ) then
+    with ( mainscene.Objects[ Obj ] as TP3DRenderableObject ) do
+      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
+
   //TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
   WriteLn( mainscene.Objects.OutputDebugInfo );
   //for i:= 0 to mainscene.Children.Count - 1 do
   //  WriteLn( mainscene.Children[ i ].ClassName + ': ' + mainscene.Children[ i ].Name );
-  {for i:= 0 to mainscene.Lights.Count - 1 do
-    begin
-      WriteLn( mainscene.Lights[ i ].Direction.ToString());
-      //mainscene.Lights[ i ].Position:= -mainscene.Lights[ i ].Direction * 10;
-      mainscene.Lights[ i ].LinearAttenuation:= 0;
-      mainscene.AppendFile( 'bulb.p3d', mainscene.Lights[ i ]);
-    end;}
+  {for i:= 0 to mainscene.Objects.Count - 1 do
+    if ( TP3DRenderableObject( mainscene.Objects[ i ]).Data is TP3DLight ) then
+      begin
+        //WriteLn( mainscene.Lights[ i ].Direction.ToString());
+
+        //TP3DRenderableObject( mainscene.Objects[ i ]).Position:= -mainscene.Lights[ i ].Position;
+        //mainscene.Lights[ i ].LinearAttenuation:= 0;
+        mainscene.AppendFile( 'bulb.p3d', TP3DRenderableObject( mainscene.Objects[ i ]), True );
+      end;}
   //LOAD MODELS
 end;
 
@@ -84,14 +108,14 @@ begin
   //FREE PHYSICS
 end;
 
-procedure Init( Sender: TSDLWindow );
+procedure Init( Sender: TP3DApplication );
 begin
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
   pathfonts:= ExtractFilePath( ParamStr( 0 )) + pathfonts;
 
-  Sender.Width:= 800;
-  Sender.Height:= 600;
+  Sender.MainWindow.Width:= 800;
+  Sender.MainWindow.Height:= 600;
 
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -112,14 +136,12 @@ begin
   glCullFace( GL_BACK );
 end;
 
-procedure DeInit( Sender: TSDLWindow );
+procedure DeInit( Sender: TP3DApplication );
 begin
-  mainscene.Free;
-  maincamera.Free;
-
   DeInitPhysics;
-
   UnloadShader;
   UnloadModels;
+  maincamera.Free;
+  mainscene.Free;
 end;
 

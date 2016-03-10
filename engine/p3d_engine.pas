@@ -11,7 +11,7 @@ uses
   p3dframebuffer, p3dcamera, p3dscene, p3dwindow, p3dtexture, p3dfilewatch, 
   p3dskybox, p3dgeometry, p3dobjects, p3dbmpfont, p3dbmpfontfile, p3dbuffers, 
   p3dviewport, p3dfileutil, p3dcanvas, p3dSDLApplication, p3dNodes, 
-  p3dgenerics, p3dtext, LazarusPackageIntf;
+  p3dgenerics, p3dtext, p3dlogging, p3dmarkdown, LazarusPackageIntf;
 
 implementation
 

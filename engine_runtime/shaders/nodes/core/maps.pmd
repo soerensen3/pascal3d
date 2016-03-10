@@ -1,0 +1,183 @@
+---
+node: lib_maps
+---
+```{name="CODE", type="shader", restrict="declaration"}
+uniform mat4 world;
+uniform mat4 view;
+uniform mat3 matnormal;
+uniform mat4 proj;
+uniform vec3 campos;
+vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec4 BumpMapNormal)
+{
+    //BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
+    vec4 NewNormal;
+    mat3 TBN = mat3(Tangent.xyz, Cotangent.xyz, Normal.xyz);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 1 );
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+
+vec4 color_add( vec4 v1, vec4 v2 ){
+  return v1 + v2;
+}
+
+vec4 color_sub( vec4 v1, vec4 v2 ){
+  return v1 - v2;
+}
+
+vec4 color_mul( vec4 v1, vec4 v2 ){
+  return v1 * v2;
+}
+
+vec4 color_div( vec4 v1, vec4 v2 ){
+  return v1 / v2;
+}
+
+vec4 color_mix( vec4 v1, vec4 v2 ){
+  return v2;
+}
+```
+
+---
+node: TC_Init
+input: {name="Location", type="int"}
+input: {name="TexCoordIndex", type="int"}
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+layout ( location = $Location$ ) in vec4 TexCoord$TexCoordIndex$;
+out vec4 vTexCoord$TexCoordIndex$;
+```
+
+```{restrict="vshader,main"}
+vTexCoord$TexCoordIndex$ = TexCoord$TexCoordIndex$;
+```
+
+```{restrict="fshader,declaration"}
+in vec4 vTexCoord$TexCoordIndex$;
+```
+
+---
+node: Pass_Init
+---
+
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+layout ( location = 0 ) in vec4 Position;
+layout ( location = 2 ) in vec4 Normal;
+layout ( location = 3 ) in vec4 Color;
+layout ( location = 6 ) in vec4 Cotangent;
+layout ( location = 7 ) in vec4 Tangent;
+out vec4 vNormal;
+out vec4 vColor;
+out vec4 vTangent;
+out vec4 vCotangent;
+out vec4 vPosition;
+out vec3 cameye;
+```
+
+```{restrict="vshader,main"}
+vPosition = Position;
+vColor = Color;
+vNormal = world * vec4( Normal.xyz, 0 );
+vTangent = world * vec4( Tangent.xyz, 0 );
+vCotangent = world * vec4( Cotangent.xyz, 0 );
+```
+
+```{restrict="fshader,declaration"}
+in vec4 vNormal;
+in vec4 vColor;
+in vec4 vTangent;
+in vec4 vCotangent;
+in vec4 vPosition;
+in vec3 cameye;
+out vec4 FragColor;
+```
+
+```{restrict="fshader,main"}
+vec4 Normal = vec4( 0, 0, 1, 1 );
+vec4 Color = vec4( 1 );
+vec4 Specular = vec4( 1 );
+```
+---
+node: Pass_Combine
+---
+
+```{name="mix", type="text" restrict="main"}
+color_mix```
+
+```{name="multiply", type="text" restrict="main"}
+color_mul```
+
+```{name="add", type="text" restrict="main"}
+color_add```
+
+```{name="subtract", type="text" restrict=main}
+color_sub```
+
+---
+node: Pass_Read
+input: {name="TexCoordIndex", type="int"}
+input: {name="Index", type="int"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,declaration"}
+uniform sampler2D tex$Index$;
+```
+
+```{restrict="fshader,main"}
+vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$TexCoordIndex$.xy );
+```
+
+---
+node: Pass_Normal
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz *2 - 1, 1 )), $Factor$ );```
+
+---
+node: Pass_Diffuse
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+Color= mix( Color, $Mode$( Color, val$Index$ ), $Factor$ );```
+
+
+---
+node: Pass_Specular
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+Specular= mix( Specular, $Mode$( Specular, val$Index$ ), $Factor$ );```
+
+---
+node: Pass_Mix
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
+Normal = normalize( view * vec4( Normal.xyz, 0 ));
+```
+
+---
+node: Pass_Final
+---
+
+```{name="CODE", type="shader", restrict="vshader,main"}
+cameye = - ( view * Position ).xyz;
+vPosition = view * world * Position;
+gl_Position = proj * vPosition;
+```
+
+```{restrict="fshader,main"}
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+```
+

@@ -203,6 +203,9 @@ var
 
 implementation
 
+uses
+  p3dmarkdown;
+
 
 
 { TP3DShaderNodeTree }
@@ -349,6 +352,12 @@ end;
 { TP3DShaderNodeLibrary }
 
 procedure TP3DShaderNodeLibrary.LoadLibrary(FileName: String);
+begin
+  ParseMarkdownFileAppend( FileName, Self );
+end;
+
+{
+//XML deprecated
 var
   F: TXMLDocument;
   i: Integer;
@@ -365,6 +374,7 @@ begin
 
   F.Free;
 end;
+}
 
 procedure TP3DShaderNodeLibrary.LoadLibraryPath(PathName: String; const Ext: String );
 var

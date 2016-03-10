@@ -7,7 +7,7 @@ def ExportMaterials(Config):
     for mat in globalMaterials: #bpy.data.materials:    
         matEl= et.Element("material")
         Config.DocStack[ -1 ].append( matEl )
-        matEl.attrib['name'] = mat.name   
+        matEl.attrib['name'] = 'material_' + LegalName( mat.name )
         
         # COLORS
 #        amb = mat.ambient

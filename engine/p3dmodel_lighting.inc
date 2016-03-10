@@ -2,15 +2,15 @@
   { TP3DLight }
 
   TP3DLightType = ( p3dltPoint = 0, p3dltSun = 1, p3dltSpot = 2 );
-  TP3DLight = class ( TP3DRenderableObject )
+  TP3DLight = class ( TP3DDataBlock )
     private
       FColor: TVec3;
-      FDirection: TVec3;
+//      FDirection: TVec3;
       FEnergy: Float;
       FHalfVector: TVec3;
       FLightType: TP3DLightType;
       FLinearAttenuation: Float;
-      FPosition: TVec3;
+//      FPosition: TVec3;
       FQuadraticAttenuation: Float;
 
       function GetLightRange: Float;
@@ -18,7 +18,9 @@
     public
       constructor Create( AParentList: TP3DObjectList );
       constructor CreateFromDOM( AParentList: TP3DObjectList; Scene: TP3DModelScene; ADOMNode: TDOMElement );
-      procedure Render( world: TMat4; Scene: TP3DModelScene ); override;
+
+      procedure Render( world: TMat4; Scene: TP3DModelScene; RenderObject: TP3DRenderableObject ); override;
+      procedure LoadFromDOM( Scene: TP3DModelScene; ADOMNode: TDOMElement ); override;
 
       //property Position: TVec3 read FPosition write FPosition;
       //property Direction: TVec3 read FDirection write FDirection;
@@ -35,10 +37,13 @@
 
   TP3DLightInformation = ( liLightParams, liPosition );
   TP3DLightInformationSet = set of TP3DLightInformation;
+
+  { TP3DLightList }
+
   TP3DLightList = class ( TP3DCustomLightList )
     procedure Delete( Index: Integer ); override;
 
-    procedure PassToActiveShader( Position: TVec3; MaxLights: Integer; matWorldView: TMat4; Params: TP3DLightInformationSet );
+    procedure PassToActiveShader( MaxLights: Integer; Scene: TP3DModelScene; matWorld, matView: TMat4; Params: TP3DLightInformationSet );
   end;
 
   function calculateAttenuation( LightSources: TP3DLightList; i: Integer; dist: Float ): Float;
@@ -47,12 +52,7 @@
 
 {$IFDEF IMPLEMENTATION}
 
-function calculateAttenuation( LightSources: TP3DLightList; i: Integer; dist: Float ): Float;
-begin
-  Result:= ( 1.0 / ( max( 0.01, //LightSources[i].constantAttenuation + //useless
-                     LightSources[ i ].linearAttenuation * dist +
-                     LightSources[ i ].quadraticAttenuation * dist * dist )));
-end;
+
 { TP3DLight }
 
 function TP3DLight.GetLightRange: Float;
@@ -72,16 +72,31 @@ constructor TP3DLight.Create(AParentList: TP3DObjectList);
 begin
   inherited Create( AParentList );
   FLinearAttenuation:= 0.1;
-  Visible:= True;
 end;
 
 constructor TP3DLight.CreateFromDOM( AParentList: TP3DObjectList;
   Scene: TP3DModelScene; ADOMNode: TDOMElement );
+begin
+  Create( AParentList );
+  LoadFromDOM( Scene, ADOMNode );
+end;
+
+procedure TP3DLight.Render(world: TMat4; Scene: TP3DModelScene;
+  RenderObject: TP3DRenderableObject);
+begin
+  if ( LightType = p3dltSun ) then
+    begin
+      world:= mat4translate( vec4( -RenderObject.Direction * 3, 1 )) * world;
+      RenderLine3D( vec3( 0 ), RenderObject.Direction * 10, vec4( 0, 1, 1, 1 ));
+    end
+  else
+    world:= RenderObject.Matrix * world;
+end;
+
+procedure TP3DLight.LoadFromDOM(Scene: TP3DModelScene; ADOMNode: TDOMElement);
 var
   AttrS: DOMString;
 begin
-  Create( AParentList );
-
   Name:= ADOMNode.GetAttribute( 'name' );
 
   case ADOMNode.GetAttribute( 'type' ) of
@@ -101,8 +116,8 @@ begin
   AttrS:= ADOMNode.GetAttribute( 'color' );
   if ( AttrS > '' ) then
     Color.FromString( AttrS );
-  if ( AttrS > '' ) then
-    Position.FromString( AttrS );
+//  if ( AttrS > '' ) then
+//    Position.FromString( AttrS );
 //  AttrS:= ADOMNode.GetAttribute( 'direction' );
 //  if ( AttrS > '' ) then
 //    Direction.FromString( AttrS );
@@ -111,19 +126,7 @@ begin
     Energy:= StrToFloatDef( AttrS, 0.0 );
 
   Scene.Lights.Add( Self );
-end;
-
-procedure TP3DLight.Render(world: TMat4; Scene: TP3DModelScene);
-begin
-  if ( LightType = p3dltSun ) then
-    begin
- //     world:= world * mat4translate( vec4( -Direction * 3, 1 ));
- //     RenderLine3D( vec3( 0 ), Direction * 10, vec4( 0, 1, 1, 1 ));
-    end
-  else
-//    world:= world * mat4translate( vec4( Position, 1 ));
-
-  inherited Render( world, Scene );
+  FileName:= '';
 end;
 
 { TP3DLightList }
@@ -135,13 +138,15 @@ begin
 end;
 
 
-procedure TP3DLightList.PassToActiveShader(Position: TVec3; MaxLights: Integer;
-  matWorldView: TMat4; Params: TP3DLightInformationSet);
+procedure TP3DLightList.PassToActiveShader(MaxLights: Integer;
+  Scene: TP3DModelScene; matWorld, matView: TMat4;
+  Params: TP3DLightInformationSet);
 var
   numLights: Integer;
   i: Integer;
   l: String;
   pos: TVec4;
+  obj: TP3DRenderableObject;
 begin
   if ( not Assigned( ActShad )) then
     exit;
@@ -176,15 +181,19 @@ begin
       if ( liPosition in Params ) then
         begin
           //position in viewspace
-{          pos:= vec4( Items[ i ].Position, 1 ) * matWorldView;
-          glUniform4f( ActShad.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W );
-          pos:= vec4( Items[ i ].Direction, 0 ) * matWorldView;
-          glUniform4f( ActShad.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W );
-          pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
-          glUniform4f( ActShad.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W );}
-          //light_vect = light_position - face_center_position
-          //cam_vect = cam_position - face_center_position
-          //halfangle_vect = (light_vect.normal() + cam_vect.normal()).normal()
+          obj:= TP3DRenderableObject( Scene.Objects[ Scene.Objects.FindByName( Items[ i ].Name )]);  //TODO: replace buggy PassToActiveShader
+          with ( obj ) do
+            begin
+              pos:= matWorld * matView * vec4( Position, 1 );
+              glUniform4f( ActShad.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W );
+              pos:= normalize( matWorld * matView * vec4( Direction, 0 ));
+              glUniform4f( ActShad.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W );
+              pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
+              glUniform4f( ActShad.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W );
+              //light_vect = light_position - face_center_position
+              //cam_vect = cam_position - face_center_position
+              //halfangle_vect = (light_vect.normal() + cam_vect.normal()).normal()
+            end;
         end;
     end;
 end;

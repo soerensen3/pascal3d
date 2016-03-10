@@ -2,8 +2,8 @@ import mathutils
 from . p3d_helper import *
 
 def ExportObject(Config, Object):
-    WriteMatrix(Config,Object.matrix_local);
-    Config.DocStack[ -1 ].attrib["data"] = str( Object.data.name ).lower()
+    WriteMatrix(Config,Object.matrix_world);
+    Config.DocStack[ -1 ].attrib["data"] = str( Object.data.name )
     Config.DocStack[ -1 ].attrib["type"] = str( Object.type ).lower()
     
 def ExportLights(Config):
@@ -12,7 +12,7 @@ def ExportLights(Config):
         objEl = et.Element("light")
         Config.DocStack[ -1 ].append( objEl )
         Config.DocStack.append( objEl )
-        objEl.attrib['name'] = LegalName(light.name)  
+        objEl.attrib['name'] = 'light_' + LegalName( light.name )  
         ExportLight(Config,light)
 
         Config.DocStack.pop()
@@ -38,7 +38,7 @@ def ExportCameras(Config):
         objEl = et.Element("camera")
         Config.DocStack[ -1 ].append( objEl )
         Config.DocStack.append( objEl )
-        objEl.attrib['name'] = LegalName(cam.name)  
+        objEl.attrib['name'] = 'camera_' + LegalName( cam.name )
         ExportCamera(Config,cam)
 
         Config.DocStack.pop()

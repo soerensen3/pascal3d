@@ -34,8 +34,6 @@ type
     private
       fFullScreen: Boolean;
       FOnClose: TWindowEvent;
-      fOnDeinit: TWindowEvent;
-      fOnInit: TWindowEvent;
       fOnInput: TWindowEvent;
       FOnKey: TWindowEventKey;
       FOnMouseButton: TWindowEventMouseButton;
@@ -76,8 +74,7 @@ type
       function GetRenderer: PSDL_Renderer; inline;
 
       property OnRender: TWindowEvent read fOnRender write fOnRender;
-      property OnInit: TWindowEvent read fOnInit write fOnInit;
-      property OnDeinit: TWindowEvent read fOnDeinit write fOnDeinit;
+
       property OnMouseMotion: TWindowEventMouseMotion read FOnMouseMotion write FOnMouseMotion;
       property OnMouseButton: TWindowEventMouseButton read FOnMouseButton write FOnMouseButton;
       property OnMouseWheel: TWindowEventMouseWheel read FOnMouseWheel write FOnMouseWheel;

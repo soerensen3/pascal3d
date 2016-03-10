@@ -4,8 +4,6 @@
   type
     TP3DMesh = class( TP3DDataBlock )
       private
-        FBoundingBox: TP3DBoundingBox;
-
         procedure LoadMaterialFromDOM( DOM: TDOMElement; Scene: TP3DModelScene );
 
       public
@@ -26,17 +24,16 @@
 
         destructor Destroy; override;
 
-        procedure Render( world: TMat4; Scene: TP3DModelScene ); override;
+        procedure LoadFromDOM( Scene: TP3DModelScene; ADOMNode: TDOMElement ); override;
+        procedure Render( world: TMat4; Scene: TP3DModelScene; RenderObject: TP3DRenderableObject ); override;
         procedure RenderMaterialGroup( world: TMat4; Idx: Integer; Scene: TP3DModelScene );
         procedure UnpackBuffers;
         procedure ClearVBO;
         procedure CreateVBO;
         procedure CalcCotangentsFromTangents;
         procedure Calc_Tangents_Cotangents;
-        procedure CalcBoundingBox;
+        function CalcBoundingBox(): TP3DBoundingBox; override;
 //        procedure ClearChildren;
-
-        property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
     end;
     TP3DMeshList = specialize gP3DCustomObjectList < TP3DMesh >;
 {$ENDIF}
@@ -127,6 +124,24 @@ begin
       Vectors.Add( vert );
     end;
 end;
+
+{ TP3DDataBlock }
+
+constructor TP3DDataBlock.Create(AParentList: TP3DObjectList);
+begin
+  inherited;
+  FileName:= '<empty>';
+  BoundingBox:= P3DInvalidBoundingBox;
+end;
+
+function TP3DDataBlock.CalcBoundingBox: TP3DBoundingBox;
+begin
+  FBoundingBox.Center:= vec3( 0 );
+  FBoundingBox.Max:= vec3( 0 );
+  FBoundingBox.Min:= vec3( 0 );
+  Result:= BoundingBox;
+end;
+
 {
 procedure TP3DMesh.ClearChildren;
 begin
@@ -151,7 +166,7 @@ begin
     MaterialGroup.Material:= Scene.Materials[ MatIdx ]
   else
     begin
-      MaterialGroup.Material:= TP3DMaterial.Create;
+      MaterialGroup.Material:= TP3DMaterial.Create( Scene.DataBlocks );
       MaterialGroup.Material.Name:= AName;
       Scene.Materials.Add( MaterialGroup.Material );
     end;
@@ -177,13 +192,36 @@ end;
 
 constructor TP3DMesh.CreateFromDOM(AParentList: TP3DObjectList; Scene: TP3DModelScene;
   ADOMNode: TDOMElement);
+begin
+  Create( AParentList );
+  LoadFromDOM( Scene, ADOMNode );
+end;
+
+destructor TP3DMesh.Destroy;
+var
+  i: Integer;
+begin
+  Positions.Free;
+  Normals.Free;
+  Cotangents.Free;
+  Tangents.Free;
+  Indices.Free;
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].Free;
+
+  VBArray.Free;
+  MaterialGroups.Free;
+
+  inherited Destroy;
+end;
+
+procedure TP3DMesh.LoadFromDOM( Scene: TP3DModelScene; ADOMNode: TDOMElement );
 var
   Element: TDOMElement;
   Ext: String;
   Idx: Integer;
   F: TFileStream;
 begin
-  Create( AParentList );
   Name:= ADOMNode.GetAttribute( 'name' );
 
   if ( ADOMNode.hasAttribute( 'binary' )) then
@@ -206,6 +244,7 @@ begin
         Idx:= StrToInt( ADOMNode.GetAttribute( 'faces' ));
         LoadFaceFromStream( @Faces, F, Idx );
         F.Free;
+        FileName:= Ext;
       except on E: Exception do
         begin
           WriteLn( E.Message );
@@ -233,25 +272,8 @@ begin
   UnpackBuffers;
 end;
 
-destructor TP3DMesh.Destroy;
-var
-  i: Integer;
-begin
-  Positions.Free;
-  Normals.Free;
-  Cotangents.Free;
-  Tangents.Free;
-  Indices.Free;
-  for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].Free;
-
-  VBArray.Free;
-  MaterialGroups.Free;
-
-  inherited Destroy;
-end;
-
-procedure TP3DMesh.Render(world: TMat4; Scene: TP3DModelScene);
+procedure TP3DMesh.Render(world: TMat4; Scene: TP3DModelScene;
+  RenderObject: TP3DRenderableObject);
 var
   i: Integer;
   j: Integer;
@@ -304,9 +326,12 @@ var
 begin
   if (( Idx < 0 ) or ( Idx >= MaterialGroups.Count )) then
     exit;
+
   Material:= MaterialGroups[ Idx ].Material;
+  if (( not Assigned( Material )) or ( not Assigned( Material.Shader ))) then
+    exit;
   SetShader( Material.Shader );
-  Scene.PassToShader;
+  Scene.PassToShader( world );
   glVertexAttrib4f( P3DAttribColor,
     Material.Diff.R, Material.Diff.G, Material.Diff.B, 1.0 );
   //glUniform4f( ActShad.Uniforms.AddrByName( 'mat_diffuse' ), Material.Diff.r, Material.Diff.g, Material.Diff.b, 1 );
@@ -324,7 +349,7 @@ begin
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       end;
   _world:= world;
@@ -625,7 +650,7 @@ begin
     end;
 end;
 
-procedure TP3DMesh.CalcBoundingBox;
+function TP3DMesh.CalcBoundingBox: TP3DBoundingBox;
 var
   p: TVec3;
 begin
@@ -642,5 +667,6 @@ begin
       FBoundingBox.Max.Z:= Max( p.Z, BoundingBox.Max.Z );
     end;
   FBoundingBox.Center:= ( BoundingBox.Min + BoundingBox.Max ) / 2;
+  Result:= FBoundingBox;
 end;
 {$ENDIF}

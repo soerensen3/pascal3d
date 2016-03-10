@@ -4,7 +4,7 @@ unit p3dSDLApplication;
 
 interface
 uses
-  Classes, SysUtils, sdl2, p3dwindow, p3dinput, dglOpenGL;
+  Classes, SysUtils, sdl2, p3dwindow, p3dinput, dglOpenGL, p3dlogging;
 
 const
   TMouseEvent: array [ 0..3 ] of Word = ( SDL_MOUSEMOTION, SDL_MOUSEBUTTONDOWN,
@@ -33,6 +33,8 @@ type
     private
       FGLInitialized: Boolean;
       FMainWindow: TSDLWindow;
+      fOnDeinit: TSDLEvent;
+      fOnInit: TSDLEvent;
       fOnInput: TSDLEvent;
       FOnKey: TSDLEventKey;
       FOnMouseButton: TSDLEventMouseButton;
@@ -57,6 +59,8 @@ type
       property OnMouseWheel: TSDLEventMouseWheel read FOnMouseWheel write FOnMouseWheel;
       property OnKey: TSDLEventKey read FOnKey write FOnKey;
       property OnInput: TSDLEvent read fOnInput write fOnInput;
+      property OnInit: TSDLEvent read fOnInit write fOnInit;
+      property OnDeinit: TSDLEvent read fOnDeinit write fOnDeinit;
       property MainWindow: TSDLWindow read FMainWindow write SetMainWindow;
       property SDLInitialized: Boolean read FSDLInitialized write FSDLInitialized;
       property GLInitialized: Boolean read FGLInitialized write FGLInitialized;
@@ -72,6 +76,7 @@ implementation
 
 procedure TP3DApplication.SetMainWindow(AValue: TSDLWindow);
 begin
+  P3DLog.LogInfo( Self, 'SetMainWindow').AttribStrings['function']:= 'SetMainWindow';         ;
   if FMainWindow=AValue then Exit;
   FMainWindow:=AValue;
   ActiveWindow:= AValue;
@@ -81,6 +86,9 @@ constructor TP3DApplication.Create;
 begin
   inherited;
   MainWindow:= nil;
+
+  InitSDL;
+  InitGL;
 end;
 
 procedure TP3DApplication.InitSDL;
@@ -93,6 +101,7 @@ end;
 
 procedure TP3DApplication.InitGL;
 begin
+  P3DLog.LogInfo( Self, 'InitGL').AttribStrings['function']:= 'InitGL';
   if ( not InitOpenGL()) then
     raise Exception.Create('Initialization of OpenGL failed.');
   GLInitialized:= True;
@@ -100,7 +109,7 @@ begin
   ReadImplementationProperties;
   ReadExtensions;
 
-  // Some OpenGL configurations
+  // Some OpenGL configurations       ;
   glClearColor(0.0, 0.5, 1.0, 1.0);
   glClearDepth(1.0);
   glEnable(GL_DEPTH_TEST);
@@ -287,16 +296,15 @@ end;
 
 procedure TP3DApplication.Initialize;
 begin
-  InitSDL;
-  InitGL;
-
-  if ( Assigned( MainWindow ) and Assigned( MainWindow.OnInit )) then
-    MainWindow.OnInit( MainWindow );
+  P3DLog.LogInfo( Self, 'initializing application' ).AttribStrings['function']:= 'Initialize';
+  if ( Assigned( OnInit )) then
+    OnInit( Self );
 end;
 
 procedure TP3DApplication.Run;
 begin
   try
+    P3DLog.LogInfo( Self, 'Running application' ).AttribStrings['function']:= 'Run';
     Running := True;
     while Running do
       begin                // Mainloop
@@ -304,15 +312,14 @@ begin
         if ( Assigned( MainWindow )) then
           MainWindow.Render;
       end;
-
-    // Resourcen freigeben
-//    if ( Assigned( OnDeinit )) then
-//      OnDeinit( Self );
-
   except
     on E: Exception do
-      //LOG ERROR
+      P3DLog.LogException( Self, E.Message );
   end;
+  P3DLog.LogInfo( Self, 'exit mainloop' ).AttribStrings['function']:= 'Run';
+  // Resourcen freigeben
+  if ( Assigned( OnDeinit )) then
+    OnDeinit( Self );
 end;
 
 initialization

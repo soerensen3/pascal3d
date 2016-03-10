@@ -322,8 +322,10 @@ end;
 
 procedure TP3DObject.SetName(const NewName: TComponentName);
 begin
+  if ( Name = NewName ) then
+    exit;
   if ( ParentList.FindByName( NewName ) < 0 ) then
-    Name:= NewName
+    FName:= NewName
   else
     raise Exception.Create( Format('Error in TP3DObject.SetName(''%s''). An object with that name already exists!', [NewName ]));
 end;

@@ -29,7 +29,7 @@ type
 
     public
       procedure UpdateMatrices;
-      procedure PassToShader;
+      procedure PassToShader( world: TMat4 );
 
       constructor Create;
 
@@ -69,7 +69,7 @@ type
       procedure Render; virtual;
 
       procedure UpdateMatrices; virtual;
-      procedure PassToShader; virtual;
+      procedure PassToShader( world: TMat4 ); virtual;
 
       property DrawObjects: TP3DSceneEvent read FDrawObjects write FDrawObjects;
       property DrawObjectsObj: TP3DSceneEventObj read FDrawObjectsObj write FDrawObjectsObj;
@@ -96,9 +96,9 @@ begin
     end;
 end;
 
-procedure TP3DScene.PassToShader;
+procedure TP3DScene.PassToShader(world: TMat4);
 begin
-  Cam.PassToShader;
+  Cam.PassToShader( world );
 end;
 
 procedure TP3DScene.RenderFromCamera( Cam: TP3DCamera );
@@ -107,7 +107,7 @@ begin
     Cam.Aspect:= P3DViewports.Peek.Width/P3DViewports.Peek.Height;
   Cam.UpdateMatrices;
   UpdateMatrices;
-  PassToShader;
+  PassToShader( Mat4Identity );
 
   //RenderMode:= rmShadow;
 
@@ -172,13 +172,17 @@ begin
   end;
 end;
 
-procedure TP3DCamera.PassToShader;
+procedure TP3DCamera.PassToShader(world: TMat4);
+var
+  mnorm: TMat4;
 begin
   if ( Assigned( ActShad )) then
     begin
       glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'view'), 1, False, @View );
       glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'proj'), 1, False, @Proj );
-      glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'MatNormal'), 1, False, @MatNormal ); // contains left, up, forward vectors
+      mat4inverse( world * View, mnorm );
+      mnorm:= mat4transpose( mnorm );
+      glUniformMatrix4fv( ActShad.Uniforms.AddrByName( 'mnormal'), 1, False, @mnorm ); // contains left, up, forward vectors
       glUniform3fv( ActShad.Uniforms.AddrByName( 'campos'), 1, @Position );
     end;
 end;

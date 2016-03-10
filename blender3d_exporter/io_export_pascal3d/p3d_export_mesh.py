@@ -20,7 +20,7 @@ def ExportMeshes(Config):
         objEl = et.Element("mesh")
         Config.DocStack[ -1 ].append( objEl )
         Config.DocStack.append( objEl )
-        objEl.attrib['name'] = LegalName(mesh.name)  
+        objEl.attrib['name'] = 'mesh_' + LegalName(mesh.name)  
         ExportMesh(Config,mesh)
 
         Config.DocStack.pop()
@@ -247,7 +247,7 @@ def WriteMeshMaterials(Config, Mesh, Materials):
         matOffset = Materials[ matIdx ]
         matEl= et.Element("material")
         Config.DocStack[ -1 ].append( matEl )
-        matEl.attrib["name"] = mat.name  
+        matEl.attrib["name"] = 'material_' + LegalName( mat.name )  
         matEl.attrib["start"] = str( matOffset["start"])
         matEl.attrib["end"] = str( matOffset["end"])
         global globalMaterials

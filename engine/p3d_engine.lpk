@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="39">
+    <Files Count="41">
       <Item1>
         <Filename Value="p3dinput.pas"/>
         <UnitName Value="p3dinput"/>
@@ -171,6 +171,14 @@
         <Filename Value="p3dmodel_lighting.inc"/>
         <Type Value="Include"/>
       </Item39>
+      <Item40>
+        <Filename Value="p3dlogging.pas"/>
+        <UnitName Value="p3dlogging"/>
+      </Item40>
+      <Item41>
+        <Filename Value="p3dmarkdown.pas"/>
+        <UnitName Value="p3dmarkdown"/>
+      </Item41>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>
