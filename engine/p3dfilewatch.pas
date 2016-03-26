@@ -9,70 +9,74 @@ uses
 
 type
 
-  { TFileWatch }
+  { TP3DFileWatch }
 
-  TFileWatch = class;
+  TP3DFileWatch = class;
 
-  TFileWatchChange = procedure ( Sender: TFileWatch; out DoReload: Boolean ) of object;
-  TFileWatch = class
+  TP3DFileWatchChange = procedure ( Sender: TP3DFileWatch; out DoReload: Boolean ) of object;
+  TP3DFileWatch = class ( TPersistent )
     private
       FLastFileAge: LongInt;
       FFileName: String;
-      FOnFileChange: TFileWatchChange;
+      FOnFileChange: TP3DFileWatchChange;
       FUserPointer: Pointer;
 
       function GetFileAge: LongInt;
+      procedure SetFileName(AValue: String);
+
     public
       constructor Create( AFileName: String; AUserPointer: Pointer = nil );
 
       function CheckForChange: Boolean;
       procedure Reload;
 
-      property FileName: String read FFileName;
-      property LastFileAge: LongInt read FLastFileAge;
-      property OnFileChange: TFileWatchChange read FOnFileChange write FOnFileChange;
       property UserPointer: Pointer read FUserPointer write FUserPointer;
+
+    published
+      property FileName: String read FFileName write SetFileName;
+      property LastFileAge: LongInt read FLastFileAge;
+      property OnFileChange: TP3DFileWatchChange read FOnFileChange write FOnFileChange;
   end;
 
   {$MACRO ON}
   {$DEFINE TCustomList:= TCustomFileWatchList}
-  {$DEFINE TCustomListEnumerator:= TFileWatchEnumerator}
-  {$DEFINE TCustomItem:= TFileWatch}
+  {$DEFINE TCustomListEnumerator:= TP3DFileWatchEnumerator}
+  {$DEFINE TCustomItem:= TP3DFileWatch}
   {$DEFINE INTERFACE}
   {$INCLUDE p3dcustomlist.inc}
 
-  { TFileWatchList }
+  { TP3DFileWatchList }
 
-  TFileWatchList = class( TCustomFileWatchList )
+  TP3DFileWatchList = class( TCustomFileWatchList )
     function AddWatch( AFileName: String; AUserPointer: Pointer = nil ): Integer;
 
     procedure CheckForChange;
   end;
 
 var
-  FileWatches: TFileWatchList;
+  FileWatches: TP3DFileWatchList;
 
 
 implementation
 
 {$MACRO ON}
 {$DEFINE TCustomList:= TCustomFileWatchList}
-{$DEFINE TCustomListEnumerator:= TFileWatchEnumerator}
-{$DEFINE TCustomItem:= TFileWatch}
+{$DEFINE TCustomListEnumerator:= TP3DFileWatchEnumerator}
+{$DEFINE TCustomItem:= TP3DFileWatch}
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dcustomlist.inc}
 
-{ TFileWatchList }
+{ TP3DFileWatchList }
 
-function TFileWatchList.AddWatch(AFileName: String; AUserPointer: Pointer
+function TP3DFileWatchList.AddWatch(AFileName: String; AUserPointer: Pointer
   ): Integer;
 begin
-  Result:= Add( TFileWatch.Create( AFileName, AUserPointer ));
+  Result:= Add( TP3DFileWatch.Create( AFileName, AUserPointer ));
 end;
 
-procedure TFileWatchList.CheckForChange;
+procedure TP3DFileWatchList.CheckForChange;
 var
-  Watch: TFileWatch;
+  Watch: TP3DFileWatch;
   Reload: Boolean;
 begin
   for Watch in Self do
@@ -86,33 +90,42 @@ begin
 end;
 
 
-{ TFileWatch }
+{ TP3DFileWatch }
 
-function TFileWatch.GetFileAge: LongInt;
+function TP3DFileWatch.GetFileAge: LongInt;
 begin
   Result:= FileAge( FFileName );
 end;
 
-constructor TFileWatch.Create(AFileName: String; AUserPointer: Pointer);
+procedure TP3DFileWatch.SetFileName(AValue: String);
+begin
+  if ( FFileName = AValue ) then
+    Exit;
+
+  FFileName:= AValue;
+  Reload;
+end;
+
+constructor TP3DFileWatch.Create(AFileName: String; AUserPointer: Pointer);
 begin
   inherited Create;
   FFileName:= AFileName;
   Reload;
 end;
 
-function TFileWatch.CheckForChange: Boolean;
+function TP3DFileWatch.CheckForChange: Boolean;
 begin
   Result:= ( GetFileAge <> FLastFileAge );
 end;
 
-procedure TFileWatch.Reload;
+procedure TP3DFileWatch.Reload;
 begin
   FLastFileAge:= GetFileAge;
 end;
 
 
 initialization
-  FileWatches:= TFileWatchList.Create;
+  FileWatches:= TP3DFileWatchList.Create;
 
 finalization
   FileWatches.Free;

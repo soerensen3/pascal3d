@@ -26,9 +26,10 @@ interface
 
     { gP3DCustomObjectList }
 
-    generic gP3DCustomObjectList <TCustomItem> = class ( TPersistent )
+    generic gP3DCustomObjectList <TCustomItem: TObject> = class ( TPersistent )
       type
         TP3DCustomObjectListEnumerator = specialize gP3DCustomListEnumerator < TCustomItem >;
+
       private
         FItems: TList;
         FOnChange: TNotifyEvent;
@@ -53,9 +54,10 @@ interface
         property OnChange: TNotifyEvent read FOnChange write FOnChange;
     end;
 
+
 implementation
 
-{ TCustomList }
+{ gP3DCustomObjectList }
 function gP3DCustomObjectList.GetCount: Integer;
 begin
   Result:= FItems.Count;
@@ -143,8 +145,7 @@ end;
 
 { TCustomListEnumerator }
 
-constructor gP3DCustomListEnumerator.Create(
-  AMoveNext: TMoveNext);
+constructor gP3DCustomListEnumerator.Create( AMoveNext: TMoveNext );
 begin
   inherited Create;
   FCurrentIdx:= -1;

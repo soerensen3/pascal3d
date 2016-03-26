@@ -1,5 +1,3 @@
-//TODO: LOAD DATABLOCKS FIRST, THEN LOAD OBJECTS
-
 //TODO: CHECK IF BOUNDING BOX IS CALCULATED CORRECTLY
 
 var
@@ -31,7 +29,7 @@ begin
   mainscene.Shader:= shadersimple;
   P3DShaderLib.LoadLibraryPath( 'nodes/core/', '*.pmd' );
 
-  for mat in mainscene.Materials do
+  for mat in P3DData.Materials do
     mat.BuildShader;
   //LOAD SHADERS
 end;
@@ -61,13 +59,14 @@ begin
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
 
-  mainscene.AppendFile( 'bbox.p3d' );
+  //mainscene.AppendFile( 'bbox.p3d' );
 
   mainscene.AppendFile( 'grid.p3d' );
+  //mainscene.AppendFile( 'bulb.p3d', nil, True );
 
   Obj:= mainscene.Objects.FindByName( 'BBox' );
   if ( Obj >= 0 ) then
-    with ( mainscene.Objects[ Obj ] as TP3DRenderableObject ) do
+    with ( mainscene.Objects[ Obj ] as TP3DActor ) do
       Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
 
   //TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
@@ -75,13 +74,13 @@ begin
   //for i:= 0 to mainscene.Children.Count - 1 do
   //  WriteLn( mainscene.Children[ i ].ClassName + ': ' + mainscene.Children[ i ].Name );
   {for i:= 0 to mainscene.Objects.Count - 1 do
-    if ( TP3DRenderableObject( mainscene.Objects[ i ]).Data is TP3DLight ) then
+    if ( TP3DActor( mainscene.Objects[ i ]).Data is TP3DLight ) then
       begin
         //WriteLn( mainscene.Lights[ i ].Direction.ToString());
 
         //TP3DRenderableObject( mainscene.Objects[ i ]).Position:= -mainscene.Lights[ i ].Position;
         //mainscene.Lights[ i ].LinearAttenuation:= 0;
-        mainscene.AppendFile( 'bulb.p3d', TP3DRenderableObject( mainscene.Objects[ i ]), True );
+        mainscene.AppendFile( 'bulb.p3d', TP3DActor( mainscene.Objects[ i ]), True );
       end;}
   //LOAD MODELS
 end;

@@ -71,14 +71,14 @@ type
       FSceneViewer: TP3DGUISceneViewer;
       FShaderTree: TP3DShaderNodeTree;
       Fworld: TMat4;
-      FModelCube: TP3DModelScene;
+      FModelCube: TP3DScene;
       FXRot: Single;
       FYRot: Single;
       FZoom: Single;
       //vshader: TP3DShaderNodeSocket;
       //fshader: TP3DShaderNodeSocket;
 
-      procedure SetModelCube( AValue: TP3DModelScene );
+      procedure SetModelCube( AValue: TP3DScene );
       procedure DrawObjects(AScene: TP3DScene);
       procedure PreviewMouseMove( Sender: TP3DGraphicControl; X, Y: Integer );
 
@@ -100,7 +100,7 @@ type
 
       procedure Render(BaseColor: TVec4; ScrollAcc: TVec2); override;
 
-      property ModelCube: TP3DModelScene read FModelCube write SetModelCube;
+      property ModelCube: TP3DScene read FModelCube write SetModelCube;
       property SceneViewer: TP3DGUISceneViewer read FSceneViewer write FSceneViewer;
       property ShaderTree: TP3DShaderNodeTree read FShaderTree write FShaderTree;
       property OnDrawScene: TNotifyEvent read FOnDrawScene write FOnDrawScene;
@@ -280,7 +280,7 @@ end;
 
 { TP3DShaderPreview }
 
-procedure TP3DShaderPreview.SetModelCube(AValue: TP3DModelScene);
+procedure TP3DShaderPreview.SetModelCube(AValue: TP3DScene);
 begin
   if FModelCube=AValue then Exit;
   FModelCube:=AValue;

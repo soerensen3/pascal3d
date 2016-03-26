@@ -86,9 +86,6 @@ constructor TP3DApplication.Create;
 begin
   inherited;
   MainWindow:= nil;
-
-  InitSDL;
-  InitGL;
 end;
 
 procedure TP3DApplication.InitSDL;
@@ -297,6 +294,8 @@ end;
 procedure TP3DApplication.Initialize;
 begin
   P3DLog.LogInfo( Self, 'initializing application' ).AttribStrings['function']:= 'Initialize';
+  InitSDL;
+  InitGL;
   if ( Assigned( OnInit )) then
     OnInit( Self );
 end;

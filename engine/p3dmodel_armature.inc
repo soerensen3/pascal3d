@@ -1,5 +1,52 @@
 {$IFDEF INTERFACE}
 type
+
+  {TBone = class;
+
+  {$DEFINE TCustomList:= TCustomBoneList}
+  {$DEFINE TCustomListEnumerator:= TBoneEnumerator}
+  {$DEFINE TCustomItem:= TBone}
+  {$DEFINE INTERFACE}
+  {$INCLUDE p3dcustomlist.inc}
+
+  TFrame = class;
+
+  {$DEFINE TCustomList:= TCustomFrameList}
+  {$DEFINE TCustomListEnumerator:= TFrameEnumerator}
+  {$DEFINE TCustomItem:= TFrame}
+  {$DEFINE INTERFACE}
+  {$INCLUDE p3dcustomlist.inc}
+
+  TArmatureAction = class;
+
+  {$DEFINE TCustomList:= TCustomActionList}
+  {$DEFINE TCustomListEnumerator:= TActionEnumerator}
+  {$DEFINE TCustomItem:= TArmatureAction}
+  {$DEFINE INTERFACE}
+  {$INCLUDE p3dcustomlist.inc}
+
+  { TBoneList }
+
+  TBoneList = class( TCustomBoneList )
+    public
+      function FindByName( Name: String ): Integer;
+      procedure Clear; override;
+  end;
+
+  { TFrameList }
+
+  TFrameList = class( TCustomFrameList )
+    public
+      procedure Clear; override;
+  end;
+
+  { TActionList }
+
+  TActionList = class( TCustomActionList )
+    public
+      procedure Clear; override;
+  end;}
+
   TFrame = class
     private
       FBones: TBoneList;
@@ -66,6 +113,32 @@ type
       property Name: String read FName write FName;
       property Bones: TBoneList read FBones;
   end;
+
+{{$DEFINE TCustomList:= TCustomModelList}
+{$DEFINE TCustomListEnumerator:= TModelEnumerator}
+{$DEFINE TCustomItem:= TModel}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE custom_list.inc}}
+
+{
+{$DEFINE TCustomList:= TCustomBoneList}
+{$DEFINE TCustomListEnumerator:= TBoneEnumerator}
+{$DEFINE TCustomItem:= TBone}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE p3dcustomlist.inc}
+
+{$DEFINE TCustomList:= TCustomFrameList}
+{$DEFINE TCustomListEnumerator:= TFrameEnumerator}
+{$DEFINE TCustomItem:= TFrame}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE p3dcustomlist.inc}
+
+{$DEFINE TCustomList:= TCustomActionList}
+{$DEFINE TCustomListEnumerator:= TActionEnumerator}
+{$DEFINE TCustomItem:= TArmatureAction}
+{$DEFINE IMPLEMENTATION}
+{$INCLUDE p3dcustomlist.inc}
+}
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}

@@ -13,17 +13,23 @@ interface
     TP3DObject = class;
 
     //TODO: Implement Rendering
-    //TODO: Implement File and Stream Read/Write         +
+    //TODO: Implement File and Stream Read/Write
     //TODO: Write RegisterClass
 
 
     { TP3DObjectList }
+
     TP3DCustomObjectList = specialize gP3DCustomObjectList < TP3DObject >;
     TP3DObjectList = class( TP3DCustomObjectList )
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
       procedure Clear(const FreeObjects: Boolean = True ); override;
     end;
+
+    //generic gP3DCustomObjList < TObj: TP3DObject > = class ( specialize gP3DCustomizableObjectList < TP3DObject >)
+    //
+    //end;
+    //TODO: DEFINE GENERIC FOR THE USE WITH TP3DObject
 
     TP3DObjectClass = class of TP3DObject;
 

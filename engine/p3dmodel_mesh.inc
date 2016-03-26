@@ -1,10 +1,82 @@
 {$IFDEF INTERFACE}
-  { TP3DMesh }
-
   type
+     TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowBoundingBox, rfDebugShowArmature );
+     TP3DRenderFlags = set of TP3DRenderFlag;
+
+     { TP3DMaterialMap }
+
+     TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
+     TP3DMaterialMap = record
+       Map: TP3DTexture;
+       DiffuseFactor: Single;
+       NormalFactor: Single;
+       SpecularFactor: Single;
+       TexChannel: Integer;
+       Mode: TP3DMapMode;
+     end;
+
+    { TP3DMaterial }
+
+     TP3DMaterial = class ( TP3DDataBlock )
+       public
+         Maps: array [ 0..7 ] of TP3DMaterialMap;
+         NumMaps: Integer;
+         Diff: TVec3;
+         Spec: TVec3;
+         Spec_Hardness: Single;
+         alpha: Real;
+         Shader: TShader;
+
+         procedure BuildShader();
+
+         constructor Create( AParentList: TP3DObjectList );
+         destructor Destroy; override;
+
+         procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); override;
+     end;
+
+     { TP3DMaterialGroup }
+
+     TP3DMaterialGroup = class
+       PolyStart, PolyEnd,
+         IndexStart, IndexEnd: Integer;
+       Material: TP3DMaterial;
+     end;
+
+     TP3DMaterialGroupList = specialize gP3DCustomObjectList < TP3DMaterialGroup >;
+
+     TP3DFaceVertex = record
+       v, n, t, c: Integer;
+       texc: array of Integer;
+     end;
+
+     TP3DFace = record
+       verts: array of TP3DFaceVertex;
+       mat: TP3DMaterial;
+     end;
+
+
+     PP3DFaceArray = ^TP3DFaceArray;
+     TP3DFaceArray = array of TP3DFace;
+
+
+     {$MACRO ON}
+
+     TP3DCustomMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
+
+
+     { TMaterialList }
+
+     TP3DMaterialList = TP3DCustomMaterialList;//class( TP3DCustomMaterialList )
+     //  public
+     //    function FindByName( Name: String ): Integer;
+     //end;
+
+     { TP3DMesh }
+
     TP3DMesh = class( TP3DDataBlock )
       private
-        procedure LoadMaterialFromDOM( DOM: TDOMElement; Scene: TP3DModelScene );
+        procedure LoadMaterialFromDOM( DOM: TDOMElement; AData: TP3DData );
 
       public
         Positions: TP3DVec3BufferGL;
@@ -15,18 +87,17 @@
         TexCoords: array of TP3DVec2BufferGL;
 
         Indices: TP3DIntBufferGL;
-        testTex: Integer;
         VBArray: TP3DVertexBufferArray;
         MaterialGroups: TP3DMaterialGroupList;
 
         constructor Create( AParentList: TP3DObjectList );
-        constructor CreateFromDOM( AParentList: TP3DObjectList; Scene: TP3DModelScene; ADOMNode: TDOMElement );
+        constructor CreateFromDOM( AParentList: TP3DObjectList; ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
         destructor Destroy; override;
 
-        procedure LoadFromDOM( Scene: TP3DModelScene; ADOMNode: TDOMElement ); override;
-        procedure Render( world: TMat4; Scene: TP3DModelScene; RenderObject: TP3DRenderableObject ); override;
-        procedure RenderMaterialGroup( world: TMat4; Idx: Integer; Scene: TP3DModelScene );
+        procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); override;
+        procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
+        procedure RenderMaterialGroup( world: TMat4; Idx: Integer; Scene: TP3DScene );
         procedure UnpackBuffers;
         procedure ClearVBO;
         procedure CreateVBO;
@@ -35,22 +106,11 @@
         function CalcBoundingBox(): TP3DBoundingBox; override;
 //        procedure ClearChildren;
     end;
-    TP3DMeshList = specialize gP3DCustomObjectList < TP3DMesh >;
+    TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 { TP3DMesh }
-
-function LoadMat4FromDOM( DOM: TDOMElement ): TMat4;
-var
-  c0, c1, c2, c3: TVec4;
-begin
-  c0.FromString( DOM.GetAttribute( 'c0' ));
-  c1.FromString( DOM.GetAttribute( 'c1' ));
-  c2.FromString( DOM.GetAttribute( 'c2' ));
-  c3.FromString( DOM.GetAttribute( 'c3' ));
-  Result:= mat4( c0, c1, c2, c3 );
-end;
 
 procedure LoadFaceFromStream( Faces: PP3DFaceArray; S: TStream; ACount: Integer );
 var
@@ -130,8 +190,20 @@ end;
 constructor TP3DDataBlock.Create(AParentList: TP3DObjectList);
 begin
   inherited;
-  FileName:= '<empty>';
+  FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
   BoundingBox:= P3DInvalidBoundingBox;
+  FUsers:= TP3DActorList.Create;
+end;
+
+destructor TP3DDataBlock.Destroy;
+var
+  User: TP3DActor;
+begin
+  for User in Users do
+    User.FData:= nil;
+  FUsers.Free;
+  FFileWatch.Free;
+  inherited Destroy;
 end;
 
 function TP3DDataBlock.CalcBoundingBox: TP3DBoundingBox;
@@ -148,7 +220,7 @@ begin
   FChildren.Clear;
 end;
 }
-procedure TP3DMesh.LoadMaterialFromDOM(DOM: TDOMElement; Scene: TP3DModelScene);
+procedure TP3DMesh.LoadMaterialFromDOM(DOM: TDOMElement; AData: TP3DData);
 var
   MatIdx: Integer;
   AName: String;
@@ -156,19 +228,21 @@ var
   MatPolyEnd: Integer;
   MaterialGroup: TP3DMaterialGroup;
 begin
+  if ( AData = nil ) then
+    AData:= P3DData;
   AName:= DOM.GetAttribute( 'name' );
-  MatIdx:= Scene.Materials.FindByName( AName );
+  MatIdx:= AData.Materials.FindByName( AName );
   MatPolyStart:= StrToInt( DOM.GetAttribute( 'start' ));
   MatPolyEnd:= StrToInt( DOM.GetAttribute( 'end' ));
 
   MaterialGroup:= TP3DMaterialGroup.Create;
   if ( MatIdx >= 0 ) then
-    MaterialGroup.Material:= Scene.Materials[ MatIdx ]
+    MaterialGroup.Material:= AData.Materials[ MatIdx ]
   else
     begin
-      MaterialGroup.Material:= TP3DMaterial.Create( Scene.DataBlocks );
+      MaterialGroup.Material:= TP3DMaterial.Create( AData.DataBlocks );
       MaterialGroup.Material.Name:= AName;
-      Scene.Materials.Add( MaterialGroup.Material );
+      AData.Materials.Add( MaterialGroup.Material );
     end;
   MaterialGroup.PolyStart:= MatPolyStart;
   MaterialGroup.PolyEnd:= MatPolyEnd;
@@ -190,11 +264,11 @@ begin
   //FVisible:= True;
 end;
 
-constructor TP3DMesh.CreateFromDOM(AParentList: TP3DObjectList; Scene: TP3DModelScene;
-  ADOMNode: TDOMElement);
+constructor TP3DMesh.CreateFromDOM(AParentList: TP3DObjectList;
+  ADOMNode: TDOMElement; const AData: TP3DData);
 begin
   Create( AParentList );
-  LoadFromDOM( Scene, ADOMNode );
+  LoadFromDOM( ADOMNode, AData );
 end;
 
 destructor TP3DMesh.Destroy;
@@ -215,7 +289,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DMesh.LoadFromDOM( Scene: TP3DModelScene; ADOMNode: TDOMElement );
+procedure TP3DMesh.LoadFromDOM(ADOMNode: TDOMElement; const AData: TP3DData);
 var
   Element: TDOMElement;
   Ext: String;
@@ -244,7 +318,7 @@ begin
         Idx:= StrToInt( ADOMNode.GetAttribute( 'faces' ));
         LoadFaceFromStream( @Faces, F, Idx );
         F.Free;
-        FileName:= Ext;
+        FileWatch.FileName:= ExpandFileName( Ext );
       except on E: Exception do
         begin
           WriteLn( E.Message );
@@ -260,7 +334,7 @@ begin
     begin
       case Element.NodeName of
         'matrix': ;//Matrix:= LoadMat4FromDOM( Element );
-        'material': LoadMaterialFromDOM( Element, Scene );
+        'material': LoadMaterialFromDOM( Element, AData );
         'mesh': ;//Children.Add( TP3DMesh.CreateFromDOM( Children, Scene, Element ));
       else
         raise Exception.Create( 'Unknown tag inside Mesh Element: '+ Element.NodeName );
@@ -272,8 +346,8 @@ begin
   UnpackBuffers;
 end;
 
-procedure TP3DMesh.Render(world: TMat4; Scene: TP3DModelScene;
-  RenderObject: TP3DRenderableObject);
+procedure TP3DMesh.Render(world: TMat4; Scene: TP3DScene;
+  RenderObject: TP3DActor);
 var
   i: Integer;
   j: Integer;
@@ -304,7 +378,7 @@ begin
 end;
 
 procedure TP3DMesh.RenderMaterialGroup(world: TMat4; Idx: Integer;
-  Scene: TP3DModelScene);
+  Scene: TP3DScene);
 var
   i: Integer;
   _world, view, proj: TMat4;
@@ -669,4 +743,188 @@ begin
   FBoundingBox.Center:= ( BoundingBox.Min + BoundingBox.Max ) / 2;
   Result:= FBoundingBox;
 end;
+
+{ TMaterial }
+
+procedure TP3DMaterial.BuildShader;
+var
+  ShaderTree: TP3DShaderNodeTree;
+  Node: TP3DShaderNode;
+  Compiled: TP3DShaderCompiled;
+  i: Integer;
+
+  function AddNode( Name: String ): TP3DShaderNode;
+  begin
+    Node:= P3DShaderLib.FindNode( Name );
+    if ( not Assigned( Node )) then
+      raise Exception.Create( 'Cannot build shader: Node "' + Name + '" not found!' );
+    Result:= Node.MakeCopy;
+    ShaderTree.Nodes.Add( Result );
+  end;
+
+  function ChangeSocketValueInt( Node: TP3DShaderNode; Name: String; Value: Integer ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketInt( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+
+  function ChangeSocketValueFloat( Node: TP3DShaderNode; Name: String; Value: Single ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketFloat( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+
+  function ConnectSocket( Node1: TP3DShaderNode; Node2: TP3DShaderNode; Socket1: String; Socket2: String ): TP3DShaderNode;
+  var
+    Socket1n, Socket2n: Integer;
+  begin
+    Socket1n:= Node1.Inputs.FindSocketByName( Socket1 );
+    Socket2n:= Node2.Outputs.FindSocketByName( Socket2 );
+    if ( Socket1n < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Socket1 + '" not found!' );
+    if ( Socket2n < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Socket2 + '" not found!' );
+    Node1.Inputs[ Socket1n ].Connected:= Node2.Outputs[ Socket2n ];
+    Result:= Node1;
+  end;
+
+const Mode: array [ p3dmmMix .. p3dmmSubtract ] of String = ( 'mix', 'multiply', 'add', 'subtract' );
+
+begin
+  ShaderTree:= TP3DShaderNodeTree.Create;
+
+  try
+
+  AddNode( 'lib_common' );
+
+  AddNode( 'lib_maps' );
+
+  AddNode( 'Pass_Init' );
+
+  AddNode( 'lib_lighting' );
+
+
+  for i:= 0 to 7 do
+    ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
+  for i:= 0 to NumMaps - 1 do
+    begin
+      ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'Pass_Read' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+      if ( Maps[ i ].DiffuseFactor > 0 ) then
+        ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Diffuse' ), 'Index', i ), 'Factor', Maps[ i ].DiffuseFactor ),
+        AddNode( 'Pass_Combine' ), 'Mode', Mode[ Maps[ i ].Mode ]);
+      if ( Maps[ i ].NormalFactor > 0 ) then
+        ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Normal' ), 'Index', i ), 'Factor', Maps[ i ].NormalFactor ),
+        AddNode( 'Pass_Combine' ), 'Mode', Mode[ Maps[ i ].Mode ]);
+      if ( Maps[ i ].SpecularFactor > 0 ) then
+         ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Specular' ), 'Index', i ), 'Factor', Maps[ i ].SpecularFactor ),
+         AddNode( 'Pass_Combine' ), 'Mode', Mode[ Maps[ i ].Mode ]);
+    end;
+
+  AddNode( 'Pass_Mix' );
+  AddNode( 'Lighting' );
+  AddNode( 'Pass_Final' );
+
+
+  Compiled:= ShaderTree.Compile;
+  //WriteLn( 'Material: ' + Name );
+  //for i:= 0 to NumMaps - 1 do
+  //  WriteLn( '  Map: ' + Maps[ i ].Map.FileName + ' Diffuse: ', Maps[ i ].DiffuseFactor, ' Normal: ', Maps[ i ].NormalFactor );
+  //WriteLn( 'vshader: ' + Compiled.FindBuffer( 'vshader' ).Code );
+  //WriteLn( 'fshader: ' + Compiled.FindBuffer( 'fshader' ).Code );
+  if ( Assigned( Shader )) then
+    Shader.Free;
+  Shader:= p3dshaders.CreateVertexAndFragmentShader( Compiled.FindBuffer( 'vshader' ).Code, Compiled.FindBuffer( 'fshader' ).Code );
+  finally
+    ShaderTree.Free;
+    Compiled.Free;
+  end;
+end;
+
+constructor TP3DMaterial.Create(AParentList: TP3DObjectList);
+begin
+  inherited;
+  NumMaps:= 0;
+//  Diff_Map:= -1;
+end;
+
+destructor TP3DMaterial.Destroy;
+begin
+  if ( Assigned( Shader )) then
+    Shader.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DMaterial.LoadFromDOM(ADOMNode: TDOMElement; const AData: TP3DData
+  );
+var
+  SpecTmp: TVec4;
+  tex: TDOMElement;
+
+  procedure LoadTex;
+  var
+    TexName: String;
+    tx: TP3DTexture;
+  begin
+    if ( NumMaps = 8 ) then
+      raise Exception.Create( 'Maximum Number of Maps reached: 8' );
+    Maps[ NumMaps ].DiffuseFactor:= StrToFloatDef( tex.GetAttribute( 'diffuse' ), 0.0 );
+    Maps[ NumMaps ].NormalFactor:= StrToFloatDef( tex.GetAttribute( 'normal' ), 0.0 );
+    Maps[ NumMaps ].SpecularFactor:= StrToFloatDef( tex.GetAttribute( 'specular' ), 0.0 );
+    Maps[ NumMaps ].TexChannel:= StrToIntDef( tex.GetAttribute( 'layer' ), 0 );
+    case tex.GetAttribute( 'mode' ) of
+      'add': Maps[ NumMaps ].Mode:= p3dmmAdd;
+      'multiply': Maps[ NumMaps ].Mode:= p3dmmMultiply;
+      'subtract': Maps[ NumMaps ].Mode:= p3dmmSubtract;
+      else
+        Maps[ NumMaps ].Mode:= p3dmmMix;
+    end;
+    TexName:= tex.GetAttribute( 'file' );
+    if ( not FileExists( TexName )) then
+      raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' )
+    else
+      begin
+        tx:= TP3DTexture.Create( TexName );
+        if ( Assigned( tx )) then
+          Maps[ NumMaps ].Map:= tx
+        else
+          begin
+            WriteLn( 'Error: An unknown error occured while loading texture "' + TexName + '"!' );
+            exit;
+          end;
+      end;
+    Inc( NumMaps );
+  end;
+
+begin
+  Name:= ADOMNode.GetAttribute( 'name' );
+  Diff.FromString( ADOMNode.GetAttribute( 'diffuse' ));
+  SpecTmp.FromString( ADOMNode.GetAttribute( 'specular' ));
+  Spec:= SpecTmp.YZW;
+  Spec_Hardness:= SpecTmp.X;
+  tex:= TDOMElement( ADOMNode.FirstChild );
+  while Assigned( tex ) do
+    begin
+      case tex.NodeName of
+        'texture': LoadTex;
+        '#comment':;
+      else
+        raise Exception.Create( 'Unknown tag inside Material Element: '+ tex.NodeName );
+      end;
+    tex:= TDOMElement( tex.NextSibling );
+  end;
+  BuildShader;
+  FileWatch.FileName:= '';
+end;
+
+
 {$ENDIF}

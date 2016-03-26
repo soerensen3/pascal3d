@@ -12,7 +12,7 @@ def ExportLights(Config):
         objEl = et.Element("light")
         Config.DocStack[ -1 ].append( objEl )
         Config.DocStack.append( objEl )
-        objEl.attrib['name'] = 'light_' + LegalName( light.name )  
+        objEl.attrib['name'] = LegalName( light.name )  
         ExportLight(Config,light)
 
         Config.DocStack.pop()
@@ -38,10 +38,14 @@ def ExportCameras(Config):
         objEl = et.Element("camera")
         Config.DocStack[ -1 ].append( objEl )
         Config.DocStack.append( objEl )
-        objEl.attrib['name'] = 'camera_' + LegalName( cam.name )
+        objEl.attrib['name'] = LegalName( cam.name )
         ExportCamera(Config,cam)
 
         Config.DocStack.pop()
     
-def ExportCamera(Config, Object):
+def ExportCamera(Config, Cam):
     print("Exporting Camera")
+    lampEl = Config.DocStack[ -1 ]
+    lampEl.attrib['near'] = str( Cam.clip_start )
+    lampEl.attrib['far'] = str( Cam.clip_end )
+    lampEl.attrib['fov'] = str( Cam.angle )    

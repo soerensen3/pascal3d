@@ -1,67 +1,55 @@
 {$IFDEF INTERFACE}
 type
 
-  { TP3DModelScene }
+  { TP3DScene }
 
-  TP3DModelScene = class( TP3DScene )
+  TP3DScene = class( TP3DDataBlock )
     private
-      FDataBlocks: TP3DObjectList;
-      FFileWatch: TFileWatch;
-      FLights: TP3DLightList;
-      FMeshes: TP3DMeshList;
-      FObjects: TP3DRenderableObjectList;
-      FMaterials: TP3DMaterialList;
-
-    protected
-      property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
+      FCam: TP3DCamera;
+      FObjects: TP3DActorList;
 
     public
-      constructor Create();
-      constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False );
-      constructor CreateFromDOM( ADOMNode: TDOMElement );
+      constructor Create( AParentList: TP3DObjectList );
+      constructor Create( AParentList: TP3DObjectList; AFileName: String; const AWatchFileForChanges: Boolean = False );
+      constructor CreateFromDOM( AParentList: TP3DObjectList; ADOMNode: TDOMElement );
       destructor Destroy; override;
 
       procedure Clear;
 
 //      function Debug: String;
 
-      procedure Render; override;
+      procedure Render; reintroduce;
       procedure AppendFromDom(ADOMNode: TDOMElement;
-        const AParent: TP3DRenderableObject = nil; const AutoNames: Boolean=False);
-      procedure AppendFile( AFileName: String; const AParent: TP3DRenderableObject = nil; const AutoNames: Boolean = False );
-      procedure PassToShader( world: TMat4 ); override;
+        const AParent: TP3DActor = nil; const AutoNames: Boolean=False);
+      procedure AppendFile( AFileName: String; const AParent: TP3DActor = nil; const AutoNames: Boolean = False );
+      procedure PassToShader( world: TMat4 ); virtual;
 
-      property Objects: TP3DRenderableObjectList read FObjects;
-      property Materials: TP3DMaterialList read FMaterials;
-      property FileWatch: TFileWatch read FFileWatch write FFileWatch;
-      property Lights: TP3DLightList read FLights write FLights;
-      property Meshes: TP3DMeshList read FMeshes write FMeshes;
+      property Objects: TP3DActorList read FObjects;
+      property Cam: TP3DCamera read FCam write FCam;
   end;
+  TP3DSceneList = specialize gP3DCustomDatablockList < TP3DScene >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
-{ TP3DModelScene }
+{ TP3DScene }
 
-constructor TP3DModelScene.Create;
+constructor TP3DScene.Create(AParentList: TP3DObjectList);
 begin
-  inherited Create();
-  FObjects:= TP3DRenderableObjectList.Create;
-  FMaterials:= TP3DMaterialList.Create;
-  FLights:= TP3DLightList.Create;
-  FMeshes:= TP3DMeshList.Create;
-  FDataBlocks:= TP3DObjectList.Create;
+  inherited Create( AParentList );
+  FObjects:= TP3DActorList.Create;
 end;
 
-constructor TP3DModelScene.Create( AFileName: String;
+constructor TP3DScene.Create(AParentList: TP3DObjectList; AFileName: String;
   const AWatchFileForChanges: Boolean);
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
-  inherited Create;
+  inherited Create( AParentList );
   AppendFile( AFileName );
 end;
 
-constructor TP3DModelScene.CreateFromDOM( ADOMNode: TDOMElement );
+constructor TP3DScene.CreateFromDOM(AParentList: TP3DObjectList;
+  ADOMNode: TDOMElement);
 begin
   if ( not Assigned( ADOMNode )) then
     raise Exception.Create( ClassName + ': Cannot create from DOM Node. Not Assigned!' );
@@ -69,36 +57,37 @@ begin
   if ( not ( ADOMNode.NodeName = 'p3dscene' )) then
     raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dscene!' );
 
-  Create();
+  Create( AParentList );
 
   AppendFromDom( ADOMNode );
 end;
 
-destructor TP3DModelScene.Destroy;
+destructor TP3DScene.Destroy;
 begin
   Clear;
-  Lights.Free;
+  //Lights.Free;
   Objects.Free;
-  Materials.Free;
-  Meshes.Free;
-  DataBlocks.Free;
+  //Materials.Free;
+  //Meshes.Free;
+  //DataBlocks.Free;
   inherited Destroy;
 end;
 
-procedure TP3DModelScene.Clear;
+procedure TP3DScene.Clear;
 begin
   Objects.Clear( True );
-  Lights.Clear( False );
-  Materials.Clear( False );
-  Meshes.Clear( False );
-  DataBlocks.Clear( True );
+  //Lights.Clear( False );
+  //Materials.Clear( False );
+  //Meshes.Clear( False );
+  //DataBlocks.Clear( True );
 end;
+
 {
-function TP3DModelScene.Debug: String;
+function TP3DScene.Debug: String;
 var
   Indent: Integer;
 
-  function DebugList( Items: TP3DRenderableObjectList ): String;
+  function DebugList( Items: TP3DActorList ): String;
     function WriteVertices( Mdl: TP3DMesh ): String;
     var
       i: Integer;
@@ -197,17 +186,19 @@ begin
   Result:= DebugList( Children );
 end;
 }
-procedure TP3DModelScene.Render;
+procedure TP3DScene.Render;
 begin
-  inherited;
   Objects.Render( Mat4Identity, Self );
 end;
 
-procedure TP3DModelScene.AppendFromDom(ADOMNode: TDOMElement;
-  const AParent: TP3DRenderableObject; const AutoNames: Boolean = False );
+//TODO: FIXIT
+procedure TP3DScene.AppendFromDom(ADOMNode: TDOMElement;
+  const AParent: TP3DActor; const AutoNames: Boolean = False );
 var
   Element: TDOMElement;
-  Parent: TP3DRenderableObjectList;
+  Parent: TP3DActorList;
+  lst: TDOMNodeList;
+  i: Integer;
 
   procedure LoadData();
     function CreateObject: Integer;
@@ -216,11 +207,11 @@ var
     begin
       Result:= -1;
       case Element.NodeName of
-        'mesh': begin DB:= TP3DMesh.Create( DataBlocks ); Meshes.Add( TP3DMesh( DB )); end;
-        'material': begin DB:= TP3DMaterial.Create( DataBlocks ); Materials.Add( TP3DMaterial( DB )); end;
-        'light': begin DB:= TP3DLight.Create( DataBlocks ); Lights.Add( TP3DLight( DB )); end;
+        'mesh': begin DB:= TP3DMesh.Create( P3DData.DataBlocks ); P3DData.Meshes.Add( TP3DMesh( DB )); end;
+        'material': begin DB:= TP3DMaterial.Create( P3DData.DataBlocks ); P3DData.Materials.Add( TP3DMaterial( DB )); end;
+        'light': begin DB:= TP3DLight.Create( P3DData.DataBlocks ); P3DData.Lights.Add( TP3DLight( DB )); end;
       end;
-      Result:= DataBlocks.IndexOf( DB );
+      Result:= P3DData.DataBlocks.IndexOf( DB );
     end;
 
   var
@@ -228,12 +219,13 @@ var
     Idx: Integer;
   begin
     AName:= Element.GetAttribute( 'name' );
-    Idx:= DataBlocks.FindByName( AName );
+    Idx:= P3DData.DataBlocks.FindByName( AName );
     WriteLn( 'IDX of Datablock "', AName, '": ', Idx );
     if ( Idx = -1 ) then
       Idx:= CreateObject;
-    if ( TP3DDataBlock( DataBlocks[ Idx ]).FileName = '<empty>' ) then
-      TP3DDataBlock( DataBlocks[ Idx ]).LoadFromDOM( Self, Element );
+    if ( TP3DDataBlock( P3DData.DataBlocks[ Idx ]).FileWatch.FileName = '<empty>' ) then
+      TP3DDataBlock( P3DData.DataBlocks[ Idx ]).LoadFromDOM( Element, P3DData );
+    WriteLn( Format( 'Created datablock of type "%s" and name "%s" with index %d', [ Element.NodeName, AName, Idx ]));
   end;
 
 begin
@@ -252,7 +244,7 @@ begin
   while ( Assigned( Element )) do
     begin
       case Element.NodeName of
-        'object': Parent.Add( TP3DRenderableObject.CreateFromDOM( Parent, Self, Element, AutoNames ));
+        'object': ; //Postpone the loading of objects
         'mesh',
         'material',
         'light': LoadData()
@@ -261,10 +253,13 @@ begin
       end;
       Element:= TDOMElement( Element.NextSibling );
     end;
+  lst:= ADOMNode.GetElementsByTagName( 'object' );
+  for i:= 0 to lst.Count - 1 do
+    Parent.Add( TP3DActor.CreateFromDOM( P3DData.DataBlocks, TDOMElement( lst[ i ]), P3DData ));
 end;
 
-procedure TP3DModelScene.AppendFile(AFileName: String;
-  const AParent: TP3DRenderableObject; const AutoNames: Boolean);
+procedure TP3DScene.AppendFile(AFileName: String;
+  const AParent: TP3DActor; const AutoNames: Boolean);
 var
   xml: TXMLDocument;
   dir: String;
@@ -282,10 +277,9 @@ begin
   end;
 end;
 
-procedure TP3DModelScene.PassToShader(world: TMat4);
+procedure TP3DScene.PassToShader(world: TMat4);
 begin
-  inherited PassToShader( world );
-  Lights.PassToActiveShader( 0, Self, Mat4Identity, Cam.View, [ liPosition, liLightParams ]);
+  P3DData.Lights.PassToActiveShader( 0, Self, Mat4Identity, Cam.View, [ liPosition, liLightParams ]);
 end;
 
 {$ENDIF}
