@@ -7,13 +7,15 @@ interface
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, RTTICtrls, Forms, Controls, Graphics,
   Dialogs, ExtCtrls, ComCtrls, Buttons, p3dmodel, p3dSDLApplication, dglOpenGL,
-  p3dwindow, p3dshadernodes;
+  p3dwindow, p3dshadernodes, p3dgenerics, rttiutils, typinfo, p3dRTTI, p3dgui,
+  p3dgui_buttons, p3dtext, p3dviewport;
 
 type
 
   { TForm1 }
 
-  TTabSelection = ( tsObjects, tsCameras, tsLights, tsMaterials, tsMeshes, tsLibraries, tsScenes );
+  TTabSelection = ( tsObjects, tsCameras, tsLights, tsMaterials, tsMeshes,
+                    tsLibraries, tsScenes, tsTextures );
 
   TDataTab = object
     DataObject: TP3DData;
@@ -55,6 +57,7 @@ type
 var
   Form1: TForm1;
   DataTab: TDataTab;
+  Button1: TP3DButton;
 
 procedure Render( Sender: TSDLWindow );
 
@@ -62,16 +65,21 @@ implementation
 
 procedure Render(Sender: TSDLWindow);
 begin
+  GUIManager.Input;
+
   glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
+  GUIManager.Render;
 end;
 
 {$R *.lfm}
+
 
 { TForm1 }
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  P3DFontManager.DefaultFontsPath:= '../../engine_runtime/fonts/';
   DataTab.DataObject:= P3DData;
 
   TabControl1.Tabs.Append( 'P3DData' );
@@ -84,6 +92,7 @@ begin
   TabControl2.Tabs.Add( 'Meshes' );
   TabControl2.Tabs.Add( 'Libraries' );
   TabControl2.Tabs.Add( 'Scenes' );
+  TabControl2.Tabs.Add( 'Textures' );
   TabControl2.EndUpdate;
   Initialized:= False;
 end;
@@ -93,13 +102,57 @@ begin
   //P3DApplication.MainWindow.Free;
 end;
 
+
+procedure Debug( Obj: TPersistent );
+  procedure DumpList( L: TP3DPropList; const Indent: Integer = 0 );
+  var
+    i: Integer;
+    List: specialize IP3DEnumerable < TPersistent >;
+    L_New: TP3DPropList;
+    Enum: specialize IP3DEnumerator < TPersistent >;
+  begin
+    for i:= 0 to L.Count - 1 do
+      begin
+        WriteLn( StringOfChar( ' ', Indent * 2 ), L[ i ].Name, ' : ', L[ i ].TypeName, ' RO:', L[ i ].IsReadOnly, ' = ', L[ i ].Value );
+        if ( L[ i ].CanHaveChilds ) then
+          if ( L[ i ].CreateChilds ) then
+            begin
+              DumpList( L[ i ].Childs, Indent + 1 );
+
+              if (( Indent < 3 ) and Supports( L[ i ].Childs.Obj, IP3DEnumerable, List )) then
+                begin
+                  Enum:= List.GetEnumerator;
+                  while Enum.MoveNext do
+                    begin
+                      L_New:= TP3DPropList.Create;
+                      L_New.Obj:= Enum.GetCurrent;
+                      DumpList( L_New, Indent + 2 );
+                      L_New.Free;
+                    end;
+                end;
+            end;
+      end;
+  end;
+
+var
+  Lst: TP3DPropList;
+begin
+  Lst:= TP3DPropList.Create;
+  Lst.Obj:= Obj;
+  DumpList( Lst, 0 );
+  Lst.Free;
+end;
+
 procedure TForm1.ListView1SelectItem(Sender: TObject; Item: TListItem;
   Selected: Boolean);
 begin
   if ( Selected ) then
     begin
       if ( Assigned( Item )) then
-        TIPropertyGrid1.TIObject:= TPersistent( Item.Data )
+        begin
+          Debug( TPersistent( Item.Data ));
+          TIPropertyGrid1.TIObject:= TPersistent( Item.Data )
+        end
       else
         TIPropertyGrid1.TIObject:= nil;
     end;
@@ -144,19 +197,29 @@ begin
       P3DShaderLib.LoadLibraryPath( '../../engine_runtime/shaders/nodes/core/', '*.pmd' );
 
       Timer1.Enabled:= True;
+
+      GUIManager.Window:= P3DApplication.MainWindow;
+      p3dviewports.Push( 0, 0, P3DApplication.MainWindow.Width, P3DApplication.MainWindow.Height );
+      GUIManager.ShowCursor:= True;
+
+      Button1:= TP3DButton.Create( P3DData.DataBlocks, GUIManager );
+      Button1.Width:= 200;
+      Button1.Height:= 100;
+      GUIManager.Controls.Realign;
     end;
 end;
 
 procedure TForm1.TabControl2Change(Sender: TObject);
 begin
   case TabControl2.Tabs[ TabControl2.TabIndex ] of
-    'Objects': DataTab.Selection:= tsObjects;
-    'Cameras': DataTab.Selection:= tsCameras;
-    'Lights': DataTab.Selection:= tsLights;
+    'Objects':   DataTab.Selection:= tsObjects;
+    'Cameras':   DataTab.Selection:= tsCameras;
+    'Lights':    DataTab.Selection:= tsLights;
     'Materials': DataTab.Selection:= tsMaterials;
-    'Meshes': DataTab.Selection:= tsMeshes;
+    'Meshes':    DataTab.Selection:= tsMeshes;
     'Libraries': DataTab.Selection:= tsLibraries;
-    'Scenes': DataTab.Selection:= tsScenes;
+    'Scenes':    DataTab.Selection:= tsScenes;
+    'Textures':  DataTab.Selection:= tsTextures;
   end;
   UpdateList;
 end;
@@ -195,6 +258,9 @@ begin
     tsScenes:
       for i:= 0 to DataTab.DataObject.Scenes.Count - 1 do
         ListView1.AddItem( DataTab.DataObject.Scenes[ i ].Name, DataTab.DataObject.Scenes[ i ]);
+    tsTextures:
+      for i:= 0 to DataTab.DataObject.Textures.Count - 1 do
+        ListView1.AddItem( DataTab.DataObject.Textures[ i ].Name, DataTab.DataObject.Textures[ i ]);
   end;
 end;
 
@@ -214,7 +280,7 @@ begin
   UpdateList;
 end;
 
-procedure TForm1.Open(FName: String);
+procedure TForm1.Open( FName: String );
 begin
   OpenLibrary( FName );
   UpdateFiles;

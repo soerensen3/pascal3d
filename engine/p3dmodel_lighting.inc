@@ -5,30 +5,24 @@
   TP3DLight = class ( TP3DDataBlock )
     private
       FColor: TVec3;
-//      FDirection: TVec3;
       FEnergy: Float;
-//      FHalfVector: TVec3;
       FLightType: TP3DLightType;
       FLinearAttenuation: Float;
-//      FPosition: TVec3;
       FQuadraticAttenuation: Float;
 
       function GetLightRange: Float;
 
     public
-      constructor Create( AParentList: TP3DObjectList );
-      constructor CreateFromDOM( AParentList: TP3DObjectList; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil );
+      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
       procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); override;
 
-      //property Position: TVec3 read FPosition write FPosition;
-      //property Direction: TVec3 read FDirection write FDirection;
       property Color: TVec3 read FColor write FColor;
 
     published
       property Energy: Float read FEnergy write FEnergy;
-      //property HalfVector: TVec3 read FHalfVector write FHalfVector;
       property LinearAttenuation: Float read FLinearAttenuation write FLinearAttenuation;
       property QuadraticAttenuation: Float read FQuadraticAttenuation write FQuadraticAttenuation;
       property LightRange: Float read GetLightRange;
@@ -70,17 +64,16 @@ begin
     Result:= 0;
 end;
 
-constructor TP3DLight.Create(AParentList: TP3DObjectList);
+constructor TP3DLight.Create(const AData: TP3DData);
 begin
-  inherited Create( AParentList );
+  inherited Create( AData );
   FLinearAttenuation:= 0.1;
-  FUsers:= TP3DActorList.Create;
 end;
 
-constructor TP3DLight.CreateFromDOM(AParentList: TP3DObjectList;
-  ADOMNode: TDOMElement; const AData: TP3DData);
+constructor TP3DLight.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData
+  );
 begin
-  Create( AParentList );
+  Create( AData );
   LoadFromDOM( ADOMNode, AData );
 end;
 
@@ -153,7 +146,7 @@ var
   i, j: Integer;
   l: String;
   pos: TVec4;
-  obj: TP3DActor;
+  obj: TP3DDataBlock;
 
 begin
   if ( not Assigned( ActShad )) then
@@ -190,18 +183,19 @@ begin
           begin
             //position in viewspace
             obj:= Items[ i ].Users[ j ];
-            with ( obj ) do
-              begin
-                pos:= matWorld * matView * vec4( Position, 1 );
-                glUniform4f( ActShad.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W );
-                pos:= normalize( matWorld * matView * vec4( Direction, 0 ));
-                glUniform4f( ActShad.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W );
-                pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
-                glUniform4f( ActShad.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W );
-                //light_vect = light_position - face_center_position
-                //cam_vect = cam_position - face_center_position
-                //halfangle_vect = (light_vect.normal() + cam_vect.normal()).normal()
-              end;
+            if ( obj is TP3DActor ) then
+              with ( obj as TP3DActor ) do
+                begin
+                  pos:= matWorld * matView * vec4( Position, 1 );
+                  glUniform4f( ActShad.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W );
+                  pos:= normalize( matWorld * matView * vec4( Direction, 0 ));
+                  glUniform4f( ActShad.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W );
+                  pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
+                  glUniform4f( ActShad.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W );
+                  //light_vect = light_position - face_center_position
+                  //cam_vect = cam_position - face_center_position
+                  //halfangle_vect = (light_vect.normal() + cam_vect.normal()).normal()
+                end;
           end;
         Inc( numLights );
       end;

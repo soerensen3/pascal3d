@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  p3dgui_stdctrls, p3dscene, dglOpenGL, p3dMath, p3dbuffers, p3dviewport;
+  p3dgui_stdctrls, dglOpenGL, p3dMath, p3dbuffers, p3dviewport, p3dmodel;
 
 type
 
@@ -53,8 +53,8 @@ begin
   TrianglePoints.SetAttribArray( P3DAttribPosition );
   TriangleColors.SetAttribArray( P3DAttribColor );
 
-  Scene.Shader.Enable;
-  Scene.Shader.Uniforms[ Scene.Shader.Uniforms.FindByName( 'world' )].AsMat4:= Mat4Identity;
+  //Scene.Shader.Enable;
+  //Scene.Shader.Uniforms[ Scene.Shader.Uniforms.FindByName( 'world' )].AsMat4:= Mat4Identity;
 
   glDrawArrays( GL_TRIANGLES, 0, 3 );
 
@@ -85,7 +85,7 @@ initialization
   TriangleCam.Position:= vec3( 0, 0, 2 );
   TriangleScene:= TP3DScene.Create;
   TriangleScene.Cam:= TriangleCam;
-  TriangleScene.DrawObjects:= @RenderTriangle;
+  //TriangleScene.DrawObjects:= @RenderTriangle;
 
 finalization
   TriangleScene.Free;

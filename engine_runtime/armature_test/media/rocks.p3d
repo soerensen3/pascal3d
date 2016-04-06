@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<p3dscene>
+  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
+  <object data="Lamp.003" name="light_Lamp.003" type="lamp">
+    <matrix c0="-0.815094, 0.525038,-0.244860, 0.000000" c1="-0.551951,-0.575404, 0.603539, 0.000000" c2=" 0.175988, 0.627092, 0.758804, 0.000000" c3="-2.148687,11.957614, 6.639953, 1.000000" />
+  </object>
+  <object data="Lamp.002" name="light_Lamp.002" type="lamp">
+    <matrix c0=" 0.274261, 0.958095, 0.082674, 0.000000" c1="-0.731146, 0.151905, 0.665094, 0.000000" c2=" 0.624665,-0.242856, 0.742169, 0.000000" c3="-1.762631,10.429528, 6.512953, 1.000000" />
+  </object>
+  <object data="Lamp.001" name="light_Lamp.001" type="lamp">
+    <matrix c0=" 0.740410, 0.654700, 0.152185, 0.000000" c1="-0.514877, 0.406886, 0.754550, 0.000000" c2=" 0.432082,-0.637033, 0.638353, 0.000000" c3="-1.555738, 9.190848, 6.384214, 1.000000" />
+  </object>
+  <object data="Cube.001" name="mesh_Cube.001" type="mesh">
+    <matrix c0=" 0.463286, 0.188059, 0.000000, 0.000000" c1="-0.188059, 0.463286, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 0.500000, 0.000000" c3=" 0.000000, 0.000000, 1.500000, 1.000000" />
+  </object>
+  <object data="Cube" name="mesh_Cube" type="mesh">
+    <matrix c0=" 0.978531,-0.206101, 0.000000, 0.000000" c1=" 0.206101, 0.978531, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+  </object>
+  <object data="Lamp" name="light_Lamp" type="lamp">
+    <matrix c0=" 0.965387, 0.252723,-0.064486, 0.000000" c1="-0.032133,-0.130119,-0.990978, 0.000000" c2="-0.258833, 0.958749,-0.117495, 0.000000" c3="-1.532449, 7.905378, 6.204060, 1.000000" />
+  </object>
+  <object data="Camera" name="camera_Camera" type="camera">
+    <matrix c0=" 0.685881, 0.727634,-0.010817, 0.000000" c1="-0.317370, 0.312469, 0.895343, 0.000000" c2=" 0.654862,-0.610666, 0.445245, 0.000000" c3=" 7.481132,-6.507640, 5.343665, 1.000000" />
+  </object>
+  <mesh binary="rocks.Cube.001.p3dmesh" cotangents="414" faces="1536" name="Cube.001" normals="390" tangents="398" texcoords="289" vertices="1538">
+    <material end="1535" name="material_Material.001" start="0" />
+  </mesh>
+  <mesh binary="rocks.Cube.p3dmesh" cotangents="414" faces="1536" name="Cube" normals="390" tangents="398" texcoords="1729" vertices="1538">
+    <material end="1535" name="material_Material" start="0" />
+  </mesh>
+  <light color="1.000000, 0.152920, 0.437146" energy="1.0" name="Lamp.003" type="sun" />
+  <light color="1.000000, 0.000000, 0.018247" energy="1.0" name="Lamp.002" type="sun" />
+  <light color="0.000000, 1.000000, 0.001529" energy="0.5199999809265137" name="Lamp.001" type="sun" />
+  <light color="0.000000, 0.043119, 1.000000" energy="0.5299999713897705" name="Lamp" type="sun" />
+  <camera far="100.0" fov="0.8575560450553894" name="Camera" near="0.10000000149011612" />
+  <material diffuse="0.262895, 0.259063, 0.266761" name="material_Material.001" specular="7.000000, 0.152672, 0.152672, 0.152672">
+    <texture diffuse="1.0" file="rock.jpg" layer="0" mode="multiply" />
+    <texture file="rock_spec.png" layer="0" mode="mix" specular="1.0" specular_intensity="1.0" />
+    <texture file="rock_normal.png" mode="mix" normal="1.0" />
+  </material>
+  <material diffuse="1.000000, 0.729992, 0.635917" name="material_Material" specular="7.000000, 0.152672, 0.152672, 0.152672">
+    <texture diffuse="1.0" file="rock.jpg" layer="0" mode="multiply" />
+    <texture file="rock_spec.png" layer="0" mode="mix" specular="1.0" specular_intensity="1.0" />
+  </material>
+</p3dscene>

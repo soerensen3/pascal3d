@@ -1,46 +1,89 @@
 {$IFDEF INTERFACE}
   type
+     TP3DMesh = class;
      TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowBoundingBox, rfDebugShowArmature );
      TP3DRenderFlags = set of TP3DRenderFlag;
 
      { TP3DMaterialMap }
 
      TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
-     TP3DMaterialMap = record
-       Map: TP3DTexture;
-       DiffuseFactor: Single;
-       NormalFactor: Single;
-       SpecularFactor: Single;
-       TexChannel: Integer;
-       Mode: TP3DMapMode;
+
+     TP3DMaterial = class;
+     TP3DMaterialMap = class ( TPersistent )
+       private
+         FDiffuseFactor: Single;
+         FMap: TP3DTexture;
+         FMode: TP3DMapMode;
+         FNormalFactor: Single;
+         FParentMaterial: TP3DMaterial;
+         FSpecularFactor: Single;
+         FTexChannel: Integer;
+         procedure SetMap(AValue: TP3DTexture);
+
+       public
+         constructor CreateFromDOM( AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+
+       published
+         property DiffuseFactor: Single read FDiffuseFactor write FDiffuseFactor;
+         property NormalFactor: Single read FNormalFactor write FNormalFactor;
+         property SpecularFactor: Single read FSpecularFactor write FSpecularFactor;
+         property TexChannel: Integer read FTexChannel write FTexChannel;
+         property Mode: TP3DMapMode read FMode write FMode;
+         property Map: TP3DTexture read FMap write SetMap;
+         property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
      end;
+
+     TP3DMaterialMapList = specialize gP3DCustomObjectList < TP3DMaterialMap >;
 
     { TP3DMaterial }
 
      TP3DMaterial = class ( TP3DDataBlock )
-       public
-         Maps: array [ 0..7 ] of TP3DMaterialMap;
-         NumMaps: Integer;
-         Diff: TVec3;
-         Spec: TVec3;
-         Spec_Hardness: Single;
-         alpha: Real;
-         Shader: TShader;
+       private
+         FAlpha: Single;
+         FDiff: TVec3;
+         FMaps: TP3DMaterialMapList;
+         FShader: TShader;
+         FSpec: TVec3;
+         FSpec_Hardness: Single;
 
+       public
          procedure BuildShader();
 
-         constructor Create( AParentList: TP3DObjectList );
+         constructor Create( const AData: TP3DData = nil );
          destructor Destroy; override;
 
          procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); override;
+
+         property Diff: TVec3 read FDiff write FDiff;
+         property Spec: TVec3 read FSpec write FSpec;
+
+       published
+         property Maps: TP3DMaterialMapList read FMaps write FMaps;
+         property Spec_Hardness: Single read FSpec_Hardness write FSpec_Hardness;
+         property Alpha: Single read FAlpha write FAlpha;
+         property Shader: TShader read FShader write FShader;
      end;
 
      { TP3DMaterialGroup }
 
-     TP3DMaterialGroup = class
-       PolyStart, PolyEnd,
-         IndexStart, IndexEnd: Integer;
-       Material: TP3DMaterial;
+     TP3DMaterialGroup = class ( TPersistent )
+       private
+         FIndexEnd: Integer;
+         FIndexStart: Integer;
+         FMaterial: TP3DMaterial;
+         FParentMesh: TP3DMesh;
+         FPolyEnd: Integer;
+         FPolyStart: Integer;
+
+         procedure SetMaterial( AValue: TP3DMaterial );
+
+       published
+         property PolyStart: Integer read FPolyStart write FPolyStart;
+         property PolyEnd: Integer read FPolyEnd write FPolyEnd;
+         property IndexStart: Integer read FIndexStart write FIndexStart;
+         property IndexEnd: Integer read FIndexEnd write FIndexEnd;
+         property Material: TP3DMaterial read FMaterial write SetMaterial;
+         property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
      end;
 
      TP3DMaterialGroupList = specialize gP3DCustomObjectList < TP3DMaterialGroup >;
@@ -58,9 +101,6 @@
 
      PP3DFaceArray = ^TP3DFaceArray;
      TP3DFaceArray = array of TP3DFace;
-
-
-     {$MACRO ON}
 
      TP3DCustomMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
 
@@ -90,8 +130,8 @@
         VBArray: TP3DVertexBufferArray;
         MaterialGroups: TP3DMaterialGroupList;
 
-        constructor Create( AParentList: TP3DObjectList );
-        constructor CreateFromDOM( AParentList: TP3DObjectList; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+        constructor Create( const AData: TP3DData = nil );
+        constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
         destructor Destroy; override;
 
@@ -104,12 +144,66 @@
         procedure CalcCotangentsFromTangents;
         procedure Calc_Tangents_Cotangents;
         function CalcBoundingBox(): TP3DBoundingBox; override;
+        procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
 //        procedure ClearChildren;
     end;
     TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+{ TP3DMaterialMap }
+
+procedure TP3DMaterialMap.SetMap(AValue: TP3DTexture);
+begin
+  if FMap=AValue then Exit;
+
+  if ( Assigned( FMap )) then
+    FMap.Users.Delete( FMap.Users.IndexOf( ParentMaterial ));
+
+  FMap:= AValue;
+
+  if ( Assigned( FMap )) then
+    FMap.Users.Add( ParentMaterial );
+end;
+
+constructor TP3DMaterialMap.CreateFromDOM(AParentMaterial: TP3DMaterial;
+  ADOMNode: TDOMElement; const AData: TP3DData);
+var
+  TexName: DOMString;
+  n: LongInt;
+  _Data: TP3DData;
+begin
+  TexName:= ADOMNode.GetAttribute( 'file' );
+  if ( not FileExists( TexName )) then
+    raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );
+
+  if ( not Assigned( AData )) then
+    _Data:= P3DData
+  else
+    _Data:= AData;
+  n:= _Data.Textures.FindByFileName( TexName );
+  if ( n >= 0 ) then
+    Map:= _Data.Textures[ n ]
+  else
+    begin
+      Map:= TP3DTexture.Create( TexName, AData );
+      _Data.Textures.Add( Map );
+    end;
+  DiffuseFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'diffuse' ), 0.0 );
+  NormalFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'normal' ), 0.0 );
+  SpecularFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'specular' ), 0.0 );
+  TexChannel:= StrToIntDef( ADOMNode.GetAttribute( 'layer' ), 0 );
+  case ADOMNode.GetAttribute( 'mode' ) of
+    'add': Mode:= p3dmmAdd;
+    'multiply': Mode:= p3dmmMultiply;
+    'subtract': Mode:= p3dmmSubtract;
+    else
+      Mode:= p3dmmMix;
+  end;
+end;
+
+
 { TP3DMesh }
 
 procedure LoadFaceFromStream( Faces: PP3DFaceArray; S: TStream; ACount: Integer );
@@ -187,20 +281,26 @@ end;
 
 { TP3DDataBlock }
 
-constructor TP3DDataBlock.Create(AParentList: TP3DObjectList);
+constructor TP3DDataBlock.Create(const AData: TP3DData);
+var
+  _Data: TP3DData;
 begin
-  inherited;
+  if ( AData = nil ) then
+    _Data:= P3DData
+  else
+    _Data:= AData;
+  inherited Create( _Data.DataBlocks );
   FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
   BoundingBox:= P3DInvalidBoundingBox;
-  FUsers:= TP3DActorList.Create;
+  FUsers:= TP3DDataBlockList.Create;
 end;
 
 destructor TP3DDataBlock.Destroy;
 var
-  User: TP3DActor;
+  User: TP3DDataBlock;
 begin
   for User in Users do
-    User.FData:= nil;
+    User.NotifyDeleteOfData( Self );
   FUsers.Free;
   FFileWatch.Free;
   inherited Destroy;
@@ -212,6 +312,11 @@ begin
   FBoundingBox.Max:= vec3( 0 );
   FBoundingBox.Min:= vec3( 0 );
   Result:= BoundingBox;
+end;
+
+procedure TP3DDataBlock.NotifyDeleteOfData( Sender: TP3DDataBlock );
+begin
+  //Nothing to do
 end;
 
 {
@@ -240,7 +345,7 @@ begin
     MaterialGroup.Material:= AData.Materials[ MatIdx ]
   else
     begin
-      MaterialGroup.Material:= TP3DMaterial.Create( AData.DataBlocks );
+      MaterialGroup.Material:= TP3DMaterial.Create( AData );
       MaterialGroup.Material.Name:= AName;
       AData.Materials.Add( MaterialGroup.Material );
     end;
@@ -249,7 +354,7 @@ begin
   MaterialGroups.Add( MaterialGroup );
 end;
 
-constructor TP3DMesh.Create( AParentList: TP3DObjectList );
+constructor TP3DMesh.Create(const AData: TP3DData);
 begin
   inherited;
 
@@ -264,10 +369,9 @@ begin
   //FVisible:= True;
 end;
 
-constructor TP3DMesh.CreateFromDOM(AParentList: TP3DObjectList;
-  ADOMNode: TDOMElement; const AData: TP3DData);
+constructor TP3DMesh.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData);
 begin
-  Create( AParentList );
+  Create( AData );
   LoadFromDOM( ADOMNode, AData );
 end;
 
@@ -412,20 +516,19 @@ begin
   glUniform4f( ActShad.Uniforms.AddrByName( 'mat_specular' ), Material.Spec.r, Material.Spec.g, Material.Spec.b, 1 );
   glUniform1f( ActShad.Uniforms.AddrByName( 'mat_hardness' ), Material.Spec_Hardness );
 
-  if ( Material.NumMaps > 0 ) then
-    for i:= 0 to Material.NumMaps - 1 do
-      begin
-        glActiveTexture( GL_TEXTURE0 + i );
-        glEnable( GL_TEXTURE_2D );
-        glBindTexture( GL_TEXTURE_2D, Material.Maps[ i ].Map.fGLTexture );
-        glUniform1i( ActShad.Uniforms.AddrByName( 'tex' + IntToStr( i )), i );
+  for i:= 0 to Material.Maps.Count - 1 do
+    begin
+      glActiveTexture( GL_TEXTURE0 + i );
+      glEnable( GL_TEXTURE_2D );
+      glBindTexture( GL_TEXTURE_2D, Material.Maps[ i ].Map.FGLTexture );
+      glUniform1i( ActShad.Uniforms.AddrByName( 'tex' + IntToStr( i )), i );
 
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      end;
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    end;
   _world:= world;
 
   if ( Positions.Count > 0 ) then
@@ -744,6 +847,16 @@ begin
   Result:= FBoundingBox;
 end;
 
+procedure TP3DMesh.NotifyDeleteOfData(Sender: TP3DDataBlock);
+var
+  i: Integer;
+begin
+  inherited NotifyDeleteOfData(Sender);
+  for i:= 0 to MaterialGroups.Count - 1 do
+    if ( MaterialGroups[ i ].Material = Sender ) then
+      MaterialGroups[ i ].Material:= nil;
+end;
+
 { TMaterial }
 
 procedure TP3DMaterial.BuildShader;
@@ -816,7 +929,8 @@ begin
 
   for i:= 0 to 7 do
     ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
-  for i:= 0 to NumMaps - 1 do
+
+  for i:= 0 to Maps.Count - 1 do
     begin
       ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'Pass_Read' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
       if ( Maps[ i ].DiffuseFactor > 0 ) then
@@ -850,59 +964,34 @@ begin
   end;
 end;
 
-constructor TP3DMaterial.Create(AParentList: TP3DObjectList);
+constructor TP3DMaterial.Create(const AData: TP3DData);
 begin
   inherited;
-  NumMaps:= 0;
-//  Diff_Map:= -1;
+  Maps:= TP3DMaterialMapList.Create;
 end;
 
 destructor TP3DMaterial.Destroy;
 begin
+  Maps.Free;
   if ( Assigned( Shader )) then
     Shader.Free;
   inherited Destroy;
 end;
 
-procedure TP3DMaterial.LoadFromDOM(ADOMNode: TDOMElement; const AData: TP3DData
-  );
+procedure TP3DMaterial.LoadFromDOM(ADOMNode: TDOMElement; const AData: TP3DData );
 var
   SpecTmp: TVec4;
   tex: TDOMElement;
 
   procedure LoadTex;
   var
-    TexName: String;
-    tx: TP3DTexture;
+    Map: TP3DMaterialMap;
   begin
-    if ( NumMaps = 8 ) then
+    if ( Maps.Count > 7 ) then
       raise Exception.Create( 'Maximum Number of Maps reached: 8' );
-    Maps[ NumMaps ].DiffuseFactor:= StrToFloatDef( tex.GetAttribute( 'diffuse' ), 0.0 );
-    Maps[ NumMaps ].NormalFactor:= StrToFloatDef( tex.GetAttribute( 'normal' ), 0.0 );
-    Maps[ NumMaps ].SpecularFactor:= StrToFloatDef( tex.GetAttribute( 'specular' ), 0.0 );
-    Maps[ NumMaps ].TexChannel:= StrToIntDef( tex.GetAttribute( 'layer' ), 0 );
-    case tex.GetAttribute( 'mode' ) of
-      'add': Maps[ NumMaps ].Mode:= p3dmmAdd;
-      'multiply': Maps[ NumMaps ].Mode:= p3dmmMultiply;
-      'subtract': Maps[ NumMaps ].Mode:= p3dmmSubtract;
-      else
-        Maps[ NumMaps ].Mode:= p3dmmMix;
-    end;
-    TexName:= tex.GetAttribute( 'file' );
-    if ( not FileExists( TexName )) then
-      raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' )
-    else
-      begin
-        tx:= TP3DTexture.Create( TexName );
-        if ( Assigned( tx )) then
-          Maps[ NumMaps ].Map:= tx
-        else
-          begin
-            WriteLn( 'Error: An unknown error occured while loading texture "' + TexName + '"!' );
-            exit;
-          end;
-      end;
-    Inc( NumMaps );
+    Map:= TP3DMaterialMap.CreateFromDOM( Self, tex, AData );
+
+    Maps.Add( Map );
   end;
 
 begin
@@ -924,6 +1013,21 @@ begin
   end;
   BuildShader;
   FileWatch.FileName:= '';
+end;
+
+{ TP3DMaterialGroup }
+
+procedure TP3DMaterialGroup.SetMaterial(AValue: TP3DMaterial);
+begin
+  if FMaterial=AValue then Exit;
+
+  if ( Assigned( FMaterial )) then
+    FMaterial.Users.Delete( FMaterial.Users.IndexOf( ParentMesh ));
+
+  FMaterial:= AValue;
+
+  if ( Assigned( FMaterial )) then
+    FMaterial.Users.Add( ParentMesh );
 end;
 
 

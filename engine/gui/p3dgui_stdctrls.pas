@@ -182,8 +182,8 @@ type
 
   TP3DValueEdit = class ( TP3DCustomValueEdit )
     protected
-	    FValue: Single;
-	    FValueName: String;
+      FValue: Single;
+      FValueName: String;
 
       function GetValue: Single; override;
       procedure SetValue(AValue: Single); override;

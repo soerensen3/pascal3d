@@ -22,6 +22,7 @@ TP3DGUIManager = class
     procedure SetMouseY( const Value: Integer );
     procedure CtrlDeleteNotifier( Ctrl: TP3DGraphicControl );
     procedure SetShowCursor(AValue: Boolean);
+    procedure SetWindow(AValue: TSDLWindow);
 
   public
     constructor Create;
@@ -34,7 +35,7 @@ TP3DGUIManager = class
   published
     property MouseX: Integer read GetMouseX write SetMouseX;
     property MouseY: Integer read GetMouseY write SetMouseY;
-    property Window: TSDLWindow read FWindow write FWindow;
+    property Window: TSDLWindow read FWindow write SetWindow;
     property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
     property Controls: TP3DControlList read FControls write FControls;
     property Cursor: TP3DCursor read FCursor write SetCursor;
@@ -143,6 +144,14 @@ begin
   if FShowCursor=AValue then Exit;
   FShowCursor:=AValue;
   SetCursor( Cursor );
+end;
+
+procedure TP3DGUIManager.SetWindow(AValue: TSDLWindow);
+begin
+  if FWindow=AValue then Exit;
+  FWindow:=AValue;
+  if ( Assigned( Window )) then
+    UpdateExtents;
 end;
 
 procedure TP3DGUIManager.UpdateExtents;

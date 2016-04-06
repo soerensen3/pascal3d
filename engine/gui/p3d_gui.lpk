@@ -11,7 +11,7 @@
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="11">
+    <Files Count="12">
       <Item1>
         <Filename Value="p3d_gui.pas"/>
         <UnitName Value="p3d_gui"/>
@@ -34,10 +34,12 @@
       </Item5>
       <Item6>
         <Filename Value="p3dgui_shadernodes.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="p3dgui_shadernodes"/>
       </Item6>
       <Item7>
         <Filename Value="p3dgui_sceneviewer.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="p3dgui_sceneviewer"/>
       </Item7>
       <Item8>
@@ -56,6 +58,11 @@
         <Filename Value="p3dgui_menus.pas"/>
         <UnitName Value="p3dgui_menus"/>
       </Item11>
+      <Item12>
+        <Filename Value="p3dgui_commonctrls.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="p3dgui_commonctrls"/>
+      </Item12>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

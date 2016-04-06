@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<p3dscene>
+  <object data="mesh.grid" name="grid" type="mesh">
+    <matrix c0="100.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000,100.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+  </object>
+  <mesh binary="grid.Plane.p3dmesh" cotangents="1" faces="1" name="mesh.grid" normals="1" tangents="1" texcoords="4" vertices="4">
+    <material end="0" name="GridMaterial" start="0" />
+  </mesh>
+  <material diffuse="0.800000, 0.800000, 0.800000" name="GridMaterial" specular="50.000000, 0.000000, 0.000000, 0.000000">
+    <texture alpha="1.0" diffuse="1.0" file="grid.png" layer="0" mode="mix" />
+  </material>
+</p3dscene>

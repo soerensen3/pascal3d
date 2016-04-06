@@ -169,6 +169,13 @@ begin
     Result:= p3dmodel.BoundingBox( Position, Position, Position );
 end;
 
+procedure TP3DActor.NotifyDeleteOfData(Sender: TP3DDataBlock);
+begin
+  inherited NotifyDeleteOfData(Sender);
+  if ( Sender = Data ) then
+    Data:= nil;
+end;
+
 { TP3DActorList }
 
 procedure TP3DActorList.Render( world: TMat4; Scene: TP3DScene );

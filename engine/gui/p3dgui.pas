@@ -16,7 +16,6 @@ interface
     Contnrs,
     math,
     clipbrd,
-//    GlobalVars,
     SDL2,
     p3dgenerics,
     p3dwindow,

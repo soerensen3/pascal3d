@@ -26,8 +26,8 @@ type
       procedure PassToShader( world: TMat4 );
       procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); override;
 
-      constructor Create( AParentList: TP3DObjectList );
-      constructor CreateFromDOM( AParentList: TP3DObjectList; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil );
+      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
       property Position: TVec3 read FPosition write FPosition;
       property Forward: TVec3 read FForward;
@@ -136,7 +136,7 @@ begin
   FileWatch.FileName:= '';
 end;
 
-constructor TP3DCamera.Create(AParentList: TP3DObjectList);
+constructor TP3DCamera.Create(const AData: TP3DData);
 begin
   inherited;
   Aspect:= 4/3;
@@ -145,10 +145,10 @@ begin
   //FHandedness:= coRight;
 end;
 
-constructor TP3DCamera.CreateFromDOM(AParentList: TP3DObjectList;
-  ADOMNode: TDOMElement; const AData: TP3DData);
+constructor TP3DCamera.CreateFromDOM(ADOMNode: TDOMElement;
+  const AData: TP3DData);
 begin
-  Create( AParentList );
+  Create( AData );
   LoadFromDOM( ADOMNode, AData );
 end;
 

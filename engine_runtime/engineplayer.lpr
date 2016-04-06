@@ -22,9 +22,7 @@ uses
   p3dMath,
   p3dmodel,
   p3dinput,
-  p3dscene,
   p3dframebuffer,
-  p3dtexture,
   p3dfilewatch,
   p3dgeometry,
   p3dobjects,
@@ -34,16 +32,17 @@ uses
   p3dgui_menus,
   p3dtext,
   p3dcanvas,
-  p3dshadernodes,
-  p3dgui_shadernodes,
+  //p3dshadernodes,
+  //p3dgui_shadernodes,
   p3dNodes,
   p3dviewport,
   p3dgenerics,
   p3dmarkdown,
   XMLRead,
   DOM,
-  p3dlogging,
-  p3dgui_sceneviewer;
+  p3dlogging
+  //p3dgui_sceneviewer
+  ;
 
 {$DEFINE INTERFACE}
          {$INCLUDE renderscene.inc}

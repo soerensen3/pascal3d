@@ -16,9 +16,7 @@ type
       FMeshes: TP3DMeshList;
       FObjects: TP3DActorList;
       FScenes: TP3DSceneList;
-
-    protected
-      property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
+      FTextures: TP3DTextureList;
 
     public
       constructor Create;
@@ -29,6 +27,9 @@ type
       procedure AppendFromDom( ADOMNode: TDOMElement;
         const AParent: TP3DActor = nil );
       procedure AppendFile( AFileName: String; const AParent: TP3DActor = nil );
+      procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
+
+      property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
 
     published
       property Cameras: TP3DCameraList read FCameras write FCameras;
@@ -38,6 +39,7 @@ type
       property Meshes: TP3DMeshList read FMeshes write FMeshes;
       property Objects: TP3DActorList read FObjects write FObjects;
       property Scenes: TP3DSceneList read FScenes write FScenes;
+      property Textures: TP3DTextureList read FTextures write FTextures;
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
   end;
 
@@ -73,6 +75,7 @@ begin
   Objects:= TP3DActorList.Create;
   Libraries:= TP3DDataList.Create;
   Scenes:= TP3DSceneList.Create;
+  Textures:= TP3DTextureList.Create;
   FileWatch:= TP3DFileWatch.Create( '', Self );
 end;
 
@@ -91,12 +94,15 @@ end;
 
 destructor TP3DData.Destroy;
 begin
+  Cameras.Free;
   Lights.Free;
   Materials.Free;
   Meshes.Free;
   Objects.Free;
   Libraries.Clear( True );
   Libraries.Free;
+  Scenes.Free;
+  Textures.Free;
   FileWatch.Free;
 
   DataBlocks.Free;
@@ -119,10 +125,10 @@ var
     begin
       Result:= -1;
       case Element.NodeName of
-        'mesh': begin DB:= TP3DMesh.Create( DataBlocks ); Meshes.Add( TP3DMesh( DB )); end;
-        'material': begin DB:= TP3DMaterial.Create( DataBlocks ); Materials.Add( TP3DMaterial( DB )); end;
-        'light': begin DB:= TP3DLight.Create( DataBlocks ); Lights.Add( TP3DLight( DB )); end;
-        'camera': begin DB:= TP3DCamera.Create( DataBlocks ); Cameras.Add( TP3DCamera( DB )); end;
+        'mesh': begin DB:= TP3DMesh.Create( Self ); Meshes.Add( TP3DMesh( DB )); end;
+        'material': begin DB:= TP3DMaterial.Create( Self ); Materials.Add( TP3DMaterial( DB )); end;
+        'light': begin DB:= TP3DLight.Create( Self ); Lights.Add( TP3DLight( DB )); end;
+        'camera': begin DB:= TP3DCamera.Create( Self ); Cameras.Add( TP3DCamera( DB )); end;
       end;
       Result:= DataBlocks.IndexOf( DB );
     end;
@@ -188,6 +194,11 @@ begin
     SetCurrentDir( dir );
     xml.Free;
   end;
+end;
+
+procedure TP3DData.NotifyDeleteOfData(Sender: TP3DDataBlock);
+begin
+
 end;
 
 function OpenLibrary(FileName: String): Integer;

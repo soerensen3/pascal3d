@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<p3dscene>
+  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
+  <armature name="Armature" />
+  <mesh binary="plant.tree.005.p3dmesh" cotangents="401" faces="686" name="tree.005" normals="395" tangents="394" texcoords="200" vertices="494">
+    <matrix c0=" 1.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 1.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+    <material end="685" name="matFace" start="0" />
+  </mesh>
+  <mesh binary="plant.tree.004.p3dmesh" cotangents="4530" faces="8940" name="tree.004" normals="5747" tangents="4529" texcoords="199" vertices="5970">
+    <matrix c0=" 1.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 1.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+    <material end="8939" name="matLeaf" start="0" />
+  </mesh>
+  <mesh binary="plant.tree.003.p3dmesh" cotangents="10042" faces="7390" name="tree.003" normals="3794" tangents="10022" texcoords="1248" vertices="3797">
+    <matrix c0=" 1.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 1.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+    <material end="7389" name="matWood" start="0" />
+  </mesh>
+  <mesh binary="plant.tree.p3dmesh" cotangents="1070" faces="1388" name="tree" normals="955" tangents="1068" texcoords="355" vertices="934">
+    <matrix c0=" 1.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 1.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+    <material end="1387" name="matRoots" start="0" />
+  </mesh>
+  <light color="1.000000, 1.000000, 1.000000" direction="0.389027, 0.683051, 0.618142" energy="1.0" name="Lamp.002" type="sun" />
+  <material diffuse="0.113921, 0.113921, 0.113921" name="matFace" specular="50.000000, 0.000000, 0.000000, 0.000000" />
+  <material diffuse="0.640000, 0.640000, 0.640000" name="matLeaf" specular="50.000000, 0.500000, 0.500000, 0.500000">
+    <texture alpha="1.0" diffuse="1.0" file="leaf.png" mode="mix" />
+    <texture file="NormalMap.png" layer="0" mode="mix" normal="1.0" />
+  </material>
+  <material diffuse="0.039639, 0.017456, 0.005489" name="matWood" specular="18.000000, 0.007246, 0.007246, 0.007246">
+    <texture file="tree_norm.png" layer="0" mode="mix" normal="0.699999988079071" />
+    <texture diffuse="1.0" file="tree_diff.png" mode="mix" />
+  </material>
+  <material diffuse="0.020315, 0.004772, 0.001546" name="matRoots" specular="50.000000, 0.000000, 0.000000, 0.000000">
+    <texture alpha="1.0" file="roots.png" layer="0" mode="mix" />
+  </material>
+</p3dscene>

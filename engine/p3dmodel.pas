@@ -8,8 +8,9 @@ unit p3dmodel;
 interface
 
 uses
-  Classes, SysUtils, dglOpenGL, Math, p3dMath, p3dshaders, p3dshadernodes, p3dtexture,
-  p3dgeometry, LCLIntf, p3dfilewatch, p3dobjects, p3dbuffers, DOM, XMLRead, p3dgenerics;
+  Classes, SysUtils, dglOpenGL, Math, p3dMath, p3dshaders, p3dshadernodes,
+  p3dgeometry, LCLIntf, p3dfileutil, p3dobjects, p3dbuffers, DOM, XMLRead, p3dgenerics,
+  SDL2, SDL2_image;
 
 type
   TP3DScene = class;
@@ -24,6 +25,7 @@ type
  {$INCLUDE p3dmodel_camera.inc}
  {$INCLUDE p3dmodel_scene.inc}
  {$INCLUDE p3dmodel_actor.inc}
+ {$INCLUDE p3dmodel_texture.inc}
  {$INCLUDE p3dmodel_mesh.inc}
  {$INCLUDE p3dmodel_lighting.inc}
  {$INCLUDE p3dmodel_resource.inc}
@@ -38,11 +40,12 @@ implementation
 
 {$INCLUDE p3dmodel_common.inc}
 {$INCLUDE p3dmodel_datablock.inc}
-{$INCLUDE p3dmodel_actor.inc}
-{$INCLUDE p3dmodel_mesh.inc}
-{$INCLUDE p3dmodel_lighting.inc}
 {$INCLUDE p3dmodel_camera.inc}
 {$INCLUDE p3dmodel_scene.inc}
+{$INCLUDE p3dmodel_actor.inc}
+{$INCLUDE p3dmodel_texture.inc}
+{$INCLUDE p3dmodel_mesh.inc}
+{$INCLUDE p3dmodel_lighting.inc}
 {$INCLUDE p3dmodel_resource.inc}
 
 {$UNDEF IMPLEMENTATION}

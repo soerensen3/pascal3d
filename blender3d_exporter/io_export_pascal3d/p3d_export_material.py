@@ -49,4 +49,4 @@ def ExportMaterials(Config):
                 
                 global globalUVLayerNames
                 if ( tex.uv_layer != '' ):
-                    texEl.attrib['layer'] = str( globalUVLayerNames[ mat.name, tex.uv_layer ] )   
+                    texEl.attrib['layer'] = str( globalUVLayerNames[ mat.name, tex.uv_layer ])   

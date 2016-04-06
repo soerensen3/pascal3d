@@ -1,0 +1,173 @@
+header, section, footer, aside, nav, main, article, figure {
+    display: block;
+} 
+
+header {  
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;  
+  font-size: x-large;  
+  font-style: italic;  
+  text-align: left;  
+  background-color: #E5DED5;  
+  color: #000000;  
+  border-bottom-color: #7C4A09;  
+  border-bottom-style: solid;  
+  font-variant: normal;
+  padding-left: 5pt; 
+  padding-top: 5pt;
+  padding-right: 5pt;
+  padding-bottom: 0;
+}
+
+h1 {  
+  font-size: large;
+  font-weight: lighter;  
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  border-color: #5E7B30;  
+  border-bottom-width: 10px;  
+  border-bottom-style: solid;
+  display: inline-block;
+}
+/*
+h1:before,
+h1:after {
+  background: #ddd;
+  content: " asd";
+  display: block;
+  height: 1px;
+  position: absolute;
+  border-style: none;
+    top: 50%;
+  width: 400%;
+}
+h1::after { content:"\A"; white-space:pre; }*/
+
+
+h2 {  
+  font-size: medium;
+  font-weight: bold;
+  color: maroon;
+  font-style: italic;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  border-color: #5E7B30;  
+  border-bottom-width: 2px;  
+  border-bottom-style: solid;  
+  display: inline-block;
+}
+h2::after { content:"\A"; white-space:pre; }
+
+
+a:visited{
+  color: #283810;
+  font-weight: normal;
+}
+
+a:link{
+  font-weight: bold;
+  color: #5E7B30;
+}
+a {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+description {  
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+strong, b {
+    font-weight: bold;
+}
+
+article {
+  border-color: #eeeeee;  
+  border-width: 1px;  
+  border-style: solid;  
+  padding-bottom: 5px;
+  margin: 5px;
+}
+
+code {  
+  white-space: pre-wrap;
+  font-family: "Source Code Pro",monospace;  
+}
+/*code:span {
+  white-space: pre;
+  font-family: "Source Code Pro",monospace;  
+}*/
+
+body {  
+  font-family: "DejaVu Serif", Times, serif;  
+  font-weight: lighter;
+}
+
+div {  
+  line-height: 150%;  
+  list-style-type: square;  
+  list-style-position: inside;
+}
+
+ul {  
+  list-style-type: none;  
+}
+
+.list li {  
+  border-color: #D4E5BB;  
+  border-width: 1px;  
+  border-style: solid;  
+}
+
+.list td {  
+  border-bottom-color: #D4E5BB;  
+  border-bottom-width: 2px;  
+  border-bottom-style: solid;  
+}
+
+/*from lazdoc.css*/
+
+/* identifier in source fragments */
+span.identifier {
+
+}
+
+/* symbols in source fragments */
+span.symbol {
+  color: darkred
+}
+
+/* keywords in source fragments */
+span.keyword {
+  font-weight: bold
+}
+
+/* comments in source fragments */
+span.comment {
+  font-weight: lighter;  
+  font-style: italic;  
+  color: #3333ff;
+}
+
+/* directives in source fragments */
+span.directive {
+  color: darkyellow;
+  font-style: italic
+}
+
+/* numbers in source fragments */
+span.number {
+  color: darkmagenta
+}
+
+/* characters (#...) in source fragments */
+span.character {
+  color: darkcyan
+}
+
+/* strings in source fragments */
+span.string {
+  color: blue
+}
+
+/* assembler passages in source fragments */
+span.assembler {
+  color: green
+}
+

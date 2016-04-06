@@ -5,7 +5,7 @@ unit p3dtext;
 interface
 
 uses
-   Classes, SysUtils, dglOpenGL, p3dbuffers, SDL2, sdl2_ttf, p3dtexture, p3dmath, FileUtil, p3dgenerics, p3dshaders;
+   Classes, SysUtils, dglOpenGL, p3dbuffers, SDL2, sdl2_ttf, p3dmodel, p3dmath, FileUtil, p3dgenerics, p3dshaders;
 
 type
 
@@ -20,6 +20,7 @@ type
       FFontName: String;
       FSize: Integer;
       FFont: sdl2_ttf.PTTF_Font;
+
       procedure SetFileName(AValue: String);
 
     public
@@ -42,17 +43,22 @@ type
   TP3DFontManager = class ( TP3DCustomFontList )
     private
       FDefaultFontsPath: String;
-      FShader: TShader;
+      FMaterial: TP3DMaterial;
+
       function GetFont( FontName: String; Height: Integer ): TP3DFont;
 
     public
-      property Fonts [ FontName: String; Height: Integer ]: TP3DFont read GetFont; default;
+      constructor Create;
+      destructor Destroy; override;
+
       function Add( Item: TP3DFont ): Integer; override;
       function Add( FontName: String; Height: Integer ): Integer;
 
+      property Fonts [ FontName: String; Height: Integer ]: TP3DFont read GetFont; default;
+
     published
       function Find( FontName: String; Height: Integer ): Integer;
-      property Shader: TShader read FShader write FShader;
+      property Material: TP3DMaterial read FMaterial write FMaterial;
       property DefaultFontsPath: String read FDefaultFontsPath write FDefaultFontsPath;
   end;
 
@@ -69,6 +75,8 @@ type
       FVertices: TP3DVec2BufferGL;
       FText: String;
       FWidth: Single;
+
+      procedure ApplyShader;
 
       //function AppendLetter( L: WideChar; fs: Single; p: TVec2 ): TVec2;
 
@@ -102,7 +110,7 @@ var
 
 implementation
 
-function p3dTextSimple(AText: String; AFont: TP3DFont ): TP3DText;
+function p3dTextSimple( AText: String; AFont: TP3DFont ): TP3DText;
 var
   cl: TSDL_Color;
   surface: PSDL_Surface;
@@ -147,6 +155,16 @@ begin
 end;
 
 { TP3DText }
+
+procedure TP3DText.ApplyShader;
+begin
+  if ( P3DFontManager.Material.Maps.Count = 0 ) then
+    P3DFontManager.Material.Maps.Add( TP3DMaterialMap.Create );
+  P3DFontManager.Material.Maps[ 0 ].Map:= Texture;
+  if ( not Assigned( P3DFontManager.Material.Shader )) then
+    P3DFontManager.Material.BuildShader();
+  P3DFontManager.Material.Shader.Enable;
+end;
 
 constructor TP3DText.Create;
 begin
@@ -216,15 +234,14 @@ var
   OldShader: TShader;
 begin
   OldShader:= ActShad;
-  if ( Assigned( Font.FontManager.Shader )) then
-    Font.FontManager.Shader.Enable;
+  ApplyShader;
 
   tx:= ActShad.Uniforms.AddrByName( 'tex0' );
   mat:= ActShad.Uniforms.AddrByName( 'mat' );
 
   glActiveTexture( GL_TEXTURE0 );
   glEnable( GL_TEXTURE_2D );
-  glBindTexture( GL_TEXTURE_2D, Texture.fGLTexture );
+  glBindTexture( GL_TEXTURE_2D, Texture.GLTexture );
 
   mt:= mat4translate( vec4( p, 0, 1 ));
   m:= mt * proj;
@@ -289,6 +306,18 @@ begin
   Result:= Add( TP3DFont.Create( FontName, Height ));
 end;
 
+constructor TP3DFontManager.Create;
+begin
+  inherited;
+  Material:= TP3DMaterial.Create;
+end;
+
+destructor TP3DFontManager.Destroy;
+begin
+  inherited Destroy;
+  Material.Free;
+end;
+
 function TP3DFontManager.Find(FontName: String; Height: Integer): Integer;
 var
   i: Integer;
@@ -331,8 +360,8 @@ end;
 
 
 initialization
-  if ( TTF_Init() <> 0) then
-	  SDL_Quit()
+  if ( TTF_Init() <> 0 ) then
+    SDL_Quit()
   else
     P3DFontManager:= TP3DFontManager.Create;
 

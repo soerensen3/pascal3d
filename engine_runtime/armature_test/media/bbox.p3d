@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<p3dscene>
+  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
+  <object data="mesh_Cube" name="BBox" type="mesh">
+    <matrix c0=" 1.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 1.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+  </object>
+  <mesh binary="bbox.Cube.p3dmesh" cotangents="3" faces="6" name="mesh_Cube" normals="6" tangents="4" texcoords="4" vertices="8">
+    <material end="5" name="material_BBoxMaterial" start="0" />
+  </mesh>
+  <material diffuse="0.640000, 0.640000, 0.640000" name="material_BBoxMaterial" specular="50.000000, 0.500000, 0.500000, 0.500000">
+    <texture alpha="1.0" diffuse="1.0" file="grid.png" mode="mix" />
+  </material>
+</p3dscene>

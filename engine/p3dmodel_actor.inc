@@ -27,6 +27,7 @@ type
       destructor Destroy; override;
       procedure Render( world: TMat4; Scene: TP3DScene ); reintroduce;
       function CalcBoundingBox(): TP3DBoundingBox; override;
+      procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
 
       property Position: TVec3 read GetPosition write SetPosition;
       property Direction: TVec3 read GetDirection write SetDirection;
@@ -51,6 +52,7 @@ type
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
 
 {$ENDIF}
 

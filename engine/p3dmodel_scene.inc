@@ -8,10 +8,12 @@ type
       FCam: TP3DCamera;
       FObjects: TP3DActorList;
 
+      procedure SetCam(AValue: TP3DCamera);
+
     public
-      constructor Create( AParentList: TP3DObjectList );
-      constructor Create( AParentList: TP3DObjectList; AFileName: String; const AWatchFileForChanges: Boolean = False );
-      constructor CreateFromDOM( AParentList: TP3DObjectList; ADOMNode: TDOMElement );
+      constructor Create( const AData: TP3DData = nil );
+      constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DData = nil );
+      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
       destructor Destroy; override;
 
       procedure Clear;
@@ -23,9 +25,10 @@ type
         const AParent: TP3DActor = nil; const AutoNames: Boolean=False);
       procedure AppendFile( AFileName: String; const AParent: TP3DActor = nil; const AutoNames: Boolean = False );
       procedure PassToShader( world: TMat4 ); virtual;
+      procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
 
       property Objects: TP3DActorList read FObjects;
-      property Cam: TP3DCamera read FCam write FCam;
+      property Cam: TP3DCamera read FCam write SetCam;
   end;
   TP3DSceneList = specialize gP3DCustomDatablockList < TP3DScene >;
 {$ENDIF}
@@ -33,23 +36,35 @@ type
 {$IFDEF IMPLEMENTATION}
 { TP3DScene }
 
-constructor TP3DScene.Create(AParentList: TP3DObjectList);
+procedure TP3DScene.SetCam(AValue: TP3DCamera);
 begin
-  inherited Create( AParentList );
+  if FCam=AValue then Exit;
+
+  if ( Assigned( FCam )) then
+    FCam.Users.Delete( FCam.Users.IndexOf( Self ));
+
+  FCam:= AValue;
+
+  if ( Assigned( FCam )) then
+    FCam.Users.Add( Self );
+end;
+
+constructor TP3DScene.Create(const AData: TP3DData);
+begin
+  inherited Create( AData );
   FObjects:= TP3DActorList.Create;
 end;
 
-constructor TP3DScene.Create(AParentList: TP3DObjectList; AFileName: String;
-  const AWatchFileForChanges: Boolean);
+constructor TP3DScene.Create(AFileName: String;
+  const AWatchFileForChanges: Boolean; const AData: TP3DData);
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
-  inherited Create( AParentList );
+  inherited Create( AData );
   AppendFile( AFileName );
 end;
 
-constructor TP3DScene.CreateFromDOM(AParentList: TP3DObjectList;
-  ADOMNode: TDOMElement);
+constructor TP3DScene.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData );
 begin
   if ( not Assigned( ADOMNode )) then
     raise Exception.Create( ClassName + ': Cannot create from DOM Node. Not Assigned!' );
@@ -57,7 +72,7 @@ begin
   if ( not ( ADOMNode.NodeName = 'p3dscene' )) then
     raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dscene!' );
 
-  Create( AParentList );
+  Create( AData );
 
   AppendFromDom( ADOMNode );
 end;
@@ -65,21 +80,13 @@ end;
 destructor TP3DScene.Destroy;
 begin
   Clear;
-  //Lights.Free;
   Objects.Free;
-  //Materials.Free;
-  //Meshes.Free;
-  //DataBlocks.Free;
   inherited Destroy;
 end;
 
 procedure TP3DScene.Clear;
 begin
   Objects.Clear( True );
-  //Lights.Clear( False );
-  //Materials.Clear( False );
-  //Meshes.Clear( False );
-  //DataBlocks.Clear( True );
 end;
 
 {
@@ -207,9 +214,9 @@ var
     begin
       Result:= -1;
       case Element.NodeName of
-        'mesh': begin DB:= TP3DMesh.Create( P3DData.DataBlocks ); P3DData.Meshes.Add( TP3DMesh( DB )); end;
-        'material': begin DB:= TP3DMaterial.Create( P3DData.DataBlocks ); P3DData.Materials.Add( TP3DMaterial( DB )); end;
-        'light': begin DB:= TP3DLight.Create( P3DData.DataBlocks ); P3DData.Lights.Add( TP3DLight( DB )); end;
+        'mesh': begin DB:= TP3DMesh.Create( P3DData ); P3DData.Meshes.Add( TP3DMesh( DB )); end;
+        'material': begin DB:= TP3DMaterial.Create( P3DData ); P3DData.Materials.Add( TP3DMaterial( DB )); end;
+        'light': begin DB:= TP3DLight.Create( P3DData ); P3DData.Lights.Add( TP3DLight( DB )); end;
       end;
       Result:= P3DData.DataBlocks.IndexOf( DB );
     end;
@@ -280,6 +287,13 @@ end;
 procedure TP3DScene.PassToShader(world: TMat4);
 begin
   P3DData.Lights.PassToActiveShader( 0, Self, Mat4Identity, Cam.View, [ liPosition, liLightParams ]);
+end;
+
+procedure TP3DScene.NotifyDeleteOfData(Sender: TP3DDataBlock);
+begin
+  inherited NotifyDeleteOfData( Sender );
+  if ( Sender = Cam ) then
+    Cam:= nil;
 end;
 
 {$ENDIF}

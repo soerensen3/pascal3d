@@ -5,28 +5,29 @@ type
 
   { TP3DDataBlock }
 
+  TP3DDataBlockList = class;
   TP3DDataBlock = class ( TP3DObject )
     private
       FBoundingBox: TP3DBoundingBox;
       FFileWatch: TP3DFileWatch;
-      FUsers: TP3DActorList;
+      FUsers: TP3DDataBlockList;
 
     public
-      constructor Create( AParentList: TP3DObjectList );
+      constructor Create( const AData: TP3DData = nil );
       destructor Destroy; override;
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); virtual; abstract;
       procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); virtual; abstract;
       function CalcBoundingBox(): TP3DBoundingBox; virtual;
+      procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
 
       property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
 
     published
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
-      property Users: TP3DActorList read FUsers;
+      property Users: TP3DDataBlockList read FUsers;
   end;
 
-  { gP3DCustomObjectList }
 
   { gP3DCustomDatablockList }
 
@@ -57,12 +58,15 @@ type
       function FindByFileName( AFileName: String ): Integer;
 
       property Items[ Index: Integer ]: TCustomItem read GetItems; default;
+
+    published
       property Count: Integer read GetCount write SetCount;
       property OnChange: TNotifyEvent read FOnChange write FOnChange;
       property FreeChildrenOnDestroy: Boolean read FFreeChildrenOnDestroy write FFreeChildrenOnDestroy;
   end;
 
-  TP3DDataBlockList = specialize gP3DCustomDatablockList <TP3DDataBlock>;
+  TP3DCustomDataBlockList = specialize gP3DCustomDatablockList <TP3DDataBlock>;
+  TP3DDataBlockList = class ( TP3DCustomDataBlockList ) end;
 
 {$ENDIF}
 
@@ -146,7 +150,7 @@ function gP3DCustomDatablockList.FindByFileName(AFileName: String): Integer;
 var
   i: Integer;
 begin
-  i:= -1;
+  Result:= -1;
   for i:= 0 to Count - 1 do
     if ( Self[ i ].FileWatch.FileName = ExpandFileName( AFileName )) then
       begin

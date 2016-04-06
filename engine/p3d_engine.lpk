@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="42">
+    <Files Count="33">
       <Item1>
         <Filename Value="p3dinput.pas"/>
         <UnitName Value="p3dinput"/>
@@ -23,166 +23,129 @@
         <UnitName Value="p3dshaders"/>
       </Item2>
       <Item3>
-        <Filename Value="p3dwavefront.pas"/>
-        <UnitName Value="p3dwavefront"/>
-      </Item3>
-      <Item4>
         <Filename Value="p3d_engine.pas"/>
         <UnitName Value="p3d_engine"/>
-      </Item4>
-      <Item5>
-        <Filename Value="p3dcustomlist.inc"/>
-        <Type Value="Include"/>
-      </Item5>
-      <Item6>
+      </Item3>
+      <Item4>
         <Filename Value="p3dshadernodes.pas"/>
         <UnitName Value="p3dshadernodes"/>
-      </Item6>
-      <Item7>
+      </Item4>
+      <Item5>
         <Filename Value="p3d_engine.lrs"/>
         <Type Value="LRS"/>
-      </Item7>
-      <Item8>
+      </Item5>
+      <Item6>
         <Filename Value="p3dframebuffer.pas"/>
         <UnitName Value="p3dframebuffer"/>
-      </Item8>
-      <Item9>
+      </Item6>
+      <Item7>
         <Filename Value="p3dwindow.pas"/>
         <UnitName Value="p3dwindow"/>
-      </Item9>
-      <Item10>
-        <Filename Value="p3dtexture.pas"/>
-        <UnitName Value="p3dtexture"/>
-      </Item10>
-      <Item11>
-        <Filename Value="p3dfilewatch.pas"/>
-        <UnitName Value="p3dfilewatch"/>
-      </Item11>
-      <Item12>
-        <Filename Value="p3dgeometry.pas"/>
-        <UnitName Value="p3dgeometry"/>
-      </Item12>
-      <Item13>
-        <Filename Value="p3dcharactercontroller.pas"/>
-        <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="p3dcharactercontroller"/>
-      </Item13>
-      <Item14>
+      </Item7>
+      <Item8>
         <Filename Value="p3dobjects.pas"/>
         <UnitName Value="p3dobjects"/>
-      </Item14>
-      <Item15>
-        <Filename Value="p3dbmpfont.pas"/>
-        <UnitName Value="p3dbmpfont"/>
-      </Item15>
-      <Item16>
-        <Filename Value="p3dbmpfontfile.pas"/>
-        <UnitName Value="p3dbmpfontfile"/>
-      </Item16>
-      <Item17>
+      </Item8>
+      <Item9>
         <Filename Value="p3dbuffers.pas"/>
         <UnitName Value="p3dbuffers"/>
+      </Item9>
+      <Item10>
+        <Filename Value="p3dbuffers_bufferobjectgl.inc"/>
+        <Type Value="Binary"/>
+      </Item10>
+      <Item11>
+        <Filename Value="p3dinput_scancodes.inc"/>
+        <Type Value="Binary"/>
+      </Item11>
+      <Item12>
+        <Filename Value="p3dviewport.pas"/>
+        <UnitName Value="p3dviewport"/>
+      </Item12>
+      <Item13>
+        <Filename Value="p3dfileutil.pas"/>
+        <UnitName Value="p3dfileutil"/>
+      </Item13>
+      <Item14>
+        <Filename Value="p3dcanvas.pas"/>
+        <UnitName Value="p3dcanvas"/>
+      </Item14>
+      <Item15>
+        <Filename Value="p3dcanvas_2d.inc"/>
+        <Type Value="Binary"/>
+      </Item15>
+      <Item16>
+        <Filename Value="p3dshadernodes_load.inc"/>
+        <Type Value="Binary"/>
+      </Item16>
+      <Item17>
+        <Filename Value="p3dsdlapplication.pas"/>
+        <UnitName Value="p3dSDLApplication"/>
       </Item17>
       <Item18>
-        <Filename Value="p3dbuffers_bufferobjectgl.inc"/>
+        <Filename Value="p3dshader_core.inc"/>
         <Type Value="Binary"/>
       </Item18>
       <Item19>
-        <Filename Value="p3dinput_scancodes.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dnodes.pas"/>
+        <UnitName Value="p3dNodes"/>
       </Item19>
       <Item20>
-        <Filename Value="p3dviewport.pas"/>
-        <UnitName Value="p3dviewport"/>
+        <Filename Value="p3dgenerics.pas"/>
+        <UnitName Value="p3dgenerics"/>
       </Item20>
       <Item21>
-        <Filename Value="p3dfileutil.pas"/>
-        <UnitName Value="p3dfileutil"/>
+        <Filename Value="p3dtext.pas"/>
+        <UnitName Value="p3dtext"/>
       </Item21>
       <Item22>
-        <Filename Value="p3dgui_canvas.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dlogging.pas"/>
+        <UnitName Value="p3dlogging"/>
       </Item22>
       <Item23>
-        <Filename Value="p3dcanvas.pas"/>
-        <UnitName Value="p3dcanvas"/>
+        <Filename Value="p3dmarkdown.pas"/>
+        <UnitName Value="p3dmarkdown"/>
       </Item23>
       <Item24>
-        <Filename Value="p3dcanvas_2d.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dmodel.pas"/>
+        <UnitName Value="p3dmodel"/>
       </Item24>
       <Item25>
-        <Filename Value="p3dshadernodes_load.inc"/>
+        <Filename Value="p3dmodel_common.inc"/>
         <Type Value="Binary"/>
       </Item25>
       <Item26>
-        <Filename Value="p3dsdlapplication.pas"/>
-        <UnitName Value="p3dSDLApplication"/>
+        <Filename Value="p3dmodel_lighting.inc"/>
+        <Type Value="Include"/>
       </Item26>
       <Item27>
-        <Filename Value="p3dshader_core.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dmodel_mesh.inc"/>
+        <Type Value="Include"/>
       </Item27>
       <Item28>
-        <Filename Value="p3dnodes.pas"/>
-        <UnitName Value="p3dNodes"/>
+        <Filename Value="p3dmodel_scene.inc"/>
+        <Type Value="Binary"/>
       </Item28>
       <Item29>
-        <Filename Value="p3dgenerics_customlist.inc"/>
+        <Filename Value="p3dmodel_datablock.inc"/>
         <Type Value="Binary"/>
       </Item29>
       <Item30>
-        <Filename Value="p3dgenerics.pas"/>
-        <UnitName Value="p3dgenerics"/>
-      </Item30>
-      <Item31>
-        <Filename Value="p3dtext.pas"/>
-        <UnitName Value="p3dtext"/>
-      </Item31>
-      <Item32>
-        <Filename Value="p3dlogging.pas"/>
-        <UnitName Value="p3dlogging"/>
-      </Item32>
-      <Item33>
-        <Filename Value="p3dmarkdown.pas"/>
-        <UnitName Value="p3dmarkdown"/>
-      </Item33>
-      <Item34>
-        <Filename Value="p3dmodel.pas"/>
-        <UnitName Value="p3dmodel"/>
-      </Item34>
-      <Item35>
-        <Filename Value="p3dmodel_common.inc"/>
-        <Type Value="Binary"/>
-      </Item35>
-      <Item36>
-        <Filename Value="p3dmodel_lighting.inc"/>
-        <Type Value="Include"/>
-      </Item36>
-      <Item37>
-        <Filename Value="p3dmodel_mesh.inc"/>
-        <Type Value="Include"/>
-      </Item37>
-      <Item38>
-        <Filename Value="p3dmodel_scene.inc"/>
-        <Type Value="Binary"/>
-      </Item38>
-      <Item39>
-        <Filename Value="p3dmodel_datablock.inc"/>
-        <Type Value="Binary"/>
-      </Item39>
-      <Item40>
         <Filename Value="p3dmodel_actor.inc"/>
         <Type Value="Binary"/>
-      </Item40>
-      <Item41>
+      </Item30>
+      <Item31>
         <Filename Value="p3dmodel_resource.inc"/>
         <Type Value="Include"/>
-      </Item41>
-      <Item42>
+      </Item31>
+      <Item32>
         <Filename Value="p3dmodel_camera.inc"/>
         <Type Value="Binary"/>
-      </Item42>
+      </Item32>
+      <Item33>
+        <Filename Value="p3dmodel_texture.inc"/>
+        <Type Value="Binary"/>
+      </Item33>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>

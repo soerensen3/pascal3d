@@ -14,7 +14,6 @@ interface
     p3dshaders,
     p3dNodes,
     p3dmodel,
-    p3dscene,
     p3dgui_sceneviewer,
     p3dbuffers,
     p3dgenerics,

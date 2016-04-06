@@ -1,7 +1,7 @@
 //TODO: CHECK IF BOUNDING BOX IS CALCULATED CORRECTLY
 
 var
-  mainscene: TP3DModelScene;
+  mainscene: TP3DScene;
   maincamera: TP3DCamera;
 
   pathshaders: String = '../../../shaders';
@@ -26,7 +26,7 @@ begin
 
   InitGeom( CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )),
             CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )));
-  mainscene.Shader:= shadersimple;
+  //mainscene.Shader:= shadersimple;
   P3DShaderLib.LoadLibraryPath( 'nodes/core/', '*.pmd' );
 
   for mat in P3DData.Materials do
@@ -119,7 +119,7 @@ begin
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-  mainscene:= TP3DModelScene.Create;
+  mainscene:= TP3DScene.Create( );
   maincamera:= TP3DCamera.Create;
 
   LoadShader;
