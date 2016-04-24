@@ -1,18 +1,22 @@
 {$IFDEF INTERFACE}
-procedure DrawObjects( Scene: tScene ); forward;
+//procedure DrawObjects(); forward;
 {$UNDEF INTERFACE}
 {$ELSE}
 
-procedure Render( Sender: TSDLWindow );
+procedure Render( Sender: TP3DWindow );
 var
   p: TVec4;
 begin
+  P3DGUIManager.Input;
   glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
 
-  mainscene.Render;
-end;
+  //mainscene.Render;
 
+  P3DGUIManager.Render;
+  P3DInput.NextCycle;
+end;
+{
 procedure DrawObjects( Scene: tScene );
   function RenderLetter( fnt: TP3DFont; p: TVec2; col: TVec4; idx: Integer ): TVec2;
   var
@@ -134,9 +138,9 @@ begin
   InputManager.NextCycle;
   //DRAW CODE HERE
 end;
+}
 
-
-procedure ResizeWnd( Sender: TSDLWindow );
+procedure ResizeWnd( Sender: TP3DWindow );
 begin
   //Setup2D( Sender.Width, Sender.Height );
 end;

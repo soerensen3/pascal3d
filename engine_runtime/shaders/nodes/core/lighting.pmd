@@ -122,3 +122,11 @@ node: Lighting
       util_directionalLight( i, 10, Normal.xyz, shadow, spec );
   }
 ```
+
+---
+node: Unlit
+---
+```{name="CODE", type="shader", restrict="fshader,main"}
+  vec3 shadow = vec3( 1 );
+  vec3 spec = vec3( 0 );
+```

@@ -1,6 +1,6 @@
 var
-  mainscene: tScene;
-  maincamera: tCamera;
+  mainscene: TP3DScene;
+  maincamera: TP3DActor;
 
   pathshaders: String = '../../../shaders';
   pathmodels: String = '../../../p3dlcl/media';
@@ -11,26 +11,16 @@ var
 
   CatchMouse: Boolean = False;
 
-  font_shader: TShader;
-  ParentList: TObjectList;
-  SimpleControl: TP3DGraphicControl;
-
 function LoadShader: Boolean;
 begin
   Result:= False;
   SetCurrentDir( pathshaders );
-
-  InitGeom( CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )),
-            CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )));
-  mainscene.Shader:= LineShader2D;
-  font_shader:= CreateVertexAndFragmentShader( LoadShaderToText( 'font.vert' ), LoadShaderToText( 'font.frag' ));
-  P3DFontManager.Shader:= font_shader;
+  P3DShaderNodeLib.LoadLibraryPath( 'nodes/core/', '*.pmd' );
   //LOAD SHADERS
 end;
 
 procedure UnloadShader;
 begin
-  font_shader.Free;
   //FREE SHADERS
 end;
 
@@ -52,9 +42,7 @@ end;
 procedure LoadFonts;
 begin
   SetCurrentDir( pathfonts );
-  dejavu:= LoadP3DFont( 'Deja Vu Sans.p3dfont' );
-  dejavu.SizeFactor:= 10;
-  P3DFontManager.Add( dejavu );
+  P3DFontManager.DefaultFontsPath:= pathfonts;
 end;
 
 procedure UnloadFonts;
@@ -79,7 +67,7 @@ begin
   //FREE PHYSICS
 end;
 
-procedure Init( Sender: TSDLWindow );
+procedure Init( Sender: TP3DWindow );
 begin
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
@@ -91,8 +79,9 @@ begin
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-  mainscene:= tScene.Create;
-  maincamera:= tCamera.Create;
+  mainscene:= TP3DScene.Create;
+  maincamera:= TP3DActor.Create;
+  maincamera.Data:= TP3DCamera.Create();
 
   LoadModels;
   InitPhysics;
@@ -101,35 +90,37 @@ begin
 
   LoadFonts;
 
-  mainscene.DrawObjects:= @DrawObjects;
-  mainscene.Cam:= maincamera;
+  P3DGUIInit;
+  P3DGUIManager.Window:= P3DApplication.MainWindow;
+  //mainscene.DrawObjects:= @DrawObjects;
+  //mainscene.Cam:= maincamera;
 
-  ParentList:= TObjectList.Create;
   //SimpleControl:= TP3DGraphicControl.Create( ParentList, GUIManager );
   //SimpleControl.Width:= 400;
   //SimpleControl.Height:= 300;
-  with ( TP3DEdit.Create( ParentList, GUIManager )) do
+  with ( TP3DEdit.Create( P3DData.DataBlocks, P3DGUIManager )) do
     begin
       Left:= 20;
       Top:= 100;
       Width:= 200;
+      Height:= 50;
       Font.Size:= 32;
-      Font.Name:= 'Deja Vu Sans';;
+      Font.Name:= 'DejaVuSans';
       Caption:= 'Wurst';
     end;
   //Setup2D( mainwnd.Width, mainwnd.Height );
 
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
-  p3dviewports.Push( 0, 0, mainwnd.Width, mainwnd.Height );
+  //p3dviewports.Push( 0, 0, mainwnd.Width, mainwnd.Height );
 
   //txt:= p3dTextSimple( 'Wurst', dejavu, 64 );
 end;
 
-procedure DeInit( Sender: TSDLWindow );
+procedure DeInit( Sender: TP3DApplication );
 begin
   mainscene.Free;
   maincamera.Free;
-  ParentList.Free;
+  //ParentList.Free;
 
   DeInitPhysics;
 

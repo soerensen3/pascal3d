@@ -2,51 +2,49 @@
 
 var
   mainscene: TP3DScene;
-  maincamera: TP3DCamera;
+  maincamera: TP3DActor;
 
   pathshaders: String = '../../../shaders';
   pathmodels: String = '../../../armature_test/media';
   pathfonts: String = '../../../fonts';
 
-  shadersimple: TShader;
+  //shadersimple: TShader;
 
   CatchMouse: Boolean = False;
+  CamYawPitchRoll: TVec3;
+  CamPos: TVec3;
+  material: TP3DMaterial;
 
   //Mdl: TP3DModelScene;
 
 
 function LoadShader: Boolean;
-var
-  mat: TP3DMaterial;
 begin
   Result:= False;
   SetCurrentDir( pathshaders );
 
-  shadersimple:= CreateVertexAndFragmentShader( LoadShaderToText( 'simple.vert' ), LoadShaderToText( 'simple.frag' ));
+  {shadersimple:= CreateVertexAndFragmentShader( LoadShaderToText( 'simple.vert' ), LoadShaderToText( 'simple.frag' ));
 
   InitGeom( CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )),
             CreateVertexAndFragmentShader( LoadShaderToText( 'default.vert' ), LoadShaderToText( 'default.frag' )));
-  //mainscene.Shader:= shadersimple;
-  P3DShaderLib.LoadLibraryPath( 'nodes/core/', '*.pmd' );
+  //mainscene.Shader:= shadersimple; }
+  P3DShaderNodeLib.LoadLibraryPath( 'nodes/core/', '*.pmd' );
 
-  for mat in P3DData.Materials do
-    mat.BuildShader;
   //LOAD SHADERS
 end;
 
 procedure UnloadShader;
 begin
-  LineShader2D.Free;
-  LineShader3D.Free;
-  shadersimple.Free;
-  P3DShaderLib.Nodes.Clear( True );
+  P3DShaderNodeLib.Nodes.Clear( True );
   //FREE SHADERS
 end;
 
 function LoadModels: Boolean;
 var
-  Obj, i: Integer;
+  Obj, i, n: Integer;
   BBox: TP3DBoundingBox;
+  lib: TP3DData;
+  mat: TP3DMaterial;
 begin
   Result:= False;
   SetCurrentDir( pathmodels );
@@ -54,7 +52,8 @@ begin
   //mainscene.AppendFile( 'lights.p3d' );
 
   //mainscene.AppendFile( 'makehuman.p3d' );
-  mainscene.AppendFile( 'rocks.p3d' );
+  //mainscene.AppendFile( 'rocks.p3d' );
+  mainscene.AppendFile( 'terrain.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
@@ -62,6 +61,7 @@ begin
   //mainscene.AppendFile( 'bbox.p3d' );
 
   mainscene.AppendFile( 'grid.p3d' );
+  //n:= OpenLibrary( 'bulb.p3d' );
   //mainscene.AppendFile( 'bulb.p3d', nil, True );
 
   Obj:= mainscene.Objects.FindByName( 'BBox' );
@@ -80,9 +80,22 @@ begin
 
         //TP3DRenderableObject( mainscene.Objects[ i ]).Position:= -mainscene.Lights[ i ].Position;
         //mainscene.Lights[ i ].LinearAttenuation:= 0;
-        mainscene.AppendFile( 'bulb.p3d', TP3DActor( mainscene.Objects[ i ]), True );
+        mainscene.AppendFromData( P3DData.Libraries[ n ]);
       end;}
   //LOAD MODELS
+
+  {for mat in P3DData.Materials do
+    mat.BuildShader;
+
+  for lib in P3DData.Libraries do
+    for mat in lib.Materials do
+      begin
+        mat.Unlit:= True;
+        //mat.BuildShader;
+      end;}
+  material:= TP3DMaterial.Create();
+  material.Unlit:= True;
+  material.BuildShader();
 end;
 
 procedure UnloadModels;
@@ -119,20 +132,22 @@ begin
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-  mainscene:= TP3DScene.Create( );
-  maincamera:= TP3DCamera.Create;
+  mainscene:= TP3DScene.Create();
+  maincamera:= TP3DActor.Create();
+  maincamera.Position:= vec3( 0, 0, -10 );
+  maincamera.Data:= TP3DCamera.Create();
+  TP3DCamera( maincamera.Data ).Far:= 2000;
 
   LoadShader;
   LoadModels;
   InitPhysics;
   LoadTextures;
 
-  mainscene.DrawObjects:= @DrawObjects;
   mainscene.Cam:= maincamera;
 
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
   glEnable( GL_DEPTH_TEST );
-  glCullFace( GL_BACK );
+  glCullFace( GL_NONE );
 end;
 
 procedure DeInit( Sender: TP3DApplication );

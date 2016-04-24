@@ -5,7 +5,7 @@ unit p3dRTTI;
 interface
 
 uses
-  Classes, SysUtils, typinfo, strutils, p3dgenerics;
+  Classes, SysUtils, typinfo, strutils, p3dutils;
 
 type
 

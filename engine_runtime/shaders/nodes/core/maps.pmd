@@ -135,7 +135,8 @@ input: {name="Mode", type="text"}
 ---
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
-Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz *2 - 1, 1 )), $Factor$ );```
+Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz *2 - 1, 1 )), $Factor$ );
+```
 
 ---
 node: Pass_Diffuse
@@ -145,7 +146,8 @@ input: {name="Mode", type="text"}
 ---
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
-Color= mix( Color, $Mode$( Color, val$Index$ ), $Factor$ );```
+Color= mix( Color, $Mode$( Color, val$Index$ ), $Factor$ );
+```
 
 
 ---
@@ -156,7 +158,8 @@ input: {name="Mode", type="text"}
 ---
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
-Specular= mix( Specular, $Mode$( Specular, val$Index$ ), $Factor$ );```
+Specular= mix( Specular, $Mode$( Specular, val$Index$ ), $Factor$ );
+```
 
 ---
 node: Pass_Mix
@@ -178,6 +181,6 @@ gl_Position = proj * vPosition;
 ```
 
 ```{restrict="fshader,main"}
-FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 ```
 

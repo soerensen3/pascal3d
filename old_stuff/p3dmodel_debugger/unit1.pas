@@ -6,16 +6,15 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, RTTICtrls, Forms, Controls, Graphics,
-  Dialogs, ExtCtrls, ComCtrls, Buttons, p3dmodel, p3dSDLApplication, dglOpenGL,
-  p3dwindow, p3dshadernodes, p3dgenerics, rttiutils, typinfo, p3dRTTI, p3dgui,
-  p3dgui_buttons, p3dtext, p3dviewport;
+  Dialogs, ExtCtrls, ComCtrls, Buttons, p3dgraphics, p3devents, dglOpenGL,
+  p3dutils, rttiutils, typinfo, p3dRTTI, p3dMath, p3dgui, p3dgui_buttons;
 
 type
 
   { TForm1 }
 
   TTabSelection = ( tsObjects, tsCameras, tsLights, tsMaterials, tsMeshes,
-                    tsLibraries, tsScenes, tsTextures );
+                    tsLibraries, tsScenes, tsTextures, tsShaders );
 
   TDataTab = object
     DataObject: TP3DData;
@@ -57,19 +56,32 @@ type
 var
   Form1: TForm1;
   DataTab: TDataTab;
+  TestCanvas: TP3DCanvas2D;
   Button1: TP3DButton;
+  TestText: TP3DText;
+  TestScene: TP3DScene;
+  TestCam: TP3DActor;
 
-procedure Render( Sender: TSDLWindow );
+procedure Render( Sender: TP3DWindow );
 
 implementation
 
-procedure Render(Sender: TSDLWindow);
+procedure Render(Sender: TP3DWindow);
 begin
-  GUIManager.Input;
+  P3DGUIManager.Input;
 
   glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
-  GUIManager.Render;
+
+  //TestCanvas.Lock;
+  //TestCanvas.RenderLineCircle( vec2( 100, 100 ), 25, 5, vec4( 1 ));
+  //TestCanvas.Unlock();
+
+  TestScene.Render;
+  P3DGUIManager.Render;
+  {TestCanvas.Lock;
+  TestCanvas.RenderText( TestText, vec2( 25, 25 ));
+  TestCanvas.Unlock();}
 end;
 
 {$R *.lfm}
@@ -79,9 +91,6 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  P3DFontManager.DefaultFontsPath:= '../../engine_runtime/fonts/';
-  DataTab.DataObject:= P3DData;
-
   TabControl1.Tabs.Append( 'P3DData' );
 
   TabControl2.BeginUpdate;
@@ -93,12 +102,18 @@ begin
   TabControl2.Tabs.Add( 'Libraries' );
   TabControl2.Tabs.Add( 'Scenes' );
   TabControl2.Tabs.Add( 'Textures' );
+  TabControl2.Tabs.Add( 'Shaders' );
   TabControl2.EndUpdate;
   Initialized:= False;
+  //FormActivate( Self );
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
+  TestText.Free;
+  P3DGUIFinish;
+  P3DGraphicssFinish;
+  P3DEventsFinish;
   //P3DApplication.MainWindow.Free;
 end;
 
@@ -188,24 +203,36 @@ procedure TForm1.FormActivate(Sender: TObject);
 begin
   if ( not Initialized ) then
     begin
+      P3DEventsInit;
+      P3DLog.FileName:= 'Logfile.xml';
+      P3DApplication.MainWindow:= TP3DWindow.Create;
       P3DApplication.Initialize;
-
-      P3DApplication.MainWindow:= TSDLWindow.Create;
+      P3DGraphicsInit;
+      P3DFontManager.DefaultFontsPath:= '../../engine_runtime/fonts/';
 
       P3DApplication.MainWindow.OnRender:= @Render;
+      P3DShaderNodeLib.LoadLibraryPath( '../../engine_runtime/shaders/nodes/core/', '*.pmd' );
+      P3DGUIInit;
 
-      P3DShaderLib.LoadLibraryPath( '../../engine_runtime/shaders/nodes/core/', '*.pmd' );
-
+      TestText:= p3dTextSimple( 'ABCDEFG', P3DFontManager.Fonts['DejaVuSans', 16 ]);
       Timer1.Enabled:= True;
 
-      GUIManager.Window:= P3DApplication.MainWindow;
-      p3dviewports.Push( 0, 0, P3DApplication.MainWindow.Width, P3DApplication.MainWindow.Height );
-      GUIManager.ShowCursor:= True;
+      DataTab.DataObject:= P3DData;
+      TestCanvas:= TP3DCanvas2D.Create( P3DData.DataBlocks );
+      TestCanvas.Width:= P3DApplication.MainWindow.Width;
+      TestCanvas.Height:= P3DApplication.MainWindow.Height;
 
-      Button1:= TP3DButton.Create( P3DData.DataBlocks, GUIManager );
+      glEnable( GL_LINE_SMOOTH );
+
+      P3DGUIManager.Window:= P3DApplication.MainWindow;
+      P3DGUIManager.ShowCursor:= True;
+
+      Button1:= TP3DButton.Create( P3DData.DataBlocks, P3DGUIManager );
       Button1.Width:= 200;
       Button1.Height:= 100;
-      GUIManager.Controls.Realign;
+      P3DGUIManager.Controls.Realign;
+
+      TestScene:= TP3DScene.Create();
     end;
 end;
 
@@ -220,6 +247,7 @@ begin
     'Libraries': DataTab.Selection:= tsLibraries;
     'Scenes':    DataTab.Selection:= tsScenes;
     'Textures':  DataTab.Selection:= tsTextures;
+    'Shaders':   DataTab.Selection:= tsShaders;
   end;
   UpdateList;
 end;
@@ -261,6 +289,9 @@ begin
     tsTextures:
       for i:= 0 to DataTab.DataObject.Textures.Count - 1 do
         ListView1.AddItem( DataTab.DataObject.Textures[ i ].Name, DataTab.DataObject.Textures[ i ]);
+    tsShaders:
+      for i:= 0 to DataTab.DataObject.Shaders.Count - 1 do
+        ListView1.AddItem( DataTab.DataObject.Shaders[ i ].Name, DataTab.DataObject.Shaders[ i ]);
   end;
 end;
 
@@ -281,10 +312,22 @@ begin
 end;
 
 procedure TForm1.Open( FName: String );
+var
+  n: Integer;
+  Obj: TP3DActor;
 begin
-  OpenLibrary( FName );
+  n:= OpenLibrary( FName );
   UpdateFiles;
   UpdateList;
+  for Obj in P3DData.Libraries[ n ].Objects do
+    begin
+      if ( Obj.Data is TP3DCamera ) then
+        begin
+          TestCam:= Obj;
+          TestScene.Cam:= TP3DCamera( TestCam.Data );
+        end;
+      TestScene.Objects.Add( Obj );
+    end;
 end;
 
 end.
