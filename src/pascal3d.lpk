@@ -147,23 +147,23 @@
         <Type Value="Include"/>
       </Item31>
       <Item32>
-        <Filename Value="p3dgraphics\p3dtexture.inc"/>
+        <Filename Value="p3dgraphics\p3dtext.inc"/>
         <Type Value="Include"/>
       </Item32>
       <Item33>
-        <Filename Value="p3dgraphics\p3dviewport.inc"/>
+        <Filename Value="p3dgraphics\p3dtexture.inc"/>
         <Type Value="Include"/>
       </Item33>
       <Item34>
-        <Filename Value="p3dutils\p3dfileutil.inc"/>
+        <Filename Value="p3dgraphics\p3dviewport.inc"/>
         <Type Value="Include"/>
       </Item34>
       <Item35>
-        <Filename Value="p3dutils\p3dgenerics.inc"/>
+        <Filename Value="p3dutils\p3dfileutil.inc"/>
         <Type Value="Include"/>
       </Item35>
       <Item36>
-        <Filename Value="p3dgraphics\p3dtext.inc"/>
+        <Filename Value="p3dutils\p3dgenerics.inc"/>
         <Type Value="Include"/>
       </Item36>
     </Files>

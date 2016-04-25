@@ -12,9 +12,10 @@ var
 begin
   glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
-  maincamera.Matrix:= //mat4lookatLH( 5*vec3( cos( SDL_GetTicks / 1000 ), 0, sin( SDL_GetTicks / 1000 ) ), vec3( 0, 0, 1 ), vec3( 0, 1, 0 )); //vec4( maincamera.Position, 1));
-  mat4translate( vec4( CamPos, 1 )) * mat4rotateEuler( CamYawPitchRoll * deg2rad );
-
+  //maincamera.Matrix:= //mat4lookatLH( 5*vec3( cos( SDL_GetTicks / 1000 ), 0, sin( SDL_GetTicks / 1000 ) ), vec3( 0, 0, 1 ), vec3( 0, 1, 0 )); //vec4( maincamera.Position, 1));
+  //mat4translate( vec4( CamPos, 1 )) * mat4rotateEuler( CamYawPitchRoll * deg2rad );
+  maincamera.Position:= CamPos;
+  maincamera.Rotation:= CamYawPitchRoll;
   {TP3DRenderableObject( mainscene.Objects[ 3 ]).Matrix:= mat4rotate( vec3( 0.5, 0.5, 0 ).Normalize, ( SDL_GetTicks / 10000 )) * mat4translate( vec4( TP3DRenderableObject( mainscene.Objects[ 3 ]).Position, 1 ));
 
   BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();

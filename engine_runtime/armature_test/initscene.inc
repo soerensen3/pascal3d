@@ -52,8 +52,8 @@ begin
   //mainscene.AppendFile( 'lights.p3d' );
 
   //mainscene.AppendFile( 'makehuman.p3d' );
-  //mainscene.AppendFile( 'rocks.p3d' );
-  mainscene.AppendFile( 'terrain.p3d' );
+  mainscene.AppendFile( 'rocks.p3d' );
+  //mainscene.AppendFile( 'terrain.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
@@ -64,10 +64,11 @@ begin
   //n:= OpenLibrary( 'bulb.p3d' );
   //mainscene.AppendFile( 'bulb.p3d', nil, True );
 
-  Obj:= mainscene.Objects.FindByName( 'BBox' );
+  Obj:= mainscene.Objects.FindByName( 'mesh.grid' );
   if ( Obj >= 0 ) then
     with ( mainscene.Objects[ Obj ] as TP3DActor ) do
-      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
+      Scale:= vec3( 100, 50, 25 );
+//      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
 
   //TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
   WriteLn( mainscene.Objects.OutputDebugInfo );

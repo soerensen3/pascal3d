@@ -12,6 +12,7 @@ type
       FPosition: TVec3;
       FQuaternion: TQuaternion;
       FRotation: TVec3;
+      FScale: TVec3;
       FVisible: Boolean;
       FMatrix: TMat4;
 
@@ -21,6 +22,7 @@ type
       procedure SetPosition(AValue: TVec3);
       procedure SetQuaternion(AValue: TQuaternion);
       procedure SetRotation(AValue: TVec3);
+      procedure SetScale(AValue: TVec3);
       property BoundingBox;
       procedure UpdateMatrix;
       procedure UpdateEuler;
@@ -37,6 +39,7 @@ type
       property Position: TVec3 read FPosition write SetPosition;
       property Direction: TVec3 read GetDirection;
       property Rotation: TVec3 read FRotation write SetRotation;
+      property Scale: TVec3 read FScale write SetScale;
       property Matrix: TMat4 read FMatrix write SetMatrix;
       property Quaternion: TQuaternion read FQuaternion write SetQuaternion;
 
@@ -76,7 +79,7 @@ end;
 
 procedure TP3DActor.UpdateMatrix;
 begin
-  FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( Quaternion );
+  FMatrix:= mat4translate( vec4( Position, 1 )) * {mat4( mat3( Quaternion )) *} mat4scale( vec4( Scale, 1 ));
   //mat4translate( vec4( Position, 1 )) * mat4rotateEuler( Rotation );
 end;
 
@@ -101,10 +104,11 @@ end;
 
 procedure TP3DActor.SetMatrix(AValue: TMat4);
 begin
-  if FMatrix=AValue then Exit;
-  FMatrix:=AValue;
+  if FMatrix= AValue then Exit;
+  FMatrix:= AValue;
   Position:= vec3( Matrix._30, Matrix._31, Matrix._32 );
-  Rotation:= mat4toPitchYawRoll( AValue );
+  Rotation:= mat4toEuler( AValue );
+  Scale:= mat3toScale( mat3( FMatrix ));
 end;
 
 
@@ -132,7 +136,14 @@ procedure TP3DActor.SetRotation(AValue: TVec3);
 begin
   if FRotation=AValue then Exit;
   FRotation:=AValue;
-  Quaternion:= ;
+  Quaternion:= quatEuler( AValue * deg2rad );
+  UpdateMatrix;
+end;
+
+procedure TP3DActor.SetScale(AValue: TVec3);
+begin
+  if ( FScale = AValue ) then Exit;
+  FScale:= AValue;
   UpdateMatrix;
 end;
 
@@ -142,6 +153,7 @@ begin
   FChildren:= TP3DActorList.Create;
   FVisible:= True;
   Parent.Objects.Add( Self );
+  FScale:= vec3( 1 );
 end;
 
 constructor TP3DActor.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData );

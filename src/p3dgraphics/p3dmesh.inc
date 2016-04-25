@@ -286,28 +286,6 @@ procedure TP3DMesh.Render(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DActor);
 var
   i: Integer;
-  j: Integer;
-  matId: Integer;
-  vNorm, Vec2: TVec3;
-  _world, view, proj: TMat4;
-  k: Integer;
-  normal, vertex, color: GLint;
-  n: Integer;
-  _worldview: TMat4;
-  p: TVec3;
-  BackupShader: TP3DShader;
-  //Res: Boolean;
-
-  function SeTP3DShader( Shader: TP3DShader ): Boolean;
-  begin
-    Result:= False;
-    if ( Shader = nil ) then
-      exit;
-    if ( Shader <> P3DShaderActive ) then
-      Shader.Enable;
-    Result:= True;
-  end;
-
 begin
   for i:= 0 to MaterialGroups.Count - 1 do
     RenderMaterialGroup( world, i, Scene );
@@ -316,22 +294,9 @@ end;
 procedure TP3DMesh.RenderMaterialGroup(world: TMat4; Idx: Integer;
   Scene: TP3DScene);
 var
-  i: Integer;
-  _world, view, proj: TMat4;
-
   Material: TP3DMaterial;
   offset: Integer;
-  count: Integer;
-
-  function SetShader( Shader: TP3DShader ): Boolean;
-  begin
-    Result:= False;
-    if ( Shader = nil ) then
-      exit;
-    if ( Shader <> P3DShaderActive ) then
-      Shader.Enable;
-    Result:= True;
-  end;
+  count, i: Integer;
 
 begin
   if (( Idx < 0 ) or ( Idx >= MaterialGroups.Count )) then
@@ -342,8 +307,6 @@ begin
     exit;
   Material.PassToShader();
   Scene.PassToShader( world );
-
-  _world:= world;
 
   if ( Positions.Count > 0 ) then
     Positions.SetAttribArray( P3DAttribPosition );
@@ -357,8 +320,6 @@ begin
     TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
-
-  glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'world' ), 1, False, @_world ); cle( Self );
 
   offset:= MaterialGroups[ Idx ].IndexStart;
   count:= ( MaterialGroups[ Idx ].IndexEnd - MaterialGroups[ Idx ].IndexStart ) + 1;

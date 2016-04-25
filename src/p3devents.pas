@@ -12,6 +12,7 @@ uses
   SysUtils,
 
   XMLWrite,
+  XMLRead,
   DOM,
 
   SDL2

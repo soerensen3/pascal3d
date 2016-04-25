@@ -67,14 +67,14 @@ begin
   //FREE PHYSICS
 end;
 
-procedure Init( Sender: TP3DWindow );
+procedure Init( Sender: TP3DApplication );
 begin
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
   pathfonts:= ExtractFilePath( ParamStr( 0 )) + pathfonts;
 
-  Sender.Width:= 800;
-  Sender.Height:= 600;
+  Sender.MainWindow.Width:= 800;
+  Sender.MainWindow.Height:= 600;
 
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );

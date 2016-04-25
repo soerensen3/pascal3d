@@ -1,7 +1,7 @@
 procedure OnMouseMotion( Sender: TP3DApplication; Event: TSDL_MouseMotionEvent );
 begin
   CamYawPitchRoll.X:= ( min( 180, max( 0, CamYawPitchRoll.X - Event.yrel / 5 )));
-  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z + Event.xrel / 5 );
+  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z - Event.xrel / 5 );
 end;
 
 procedure OnMouseButton( Sender: TP3DApplication; Event: TSDL_MouseButtonEvent );
@@ -82,8 +82,8 @@ begin
   if ( KeyPressed( SDL_SCANCODE_D )) then
     maincamera.Position:= maincamera.Position + vec3( sin( - CamYawPitchRoll.Z * deg2rad + PI/2 ), cos( - CamYawPitchRoll.Z * deg2rad + PI /2), 0 ) * speed;}
   if ( KeyPressed( SDL_SCANCODE_SPACE )) then
-    maincamera.Position.Z:= maincamera.Position.Z + speed;
+    CamPos.Z:= CamPos.Z - speed;
   if ( KeyPressed( SDL_SCANCODE_LSHIFT )) then
-    maincamera.Position.Z:= maincamera.Position.Z - speed;
+    CamPos.Z:= CamPos.Z + speed;
 end;
 

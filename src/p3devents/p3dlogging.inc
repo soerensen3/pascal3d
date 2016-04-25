@@ -4,7 +4,6 @@
 {$IFDEF INTERFACE}
 
 type
-
   { TP3DLogger }
 
   TP3DLogger = class
@@ -30,6 +29,51 @@ type
     property Level: TDOMElement read FLevel write FLevel;
   end;
 
+const
+  P3DLogStylesheet =
+  '<xsl:stylesheet id="stylesheet"' + LineEnding +
+  '                version="1.0"' + LineEnding +
+  '                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">' + LineEnding +
+  '  <xsl:template match="xsl:stylesheet"/>' + LineEnding +
+  '  <xsl:template match="/">' + LineEnding +
+  '  <html>' + LineEnding +
+  '  <head>' + LineEnding +
+  '     <style>' + LineEnding +
+  '      h1{' + LineEnding +
+  '      font-family: Roboto Sans, Arial;' + LineEnding +
+  '      font-size: 32px;' + LineEnding +
+  '      }' + LineEnding +
+  '      td,th{' + LineEnding +
+  '      font-family: Roboto Sans, Arial;' + LineEnding +
+  '      white-space: pre-wrap;' + LineEnding +
+  '      text-align:left;' + LineEnding +
+  '      vertical-align: top;' + LineEnding +
+  '      }' + LineEnding +
+  '      .info{' + LineEnding +
+  '      background-color: rgb(255, 255, 230);' + LineEnding +
+  '      }' + LineEnding +
+  '      .exception{' + LineEnding +
+  '      background-color: rgb(255, 194, 153);' + LineEnding +
+  '      }' + LineEnding +
+  '     </style>' + LineEnding +
+  '  </head>' + LineEnding +
+  '  <body>' + LineEnding +
+  '  <h1>Logfile</h1>' + LineEnding +
+  '  <table>' + LineEnding +
+  '  <tr><th>Time</th><th>Message</th></tr>' + LineEnding +
+  '  <xsl:apply-templates />' + LineEnding +
+  '  </table>' + LineEnding +
+  '  </body>' + LineEnding +
+  '  </html>' + LineEnding +
+  '  </xsl:template>' + LineEnding +
+  '  <xsl:template match="info">' + LineEnding +
+  '    <tr class="info"><td><xsl:value-of select="@Time"/></td><td><xsl:value-of select="."/></td></tr>' + LineEnding +
+  '  </xsl:template>' + LineEnding +
+  '  <xsl:template match="exception">' + LineEnding +
+  '    <tr class="exception"><td><xsl:value-of select="@Time"/></td><td><xsl:value-of select="."/></td></tr>' + LineEnding +
+  '  </xsl:template>' + LineEnding +
+  '</xsl:stylesheet>';
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -48,9 +92,17 @@ begin
 end;
 
 constructor TP3DLogger.Create;
+var
+  Instr: TDOMProcessingInstruction;
+  F: TStringStream;
 begin
   FLogFile:= TXMLDocument.Create;
+  Instr:= FLogFile.CreateProcessingInstruction( 'xml-stylesheet', 'type="text/xml" href="#stylesheet"' );
+  LogFile.AppendChild( Instr );
   Level:= FLogFile.CreateElement( 'p3dlog');
+  F:= TStringStream.Create( P3DLogStylesheet );
+  XMLRead.ReadXMLFragment( Level, F );
+  F.Free;
   LogFile.AppendChild( Level );
 end;
 

@@ -307,6 +307,7 @@ procedure TP3DScene.PassToShader(world: TMat4);
 var
   LightList: TP3DLightList;
   Obj: TP3DActor;
+  decl: TP3DShaderDecl;
 begin
   if ( Assigned( Cam )) then
     begin
@@ -314,14 +315,15 @@ begin
       for Obj in Objects do
         if ( Obj.Data is TP3DLight ) then
           LightList.Add( TP3DLight( Obj.Data ));
-      LightList.PassToActiveShader( 0, Self, Mat4Identity, Cam.Matrix, [ liPosition, liLightParams ]);
+      LightList.PassToActiveShader( 0, Self, world, Cam.Matrix, [ liPosition, liLightParams ]);
+      if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
+        decl.AsMat4:= world;
       LightList.Free;
       if ( Cam.Data is TP3DCamera ) then
         begin
           TP3DCamera( Cam.Data ).View:= Cam.Matrix;
 
           TP3DCamera( Cam.Data ).PassToShader( world );
-
         end;
     end;
 end;

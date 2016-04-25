@@ -97,6 +97,7 @@ type
       destructor Destroy; override;
 
       procedure UpdateUniforms();
+      procedure BindAttribLocations();
       function DumpUniforms: String;
 
     published
@@ -672,6 +673,8 @@ begin
 
   _fshader:= shaderAttachFromSrc( ProgramObj, GL_FRAGMENT_SHADER, fshader );
 
+  BindAttribLocations();
+
   glLinkProgram( ProgramObj );
 
   glGetProgramiv( ProgramObj, GL_LINK_STATUS, @isLinked );
@@ -752,8 +755,8 @@ var
 
 begin
   Create( AData );
-  VShader:= AVShader;
-  FShader:= AFShader;
+  FVShader:= AVShader;
+  FFShader:= AFShader;
   LinkProgram;
 end;
 
@@ -769,6 +772,23 @@ var
 begin
   for i:= 0 to Uniforms.Count - 1 do
     Uniforms[ i ].Addr:= glGetUniformLocation( ProgramObj, PChar( Uniforms[ i ].Name ));
+end;
+
+procedure TP3DShader.BindAttribLocations;
+begin
+  glBindAttribLocation( ProgramObj, P3DAttribPosition,  'Position'  );
+  glBindAttribLocation( ProgramObj, P3DAttribNormal,    'Normal'    );
+  glBindAttribLocation( ProgramObj, P3DAttribColor,     'Color'     );
+  glBindAttribLocation( ProgramObj, P3DAttribCotangent, 'Cotangent' );
+  glBindAttribLocation( ProgramObj, P3DAttribTangent,   'Tangent'   );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord0, 'TexCoord0' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord1, 'TexCoord1' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord2, 'TexCoord2' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord3, 'TexCoord3' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord4, 'TexCoord4' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord5, 'TexCoord5' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord6, 'TexCoord6' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord7, 'TexCoord7' );
 end;
 
 function TP3DShader.DumpUniforms: String;

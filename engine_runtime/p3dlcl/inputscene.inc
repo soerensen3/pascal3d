@@ -1,21 +1,21 @@
-procedure OnMouseMotion( Sender: TP3DWindow; Event: TSDL_MouseMotionEvent );
+procedure OnMouseMotion( Sender: TP3DApplication; Event: TSDL_MouseMotionEvent );
 begin
   //maincamera.YawPitchRoll.X:= ( min( 180, max( 0, maincamera.YawPitchRoll.X - Event.yrel / 5 )));
   //maincamera.YawPitchRoll.Z:= ( maincamera.YawPitchRoll.Z - Event.xrel / 5 );
 end;
 
-procedure OnMouseButton( Sender: TP3DWindow; Event: TSDL_MouseButtonEvent );
+procedure OnMouseButton( Sender: TP3DApplication; Event: TSDL_MouseButtonEvent );
 begin
 
 end;
 
-procedure OnMouseWheel( Sender: TP3DWindow; Event: TSDL_MouseWheelEvent );
+procedure OnMouseWheel( Sender: TP3DApplication; Event: TSDL_MouseWheelEvent );
 const speed = 1;
 begin
   maincamera.Position:= maincamera.Position + vec3( 0, 0, Event.y * speed );
 end;
 
-procedure OnKey( Sender: TP3DWindow; Event: TSDL_KeyboardEvent );
+procedure OnKey( Sender: TP3DApplication; Event: TSDL_KeyboardEvent );
 begin
   {if ( Event.type_ = SDL_KEYDOWN ) then
     begin
@@ -43,7 +43,7 @@ begin
     end;}
 end;
 
-procedure OnInput( Sender: TP3DWindow );
+procedure OnInput( Sender: TP3DApplication );
 
 type
   KeyState = array of PUInt8;

@@ -1,7 +1,27 @@
 ---
 node: lib_maps
 ---
-```{name="CODE", type="shader", restrict="declaration"}
+```{name="CODE", type="shader", restrict="declaration,vshader"}
+#if (__VERSION__ > 120)
+# define IN in
+# define OUT out
+#else
+# define IN attribute
+# define OUT varying
+#endif
+```
+
+```{name="CODE", type="shader", restrict="declaration,fshader"}
+#if (__VERSION__ > 120)
+# define IN in
+# define OUT out
+#else
+# define IN varying
+# define OUT  
+#endif
+```
+
+```{restrict="declaration"}
 uniform mat4 world;
 uniform mat4 view;
 uniform mat3 matnormal;
@@ -44,8 +64,8 @@ input: {name="Location", type="int"}
 input: {name="TexCoordIndex", type="int"}
 ---
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
-layout ( location = $Location$ ) in vec4 TexCoord$TexCoordIndex$;
-out vec4 vTexCoord$TexCoordIndex$;
+/* layout ( location = $Location$ ) */ IN vec4 TexCoord$TexCoordIndex$;
+OUT vec4 vTexCoord$TexCoordIndex$;
 ```
 
 ```{restrict="vshader,main"}
@@ -53,7 +73,7 @@ vTexCoord$TexCoordIndex$ = TexCoord$TexCoordIndex$;
 ```
 
 ```{restrict="fshader,declaration"}
-in vec4 vTexCoord$TexCoordIndex$;
+IN vec4 vTexCoord$TexCoordIndex$;
 ```
 
 ---
@@ -61,17 +81,17 @@ node: Pass_Init
 ---
 
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
-layout ( location = 0 ) in vec4 Position;
-layout ( location = 2 ) in vec4 Normal;
-layout ( location = 3 ) in vec4 Color;
-layout ( location = 6 ) in vec4 Cotangent;
-layout ( location = 7 ) in vec4 Tangent;
-out vec4 vNormal;
-out vec4 vColor;
-out vec4 vTangent;
-out vec4 vCotangent;
-out vec4 vPosition;
-out vec3 cameye;
+/*layout ( location = 0 ) */ IN vec4 Position;
+/*layout ( location = 2 ) */ IN vec4 Normal;
+/*layout ( location = 3 ) */ IN vec4 Color;
+/*layout ( location = 6 ) */ IN vec4 Cotangent;
+/*layout ( location = 7 ) */ IN vec4 Tangent;
+OUT vec4 vNormal;
+OUT vec4 vColor;
+OUT vec4 vTangent;
+OUT vec4 vCotangent;
+OUT vec4 vPosition;
+OUT vec3 cameye;
 ```
 
 ```{restrict="vshader,main"}
@@ -83,13 +103,13 @@ vCotangent = world * vec4( Cotangent.xyz, 0 );
 ```
 
 ```{restrict="fshader,declaration"}
-in vec4 vNormal;
-in vec4 vColor;
-in vec4 vTangent;
-in vec4 vCotangent;
-in vec4 vPosition;
-in vec3 cameye;
-out vec4 FragColor;
+IN vec4 vNormal;
+IN vec4 vColor;
+IN vec4 vTangent;
+IN vec4 vCotangent;
+IN vec4 vPosition;
+IN vec3 cameye;
+OUT vec4 FragColor;
 ```
 
 ```{restrict="fshader,main"}
@@ -182,5 +202,8 @@ gl_Position = proj * vPosition;
 
 ```{restrict="fshader,main"}
 FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+#if (__VERSION__ < 130)
+gl_FragColor = FragColor;
+#endif
 ```
 

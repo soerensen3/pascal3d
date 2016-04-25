@@ -191,6 +191,8 @@ type
   {$INCLUDE p3dshadernodes_markdown.inc}
   {$INCLUDE p3dshadernodes_core.inc}
 
+  const P3DGLSLVersion: String = '120';
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -240,7 +242,7 @@ begin
   Result.Defines.Text:= Definitions.Text;
   Result.Defines.Add( 'declaration' );
 
-  Result.Code:= '#version 330' + LineEnding
+  Result.Code:= '#version ' + P3DGLSLVersion + LineEnding
                 + Result.Declarations.GetStringOutput( Result )
                 + 'void main(){' + LineEnding
                 + s + '}';
@@ -460,8 +462,6 @@ end;
 function TP3DShaderNodeSocket.MakeCopy(ANode: TP3DNode): TP3DShaderNodeSocket;
 type
   TP3DShaderNodeSocketClass = class of TP3DShaderNodeSocket;
-var
-  Frag: TP3DShaderNodeFragment;
 begin
   Result:= TP3DShaderNodeSocketClass( ClassType ).Create( ANode, Direction );
   Result.Name:= Name;

@@ -28,7 +28,7 @@ uses
   ;
 
 {$DEFINE INTERFACE}
-         {$INCLUDE renderscene.inc}
+  {$INCLUDE renderscene.inc}
 
 {$INCLUDE initscene.inc}
 

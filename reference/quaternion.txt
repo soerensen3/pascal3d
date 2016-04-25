@@ -1,0 +1,4 @@
+                airplane        telescope         symbol        angular velocity     
+applied first   heading         azimuth         θ (theta)       yaw                 y
+applied second  attitude        elevation       φ (phi)         pitch               z
+applied last    bank            tilt            ψ (psi)         roll                x
