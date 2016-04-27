@@ -166,6 +166,7 @@ begin
   Result:= True;
 end;
 
+
 constructor TP3DButton.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
   const AParent: TP3DGraphicControl);
 begin

@@ -110,12 +110,15 @@ IN vec4 vCotangent;
 IN vec4 vPosition;
 IN vec3 cameye;
 OUT vec4 FragColor;
+
+uniform vec4 mat_specular;
+uniform float mat_hardness;
 ```
 
 ```{restrict="fshader,main"}
 vec4 Normal = vec4( 0, 0, 1, 1 );
 vec4 Color = vec4( 1 );
-vec4 Specular = vec4( 1 );
+vec4 Specular = mat_specular;
 ```
 ---
 node: Pass_Combine
@@ -201,7 +204,7 @@ gl_Position = proj * vPosition;
 ```
 
 ```{restrict="fshader,main"}
-FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ < 130)
 gl_FragColor = FragColor;
 #endif

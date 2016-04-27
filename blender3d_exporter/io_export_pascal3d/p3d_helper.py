@@ -29,7 +29,15 @@ def WriteMatrix( Config, Matrix ):
     matrix.attrib['c1'] = "{:9f},{:9f},{:9f},{:9f}".format(Matrix[0][1], Matrix[1][1], Matrix[2][1], Matrix[3][1]) 
     matrix.attrib['c2'] = "{:9f},{:9f},{:9f},{:9f}".format(Matrix[0][2], Matrix[1][2], Matrix[2][2], Matrix[3][2])  
     matrix.attrib['c3'] = "{:9f},{:9f},{:9f},{:9f}".format(Matrix[0][3], Matrix[1][3], Matrix[2][3], Matrix[3][3])
-    
+
+def WriteTransform( Config, Object ):
+    transform = et.Element("transform")
+    Config.DocStack[ -1 ].append( transform )
+    transform.attrib['position'] = "{:9f},{:9f},{:9f}".format( *Object.location )
+    quat = Object.matrix_world.to_quaternion()
+    transform.attrib['quaternion'] = "{:9f},{:9f},{:9f},{:9f}".format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+    transform.attrib['scale'] = "{:9f},{:9f},{:9f}".format( *Object.scale )
+
 ## HELPER
 globalNormals = {}
 globalUVs = {}

@@ -14,8 +14,10 @@ def ExportMaterials(Config):
 #        Config.File.write("{}ambient {:6f}, {:6f}, {:6f}\n".format("  " * Config.Whitespace, *amb))  # Ambient, uses mirror color,
         matEl.attrib['diffuse'] = "{:6f}, {:6f}, {:6f}".format(*( mat.diffuse_color * mat.diffuse_intensity )) # Diffuse        
         matEl.attrib['specular'] = "{:6f}, {:6f}, {:6f}, {:6f}".format( mat.specular_hardness, *( mat.specular_color * mat.specular_intensity ))  # Specular        
-        
+        if ( mat.use_shadeless ):
+            matEl.attrib['unlit'] = "yes";        
         texlist = (tex for tex in mat.texture_slots if ( not ( tex is None )) and tex.use and ( tex.texture.type == 'IMAGE' ) and ( not ( tex.texture.image is None )))
+    
         # TEXTURES
         for tex in texlist:
             filepath = tex.texture.image.filepath
@@ -44,6 +46,7 @@ def ExportMaterials(Config):
                     
                 if ( tex.use_map_alpha ):
                     texEl.attrib['alpha'] = str( tex.alpha_factor )      
+                    
                     
                 texEl.attrib['mode'] = str( tex.blend_type.lower() )
                 

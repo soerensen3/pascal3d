@@ -68,6 +68,8 @@ begin
 end;
 
 procedure Init( Sender: TP3DApplication );
+var
+  box: TP3DForm;
 begin
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
@@ -92,21 +94,60 @@ begin
 
   P3DGUIInit;
   P3DGUIManager.Window:= P3DApplication.MainWindow;
+
+  SDL_ShowCursor( 0 );
+  P3DGUIManager.ShowCursor:= True;
   //mainscene.DrawObjects:= @DrawObjects;
   //mainscene.Cam:= maincamera;
 
   //SimpleControl:= TP3DGraphicControl.Create( ParentList, GUIManager );
   //SimpleControl.Width:= 400;
   //SimpleControl.Height:= 300;
+  box:= TP3DForm.Create( P3DData.DataBlocks, P3DGUIManager );
+  with ( box ) do
+    begin
+      Left:= 20;
+      Top:= 100;
+      Width:= 400;
+      Height:= 400;
+      Font.Size:= 32;
+      Font.Name:= 'RobotoCondensed-Light';
+      Caption:= 'Form1';
+    end;
+
+  box:= TP3DForm.Create( P3DData.DataBlocks, P3DGUIManager );
+  with ( box ) do
+    begin
+      Left:= 20;
+      Top:= 100;
+      Width:= 400;
+      Height:= 400;
+      Font.Size:= 32;
+      Font.Name:= 'RobotoCondensed-Light';
+      Caption:= 'Form2';
+    end;
   with ( TP3DEdit.Create( P3DData.DataBlocks, P3DGUIManager )) do
+    begin
+      Left:= 20;
+      Top:= 20;
+      Width:= 200;
+      Height:= 50;
+      Font.Size:= 32;
+      Font.Name:= 'RobotoCondensed-Light';
+      Caption:= 'Edit';
+      Parent:= box;
+    end;
+
+  with ( TP3DButton.Create( P3DData.DataBlocks, P3DGUIManager )) do
     begin
       Left:= 20;
       Top:= 100;
       Width:= 200;
       Height:= 50;
       Font.Size:= 32;
-      Font.Name:= 'DejaVuSans';
-      Caption:= 'Wurst';
+      Font.Name:= 'RobotoCondensed-Light';
+      Caption:= 'Button';
+      Parent:= box;
     end;
   //Setup2D( mainwnd.Width, mainwnd.Height );
 

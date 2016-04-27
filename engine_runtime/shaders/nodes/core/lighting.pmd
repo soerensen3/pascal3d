@@ -30,6 +30,7 @@ uniform LightSourceParameters LightSource[8];
 uniform vec4 eyeVec;
 uniform vec4 eyePos;
 
+
 vec3 viewDir;
 
 /*float calculateAttenuation(in int i, in float dist)
@@ -117,9 +118,9 @@ node: Lighting
   viewDir = normalize( -vPosition.xyz );
   for ( int i=0; i < numLightSource; i++ ) {
     if ( LightSource[ i ].type == p3dltPoint )
-      util_PointLight( i, 10, Normal.xyz, shadow, spec );
+      util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec );
     if ( LightSource[ i ].type == p3dltSun )
-      util_directionalLight( i, 10, Normal.xyz, shadow, spec );
+      util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   }
 ```
 

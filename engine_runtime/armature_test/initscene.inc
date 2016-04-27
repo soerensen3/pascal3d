@@ -54,6 +54,7 @@ begin
   //mainscene.AppendFile( 'makehuman.p3d' );
   mainscene.AppendFile( 'rocks.p3d' );
   //mainscene.AppendFile( 'terrain.p3d' );
+  //mainscene.AppendFile( 'quattest.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
@@ -64,11 +65,15 @@ begin
   //n:= OpenLibrary( 'bulb.p3d' );
   //mainscene.AppendFile( 'bulb.p3d', nil, True );
 
-  Obj:= mainscene.Objects.FindByName( 'mesh.grid' );
+  Obj:= mainscene.Objects.FindByName( 'grid' );
   if ( Obj >= 0 ) then
     with ( mainscene.Objects[ Obj ] as TP3DActor ) do
-      Scale:= vec3( 100, 50, 25 );
+      begin
+        //TP3DMesh( mainscene.Objects[ Obj ].Data ).MaterialGroups[ 0 ].Material.Unlit:= True;
+        Position:= vec3( 0, 0, -1 );
+        Scale:= vec3( 10 );
 //      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
+      end;
 
   //TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
   WriteLn( mainscene.Objects.OutputDebugInfo );

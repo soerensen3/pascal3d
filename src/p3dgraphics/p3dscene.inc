@@ -321,8 +321,8 @@ begin
       LightList.Free;
       if ( Cam.Data is TP3DCamera ) then
         begin
-          TP3DCamera( Cam.Data ).View:= Cam.Matrix;
-
+          TP3DCamera( Cam.Data ).View:= mat4translate( vec4( Cam.Position, 1 )) * mat4( mat3( Cam.Quaternion ));
+                           //TODO:SHOULD BE INVERTED
           TP3DCamera( Cam.Data ).PassToShader( world );
         end;
     end;

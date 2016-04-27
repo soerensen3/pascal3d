@@ -20,7 +20,7 @@ def ExportMeshes(Config):
         objEl = et.Element("mesh")
         Config.DocStack[ -1 ].append( objEl )
         Config.DocStack.append( objEl )
-        objEl.attrib['name'] = LegalName(mesh.name)  
+        objEl.attrib['name'] = 'mesh_' + LegalName(mesh.name)  
         ExportMesh(Config,mesh)
 
         Config.DocStack.pop()

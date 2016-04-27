@@ -21,6 +21,7 @@ uses
   p3dMath,
   p3dgui,
   p3dgui_buttons,
+  p3dgui_forms,
   //p3dgui_commonctrls,
   p3dgui_stdctrls,
   XMLRead,

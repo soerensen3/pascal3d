@@ -7,7 +7,8 @@ unit pascal3d_gui;
 interface
 
 uses
-  p3dgui, p3dgui_buttons, p3dgui_stdctrls, p3dgui_menus, LazarusPackageIntf;
+  p3dgui, p3dgui_buttons, p3dgui_stdctrls, p3dgui_menus, p3dgui_forms, 
+  LazarusPackageIntf;
 
 implementation
 

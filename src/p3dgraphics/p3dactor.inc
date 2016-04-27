@@ -79,8 +79,7 @@ end;
 
 procedure TP3DActor.UpdateMatrix;
 begin
-  FMatrix:= mat4translate( vec4( Position, 1 )) * {mat4( mat3( Quaternion )) *} mat4scale( vec4( Scale, 1 ));
-  //mat4translate( vec4( Position, 1 )) * mat4rotateEuler( Rotation );
+  FMatrix:= mat4scale( vec4( Scale, 1 )) * mat4( mat3( Quaternion )) * mat4translate( vec4( Position, 1 ));
 end;
 
 procedure TP3DActor.UpdateEuler;
@@ -106,9 +105,9 @@ procedure TP3DActor.SetMatrix(AValue: TMat4);
 begin
   if FMatrix= AValue then Exit;
   FMatrix:= AValue;
-  Position:= vec3( Matrix._30, Matrix._31, Matrix._32 );
-  Rotation:= mat4toEuler( AValue );
-  Scale:= mat3toScale( mat3( FMatrix ));
+  FPosition:= vec3( Matrix._30, Matrix._31, Matrix._32 );
+  FRotation:= mat4toEuler( AValue );
+  FScale:= mat3toScale( mat3( FMatrix ));
 end;
 
 
@@ -162,7 +161,15 @@ var
   DataType: DOMString;
   DataName: DOMString;
   Child: TP3DActor;
-  n: Integer;
+
+  procedure LoadTransformFromDOM( DOM: TDOMElement );
+  begin
+    FPosition.FromString( DOM.GetAttribute( 'position' ));
+    FQuaternion.FromString( DOM.GetAttribute( 'quaternion' ));
+    FQuaternion:= -FQuaternion; //TODO: FIND OUT WHY THIS IS NECESSARY
+    FScale.FromString( DOM.GetAttribute( 'scale' ));
+    UpdateMatrix;
+  end;
 begin
   Create( AData );
   //if ( AutoNames ) then
@@ -172,20 +179,24 @@ begin
 
   DataType:= ADOMNode.GetAttribute( 'type' );
   DataName:= ADOMNode.GetAttribute( 'data' );
-  case DataType of
-    'mesh': Data:= Parent.Meshes[( Parent.Meshes.FindByName( DataName ))];    //SAFE EVEN IF NOT FOUND
-    'material': Data:= Parent.Materials[( Parent.Materials.FindByName( DataName ))];
-    'lamp': Data:= Parent.Lights[( Parent.Lights.FindByName( DataName ))];
-    'camera': Data:= Parent.Cameras[( Parent.Cameras.FindByName( DataName ))];
-  end;
-  if ( not Assigned( Data )) then
-    raise Exception.Create( Format( 'Error while creating object "%s"! A data block of type "%s" with the name "%s" the was not found!', [ Name, DataType, DataName ]));
+  if ( DataName > '' ) then
+    begin
+      case DataType of
+        'mesh': Data:= Parent.Meshes[( Parent.Meshes.FindByName( DataName ))];    //SAFE EVEN IF NOT FOUND
+        'material': Data:= Parent.Materials[( Parent.Materials.FindByName( DataName ))];
+        'lamp': Data:= Parent.Lights[( Parent.Lights.FindByName( DataName ))];
+        'camera': Data:= Parent.Cameras[( Parent.Cameras.FindByName( DataName ))];
+      end;
+      if ( not Assigned( Data )) then
+        raise Exception.Create( Format( 'Error while creating object "%s"! A data block of type "%s" with the name "%s" the was not found!', [ Name, DataType, DataName ]));
+    end;
 
   Element:= TDOMElement( ADOMNode.FirstChild );
   while ( Assigned( Element )) do
     begin
       case Element.NodeName of
         'matrix': Matrix:= LoadMat4FromDOM( Element );
+        'transform': LoadTransformFromDom( Element );
         'object': begin Child:= TP3DActor.CreateFromDOM( Element, Parent ); Children.Add( Child ); end;
       else
         raise Exception.Create( 'Unknown tag inside Object Element: '+ Element.NodeName );

@@ -11,7 +11,7 @@
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="12">
+    <Files Count="13">
       <Item1>
         <Filename Value="pascal3d_gui.pas"/>
         <UnitName Value="pascal3d_gui"/>
@@ -63,6 +63,10 @@
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="p3dgui_commonctrls"/>
       </Item12>
+      <Item13>
+        <Filename Value="p3dgui_forms.pas"/>
+        <UnitName Value="p3dgui_forms"/>
+      </Item13>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

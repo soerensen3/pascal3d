@@ -67,6 +67,7 @@ TP3DCanvas2D = class ( TP3DCanvas )
     procedure RenderText( Text: TP3DText; P: TVec2 );
     procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TVec4 );
     procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TVec4);
+    procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TVec4 );
     procedure PassToShader;
 
     function Lock: Integer; override;
@@ -167,7 +168,6 @@ end;
 procedure TP3DCanvas2D.RenderRect(p1, p2: TVec2; Color: TVec4);
 begin
   if ( not PrepareForDrawing ) then exit;
-
   glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
   glBegin( GL_TRIANGLE_FAN );
   glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
@@ -341,6 +341,30 @@ begin
     AColor, AColor, c0, c0 );
 
   RenderRect( p1, p2, AColor );
+end;
+
+procedure TP3DCanvas2D.RenderRectShadowInner(p1, p2: TVec2; off, blur: Single;
+  AColor: TVec4);
+var
+  c0: TVec4;
+begin
+  c0:= vec4( 0, 0, 0, 0 );
+
+  RenderQuad(
+    vec2( p1.x + off, p1.y + off ),
+    vec2( p1.x + off + blur, p1.y + off + blur ),
+    vec2( p1.x + off, p2.y ),
+    vec2( p1.x + off + blur, p2.y ),
+    AColor, c0, AColor, c0 );
+  RenderQuad(
+    vec2( p1.x + off, p1.y + off ),
+    vec2( p2.x, p1.y + off ),
+    vec2( p1.x + off + blur, p1.y + off + blur ),
+    vec2( p2.x, p1.y + off + blur ),
+    AColor, AColor, c0, c0 );
+
+  RenderRect( p1, vec2( p1.X + off, p2.Y ), AColor );
+  RenderRect( vec2( p1.X + off, p1.Y ), vec2( p2.X, p1.Y + off ), AColor );
 end;
 
 procedure TP3DCanvas2D.PassToShader;

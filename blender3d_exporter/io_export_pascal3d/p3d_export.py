@@ -79,19 +79,19 @@ def ExportObjects(Config, ObjectList):
             print("mesh")
             global globalMeshes
             globalMeshes.add( Object ) #modifiers can't be applied if data is exported
-            objEl.attrib['name'] = 'mesh_' + LegalName(Object.name)
+            objEl.attrib['data'] = 'mesh_' + LegalName(Object.name)
         
         if Object.type == 'LAMP':
             print("lamp")
             global globalLamps
             globalLamps.add( Object.data )
-            objEl.attrib['name'] = 'light_' + LegalName(Object.name)
+            objEl.attrib['data'] = 'light_' + LegalName(Object.name)
 
         if Object.type == 'CAMERA':
             print("cam")
             global globalCameras
             globalCameras.add( Object.data )
-            objEl.attrib['name'] = 'camera_' + LegalName(Object.name)
+            objEl.attrib['data'] = 'camera_' + LegalName(Object.name)
             
     print("Finished Objects")
 

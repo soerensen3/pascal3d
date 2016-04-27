@@ -8,7 +8,7 @@ var
   p: TVec4;
 begin
   P3DGUIManager.Input;
-  glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
+  glClearColor($CC / 255, $DC / 255, $FF / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
 
   //mainscene.Render;

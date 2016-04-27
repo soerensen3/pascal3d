@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<p3dscene>
+  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
+  <object data="mesh_Cube.008" name="Cube.008" type="mesh">
+    <transform position="-2.598076,-1.500000, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Cube.007" name="Cube.007" type="mesh">
+    <transform position="-4.098076, 1.098076, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Cube.006" name="Cube.006" type="mesh">
+    <transform position="-1.098076,-4.098076, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Cube.005" name="Cube.005" type="mesh">
+    <transform position=" 2.598076, 1.500000, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Cube.004" name="Cube.004" type="mesh">
+    <transform position=" 1.098076, 4.098076, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Cube.003" name="Cube.003" type="mesh">
+    <transform position=" 4.098076,-1.098076, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Cube.002" name="Cube.002" type="mesh">
+    <transform position=" 1.500000,-2.598076, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Cube.001" name="Cube.001" type="mesh">
+    <transform position="-1.500000, 2.598076, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="mesh_Plane" name="Plane" type="mesh">
+    <transform position=" 0.000000, 0.000000, 0.000000" quaternion=" 0.000000, 0.000000, 0.000000, 1.000000" scale=" 5.000000, 5.000000, 5.000000" />
+  </object>
+  <object data="mesh_Cube" name="Cube" type="mesh">
+    <transform position=" 0.000000, 0.000000, 1.000000" quaternion=" 0.000000, 0.000000, 0.258819, 0.965926" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="light_Lamp" name="Lamp" type="lamp">
+    <transform position=" 4.076245, 1.005454, 5.903862" quaternion=" 0.169076, 0.272171, 0.755880, 0.570947" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <mesh binary="quattest.Cube.008.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.008" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.007.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.007" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.006.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.006" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.005.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.005" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.004.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.004" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.003.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.003" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.002.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.002" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.001.p3dmesh" cotangents="5" faces="6" name="mesh_Cube.001" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <mesh binary="quattest.Plane.p3dmesh" cotangents="1" faces="1" name="mesh_Plane" normals="1" tangents="1" texcoords="4" vertices="4">
+    <material end="0" name="material_Material.001" start="0" />
+  </mesh>
+  <mesh binary="quattest.Cube.p3dmesh" cotangents="5" faces="6" name="mesh_Cube" normals="6" tangents="4" texcoords="14" vertices="8">
+    <material end="5" name="material_Material" start="0" />
+  </mesh>
+  <light color="1.000000, 1.000000, 1.000000" energy="1.0" name="light_Lamp" type="point" />
+  <camera far="100.0" fov="0.8575560450553894" name="camera_Camera" near="0.10000000149011612" />
+  <material diffuse="0.640000, 0.513066, 0.028479" name="material_Material" specular="50.000000, 0.500000, 0.500000, 0.500000" />
+  <material diffuse="0.640000, 0.000000, 0.003210" name="material_Material.001" specular="50.000000, 0.500000, 0.500000, 0.500000" />
+</p3dscene>

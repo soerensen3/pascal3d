@@ -277,7 +277,7 @@ begin
       for i:= 0 to Maps.Count - 1 do
         begin
           glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-          glEnable( GL_TEXTURE_2D ); cle( Self );
+          //glEnable( GL_TEXTURE_2D ); cle( Self );
           glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
           glUniform1i( Shader.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
         end;
@@ -321,6 +321,8 @@ begin
   Spec:= SpecTmp.YZW;
   Spec_Hardness:= SpecTmp.X;
   tex:= TDOMElement( ADOMNode.FirstChild );
+  if ( ADOMNode.GetAttribute( 'specular' ) = 'yes' ) then
+    FUnlit:= True;
   while Assigned( tex ) do
     begin
       case tex.NodeName of

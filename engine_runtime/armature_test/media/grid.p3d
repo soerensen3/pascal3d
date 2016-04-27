@@ -1,12 +1,21 @@
 <?xml version="1.0" ?>
 <p3dscene>
-  <object data="mesh.grid" name="grid" type="mesh">
-    <matrix c0="100.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000,100.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
+  <object data="mesh_Plane" name="Plane" type="mesh">
+    <transform position=" 0.000000, 0.000000, 0.000000" quaternion=" 0.000000, 0.000000, 0.000000, 1.000000" scale="100.000000,100.000000, 1.000000" />
   </object>
-  <mesh binary="grid.Plane.p3dmesh" cotangents="1" faces="1" name="mesh.grid" normals="1" tangents="1" texcoords="4" vertices="4">
-    <material end="0" name="GridMaterial" start="0" />
+  <object data="light_Lamp" name="Lamp" type="lamp">
+    <transform position=" 4.076245, 1.005454, 5.903862" quaternion=" 0.169076, 0.272171, 0.755880, 0.570947" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <object data="camera_Camera" name="Camera" type="camera">
+    <transform position=" 7.481132,-6.507640, 5.343665" quaternion=" 0.481707, 0.212922, 0.334251, 0.781600" scale=" 1.000000, 1.000000, 1.000000" />
+  </object>
+  <mesh binary="grid.Plane.p3dmesh" cotangents="1" faces="1" name="mesh_Plane" normals="1" tangents="1" texcoords="4" vertices="4">
+    <material end="0" name="material_Material" start="0" />
   </mesh>
-  <material diffuse="0.800000, 0.800000, 0.800000" name="GridMaterial" specular="50.000000, 0.000000, 0.000000, 0.000000">
+  <light color="1.000000, 1.000000, 1.000000" energy="1.0" name="light_Lamp" type="point" />
+  <camera far="100.0" fov="0.8575560450553894" name="camera_Camera" near="0.10000000149011612" />
+  <material diffuse="1.000000, 1.000000, 1.000000" name="material_Material" specular="50.000000, 0.000000, 0.000000, 0.000000" unlit="yes">
     <texture alpha="1.0" diffuse="1.0" file="grid.png" layer="0" mode="mix" />
   </material>
 </p3dscene>

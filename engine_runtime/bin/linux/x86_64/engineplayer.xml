@@ -58,10 +58,10 @@
     </xsl:template>
   </xsl:stylesheet>
   <info Time="0" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="580" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="580" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
-  <info Time="655" Unit="p3dgraphics" Sender="TP3DData">Warning unsupported type "world". Skipping.</info>
-  <info Time="761" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="773" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
+  <info Time="773" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
+  <info Time="920" Unit="p3dgraphics" Sender="TP3DData">Warning unsupported type "world". Skipping.</info>
+  <info Time="1193" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 
 #define PI 3.14159
@@ -280,7 +280,7 @@ vPosition = view * world * Position;
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="762" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1194" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 
 #define PI 3.14159
@@ -460,6 +460,9 @@ IN vec4 vCotangent;
 IN vec4 vPosition;
 IN vec3 cameye;
 OUT vec4 FragColor;
+
+uniform vec4 mat_specular;
+uniform float mat_hardness;
 vec3 transformToTangentSpace( vec3 v ){
 return vec3(
   dot( v, vTangent.xyz),
@@ -487,6 +490,7 @@ uniform int numLightSource;
 uniform LightSourceParameters LightSource[8];
 uniform vec4 eyeVec;
 uniform vec4 eyePos;
+
 
 vec3 viewDir;
 
@@ -578,11 +582,11 @@ uniform sampler2D tex2;
 void main(){
 vec4 Normal = vec4( 0, 0, 1, 1 );
 vec4 Color = vec4( 1 );
-vec4 Specular = vec4( 1 );
+vec4 Specular = mat_specular;
 vec4 val0 = texture2D( tex0, vTexCoord0.xy );
 Color= mix( Color, color_mul( Color, val0 ), 1 );
 vec4 val1 = texture2D( tex1, vTexCoord0.xy );
-Specular= mix( Specular, color_mix( Specular, val1 ), 1 );
+Specular= mix( Specular, color_mul( Specular, val1 ), 1 );
 vec4 val2 = texture2D( tex2, vTexCoord0.xy );
 Normal= mix( Normal, color_mix( Normal, vec4( val2.xyz *2 - 1, 1 )), 1 );
 Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
@@ -592,17 +596,17 @@ Normal = normalize( view * vec4( Normal.xyz, 0 ));
   viewDir = normalize( -vPosition.xyz );
   for ( int i=0; i &lt; numLightSource; i++ ) {
     if ( LightSource[ i ].type == p3dltPoint )
-      util_PointLight( i, 10, Normal.xyz, shadow, spec );
+      util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec );
     if ( LightSource[ i ].type == p3dltSun )
-      util_directionalLight( i, 10, Normal.xyz, shadow, spec );
+      util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   }
-FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ &lt; 130)
 gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="821" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1350" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 
 #define PI 3.14159
@@ -821,7 +825,7 @@ vPosition = view * world * Position;
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="822" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1351" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 
 #define PI 3.14159
@@ -1001,6 +1005,9 @@ IN vec4 vCotangent;
 IN vec4 vPosition;
 IN vec3 cameye;
 OUT vec4 FragColor;
+
+uniform vec4 mat_specular;
+uniform float mat_hardness;
 vec3 transformToTangentSpace( vec3 v ){
 return vec3(
   dot( v, vTangent.xyz),
@@ -1028,6 +1035,7 @@ uniform int numLightSource;
 uniform LightSourceParameters LightSource[8];
 uniform vec4 eyeVec;
 uniform vec4 eyePos;
+
 
 vec3 viewDir;
 
@@ -1115,14 +1123,19 @@ IN vec4 vTexCoord6;
 IN vec4 vTexCoord7;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
+uniform sampler2D tex2;
+uniform sampler2D tex3;
 void main(){
 vec4 Normal = vec4( 0, 0, 1, 1 );
 vec4 Color = vec4( 1 );
-vec4 Specular = vec4( 1 );
-vec4 val0 = texture2D( tex0, vTexCoord0.xy );
-Color= mix( Color, color_mul( Color, val0 ), 1 );
+vec4 Specular = mat_specular;
+vec4 val0 = texture2D( tex0, vTexCoord1.xy );
+Color= mix( Color, color_mix( Color, val0 ), 1 );
 vec4 val1 = texture2D( tex1, vTexCoord0.xy );
-Specular= mix( Specular, color_mix( Specular, val1 ), 1 );
+Color= mix( Color, color_mul( Color, val1 ), 1 );
+vec4 val2 = texture2D( tex2, vTexCoord0.xy );
+vec4 val3 = texture2D( tex3, vTexCoord0.xy );
+Normal= mix( Normal, color_mix( Normal, vec4( val3.xyz *2 - 1, 1 )), 1 );
 Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
 Normal = normalize( view * vec4( Normal.xyz, 0 ));
   vec3 shadow = vec3( 0 );
@@ -1130,17 +1143,18 @@ Normal = normalize( view * vec4( Normal.xyz, 0 ));
   viewDir = normalize( -vPosition.xyz );
   for ( int i=0; i &lt; numLightSource; i++ ) {
     if ( LightSource[ i ].type == p3dltPoint )
-      util_PointLight( i, 10, Normal.xyz, shadow, spec );
+      util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec );
     if ( LightSource[ i ].type == p3dltSun )
-      util_directionalLight( i, 10, Normal.xyz, shadow, spec );
+      util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   }
-FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ &lt; 130)
 gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="868" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1354" Unit="p3dgraphics" Sender="TP3DData">Warning unsupported type "world". Skipping.</info>
+  <info Time="1363" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 
 #define PI 3.14159
@@ -1359,7 +1373,7 @@ vPosition = view * world * Position;
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="869" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1365" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 
 #define PI 3.14159
@@ -1539,6 +1553,9 @@ IN vec4 vCotangent;
 IN vec4 vPosition;
 IN vec3 cameye;
 OUT vec4 FragColor;
+
+uniform vec4 mat_specular;
+uniform float mat_hardness;
 vec3 transformToTangentSpace( vec3 v ){
 return vec3(
   dot( v, vTangent.xyz),
@@ -1566,6 +1583,7 @@ uniform int numLightSource;
 uniform LightSourceParameters LightSource[8];
 uniform vec4 eyeVec;
 uniform vec4 eyePos;
+
 
 vec3 viewDir;
 
@@ -1655,7 +1673,7 @@ uniform sampler2D tex0;
 void main(){
 vec4 Normal = vec4( 0, 0, 1, 1 );
 vec4 Color = vec4( 1 );
-vec4 Specular = vec4( 1 );
+vec4 Specular = mat_specular;
 vec4 val0 = texture2D( tex0, vTexCoord0.xy );
 Color= mix( Color, color_mix( Color, val0 ), 1 );
 Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
@@ -1665,17 +1683,17 @@ Normal = normalize( view * vec4( Normal.xyz, 0 ));
   viewDir = normalize( -vPosition.xyz );
   for ( int i=0; i &lt; numLightSource; i++ ) {
     if ( LightSource[ i ].type == p3dltPoint )
-      util_PointLight( i, 10, Normal.xyz, shadow, spec );
+      util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec );
     if ( LightSource[ i ].type == p3dltSun )
-      util_directionalLight( i, 10, Normal.xyz, shadow, spec );
+      util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   }
-FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ &lt; 130)
 gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="907" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1367" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1764,7 +1782,7 @@ vPosition = view * world * Position;
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="908" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1369" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1814,6 +1832,9 @@ IN vec4 vCotangent;
 IN vec4 vPosition;
 IN vec3 cameye;
 OUT vec4 FragColor;
+
+uniform vec4 mat_specular;
+uniform float mat_hardness;
 IN vec4 vTexCoord0;
 IN vec4 vTexCoord1;
 IN vec4 vTexCoord2;
@@ -1825,18 +1846,18 @@ IN vec4 vTexCoord7;
 void main(){
 vec4 Normal = vec4( 0, 0, 1, 1 );
 vec4 Color = vec4( 1 );
-vec4 Specular = vec4( 1 );
+vec4 Specular = mat_specular;
 Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
 Normal = normalize( view * vec4( Normal.xyz, 0 ));
   vec3 shadow = vec3( 1 );
   vec3 spec = vec3( 0 );
-FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ &lt; 130)
 gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="914" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1371" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1925,7 +1946,7 @@ vPosition = view * world * Position;
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="915" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="1373" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1975,6 +1996,9 @@ IN vec4 vCotangent;
 IN vec4 vPosition;
 IN vec3 cameye;
 OUT vec4 FragColor;
+
+uniform vec4 mat_specular;
+uniform float mat_hardness;
 IN vec4 vTexCoord0;
 IN vec4 vTexCoord1;
 IN vec4 vTexCoord2;
@@ -1986,18 +2010,18 @@ IN vec4 vTexCoord7;
 void main(){
 vec4 Normal = vec4( 0, 0, 1, 1 );
 vec4 Color = vec4( 1 );
-vec4 Specular = vec4( 1 );
+vec4 Specular = mat_specular;
 Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
 Normal = normalize( view * vec4( Normal.xyz, 0 ));
   vec3 shadow = vec3( 1 );
   vec3 spec = vec3( 0 );
-FragColor =vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ &lt; 130)
 gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="921" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
-  <exception Time="923" Unit="p3dgraphics" Sender="TP3DViewportStack">p3dviewport.inc(62): OpenGL Error: invalid enumerant</exception>
-  <info Time="2323" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
+  <info Time="1375" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
+  <exception Time="1380" Unit="p3dgraphics" Sender="TP3DViewportStack">p3dviewport.inc(62): OpenGL Error: invalid enumerant</exception>
+  <info Time="55203" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
 </p3dlog>

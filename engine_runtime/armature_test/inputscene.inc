@@ -64,7 +64,8 @@ var
   m: TMat4;
 begin
   Keys:= SDL_GetKeyboardState( nil );
-  mat4inverse( maincamera.Matrix, m );
+  m:= TP3DCamera( maincamera.Data ).View;
+  mat4inverse( m, m );
   if ( KeyPressed( SDL_SCANCODE_S )) then
     CamPos:= CamPos - m.Row[ 2 ].xyz * speed;
   if ( KeyPressed( SDL_SCANCODE_A )) then

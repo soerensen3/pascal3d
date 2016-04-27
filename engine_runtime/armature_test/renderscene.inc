@@ -24,6 +24,13 @@ begin
   if ( Obj >= 0 ) then
     with ( mainscene.Objects[ Obj ] as TP3DRenderableObject ) do
       Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 )); }
+  Obj:= mainscene.Objects.FindByName( 'grid' );
+  if ( Obj >= 0 ) then
+    with ( mainscene.Objects[ Obj ] as TP3DActor ) do
+      begin
+        Scale:= vec3( 10, 10, 1 );
+        Position:= vec3( int( sin( SDL_GetTicks / 10000 ) * 50 ), int( sin( SDL_GetTicks / 10000 ) * 50 ), -1 );
+      end;
   P3DApplication.MainWindow.Title:= CamPos.ToString();
   mainscene.Render;
   {material.PassToShader();

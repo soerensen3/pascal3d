@@ -47,7 +47,6 @@ type
       procedure MouseDownEvnt( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
       procedure BtnDragDrop( Sender: TP3DGraphicControl; Source: TP3DGraphicControl; X, Y: Integer );
       procedure BtnMouseDown( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
-      procedure Render( BaseColor: TVec4; ScrollAcc: TVec2 ); override;
       procedure BtnDeleteClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
 
     public
@@ -510,17 +509,6 @@ procedure TP3DNodeControl.BtnMouseDown(Sender: TP3DGraphicControl;
 begin
   if (( mb1 ) and ( gcisMouseOver in Sender.InputState )) then
     BeginDrag();
-end;
-
-procedure TP3DNodeControl.Render(BaseColor: TVec4; ScrollAcc: TVec2);
-var
-  p1: TVec2;
-begin
-  p1:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
-  Manager.ScreenCanvas.Lock;
-  Manager.ScreenCanvas.RenderRectShadow( p1, p1 + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
-  Manager.ScreenCanvas.Unlock();
-  inherited Render(BaseColor, ScrollAcc);
 end;
 
 procedure TP3DNodeControl.BtnDeleteClick(Sender: TP3DGraphicControl; mb1, mb2,

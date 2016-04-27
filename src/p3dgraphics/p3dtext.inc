@@ -268,6 +268,7 @@ var
 begin
   LetterPosAndSize.Clear;
   Cur:= Point( 0, 0 );
+  //TODO: FIX ERROR ON EMPTY TEXT
   for c in FText do
     begin
       sz:= p3dTextSize( c, Font );

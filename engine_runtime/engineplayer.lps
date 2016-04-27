@@ -7,103 +7,104 @@
       <Unit0>
         <Filename Value="engineplayer.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="41"/>
-        <CursorPos X="24" Y="58"/>
-        <UsageCount Value="40"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="10"/>
+        <CursorPos X="5" Y="25"/>
+        <UsageCount Value="138"/>
       </Unit0>
       <Unit1>
         <Filename Value="space_game/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit1>
       <Unit2>
         <Filename Value="space_game/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit2>
       <Unit3>
         <Filename Value="space_game/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit3>
       <Unit4>
         <Filename Value="physics_test/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit4>
       <Unit5>
         <Filename Value="physics_test/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit5>
       <Unit6>
         <Filename Value="physics_test/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit6>
       <Unit7>
         <Filename Value="template/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit7>
       <Unit8>
         <Filename Value="template/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit8>
       <Unit9>
         <Filename Value="template/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit9>
       <Unit10>
         <Filename Value="line_test/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit10>
       <Unit11>
         <Filename Value="line_test/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit11>
       <Unit12>
         <Filename Value="line_test/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit12>
       <Unit13>
         <Filename Value="armature_test/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="54"/>
-        <CursorPos X="14" Y="68"/>
-        <UsageCount Value="40"/>
+        <EditorIndex Value="11"/>
+        <TopLine Value="44"/>
+        <CursorPos X="5" Y="57"/>
+        <UsageCount Value="138"/>
         <Loaded Value="True"/>
       </Unit13>
       <Unit14>
         <Filename Value="armature_test/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
-        <CursorPos X="36" Y="11"/>
-        <UsageCount Value="40"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="53"/>
+        <CursorPos X="34" Y="67"/>
+        <UsageCount Value="138"/>
         <Loaded Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="armature_test/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="15"/>
-        <CursorPos X="40" Y="18"/>
-        <UsageCount Value="40"/>
+        <EditorIndex Value="13"/>
+        <CursorPos X="32" Y="31"/>
+        <UsageCount Value="138"/>
         <Loaded Value="True"/>
       </Unit15>
       <Unit16>
         <Filename Value="p3dlcl/initscene.inc"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="65"/>
-        <CursorPos X="21" Y="77"/>
-        <UsageCount Value="40"/>
+        <TopLine Value="103"/>
+        <CursorPos X="23" Y="115"/>
+        <UsageCount Value="138"/>
       </Unit16>
       <Unit17>
         <Filename Value="p3dlcl/inputscene.inc"/>
@@ -111,47 +112,33 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="38"/>
         <CursorPos X="43" Y="46"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit17>
       <Unit18>
         <Filename Value="p3dlcl/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="26" Y="9"/>
+        <UsageCount Value="138"/>
       </Unit18>
       <Unit19>
         <Filename Value="shadernodes/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit19>
       <Unit20>
         <Filename Value="shadernodes/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit20>
       <Unit21>
         <Filename Value="shadernodes/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="138"/>
       </Unit21>
     </Units>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="2">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="../src/p3dgraphics/p3dshaders.inc"/>
-        <Line Value="420"/>
-      </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="armature_test/initscene.inc"/>
-        <Line Value="70"/>
-      </Item2>
-    </BreakPoints>
     <Watches Count="2">
       <Item1>
         <Expression Value="Scale"/>

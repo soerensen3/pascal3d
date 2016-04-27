@@ -108,6 +108,7 @@ TP3DGraphicControl = class ( TP3DObject )
     procedure SendToBack;
 
     class function IsFocusControl(): Boolean; virtual;
+    class function HasShadow(): Boolean; virtual;
 
     property Canvas: TP3DCanvas2D read FCanvas write FCanvas;
     property ClientRect: TRect read FClientRect;
@@ -329,6 +330,11 @@ begin
   Result:= False;
 end;
 
+class function TP3DGraphicControl.HasShadow: Boolean;
+begin
+  Result:= False;
+end;
+
 
 procedure TP3DGraphicControl.Realign;
 begin
@@ -428,6 +434,14 @@ var
   txt: TP3DText;
   p: TVec2;
 begin
+  if ( HasShadow()) then
+    begin
+      p:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
+      Manager.ScreenCanvas.Lock;
+      Manager.ScreenCanvas.RenderRectShadow( p, p + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
+      Manager.ScreenCanvas.Unlock();
+    end;
+
   Canvas.Lock;
   OldScroll:= Scroll;
   Canvas.Scroll:= ScrollAcc + Scroll;

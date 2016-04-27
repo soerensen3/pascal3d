@@ -575,6 +575,7 @@ begin
   Text:= Name;
   PresetDown.Assign( PresetNormal );
   PresetHover.Assign( PresetNormal );
+  //Cursor:= p;
 end;
 
 procedure TP3DEdit.Draw;
@@ -592,7 +593,9 @@ begin
   else
     Preset:= PresetNormal;
 
+
   Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+  Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( 0, 0, 0, 0.1 ));
   Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
 
   Canvas.Font.Color:= Preset.FontColor;
