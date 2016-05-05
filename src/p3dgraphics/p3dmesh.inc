@@ -229,7 +229,7 @@ procedure TP3DMesh.LoadFromDOM(ADOMNode: TDOMElement);
 var
   Element: TDOMElement;
   Ext: String;
-  Idx: Integer;
+  cnt: Integer;
   F: TFileStream;
 begin
   Name:= ADOMNode.GetAttribute( 'name' );
@@ -238,21 +238,37 @@ begin
     begin
       Ext:= ADOMNode.GetAttribute( 'binary' );
       try
+        if ( not FileExists( Ext )) then
+          raise Exception.Create( Format( 'Error while loading mesh "%s"! The specified file does not exist!', [ Ext ]));
         F:= TFileStream.Create( Ext, fmOpenRead );
-        Idx:= StrToIntDef( ADOMNode.GetAttribute( 'vertices' ), 0 );
-        LoadVec3FromStream( Positions, F, Idx );
-        Idx:= StrToIntDef( ADOMNode.GetAttribute( 'normals' ), 0 );
-        LoadVec3FromStream( Normals, F, Idx );
-        Idx:= StrToIntDef( ADOMNode.GetAttribute( 'tangents' ), 0 );
-        LoadVec3FromStream( Tangents, F, Idx );
-        Idx:= StrToIntDef( ADOMNode.GetAttribute( 'cotangents' ), 0 );
-        LoadVec3FromStream( Cotangents, F, Idx );
-        Idx:= StrToIntDef( ADOMNode.GetAttribute( 'texcoords' ), 0 );
-        SetLength( TexCoords, 1 );
-        TexCoords[ 0 ]:= TP3DVec2BufferGL.Create( True );
-        LoadVec2FromStream( TexCoords[ 0 ], F, Idx );
-        Idx:= StrToInt( ADOMNode.GetAttribute( 'faces' ));
-        LoadFaceFromStream( @Faces, F, Idx );
+        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'vertices' ), 0 );
+        if ( cnt > 0 ) then
+          LoadVec3FromStream( Positions, F, cnt );
+
+        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'normals' ), 0 );
+        if ( cnt > 0 ) then
+          LoadVec3FromStream( Normals, F, cnt );
+
+        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'texcoords' ), 0 );
+        if ( cnt > 0 ) then
+          begin
+            SetLength( TexCoords, 1 );
+            TexCoords[ 0 ]:= TP3DVec2BufferGL.Create( True );
+            LoadVec2FromStream( TexCoords[ 0 ], F, cnt );
+
+            cnt:= StrToIntDef( ADOMNode.GetAttribute( 'tangents' ), 0 );
+            if ( cnt > 0 ) then
+              LoadVec3FromStream( Tangents, F, cnt );
+
+            if ( cnt > 0 ) then
+              cnt:= StrToIntDef( ADOMNode.GetAttribute( 'cotangents' ), 0 );
+            LoadVec3FromStream( Cotangents, F, cnt );
+          end;
+
+        cnt:= StrToInt( ADOMNode.GetAttribute( 'faces' ));
+        if ( cnt > 0 ) then
+          LoadFaceFromStream( @Faces, F, cnt );
+
         F.Free;
         FileWatch.FileName:= ExpandFileName( Ext );
       except on E: Exception do

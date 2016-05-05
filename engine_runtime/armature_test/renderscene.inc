@@ -31,7 +31,7 @@ begin
         Scale:= vec3( 10, 10, 1 );
         Position:= vec3( int( sin( SDL_GetTicks / 10000 ) * 50 ), int( sin( SDL_GetTicks / 10000 ) * 50 ), -1 );
       end;
-  P3DApplication.MainWindow.Title:= CamPos.ToString();
+  P3DApplication.MainWindow.Title:= CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
   mainscene.Render;
   {material.PassToShader();
   TP3DCamera( maincamera.Data ).PassToShader( Mat4Identity );

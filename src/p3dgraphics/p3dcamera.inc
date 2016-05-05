@@ -31,7 +31,7 @@ type
 
       constructor Create( const AData: TP3DData = nil );
       constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
-      procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
+      procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
 
       property Position: TVec3 read FPosition write FPosition;
       property Forward: TVec3 read FForward;

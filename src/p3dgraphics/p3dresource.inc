@@ -129,7 +129,7 @@ var
       case Element.NodeName of
         'mesh': begin DB:= TP3DMesh.Create( Self ); Meshes.Add( TP3DMesh( DB )); end;
         'material': begin DB:= TP3DMaterial.Create( Self ); Materials.Add( TP3DMaterial( DB )); end;
-        'light': begin DB:= TP3DLight.Create( Self ); Lights.Add( TP3DLight( DB )); end;
+        'light', 'lamp': begin DB:= TP3DLight.Create( Self ); Lights.Add( TP3DLight( DB )); end;
         'camera': begin DB:= TP3DCamera.Create( Self ); Cameras.Add( TP3DCamera( DB )); end;
       end;
       Result:= DataBlocks.IndexOf( DB );
@@ -156,8 +156,8 @@ begin
   if ( not Assigned( ADOMNode )) then
     raise Exception.Create( ClassName + ': Cannot create from DOM Node. Not Assigned!' );
 
-  if ( not ( ADOMNode.NodeName = 'p3dscene' )) then
-    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dscene!' );
+  if ( not ( ADOMNode.NodeName = 'p3dfile' )) then
+    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dfile!' );
 
   Element:= TDOMElement( ADOMNode.FirstChild );
   if ( Assigned( AParent )) then
@@ -172,7 +172,7 @@ begin
         'mesh',
         'material',
         'camera',
-        'light': LoadData()
+        'light', 'lamp': LoadData()
       else
         P3DLog.LogInfo( Self, Format( 'Warning unsupported type "%s". Skipping.', [ Element.NodeName ]));
       end;

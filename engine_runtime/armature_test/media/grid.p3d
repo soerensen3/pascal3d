@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<p3dscene>
+<p3dfile>
   <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
   <object data="mesh_Plane" name="Plane" type="mesh">
     <transform position=" 0.000000, 0.000000, 0.000000" quaternion=" 0.000000, 0.000000, 0.000000, 1.000000" scale="100.000000,100.000000, 1.000000" />
@@ -18,4 +18,4 @@
   <material diffuse="1.000000, 1.000000, 1.000000" name="material_Material" specular="50.000000, 0.000000, 0.000000, 0.000000" unlit="yes">
     <texture alpha="1.0" diffuse="1.0" file="grid.png" layer="0" mode="mix" />
   </material>
-</p3dscene>
+</p3dfile>

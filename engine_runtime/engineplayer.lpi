@@ -211,10 +211,10 @@
     </RunParams>
     <RequiredPackages Count="7">
       <Item1>
-        <PackageName Value="pascal3d_gui"/>
+        <PackageName Value="pascal3d_math"/>
       </Item1>
       <Item2>
-        <PackageName Value="p3d_math"/>
+        <PackageName Value="pascal3d_gui"/>
       </Item2>
       <Item3>
         <PackageName Value="pascal3d"/>

@@ -52,8 +52,8 @@ begin
   //mainscene.AppendFile( 'lights.p3d' );
 
   //mainscene.AppendFile( 'makehuman.p3d' );
-  mainscene.AppendFile( 'rocks.p3d' );
-  //mainscene.AppendFile( 'terrain.p3d' );
+  //mainscene.AppendFile( 'rocks.p3d' );
+  mainscene.AppendFile( 'terrain_simple.p3d' );
   //mainscene.AppendFile( 'quattest.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();

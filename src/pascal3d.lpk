@@ -169,7 +169,7 @@
     </Files>
     <RequiredPkgs Count="5">
       <Item1>
-        <PackageName Value="p3d_math"/>
+        <PackageName Value="pascal3d_math"/>
       </Item1>
       <Item2>
         <PackageName Value="pl_opengl"/>

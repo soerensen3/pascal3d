@@ -308,6 +308,7 @@ var
   LightList: TP3DLightList;
   Obj: TP3DActor;
   decl: TP3DShaderDecl;
+  matCam: TMat4;
 begin
   if ( Assigned( Cam )) then
     begin
@@ -315,16 +316,16 @@ begin
       for Obj in Objects do
         if ( Obj.Data is TP3DLight ) then
           LightList.Add( TP3DLight( Obj.Data ));
-      LightList.PassToActiveShader( 0, Self, world, Cam.Matrix, [ liPosition, liLightParams ]);
-      if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
-        decl.AsMat4:= world;
-      LightList.Free;
       if ( Cam.Data is TP3DCamera ) then
         begin
           TP3DCamera( Cam.Data ).View:= mat4translate( vec4( Cam.Position, 1 )) * mat4( mat3( Cam.Quaternion ));
                            //TODO:SHOULD BE INVERTED
           TP3DCamera( Cam.Data ).PassToShader( world );
+          LightList.PassToActiveShader( 0, Self, world, TP3DCamera( Cam.Data ).View, [ liPosition, liLightParams ]);
         end;
+      if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
+        decl.AsMat4:= world;
+      LightList.Free;
     end;
 end;
 
