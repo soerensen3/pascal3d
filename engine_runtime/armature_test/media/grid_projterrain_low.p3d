@@ -1,0 +1,96 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      type = "mesh"
+      data = "mesh_Grid"
+      name = "Grid">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = "16.000000,16.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      data = "lamp_Lamp"
+      name = "Lamp">
+      <transform
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+        position = " 4.076245, 1.005454, 5.903862"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      type = "camera"
+      data = "camera_Camera"
+      name = "Camera">
+      <transform
+        quaternion = " 0.481707, 0.212922, 0.334251, 0.781600"
+        position = " 7.481132,-6.507640, 5.343665"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    faces = "17204"
+    tangents = "68816"
+    texcoords = "68816"
+    normals = "17241"
+    binary = "grid_projterrain_low.mesh_Grid.p3dmesh"
+    vertices = "17241"
+    name = "mesh_Grid"
+    cotangents = "68816">
+    <material
+      end = "17203"
+      name = "material_Material"
+      start = "0">
+    </material>
+  </mesh>
+  <lamp
+    type = "point"
+    color = "1.000000, 1.000000, 1.000000"
+    energy = "1.0"
+    name = "lamp_Lamp">
+  </lamp>
+  <camera
+    near = "0.10000000149011612"
+    fov = "0.8575560450553894"
+    name = "camera_Camera"
+    far = "100.0">
+  </camera>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material"
+    type = "shader"
+    vshader = "terrain.vert"
+    fshader = "terrain.frag"
+    diffuse = "0.640000, 0.640000, 0.640000">
+    <texture
+      diffuse = "1.0"
+      file = "megt00n270hb_n_displ_low.png"
+      mode = "mix">
+    </texture>
+    <texture
+      diffuse = "1.0"
+      file = "megt00n270hb_diff_4k_low.jpg"
+      mode = "mix">
+    </texture>
+    <texture
+      diffuse = "1.0"
+      file = "rock.jpg"
+      mode = "mix">
+    </texture>
+    <texture
+      diffuse = "1.0"
+      file = "rock_normal.png"
+      mode = "mix">
+    </texture>
+    <texture
+      diffuse = "1.0"
+      file = "rock_spec.png"
+      mode = "mix">
+    </texture>
+  </material>
+</p3dfile>

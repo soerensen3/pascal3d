@@ -155,12 +155,13 @@ begin
   FScale:= vec3( 1 );
 end;
 
-constructor TP3DActor.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData );
+constructor TP3DActor.CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData );
 var
   Element: TDOMElement;
   DataType: DOMString;
   DataName: DOMString;
   Child: TP3DActor;
+  n: Integer;
 
   procedure LoadTransformFromDOM( DOM: TDOMElement );
   begin
@@ -181,14 +182,8 @@ begin
   DataName:= ADOMNode.GetAttribute( 'data' );
   if ( DataName > '' ) then
     begin
-      case DataType of
-        'mesh': Data:= Parent.Meshes[( Parent.Meshes.FindByName( DataName ))];    //SAFE EVEN IF NOT FOUND
-        'material': Data:= Parent.Materials[( Parent.Materials.FindByName( DataName ))];
-        'lamp': Data:= Parent.Lights[( Parent.Lights.FindByName( DataName ))];
-        'camera': Data:= Parent.Cameras[( Parent.Cameras.FindByName( DataName ))];
-      end;
-      if ( not Assigned( Data )) then
-        raise Exception.Create( Format( 'Error while creating object "%s"! A data block of type "%s" with the name "%s" the was not found!', [ Name, DataType, DataName ]));
+      n:= AData.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), DataName, FindClassForDOM( DataType ));
+      Data:= TP3DDataBlock( AData.DataBlocks[ n ]);
     end;
 
   Element:= TDOMElement( ADOMNode.FirstChild );

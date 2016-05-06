@@ -36,7 +36,7 @@ type
       FFont: TP3DCanvasFont;
       FLockID: Integer;
       FLeft: Integer;
-      FMaterial: TP3DMaterial;
+      FMaterial: TP3DMaterialBase;
       FOwner: TPersistent;
       FScreenColor: TVec4;
       FTop: Integer;
@@ -61,7 +61,7 @@ type
       property Owner: TPersistent read FOwner write FOwner;
       property Font: TP3DCanvasFont read FFont write FFont; //TODO: OnChange event for font will fire redraw of texts in components
       property ScreenColor: TVec4 read FScreenColor write FScreenColor;
-      property Material: TP3DMaterial read FMaterial;
+      property Material: TP3DMaterialBase read FMaterial;
   end;
 
   {$INCLUDE p3dcanvas_2d.inc}
@@ -218,7 +218,7 @@ begin
   FLockID:= -1;
   FScreenColor:= vec4( 1 );
   FOwner:= AOwner;
-  FMaterial:= TP3DMaterial.Create();
+  FMaterial:= TP3DMaterialBase.Create();
 end;
 
 destructor TP3DCanvas.Destroy;

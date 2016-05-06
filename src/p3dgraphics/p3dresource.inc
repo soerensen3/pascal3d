@@ -26,8 +26,12 @@ type
       constructor CreateFromFile( AFileName: String );
       destructor Destroy; override;
 
-      procedure AppendFromDom( ADOMNode: TDOMElement;
-        const AParent: TP3DActor = nil );
+      function AppendFromDom( ADOMNode: TDOMElement;
+        const AParent: TP3DActor = nil ): Integer;
+      function AppendFromDom( ADOMNode: TDOMElement; AName: String;
+        AType: TP3DDataBlockType; const AParent: TP3DActor = nil ): Integer;
+      function AppendAllFromDom( ADOMNode: TDOMElement; AType: TP3DDataBlockType;
+        const AParent: TP3DActor = nil ): Integer;
       function AppendFile( AFileName: String; const AParent: TP3DActor = nil ): TP3DData;
       procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
 
@@ -112,79 +116,133 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DData.AppendFromDom(ADOMNode: TDOMElement; const AParent: TP3DActor
-  );
+function TP3DData.AppendFromDom( ADOMNode: TDOMElement; const AParent: TP3DActor ): Integer;
 var
-  Element: TDOMElement;
   Parent: TP3DActorList;
-  lst: TDOMNodeList;
-  i: Integer;
 
-  procedure LoadData();
+  function LoadData(): Integer;
     function CreateObject: Integer;
     var
       DB: TP3DDataBlock;
     begin
       Result:= -1;
-      case Element.NodeName of
-        'mesh': begin DB:= TP3DMesh.Create( Self ); Meshes.Add( TP3DMesh( DB )); end;
-        'material': begin DB:= TP3DMaterial.Create( Self ); Materials.Add( TP3DMaterial( DB )); end;
-        'light', 'lamp': begin DB:= TP3DLight.Create( Self ); Lights.Add( TP3DLight( DB )); end;
-        'camera': begin DB:= TP3DCamera.Create( Self ); Cameras.Add( TP3DCamera( DB )); end;
+      case ADOMNode.NodeName of
+        'mesh':
+          begin
+            DB:= TP3DMesh.Create( Self );
+            Meshes.Add( TP3DMesh( DB ));
+          end;
+        'material':
+          begin
+            case ADOMNode.GetAttribute( 'type' ) of
+              'shader': DB:= TP3DMaterialShader.Create( Self );
+              else
+                DB:= TP3DMaterialBase.Create( Self );
+            end;
+            Materials.Add( TP3DMaterialShader( DB ));
+          end;
+        'light', 'lamp':
+          begin
+            DB:= TP3DLight.Create( Self );
+            Lights.Add( TP3DLight( DB ));
+          end;
+        'camera':
+          begin
+            DB:= TP3DCamera.Create( Self );
+            Cameras.Add( TP3DCamera( DB ));
+          end;
+        'scene':
+          begin
+            DB:= TP3DScene.Create( Self );
+            Scenes.Add( TP3DScene( DB ));
+          end;
       end;
       Result:= DataBlocks.IndexOf( DB );
     end;
 
   var
     AName: DOMString;
-    Idx: Integer;
   begin
-    AName:= Element.GetAttribute( 'name' );
-    Idx:= DataBlocks.FindByName( AName );
+    AName:= ADOMNode.GetAttribute( 'name' );
+    Result:= DataBlocks.FindByName( AName );
 
-    if ( Idx = -1 ) then
-      Idx:= CreateObject;
-    if ( TP3DDataBlock( DataBlocks[ Idx ]).FileWatch.FileName = '<empty>' ) then
-      TP3DDataBlock( DataBlocks[ Idx ]).LoadFromDOM( Element );
+    if ( Result = -1 ) then
+      begin
+        Result:= CreateObject;
+        TP3DDataBlock( DataBlocks[ Result ]).LoadFromDOM( ADOMNode );
+      end;
     {$IFDEF VERBOSE}
-    WriteLn( 'IDX of Datablock "', AName, '": ', Idx );
-    WriteLn( Format( 'Created datablock of type "%s" and name "%s" with index %d', [ Element.NodeName, AName, Idx ]));
+    WriteLn( 'Index of Datablock "', AName, '": ', Result );
+    WriteLn( Format( 'Created datablock of type "%s" and name "%s" with index %d', [ ADOMNode.NodeName, AName, Result ]));
     {$ENDIF}
   end;
 
 begin
   if ( not Assigned( ADOMNode )) then
-    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Not Assigned!' );
+    raise Exception.Create( ClassName + ': Cannot create from DOM Node which is not assigned!' );
 
-  if ( not ( ADOMNode.NodeName = 'p3dfile' )) then
-    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dfile!' );
-
-  Element:= TDOMElement( ADOMNode.FirstChild );
   if ( Assigned( AParent )) then
     Parent:= AParent.Children
   else
     Parent:= Objects;
 
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'object': ; //Postpone the loading of objects
-        'mesh',
-        'material',
-        'camera',
-        'light', 'lamp': LoadData()
-      else
-        P3DLog.LogInfo( Self, Format( 'Warning unsupported type "%s". Skipping.', [ Element.NodeName ]));
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
-  lst:= ADOMNode.GetElementsByTagName( 'object' );
-  for i:= 0 to lst.Count - 1 do
-    Parent.Add( TP3DActor.CreateFromDOM( TDOMElement( lst[ i ]), Self ));
+  case ADOMNode.NodeName of
+    'p3dfile': //DO NOTHING FOR NOW
+      AppendAllFromDom( ADOMNode, TP3DActor, AParent );
+    'object':
+      Result:= Parent.Add( TP3DActor.CreateFromDOM( ADOMNode, Self ));
+    'mesh', 'material',
+      'camera', 'light',
+      'lamp', 'scene': Result:= LoadData();
+    else
+      P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ADOMNode.NodeName + '". Skipping.' );
+  end;
 end;
 
-function TP3DData.AppendFile(AFileName: String; const AParent: TP3DActor
-  ): TP3DData;
+function TP3DData.AppendFromDom( ADOMNode: TDOMElement; AName: String;
+  AType: TP3DDataBlockType; const AParent: TP3DActor ): Integer;
+var
+  Element: TDOMElement;
+begin
+  Result:= DataBlocks.FindByName( AName );
+  if ( Result > -1 ) then
+    if ( not ( DataBlocks[ Result ] is AType )) then
+      raise Exception.Create( Format( 'Error while appending from DOM: A class with name %s was already loaded before but is of the wrong type. Expected "%s", Found "%s"', [ AName, AType.ClassName, FindClassForDOM( Element ).ClassName ]))
+    else
+      exit;
+  Element:= TDOMElement( ADOMNode.FirstChild );
+  while ( Assigned( Element )) do
+    begin
+      if ( Element.GetAttribute( 'name' ) = AName ) then
+        if ( FindClassForDOM( Element ).InheritsFrom( AType )) then
+          break
+        else
+          raise Exception.Create( Format( 'Error while appending from DOM: A class with name %s was found but is of the wrong type. Expected "%s", Found "%s"', [ AName, AType.ClassName, FindClassForDOM( Element ).ClassName ]));
+      Element:= TDOMElement( Element.NextSibling );
+    end;
+  if ( not Assigned( Element )) then
+    raise Exception.Create( Format( 'Error while appending from DOM: A class with name %s was not found!', [ AName ]));
+  Result:= AppendFromDom( Element, AParent );
+end;
+
+function TP3DData.AppendAllFromDom( ADOMNode: TDOMElement;
+  AType: TP3DDataBlockType; const AParent: TP3DActor ): Integer;
+var
+  filter: String;
+  lst: TDOMNodeList;
+  i: Integer;
+begin
+  filter:= FindDOMForClass( AType );
+  lst:= ADOMNode.GetElementsByTagName( filter );
+  Result:= 0;
+  for i:= 0 to lst.Count - 1 do
+    begin
+      AppendFromDom( TDOMElement( lst[ i ]), AParent );
+      Inc( Result );
+    end;
+end;
+
+function TP3DData.AppendFile(AFileName: String; const AParent: TP3DActor ): TP3DData;
 var
   xml: TXMLDocument;
   dir: String;

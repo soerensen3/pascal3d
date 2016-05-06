@@ -9,6 +9,11 @@ var
   BBox: TP3DBoundingBox;
   Obj: Integer;
   world, view: TP3DShaderDecl;
+
+const
+  hsize = 1024;
+  cell = 256;
+  hcell = hsize/cell*2;
 begin
   glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
@@ -24,12 +29,17 @@ begin
   if ( Obj >= 0 ) then
     with ( mainscene.Objects[ Obj ] as TP3DRenderableObject ) do
       Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 )); }
-  Obj:= mainscene.Objects.FindByName( 'grid' );
+  Obj:= mainscene.Objects.FindByName( 'Grid' );
   if ( Obj >= 0 ) then
     with ( mainscene.Objects[ Obj ] as TP3DActor ) do
       begin
-        Scale:= vec3( 10, 10, 1 );
-        Position:= vec3( int( sin( SDL_GetTicks / 10000 ) * 50 ), int( sin( SDL_GetTicks / 10000 ) * 50 ), -1 );
+        Position:= vec3( Int( -CamPos.X / hcell ) * hcell, Int( -CamPos.Y / hcell ) * hcell, 0 );
+        Scale:= vec3( hsize, hsize, -hsize / 4 );
+        TP3DMesh( Data ).MaterialGroups[ 0 ].Material.Shader.Enable;
+        glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvX' ), Round( Int( CamPos.X / hcell )));
+        glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), Round( Int( CamPos.Y / hcell )));
+        //glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -3 );
+        glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'cellNumber' ), cell );
       end;
   P3DApplication.MainWindow.Title:= CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
   mainscene.Render;

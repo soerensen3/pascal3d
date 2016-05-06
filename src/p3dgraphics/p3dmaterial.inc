@@ -4,57 +4,87 @@
   type
      { TP3DMaterialMap }
 
-     TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
+     TP3DMaterialShader = class;
 
-     TP3DMaterial = class;
-     TP3DMaterialMap = class ( TPersistent )
+     { TP3DMaterialMapShader }
+
+     TP3DMaterialMapShader = class ( TPersistent )
        private
-         FDiffuseFactor: Single;
          FMap: TP3DTexture;
-         FMode: TP3DMapMode;
-         FNormalFactor: Single;
-         FParentMaterial: TP3DMaterial;
-         FSpecularFactor: Single;
+         FParentMaterial: TP3DMaterialShader;
          FTexChannel: Integer;
-         procedure SetMap(AValue: TP3DTexture);
+
+         procedure SetMap( AValue: TP3DTexture );
 
        public
          constructor Create;
-         constructor CreateFromDOM( AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+         constructor CreateFromDOM( AParentMaterial: TP3DMaterialShader; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+
+       published
+         property TexChannel: Integer read FTexChannel write FTexChannel;
+         property Map: TP3DTexture read FMap write SetMap;
+         property ParentMaterial: TP3DMaterialShader read FParentMaterial write FParentMaterial;
+     end;
+
+     TP3DMaterialBase = class;
+
+     TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
+
+     TP3DMaterialMapBase = class ( TP3DMaterialMapShader )
+       private
+         FDiffuseFactor: Single;
+         FMode: TP3DMapMode;
+         FNormalFactor: Single;
+         FSpecularFactor: Single;
+
+       public
+         constructor Create;
+         constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
        published
          property DiffuseFactor: Single read FDiffuseFactor write FDiffuseFactor;
          property NormalFactor: Single read FNormalFactor write FNormalFactor;
          property SpecularFactor: Single read FSpecularFactor write FSpecularFactor;
-         property TexChannel: Integer read FTexChannel write FTexChannel;
          property Mode: TP3DMapMode read FMode write FMode;
-         property Map: TP3DTexture read FMap write SetMap;
-         property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
      end;
 
-     TP3DMaterialMapList = specialize gP3DCustomObjectList < TP3DMaterialMap >;
+     TP3DMaterialMapList = specialize gP3DCustomObjectList < TP3DMaterialMapShader >;
+
+     { TP3DMaterialShader }
+
+     TP3DMaterialShader = class ( TP3DDataBlock )
+       private
+         FMaps: TP3DMaterialMapList;
+         FShader: TP3DShader;
+
+       public
+         constructor Create( const AData: TP3DData = nil );
+         destructor Destroy; override;
+
+         procedure PassToShader(); virtual;
+         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
+
+       published
+         property Shader: TP3DShader read FShader write FShader;
+         property Maps: TP3DMaterialMapList read FMaps write FMaps;
+     end;
 
     { TP3DMaterial }
 
-     TP3DMaterial = class ( TP3DDataBlock )
+     TP3DMaterialBase = class ( TP3DMaterialShader )
        private
          FAlpha: Single;
          FDiff: TVec3;
-         FMaps: TP3DMaterialMapList;
-         FShader: TP3DShader;
          FSpec: TVec3;
          FSpec_Hardness: Single;
          FUnlit: Boolean;
          FUseVertexColor: Boolean;
 
-         procedure SetUnlit(AValue: Boolean);
+         procedure SetUnlit( AValue: Boolean );
 
        public
          procedure BuildShader();
-         procedure PassToShader();
-
-         constructor Create( const AData: TP3DData = nil );
-         destructor Destroy; override;
+         procedure PassToShader(); override;
 
          procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
 
@@ -62,23 +92,22 @@
          property Spec: TVec3 read FSpec write FSpec;
 
        published
-         property Maps: TP3DMaterialMapList read FMaps write FMaps;
          property Spec_Hardness: Single read FSpec_Hardness write FSpec_Hardness;
          property Alpha: Single read FAlpha write FAlpha;
-         property Shader: TP3DShader read FShader write FShader;
          property UseVertexColor: Boolean read FUseVertexColor write FUseVertexColor;
          property Unlit: Boolean read FUnlit write SetUnlit;
      end;
 
-     TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
+
+     TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterialShader >;
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
-{ TP3DMaterialMap }
+{ TP3DMaterialMapShader }
 
-procedure TP3DMaterialMap.SetMap(AValue: TP3DTexture);
+procedure TP3DMaterialMapShader.SetMap(AValue: TP3DTexture);
 begin
   if FMap=AValue then Exit;
 
@@ -91,17 +120,51 @@ begin
     FMap.Users.Add( ParentMaterial );
 end;
 
-constructor TP3DMaterialMap.Create;
+constructor TP3DMaterialMapShader.Create;
+begin
+  inherited;
+  FTexChannel:= 0;
+end;
+
+constructor TP3DMaterialMapShader.CreateFromDOM(
+  AParentMaterial: TP3DMaterialShader; ADOMNode: TDOMElement;
+  const AData: TP3DData);
+var
+  TexName: DOMString;
+  _Data: TP3DData;
+  n: LongInt;
+begin
+  Create;
+  TexName:= ADOMNode.GetAttribute( 'file' );
+  if ( not FileExists( TexName )) then
+    raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );
+  if ( not Assigned( AData )) then
+    _Data:= P3DData
+  else
+    _Data:= AData;
+  n:= _Data.Textures.FindByFileName( TexName );
+  if ( n >= 0 ) then
+    Map:= _Data.Textures[ n ]
+  else
+    begin
+      Map:= TP3DTexture.Create( TexName, AData );
+      _Data.Textures.Add( Map );
+    end;
+end;
+
+{ TP3DMaterialMapBase }
+
+constructor TP3DMaterialMapBase.Create;
 begin
   inherited;
   FDiffuseFactor:= 1.0;
   FNormalFactor:= 0.0;
   FSpecularFactor:= 0.0;
   FMode:= p3dmmMix;
-  FTexChannel:= 0;
+  TexChannel:= 0;
 end;
 
-constructor TP3DMaterialMap.CreateFromDOM(AParentMaterial: TP3DMaterial;
+constructor TP3DMaterialMapBase.CreateFromDOM(AParentMaterial: TP3DMaterialBase;
   ADOMNode: TDOMElement; const AData: TP3DData);
 var
   TexName: DOMString;
@@ -141,14 +204,14 @@ end;
 
 { TMaterial }
 
-procedure TP3DMaterial.SetUnlit(AValue: Boolean);
+procedure TP3DMaterialBase.SetUnlit(AValue: Boolean);
 begin
   if FUnlit=AValue then Exit;
   FUnlit:=AValue;
   BuildShader();
 end;
 
-procedure TP3DMaterial.BuildShader;
+procedure TP3DMaterialBase.BuildShader;
 var
   ShaderTree: TP3DShaderNodeTree;
   Node: TP3DShaderNode;
@@ -224,15 +287,15 @@ begin
     for i:= 0 to Maps.Count - 1 do
       begin
         ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'Pass_Read' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
-        if ( Maps[ i ].DiffuseFactor > 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Diffuse' ), 'Index', i ), 'Factor', Maps[ i ].DiffuseFactor ),
-          AddNode( 'Pass_Combine' ), 'Mode', Mode[ Maps[ i ].Mode ]);
-        if ( Maps[ i ].NormalFactor > 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Normal' ), 'Index', i ), 'Factor', Maps[ i ].NormalFactor ),
-          AddNode( 'Pass_Combine' ), 'Mode', Mode[ Maps[ i ].Mode ]);
-        if ( Maps[ i ].SpecularFactor > 0 ) then
-           ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Specular' ), 'Index', i ), 'Factor', Maps[ i ].SpecularFactor ),
-           AddNode( 'Pass_Combine' ), 'Mode', Mode[ Maps[ i ].Mode ]);
+        if ( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor > 0 ) then
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
+          AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+        if ( TP3DMaterialMapBase( Maps[ i ]).NormalFactor > 0 ) then
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
+          AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+        if ( TP3DMaterialMapBase( Maps[ i ]).SpecularFactor > 0 ) then
+           ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
+           AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
       end;
 
     AddNode( 'Pass_Mix' );
@@ -256,7 +319,7 @@ begin
   end;
 end;
 
-procedure TP3DMaterial.PassToShader;
+procedure TP3DMaterialBase.PassToShader;
 var
   i: Integer;
 begin
@@ -284,32 +347,18 @@ begin
     end;
 end;
 
-constructor TP3DMaterial.Create(const AData: TP3DData);
-begin
-  inherited;
-  Maps:= TP3DMaterialMapList.Create;
-end;
-
-destructor TP3DMaterial.Destroy;
-begin
-  Maps.Free;
-  if ( Assigned( Shader )) then
-    Shader.Free;
-  inherited Destroy;
-end;
-
-procedure TP3DMaterial.LoadFromDOM(ADOMNode: TDOMElement);
+procedure TP3DMaterialBase.LoadFromDOM(ADOMNode: TDOMElement);
 var
   SpecTmp: TVec4;
   tex: TDOMElement;
 
   procedure LoadTex;
   var
-    Map: TP3DMaterialMap;
+    Map: TP3DMaterialMapBase;
   begin
     if ( Maps.Count > 7 ) then
       raise Exception.Create( 'Maximum Number of Maps reached: 8' );
-    Map:= TP3DMaterialMap.CreateFromDOM( Self, tex, Parent );
+    Map:= TP3DMaterialMapBase.CreateFromDOM( Self, tex, Parent );
 
     Maps.Add( Map );
   end;
@@ -320,9 +369,11 @@ begin
   SpecTmp.FromString( ADOMNode.GetAttribute( 'specular' ));
   Spec:= SpecTmp.YZW;
   Spec_Hardness:= SpecTmp.X;
-  tex:= TDOMElement( ADOMNode.FirstChild );
+
   if ( ADOMNode.GetAttribute( 'specular' ) = 'yes' ) then
     FUnlit:= True;
+
+  tex:= TDOMElement( ADOMNode.FirstChild );
   while Assigned( tex ) do
     begin
       case tex.NodeName of
@@ -335,6 +386,73 @@ begin
   end;
   BuildShader;
   FileWatch.FileName:= '';
+end;
+
+{ TP3DMaterialShader }
+
+constructor TP3DMaterialShader.Create(const AData: TP3DData);
+begin
+  inherited;
+  Maps:= TP3DMaterialMapList.Create;
+end;
+
+destructor TP3DMaterialShader.Destroy;
+begin
+  Maps.Free;
+  if ( Assigned( Shader )) then
+    Shader.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DMaterialShader.PassToShader;
+var
+  i: Integer;
+begin
+  if ( Assigned( Shader )) then
+    begin
+      Shader.Enable;
+
+      for i:= 0 to Maps.Count - 1 do
+        begin
+          glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
+          glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
+          glUniform1i( Shader.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
+        end;
+    end;
+end;
+
+procedure TP3DMaterialShader.LoadFromDOM(ADOMNode: TDOMElement);
+var
+  tex: TDOMElement;
+
+  procedure LoadTex;
+  var
+    Map: TP3DMaterialMapShader;
+  begin
+    if ( Maps.Count > 7 ) then
+      raise Exception.Create( 'Maximum Number of Maps reached: 8' );
+    Map:= TP3DMaterialMapShader.CreateFromDOM( Self, tex, Parent );
+
+    Maps.Add( Map );
+  end;
+var
+  VShaderFile, FShaderFile: DOMString;
+begin
+  VShaderFile:= ADOMNode.GetAttribute( 'vshader' );
+  FShaderFile:= ADOMNode.GetAttribute( 'fshader' );
+  Shader:= TP3DShader.CreateFromVertexAndFragmentShaderFile( VShaderFile, FShaderFile );
+
+  tex:= TDOMElement( ADOMNode.FirstChild );
+  while Assigned( tex ) do
+    begin
+      case tex.NodeName of
+        'texture': LoadTex;
+        '#comment':;
+      else
+        raise Exception.Create( 'Unknown tag inside Material Element: '+ tex.NodeName );
+      end;
+    tex:= TDOMElement( tex.NextSibling );
+  end;
 end;
 
 

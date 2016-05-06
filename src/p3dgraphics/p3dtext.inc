@@ -39,7 +39,7 @@ type
   TP3DFontManager = class ( TP3DCustomFontList )
     private
       FDefaultFontsPath: String;
-      FMaterial: TP3DMaterial;
+      FMaterial: TP3DMaterialBase;
 
       function GetFont( FontName: String; Height: Integer ): TP3DFont;
 
@@ -54,7 +54,7 @@ type
 
     published
       function Find( FontName: String; Height: Integer ): Integer;
-      property Material: TP3DMaterial read FMaterial write FMaterial;
+      property Material: TP3DMaterialBase read FMaterial write FMaterial;
       property DefaultFontsPath: String read FDefaultFontsPath write FDefaultFontsPath;
   end;
 
@@ -153,7 +153,7 @@ end;
 procedure TP3DText.ApplyShader;
 begin
   if ( P3DFontManager.Material.Maps.Count = 0 ) then
-    P3DFontManager.Material.Maps.Add( TP3DMaterialMap.Create );
+    P3DFontManager.Material.Maps.Add( TP3DMaterialMapBase.Create );
   P3DFontManager.Material.Maps[ 0 ].Map:= Texture;
   if ( not Assigned( P3DFontManager.Material.Shader )) then
     P3DFontManager.Material.BuildShader();
@@ -305,7 +305,7 @@ end;
 constructor TP3DFontManager.Create;
 begin
   inherited;
-  FMaterial:= TP3DMaterial.Create;
+  FMaterial:= TP3DMaterialBase.Create;
   FMaterial.FUnlit:= True;
   FMaterial.FUseVertexColor:= True;
 end;

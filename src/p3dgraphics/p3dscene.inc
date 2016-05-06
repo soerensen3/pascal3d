@@ -93,183 +93,13 @@ begin
   Objects.Clear( True );
 end;
 
-{
-function TP3DScene.Debug: String;
-var
-  Indent: Integer;
-
-  function DebugList( Items: TP3DActorList ): String;
-    function WriteVertices( Mdl: TP3DMesh ): String;
-    var
-      i: Integer;
-    begin
-      Result:= StringOfChar( ' ', Indent * 2 ) + 'vertices' + #13#10;
-
-      Inc( Indent );
-
-      for i:= 0 to Mdl.Positions.Count - 1 do
-        Result += StringOfChar( ' ', Indent * 2 ) +
-          Format( '%9.4f, %9.4f, %9.4f;', [ Mdl.Positions[ i ].X, Mdl.Positions[ i ].Y, Mdl.Positions[ i ].Z ])
-          + #13#10;
-
-      Dec( Indent );
-
-      Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
-    end;
-
-    function WriteNormals( Mdl: TP3DMesh ): String;
-    var
-      i: Integer;
-    begin
-      Result:= StringOfChar( ' ', Indent * 2 ) + 'normals' + #13#10;
-
-      Inc( Indent );
-
-      for i:= 0 to Mdl.Normals.Count - 1 do
-        Result += StringOfChar( ' ', Indent * 2 ) +
-          Format( '%9.4f, %9.4f, %9.4f;', [ Mdl.Normals[ i ].X, Mdl.Normals[ i ].Y, Mdl.Normals[ i ].Z ])
-          + #13#10;
-
-      Dec( Indent );
-
-      Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
-    end;
-
-    function WriteFaces( Mdl: TP3DMesh ): String;
-    var
-      i: Integer;
-      s: String;
-      j: Integer;
-      k: Integer;
-    begin
-      Result:= StringOfChar( ' ', Indent * 2 ) + 'faces' + #13#10;
-
-      Inc( Indent );
-
-      for i:= 0 to high( Mdl.Faces ) do
-        begin
-          s:= '';
-
-          for j:= 0 to high( Mdl.Faces[ i ].verts ) do
-            begin
-              s += ', ' + IntToStr( Mdl.Faces[ i ].verts[ j ].v ) + '/' + IntToStr( Mdl.Faces[ i ].verts[ j ].n ) + '/';
-              for k:= 0 to High( Mdl.Faces[ i ].verts[ j ].texc ) do
-                begin
-                  if ( k > 0 ) then
-                    s += '|';
-                  s += IntToStr( Mdl.Faces[ i ].verts[ j ].texc[ k ]);
-                end;
-            end;
-
-
-          Delete( s, 1, 2 );
-          Result += StringOfChar( ' ', Indent * 2 ) + s + #13#10;
-        end;
-
-      Dec( Indent );
-
-      Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
-    end;
-
-  var
-    i: Integer;
-  begin
-    Result:= '';
-    for i:= 0 to Items.Count - 1 do
-      begin
-        Result += StringOfChar( ' ', Indent * 2 ) + 'object ' + Items[ i ].Name +  #13#10;
-        Inc( Indent );
-        Result += WriteVertices( Items[ i ] as TP3DMesh );
-        Result += WriteNormals( Items[ i ] as TP3DMesh );
-        Result += WriteFaces( Items[ i ] as TP3DMesh );
-        Result += StringOfChar( ' ', Indent * 2 ) + 'children' + #13#10;
-        Inc( Indent );
-        Result += DebugList( ( Items[ i ] as TP3DMesh ).Children );
-        Dec( Indent );
-        Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
-        Dec( Indent );
-        Result += StringOfChar( ' ', Indent * 2 ) + 'end;' + #13#10;
-      end;
-  end;
-
-begin
-  Indent:= 0;
-  Result:= DebugList( Children );
-end;
-}
 procedure TP3DScene.Render;
 begin
+  TP3DCamera( Cam.Data ).View:= mat4translate( vec4( Cam.Position, 1 )) * mat4( mat3( Cam.Quaternion ));
+                   //TODO:SHOULD BE INVERTED
   Objects.Render( Mat4Identity, Self );
 end;
-{
-//TODO: FIXIT
-procedure TP3DScene.AppendFromData(AData: TP3DData);
-var
-  Element: TDOMElement;
-  ParentActor: TP3DActorList;
-  lst: TDOMNodeList;
-  i: Integer;
 
-  procedure LoadData();
-    function CreateObject: Integer;
-    var
-      DB: TP3DDataBlock;
-    begin
-      Result:= -1;
-      case Element.NodeName of
-        'mesh': DB:= TP3DMesh.Create( P3DData );
-        'material': DB:= TP3DMaterial.Create( P3DData );
-        'light': DB:= TP3DLight.Create( P3DData );
-      end;
-      Result:= P3DData.DataBlocks.IndexOf( DB );
-    end;
-
-  var
-    AName: DOMString;
-    Idx: Integer;
-  begin
-    AName:= Element.GetAttribute( 'name' );
-    Idx:= P3DData.DataBlocks.FindByName( AName );
-    if ( Idx = -1 ) then
-      Idx:= CreateObject;
-    if ( TP3DDataBlock( P3DData.DataBlocks[ Idx ]).FileWatch.FileName = '<empty>' ) then
-      TP3DDataBlock( P3DData.DataBlocks[ Idx ]).LoadFromDOM( Element );
-    {$IFDEF VERBOSE}
-    WriteLn( 'IDX of Datablock "', AName, '": ', Idx );
-    WriteLn( Format( 'Created datablock of type "%s" and name "%s" with index %d', [ Element.NodeName, AName, Idx ]));
-    {$ENDIF}
-  end;
-
-begin
-  if ( not Assigned( ADOMNode )) then
-    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Not Assigned!' );
-
-  if ( not ( ADOMNode.NodeName = 'p3dscene' )) then
-    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dscene!' );
-
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  if ( Assigned( AParentActor )) then
-    ParentActor:= AParentActor.Children
-  else
-    ParentActor:= Objects;
-
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'object': ; //Postpone the loading of objects
-        'mesh',
-        'material',
-        'light': LoadData()
-      else
-        P3DLog.LogInfo( Self, Format( 'Warning unsupported type "%s". Skipping.', [ Element.NodeName ]));
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
-  lst:= ADOMNode.GetElementsByTagName( 'object' );
-  for i:= 0 to lst.Count - 1 do
-    ParentActor.Add( TP3DActor.CreateFromDOM( TDOMElement( lst[ i ]), P3DData ));
-end;
-}
 procedure TP3DScene.AppendFile(AFileName: String;
   const AParent: TP3DActor; const AutoNames: Boolean);
 var
@@ -318,8 +148,6 @@ begin
           LightList.Add( TP3DLight( Obj.Data ));
       if ( Cam.Data is TP3DCamera ) then
         begin
-          TP3DCamera( Cam.Data ).View:= mat4translate( vec4( Cam.Position, 1 )) * mat4( mat3( Cam.Quaternion ));
-                           //TODO:SHOULD BE INVERTED
           TP3DCamera( Cam.Data ).PassToShader( world );
           LightList.PassToActiveShader( 0, Self, world, TP3DCamera( Cam.Data ).View, [ liPosition, liLightParams ]);
         end;

@@ -12,19 +12,19 @@
        private
          FIndexEnd: Integer;
          FIndexStart: Integer;
-         FMaterial: TP3DMaterial;
+         FMaterial: TP3DMaterialShader;
          FParentMesh: TP3DMesh;
          FPolyEnd: Integer;
          FPolyStart: Integer;
 
-         procedure SetMaterial( AValue: TP3DMaterial );
+         procedure SetMaterial( AValue: TP3DMaterialShader );
 
        published
          property PolyStart: Integer read FPolyStart write FPolyStart;
          property PolyEnd: Integer read FPolyEnd write FPolyEnd;
          property IndexStart: Integer read FIndexStart write FIndexStart;
          property IndexEnd: Integer read FIndexEnd write FIndexEnd;
-         property Material: TP3DMaterial read FMaterial write SetMaterial;
+         property Material: TP3DMaterialShader read FMaterial write SetMaterial;
          property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
      end;
 
@@ -37,7 +37,7 @@
 
      TP3DFace = record
        verts: array of TP3DFaceVertex;
-       mat: TP3DMaterial;
+       mat: TP3DMaterialShader;
      end;
 
 
@@ -168,19 +168,12 @@ var
   MaterialGroup: TP3DMeshMaterialGroup;
 begin
   AName:= DOM.GetAttribute( 'name' );
-  MatIdx:= Parent.Materials.FindByName( AName );
+  MatIdx:= Parent.AppendFromDom( TDOMElement( DOM.OwnerDocument.FirstChild ), AName, TP3DMaterialShader );
   MatPolyStart:= StrToInt( DOM.GetAttribute( 'start' ));
   MatPolyEnd:= StrToInt( DOM.GetAttribute( 'end' ));
 
   MaterialGroup:= TP3DMeshMaterialGroup.Create;
-  if ( MatIdx >= 0 ) then
-    MaterialGroup.Material:= Parent.Materials[ MatIdx ]
-  else
-    begin
-      MaterialGroup.Material:= TP3DMaterial.Create( Parent );
-      MaterialGroup.Material.Name:= AName;
-      Parent.Materials.Add( MaterialGroup.Material );
-    end;
+  MaterialGroup.Material:= TP3DMaterialShader( Parent.DataBlocks[ MatIdx ]);
   MaterialGroup.PolyStart:= MatPolyStart;
   MaterialGroup.PolyEnd:= MatPolyEnd;
   MaterialGroups.Add( MaterialGroup );
@@ -310,7 +303,7 @@ end;
 procedure TP3DMesh.RenderMaterialGroup(world: TMat4; Idx: Integer;
   Scene: TP3DScene);
 var
-  Material: TP3DMaterial;
+  Material: TP3DMaterialShader;
   offset: Integer;
   count, i: Integer;
 
@@ -650,7 +643,7 @@ end;
 
 { TP3DMeshMaterialGroup }
 
-procedure TP3DMeshMaterialGroup.SetMaterial(AValue: TP3DMaterial);
+procedure TP3DMeshMaterialGroup.SetMaterial( AValue: TP3DMaterialShader );
 begin
   if FMaterial=AValue then Exit;
 

@@ -33,8 +33,9 @@ type
       constructor Create( const AData: TP3DData = nil );
       destructor Destroy; override;
 
-      procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); virtual; abstract;
-      procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual; abstract;
+      procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); virtual;
+      procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual;
+      procedure Reload; virtual;
       function CalcBoundingBox(): TP3DBoundingBox; virtual;
       procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
 
@@ -45,6 +46,8 @@ type
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       property Users: TP3DDataBlockList read FUsers;
   end;
+
+  TP3DDataBlockType = class of TP3DDataBlock;
 
 
   { gP3DCustomDatablockList }
@@ -93,6 +96,48 @@ type
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+function FindDOMForClass( AClass: TP3DDataBlockType ): String;
+begin
+  case AClass.ClassName of
+    'TP3DMaterialShader', 'TP3DMaterialBase': Result:= 'material';
+    'TP3DMesh': Result:= 'mesh';
+    'TP3DLight': Result:= 'lamp';
+    'TP3DCamera': Result:= 'camera';
+    'TP3DActor': Result:= 'object';
+    'TP3DScene': Result:= 'scene';
+  end;
+end;
+
+function FindClassForDOM( ADOMName: String ): TP3DDataBlockType;
+begin
+  case
+    ADOMName of
+      'material': Result:= TP3DMaterialShader;
+      'mesh': Result:= TP3DMesh;
+      'light', 'lamp': Result:= TP3DLight;
+      'camera': Result:= TP3DCamera;
+      'object': Result:= TP3DActor;
+      'scene': Result:= TP3DScene;
+    end;
+end;
+
+function FindClassForDOM( ADOMNode: TDOMElement ): TP3DDataBlockType;
+begin
+  case
+    ADOMNode.NodeName of
+      'material':
+        if ( ADOMNode.GetAttribute( 'type' ) = 'shader' ) then
+          Result:= TP3DMaterialShader
+        else
+          Result:= TP3DMaterialBase;
+      'mesh': Result:= TP3DMesh;
+      'light', 'lamp': Result:= TP3DLight;
+      'camera': Result:= TP3DCamera;
+      'object': Result:= TP3DActor;
+      'scene': Result:= TP3DScene;
+    end;
+end;
 
 { gP3DCustomDatablockList }
 function gP3DCustomDatablockList.GetCount: Integer;
@@ -274,6 +319,22 @@ begin
   FUsers.Free;
   FFileWatch.Free;
   inherited Destroy;
+end;
+
+procedure TP3DDataBlock.Render(world: TMat4; Scene: TP3DScene;
+  RenderObject: TP3DActor);
+begin
+
+end;
+
+procedure TP3DDataBlock.LoadFromDOM(ADOMNode: TDOMElement);
+begin
+
+end;
+
+procedure TP3DDataBlock.Reload;
+begin
+
 end;
 
 function TP3DDataBlock.CalcBoundingBox: TP3DBoundingBox;

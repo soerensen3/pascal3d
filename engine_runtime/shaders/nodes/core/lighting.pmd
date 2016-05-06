@@ -13,22 +13,20 @@ const int p3dltSun = 1;
 const int p3dltSpot = 2;
 
 struct LightSourceParameters {
-	vec4 color;
-	vec4 position;
-	vec4 halfvector;
-	vec4 direction;
-	int type;
-//	float spotExponent;
-//	float spotCutoff; // (range: [0.0,90.0], 180.0)
-//	float spotCosCutoff; // (range: [1.0,0.0],-1.0)
-//	float constantAttenuation;
-	float linearAttenuation;
-	float quadraticAttenuation;
+  vec4 color;
+  vec4 position;
+  vec4 halfvector;
+  vec4 direction;
+  int type;
+//  float spotExponent;
+//  float spotCutoff; // (range: [0.0,90.0], 180.0)
+//  float spotCosCutoff; // (range: [1.0,0.0],-1.0)
+//  float constantAttenuation;
+  float linearAttenuation;
+  float quadraticAttenuation;
 };
 uniform int numLightSource;
 uniform LightSourceParameters LightSource[8];
-uniform vec4 eyeVec;
-uniform vec4 eyePos;
 
 
 vec3 viewDir;
@@ -43,40 +41,40 @@ void util_PointLight( in int i, in float shininess,
                       in vec3 N, inout vec3 diffuse, inout vec3 specular )
 
 {
-		vec3 lVector = ( LightSource[ i ].position.xyz - vPosition.xyz );
-		vec3 lightDir = normalize( lVector );
+    vec3 lVector = ( LightSource[ i ].position.xyz - vPosition.xyz );
+    vec3 lightDir = normalize( lVector );
 
-		// attenuation
+    // attenuation
 
-		float attenuation = 1;//calcLightAttenuation( length( lVector ), 1, 0.1 ); //pointLightDistance[ i ], pointLightDecay[ i ] );
+    float attenuation = 1;//calcLightAttenuation( length( lVector ), 1, 0.1 ); //pointLightDistance[ i ], pointLightDecay[ i ] );
 
-		// diffuse
+    // diffuse
 
-		float cosineTerm = saturate( dot( N, lightDir ) );
+    float cosineTerm = saturate( dot( N, lightDir ) );
 
-		diffuse += LightSource[ i ].color.rgb * attenuation * cosineTerm;
+    diffuse += LightSource[ i ].color.rgb * attenuation * cosineTerm;
 
-		// specular
+    // specular
 
-		vec3 brdf = BRDF_BlinnPhong( vec3( 1 ), shininess, N, lightDir, viewDir );
+    vec3 brdf = BRDF_BlinnPhong( vec3( 1 ), shininess, N, lightDir, viewDir );
 
-		specular += brdf * LightSource[ i ].color.rgb * attenuation * cosineTerm;
+    specular += brdf * LightSource[ i ].color.rgb * attenuation * cosineTerm;
 }
 
 /*{
-	  vec3 s = ( LightSource[ i ].position.xyz - vPosition.xyz );
-	  float dist = length( s );
-	  s = s / dist;
-	  vec3 v = normalize( -vPosition.xyz );
-	  vec3 r = reflect( -s, N );
-	  float attenuation = calculateAttenuation(i, dist);
-	  float sDotN = max( dot(s,N), 0.0 );
+    vec3 s = ( LightSource[ i ].position.xyz - vPosition.xyz );
+    float dist = length( s );
+    s = s / dist;
+    vec3 v = normalize( -vPosition.xyz );
+    vec3 r = reflect( -s, N );
+    float attenuation = calculateAttenuation(i, dist);
+    float sDotN = max( dot(s,N), 0.0 );
 
       specular= clamp( specular + 
       vec4( LightSource[ i ].color.rgb, 1 ) *
-				 pow( dot(r,v), shininess ) * attenuation, 0.0, 1.0 );
+         pow( dot(r,v), shininess ) * attenuation, 0.0, 1.0 );
 
-	  diffuse = clamp( diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * sDotN * attenuation, 0.0, 1.0 );
+    diffuse = clamp( diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * sDotN * attenuation, 0.0, 1.0 );
 }*/
 void util_directionalLight( in int i,
                             in float shininess,
@@ -95,17 +93,17 @@ void util_directionalLight( in int i,
     specular = clamp( specular + vec4( LightSource[ i ].color.rgb, 1 ) * pf, 0.0, 1.0 );*/
 
 
-		// diffuse
+    // diffuse
 
-		float cosineTerm = saturate( dot( N, LightSource[ i ].direction.xyz ));
+    float cosineTerm = saturate( dot( N, LightSource[ i ].direction.xyz ));
 
-		diffuse += LightSource[ i ].color.rgb * cosineTerm;
+    diffuse += LightSource[ i ].color.rgb * cosineTerm;
 
-		// specular
+    // specular
 
-		vec3 brdf = BRDF_BlinnPhong( vec3( 1 ), shininess, N, LightSource[ i ].direction.xyz, viewDir );
+    vec3 brdf = BRDF_BlinnPhong( vec3( 1 ), shininess, N, LightSource[ i ].direction.xyz, viewDir );
 
-		specular += brdf * LightSource[ i ].color.rgb * cosineTerm;
+    specular += brdf * LightSource[ i ].color.rgb * cosineTerm;
 }
 ```
 

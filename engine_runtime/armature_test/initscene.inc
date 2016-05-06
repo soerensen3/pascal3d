@@ -13,7 +13,6 @@ var
   CatchMouse: Boolean = False;
   CamYawPitchRoll: TVec3;
   CamPos: TVec3;
-  material: TP3DMaterial;
 
   //Mdl: TP3DModelScene;
 
@@ -44,7 +43,7 @@ var
   Obj, i, n: Integer;
   BBox: TP3DBoundingBox;
   lib: TP3DData;
-  mat: TP3DMaterial;
+
 begin
   Result:= False;
   SetCurrentDir( pathmodels );
@@ -53,8 +52,9 @@ begin
 
   //mainscene.AppendFile( 'makehuman.p3d' );
   //mainscene.AppendFile( 'rocks.p3d' );
-  mainscene.AppendFile( 'terrain_simple.p3d' );
-  //mainscene.AppendFile( 'quattest.p3d' );
+  //mainscene.AppendFile( 'terrain_simple.p3d' );
+  //mainscene.AppendFile( 'grid_projterrain_high.p3d' );
+  mainscene.AppendFile( 'grid_projterrain_low.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
@@ -99,9 +99,6 @@ begin
         mat.Unlit:= True;
         //mat.BuildShader;
       end;}
-  material:= TP3DMaterial.Create();
-  material.Unlit:= True;
-  material.BuildShader();
 end;
 
 procedure UnloadModels;
