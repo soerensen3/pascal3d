@@ -1,3 +1,4 @@
+#version 120
 #if (__VERSION__ > 120)
 # define IN in
 # define OUT out
@@ -30,8 +31,8 @@ const int p3dltPoint = 0;
 const int p3dltSun = 1;
 const int p3dltSpot = 2;
 
-const vec4 mat_specular = vec4( 1 );
-const float mat_hardness = 32.0;
+const vec4 mat_specular = vec4( 0.020958, 0.020958, 0.020958, 1 );
+const float mat_hardness = 5.000000;
 
 struct LightSourceParameters {
   vec4 color;
@@ -142,7 +143,6 @@ void util_directionalLight( in int i,
 
 vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec3 BumpMapNormal)
 {
-    BumpMapNormal = vec3( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0));
     vec4 NewNormal;
     mat3 TBN = mat3(Tangent.xyz, Cotangent.xyz, Normal.xyz);
     NewNormal = vec4( TBN * BumpMapNormal, 1.0 );
@@ -150,13 +150,26 @@ vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec3 BumpMapNorm
     return NewNormal;
 }
 
+const float fogstart = 600.0;
+const float fogend = 950.0;
+const vec3 fogcolor = vec3( 181.0,136.0,71.0 ) / 255;
+
 
 void main()
 {
-  vec3 color = texture2D( tex1, vTexCoord0.st ).rgb;
-  vec3 Normal = texture2D( tex0, vTexCoord0.st ).rgb;
+  vec3 color = texture2D( tex0, vTexCoord0.st ).rgb;
+  vec3 Normal = texture2D( tex1, vTexCoord0.st ).rgb;
   vec3 detail_diff = texture2D( tex2, vTexCoord0.st * float( cellNumber )).rgb;
-  Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal).xyz;
+  vec3 detail_norm = texture2D( tex3, vTexCoord0.st * float( cellNumber )).rgb;
+  vec3 detail_spec = texture2D( tex4, vTexCoord0.st * float( cellNumber )).rgb;
+  vec3 detail_diff2 = texture2D( tex2, vTexCoord0.ts * float( cellNumber / 3.7 )).rgb;
+  vec3 detail_norm2 = texture2D( tex3, vTexCoord0.ts * float( cellNumber / 3.7 )).rgb;
+  vec3 detail_spec2 = texture2D( tex4, vTexCoord0.ts * float( cellNumber / 3.7 )).rgb;
+  Normal = mix( detail_norm, Normal, 0.8 );  
+  Normal = mix( detail_norm2, Normal, 0.7 );  
+  Normal = Normal * 2.0 - 1.0;
+  Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal ).xyz;
+  
   Normal = ( view * vec4( Normal, 0 )).xyz;
   vec3 shadow = vec3( 0 );
   vec3 spec = vec3( 0 );
@@ -166,10 +179,12 @@ void main()
       util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec );
     if ( LightSource[ i ].type == p3dltSun )
       util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
-  }
   
-  FragColor.rgb = color * detail_diff * shadow + spec;
-  FragColor.a = 1.0;
+  }
+  FragColor.rgb = mix( color, detail_diff*detail_diff2, 0.4 );//mix( color, mix( detail_diff, detail_diff2, 0.6 ), 0.3 );
+  FragColor.rgb = FragColor.rgb * shadow + spec * mix( mix( vec3( 1 ), detail_spec, 0.4 ), detail_spec2, 0.5 );
+  FragColor.rgb = mix( FragColor.rgb, fogcolor, smoothstep( fogstart, fogend, length( vPosition )));
+  FragColor.a = 1;
   #if (__VERSION__ < 130)
   gl_FragColor = FragColor;
   #endif

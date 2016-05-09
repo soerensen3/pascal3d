@@ -27,6 +27,7 @@ begin
         begin
           UnloadShader;
           LoadShader;
+          ReloadShader;
         end;
       if ( Event.keysym.scancode = SDL_SCANCODE_F6 ) then
         begin
@@ -58,7 +59,7 @@ var
     Result:= ( Keys + LongInt( Key ))^ = 1;
   end;
 
-const speed = 0.10;
+const speed = 1.10;
 
 var
   m: TMat4;

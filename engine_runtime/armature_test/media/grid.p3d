@@ -1,21 +1,44 @@
 <?xml version="1.0" ?>
 <p3dfile>
-  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
-  <object data="mesh_Plane" name="Plane" type="mesh">
-    <transform position=" 0.000000, 0.000000, 0.000000" quaternion=" 0.000000, 0.000000, 0.000000, 1.000000" scale="100.000000,100.000000, 1.000000" />
-  </object>
-  <object data="light_Lamp" name="Lamp" type="lamp">
-    <transform position=" 4.076245, 1.005454, 5.903862" quaternion=" 0.169076, 0.272171, 0.755880, 0.570947" scale=" 1.000000, 1.000000, 1.000000" />
-  </object>
-  <object data="camera_Camera" name="Camera" type="camera">
-    <transform position=" 7.481132,-6.507640, 5.343665" quaternion=" 0.481707, 0.212922, 0.334251, 0.781600" scale=" 1.000000, 1.000000, 1.000000" />
-  </object>
-  <mesh binary="grid.Plane.p3dmesh" cotangents="1" faces="1" name="mesh_Plane" normals="1" tangents="1" texcoords="4" vertices="4">
-    <material end="0" name="material_Material" start="0" />
+  <scene
+    name = "Scene">
+    <object
+      type = "mesh"
+      data = "mesh_Plane"
+      name = "Plane">
+      <transform
+        scale = "100.000000,100.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    faces = "1"
+    name = "mesh_Plane"
+    normals = "4"
+    vertices = "4"
+    texcoords = "4"
+    tangents = "4"
+    cotangents = "4"
+    binary = "grid.mesh_Plane.p3dmesh">
+    <material
+      end = "0"
+      name = "material_Material"
+      start = "0">
+    </material>
   </mesh>
-  <light color="1.000000, 1.000000, 1.000000" energy="1.0" name="light_Lamp" type="point" />
-  <camera far="100.0" fov="0.8575560450553894" name="camera_Camera" near="0.10000000149011612" />
-  <material diffuse="1.000000, 1.000000, 1.000000" name="material_Material" specular="50.000000, 0.000000, 0.000000, 0.000000" unlit="yes">
-    <texture alpha="1.0" diffuse="1.0" file="grid.png" layer="0" mode="mix" />
+  <material
+    specular = "50.000000, 0.000000, 0.000000, 0.000000"
+    unlit = "yes"
+    name = "material_Material"
+    diffuse = "1.000000, 1.000000, 1.000000">
+    <texture
+      mode = "mix"
+      alpha = "1.0"
+      layer = "0"
+      file = "grid.png"
+      diffuse = "1.0">
+    </texture>
   </material>
 </p3dfile>

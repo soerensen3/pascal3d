@@ -13,13 +13,13 @@
       </transform>
     </object>
     <object
-      type = "lamp"
       data = "lamp_Lamp"
+      type = "lamp"
       name = "Lamp">
       <transform
-        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
-        position = " 4.076245, 1.005454, 5.903862"
-        scale = " 1.000000, 1.000000, 1.000000">
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
+        position = " 4.076245, 1.005454, 5.903862">
       </transform>
     </object>
     <object
@@ -27,9 +27,9 @@
       data = "camera_Camera"
       name = "Camera">
       <transform
-        quaternion = " 0.481707, 0.212922, 0.334251, 0.781600"
-        position = " 7.481132,-6.507640, 5.343665"
-        scale = " 1.000000, 1.000000, 1.000000">
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
+        position = " 4.076245, 1.005454, 5.903862">
       </transform>
     </object>
   </scene>
@@ -49,9 +49,9 @@
     </material>
   </mesh>
   <lamp
-    type = "point"
-    color = "1.000000, 1.000000, 1.000000"
     energy = "1.0"
+    type = "sun"
+    color = "1.000000, 1.000000, 1.000000"
     name = "lamp_Lamp">
   </lamp>
   <camera

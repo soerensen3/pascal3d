@@ -99,6 +99,7 @@ type
       procedure UpdateUniforms();
       procedure BindAttribLocations();
       function DumpUniforms: String;
+      procedure Reload; override;
 
     published
       property ProgramObj: GLHandle read FProgramObj write FProgramObj;
@@ -715,11 +716,18 @@ end;
 
 constructor TP3DShader.CreateFromVertexAndFragmentShaderFile(fnvshader,
   fnfshader: String; const AData: TP3DData);
+var
+  path: String;
 begin
   Create( AData );
+  path:= GetCurrentDir();
+  fnvshader:= CreateAbsolutePath( fnvshader, path );
+  fnfshader:= CreateAbsolutePath( fnfshader, path );
   VShader:= LoadShaderToText( fnvshader );
   FShader:= LoadShaderToText( fnfshader );
   CreateFromVertexAndFragmentShader( vshader, fshader, Parent );
+  FVShaderWatch:= TP3DFileWatch.Create( fnvshader );
+  FFShaderWatch:= TP3DFileWatch.Create( fnfshader );
 end;
 
 constructor TP3DShader.CreateFromVertexAndFragmentShader(AVShader,
@@ -755,6 +763,10 @@ var
 
 begin
   Create( AData );
+  if ( Assigned( FVShaderWatch )) then
+    FVShaderWatch.Free;
+  if ( Assigned( FFShaderWatch )) then
+    FFShaderWatch.Free;
   FVShader:= AVShader;
   FFShader:= AFShader;
   LinkProgram;
@@ -762,6 +774,10 @@ end;
 
 destructor TP3DShader.Destroy;
 begin
+  if ( Assigned( FVShaderWatch )) then
+    FVShaderWatch.Free;
+  if ( Assigned( FFShaderWatch )) then
+    FFShaderWatch.Free;
   DeleteProgram( ProgramObj );
   inherited Destroy;
 end;
@@ -798,6 +814,26 @@ begin
   Result:= 'Uniforms of Shader ' + Name;
   for i:= 0 to Uniforms.Count - 1 do
     Result+= LineEnding + Format( '%s (@%d) = %s', [ Uniforms[ i ].Name, Uniforms[ i ].Addr, Uniforms[ i ].AsString ]);
+end;
+
+procedure TP3DShader.Reload;
+var
+  Changed: Boolean;
+begin
+  inherited Reload;
+  Changed:= False;
+  if ( Assigned( VShaderWatch ) and VShaderWatch.CheckForChange ) then
+    begin
+      Changed:= True;
+      VShader:= LoadShaderToText( VShaderWatch.FileName );
+    end;
+  if ( Assigned( FShaderWatch ) and FShaderWatch.CheckForChange ) then
+    begin
+      Changed:= True;
+      FShader:= LoadShaderToText( FShaderWatch.FileName );
+    end;
+  if ( Changed ) then
+    LinkProgram;
 end;
 
 {$ENDIF}

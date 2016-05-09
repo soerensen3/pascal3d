@@ -1,37 +1,35 @@
 <?xml version="1.0" ?>
 <p3dfile>
-
-    <object
-      data = "mesh_Grid"
-      type = "mesh"
-      name = "Grid">
-      <transform
-        scale = " 1.000000, 1.000000, 1.000000"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        position = " 0.000000, 0.000000, 0.000000">
-      </transform>
-    </object>
-    <object
-      data = "lamp_Lamp"
-      type = "lamp"
-      name = "Lamp">
-      <transform
-        scale = " 1.000000, 1.000000, 1.000000"
-        quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
-        position = " 4.076245, 1.005454, 5.903862">
-      </transform>
-    </object>
-    <object
-      data = "camera_Camera"
-      type = "camera"
-      name = "Camera">
-      <transform
-        scale = " 1.000000, 1.000000, 1.000000"
-        quaternion = " 0.481707, 0.212922, 0.334251, 0.781600"
-        position = " 7.481132,-6.507640, 5.343665">
-      </transform>
-    </object>
-
+  <object
+    data = "mesh_Grid"
+    type = "mesh"
+    name = "Grid">
+    <transform
+      scale = " 1.000000, 1.000000, 1.000000"
+      quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+      position = " 0.000000, 0.000000, 0.000000">
+    </transform>
+  </object>
+  <object
+    data = "lamp_Lamp"
+    type = "lamp"
+    name = "Lamp">
+    <transform
+      scale = " 1.000000, 1.000000, 1.000000"
+      quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
+      position = " 4.076245, 1.005454, 5.903862">
+    </transform>
+  </object>
+  <object
+    data = "camera_Camera"
+    type = "camera"
+    name = "Camera">
+    <transform
+      scale = " 1.000000, 1.000000, 1.000000"
+      quaternion = " 0.481707, 0.212922, 0.334251, 0.781600"
+      position = " 7.481132,-6.507640, 5.343665">
+    </transform>
+  </object>
   <mesh
     texcoords = "260100"
     vertices = "65536"
@@ -66,11 +64,11 @@
     <texture
       normal = "1.0"
       mode = "mix"
-      file = "megt00n270hb_n_displ.png">
+      file = "megt00n270hb_n_displ_high.png">
     </texture>
     <texture
       mode = "mix"
-      file = "megt00n270hb_diff_4k.jpg"
+      file = "megt00n270hb_diff_4k_high.jpg"
       diffuse = "1.0">
     </texture>
   </material>

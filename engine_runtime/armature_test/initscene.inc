@@ -13,9 +13,27 @@ var
   CatchMouse: Boolean = False;
   CamYawPitchRoll: TVec3;
   CamPos: TVec3;
+  FPS: Single;
+  FramesCounter: Integer;
+  FPSLastPoll: Integer;
+
+const
+  FPSUpdate: Integer = 2000;
 
   //Mdl: TP3DModelScene;
 
+
+procedure ReloadShader;
+var
+  Shader: TP3DShader;
+  Lib: TP3DData;
+begin
+  for Shader in P3DData.Shaders do
+    Shader.Reload;
+  for Lib in P3DData.Libraries do
+    for Shader in Lib.Shaders do
+      Shader.Reload;
+end;
 
 function LoadShader: Boolean;
 begin
@@ -54,14 +72,14 @@ begin
   //mainscene.AppendFile( 'rocks.p3d' );
   //mainscene.AppendFile( 'terrain_simple.p3d' );
   //mainscene.AppendFile( 'grid_projterrain_high.p3d' );
-  mainscene.AppendFile( 'grid_projterrain_low.p3d' );
+  mainscene.AppendFile( 'grid_projterrain_med.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
 
   //mainscene.AppendFile( 'bbox.p3d' );
 
-  mainscene.AppendFile( 'grid.p3d' );
+  //mainscene.AppendFile( 'grid.p3d' );
   //n:= OpenLibrary( 'bulb.p3d' );
   //mainscene.AppendFile( 'bulb.p3d', nil, True );
 

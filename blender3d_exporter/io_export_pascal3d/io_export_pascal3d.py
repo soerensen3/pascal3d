@@ -379,7 +379,7 @@ class P3DExporter( bpy.types.Operator ):
     el.attrib[ 'mode' ] = str( tex.blend_type.lower())
     
     if ( tex.uv_layer != '' ):
-      el.attrib[ 'layer' ] = Mesh.uv_layers.find( tex.uv_layer )
+      el.attrib[ 'layer' ] = 0 #self.file.mesh.uv_layers.find( tex.uv_layer )
 
     self.file.pop()
 

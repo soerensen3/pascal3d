@@ -12,10 +12,10 @@ var
 
 const
   hsize = 1024;
-  cell = 256;
+  cell = 64;
   hcell = hsize/cell*2;
 begin
-  glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
+  glClearColor($E7 / 255, $AF / 255, $5C / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
   //maincamera.Matrix:= //mat4lookatLH( 5*vec3( cos( SDL_GetTicks / 1000 ), 0, sin( SDL_GetTicks / 1000 ) ), vec3( 0, 0, 1 ), vec3( 0, 1, 0 )); //vec4( maincamera.Position, 1));
   //mat4translate( vec4( CamPos, 1 )) * mat4rotateEuler( CamYawPitchRoll * deg2rad );
@@ -34,14 +34,14 @@ begin
     with ( mainscene.Objects[ Obj ] as TP3DActor ) do
       begin
         Position:= vec3( Int( -CamPos.X / hcell ) * hcell, Int( -CamPos.Y / hcell ) * hcell, 0 );
-        Scale:= vec3( hsize, hsize, -hsize / 4 );
+        Scale:= vec3( hsize, hsize, hsize );
         TP3DMesh( Data ).MaterialGroups[ 0 ].Material.Shader.Enable;
         glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvX' ), Round( Int( CamPos.X / hcell )));
         glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), Round( Int( CamPos.Y / hcell )));
-        //glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -3 );
+        glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -0.1 );
         glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'cellNumber' ), cell );
       end;
-  P3DApplication.MainWindow.Title:= CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
+  P3DApplication.MainWindow.Title:= 'FPS: ' + FloatToStr( FPS ) + CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
   mainscene.Render;
   {material.PassToShader();
   TP3DCamera( maincamera.Data ).PassToShader( Mat4Identity );
@@ -63,6 +63,13 @@ begin
   glVertexAttrib4f( P3DAttribPosition, 5, 5, -1, 1 );
   glVertexAttrib4f( P3DAttribPosition, -5, 5, -1, 1 );
   glEnd();}
+  Inc( FramesCounter );
+  if ( FPSLastPoll + FPSUpdate <= SDL_GetTicks ) then
+    begin
+      FPS:= FramesCounter / ( SDL_GetTicks - FPSLastPoll ) * FPSUpdate;
+      FramesCounter:= 0;
+      FPSLastPoll:= SDL_GetTicks;
+    end;
 end;
 
 

@@ -197,6 +197,7 @@ begin
                 end;
           end;
         Inc( numLights );
+        //WriteLn( P3DShaderActive.DumpUniforms );
       end;
   glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'numLightSource'), numLights ); cle( Self );
 end;

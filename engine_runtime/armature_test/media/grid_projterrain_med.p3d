@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      type = "mesh"
+      data = "mesh_Grid"
+      name = "Grid">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      data = "lamp_Lamp.002"
+      name = "Lamp">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
+        position = " 4.076245, 1.005454, 5.903862">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    faces = "253184"
+    name = "mesh_Grid"
+    normals = "253473"
+    vertices = "253473"
+    texcoords = "1012736"
+    tangents = "1012736"
+    cotangents = "1012736"
+    binary = "grid_projterrain_med.mesh_Grid.p3dmesh">
+    <material
+      end = "253183"
+      name = "material_Material.001"
+      start = "0">
+    </material>
+  </mesh>
+  <lamp
+    type = "sun"
+    energy = "2.0"
+    name = "lamp_Lamp.002"
+    color = "1.000000, 1.000000, 1.000000">
+  </lamp>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material.001"
+    diffuse = "0.640000, 0.640000, 0.640000"
+    type = "shader"
+    vshader = "terrain.vert"
+    fshader = "terrain.frag">
+    <texture
+      mode = "mix"
+      file = "megt00n270hb_diff_4k_high.jpg"
+      diffuse = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "megt00n270hb_n_displ_high.png"
+      diffuse = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock.jpg"
+      diffuse = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_normal.png"
+      diffuse = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_spec.png"
+      diffuse = "1.0">
+    </texture>
+  </material>
+</p3dfile>

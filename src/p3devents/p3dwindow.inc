@@ -224,6 +224,8 @@ begin
   if ( not Assigned( P3DApplication.ActiveWindow )) then
     P3DApplication.ActiveWindow:= Self;
 
+  SDL_GL_SetSwapInterval( 0 );
+
   UpdateViewport;
 end;
 

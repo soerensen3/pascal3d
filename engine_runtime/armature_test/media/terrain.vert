@@ -28,6 +28,9 @@ IN vec4 TexCoord0;
 
 OUT vec4 vPosition;
 OUT vec4 vTexCoord0;
+OUT vec4 vNormal;
+OUT vec4 vTangent;
+OUT vec4 vCotangent;
 
 uniform int uvX;
 uniform int uvY;
@@ -40,9 +43,13 @@ void main()
 {
   vTexCoord0.s = TexCoord0.x-float(uvX)/float(cellNumber);
   vTexCoord0.t = TexCoord0.y+float(uvY)/float(cellNumber);
-  float offset = texture2D( tex0, vTexCoord0.st ).a;
+  float offset = texture2D( tex1, vTexCoord0.st ).a;
   vPosition = Position;
-  vPosition.z+= offset;
+  vPosition.z+= offset * height;
   vPosition = view * world * vPosition;
+  vPosition.z-= length( vPosition.xy ) / 10;
+  vNormal = world * vec4( Normal.xyz, 0 );
+  vTangent = world * vec4( Tangent.xyz, 0 );
+  vCotangent = world * vec4( Cotangent.xyz, 0 );
   gl_Position = proj * vPosition;
 }
