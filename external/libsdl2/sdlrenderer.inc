@@ -67,12 +67,16 @@ type
    *}
 
   PPSDL_Renderer = ^PSDL_Renderer;
-  PSDL_Renderer = Pointer; //todo!
+  PSDL_Renderer = ^TSDL_Renderer;
+  TSDL_Renderer = record
+    end;
 
   {**
    *  An efficient driver-specific representation of pixel data
    *}
-  PSDL_Texture = Pointer; //todo!
+  PSDL_Texture = ^TSDL_Texture;
+  TSDL_Texture = record
+    end;
 
   {* Function prototypes *}
 
@@ -442,6 +446,16 @@ function SDL_RenderSetClipRect(renderer: PSDL_Renderer; rect: PSDL_Rect): SInt32
    *   SDL_RenderSetClipRect()
    *}
 procedure SDL_RenderGetClipRect(renderer: PSDL_Renderer; rect: PSDL_Rect) cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderGetClipRect' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Get whether clipping is enabled on the given renderer.
+   *
+   *  \param renderer The renderer from which clip state should be queried.
+   *
+   *  \sa SDL_RenderGetClipRect()
+   *}
+function SDL_RenderIsClipEnabled(renderer: PSDL_Renderer): TSDL_Bool; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderIsClipEnabled' {$ENDIF} {$ENDIF};
 
   {**
    *  Set the drawing scale for rendering on the current target.

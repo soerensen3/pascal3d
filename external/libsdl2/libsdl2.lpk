@@ -169,28 +169,27 @@
         <Type Value="Include"/>
       </Item38>
       <Item39>
-        <Filename Value="sdl2_net.pas"/>
-        <UnitName Value="SDL2_net"/>
+        <Filename Value="sdlmouse.inc"/>
+        <Type Value="Include"/>
       </Item39>
       <Item40>
-        <Filename Value="sdlmouse.inc"/>
+        <Filename Value="sdlloadso.inc"/>
         <Type Value="Include"/>
       </Item40>
       <Item41>
-        <Filename Value="sdlloadso.inc"/>
+        <Filename Value="sdltouch.inc"/>
         <Type Value="Include"/>
       </Item41>
       <Item42>
-        <Filename Value="sdltouch.inc"/>
+        <Filename Value="sdlshape.inc"/>
         <Type Value="Include"/>
       </Item42>
       <Item43>
-        <Filename Value="sdlshape.inc"/>
+        <Filename Value="sdlplatform.inc"/>
         <Type Value="Include"/>
       </Item43>
       <Item44>
-        <Filename Value="sdlplatform.inc"/>
-        <Type Value="Include"/>
+        <AddToUsesPkgSection Value="False"/>
       </Item44>
     </Files>
     <RequiredPkgs Count="1">

@@ -1,7 +1,11 @@
+const
+  move_speed: Single = 1.10;
+  mouse_speed: Single = 0.2;
+
 procedure OnMouseMotion( Sender: TP3DApplication; Event: TSDL_MouseMotionEvent );
 begin
-  CamYawPitchRoll.X:= ( min( 180, max( 0, CamYawPitchRoll.X - Event.yrel / 5 )));
-  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z - Event.xrel / 5 );
+  CamYawPitchRoll.X:= ( min( 180, max( 0, CamYawPitchRoll.X - Event.yrel * mouse_speed )));
+  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z - Event.xrel * mouse_speed );
 end;
 
 procedure OnMouseButton( Sender: TP3DApplication; Event: TSDL_MouseButtonEvent );
@@ -10,9 +14,8 @@ begin
 end;
 
 procedure OnMouseWheel( Sender: TP3DApplication; Event: TSDL_MouseWheelEvent );
-const speed = 0.2;
 begin
-  maincamera.Position:= maincamera.Position + vec3( 0, 0, Event.y * speed );
+
 end;
 
 procedure OnKey( Sender: TP3DApplication; Event: TSDL_KeyboardEvent );
@@ -56,10 +59,8 @@ var
 
   function KeyPressed( Key: Integer ): Boolean;
   begin
-    Result:= ( Keys + LongInt( Key ))^ = 1;
+    Result:= {P3DInput.Keyboard.Keys[ Key ];//}( Keys + LongInt( Key ))^ = 1;
   end;
-
-const speed = 1.10;
 
 var
   m: TMat4;
@@ -68,24 +69,16 @@ begin
   m:= TP3DCamera( maincamera.Data ).View;
   mat4inverse( m, m );
   if ( KeyPressed( SDL_SCANCODE_S )) then
-    CamPos:= CamPos - m.Row[ 2 ].xyz * speed;
+    CamPos:= CamPos - m.Row[ 2 ].xyz * move_speed;
   if ( KeyPressed( SDL_SCANCODE_A )) then
-    CamPos:= CamPos + m.Row[ 0 ].xyz * speed;
+    CamPos:= CamPos + m.Row[ 0 ].xyz * move_speed;
   if ( KeyPressed( SDL_SCANCODE_W )) then
-    CamPos:= CamPos + m.Row[ 2 ].xyz * speed;
+    CamPos:= CamPos + m.Row[ 2 ].xyz * move_speed;
   if ( KeyPressed( SDL_SCANCODE_D )) then
-    CamPos:= CamPos - m.Row[ 0 ].xyz * speed;
-  {if ( KeyPressed( SDL_SCANCODE_S )) then
-    maincamera.Position:= maincamera.Position + vec3( sin( - CamYawPitchRoll.Z * deg2rad - PI ), cos( - CamYawPitchRoll.Z * deg2rad - PI ), 0 ) * speed;
-  if ( KeyPressed( SDL_SCANCODE_W )) then
-    maincamera.Position:= maincamera.Position + vec3( sin( - CamYawPitchRoll.Z * deg2rad ), cos( - CamYawPitchRoll.Z * deg2rad ), 0 ) * speed;
-  if ( KeyPressed( SDL_SCANCODE_A )) then
-    maincamera.Position:= maincamera.Position + vec3( sin( - CamYawPitchRoll.Z * deg2rad - PI/2 ), cos( - CamYawPitchRoll.Z * deg2rad - PI /2), 0 ) * speed;
-  if ( KeyPressed( SDL_SCANCODE_D )) then
-    maincamera.Position:= maincamera.Position + vec3( sin( - CamYawPitchRoll.Z * deg2rad + PI/2 ), cos( - CamYawPitchRoll.Z * deg2rad + PI /2), 0 ) * speed;}
+    CamPos:= CamPos - m.Row[ 0 ].xyz * move_speed;
   if ( KeyPressed( SDL_SCANCODE_SPACE )) then
-    CamPos.Z:= CamPos.Z - speed;
+    CamPos.Z:= CamPos.Z - move_speed;
   if ( KeyPressed( SDL_SCANCODE_LSHIFT )) then
-    CamPos.Z:= CamPos.Z + speed;
+    CamPos.Z:= CamPos.Z + move_speed;
 end;
 

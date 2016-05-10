@@ -149,16 +149,32 @@ procedure TP3DApplication.HandleEvents_SDL;
   procedure debug_printmousemoveevent( E: TSDL_Event );
   begin
     {$IFDEF VERBOSE}
-    WriteLn( 'windowID', E.motion.windowID );
-    WriteLn( 'which', E.motion.which );
-    WriteLn( 'state', E.motion.state );
-    WriteLn( 'padding1', E.motion.padding1 );
-    WriteLn( 'padding2', E.motion.padding2 );
-    WriteLn( 'padding3', E.motion.padding3 );
-    WriteLn( 'x', E.motion.x );
-    WriteLn( 'y', E.motion.y );
-    WriteLn( 'xrel', E.motion.xrel );
-    WriteLn( 'yrel', E.motion.yrel );
+    WriteLn( 'windowID ', E.motion.windowID );
+    WriteLn( 'which ', E.motion.which );
+    WriteLn( 'state ', E.motion.state );
+    WriteLn( 'padding1 ', E.motion.padding1 );
+    WriteLn( 'padding2 ', E.motion.padding2 );
+    WriteLn( 'padding3 ', E.motion.padding3 );
+    WriteLn( 'x ', E.motion.x );
+    WriteLn( 'y ', E.motion.y );
+    WriteLn( 'xrel ', E.motion.xrel );
+    WriteLn( 'yrel ', E.motion.yrel );
+    {$ENDIF}
+  end;
+
+  procedure debug_printkeyevent( E: TSDL_Event );
+  begin
+    {$IFDEF VERBOSE}
+    WriteLn( 'windowID ', E.key.windowID );
+    WriteLn( 'keysym.scancode ', E.key.keysym.scancode );
+    WriteLn( 'keysym.sym ', E.key.keysym.sym );
+    WriteLn( 'keysym.unicode ', E.key.keysym.unicode );
+    WriteLn( 'keysym._mod ', E.key.keysym._mod );
+    WriteLn( 'state ', E.key.state );
+    WriteLn( 'padding2 ', E.key.padding2 );
+    WriteLn( 'padding3 ', E.key.padding3 );
+    WriteLn( 'type ', E.key.type_ );
+    WriteLn( 'repeat ', E.key._repeat );
     {$ENDIF}
   end;
 
@@ -174,6 +190,7 @@ procedure TP3DApplication.HandleEvents_SDL;
 
     case E.type_ of
       SDL_MOUSEMOTION: debug_printmousemoveevent( E );
+      SDL_KEYDOWN,SDL_KEYUP: debug_printkeyevent( E );
     end;
     {$ENDIF}
   end;
@@ -181,7 +198,7 @@ var
   event: TSDL_Event;
   wnd: Pointer;
 begin
-  while SDL_PollEvent(@event) > 0 do
+  while ( SDL_PollEvent( @event ) > 0 ) do
     case event.type_ of
       SDL_WINDOWEVENT:
         begin
@@ -227,6 +244,9 @@ begin
           FOnMouseWheel( Self, event.wheel );
       SDL_KEYDOWN, SDL_KEYUP:
         begin
+          if ( event.key._repeat = 1 ) then
+            continue;
+          debug_printevent( event );
           P3DInput.Keyboard.Keys[ event.key.keysym.scancode ]:= Boolean( event.key.state );
           P3DInput.Keyboard.DKeys[ event.key.keysym.scancode ]:= True;
           if ( Assigned( FOnKey )) then

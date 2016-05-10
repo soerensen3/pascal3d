@@ -7,8 +7,7 @@ unit libsdl2;
 interface
 
 uses
-  SDL2_gfx, sdl2_image, sdl2_ttf, SDL2, SDL2_mixer, SDL2_net, 
-  LazarusPackageIntf;
+  SDL2_gfx, sdl2_image, sdl2_ttf, SDL2, SDL2_mixer, LazarusPackageIntf;
 
 implementation
 

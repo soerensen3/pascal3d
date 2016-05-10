@@ -58,9 +58,11 @@
     </xsl:template>
   </xsl:stylesheet>
   <info Time="0" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="600" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="600" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
-  <info Time="13533" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
-  <exception Time="13536" Unit="p3dgraphics" Sender="TP3DViewportStack">p3dviewport.inc(62): OpenGL Error: invalid enumerant</exception>
-  <info Time="310282" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
+  <info Time="742" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
+  <info Time="743" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
+  <exception Time="1846">p3dshaders.inc(405): OpenGL Error: invalid operation</exception>
+  <exception Time="1846">Compilation failed (Fragment Shader): "invalid operation"</exception>
+  <info Time="6822" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
+  <exception Time="6835" Unit="p3dgraphics" Sender="TP3DViewportStack">p3dviewport.inc(62): OpenGL Error: invalid enumerant</exception>
+  <info Time="36206" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
 </p3dlog>

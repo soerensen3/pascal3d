@@ -11,7 +11,7 @@ var
   world, view: TP3DShaderDecl;
 
 const
-  hsize = 1024;
+  hsize = 4096;
   cell = 64;
   hcell = hsize/cell*2;
 begin
@@ -38,7 +38,7 @@ begin
         TP3DMesh( Data ).MaterialGroups[ 0 ].Material.Shader.Enable;
         glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvX' ), Round( Int( CamPos.X / hcell )));
         glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), Round( Int( CamPos.Y / hcell )));
-        glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -0.1 );
+        glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -0.05 );
         glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'cellNumber' ), cell );
       end;
   P3DApplication.MainWindow.Title:= 'FPS: ' + FloatToStr( FPS ) + CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
@@ -66,7 +66,7 @@ begin
   Inc( FramesCounter );
   if ( FPSLastPoll + FPSUpdate <= SDL_GetTicks ) then
     begin
-      FPS:= FramesCounter / ( SDL_GetTicks - FPSLastPoll ) * FPSUpdate;
+      FPS:= FramesCounter / ( SDL_GetTicks - FPSLastPoll ) * 1000;
       FramesCounter:= 0;
       FPSLastPoll:= SDL_GetTicks;
     end;

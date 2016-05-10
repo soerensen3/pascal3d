@@ -47,7 +47,7 @@ void main()
   vPosition = Position;
   vPosition.z+= offset * height;
   vPosition = view * world * vPosition;
-  vPosition.z-= length( vPosition.xy ) / 10;
+  vPosition.z-= length( vPosition.xy ) / 10.0;
   vNormal = world * vec4( Normal.xyz, 0 );
   vTangent = world * vec4( Tangent.xyz, 0 );
   vCotangent = world * vec4( Cotangent.xyz, 0 );

@@ -150,9 +150,11 @@ vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec3 BumpMapNorm
     return NewNormal;
 }
 
-const float fogstart = 600.0;
-const float fogend = 950.0;
-const vec3 fogcolor = vec3( 181.0,136.0,71.0 ) / 255;
+const float fogstart = 1600.0;
+const float fogend = 1800.0;
+const float fogend2 = 2000.0;
+const vec3 fogcolor = vec3( 181.0,136.0,71.0 ) / 512;
+const vec3 fogcolor2 = vec3( 0.9058823529411765, 0.6862745098039216, 0.3607843137254902 );
 
 
 void main()
@@ -183,7 +185,7 @@ void main()
   }
   FragColor.rgb = mix( color, detail_diff*detail_diff2, 0.4 );//mix( color, mix( detail_diff, detail_diff2, 0.6 ), 0.3 );
   FragColor.rgb = FragColor.rgb * shadow + spec * mix( mix( vec3( 1 ), detail_spec, 0.4 ), detail_spec2, 0.5 );
-  FragColor.rgb = mix( FragColor.rgb, fogcolor, smoothstep( fogstart, fogend, length( vPosition )));
+  FragColor.rgb = mix( FragColor.rgb, mix( fogcolor, fogcolor2, smoothstep( fogend, fogend2, length( vPosition ))), smoothstep( fogstart, fogend, length( vPosition )));
   FragColor.a = 1;
   #if (__VERSION__ < 130)
   gl_FragColor = FragColor;

@@ -72,7 +72,8 @@ begin
   //mainscene.AppendFile( 'rocks.p3d' );
   //mainscene.AppendFile( 'terrain_simple.p3d' );
   //mainscene.AppendFile( 'grid_projterrain_high.p3d' );
-  mainscene.AppendFile( 'grid_projterrain_med.p3d' );
+  //mainscene.AppendFile( 'grid_projterrain_med.p3d' );
+  mainscene.AppendFile( 'grid_projterrain_low.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
