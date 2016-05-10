@@ -153,8 +153,8 @@ vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec3 BumpMapNorm
 const float fogstart = 1600.0;
 const float fogend = 1800.0;
 const float fogend2 = 2000.0;
-const vec3 fogcolor = vec3( 181.0,136.0,71.0 ) / 512;
-const vec3 fogcolor2 = vec3( 0.9058823529411765, 0.6862745098039216, 0.3607843137254902 );
+const vec3 fogcolor = vec3( 0.165, 0.129, 0.11 );
+const vec3 fogcolor2 = vec3( 0.38, 0.318, 0.318 );
 
 
 void main()

@@ -15,12 +15,17 @@ const
   cell = 64;
   hcell = hsize/cell*2;
 begin
-  glClearColor($E7 / 255, $AF / 255, $5C / 255, 1.0);                      // Set the Background colour of or scene
+  glClearColor(0.451, 0.404, 0.404, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
   //maincamera.Matrix:= //mat4lookatLH( 5*vec3( cos( SDL_GetTicks / 1000 ), 0, sin( SDL_GetTicks / 1000 ) ), vec3( 0, 0, 1 ), vec3( 0, 1, 0 )); //vec4( maincamera.Position, 1));
   //mat4translate( vec4( CamPos, 1 )) * mat4rotateEuler( CamYawPitchRoll * deg2rad );
   maincamera.Position:= CamPos;
   maincamera.Rotation:= CamYawPitchRoll;
+  skycamera.Rotation:= CamYawPitchRoll;
+
+  skyboxscene.Render;
+  glClear( GL_DEPTH_BUFFER_BIT );   // Clear the depth buffer
+
   {TP3DRenderableObject( mainscene.Objects[ 3 ]).Matrix:= mat4rotate( vec3( 0.5, 0.5, 0 ).Normalize, ( SDL_GetTicks / 10000 )) * mat4translate( vec4( TP3DRenderableObject( mainscene.Objects[ 3 ]).Position, 1 ));
 
   BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();

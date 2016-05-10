@@ -370,7 +370,7 @@ begin
   Spec:= SpecTmp.YZW;
   Spec_Hardness:= SpecTmp.X;
 
-  if ( ADOMNode.GetAttribute( 'specular' ) = 'yes' ) then
+  if ( ADOMNode.GetAttribute( 'unlit' ) = 'yes' ) then
     FUnlit:= True;
 
   tex:= TDOMElement( ADOMNode.FirstChild );

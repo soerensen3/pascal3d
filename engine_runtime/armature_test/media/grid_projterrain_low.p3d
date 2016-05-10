@@ -39,7 +39,7 @@
     </material>
   </mesh>
   <lamp
-    color = "1.000000, 1.000000, 1.000000"
+    color = "0.529, 0.608, 0.714"
     name = "lamp_Lamp"
     type = "sun"
     energy = "2.0">

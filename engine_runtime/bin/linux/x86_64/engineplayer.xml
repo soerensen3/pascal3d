@@ -58,11 +58,176 @@
     </xsl:template>
   </xsl:stylesheet>
   <info Time="0" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="742" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="743" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
-  <exception Time="1846">p3dshaders.inc(405): OpenGL Error: invalid operation</exception>
-  <exception Time="1846">Compilation failed (Fragment Shader): "invalid operation"</exception>
-  <info Time="6822" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
-  <exception Time="6835" Unit="p3dgraphics" Sender="TP3DViewportStack">p3dviewport.inc(62): OpenGL Error: invalid enumerant</exception>
-  <info Time="36206" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
+  <info Time="581" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
+  <info Time="581" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
+  <info Time="7526" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+#version 120
+#if (__VERSION__ &gt; 120)
+# define IN in
+# define OUT out
+#else
+# define IN attribute
+# define OUT varying
+#endif
+uniform mat4 world;
+uniform mat4 view;
+uniform mat3 matnormal;
+uniform mat4 proj;
+uniform vec3 campos;
+vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec4 BumpMapNormal)
+{
+    //BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
+    vec4 NewNormal;
+    mat3 TBN = mat3(Tangent.xyz, Cotangent.xyz, Normal.xyz);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 1 );
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+
+vec4 color_add( vec4 v1, vec4 v2 ){
+  return v1 + v2;
+}
+
+vec4 color_sub( vec4 v1, vec4 v2 ){
+  return v1 - v2;
+}
+
+vec4 color_mul( vec4 v1, vec4 v2 ){
+  return v1 * v2;
+}
+
+vec4 color_div( vec4 v1, vec4 v2 ){
+  return v1 / v2;
+}
+
+vec4 color_mix( vec4 v1, vec4 v2 ){
+  return v2;
+}
+/*layout ( location = 0 ) */ IN vec4 Position;
+/*layout ( location = 2 ) */ IN vec4 Normal;
+/*layout ( location = 3 ) */ IN vec4 Color;
+/*layout ( location = 6 ) */ IN vec4 Cotangent;
+/*layout ( location = 7 ) */ IN vec4 Tangent;
+OUT vec4 vNormal;
+OUT vec4 vColor;
+OUT vec4 vTangent;
+OUT vec4 vCotangent;
+OUT vec4 vPosition;
+OUT vec3 cameye;
+/* layout ( location = 8 ) */ IN vec4 TexCoord0;
+OUT vec4 vTexCoord0;
+/* layout ( location = 9 ) */ IN vec4 TexCoord1;
+OUT vec4 vTexCoord1;
+/* layout ( location = 10 ) */ IN vec4 TexCoord2;
+OUT vec4 vTexCoord2;
+/* layout ( location = 11 ) */ IN vec4 TexCoord3;
+OUT vec4 vTexCoord3;
+/* layout ( location = 12 ) */ IN vec4 TexCoord4;
+OUT vec4 vTexCoord4;
+/* layout ( location = 13 ) */ IN vec4 TexCoord5;
+OUT vec4 vTexCoord5;
+/* layout ( location = 14 ) */ IN vec4 TexCoord6;
+OUT vec4 vTexCoord6;
+/* layout ( location = 15 ) */ IN vec4 TexCoord7;
+OUT vec4 vTexCoord7;
+void main(){
+vPosition = Position;
+vColor = Color;
+vNormal = world * vec4( Normal.xyz, 0 );
+vTangent = world * vec4( Tangent.xyz, 0 );
+vCotangent = world * vec4( Cotangent.xyz, 0 );
+vTexCoord0 = TexCoord0;
+vTexCoord1 = TexCoord1;
+vTexCoord2 = TexCoord2;
+vTexCoord3 = TexCoord3;
+vTexCoord4 = TexCoord4;
+vTexCoord5 = TexCoord5;
+vTexCoord6 = TexCoord6;
+vTexCoord7 = TexCoord7;
+cameye = - ( view * Position ).xyz;
+vPosition = view * world * Position;
+gl_Position = proj * vPosition;
+}
+&amp;lt; End of Shader</info>
+  <info Time="7527" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+#version 120
+#if (__VERSION__ &gt; 120)
+# define IN in
+# define OUT out
+#else
+# define IN varying
+# define OUT  
+#endif
+uniform mat4 world;
+uniform mat4 view;
+uniform mat3 matnormal;
+uniform mat4 proj;
+uniform vec3 campos;
+vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec4 BumpMapNormal)
+{
+    //BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
+    vec4 NewNormal;
+    mat3 TBN = mat3(Tangent.xyz, Cotangent.xyz, Normal.xyz);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 1 );
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+
+vec4 color_add( vec4 v1, vec4 v2 ){
+  return v1 + v2;
+}
+
+vec4 color_sub( vec4 v1, vec4 v2 ){
+  return v1 - v2;
+}
+
+vec4 color_mul( vec4 v1, vec4 v2 ){
+  return v1 * v2;
+}
+
+vec4 color_div( vec4 v1, vec4 v2 ){
+  return v1 / v2;
+}
+
+vec4 color_mix( vec4 v1, vec4 v2 ){
+  return v2;
+}
+IN vec4 vNormal;
+IN vec4 vColor;
+IN vec4 vTangent;
+IN vec4 vCotangent;
+IN vec4 vPosition;
+IN vec3 cameye;
+OUT vec4 FragColor;
+
+uniform vec4 mat_specular;
+uniform float mat_hardness;
+IN vec4 vTexCoord0;
+IN vec4 vTexCoord1;
+IN vec4 vTexCoord2;
+IN vec4 vTexCoord3;
+IN vec4 vTexCoord4;
+IN vec4 vTexCoord5;
+IN vec4 vTexCoord6;
+IN vec4 vTexCoord7;
+uniform sampler2D tex0;
+void main(){
+vec4 Normal = vec4( 0, 0, 1, 1 );
+vec4 Color = vec4( 1 );
+vec4 Specular = mat_specular;
+vec4 val0 = texture2D( tex0, vTexCoord0.xy );
+Color= mix( Color, color_mix( Color, val0 ), 1 );
+Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
+Normal = normalize( view * vec4( Normal.xyz, 0 ));
+  vec3 shadow = vec3( 1 );
+  vec3 spec = vec3( 0 );
+FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+#if (__VERSION__ &lt; 130)
+gl_FragColor = FragColor;
+#endif
+}
+&amp;lt; End of Shader</info>
+  <info Time="7554" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
+  <exception Time="7556" Unit="p3dgraphics" Sender="TP3DViewportStack">p3dviewport.inc(62): OpenGL Error: invalid enumerant</exception>
+  <info Time="79000" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
 </p3dlog>

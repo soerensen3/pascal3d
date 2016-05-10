@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      type = "mesh"
+      data = "mesh_Cube"
+      name = "Cube">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    faces = "6"
+    cotangents = "24"
+    vertices = "8"
+    texcoords = "24"
+    tangents = "24"
+    binary = "skybox.mesh_Cube.p3dmesh"
+    normals = "8"
+    name = "mesh_Cube">
+    <material
+      end = "5"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <material
+    diffuse = "1.000000, 1.000000, 1.000000"
+    unlit = "yes"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material">
+    <texture
+      diffuse = "1.0"
+      mode = "mix"
+      file = "martian_sunset.png">
+    </texture>
+  </material>
+</p3dfile>

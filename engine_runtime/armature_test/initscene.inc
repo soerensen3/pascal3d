@@ -2,7 +2,9 @@
 
 var
   mainscene: TP3DScene;
+  skyboxscene: TP3DScene;
   maincamera: TP3DActor;
+  skycamera: TP3DActor;
 
   pathshaders: String = '../../../shaders';
   pathmodels: String = '../../../armature_test/media';
@@ -74,6 +76,7 @@ begin
   //mainscene.AppendFile( 'grid_projterrain_high.p3d' );
   //mainscene.AppendFile( 'grid_projterrain_med.p3d' );
   mainscene.AppendFile( 'grid_projterrain_low.p3d' );
+  skyboxscene.AppendFile( 'skybox.p3d' );
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
@@ -159,6 +162,13 @@ begin
   maincamera.Position:= vec3( 0, 0, -10 );
   maincamera.Data:= TP3DCamera.Create();
   TP3DCamera( maincamera.Data ).Far:= 2000;
+
+  skyboxscene:= TP3DScene.Create();
+  skycamera:= TP3DActor.Create();
+  skycamera.Position:= vec3( 0, 0, 0 );
+  skycamera.Data:= TP3DCamera.Create();
+  TP3DCamera( skycamera.Data ).Far:= 2000;
+  skyboxscene.Cam:= skycamera;
 
   LoadShader;
   LoadModels;
