@@ -208,7 +208,9 @@ begin
       P3DApplication.MainWindow:= TP3DWindow.Create;
       P3DApplication.Initialize;
       P3DGraphicsInit;
-      P3DFontManager.DefaultFontsPath:= '../../engine_runtime/fonts/';
+      P3DUtilsInit;
+      P3DSearchPaths.BaseDir:= '../../engine_runtime' ;
+      P3DSearchPaths[ p3dsc_Fonts ].Add( 'fonts/' );
 
       P3DApplication.MainWindow.OnRender:= @Render;
       P3DShaderNodeLib.LoadLibraryPath( '../../engine_runtime/shaders/nodes/core/', '*.pmd' );
@@ -233,6 +235,11 @@ begin
       P3DGUIManager.Controls.Realign;
 
       TestScene:= TP3DScene.Create();
+      TestScene.Cam:= TP3DActor.Create();
+      TestScene.Cam.Data:= TP3DCamera.Create();
+      TP3DCamera( TestScene.Cam.Data ).Far:= 2000;
+      TestScene.Cam.Position:= vec3( 0, 1, -10 );
+      TestScene.Cam.Rotation:= vec3( 90, 0, 180 );
     end;
 end;
 
@@ -323,8 +330,8 @@ begin
     begin
       if ( Obj.Data is TP3DCamera ) then
         begin
-          TestCam:= Obj;
-          TestScene.Cam:= TP3DCamera( TestCam.Data );
+          //TestCam:= Obj;
+          TestScene.Cam:= Obj;//TP3DCamera( TestCam.Data );
         end;
       TestScene.Objects.Add( Obj );
     end;

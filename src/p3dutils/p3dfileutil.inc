@@ -40,6 +40,56 @@ type
     procedure CheckForChange;
   end;
 
+  { TP3DSearchPathCategory }
+
+  TP3DSearchPaths = class;
+
+  TP3DSearchPathCategory = ( p3dsc_Models, p3dsc_Shaders, p3dsc_Fonts );
+
+  { TP3DSearchPathContainer }
+
+  TP3DSearchPathContainer = class( TStringList )
+    private
+      FCategory: TP3DSearchPathCategory;
+      FSearchPaths: TP3DSearchPaths;
+
+    protected
+      property SearchPaths: TP3DSearchPaths read FSearchPaths write FSearchPaths;
+
+    public
+      constructor Create( ASearchPaths: TP3DSearchPaths );
+
+      function FindFile( FName: String ): String;
+
+    published
+      property Category: TP3DSearchPathCategory read FCategory write FCategory;
+  end;
+
+  { TP3DSearchPaths }
+
+  TP3DSearchPaths = class ( TPersistent )
+    private
+      FBaseDir: String;
+      SearchPaths: array [ p3dsc_Fonts..p3dsc_Fonts ] of TP3DSearchPathContainer;
+
+      function GetItem( Index: TP3DSearchPathCategory ): TP3DSearchPathContainer;
+      procedure SetBaseDir(AValue: String);
+      procedure SetItem( Index: TP3DSearchPathCategory ; AValue: TP3DSearchPathContainer );
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      property Items[ Index: TP3DSearchPathCategory ]: TP3DSearchPathContainer
+        read GetItem write SetItem; default;
+
+    published
+      property BaseDir: String read FBaseDir write SetBaseDir;
+      property Fonts: TP3DSearchPathContainer read Searchpaths[ p3dsc_Fonts ] write Searchpaths[ p3dsc_Fonts ];
+      property Models: TP3DSearchPathContainer read Searchpaths[ p3dsc_Models ] write Searchpaths[ p3dsc_Models ];
+      property Shaders: TP3DSearchPathContainer read Searchpaths[ p3dsc_Shaders ] write Searchpaths[ p3dsc_Shaders ];
+  end;
+
   function P3DListFolderFiles( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
 
 {$ENDIF}
@@ -162,6 +212,75 @@ begin
   Ext:= ExtractFileExt( Folder );
   FindAllFiles( Result, Ext, Path, Recursive, Relative );
 end;
+
+{ TP3DSearchPathCategory }
+
+constructor TP3DSearchPathContainer.Create(ASearchPaths: TP3DSearchPaths);
+begin
+  inherited Create;
+  SearchPaths:= ASearchPaths;
+end;
+
+function TP3DSearchPathContainer.FindFile(FName: String): String;
+var
+  i: Integer;
+  BasePath, FileName: String;
+begin
+  Result:= '';
+  if ( FilenameIsAbsolute( FName ) and FileExistsUTF8( FName )) then
+    begin
+      Result:= FName;
+      exit;
+    end;
+  BasePath:= SearchPaths.BaseDir;
+  for i:= Count - 1 downto 0 do
+    begin
+      FileName:= CleanAndExpandDirectory( AppendPathDelim( BasePath ) + Self[ i ]) + FName;
+      if ( FileExists( FileName )) then
+        begin
+          Result:= FileName;
+          break;
+        end;
+    end;
+end;
+
+{ TP3DSearchPaths }
+
+function TP3DSearchPaths.GetItem(Index: TP3DSearchPathCategory): TP3DSearchPathContainer;
+begin
+  Result:= SearchPaths[ Index ];
+end;
+
+procedure TP3DSearchPaths.SetBaseDir(AValue: String);
+begin
+  if FBaseDir= AValue then Exit;
+  FBaseDir:= AppendPathDelim( ExpandFileName( AValue ));
+end;
+
+procedure TP3DSearchPaths.SetItem(Index: TP3DSearchPathCategory; AValue: TP3DSearchPathContainer);
+begin
+  SearchPaths[ Index ]:= AValue;
+end;
+
+constructor TP3DSearchPaths.Create;
+var
+  Item: TP3DSearchPathCategory;
+begin
+  inherited;
+  for Item in TP3DSearchPathCategory do
+    Items[ Item ]:= TP3DSearchPathContainer.Create( Self );
+end;
+
+destructor TP3DSearchPaths.Destroy;
+var
+  Item: TP3DSearchPathCategory;
+begin
+  for Item in TP3DSearchPathCategory do
+    Items[ Item ].Free;
+  inherited Destroy;
+end;
+
+
 
 {$ENDIF}
 

@@ -38,7 +38,6 @@ type
 
   TP3DFontManager = class ( TP3DCustomFontList )
     private
-      FDefaultFontsPath: String;
       FMaterial: TP3DMaterialBase;
 
       function GetFont( FontName: String; Height: Integer ): TP3DFont;
@@ -55,7 +54,6 @@ type
     published
       function Find( FontName: String; Height: Integer ): Integer;
       property Material: TP3DMaterialBase read FMaterial write FMaterial;
-      property DefaultFontsPath: String read FDefaultFontsPath write FDefaultFontsPath;
   end;
 
   { TP3DText }
@@ -288,7 +286,7 @@ begin
   if ( n > -1 ) then
     Result:= Items[ n ]
   else
-    Result:= Items[ Add( DefaultFontsPath + DirectorySeparator + FontName + '.ttf', Height )];
+    Result:= Items[ Add( FontName + '.ttf', Height )];
 end;
 
 function TP3DFontManager.Add(Item: TP3DFont): Integer;
@@ -337,9 +335,10 @@ begin
   inherited Create;
   Size:= ASize;
   FileName:= AFileName;
+  AFileName:= P3DSearchPaths.Fonts.FindFile( AFileName );
+  if ( AFileName = '' ) then
+    raise Exception.Create( 'p3dtext.TP3DFont: Failed to load font "' + FileName + '"! Not found!' );
   Font:= TTF_OpenFont( PChar( AFileName ), Size );
-  if ( not Assigned( Font )) then
-    raise Exception.Create( 'p3dtext.TP3DFont: Failed to load font "' + AFileName + '"!' );
 end;
 
 destructor TP3DFont.Destroy;

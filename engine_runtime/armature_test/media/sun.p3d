@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      type = "mesh"
+      data = "mesh_Plane"
+      name = "Sun">
+      <transform
+        quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
+        position = " 0.000000,-0.939693, 0.342020"
+        scale = " 0.050000, 0.050000, 0.050000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    binary = "sun.mesh_Plane.p3dmesh"
+    texcoords = "4"
+    vertices = "4"
+    name = "mesh_Plane"
+    tangents = "4"
+    normals = "4"
+    cotangents = "4"
+    faces = "1">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_MatBillboard">
+    </material>
+  </mesh>
+  <material
+    unlit = "yes"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "1.000000, 1.000000, 1.000000"
+    name = "material_MatBillboard">
+    <texture
+      alpha = "1.0"
+      file = "sun.png"
+      mode = "mix"
+      diffuse = "1.0">
+    </texture>
+  </material>
+</p3dfile>

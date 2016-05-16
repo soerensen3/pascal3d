@@ -76,7 +76,20 @@ begin
   //mainscene.AppendFile( 'grid_projterrain_high.p3d' );
   //mainscene.AppendFile( 'grid_projterrain_med.p3d' );
   mainscene.AppendFile( 'grid_projterrain_low.p3d' );
+
   skyboxscene.AppendFile( 'skybox.p3d' );
+  skyboxscene.AppendFile( 'sun.p3d' );
+
+  {Obj:= skyboxscene.Objects.FindByName( 'Plane' );
+  if ( Obj >= 0 ) then
+    with ( skyboxscene.Objects[ Obj ] as TP3DActor ) do
+      begin
+        //TP3DMesh( mainscene.Objects[ Obj ].Data ).MaterialGroups[ 0 ].Material.Unlit:= True;
+        Position:= Direction * 0.7;
+        Scale:= vec3( 0.1 );
+        Quaternion:= quat( 0.573576, 0.000000, 0.000000, 0.819152 );
+//      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
+      end;}
 
   BBox:= mainscene.Objects.CalcBoundingBox();
   //BBox:= TP3DRenderableObject( mainscene.Objects[ 3 ]).CalcBoundingBox();
@@ -153,6 +166,7 @@ begin
 
   Sender.MainWindow.Width:= 800;
   Sender.MainWindow.Height:= 600;
+  Sender.MainWindow.FullScreen:= False;
 
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );

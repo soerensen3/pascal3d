@@ -95,7 +95,8 @@ end;
 
 procedure TP3DScene.Render;
 begin
-  TP3DCamera( Cam.Data ).View:= mat4translate( vec4( Cam.Position, 1 )) * mat4( mat3( Cam.Quaternion ));
+  if ( Assigned( Cam ) and Assigned( Cam.Data )) then
+    TP3DCamera( Cam.Data ).View:= mat4translate( vec4( Cam.Position, 1 )) * mat4( mat3( Cam.Quaternion ));
                    //TODO:SHOULD BE INVERTED
   Objects.Render( Mat4Identity, Self );
 end;

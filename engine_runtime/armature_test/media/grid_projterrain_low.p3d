@@ -39,7 +39,7 @@
     </material>
   </mesh>
   <lamp
-    color = "0.529, 0.608, 0.714"
+    color = "0.729, 0.808, 1.0"
     name = "lamp_Lamp"
     type = "sun"
     energy = "2.0">
@@ -53,7 +53,7 @@
     fshader = "terrain.frag">
     <texture
       mode = "mix"
-      file = "megt00n270hb_diff_4k_high.jpg"
+      file = "megt00n270hb_diff_4k_high.png"
       diffuse = "1.0">
     </texture>
     <texture

@@ -150,8 +150,8 @@ vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec3 BumpMapNorm
     return NewNormal;
 }
 
-const float fogstart = 1600.0;
-const float fogend = 1800.0;
+const float fogstart = 50.0;
+const float fogend = 1400.0;
 const float fogend2 = 2000.0;
 const vec3 fogcolor = vec3( 0.165, 0.129, 0.11 );
 const vec3 fogcolor2 = vec3( 0.38, 0.318, 0.318 );
@@ -159,17 +159,22 @@ const vec3 fogcolor2 = vec3( 0.38, 0.318, 0.318 );
 
 void main()
 {
-  vec3 color = texture2D( tex0, vTexCoord0.st ).rgb;
+  vec4 color = texture2D( tex0, vTexCoord0.st ).rgba;
   vec3 Normal = texture2D( tex1, vTexCoord0.st ).rgb;
   vec3 detail_diff = texture2D( tex2, vTexCoord0.st * float( cellNumber )).rgb;
   vec3 detail_norm = texture2D( tex3, vTexCoord0.st * float( cellNumber )).rgb;
   vec3 detail_spec = texture2D( tex4, vTexCoord0.st * float( cellNumber )).rgb;
-  vec3 detail_diff2 = texture2D( tex2, vTexCoord0.ts * float( cellNumber / 3.7 )).rgb;
-  vec3 detail_norm2 = texture2D( tex3, vTexCoord0.ts * float( cellNumber / 3.7 )).rgb;
-  vec3 detail_spec2 = texture2D( tex4, vTexCoord0.ts * float( cellNumber / 3.7 )).rgb;
-  Normal = mix( detail_norm, Normal, 0.8 );  
-  Normal = mix( detail_norm2, Normal, 0.7 );  
+  vec3 detail_diff2 = texture2D( tex2, vTexCoord0.ts * float( cellNumber ) / 3.7 ).rgb;
+  vec3 detail_norm2 = texture2D( tex3, vTexCoord0.ts * float( cellNumber ) / 3.7 ).rgb;
+  vec3 detail_spec2 = texture2D( tex4, vTexCoord0.ts * float( cellNumber ) / 3.7 ).rgb;
+  vec3 detail_diff3 = texture2D( tex2, vTexCoord0.ts * float( cellNumber ) * 7.45 ).rgb;
+  vec3 detail_norm3 = texture2D( tex3, vTexCoord0.ts * float( cellNumber ) * 7.45 ).rgb;
+  vec3 detail_spec3 = texture2D( tex4, vTexCoord0.ts * float( cellNumber ) * 7.45 ).rgb;
+  Normal = mix( detail_norm, Normal, 0.5 );
+  Normal = mix( detail_norm2, Normal, 0.7 );
+  Normal = mix( detail_norm3, Normal, 0.4 );
   Normal = Normal * 2.0 - 1.0;
+  normalize( Normal );
   Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal ).xyz;
   
   Normal = ( view * vec4( Normal, 0 )).xyz;
@@ -183,8 +188,10 @@ void main()
       util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   
   }
-  FragColor.rgb = mix( color, detail_diff*detail_diff2, 0.4 );//mix( color, mix( detail_diff, detail_diff2, 0.6 ), 0.3 );
-  FragColor.rgb = FragColor.rgb * shadow + spec * mix( mix( vec3( 1 ), detail_spec, 0.4 ), detail_spec2, 0.5 );
+  shadow*= color.a;
+  spec = color.a * spec * mix( mix( vec3( 1 ), detail_spec, 0.3 ), detail_spec2, 0.4 );
+  FragColor.rgb = mix( color.rgb, detail_diff*detail_diff2*detail_diff3, 0.4 );//mix( color, mix( detail_diff, detail_diff2, 0.6 ), 0.3 );
+  FragColor.rgb = FragColor.rgb * shadow + spec;
   FragColor.rgb = mix( FragColor.rgb, mix( fogcolor, fogcolor2, smoothstep( fogend, fogend2, length( vPosition ))), smoothstep( fogstart, fogend, length( vPosition )));
   FragColor.a = 1;
   #if (__VERSION__ < 130)
