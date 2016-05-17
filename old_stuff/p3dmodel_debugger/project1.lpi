@@ -27,25 +27,28 @@
         <LaunchingApplication PathPlusParams="command /c"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="6">
+    <RequiredPackages Count="7">
       <Item1>
-        <PackageName Value="pascal3d_math"/>
+        <PackageName Value="LazOpenGLContext"/>
       </Item1>
       <Item2>
-        <PackageName Value="pascal3d_gui"/>
+        <PackageName Value="pascal3d_math"/>
       </Item2>
       <Item3>
-        <PackageName Value="pascal3d"/>
+        <PackageName Value="pascal3d_gui"/>
       </Item3>
       <Item4>
-        <PackageName Value="pl_opengl"/>
+        <PackageName Value="pascal3d"/>
       </Item4>
       <Item5>
-        <PackageName Value="RunTimeTypeInfoControls"/>
+        <PackageName Value="pl_opengl"/>
       </Item5>
       <Item6>
-        <PackageName Value="LCL"/>
+        <PackageName Value="RunTimeTypeInfoControls"/>
       </Item6>
+      <Item7>
+        <PackageName Value="LCL"/>
+      </Item7>
     </RequiredPackages>
     <Units Count="3">
       <Unit0>

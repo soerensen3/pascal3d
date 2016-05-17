@@ -62,6 +62,7 @@ type
 
       constructor Create;
       constructor CreateFrom( Wnd: Pointer );
+      constructor CreateDummyWindow;
 
       procedure Show;
       procedure Hide;
@@ -202,7 +203,7 @@ constructor TP3DWindow.Create;
 begin
   if ( not P3DApplication.SDLInitialized ) then
     P3DApplication.InitSDL;
-  FWindow:= SDL_CreateWindow( 'Main Window', 100, 100, 640, 480,
+  FWindow:= SDL_CreateWindow( 'SDL WINDOW', 100, 100, 640, 480,
                               SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE );
 
   if ( not Assigned( window )) then
@@ -239,7 +240,28 @@ begin                                             //incomplete
 
   SDL_SetWindowData( fWindow, 'p3dwindow', Self );
 
+  // Create a Context
+  FContext:= SDL_GL_CreateContext( Window );
+
+  if ( not Assigned( Context )) then
+    raise Exception.Create( 'Could not create an OpenGL Context: ' + SDL_GetError );
   FVisible:= True;
+
+  if ( not Assigned( P3DApplication.ActiveWindow )) then
+    P3DApplication.ActiveWindow:= Self;
+
+  SDL_GL_SetSwapInterval( 0 );
+
+  UpdateViewport;
+
+  FVisible:= True;
+end;
+
+constructor TP3DWindow.CreateDummyWindow;
+begin
+  Create;
+  SDL_SetHint( SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, PChar( Format( '%p', [ Window ])));
+  Hide;
 end;
 
 procedure TP3DWindow.Show;

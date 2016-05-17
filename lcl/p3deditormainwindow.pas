@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Menus,
   ComCtrls, ExtCtrls, Buttons, IDEWindowIntf, MenuIntf, p3dlcleditorfile,
-  SDL2, p3dSDLApplication, typinfo, p3dinput,
+  SDL2, p3dSDLApplication, typinfo, p3dinput, LazOpenGLContext,
   {$IFDEF LCLGTK2}
   gtk2, xlib, x,gdk2x,gdk2,
   {$ENDIF}

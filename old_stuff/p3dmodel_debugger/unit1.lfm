@@ -11,10 +11,11 @@ object Form1: TForm1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   LCLVersion = '1.6.0.4'
+  Visible = False
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 472
-    Height = 619
-    Top = 50
+    Height = 419
+    Top = 250
     Width = 200
     Align = alRight
     CheckboxForBoolean = False
@@ -128,16 +129,16 @@ object Form1: TForm1
   end
   object TabControl1: TTabControl
     Left = 0
-    Height = 619
-    Top = 50
+    Height = 419
+    Top = 250
     Width = 467
     OnChange = TabControl1Change
     Align = alClient
     TabOrder = 2
     object TabControl2: TTabControl
       Left = 2
-      Height = 581
-      Top = 36
+      Height = 395
+      Top = 22
       Width = 463
       OnChange = TabControl2Change
       Style = tsButtons
@@ -145,8 +146,8 @@ object Form1: TForm1
       TabOrder = 1
       object ListView1: TListView
         Left = 2
-        Height = 543
-        Top = 36
+        Height = 371
+        Top = 22
         Width = 459
         Align = alClient
         Columns = <>
@@ -157,11 +158,19 @@ object Form1: TForm1
   end
   object Splitter1: TSplitter
     Left = 467
-    Height = 619
-    Top = 50
+    Height = 419
+    Top = 250
     Width = 5
     Align = alRight
     ResizeAnchor = akRight
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 200
+    Top = 50
+    Width = 672
+    Align = alTop
+    TabOrder = 4
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = '.p3d'

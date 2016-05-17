@@ -1,0 +1,110 @@
+object Form1: TForm1
+  Left = 378
+  Height = 370
+  Top = 245
+  Width = 668
+  Caption = 'Form1'
+  ClientHeight = 370
+  ClientWidth = 668
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnPaint = FormPaint
+  LCLVersion = '1.2.6.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 668
+    Align = alTop
+    ClientHeight = 50
+    ClientWidth = 668
+    TabOrder = 0
+    object FontsEdt: TLabeledEdit
+      Left = 4
+      Height = 26
+      Top = 24
+      Width = 268
+      EditLabel.AnchorSideLeft.Control = FontsEdt
+      EditLabel.AnchorSideRight.Control = FontsEdt
+      EditLabel.AnchorSideRight.Side = asrBottom
+      EditLabel.AnchorSideBottom.Control = FontsEdt
+      EditLabel.Left = 4
+      EditLabel.Height = 16
+      EditLabel.Top = 5
+      EditLabel.Width = 268
+      EditLabel.Caption = 'Font'
+      EditLabel.ParentColor = False
+      TabOrder = 0
+      OnKeyPress = FontsEdtKeyPress
+    end
+    object Button1: TButton
+      Left = 272
+      Height = 25
+      Top = 25
+      Width = 30
+      Caption = '...'
+      OnClick = Button1Click
+      TabOrder = 1
+    end
+    object SpinEdit1: TSpinEdit
+      Left = 312
+      Height = 24
+      Top = 24
+      Width = 66
+      Increment = 64
+      MaxValue = 4096
+      MinValue = 64
+      OnChange = SpinEdit1Change
+      TabOrder = 2
+      Value = 512
+    end
+    object Label1: TLabel
+      Left = 312
+      Height = 16
+      Top = 8
+      Width = 27
+      Caption = 'Size'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 384
+      Height = 16
+      Top = 32
+      Width = 31
+      Caption = 'x512'
+      Enabled = False
+      ParentColor = False
+    end
+    object Button2: TButton
+      Left = 448
+      Height = 25
+      Top = 23
+      Width = 75
+      Caption = 'Apply'
+      OnClick = Button2Click
+      TabOrder = 3
+    end
+  end
+  object Button3: TButton
+    Left = 528
+    Height = 25
+    Top = 23
+    Width = 75
+    Caption = 'Save'
+    OnClick = Button3Click
+    TabOrder = 1
+  end
+  object FontDialog1: TFontDialog
+    Font.Height = -53
+    Font.Quality = fqCleartypeNatural
+    MinFontSize = 0
+    MaxFontSize = 0
+    left = 240
+    top = 152
+  end
+  object SaveDialog1: TSaveDialog
+    Filter = '.p3dfont|*.p3dfont'
+    left = 280
+    top = 152
+  end
+end

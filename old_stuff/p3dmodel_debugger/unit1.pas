@@ -5,9 +5,14 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, RTTIGrids, RTTICtrls, Forms, Controls, Graphics,
+  Classes, SysUtils, FileUtil, RTTIGrids, RTTICtrls, Forms, Graphics,
+  {$IFDEF LCLGTK2}
+  gtk2, xlib, x,gdk2x,gdk2,
+  {$ENDIF}
   Dialogs, ExtCtrls, ComCtrls, Buttons, Math, p3dgraphics, p3devents, dglOpenGL,
-  p3dutils, rttiutils, typinfo, p3dRTTI, p3dMath, p3dgui, p3dgui_buttons;
+  OpenGLContext,
+  p3dutils, rttiutils, typinfo, p3dRTTI, p3dMath, p3dgui, p3dgui_buttons,
+  Controls;
 
 type
 
@@ -27,6 +32,7 @@ type
     ListView1: TListView;
     OpenDialog1: TOpenDialog;
     Panel1: TPanel;
+    Panel2: TPanel;
     Splitter1: TSplitter;
     TabControl1: TTabControl;
     TabControl2: TTabControl;
@@ -63,6 +69,7 @@ var
   TestCam: TP3DActor;
   CamRotation: TVec3;
   CamDistance: Single = 10;
+  WindowGL: TOpenGLControl;
 
 procedure Render( Sender: TP3DWindow );
 procedure Input( Sender: TP3DApplication );
@@ -73,7 +80,9 @@ implementation
 
 procedure Render(Sender: TP3DWindow);
 begin
+  WindowGL.MakeCurrent();
   P3DGUIManager.Input;
+  P3DViewports[ 0 ]:= P3DViewport( 0, 0, WindowGL.Width, WindowGL.Height );
 
   glClearColor($06 / 255, $2C / 255, $29 / 255, 1.0);                      // Set the Background colour of or scene
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);   // Clear the colour buffer
@@ -88,6 +97,7 @@ begin
   glDisable( GL_DEPTH_TEST );
 
   P3DGUIManager.Render;
+  WindowGL.SwapBuffers;
   {TestCanvas.Lock;
   TestCanvas.RenderText( TestText, vec2( 25, 25 ));
   TestCanvas.Unlock();}
@@ -99,7 +109,7 @@ var
 begin
   if ( P3DInput.Mouse.Buttons[ 0 ]) then
     TestCam.Rotation:= TestCam.Rotation + vec3( P3DInput.Mouse.DY, 0, P3DInput.Mouse.DX ) * 0.5;
-  if ( P3DInput.Mouse.Buttons[ 1 ]) then
+  if ( P3DInput.Mouse.Buttons[ 2 ]) then
     CamDistance:= Max( 0.1, CamDistance + P3DInput.Mouse.DY * 0.2 );
   m:= TP3DCamera( TestCam.Data ).View;
   mat4inverse( m, m );
@@ -222,13 +232,48 @@ begin
     Open( OpenDialog1.FileName );
 end;
 
+function GetWindowPtr( Comp: TWinControl ): Pointer;
+begin
+  {$IFDEF LCLWIN32}
+  Result:= Comp.Handle;
+  {$ENDIF}
+  {$IFDEF LCLGTK2}
+    Result:= Pointer( GDK_WINDOW_XID( PGtkWidget( Comp.Handle )^.window ));
+  {SDL_VERSION( @info.version );
+  if ( Boolean( SDL_GetWindowWMInfo( P3DApplication.MainWindow.Window, @info ))) then
+    WriteLn( GetEnumName( TypeInfo( TSDL_SYSWM_TYPE ), Ord( info.subsystem )));
+  case info.subsystem of
+    SDL_SYSWM_UNKNOWN: WriteLn( 'SDL_SYSWM_UNKNOWN' );
+    SDL_SYSWM_WINDOWS: WriteLn( 'SDL_SYSWM_WINDOWS' );
+    SDL_SYSWM_X11: WriteLn( 'SDL_SYSWM_X11' );
+    SDL_SYSWM_DIRECTFB: WriteLn( 'SDL_SYSWM_DIRECTFB' );
+    SDL_SYSWM_COCOA: WriteLn( 'SDL_SYSWM_COCOA' );
+    SDL_SYSWM_UIKIT: WriteLn( 'SDL_SYSWM_UIKIT' );
+    SDL_SYSWM_WAYLAND: WriteLn( 'SDL_SYSWM_WAYLAND' );
+    SDL_SYSWM_MIR: WriteLn( 'SDL_SYSWM_MIR' );
+    SDL_SYSWM_WINRT: WriteLn( 'SDL_SYSWM_WINRT' );
+    SDL_SYSWM_ANDROID: WriteLn( 'SDL_SYSWM_ANDROID' );
+  end;
+
+  WriteLn( Ord( info.subsystem ));
+
+  XReparentWindow( info.x11.display, info.x11.window, GDK_WINDOW_XID( PGtkWidget( Handle )^.window ), 0, 0 );}
+  {WriteLn( Integer( gdk_window_lookup( info.x11.window )));
+  WriteLn( Integer( PGtkWidget( Handle )^.window ));
+  gdk_window_reparent( gdk_window_lookup( info.x11.window ), PGtkWidget( Handle )^.window, 0, 0 );}
+  {$ENDIF}
+end;
+
 procedure TForm1.FormActivate(Sender: TObject);
 begin
   if ( not Initialized ) then
     begin
       P3DEventsInit;
       P3DLog.FileName:= 'Logfile.xml';
-      P3DApplication.MainWindow:= TP3DWindow.Create;
+      WindowGL:= TOpenGLControl.Create( Panel2 );
+      WindowGL.Parent:= Panel2;
+      WindowGL.Align:= alClient;
+      P3DApplication.MainWindow:= TP3DWindow.CreateDummyWindow;//TP3DWindow.CreateFrom( GetWindowPtr( WindowGL ));
       P3DApplication.Initialize;
       P3DGraphicsInit;
       P3DUtilsInit;

@@ -230,8 +230,9 @@ begin
   if ( ADOMNode.hasAttribute( 'binary' )) then
     begin
       Ext:= ADOMNode.GetAttribute( 'binary' );
+      FName:= P3DSearchPaths.Models.FindFileEx( Ext, GetCurrentDir );
       try
-        if ( not FileExists( Ext )) then
+        if ( not FileExists( FName )) then
           raise Exception.Create( Format( 'Error while loading mesh "%s"! The specified file does not exist!', [ Ext ]));
         F:= TFileStream.Create( Ext, fmOpenRead );
         cnt:= StrToIntDef( ADOMNode.GetAttribute( 'vertices' ), 0 );

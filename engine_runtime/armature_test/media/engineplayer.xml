@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p3dlog>
+  <info Unit="p3dSDLApplication" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
+  <info Unit="p3dSDLApplication" Sender="TP3DApplication" function="InitGL">InitGL</info>
+  <info Unit="p3dSDLApplication" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
+  <info Unit="p3dSDLApplication" Sender="TP3DApplication" function="Initialize">initializing application</info>
+  <info Unit="p3dSDLApplication" Sender="TP3DApplication" function="Run">Running application</info>
+  <info Unit="p3dSDLApplication" Sender="TP3DApplication">exit mainloop</info>
+</p3dlog>

@@ -1,0 +1,36 @@
+object Form1: TForm1
+  Left = 146
+  Height = 461
+  Top = 206
+  Width = 668
+  Caption = 'Form1'
+  ClientHeight = 461
+  ClientWidth = 668
+  LCLVersion = '1.6.0.4'
+  object Memo1: TMemo
+    Left = 0
+    Height = 436
+    Top = 25
+    Width = 668
+    Align = alClient
+    Lines.Strings = (
+      'Memo1'
+    )
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 0
+    Height = 25
+    Top = 0
+    Width = 668
+    Align = alTop
+    Caption = 'Button1'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object OpenDialog1: TOpenDialog
+    left = 151
+    top = 47
+  end
+end

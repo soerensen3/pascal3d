@@ -1,0 +1,22 @@
+<p3dsettings>
+  <general
+    rootdir="../../../">
+  </general>
+  <window
+    title="P3D-Engine DEMO"
+    width="800"
+    height="600"
+    fullscreen="no"
+    />
+  <paths>
+    <path 
+    type="fonts"
+    value="fonts"/>
+    <path 
+    type="models"
+    value="models"/>
+    <path 
+    type="shaders"
+    value="shaders"/>
+  </paths>
+</p3dsettings>
