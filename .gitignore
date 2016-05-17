@@ -9,6 +9,7 @@ lib/
 !*.lpr
 !*.lpi
 !*.lrs
+!*.lfm
 !*.glsl
 !*.frag
 !*.vert
@@ -24,6 +25,7 @@ lib/
 !*.tga
 !*.bmp
 !*.ttf
+!*.xml
 !reference
 !pascal3d
 !.gitignore

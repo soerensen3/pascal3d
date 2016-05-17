@@ -270,6 +270,7 @@ end;
 function LoadShaderToText(FName: String; const do_replace: Boolean = True ): String;
 var
   F: TStringList;
+  FileName: String;
 
   procedure StartReplace;
   var
@@ -301,18 +302,20 @@ var
   end;
 
 begin
-  if ( FileExists( FName )) then
+  FileName:= P3DSearchPaths.Shaders.FindFileEx( FName, GetCurrentDir );
+
+  if ( FileExists( FileName )) then
     begin
       F:= TStringList.Create;
       {$IFDEF VERBOSE}
-      WriteLn( 'Loading ', FName, '...' );
+      WriteLn( 'Loading ', FileName, '...' );
       {$ENDIF}
-      F.LoadFromFile( FName );
+      F.LoadFromFile( FileName );
 
       if ( do_replace ) then
         StartReplace;
 
-      F.SaveToFile( FName +'.tmp' );
+      F.SaveToFile( FileName +'.tmp' );
       Result:= F.Text;
 
       F.Free;
@@ -720,9 +723,6 @@ var
   path: String;
 begin
   Create( AData );
-  path:= GetCurrentDir();
-  fnvshader:= CreateAbsolutePath( fnvshader, path );
-  fnfshader:= CreateAbsolutePath( fnfshader, path );
   VShader:= LoadShaderToText( fnvshader );
   FShader:= LoadShaderToText( fnfshader );
   CreateFromVertexAndFragmentShader( vshader, fshader, Parent );

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, RTTIGrids, RTTICtrls, Forms, Controls, Graphics,
-  Dialogs, ExtCtrls, ComCtrls, Buttons, p3dgraphics, p3devents, dglOpenGL,
+  Dialogs, ExtCtrls, ComCtrls, Buttons, Math, p3dgraphics, p3devents, dglOpenGL,
   p3dutils, rttiutils, typinfo, p3dRTTI, p3dMath, p3dgui, p3dgui_buttons;
 
 type
@@ -61,10 +61,15 @@ var
   TestText: TP3DText;
   TestScene: TP3DScene;
   TestCam: TP3DActor;
+  CamRotation: TVec3;
+  CamDistance: Single = 10;
 
 procedure Render( Sender: TP3DWindow );
+procedure Input( Sender: TP3DApplication );
 
 implementation
+
+
 
 procedure Render(Sender: TP3DWindow);
 begin
@@ -77,11 +82,29 @@ begin
   //TestCanvas.RenderLineCircle( vec2( 100, 100 ), 25, 5, vec4( 1 ));
   //TestCanvas.Unlock();
 
+
+  glEnable( GL_DEPTH_TEST );
   TestScene.Render;
+  glDisable( GL_DEPTH_TEST );
+
   P3DGUIManager.Render;
   {TestCanvas.Lock;
   TestCanvas.RenderText( TestText, vec2( 25, 25 ));
   TestCanvas.Unlock();}
+end;
+
+procedure Input(Sender: TP3DApplication);
+var
+  m: TMat4;
+begin
+  if ( P3DInput.Mouse.Buttons[ 0 ]) then
+    TestCam.Rotation:= TestCam.Rotation + vec3( P3DInput.Mouse.DY, 0, P3DInput.Mouse.DX ) * 0.5;
+  if ( P3DInput.Mouse.Buttons[ 1 ]) then
+    CamDistance:= Max( 0.1, CamDistance + P3DInput.Mouse.DY * 0.2 );
+  m:= TP3DCamera( TestCam.Data ).View;
+  mat4inverse( m, m );
+  TestCam.Position:= -m.Row[ 2 ].xyz * CamDistance;
+  //TestCam.Position:= -TP3DCamera( TestCam.Data ).View.Row[ 1 ].xyz * Distance;
 end;
 
 {$R *.lfm}
@@ -213,6 +236,7 @@ begin
       P3DSearchPaths[ p3dsc_Fonts ].Add( 'fonts/' );
 
       P3DApplication.MainWindow.OnRender:= @Render;
+      P3DApplication.OnInput:= @Input;
       P3DShaderNodeLib.LoadLibraryPath( '../../engine_runtime/shaders/nodes/core/', '*.pmd' );
       P3DGUIInit;
 
@@ -225,6 +249,8 @@ begin
       TestCanvas.Height:= P3DApplication.MainWindow.Height;
 
       glEnable( GL_LINE_SMOOTH );
+      glEnable( GL_DEPTH_TEST );
+      glCullFace( GL_NONE );
 
       P3DGUIManager.Window:= P3DApplication.MainWindow;
       P3DGUIManager.ShowCursor:= True;
@@ -240,6 +266,7 @@ begin
       TP3DCamera( TestScene.Cam.Data ).Far:= 2000;
       TestScene.Cam.Position:= vec3( 0, 1, -10 );
       TestScene.Cam.Rotation:= vec3( 90, 0, 180 );
+      TestCam:= TestScene.Cam;
     end;
 end;
 
@@ -264,6 +291,7 @@ begin
   P3DApplication.HandleEvents_SDL;
   if ( Assigned( P3DApplication.MainWindow )) then
     P3DApplication.MainWindow.Render;
+  P3DInput.NextCycle;
 end;
 
 procedure TForm1.UpdateList;
@@ -328,11 +356,11 @@ begin
   UpdateList;
   for Obj in P3DData.Libraries[ n ].Objects do
     begin
-      if ( Obj.Data is TP3DCamera ) then
+      {if ( Obj.Data is TP3DCamera ) then
         begin
           //TestCam:= Obj;
           TestScene.Cam:= Obj;//TP3DCamera( TestCam.Data );
-        end;
+        end;}
       TestScene.Objects.Add( Obj );
     end;
 end;

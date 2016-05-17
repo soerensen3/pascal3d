@@ -28,24 +28,24 @@ type
 {$IFDEF IMPLEMENTATION}
  { TP3DTexture }
 
-constructor TP3DTexture.Create(AName: String; const AData: TP3DData);
+constructor TP3DTexture.Create( AName: String; const AData: TP3DData );
 var
-  Mode: Integer;
-  fSurface: PSDL_Surface;
+  FSurface: PSDL_Surface;
+  FileName: String;
 begin
-  AName:= ExpandFileName( AName );
-  if ( not FileExists( AName )) then
+  FileName:= P3DSearchPaths.Models.FindFileEx( AName, GetCurrentDir );
+  if ( FileName = '' ) then
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AName ]));
   inherited Create( AData );
-  FSurface:= IMG_Load( PChar( AName ));
-  FileWatch.FileName:= AName;
-  if ( fSurface = nil ) then
+  FSurface:= IMG_Load( PChar( FileName ));
+  FileWatch.FileName:= FileName;
+  if ( FSurface = nil ) then
     raise Exception.Create( Format( 'The specified file "%s" could not be loaded!', [ AName ]));
 
   {$IFDEF VERBOSE}
   WriteLn( 'Texture loaded: ' + AName );
   {$ENDIF}
-  CreateFromSurface( fSurface, AData );
+  CreateFromSurface( FSurface, AData );
 {  if ( not Assigned( glGenTextures )) then
     exit;
   glGenTextures(1, @FGLTexture ); cle( Self );

@@ -60,6 +60,7 @@ type
       constructor Create( ASearchPaths: TP3DSearchPaths );
 
       function FindFile( FName: String ): String;
+      function FindFileEx( FName: String; PrefferedPath: String ): String;
 
     published
       property Category: TP3DSearchPathCategory read FCategory write FCategory;
@@ -70,7 +71,7 @@ type
   TP3DSearchPaths = class ( TPersistent )
     private
       FBaseDir: String;
-      SearchPaths: array [ p3dsc_Fonts..p3dsc_Fonts ] of TP3DSearchPathContainer;
+      SearchPaths: array [ p3dsc_Models..p3dsc_Fonts ] of TP3DSearchPathContainer;
 
       function GetItem( Index: TP3DSearchPathCategory ): TP3DSearchPathContainer;
       procedure SetBaseDir(AValue: String);
@@ -222,6 +223,11 @@ begin
 end;
 
 function TP3DSearchPathContainer.FindFile(FName: String): String;
+begin
+  Result:= FindFileEx( FName, '' );
+end;
+
+function TP3DSearchPathContainer.FindFileEx( FName: String; PrefferedPath: String ): String;
 var
   i: Integer;
   BasePath, FileName: String;
@@ -231,6 +237,15 @@ begin
     begin
       Result:= FName;
       exit;
+    end;
+  if ( PrefferedPath > '' ) then
+    begin
+      FileName:= CleanAndExpandDirectory( AppendPathDelim( PrefferedPath )) + FName;
+      if ( FileExists( FileName )) then
+        begin
+          Result:= FileName;
+          exit;
+        end;
     end;
   BasePath:= SearchPaths.BaseDir;
   for i:= Count - 1 downto 0 do

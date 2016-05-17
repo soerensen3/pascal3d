@@ -32,7 +32,7 @@ type
         AType: TP3DDataBlockType; const AParent: TP3DActor = nil ): Integer;
       function AppendAllFromDom( ADOMNode: TDOMElement; AType: TP3DDataBlockType;
         const AParent: TP3DActor = nil ): Integer;
-      function AppendFile( AFileName: String; const AParent: TP3DActor = nil ): TP3DData;
+      function AppendFile( AFileName: String; const AParent: TP3DActor = nil ): String;
       procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
 
       property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
@@ -93,8 +93,7 @@ end;
 constructor TP3DData.CreateFromFile(AFileName: String);
 begin
   Create;
-  AppendFile( AFileName );
-  FileWatch.FileName:= AFileName;
+  FileWatch.FileName:= AppendFile( AFileName );
 end;
 
 destructor TP3DData.Destroy;
@@ -242,22 +241,25 @@ begin
     end;
 end;
 
-function TP3DData.AppendFile(AFileName: String; const AParent: TP3DActor ): TP3DData;
+function TP3DData.AppendFile( AFileName: String; const AParent: TP3DActor ): String;
 var
   xml: TXMLDocument;
-  dir: String;
+  dir, FName: String;
 begin
-  if ( not FileExists( AFileName )) then
+  Result:= '';
+  FName:= P3DSearchPaths.Models.FindFile( AFileName );
+  if ( not FileExists( FName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
-  ReadXMLFile( xml, AFileName );
+  ReadXMLFile( xml, FName );
   dir:= GetCurrentDir;
   try
-    SetCurrentDir( ExtractFilePath( AFileName ));
+    SetCurrentDir( ExtractFilePath( FName ));
     AppendFromDom( xml.DocumentElement, AParent );
   finally
     SetCurrentDir( dir );
     xml.Free;
   end;
+  Result:= FName;
 end;
 
 procedure TP3DData.NotifyDeleteOfData(Sender: TP3DDataBlock);
@@ -265,10 +267,11 @@ begin
 
 end;
 
-function OpenLibrary(FileName: String): Integer;
+function OpenLibrary( FileName: String ): Integer;
 var
   F: TP3DData;
 begin
+  FileName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
   Result:= P3DData.Libraries.FindByFileName( FileName );
   if ( Result = -1 ) then
     begin
