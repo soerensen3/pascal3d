@@ -10,6 +10,7 @@ TP3DGUIManager = class
     FControls: TP3DControlList;
     FCursor: TP3DCursor;
     FFocusedControl: TP3DGraphicControl;
+    FScrollSpeed: Single;
     FShowCursor: Boolean;
     FWindow: TP3DWindow;
     FCursorTxt: TP3DText;
@@ -35,6 +36,7 @@ TP3DGUIManager = class
   published
     property MouseX: Integer read GetMouseX write SetMouseX;
     property MouseY: Integer read GetMouseY write SetMouseY;
+    property ScrollSpeed: Single read FScrollSpeed write FScrollSpeed;
     property Window: TP3DWindow read FWindow write SetWindow;
     property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
     property Controls: TP3DControlList read FControls write FControls;
@@ -53,8 +55,8 @@ constructor TP3DGUIManager.Create();
 begin
   inherited Create;
 
-  //P3DFontManager.DefaultFontsPath:= '../../../fonts';
-  Controls:= TP3DControlList.Create( nil, Self );
+  ScrollSpeed:= -50;
+  Controls:= TP3DControlList.Create( nil );
   ScreenCanvas:= TP3DCanvas2D.Create( nil );
   Cursor:= curArrow;
   UpdateExtents;
@@ -102,6 +104,9 @@ end;
 
 procedure TP3DGUIManager.Render;
 begin
+  if (( ScreenCanvas.Width <> P3DViewports[ 0 ].Width ) or
+      ( ScreenCanvas.Height <> P3DViewports[ 0 ].Height )) then
+    UpdateExtents;
   Controls.Render( vec4( 1 ), vec2( 0 ));
   if ( ShowCursor and Assigned( FCursorTxt )) then
     begin

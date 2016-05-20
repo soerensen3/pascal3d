@@ -6,7 +6,7 @@
     <CompilerOptions>
       <Version Value="11"/>
       <SearchPaths>
-        <IncludeFiles Value=".."/>
+        <IncludeFiles Value="..;."/>
         <OtherUnitFiles Value="."/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
@@ -25,47 +25,44 @@
         <Type Value="Include"/>
       </Item3>
       <Item4>
-        <Filename Value="p3dgui_buttons.pas"/>
-        <UnitName Value="p3dgui_buttons"/>
-      </Item4>
-      <Item5>
-        <Filename Value="p3dgui_stdctrls.pas"/>
-        <UnitName Value="p3dgui_stdctrls"/>
-      </Item5>
-      <Item6>
-        <Filename Value="p3dgui_shadernodes.pas"/>
-        <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="p3dgui_shadernodes"/>
-      </Item6>
-      <Item7>
-        <Filename Value="p3dgui_sceneviewer.pas"/>
-        <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="p3dgui_sceneviewer"/>
-      </Item7>
-      <Item8>
         <Filename Value="p3dgui_shadernodes_controls.inc"/>
         <Type Value="Binary"/>
-      </Item8>
-      <Item9>
+      </Item4>
+      <Item5>
         <Filename Value="p3dgui_controllist.inc"/>
         <Type Value="Binary"/>
-      </Item9>
-      <Item10>
+      </Item5>
+      <Item6>
         <Filename Value="p3dgui_manager.inc"/>
         <Type Value="Binary"/>
+      </Item6>
+      <Item7>
+        <Filename Value="p3dgui_buttons.inc"/>
+        <Type Value="Include"/>
+      </Item7>
+      <Item8>
+        <Filename Value="p3dgui_menus.inc"/>
+        <Type Value="Include"/>
+      </Item8>
+      <Item9>
+        <Filename Value="p3dgui_sceneviewer.inc"/>
+        <Type Value="Include"/>
+      </Item9>
+      <Item10>
+        <Filename Value="p3dgui_stdctrls.inc"/>
+        <Type Value="Include"/>
       </Item10>
       <Item11>
-        <Filename Value="p3dgui_menus.pas"/>
-        <UnitName Value="p3dgui_menus"/>
+        <Filename Value="p3dgui_forms.inc"/>
+        <Type Value="Include"/>
       </Item11>
       <Item12>
-        <Filename Value="p3dgui_commonctrls.pas"/>
-        <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="p3dgui_commonctrls"/>
+        <Filename Value="p3dgui_commonctrls.inc"/>
+        <Type Value="Include"/>
       </Item12>
       <Item13>
-        <Filename Value="p3dgui_forms.pas"/>
-        <UnitName Value="p3dgui_forms"/>
+        <Filename Value="p3dgui_shadernodes.inc"/>
+        <Type Value="Include"/>
       </Item13>
     </Files>
     <RequiredPkgs Count="4">

@@ -6,7 +6,6 @@ TP3DCustomControlList = specialize gP3DCustomObjectList < TP3DGraphicControl >;
 
 TP3DControlList = class( TP3DCustomControlList )
   private
-    FManager: TP3DGUIManager;
     FParent: TP3DGraphicControl;
 
   public
@@ -24,11 +23,10 @@ TP3DControlList = class( TP3DCustomControlList )
     function IndexOf( Name: String ): Integer; overload;
     function ChildOf( AControl: TP3DGraphicControl ): Boolean;
 
-    constructor Create( AParent: TP3DGraphicControl; AManager: TP3DGUIManager );
+    constructor Create( AParent: TP3DGraphicControl );
     destructor Destroy; override;
 
     property Parent: TP3DGraphicControl read FParent;
-    property Manager: TP3DGUIManager read FManager write FManager;
 end;
 
 {$ENDIF}
@@ -47,8 +45,8 @@ begin
       Items[ i ].Free
     else
       begin
-        Items[ i ].Controls:= Manager.Controls;
-        Manager.Controls.Add( Items[ i ]);
+        Items[ i ].Controls:= P3DGUIManager.Controls;
+        P3DGUIManager.Controls.Add( Items[ i ]);
       end;
   Count:= 0;
 end;
@@ -58,12 +56,10 @@ begin
   Delete( IndexOf( Itm ));
 end;
 
-constructor TP3DControlList.Create(AParent: TP3DGraphicControl;
-  AManager: TP3DGUIManager);
+constructor TP3DControlList.Create(AParent: TP3DGraphicControl);
 begin
   inherited Create;
   FParent:= AParent;
-  Manager:= AManager;
 end;
 
 destructor TP3DControlList.Destroy;
@@ -80,7 +76,7 @@ end;
 
 procedure TP3DControlList.Realign;
 var
-  R: TRect;
+  R: TP3DRect;
   Control: TP3DGraphicControl;
 
   // Boundary = Left/Right/Top/Bottom Boundary?
@@ -88,7 +84,7 @@ var
   // BoundaryLength = The length of the boundary
   // BoundaryShift =
 
-  procedure UpdateControlAndBoundary( var Boundary: Integer; var ControlPos: Integer; var ControlLength: Integer; BoundaryLength, BoundaryShift: Integer ); inline;
+  procedure UpdateControlAndBoundary( var Boundary: Float; var ControlPos: Float; var ControlLength: Float; BoundaryLength, BoundaryShift: Float ); inline;
   begin
     if ( BoundaryShift < 0 ) then
       ControlPos:= Boundary + BoundaryShift
@@ -106,9 +102,9 @@ begin
       R.Left:= 0;
       R.Top:= 0; //Left/Top start already at the Client Rect
     end
-  else
-    with ( Manager.ScreenCanvas ) do
-      R:= Rect( 0, 0, Width, Height );
+  else if P3DViewports.Count > 0 then
+    with ( P3DViewports[ 0 ]) do
+      R:= P3DRect( 0, 0, Width, Height );
   for Control in Self do
     if ( Control.Visible ) then
       begin
@@ -117,13 +113,36 @@ begin
           alLeft:
             begin
               Control.FLeft:= R.Left;
-              Control.FHeight:= R.Bottom - R.Top;
-              R.Left+= Control.Width;
+              Control.FHeight:= R.Height;
+              R.Left:= R.Left + Control.Width;
+              R.Width:= R.Width - Control.Width;
+            end;
+          alRight:
+            begin
+              Control.FLeft:= R.Left + R.Width - Control.Width;
+              Control.FTop:= R.Top;
+              Control.FHeight:= R.Height;
+              R.Right:= R.Right - Control.Width;
+            end;
+          alTop:
+            begin
+              Control.FTop:= R.Top;
+              Control.FLeft:= R.Left;
+              Control.FWidth:= R.Width;
+              R.Top:= R.Top + Control.Height;
+              R.Height:= R.Height - Control.Height;
+            end;
+          alBottom:
+            begin
+              Control.FLeft:= R.Left;
+              Control.FWidth:= R.Width;
+              Control.FTop:= R.Bottom - Control.Height;
+              R.Height:= R.Height - Control.Height;
             end;
           //UpdateControlAndBoundary( R.Left, Control.FLeft, Control.FHeight, R.Bottom - R.Top, Control.Width );
-          alRight: UpdateControlAndBoundary( R.Right, Control.FLeft, Control.FHeight, R.Bottom - R.Top, -Control.Width );
-          alTop: UpdateControlAndBoundary( R.Top, Control.FTop, Control.FWidth, R.Right - R.Left, Control.Height );
-          alBottom: UpdateControlAndBoundary( R.Bottom, Control.FTop, Control.FWidth, R.Right - R.Left, -Control.Height );
+          //alRight: UpdateControlAndBoundary( R.FRight, Control.FLeft, Control.FHeight, R.Bottom - R.Top, -Control.Width );
+          //alTop: UpdateControlAndBoundary( R.Top, Control.FTop, Control.FWidth, R.Right - R.Left, Control.Height );
+          //alBottom: UpdateControlAndBoundary( R.Bottom, Control.FTop, Control.FWidth, R.Right - R.Left, -Control.Height );
         end;
         Control.Realign;
         Control.Controls.Realign;
@@ -143,11 +162,14 @@ end;
 
 procedure TP3DControlList.Render(base: TVec4; ScrollAcc: TVec2);
 var
-  I: Integer;
+  i: Integer;
 begin
-  for I:= 0 to Count - 1 do
-    if ( Items[ I ].Visible ) then
-      Items[ I ].Render( base, ScrollAcc );
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Visible ) then
+      if ( Items[ i ].Align = alNone ) then
+        Items[ i ].Render( base, ScrollAcc )
+      else
+        Items[ i ].Render( base, vec2( 0 ));
 end;
 
 procedure TP3DControlList.BringToFront( Index: Integer );
@@ -256,10 +278,10 @@ begin
         Result.InputState:= Result.InputState + [ gcisMouseOver ];
       LastMouseOverCtrl:= Result;
     end;
-  if ( not Assigned( Result ) and ( Manager.Cursor <> curArrow )) then
-    Manager.Cursor:= curArrow
-  else if (( Assigned( Result )) and ( Result.Cursor <> Manager.Cursor )) then
-    Manager.Cursor:= Result.Cursor;
+  if ( not Assigned( Result ) and ( P3DGUIManager.Cursor <> curArrow )) then
+    P3DGUIManager.Cursor:= curArrow
+  else if (( Assigned( Result )) and ( Result.Cursor <> P3DGUIManager.Cursor )) then
+    P3DGUIManager.Cursor:= Result.Cursor;
 
 
   for i:= 0 to 2 do
@@ -270,7 +292,7 @@ begin
             LastMouseDownCtrl[ i ]:= LastMouseOverCtrl;
             if ( Assigned( LastMouseDownCtrl[ i ])) then
               LastMouseDownCtrl[ i ].InputState:= LastMouseDownCtrl[ i ].InputState + BtnInpState( i );
-            Manager.FocusedControl:= LastMouseOverCtrl;
+            P3DGUIManager.FocusedControl:= LastMouseOverCtrl;
           end
         else                    //released
           begin

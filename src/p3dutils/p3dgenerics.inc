@@ -85,7 +85,10 @@ end;
 
 function gP3DCustomObjectList.GetItems( Index: Integer ): TCustomItem;
 begin
-  Result:= TCustomItem( FItems[ Index ]);
+  if (( Index < Count ) and ( Index > -1 )) then
+    Result:= TCustomItem( FItems[ Index ])
+  else
+    Result:= nil;
 end;
 
 constructor gP3DCustomObjectList.Create;

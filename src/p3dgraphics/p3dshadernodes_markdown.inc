@@ -429,9 +429,13 @@ end;
 function ParseMarkdownFile( FN: String ): TP3DShaderNodeLibrary;
 var
   F: TStringList;
+  FileName: String;
 begin
+  FileName:= P3DSearchPaths.Shaders.FindFileEx( FN, GetCurrentDir());
+  if ( FileName = '' ) then
+    raise Exception.Create( Format( 'Error while parsing markdown file. The file "%f" could not be found', [ FN ]));
   F:= TStringlist.Create;
-  F.LoadFromFile( FN );
+  F.LoadFromFile( FileName );
   Result:= ParseMarkdown( F.Text );
   F.Free;
 end;
@@ -439,9 +443,13 @@ end;
 procedure ParseMarkdownFileAppend(FN: String; Lib: TP3DShaderNodeLibrary);
 var
   F: TStringList;
+  FileName: String;
 begin
+  FileName:= P3DSearchPaths.Shaders.FindFileEx( FN, GetCurrentDir());
+  if ( FileName = '' ) then
+    raise Exception.Create( Format( 'Error while parsing markdown file. The file "%f" could not be found', [ FN ]));
   F:= TStringlist.Create;
-  F.LoadFromFile( FN );
+  F.LoadFromFile( FileName );
   ParseMarkdownAppend( F.Text, Lib );
   F.Free;
 end;

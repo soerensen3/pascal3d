@@ -27,23 +27,14 @@ TP3DGCInputFlags = set of TP3DGCInputState;
 TP3DGraphicControl = class ( TP3DObject )
   protected
     FAlign: TP3DControlAlign;
-    FBoundsBottom: Integer;
-    FBoundsLeft: Integer;
-    FBoundsRight: Integer;
-    FBoundsTop: Integer;
     FCanvas: TP3DCanvas2D;
-    FClientRect: TRect;
+    FClientRect: TP3DRect;
     FControls: TP3DControlList;
     FEnabled: Boolean;
-    FHeight: Integer;
     FInputState: TP3DGCInputFlags;
     FLastClick: Integer;
-    FLeft: Integer;
+    FLeft: Float;
     FManager: TP3DGUIManager;
-    FMaxHeight: DWord;
-    FMaxWidth: DWord;
-    FMinHeight: DWord;
-    FMinWidth: DWord;
     FNoBounds: Boolean;
     FOnDragDrop: TP3DGUIDragDrop;
     FOnDragDropCancel: TP3DGUIMouseEvent;
@@ -58,11 +49,18 @@ TP3DGraphicControl = class ( TP3DObject )
     FOnParentRealign: TNotifyEvent;
     FOwnerCtrlBuf: TP3DControlList;
     FTag: Integer;
-    FTop: Integer;
+    FTop: Float;
     FVisible: Boolean;
-    FWidth: Integer;
+    FWidth: Float;
     FCursor: TP3DCursor;
+    FBounds: TP3DRect;
+    FHeight: Float;
+    FMaxHeight: Float;
+    FMaxWidth: Float;
+    FMinHeight: Float;
+    FMinWidth: Float;
 
+    procedure SetBounds(AValue: TP3DRect);
     function GetFocused: Boolean; virtual;
     procedure SetFocused(AValue: Boolean); virtual;
     procedure SetCursor(AValue: TP3DCursor);
@@ -74,20 +72,18 @@ TP3DGraphicControl = class ( TP3DObject )
     procedure Realign; virtual;
     procedure Render( BaseColor: TVec4; ScrollAcc: TVec2 ); virtual;
     procedure SetAlign( const Value: TP3DControlAlign ); virtual;
-    procedure SetBounds( Index: Integer; const Value: Integer); virtual;
-    procedure SetHeight( const Value: Integer ); virtual;
+    procedure SetHeight( const Value: Float ); virtual;
     procedure SetInputState(AValue: TP3DGCInputFlags); virtual;
-    procedure SetLeft( const Value: Integer ); virtual;
+    procedure SetLeft( const Value: Float ); virtual;
     procedure SetParent(const Value: TP3DGraphicControl);
     procedure SetScroll(AValue: TVec2);
-    procedure SetTop( const Value: Integer ); virtual;
+    procedure SetTop( const Value: Float ); virtual;
     procedure SetVisible( const Value: Boolean ); virtual;
-    procedure SetWidth( const Value: Integer ); virtual;
+    procedure SetWidth( const Value: Float ); virtual;
     procedure UpdateClientRect;
 
   public
-    constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-      const AParent: TP3DGraphicControl=nil);
+    constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
     destructor Destroy; override;
 
     procedure BeginDrag();
@@ -103,6 +99,7 @@ TP3DGraphicControl = class ( TP3DObject )
     procedure MouseLeave( X, Y: Integer ); virtual;
     procedure MouseMove( X, Y: Integer ); virtual;
     procedure MouseUp( mb1, mb2, mb3: Boolean; X, Y: Integer ); virtual;
+    procedure MouseWheel( delta: Integer ); virtual;
     procedure OneLayerDown;
     procedure OneLayerUp;
     procedure SendToBack;
@@ -110,11 +107,11 @@ TP3DGraphicControl = class ( TP3DObject )
     class function IsFocusControl(): Boolean; virtual;
     class function HasShadow(): Boolean; virtual;
 
+    property Bounds: TP3DRect read FBounds write SetBounds;
     property Canvas: TP3DCanvas2D read FCanvas write FCanvas;
-    property ClientRect: TRect read FClientRect;
+    property ClientRect: TP3DRect read FClientRect;
     property Controls: TP3DControlList read FControls write FControls;
     property InputState: TP3DGCInputFlags read FInputState write SetInputState;
-    property Manager: TP3DGUIManager read FManager write FManager;
     property ParentCtrl: TP3DControlList read FOwnerCtrlBuf write FOwnerCtrlBuf;
     property Scroll: TVec2 read GetScroll write SetScroll;
 
@@ -127,20 +124,15 @@ TP3DGraphicControl = class ( TP3DObject )
     property Visible: Boolean read FVisible write SetVisible;
     property Focused: Boolean read GetFocused write SetFocused;
 
-    property BoundsLeft: Integer index 0 read FBoundsLeft write SetBounds;
-    property BoundsTop: Integer index 1 read FBoundsTop write SetBounds;
-    property BoundsRight: Integer index 2 read FBoundsRight write SetBounds;
-    property BoundsBottom: Integer index 3 read FBoundsBottom write SetBounds;
+    property Left: Float read FLeft write SetLeft;
+    property Top: Float read FTop write SetTop;
+    property Width: Float read FWidth write SetWidth;
+    property Height: Float read FHeight write SetHeight;
 
-    property Left: Integer read FLeft write SetLeft;
-    property Top: Integer read FTop write SetTop;
-    property Width: Integer read FWidth write SetWidth;
-    property Height: Integer read FHeight write SetHeight;
-
-    property MinWidth: DWord read FMinWidth write FMinWidth;
-    property MinHeight: DWord read FMinHeight write FMinHeight;
-    property MaxWidth: DWord read FMaxWidth write FMaxWidth;
-    property MaxHeight: DWord read FMaxHeight write FMaxHeight;
+    property MinWidth: Float read FMinWidth write FMinWidth;
+    property MinHeight: Float read FMinHeight write FMinHeight;
+    property MaxWidth: Float read FMaxWidth write FMaxWidth;
+    property MaxHeight: Float read FMaxHeight write FMaxHeight;
 
     property OnDragDrop: TP3DGUIDragDrop read FOnDragDrop write FOnDragDrop;
     property OnDragDropCancel: TP3DGUIMouseEvent read FOnDragDropCancel write FOnDragDropCancel;
@@ -161,16 +153,16 @@ end;
 
 { TP3DGraphicControl }
 
-constructor TP3DGraphicControl.Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager; const AParent: TP3DGraphicControl = nil );
+constructor TP3DGraphicControl.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner );
-  Manager:= AManager;
-  Controls:= TP3DControlList.Create( Self, Manager );
+  Controls:= TP3DControlList.Create( Self );
   FCanvas:= TP3DCanvas2D.Create( Self );
   if ( Assigned( AParent )) then
     ParentCtrl:= AParent.Controls
   else
-    ParentCtrl:= AManager.Controls;
+    ParentCtrl:= P3DGUIManager.Controls;
   ParentCtrl.Add( Self );
 
   Visible:= True;
@@ -184,7 +176,7 @@ end;
 
 destructor TP3DGraphicControl.Destroy;
 begin
-  Manager.CtrlDeleteNotifier( Self );
+  P3DGUIManager.CtrlDeleteNotifier( Self );
   ParentCtrl.Delete( Self );
   Controls.Free;
   Canvas.Free;
@@ -197,17 +189,24 @@ begin
     FOnDraw( Self, Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height );
 end;
 
+procedure TP3DGraphicControl.SetBounds(AValue: TP3DRect);
+begin
+  FBounds:=AValue;
+  Realign;
+  Controls.Realign;
+end;
+
 function TP3DGraphicControl.GetFocused: Boolean;
 begin
-  Result:= Self = Manager.FocusedControl;
+  Result:= Self = P3DGUIManager.FocusedControl;
 end;
 
 procedure TP3DGraphicControl.SetFocused(AValue: Boolean);
 begin
   if ( AValue ) then
-    Manager.FocusedControl:= Self
-  else if ( Manager.FocusedControl = Self ) then
-    Manager.FocusedControl:= nil;
+    P3DGUIManager.FocusedControl:= Self
+  else if ( P3DGUIManager.FocusedControl = Self ) then
+    P3DGUIManager.FocusedControl:= nil;
 end;
 
 procedure TP3DGraphicControl.SetCursor(AValue: TP3DCursor);
@@ -273,6 +272,8 @@ begin
   cy:= Y - Canvas.Top;
   if (( P3DInput.Mouse.DX <> 0 ) or ( P3DInput.Mouse.DY <> 0 )) then
     MouseMove( cx, cy );
+  if ( P3DInput.Mouse.DZ <> 0 ) then
+    MouseWheel( P3DInput.Mouse.DZ );
   for Ctrl in Controls do
     Ctrl.MouseAction( X, Y, mb1, mb2, mb3, dmb1, dmb2, dmb3 );
 end;
@@ -295,6 +296,11 @@ begin
     FOnMouseUp( Self, mb1, mb2, mb3, X, Y );
   if ( gcisMouseOver in InputState ) then //ONLY FIRE EVENT IF THE BUTTON IS RELEASED INSIDE OF THE CONTROL
     MouseClick( mb1, mb2, mb3, X, Y );
+end;
+
+procedure TP3DGraphicControl.MouseWheel(delta: Integer);
+begin
+
 end;
 
 procedure TP3DGraphicControl.KeyboardAction;
@@ -342,25 +348,25 @@ begin
     begin
       if ( NoBounds ) then
         begin
-          Canvas.Left:= Left + Parent.Canvas.Left;
-          Canvas.Top:= Top + Parent.Canvas.Top;
-          Canvas.Width:= Min( Parent.Width - Left, Width );
-          Canvas.Height:= Min( Parent.Height - Top, Height );
+          Canvas.Left:= Round( Left + Parent.Canvas.Left );
+          Canvas.Top:= Round( Top + Parent.Canvas.Top );
+          Canvas.Width:= Round( Min( Parent.Width - Left, Width ));
+          Canvas.Height:= Round( Min( Parent.Height - Top, Height ));
         end
       else
         begin
-          Canvas.Left:= Left + Parent.Canvas.Left + Parent.ClientRect.Left;
-          Canvas.Top:= Top + Parent.Canvas.Top + Parent.ClientRect.Top;
-          Canvas.Width:= Min( Parent.ClientRect.Right - Left, Width );
-          Canvas.Height:= Min( Parent.ClientRect.Bottom - Top, Height );
+          Canvas.Left:= Round( Left + Parent.Canvas.Left + Parent.ClientRect.Left );
+          Canvas.Top:= Round( Top + Parent.Canvas.Top + Parent.ClientRect.Top );
+          Canvas.Width:= Round( Min( Parent.ClientRect.Right - Left, Width ));
+          Canvas.Height:= Round( Min( Parent.ClientRect.Bottom - Top, Height ));
         end;
     end
   else
     begin
-      Canvas.Left:= Left;
-      Canvas.Top:= Top;
-      Canvas.Width:= Min( Manager.ScreenCanvas.Width - Left, Width );
-      Canvas.Height:= Min( Manager.ScreenCanvas.Height - Top, Height );
+      Canvas.Left:= Round( Left );
+      Canvas.Top:= Round( Top );
+      Canvas.Width:= Round( Min( P3DGUIManager.ScreenCanvas.Width - Left, Width ));
+      Canvas.Height:= Round( Min( P3DGUIManager.ScreenCanvas.Height - Top, Height ));
     end;
   UpdateClientRect;
 end;
@@ -437,9 +443,9 @@ begin
   if ( HasShadow()) then
     begin
       p:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
-      Manager.ScreenCanvas.Lock;
-      Manager.ScreenCanvas.RenderRectShadow( p, p + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
-      Manager.ScreenCanvas.Unlock();
+      P3DGUIManager.ScreenCanvas.Lock;
+      P3DGUIManager.ScreenCanvas.RenderRectShadow( p, p + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
+      P3DGUIManager.ScreenCanvas.Unlock();
     end;
 
   Canvas.Lock;
@@ -485,9 +491,9 @@ begin
     ParentCtrl.Realign;
 end;
 
-procedure TP3DGraphicControl.SetHeight( const Value: Integer );
+procedure TP3DGraphicControl.SetHeight(const Value: Float);
 var
-  Val: Integer;
+  Val: Float;
 begin
   if ( Align in [ alClient, alLeft, alRight ]) then
     exit;
@@ -505,7 +511,7 @@ begin
     Controls.Realign;
 end;
 
-procedure TP3DGraphicControl.SetLeft( const Value: Integer );
+procedure TP3DGraphicControl.SetLeft(const Value: Float);
 begin
   if ( Align = alNone ) then
     begin
@@ -528,7 +534,7 @@ begin
 end;
 
 
-procedure TP3DGraphicControl.SetTop( const Value: Integer );
+procedure TP3DGraphicControl.SetTop(const Value: Float);
 begin
   if ( Align = alNone ) then
     begin
@@ -547,9 +553,9 @@ begin
     end;
 end;
 
-procedure TP3DGraphicControl.SetWidth( const Value: Integer );
+procedure TP3DGraphicControl.SetWidth(const Value: Float);
 var
-  Val: Integer;
+  Val: Float;
 begin
   if ( Align in [ alClient, alTop, alBottom ]) then
     exit;
@@ -570,7 +576,7 @@ end;
 
 procedure TP3DGraphicControl.UpdateClientRect;
 begin
-  FClientRect:= Rect( BoundsLeft, BoundsTop, Width - BoundsRight - BoundsLeft, Height - BoundsBottom - BoundsTop );
+  FClientRect:= P3DRect( Bounds.Left, Bounds.Top, Width - Bounds.Right - Bounds.Left, Height - Bounds.Bottom - Bounds.Top );
 end;
 
 function TP3DGraphicControl.MouseRay(X, Y: Integer): Boolean;
@@ -595,18 +601,6 @@ procedure TP3DGraphicControl.DragCancel(Sender: TP3DGraphicControl; X,
 begin
   if ( Assigned( FOnDragDropCancel )) then
     FOnDragDropCancel( Sender, X, Y );
-end;
-
-procedure TP3DGraphicControl.SetBounds( Index: Integer; const Value: Integer );
-begin
-  case ( Index ) of
-    0: FBoundsLeft := Value;
-    1: FBoundsTop := Value;
-    2: FBoundsRight := Value;
-    3: FBoundsBottom := Value;
-  end;
-  Realign;
-  Controls.Realign;
 end;
 
 {$ENDIF}

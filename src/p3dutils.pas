@@ -7,7 +7,9 @@ interface
 uses
   Classes,
   SysUtils,
-  LazFileUtils;
+  LazFileUtils,
+  LazUTF8,
+  XMLRead, DOM;
 
 
 {$DEFINE INTERFACE}

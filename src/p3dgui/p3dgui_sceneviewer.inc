@@ -1,12 +1,7 @@
-unit p3dgui_sceneviewer;
+//p3dgui_sceneviewer.inc
+//part of p3dgui.pas
 
-{$mode objfpc}{$H+}
-
-interface
-
-uses
-  Classes, SysUtils,
-  p3dgui_stdctrls, dglOpenGL, p3dMath, p3dbuffers, p3dviewport, p3dmodel;
+{$IFDEF INTERFACE}
 
 type
 
@@ -29,7 +24,9 @@ type
     TrianglePoints: TP3DVec3BufferGL;
     TriangleColors: TP3DVec4BufferGL;
 
-implementation
+{$ENDIF}
+
+{$IFDEF IMPLEMENTATION}
 
 procedure InitTriangle;
 begin
@@ -93,5 +90,5 @@ finalization
   TriangleColors.Free;
 
 
-end.
+{$ENDIF}
 

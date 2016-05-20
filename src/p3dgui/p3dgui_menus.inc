@@ -1,11 +1,7 @@
-unit p3dgui_menus;
+//p3dgui_menus.inc
+//part of p3dgui.pas
 
-{$mode objfpc}{$H+}
-
-interface
-
-  uses
-    Classes, SysUtils, Math, p3dMath, p3dgui, p3dgraphics, p3dgui_buttons, p3dutils;
+{$IFDEF INTERFACE}
 
   type
     TP3DMenuItem = class;
@@ -29,8 +25,7 @@ interface
         FUserData: TObject;
 
       public
-        constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-          const AParent: TP3DGraphicControl=nil);
+        constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
         property UserData: TObject read FUserData write FUserData;
     end;
 
@@ -40,8 +35,7 @@ interface
 
     TP3DCustomPopupMenu = class ( TP3DGraphicControl )
       public
-        constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-          const AParent: TP3DGraphicControl=nil);
+        constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
 
         class function IsFocusControl: Boolean; override;
 
@@ -59,8 +53,7 @@ interface
         procedure ItemsChange( Sender: TObject );
 
       public
-        constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-          const AParent: TP3DGraphicControl=nil);
+        constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
         destructor Destroy; override;
 
         procedure Update;
@@ -69,12 +62,14 @@ interface
         property Items: TP3DMenuItemList read FItems write FItems;
     end;
 
-implementation
+{$ENDIF}
+
+{$IFDEF IMPLEMENTATION}
 
 { TP3DMenuItem }
 
-constructor TP3DMenuItem.Create(AOwner: TP3DObjectList;
-  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
+constructor TP3DMenuItem.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
 begin
   inherited;
   HAlignment:= haLeft;
@@ -86,7 +81,7 @@ function TP3DMenuItemList.Add(ACaption: String): Integer;
 var
   Ctrl: TP3DMenuItem;
 begin
-  Ctrl:= TP3DMenuItem.Create( Parent.ParentList, Parent.Manager, Parent );
+  Ctrl:= TP3DMenuItem.Create( Parent.ParentList, Parent );
   Ctrl.Caption:= ACaption;
   Ctrl.Align:= alTop;
   Result:= Add( Ctrl );
@@ -105,8 +100,8 @@ begin
   Update;
 end;
 
-constructor TP3DPopupMenu.Create(AOwner: TP3DObjectList;
-  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
+constructor TP3DPopupMenu.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
 begin
   inherited;
   FItems:= TP3DMenuItemList.Create( Self );
@@ -141,20 +136,20 @@ procedure TP3DCustomPopupMenu.Render(BaseColor: TVec4; ScrollAcc: TVec2);
 var
   p1: TVec2;
 begin
-  if (( not Focused ) and ( not Controls.ChildOf( Manager.FocusedControl ))) then
+  if (( not Focused ) and ( not Controls.ChildOf( P3DGUIManager.FocusedControl ))) then
     Visible:= False;
 
   p1:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
-  Manager.ScreenCanvas.Lock;
-  Manager.ScreenCanvas.RenderRectShadow( p1, p1 + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
-  Manager.ScreenCanvas.Unlock();
+  P3DGUIManager.ScreenCanvas.Lock;
+  P3DGUIManager.ScreenCanvas.RenderRectShadow( p1, p1 + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
+  P3DGUIManager.ScreenCanvas.Unlock();
 
   inherited Render(BaseColor, ScrollAcc);
 end;
 
 
-constructor TP3DCustomPopupMenu.Create(AOwner: TP3DObjectList;
-  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
+constructor TP3DCustomPopupMenu.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
 begin
   inherited;
   Visible:= False;

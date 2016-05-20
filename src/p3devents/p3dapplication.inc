@@ -240,8 +240,11 @@ begin
             FOnMouseButton( Self, event.button );
         end;
       SDL_MOUSEWHEEL:
-        if ( Assigned( FOnMouseWheel )) then
-          FOnMouseWheel( Self, event.wheel );
+        begin
+          P3DInput.Mouse.DZ:= event.wheel.y;
+          if ( Assigned( FOnMouseWheel )) then
+            FOnMouseWheel( Self, event.wheel );
+        end;
       SDL_KEYDOWN, SDL_KEYUP:
         begin
           if ( event.key._repeat = 1 ) then

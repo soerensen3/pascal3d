@@ -1,5 +1,5 @@
 object Form1: TForm1
-  Left = 536
+  Left = 356
   Height = 669
   Top = 23
   Width = 672
@@ -11,7 +11,6 @@ object Form1: TForm1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   LCLVersion = '1.6.0.4'
-  Visible = False
   object TIPropertyGrid1: TTIPropertyGrid
     Left = 472
     Height = 419
@@ -137,8 +136,8 @@ object Form1: TForm1
     TabOrder = 2
     object TabControl2: TTabControl
       Left = 2
-      Height = 395
-      Top = 22
+      Height = 381
+      Top = 36
       Width = 463
       OnChange = TabControl2Change
       Style = tsButtons
@@ -146,8 +145,8 @@ object Form1: TForm1
       TabOrder = 1
       object ListView1: TListView
         Left = 2
-        Height = 371
-        Top = 22
+        Height = 343
+        Top = 36
         Width = 459
         Align = alClient
         Columns = <>

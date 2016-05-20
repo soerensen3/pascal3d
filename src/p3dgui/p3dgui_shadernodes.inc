@@ -1,33 +1,10 @@
-unit p3dgui_shadernodes;
+//p3dgui_buttons.inc
+//part of p3dgui.pas
 
-interface
-  uses
-    p3dgui,
-    p3dobjects,
-    p3dMath,
-    p3dtext,
-    p3dinput,
-    p3dcanvas,
-    p3dgui_stdctrls,
-    p3dgui_buttons,
-    p3dgui_menus,
-    p3dshaders,
-    p3dNodes,
-    p3dmodel,
-    p3dgui_sceneviewer,
-    p3dbuffers,
-    p3dgenerics,
-    p3dshadernodes,
-    dglOpenGL,
-    Classes,
-    math,
-    Types;
+{$IFDEF INTERFACE}
 
 type
-  {$DEFINE INTERFACE}
   {$INCLUDE p3dgui_shadernodes_controls.inc}
-  {$UNDEF INTERFACE}
-
 
 
   { TP3DNodeControl }
@@ -105,7 +82,9 @@ type
   end;
 
 
-implementation
+{$ENDIF}
+
+{$IFDEF IMPLEMENTATION}
 
 { TP3DNodeSocketVectorEdit }
 
@@ -272,9 +251,7 @@ begin
     Result:= False;
 end;
 
-{$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dgui_shadernodes_controls.inc}
-{$UNDEF IMPLEMENTATION}
 
 { TP3DShaderPreview }
 
@@ -546,5 +523,5 @@ begin
   inherited Destroy;
 end;
 
-end.
+{$ENDIF}
 

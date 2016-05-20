@@ -1,11 +1,7 @@
-unit p3dgui_forms;
+//p3dgui_forms.inc
+//part of p3dgui.pas
 
-{$mode objfpc}{$H+}
-
-interface
-
-uses
-  Classes, SysUtils, p3dMath, p3dgui, p3dgui_stdctrls, p3devents;
+{$IFDEF INTERFACE}
 
 type
 
@@ -21,7 +17,9 @@ type
 
   end;
 
-implementation
+{$ENDIF}
+
+{$IFDEF IMPLEMENTATION}
 
 { TP3DForm }
 
@@ -46,5 +44,5 @@ begin
     end;
 end;
 
-end.
+{$ENDIF}
 

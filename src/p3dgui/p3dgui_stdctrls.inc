@@ -1,22 +1,7 @@
-unit p3dgui_stdctrls;
+//p3dgui_stdctrls.inc
+//part of p3dgui.pas
 
-{$mode objfpc}{$H+}
-
-interface
-
-uses
-  Classes,
-  SysUtils,
-  p3dgraphics,
-  math,
-  p3dMath,
-  p3devents,
-  p3dgui,
-  p3dgui_buttons;
-
-type
-
-  { TP3DFocusControl }
+{$IFDEF INTERFACE}
 
   { TP3DEdit }
 
@@ -42,8 +27,7 @@ type
       procedure Insert( S: String );
 
     public
-      constructor Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-         const AParent: TP3DGraphicControl = nil );
+      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
       procedure Draw(); override;
       procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
       procedure MouseMove( X, Y: Integer ); override;
@@ -75,7 +59,7 @@ type
       procedure Resize;
 
     public
-      constructor Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager; const AParent: TP3DGraphicControl = nil );
+      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -102,8 +86,7 @@ type
       procedure SetCaption(AValue: String);
 
     public
-      constructor Create( AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-         const AParent: TP3DGraphicControl = nil );
+      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
       procedure Draw(); override;
 
@@ -113,13 +96,13 @@ type
       property BorderColor: TVec4 read FBorderColor write FBorderColor;
   end;
 
-	{ TP3DValueEdit }
+  { TP3DCustomValueEdit }
 
   TP3DCustomValueEdit = class ( TP3DEdit )
-	  private
+    private
       FStep: Single;
       FTransmission: Single;
-    	FTyping: Boolean;
+      FTyping: Boolean;
       FCursorMoved: Boolean;
       FValueNameText: TP3DText;
       FValueText: TP3DText;
@@ -133,8 +116,7 @@ type
       function GetValueName: String; virtual;
 
     public
-      constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-        const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
       procedure Draw; override;
       procedure MouseMove(X, Y: Integer); override;
@@ -142,10 +124,10 @@ type
       procedure MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure KeyboardAction; override;
 
-	  published
-  	  property ValueName: String read GetValueName write SetValueName;
-	    property Value: Single read GetValue write SetValue;
-	    property Typing: Boolean read FTyping write SetTyping;
+    published
+      property ValueName: String read GetValueName write SetValueName;
+      property Value: Single read GetValue write SetValue;
+      property Typing: Boolean read FTyping write SetTyping;
       property Step: Single read FStep write FStep;
       property Transmission: Single read FTransmission write FTransmission;
 	end;
@@ -189,7 +171,50 @@ type
       function GetValueName: String; override;
   end;
 
-implementation
+  TP3DScrollBarKind = ( p3dsbHorizontal, p3dsbVertical );
+
+  { TP3DScrollBar }
+
+  TP3DScrollBar = class( TP3DGraphicControl )
+    private
+      FKind: TP3DScrollBarKind;
+      FMax: Float;
+      FMin: Float;
+      FOnChange: TNotifyEvent;
+      FPageSize: Float;
+      FPercentage: Float;
+      FPreset: TP3DButtonPreset;
+      function GetPosition: Float;
+      procedure SetKind(AValue: TP3DScrollBarKind);
+      procedure SetMax(AValue: Float);
+      procedure SetPageSize(AValue: Float);
+      procedure SetPercentage(AValue: Float);
+      procedure SetPosition(AValue: Float);
+
+    public
+      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      destructor Destroy; override;
+
+      procedure Draw; override;
+      procedure Realign; override;
+      procedure SetAlign(const Value: TP3DControlAlign); override;
+
+      procedure MouseMove(X, Y: Integer); override;
+
+    published
+      property Kind: TP3DScrollBarKind read FKind write SetKind;
+      property Percentage: Float read FPercentage write SetPercentage;
+      property PageSize: Float read FPageSize write SetPageSize;
+      property OnChange: TNotifyEvent read FOnChange write FOnChange;
+      property Position: Float read GetPosition write SetPosition;
+      property Min: Float read FMin write FMin;
+      property Max: Float read FMax write SetMax;
+      property Preset: TP3DButtonPreset read FPreset write FPreset;
+  end;
+
+{$ENDIF}
+
+{$IFDEF IMPLEMENTATION}
 
 { TP3DEventValueEdit }
 
@@ -282,8 +307,8 @@ begin
   FValueNameText:= p3dTextSimple( AValue + ':', P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
-constructor TP3DCustomValueEdit.Create(AOwner: TP3DObjectList;
-  AManager: TP3DGUIManager; const AParent: TP3DGraphicControl);
+constructor TP3DCustomValueEdit.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
 begin
   inherited;
   ValueName:= GetValueName;//Self.Name;
@@ -414,10 +439,10 @@ begin
   Canvas.RenderText( FCaptionTxt, P );
 end;
 
-constructor TP3DLabel.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
+constructor TP3DLabel.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AManager, AParent );
+  inherited Create( AOwner, AParent );
   Font:= TP3DCanvasFont.Create;
   Font.Color:= vec4( vec3( 0 ), 1 );
   Caption:= Name;
@@ -441,7 +466,7 @@ begin
   FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
-constructor TP3DGroupBox.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
+constructor TP3DGroupBox.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
   inherited;
@@ -449,10 +474,7 @@ begin
   Caption:= Name;
   Color:= vec4( 1 );
   BorderColor:= vec4( 0, 0, 0, 1 );
-  BoundsLeft:= 15;
-  BoundsTop:= 25;
-  BoundsBottom:= 15;
-  BoundsRight:= 15;
+  Bounds:= P3DRect( 15, 25, 15, 15 );
 end;
 
 destructor TP3DGroupBox.Destroy;
@@ -568,7 +590,7 @@ begin
   Sel2:= Sel1;
 end;
 
-constructor TP3DEdit.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
+constructor TP3DEdit.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
   inherited;
@@ -696,5 +718,130 @@ begin
     end;
 end;
 
-end.
+{ TP3DScrollBar }
+
+function TP3DScrollBar.GetPosition: Float;
+begin
+  Result:= Percentage * ( Max - Min ) + Min;
+end;
+
+procedure TP3DScrollBar.SetKind(AValue: TP3DScrollBarKind);
+begin
+  if ( FKind = AValue ) then
+    exit;
+
+  FKind:= AValue;
+end;
+
+procedure TP3DScrollBar.SetMax(AValue: Float);
+begin
+  if FMax=AValue then Exit;
+  FMax:= Math.Max( 0.0001, AValue );
+end;
+
+procedure TP3DScrollBar.SetPageSize(AValue: Float);
+begin
+  FPageSize:= Math.Min( 1.0, Math.Max( 0.0001, AValue ));
+end;
+
+procedure TP3DScrollBar.SetPercentage(AValue: Float);
+begin
+  if ( PageSize = 1.0 ) then
+    FPercentage:= 0.0
+  else
+    FPercentage:= Math.Min( 1.0, Math.Max( 0.0, AValue ));
+  if ( Assigned( FOnChange )) then
+    OnChange( Self );
+end;
+
+procedure TP3DScrollBar.SetPosition(AValue: Float);
+begin
+  Percentage:= ( AValue - Min ) / Max;
+end;
+
+constructor TP3DScrollBar.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited;
+  Preset:= TP3DButtonPreset.Create;
+  Preset.Color:= vec4( 165/255, 165/255, 237/255, 1 );
+  Preset.OutlineColor:= vec4( vec3( 0.2 ), 0.5 );
+  Preset.FontColor:= vec4( vec3( 0 ), 0.3 );
+
+  PageSize:= 0.5;
+  Percentage:= 0.0;
+  Kind:= p3dsbVertical;
+  FMax:= 1.0;
+  FMin:= 0.0;
+end;
+
+destructor TP3DScrollBar.Destroy;
+begin
+  Preset.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DScrollBar.Draw;
+var
+  off, tp: Single;
+begin
+  inherited Draw;
+  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ), Preset.Color );
+  case Kind of
+    p3dsbHorizontal:
+      begin
+        off:= Math.Max( Height, Width * PageSize );
+        tp:= ( Width - off ) * Percentage;
+        Canvas.RenderRect( vec2( tp, 0 ), vec2( tp + off, Height ), Preset.FontColor );
+      end;
+    p3dsbVertical:
+      begin
+        off:= Math.Max( Width, Height * PageSize );
+        tp:= ( Height - off ) * Percentage;
+        Canvas.RenderRect( vec2( 0, tp ), vec2( Width, tp + off ), Preset.FontColor );
+      end;
+  end;
+end;
+
+procedure TP3DScrollBar.Realign;
+begin
+  inherited;
+end;
+
+procedure TP3DScrollBar.SetAlign(const Value: TP3DControlAlign);
+begin
+  inherited SetAlign(Value);
+  case ( Align ) of
+    alNone, alClient:;
+    alLeft, alRight: Kind:= p3dsbVertical;
+    alTop, alBottom: Kind:= p3dsbHorizontal;
+  end;
+end;
+
+
+procedure TP3DScrollBar.MouseMove(X, Y: Integer);
+var
+  off, tp: Single;
+begin
+  inherited MouseMove(X, Y);
+  if ( gcisMouseBtn1Down in InputState ) then
+    case Kind of
+      p3dsbHorizontal:
+        begin
+          off:= Math.Max( Height, Width * PageSize );
+          tp:= ( Width - off );
+          if ( tp > 0 ) then
+            Percentage:= ( X - off / 2 ) / tp;
+        end;
+      p3dsbVertical:
+        begin
+          off:= Math.Max( Width, Height * PageSize );
+          tp:= ( Height - off );
+          if ( tp > 0 ) then
+            Percentage:= ( Y - off / 2 ) / tp;
+        end;
+    end;
+end;
+
+{$ENDIF}
 

@@ -1,12 +1,7 @@
-unit p3dgui_buttons;
+//p3dgui_buttons.inc
+//part of p3dgui.pas
 
-interface
-  uses
-    p3dgui,
-    p3dgraphics,
-    p3dMath,
-    p3devents,
-    Types;
+{$IFDEF INTERFACE}
 
   type
 
@@ -57,8 +52,7 @@ interface
         procedure SetCaption( AValue: String ); virtual;
 
       public
-        constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
-          const AParent: TP3DGraphicControl=nil);
+        constructor Create(AOwner: TP3DObjectList; const AParent: TP3DGraphicControl=nil);
         destructor Destroy; override;
 
         procedure Draw; override;
@@ -77,7 +71,10 @@ interface
         property TextHeight: Single read GetTextHeight;
     end;
 
-implementation
+
+{$ENDIF}
+
+{$IFDEF IMPLEMENTATION}
 
 { TP3DButtonPreset }
 
@@ -136,22 +133,25 @@ begin
       Canvas.RenderLineRect( vec2( 4 ), vec2( Width, Height ) - 4, clf, clf, clf, clf );
     end;
 
-  case HAlignment of
-    haLeft: P.x:= 0;
-    haRight: P.x:= Width - FCaptionTxt.Width;
-    haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
-  end;
-  case VAlignment of
-    vaTop: P.y:= 0;
-    vaBottom: P.y:= Height - FCaptionTxt.Height;
-    vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
-  end;
+  if ( Assigned( FCaptionTxt )) then
+    begin
+      case HAlignment of
+        haLeft: P.x:= 0;
+        haRight: P.x:= Width - FCaptionTxt.Width;
+        haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
+      end;
+      case VAlignment of
+        vaTop: P.y:= 0;
+        vaBottom: P.y:= Height - FCaptionTxt.Height;
+        vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
+      end;
 
-  Canvas.RenderText( FCaptionTxt, P );
-  Canvas.Font.Color:= Preset.FontColor;
-  Canvas.Font.Size:= Font.Size;
-  Canvas.Font.Name:= Font.Name;
-  Canvas.RenderText( FCaptionTxt, P );
+      Canvas.RenderText( FCaptionTxt, P );
+      Canvas.Font.Color:= Preset.FontColor;
+      Canvas.Font.Size:= Font.Size;
+      Canvas.Font.Name:= Font.Name;
+      Canvas.RenderText( FCaptionTxt, P );
+    end;
 end;
 
 procedure TP3DButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -167,10 +167,10 @@ begin
 end;
 
 
-constructor TP3DButton.Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager;
+constructor TP3DButton.Create(AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AManager, AParent );
+  inherited Create( AOwner, AParent );
   PresetDown:= TP3DButtonPreset.Create;
   PresetHover:= TP3DButtonPreset.Create;
   PresetNormal:= TP3DButtonPreset.Create;
@@ -198,8 +198,6 @@ begin
 end;
 
 
-initialization
-  //Rev_RegisterClass( TRevButton );
 
-end.
+{$ENDIF}
  

@@ -365,13 +365,16 @@ begin
 end;
 }
 
-procedure TP3DShaderNodeLibrary.LoadLibraryPath(PathName: String; const Ext: String );
+procedure TP3DShaderNodeLibrary.LoadLibraryPath( PathName: String; const Ext: String );
 var
   Files: TStringList;
   line: String;
+  Path: String;
 begin
-  PathName:= IncludeTrailingPathDelimiter( PathName );
-  Files:= P3DListFolderFiles( PathName + Ext, True, True );
+  Path:= IncludeTrailingPathDelimiter( P3DSearchPaths.Shaders.FindFileEx( PathName, GetCurrentDir()));
+  if ( Path = DirectorySeparator ) then
+    raise Exception.Create( Format( 'Could not load shader library from path. The specified path "%s" was not found', [ PathName ]));
+  Files:= P3DListFolderFiles( Path + Ext, True, True );
   for line in Files do
     LoadLibrary( line );
 end;
