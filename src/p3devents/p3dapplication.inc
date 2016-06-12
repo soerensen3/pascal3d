@@ -46,6 +46,7 @@ type
 
     public
       constructor Create;
+      destructor Destroy; override;
 
       procedure InitSDL;
       procedure HandleEvents_SDL;
@@ -90,6 +91,12 @@ constructor TP3DApplication.Create;
 begin
   inherited;
   MainWindow:= nil;
+end;
+
+destructor TP3DApplication.Destroy;
+begin
+  SDL_Quit();
+  inherited Destroy;
 end;
 
 procedure TP3DApplication.InitSDL;
@@ -207,7 +214,7 @@ begin
             SDL_WINDOWEVENT_SIZE_CHANGED:
               with ( TP3DWindow( wnd )) do
                 begin
-                  TP3DWindow( wnd ).UpdateViewport;
+                  TP3DWindow( wnd ).ResizeViewport( event.window.data1, event.window.data2 );
                   if ( Assigned( OnResize )) then
                     OnResize( TP3DWindow( wnd ));
                 end;

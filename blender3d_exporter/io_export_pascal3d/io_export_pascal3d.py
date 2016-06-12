@@ -20,7 +20,7 @@ PathModes = (
     ('0', 'Absolute Paths', ''),
     ('1', 'Relative Paths', ''),
     ('2', 'Filenames only', ''),
-    )    
+    )
 
 ## P3DXMLFile ------------------------------------------------------------------
 
@@ -81,6 +81,10 @@ class P3DBinaryFile:
   def writevec( self, vec ):
     bin = struct.pack( 'f' * len( vec ), *vec)
     self.file.write( bin )
+    
+  def writeint( self, i ):
+    bin = struct.pack( 'i', i )
+    self.file.write( bin )      
 
 
 class P3DExporter( bpy.types.Operator ):
@@ -176,6 +180,8 @@ class P3DExporter( bpy.types.Operator ):
       self.report({ 'INFO' }, 'Exporting scene ' + scene.name )
     el = self.file.push( 'scene' )
     el.attrib[ 'name' ] = scene.name
+    if ( not ( scene.camera is None )):
+      el.attrib[ 'camera' ] = scene.camera.name
     for obj in scene.objects:
       self.ExportObject( obj )
     self.file.pop()
@@ -246,6 +252,15 @@ class P3DExporter( bpy.types.Operator ):
       for uvloop in uv.data:
         totno += 1  
         file.writevec([ uvloop.uv[ 0 ], 1 - uvloop.uv[ 1 ]])
+    if ( totno == 0 ):
+        return 0, 0
+    return len( file.mesh.uv_layers ), int( totno / len( file.mesh.uv_layers ))
+    
+  def ExportLoops( self, file ):
+    totno = 0
+    for loop in file.mesh.loops:
+      totno += 1  
+      file.writeint( loop.vertex_index )
     return totno
 
   def ExportFaces( self, file ):
@@ -254,37 +269,14 @@ class P3DExporter( bpy.types.Operator ):
     materials[ 0 ] = {}
     materials[ 0 ][ 'start' ] = 0
     
-    for polygon in file.mesh.polygons:
-      v_idx = 0
-      
+    for polygon in file.mesh.polygons: 
       if not ( polygon.material_index == cur_matidx ):
         materials[ cur_matidx ][ 'end' ] = polygon.index - 1
         cur_matidx = polygon.material_index
         materials[ cur_matidx ] = { 'start' : polygon.index }
-
-      bin = struct.pack( '2i', int( len( polygon.vertices )), int( len( file.mesh.uv_layers )))
+      
+      bin = struct.pack( 'i', polygon.loop_start )
       file.file.write( bin )
-
-
-      for vertex in polygon.vertices:
-        if ( len( file.LoopVertex )):
-          tangent = file.LoopVertex[ vertex ]
-        else:
-          tangent = -1
-
-        bin = struct.pack( 'i', vertex )
-        file.file.write( bin )
-        bin = struct.pack( 'i', vertex )
-        file.file.write( bin )
-        bin = struct.pack( 'i', tangent )
-        file.file.write( bin )  
-        bin = struct.pack( 'i', tangent )
-        file.file.write( bin )
-        for uv in file.mesh.uv_layers:
-          uv_idx = v_idx + polygon.loop_start
-          bin = struct.pack( 'i', uv_idx )
-          file.file.write( bin )
-          v_idx += 1
 
     materials[ cur_matidx ][ 'end' ] = polygon.index
     return len( file.mesh.polygons ), materials
@@ -310,13 +302,15 @@ class P3DExporter( bpy.types.Operator ):
 
   
     el.attrib[ 'binary' ] = self.ExportPath( file.fname )
+    
     el.attrib[ 'vertices' ] = self.ExportVertices( file )
-
     el.attrib[ 'normals' ] = self.ExportNormals( file )
+    el.attrib[ 'loops' ] = self.ExportLoops( file )
 
-    n = self.ExportUVs( file )
-    if ( n > 0 ):
+    nl, n = self.ExportUVs( file )
+    if ( nl > 0 ):
       el.attrib[ 'texcoords' ] = str( n )
+      el.attrib[ 'texlayers' ] = str( nl )
       el.attrib[ 'tangents' ] = self.ExportTangents( file )
       el.attrib[ 'cotangents' ] = self.ExportCotangents( file )
 

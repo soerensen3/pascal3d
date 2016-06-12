@@ -70,6 +70,16 @@ type
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+procedure InitDefaultMat;
+begin
+  if ( not Assigned( P3DCanvasMaterialDefault )) then
+    begin
+      P3DCanvasMaterialDefault:= TP3DMaterialBase.Create();
+      P3DCanvasMaterialDefault.Unlit:= True;
+    end;
+end;
+
 { TP3DPen }
 
 procedure TP3DPen.SetWidth(AValue: Single);
@@ -143,9 +153,9 @@ end;
 constructor TP3DCanvasFont.Create;
 begin
   inherited;
-  Size:= 16;
+  Size:= 12;
   Color:= vec4( 0, 0, 0, 1 );
-  Name:= 'DejaVuSans';
+  Name:= 'RobotoCondensed-Light';
 end;
 
 
@@ -218,12 +228,13 @@ begin
   FLockID:= -1;
   FScreenColor:= vec4( 1 );
   FOwner:= AOwner;
-  FMaterial:= TP3DMaterialBase.Create();
+  if ( not Assigned( P3DCanvasMaterialDefault )) then
+    InitDefaultMat;
+  FMaterial:= P3DCanvasMaterialDefault;
 end;
 
 destructor TP3DCanvas.Destroy;
 begin
-  FMaterial.Free;
   FFont.Free;
   inherited Destroy;
 end;

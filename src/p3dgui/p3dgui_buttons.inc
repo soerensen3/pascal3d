@@ -38,6 +38,7 @@
         FFont: TP3DCanvasFont;
         FHAlignment: THorizontalAlignment;
         FVAlignment: TVerticalAlignment;
+
         function GetTextHeight: Single;
         function GetTextWidth: Single;
 
@@ -100,8 +101,12 @@ begin
   if FCaption=AValue then Exit;
 
   FCaption:=AValue;
-  FCaptionTxt.Free;
-  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
+  if ( Assigned( FCaptionTxt )) then
+    FCaptionTxt.Free;
+  if ( AValue > '' ) then
+    FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ])
+  else
+    FCaptionTxt:= p3dTextSimple( ' ', P3DFontManager[ Font.Name, Font.Size ])
 end;
 
 

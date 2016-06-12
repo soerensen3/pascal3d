@@ -47,7 +47,7 @@
         <PackageName Value="pascal3d"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="9">
       <Unit0>
         <Filename Value="p3dscene.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -68,6 +68,22 @@
         <Filename Value="inputscene.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="p3dscene_sceneviewer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="p3dscene_dataviewer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="p3dscene_assetviewer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="p3dscene_objectinspector.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

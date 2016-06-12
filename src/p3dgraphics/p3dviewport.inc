@@ -13,7 +13,6 @@
 
   TP3DViewportStack = class
     private
-      FWndHeight: Integer;
       VPs: array of TP3DViewport;
       function GetCount: Integer;
       function GetVP( Index: Integer ): TP3DViewport;
@@ -33,6 +32,7 @@
   end;
 
 function P3DViewport( Left, Top, Width, Height: Integer ): TP3DViewport; inline;
+function P3DViewportClipMatrix( X, Y, Width, Height: Float ; VP: TP3DViewport): TMat4;
 
 
 {$ENDIF}
@@ -54,13 +54,14 @@ end;
 procedure TP3DViewportStack.SetVP( Index: Integer ; AValue: TP3DViewport);
 begin
   VPs[ Index ]:= AValue;
+  if ( Index = Count - 1 ) then
+    ApplyVP( AValue );
 end;
 
 procedure TP3DViewportStack.ApplyVP(VP: TP3DViewport);
 begin
   if ( Count > 0 ) then
     glViewport( VP.Left, VPs[ 0 ].Height-VP.Top-VP.Height, VP.Width, VP.Height ); cle( Self );
-  //Setup2D( VP.Left, VP.Top, VP.Width, VP.Height );
 end;
 
 function TP3DViewportStack.Push(Left, Top, Width, Height: Integer): Integer;
@@ -96,8 +97,8 @@ begin
       if ( Count > 1 ) then
         begin
           SetLength( VPs, Count - 1 );
-          ApplyVP( Peek );
         end;
+      ApplyVP( Peek );
     end;
 end;
 
@@ -124,6 +125,18 @@ begin
   Result.Top:= Top;
   Result.Width:= Width;
   Result.Height:= Height;
+end;
+
+function P3DViewportClipMatrix( X, Y, Width, Height: Float ; VP: TP3DViewport): TMat4;
+var
+  t, s: TVec2;
+begin
+  s:= vec2( VP.Width / Width, VP.Height / Height );
+  t:= vec2(( VP.Width + 2 * ( VP.Left - X )) / Width ,
+           ( VP.Height + 2 * ( VP.Top - Y )) / Height );
+  Result:= mat4( mat2scale( s ));
+  Result._30:= t.x;
+  Result._31:= t.y;
 end;
 
 {$ENDIF}

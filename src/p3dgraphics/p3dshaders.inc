@@ -267,7 +267,7 @@ begin
   Addr:= AAddr;
 end;
 
-function LoadShaderToText(FName: String; const do_replace: Boolean = True ): String;
+function LoadShaderToText( var FName: String; const do_replace: Boolean = True ): String;
 var
   F: TStringList;
   FileName: String;
@@ -319,6 +319,7 @@ begin
       Result:= F.Text;
 
       F.Free;
+      FName:= FileName;
     end
   else
     P3DLog.LogException( Nil, 'Error: Shader source does not exist: "' + FName + '"' );
@@ -819,18 +820,21 @@ end;
 procedure TP3DShader.Reload;
 var
   Changed: Boolean;
+  FileName: String;
 begin
   inherited Reload;
   Changed:= False;
   if ( Assigned( VShaderWatch ) and VShaderWatch.CheckForChange ) then
     begin
       Changed:= True;
-      VShader:= LoadShaderToText( VShaderWatch.FileName );
+      FileName:= VShaderWatch.FileName;
+      VShader:= LoadShaderToText( FileName );
     end;
   if ( Assigned( FShaderWatch ) and FShaderWatch.CheckForChange ) then
     begin
       Changed:= True;
-      FShader:= LoadShaderToText( FShaderWatch.FileName );
+      FileName:= FShaderWatch.FileName;
+      FShader:= LoadShaderToText( FileName );
     end;
   if ( Changed ) then
     LinkProgram;

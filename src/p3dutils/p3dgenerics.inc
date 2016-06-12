@@ -4,20 +4,21 @@
 {$IFDEF INTERFACE}
 
   type
-    generic IP3DEnumerator < TCustomItem: TObject >  = interface
+    generic IP3DEnumeratorClass < TCustomItem: TObject >  = interface
       ['{B873CDC1-491F-4F62-A1F8-CED1C13426C4}']
       function GetCurrent: TCustomItem;
       function MoveNext: Boolean;
       procedure Reset;
       property Current: TCustomItem read GetCurrent;
     end;
-    generic IP3DEnumerable < TCustomItem: TObject >  = interface
+    generic IP3DEnumerableClass < TCustomItem: TObject >  = interface
       ['{A8D955A0-E3A9-4BF5-8CDF-8A21AB3E2A06}']
-      function GetEnumerator: specialize IP3DEnumerator < TCustomItem >;
+      function GetEnumerator: specialize IP3DEnumeratorClass < TCustomItem >;
     end;
 
-     { gP3DCustomListEnumerator }
-     generic gP3DCustomListEnumerator < TCustomItem: TObject > = class ( TInterfacedPersistent, specialize IP3DEnumerator < TCustomItem >)
+     { gP3DCustomListEnumeratorClass }
+     generic gP3DCustomListEnumeratorClass < TCustomItem: TObject >
+       = class ( TInterfacedPersistent, specialize IP3DEnumeratorClass < TCustomItem >)
        private type
          TMoveNext = function ( var Index: Integer ): TCustomItem of object;
 
@@ -25,21 +26,25 @@
          FCurrent: TCustomItem;
          FCurrentIdx: Integer;
          FMoveNext: TMoveNext;
+
          function GetCurrent(): TCustomItem;
          procedure Reset();
 
        public
          constructor Create( AMoveNext: TMoveNext );
+
          function MoveNext: Boolean;
+
          property Current: TCustomItem read GetCurrent;
          property CurrentIdx: Integer read FCurrentIdx;
      end;
 
     { gP3DCustomObjectList }
 
-    generic gP3DCustomObjectList <TCustomItem: TObject> = class ( TInterfacedPersistent, specialize IP3DEnumerable < TCustomItem > )
+    generic gP3DCustomObjectList <TCustomItem: TObject>
+    = class ( TInterfacedPersistent, specialize IP3DEnumerableClass < TCustomItem > )
       type
-        TP3DCustomObjectListEnumerator = specialize gP3DCustomListEnumerator < TCustomItem >;
+        TP3DCustomObjectListEnumeratorClass = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
 
       private
         FItems: TList;
@@ -57,7 +62,7 @@
         procedure Delete( Index: Integer ); virtual;
         function IndexOf( Item: TCustomItem ): Integer; virtual;
         procedure Clear( const FreeObjects: Boolean = False ); virtual;
-        function GetEnumerator: specialize IP3DEnumerator < TCustomItem >;
+        function GetEnumerator: specialize IP3DEnumeratorClass < TCustomItem >;
         //IP3DEnumerator.GetEnumerator = GetEnumerator;
         procedure Insert( Index: Integer; Item: TCustomItem );
 
@@ -66,6 +71,89 @@
 
       published
         property Count: Integer read GetCount write SetCount;
+    end;
+
+    generic IP3DEnumerator < TCustomItem >  = interface
+      ['{117ADC07-FB5D-4F8A-B1E2-B16912EFED68}']
+      function GetCurrent: TCustomItem;
+      function MoveNext: Boolean;
+      procedure Reset;
+      property Current: TCustomItem read GetCurrent;
+    end;
+
+    generic IP3DEnumerable < TCustomItem >  = interface
+      ['{68F68805-65E7-4C7C-8662-9D4C54FE34D3}']
+      function GetEnumerator: specialize IP3DEnumerator < TCustomItem >;
+    end;
+
+    { gP3DCustomListEnumerator }
+    generic gP3DCustomListEnumerator < TCustomItem >
+      = class ( TInterfacedPersistent, specialize IP3DEnumerator < TCustomItem >)
+      private type
+        TMoveNext = function ( var Index: Integer; var Value: TCustomItem ): Boolean of object;
+
+      private
+        FCurrent: TCustomItem;
+        FCurrentIdx: Integer;
+        FMoveNext: TMoveNext;
+
+        function GetCurrent(): TCustomItem;
+        procedure Reset();
+
+      public
+        constructor Create( AMoveNext: TMoveNext );
+
+        function MoveNext: Boolean;
+
+        property Current: TCustomItem read GetCurrent;
+        property CurrentIdx: Integer read FCurrentIdx;
+    end;
+
+    generic gP3DCustomList <TCustomItem>
+    = class ( TInterfacedPersistent, specialize IP3DEnumerable < TCustomItem > )
+      private type
+        TItemArray = array [ 0..( MAXINT shr 8 )] of TCustomItem;
+        pItemArray = ^TItemArray;
+        TP3DCustomListEnumerator = specialize gP3DCustomListEnumerator < TCustomItem >;
+        TItemList = specialize gP3DCustomList <TCustomItem>;
+
+      private
+        FItems: pItemArray;
+        FCount: Integer;
+        FCapacity: Integer;
+        FGrowth: Integer;
+        FSizeLimit: Integer;
+
+        function GetItem( Index: Integer ): TCustomItem;
+        procedure SetCapacity( const Value: Integer );
+        procedure SetCount( AValue: Integer );
+        procedure SetGrowth( const Value: Integer );
+        procedure SetItem( Index: Integer; const Value: TCustomItem );
+        procedure Grow;
+        procedure Shrink;
+        function MoveNext( var Index: Integer; var Value: TCustomItem ): Boolean;
+
+      protected
+        function GetItemSize: Integer;
+
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        function Add( Item: TCustomItem ): Integer; overload;
+        function AddArray(Items: array of TCustomItem): Integer; overload;
+        procedure Delete( Index: Integer ); overload;
+        procedure Clear;
+        function PtrTo( Index: Integer ): Pointer;
+        function Ptr: Pointer;
+        procedure AssignTo( Dest: TItemList );
+        function GetEnumerator(): specialize IP3DEnumerator < TCustomItem >;
+
+        property Items[ Index: Integer ]: TCustomItem read GetItem write SetItem; default;
+        property Count: Integer read FCount write SetCount;
+        property Capacity: Integer read FCapacity write SetCapacity;
+        property Growth: Integer read FGrowth write SetGrowth;
+        property SizeLimit: Integer read FSizeLimit;
     end;
 
 {$ENDIF}
@@ -146,9 +234,9 @@ begin
     OnChange( Self );
 end;
 
-function gP3DCustomObjectList.GetEnumerator: specialize IP3DEnumerator < TCustomItem >;
+function gP3DCustomObjectList.GetEnumerator: specialize IP3DEnumeratorClass < TCustomItem >;
 begin
-  Result:= TP3DCustomObjectListEnumerator.Create( @MoveNext );
+  Result:= TP3DCustomObjectListEnumeratorClass.Create( @MoveNext );
 end;
 
 function gP3DCustomObjectList.MoveNext( var Index: Integer ): TCustomItem;
@@ -161,7 +249,171 @@ begin
 end;
 
 
-{ TCustomListEnumerator }
+{ gP3DCustomListEnumeratorClass }
+
+function gP3DCustomListEnumeratorClass.GetCurrent: TCustomItem;
+begin
+  Result:= FCurrent;
+end;
+
+procedure gP3DCustomListEnumeratorClass.Reset;
+begin
+  FCurrent:= nil;
+  FCurrentIdx:= -1;
+end;
+
+constructor gP3DCustomListEnumeratorClass.Create( AMoveNext: TMoveNext );
+begin
+  inherited Create;
+  FCurrentIdx:= -1;
+  FCurrent:= nil;
+  FMoveNext:= AMoveNext;
+end;
+
+function gP3DCustomListEnumeratorClass.MoveNext: Boolean;
+begin
+  FCurrent:= FMoveNext( FCurrentIdx );
+  Result:= FCurrent <> nil; //Assigned( FCurrent );
+end;
+
+{ gP3DCustomList }
+
+function gP3DCustomList.Add( Item: TCustomItem ): Integer;
+begin
+  if ( FCount = FCapacity ) then
+    Grow;
+
+  FItems^[ FCount ]:= Item;
+  Result:= FCount;
+
+  Inc( FCount );
+end;
+
+function gP3DCustomList.AddArray( Items: array of TCustomItem ): Integer;
+var
+  i: Integer;
+begin
+  Result:= Count;
+  for i:= Low( Items ) to High( Items ) do
+    Add( Items[ I ]);
+end;
+
+procedure gP3DCustomList.AssignTo( Dest: gP3DCustomList );
+begin
+  Dest.Count:= Count;
+  Move( FItems^, Dest.FItems^, SizeOf( TCustomItem ) * Count );
+end;
+
+function gP3DCustomList.GetEnumerator: specialize IP3DEnumerator < TCustomItem >;
+begin
+  Result:= TP3DCustomListEnumerator.Create( @MoveNext );
+end;
+
+procedure gP3DCustomList.Clear;
+begin
+  FreeMem( FItems );
+  FCount:= 0;
+  FCapacity:= 0;
+  FItems:= nil;
+end;
+
+constructor gP3DCustomList.Create;
+begin
+  inherited;
+  FItems:= nil;
+  FCount:= 0;
+  FCapacity:= 0;
+  FGrowth:= 256;
+  FSizeLimit:= SizeOf( TItemArray ) div SizeOf( TCustomItem );
+end;
+
+procedure gP3DCustomList.Delete( Index: Integer );
+var
+  i: Integer;
+begin
+  for i:= Index to Count - 2 do
+    FItems[ i ]:= FItems[ i + 1 ];
+  FCount:= FCount - 1;
+end;
+
+destructor gP3DCustomList.Destroy;
+begin
+  FreeMem( FItems);
+  inherited;
+end;
+
+function gP3DCustomList.GetItem( Index: Integer ): TCustomItem;
+begin
+  if (( Index >= 0 ) and ( Index < FCount )) then
+    Result:= FItems^[ Index ];
+end;
+
+procedure gP3DCustomList.Grow;
+begin
+  FCapacity:= FCapacity + FGrowth;
+  ReallocMem( FItems, FCapacity * SizeOf( TCustomItem ));
+end;
+
+function gP3DCustomList.PtrTo(Index: Integer): Pointer;
+begin
+  if ( Count > Index ) then
+    Result:= @FItems[ Index ]
+  else
+    Result:= nil;
+end;
+
+procedure gP3DCustomList.SetCount(AValue: Integer);
+begin
+  FCount:= AValue;
+  while ( FCapacity < FCount ) do
+    Grow;
+  while ( FCapacity > FCount + FGrowth ) do
+    Shrink;
+end;
+
+procedure gP3DCustomList.SetCapacity( const Value: Integer );
+begin
+  FCapacity:= Value;
+  if ( FCapacity < FCount ) then
+    FCapacity:= FCount;
+  ReallocMem( FItems, FCapacity * SizeOf( TCustomItem ));
+end;
+
+procedure gP3DCustomList.SetGrowth(const Value: Integer);
+begin
+  FGrowth:= Math.Max( 16, Value ); // Minimum Value 16
+end;
+
+procedure gP3DCustomList.SetItem( Index: Integer; const Value: TCustomItem );
+begin
+  FItems^[ Index ]:= Value;
+end;
+
+procedure gP3DCustomList.Shrink;
+begin
+  FCapacity:= Math.Max( 0, FCapacity - FGrowth );
+  ReallocMem( FItems, FCapacity * SizeOf( TCustomItem ));
+end;
+
+function gP3DCustomList.Ptr: Pointer;
+begin
+  Result:= FItems;
+end;
+
+function gP3DCustomList.GetItemSize: Integer;
+begin
+  Result:= SizeOf( TCustomItem );
+end;
+
+function gP3DCustomList.MoveNext( var Index: Integer; var Value: TCustomItem ): Boolean;
+begin
+  Inc( Index );
+  Result:= Index < Count;
+  if ( Result ) then
+    Value:= Items[ Index ];
+end;
+
+{ gP3DCustomListEnumerator }
 
 function gP3DCustomListEnumerator.GetCurrent: TCustomItem;
 begin
@@ -170,7 +422,6 @@ end;
 
 procedure gP3DCustomListEnumerator.Reset;
 begin
-  FCurrent:= nil;
   FCurrentIdx:= -1;
 end;
 
@@ -178,15 +429,14 @@ constructor gP3DCustomListEnumerator.Create( AMoveNext: TMoveNext );
 begin
   inherited Create;
   FCurrentIdx:= -1;
-  FCurrent:= nil;
   FMoveNext:= AMoveNext;
 end;
 
 function gP3DCustomListEnumerator.MoveNext: Boolean;
 begin
-  FCurrent:= FMoveNext( FCurrentIdx );
-  Result:= FCurrent <> nil; //Assigned( FCurrent );
+  Result:= FMoveNext( FCurrentIdx, FCurrent );
 end;
+
 
 
 {$ENDIF}

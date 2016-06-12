@@ -1,0 +1,127 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      type = "mesh"
+      name = "Circle.003"
+      data = "mesh_Circle.008">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.164580, 0.164580, 0.164580">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      name = "Circle.002"
+      data = "mesh_Circle.007">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.164580, 0.164580, 0.164580">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      name = "Circle.000"
+      data = "mesh_Circle.006">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.164580, 0.164580, 0.164580">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      name = "Circle.001"
+      data = "mesh_Circle.003">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.164580, 0.164580, 0.164580">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      name = "Sphere"
+      data = "mesh_Sphere.001">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.164580, 0.164580, 0.164580">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    normals = "64"
+    name = "mesh_Circle.008"
+    faces = "16"
+    vertices = "64"
+    binary = "EditorLamp.mesh_Circle.008.p3dmesh"
+    loops = "64">
+    <material
+      start = "0"
+      name = "material_Material.001"
+      end = "15">
+    </material>
+  </mesh>
+  <mesh
+    normals = "64"
+    name = "mesh_Circle.007"
+    faces = "16"
+    vertices = "64"
+    binary = "EditorLamp.mesh_Circle.007.p3dmesh"
+    loops = "64">
+    <material
+      start = "0"
+      name = "material_Material.001"
+      end = "15">
+    </material>
+  </mesh>
+  <mesh
+    normals = "64"
+    name = "mesh_Circle.006"
+    faces = "16"
+    vertices = "64"
+    binary = "EditorLamp.mesh_Circle.006.p3dmesh"
+    loops = "64">
+    <material
+      start = "0"
+      name = "material_Material.001"
+      end = "15">
+    </material>
+  </mesh>
+  <mesh
+    normals = "64"
+    name = "mesh_Circle.003"
+    faces = "16"
+    vertices = "64"
+    binary = "EditorLamp.mesh_Circle.003.p3dmesh"
+    loops = "64">
+    <material
+      start = "0"
+      name = "material_Material.001"
+      end = "15">
+    </material>
+  </mesh>
+  <mesh
+    normals = "146"
+    name = "mesh_Sphere.001"
+    faces = "160"
+    vertices = "146"
+    binary = "EditorLamp.mesh_Sphere.001.p3dmesh"
+    loops = "608">
+    <material
+      start = "0"
+      name = "material_Material.001"
+      end = "159">
+    </material>
+  </mesh>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    unlit = "yes"
+    name = "material_Material.001"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000">
+  </material>
+</p3dfile>

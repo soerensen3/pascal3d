@@ -38,6 +38,7 @@ type
       procedure Reload; virtual;
       function CalcBoundingBox(): TP3DBoundingBox; virtual;
       procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
+      function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; virtual;
 
       property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
       property Parent: TP3DData read FParent write FParent;
@@ -54,7 +55,7 @@ type
 
   generic gP3DCustomDatablockList <TCustomItem: TP3DDataBlock> = class ( TPersistent )
     type
-      TP3DCustomObjectListEnumerator = specialize gP3DCustomListEnumerator < TCustomItem >;
+      TP3DCustomObjectListEnumerator = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
     private
       FFreeChildrenOnDestroy: Boolean;
       FItems: TList;
@@ -348,6 +349,12 @@ end;
 procedure TP3DDataBlock.NotifyDeleteOfData( Sender: TP3DDataBlock );
 begin
   //Nothing to do
+end;
+
+function TP3DDataBlock.CastRay(Orig, Dir: TVec3; Actor: TP3DActor; out
+  HitPos: TVec3): Boolean;
+begin
+  Result:= False;
 end;
 
 operator=(A, B: TP3DBoundingBox): Boolean;

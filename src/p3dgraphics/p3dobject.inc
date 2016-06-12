@@ -16,12 +16,23 @@
     end;
 
 
-    TP3DObject = class( TPersistent )
+    { IP3DObject }
+
+    IP3DObject = interface
+      ['{713A3737-F83B-4AE6-8C04-E3A88FE26FC5}']
+      function GetName: TComponentName;
+      procedure SetName( NewName: TComponentName);
+
+      property Name: TComponentName read GetName write SetName;
+    end;
+
+    TP3DObject = class( TInterfacedPersistent, IP3DObject )
       private
         FName: TComponentName;
         FParentList: TP3DObjectList;
 
-        procedure SetName( const NewName: TComponentName );
+        function GetName: TComponentName;
+        procedure SetName( NewName: TComponentName );
 
       public
         constructor Create( const AParentList: TP3DObjectList = nil );
@@ -75,7 +86,12 @@ end;
 
 { TP3DObject }
 
-procedure TP3DObject.SetName(const NewName: TComponentName);
+function TP3DObject.GetName: TComponentName;
+begin
+  Result:= FName;
+end;
+
+procedure TP3DObject.SetName(NewName: TComponentName);
 begin
   if ( Name = NewName ) then
     exit;

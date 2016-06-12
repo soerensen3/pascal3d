@@ -71,8 +71,9 @@
     published
       property VecEdit: TP3DNodeSocketVectorEdit read FVecEdit write FVecEdit;
       procedure Draw; override;
+
       constructor Create(AOwner: TP3DObjectList; AManager: TP3DGUIManager; ASocket: TP3DNodeSocket; ADirection: TP3DNodeSocketDirection; const AParent: TP3DGraphicControl);
-	end;
+    end;
 
 {$ENDIF}
 

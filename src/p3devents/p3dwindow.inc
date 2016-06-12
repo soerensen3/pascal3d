@@ -28,7 +28,7 @@ type
   TP3DWindowEventMouseWheel  = procedure( Sender: TP3DWindow; Event: TSDL_MouseWheelEvent );
 
   TP3DWindow = class
-    private
+    protected
       FFullScreen: Boolean;
       FOnClose: TP3DWindowEvent;
       FOnInput: TP3DWindowEvent;
@@ -55,9 +55,11 @@ type
       procedure SetTop(AValue: Integer);
       procedure SetVisible(AValue: Boolean);
       procedure SetWidth(AValue: Integer);
-      procedure UpdateViewport;
+      procedure ResizeViewport(AWidth, AHeight: Integer);
 
     public
+      destructor Destroy; override;
+
       procedure Render;
 
       constructor Create;
@@ -66,6 +68,7 @@ type
 
       procedure Show;
       procedure Hide;
+      procedure UpdateViewport;
 
       property OnRender: TP3DWindowEvent read fOnRender write fOnRender;
 
@@ -178,21 +181,34 @@ begin
   SDL_SetWindowSize( window, AValue, Width );
 end;
 
-procedure TP3DWindow.UpdateViewport;
+procedure TP3DWindow.ResizeViewport( AWidth, AHeight: Integer);
 begin
   if ( Assigned( P3DViewports )) then
     begin
       if ( P3DViewports.Count = 0 ) then
-        P3DViewports.Push( 0, 0, Width, Height )
+        P3DViewports.Push( 0, 0, AWidth, AHeight )
       else
-        P3DViewports[ 0 ]:= P3DViewport( 0, 0, Width, Height );
+        begin
+          P3DViewports[ 0 ]:= P3DViewport( 0, 0, AWidth, AHeight );
+        end;
     end;
+end;
+
+procedure TP3DWindow.UpdateViewport;
+begin
+  ResizeViewport( Width, Height );
+end;
+
+destructor TP3DWindow.Destroy;
+begin
+  SDL_DestroyWindow( Window );
+  inherited Destroy;
 end;
 
 
 procedure TP3DWindow.Render;
 begin
-  UpdateViewport; //TODO: REMOVE THIS
+  //UpdateViewport; //TODO: REMOVE THIS
   P3DApplication.ActiveWindow:= Self;
   if ( Assigned( OnRender )) then
     fOnRender( Self );

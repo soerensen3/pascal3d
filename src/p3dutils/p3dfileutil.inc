@@ -244,6 +244,7 @@ begin
   Path:= ExtractFilePath( Folder );
   Ext:= ExtractFilename( Folder );
   FindAllFiles( Result, Ext, Path, Recursive, Relative );
+  Result.Sort;
 end;
 
 function P3DListFolderDirectories( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
@@ -254,6 +255,7 @@ begin
   Result:= TStringList.Create;
   Path:= ExtractFilePath( Folder );
   FindAllDirectories( Result, Path, Recursive, Relative );
+  Result.Sort;
 end;
 
 procedure ReadGeneral( BaseNode: TDOMElement );
@@ -578,10 +580,16 @@ begin
           exit;
         end;
     end;
-  BasePath:= SearchPaths.BaseDir;
+  BasePath:= AppendPathDelim( SearchPaths.BaseDir );
+  FileName:= BasePath + FName;
+  if ( FileExists( FileName )) then
+    begin
+      Result:= FileName;
+      exit;
+    end;
   for i:= Count - 1 downto 0 do
     begin
-      FileName:= CleanAndExpandDirectory( AppendPathDelim( BasePath ) + Self[ i ]) + FName;
+      FileName:= CleanAndExpandDirectory( BasePath + Self[ i ]) + FName;
       if ( FileExists( FileName ) or DirectoryExists( FileName )) then
         begin
           Result:= FileName;

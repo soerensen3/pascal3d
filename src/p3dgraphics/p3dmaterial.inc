@@ -167,25 +167,27 @@ end;
 constructor TP3DMaterialMapBase.CreateFromDOM(AParentMaterial: TP3DMaterialBase;
   ADOMNode: TDOMElement; const AData: TP3DData);
 var
-  TexName: DOMString;
+  TexName, FullTexName: DOMString;
   n: LongInt;
   _Data: TP3DData;
 begin
   Create;
+
   TexName:= ADOMNode.GetAttribute( 'file' );
-  if ( not FileExists( TexName )) then
+  FullTexName:= P3DSearchPaths.Models.FindFileEx( TexName, GetCurrentDir );
+  if ( not FileExists( FullTexName )) then
     raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );
 
   if ( not Assigned( AData )) then
     _Data:= P3DData
   else
     _Data:= AData;
-  n:= _Data.Textures.FindByFileName( TexName );
+  n:= _Data.Textures.FindByFileName( FullTexName );
   if ( n >= 0 ) then
     Map:= _Data.Textures[ n ]
   else
     begin
-      Map:= TP3DTexture.Create( TexName, AData );
+      Map:= TP3DTexture.CreateFromDOM( ADOMNode, AData );
       _Data.Textures.Add( Map );
     end;
   DiffuseFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'diffuse' ), 0.0 );
@@ -343,6 +345,7 @@ begin
           //glEnable( GL_TEXTURE_2D ); cle( Self );
           glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
           glUniform1i( Shader.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
+          Maps[ i ].Map.UpdateFiltering;
         end;
     end;
 end;
@@ -440,7 +443,7 @@ var
 begin
   VShaderFile:= ADOMNode.GetAttribute( 'vshader' );
   FShaderFile:= ADOMNode.GetAttribute( 'fshader' );
-  Shader:= TP3DShader.CreateFromVertexAndFragmentShaderFile( VShaderFile, FShaderFile );
+  Shader:= TP3DShader.CreateFromVertexAndFragmentShaderFile( VShaderFile, FShaderFile, Parent );
 
   tex:= TDOMElement( ADOMNode.FirstChild );
   while Assigned( tex ) do

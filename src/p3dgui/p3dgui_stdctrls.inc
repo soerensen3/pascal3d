@@ -76,6 +76,7 @@
 
   TP3DGroupBox = class( TP3DGraphicControl )
     private
+      FAutoSize: Boolean;
       FBorderColor: TVec4;
       FCaption: String;
       FCaptionTxt: TP3DText;
@@ -83,7 +84,9 @@
       FFont: TP3DCanvasFont;
 
       class function IsFocusControl: Boolean; override;
+      procedure SetAutoSize(AValue: Boolean);
       procedure SetCaption(AValue: String);
+      procedure UpdateAutoSize;
 
     public
       constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
@@ -94,6 +97,7 @@
       property Font: TP3DCanvasFont read FFont write FFont;
       property Color: TVec4 read FColor write FColor;
       property BorderColor: TVec4 read FBorderColor write FBorderColor;
+      property AutoSize: Boolean read FAutoSize write SetAutoSize;
   end;
 
   { TP3DCustomValueEdit }
@@ -106,6 +110,7 @@
       FCursorMoved: Boolean;
       FValueNameText: TP3DText;
       FValueText: TP3DText;
+      FValueCached: Single;
 
     protected
       function GetValue: Single; virtual;
@@ -114,6 +119,9 @@
       procedure SetTyping(AValue: Boolean);
       procedure SetValueName(AValue: String); virtual;
       function GetValueName: String; virtual;
+
+      procedure UpdateValueText(AValue: Single);
+      procedure UpdateNameText(AValue: String);
 
     public
       constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
@@ -130,7 +138,7 @@
       property Typing: Boolean read FTyping write SetTyping;
       property Step: Single read FStep write FStep;
       property Transmission: Single read FTransmission write FTransmission;
-	end;
+  end;
 
   { TP3DEventValueEdit }
 
@@ -169,6 +177,49 @@
       procedure SetValue(AValue: Single); override;
       procedure SetValueName(AValue: String); override;
       function GetValueName: String; override;
+  end;
+
+
+  { TP3DVectorEdit }
+
+  TP3DVectorEdit = class ( TP3DGraphicControl )
+    private type
+      TGetValue = function ( Sender: TP3DVectorEdit ): TVec4 of object;
+      TSetValue = procedure ( Sender: TP3DVectorEdit; AValue: TVec4 ) of object;
+
+    private
+      FEdCount: Integer;
+      FEds: array [ 0..3 ] of TP3DEventValueEdit;
+      FGetValueEvent: TGetValue;
+      FSetValueEvent: TSetValue;
+      FStep: Single;
+      FTransmission: Single;
+
+      function GetEd( Index: Integer ): TP3DEventValueEdit;
+      function GetEdValueName( Sender: TP3DEventValueEdit ): String;
+      function GetValue: TVec4;
+      procedure SetEd( Index: Integer ; AValue: TP3DEventValueEdit );
+      procedure SetEdCount(AValue: Integer);
+      procedure SetStep(AValue: Single);
+      procedure SetTransmission(AValue: Single);
+      procedure SetValue(AValue: TVec4);
+      function GetEdValue( Sender: TP3DEventValueEdit ): Single;
+      procedure SetEdValue( Sender: TP3DEventValueEdit; AValue: Single );
+
+    public
+      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      destructor Destroy; override;
+      procedure Realign; override;
+
+      procedure Update;
+
+      property Editors [ Index: Integer ]: TP3DEventValueEdit read GetEd write SetEd;
+      property EdCount: Integer read FEdCount write SetEdCount;
+      property Value: TVec4 read GetValue write SetValue;
+      property GetValueEvent: TGetValue read FGetValueEvent write FGetValueEvent;
+      property SetValueEvent: TSetValue read FSetValueEvent write FSetValueEvent;
+      property Step: Single read FStep write SetStep;
+      property Transmission: Single read FTransmission write SetTransmission;
   end;
 
   TP3DScrollBarKind = ( p3dsbHorizontal, p3dsbVertical );
@@ -210,6 +261,33 @@
       property Min: Float read FMin write FMin;
       property Max: Float read FMax write SetMax;
       property Preset: TP3DButtonPreset read FPreset write FPreset;
+  end;
+
+  { TP3DComboBox }
+
+  TP3DComboBoxChange = procedure ( Sender: TP3DGraphicControl; var AValue: String ) of object;
+
+  TP3DComboBox = class ( TP3DButton )
+    private
+      FDownSymbol: TP3DText;
+      FDropDownMenu: TP3DPopupMenu;
+      FOnChange: TP3DComboBoxChange;
+
+      procedure DropDownItemClick( Sender: TP3DMenuItem );
+      function GetItems: TP3DMenuItemList;
+      procedure SetCaption( AValue: String ); override;
+
+    public
+      constructor Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl = nil );
+      destructor Destroy; override;
+
+      procedure Draw; override;
+      procedure DropDown;
+      procedure MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+
+    published
+      property Items: TP3DMenuItemList read GetItems;
+      property OnChange: TP3DComboBoxChange read FOnChange write FOnChange;
   end;
 
 {$ENDIF}
@@ -288,6 +366,21 @@ begin
   Result:= '';
 end;
 
+procedure TP3DCustomValueEdit.UpdateValueText( AValue: Single );
+begin
+  if ( Assigned( FValueText )) then
+    FValueText.Free;
+  FValueText:= p3dTextSimple( FloatToStrF( AValue, ffGeneral, 4, 0 ), P3DFontManager[ Font.Name, Font.Size ]);
+  FValueCached:= AValue;
+end;
+
+procedure TP3DCustomValueEdit.UpdateNameText( AValue: String );
+begin
+  if ( Assigned( FValueNameText )) then
+    FValueNameText.Free;
+  FValueNameText:= p3dTextSimple( AValue + ':', P3DFontManager[ Font.Name, Font.Size ]);
+end;
+
 function TP3DCustomValueEdit.GetValue: Single;
 begin
   Result:= 0;
@@ -295,16 +388,14 @@ end;
 
 procedure TP3DCustomValueEdit.SetValue(AValue: Single);
 begin
-  if ( Assigned( FValueText )) then
-    FValueText.Free;
-  FValueText:= p3dTextSimple( FloatToStrF( AValue, ffGeneral, 4, 0 ), P3DFontManager[ Font.Name, Font.Size ]);
+  UpdateValueText( AValue );
 end;
 
 procedure TP3DCustomValueEdit.SetValueName(AValue: String);
 begin
-  if ( Assigned( FValueNameText )) then
-    FValueNameText.Free;
-  FValueNameText:= p3dTextSimple( AValue + ':', P3DFontManager[ Font.Name, Font.Size ]);
+  if (( Assigned( FValueNameText )) and ( FValueNameText.Text = AValue + ':' )) then
+    exit;
+  UpdateNameText( AValue );
 end;
 
 constructor TP3DCustomValueEdit.Create(const AOwner: TP3DObjectList;
@@ -312,7 +403,8 @@ constructor TP3DCustomValueEdit.Create(const AOwner: TP3DObjectList;
 begin
   inherited;
   ValueName:= GetValueName;//Self.Name;
-  FValueText:= p3dTextSimple( FloatToStrF( Value, ffGeneral, 4, 0 ), P3DFontManager[ Font.Name, Font.Size ]);
+  UpdateValueText( Value );
+  UpdateNameText( GetValueName );
   FStep:= 0.1;
   FTransmission:= 0.1;
 end;
@@ -327,6 +419,7 @@ end;
 procedure TP3DCustomValueEdit.Draw;
 var
   tp: TVec2;
+  Preset: TP3DButtonPreset;
 begin
   if ( not Focused ) then
     Typing:= False;
@@ -334,8 +427,20 @@ begin
     inherited Draw
   else
     begin
-      if ( GetValueName <> FValueNameText.Text ) then
-        ValueName:= GetValueName;
+      if ( gcisMouseBtn1Down in InputState ) then
+        Preset:= PresetDown
+      else if ( gcisMouseOver in InputState ) then
+        Preset:= PresetHover
+      else
+        Preset:= PresetNormal;
+      Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+      Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( 0, 0, 0, 0.1 ));
+      Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+
+      if ( GetValueName + ':' <> FValueNameText.Text ) then
+        UpdateNameText( GetValueName );
+      if ( GetValue <> FValueCached ) then
+        UpdateValueText( GetValue );
       tp:= vec2( 5, Height / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
       Canvas.Font.Color:= Font.Color;
       Canvas.RenderText( FValueNameText, tp );
@@ -466,6 +571,35 @@ begin
   FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
+procedure TP3DGroupBox.UpdateAutoSize;
+  function GetMaxXY: TVec2;
+  var
+    Control: TP3DGraphicControl;
+  begin
+    Result:= vec2( 0 );
+    for Control in Controls do
+      Result:= max( vec2( Control.Left + Control.Width, Control.Top + Control.Height ), Result );
+    Result:= Result + vec2( BoundsTL.X + BoundsBR.X, BoundsTL.Y + BoundsBR.Y );
+  end;
+
+var
+  MaxXY: TVec2;
+begin
+  MaxXY:= GetMaxXY;
+  if ( AutoSize ) then
+    case Align of
+      alNone:
+        begin
+          Width:= MaxXY.x;
+          Height:= MaxXY.y;
+        end;
+      alLeft, alRight:
+        Width:= MaxXY.x;
+      alTop, alBottom:
+        Height:= MaxXY.y;
+    end;
+end;
+
 constructor TP3DGroupBox.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
@@ -473,8 +607,9 @@ begin
   Font:= TP3DCanvasFont.Create;
   Caption:= Name;
   Color:= vec4( 1 );
-  BorderColor:= vec4( 0, 0, 0, 1 );
-  Bounds:= P3DRect( 15, 25, 15, 15 );
+  BorderColor:= vec4( 0, 0, 0, 0.1 );
+  Canvas.Pen.Style:= psStippled5;
+  SetBounds( 15, 25, 15, 15 );
 end;
 
 destructor TP3DGroupBox.Destroy;
@@ -510,6 +645,14 @@ end;
 class function TP3DGroupBox.IsFocusControl: Boolean;
 begin
   Result:= True;
+end;
+
+procedure TP3DGroupBox.SetAutoSize(AValue: Boolean);
+begin
+  if FAutoSize=AValue then Exit;
+  FAutoSize:=AValue;
+
+  UpdateAutoSize;
 end;
 
 { TP3DEdit }
@@ -593,7 +736,7 @@ end;
 constructor TP3DEdit.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AOwner, AParent );
   Text:= Name;
   PresetDown.Assign( PresetNormal );
   PresetHover.Assign( PresetNormal );
@@ -627,6 +770,7 @@ begin
   Canvas.RenderText( FCaptionTxt, tp );
   if ( Focused ) then
     begin
+      if ( Assigned( FCaptionTxt )) then
       if ( Sel1 > 0 ) then
         soff:= FCaptionTxt.WidthFromTo( 1, Sel1 + 1 )
       else
@@ -764,7 +908,7 @@ constructor TP3DScrollBar.Create(const AOwner: TP3DObjectList;
 begin
   inherited;
   Preset:= TP3DButtonPreset.Create;
-  Preset.Color:= vec4( 165/255, 165/255, 237/255, 1 );
+  Preset.Color:= vec4( 225/255, 230/255, 234/255, 1 );
   Preset.OutlineColor:= vec4( vec3( 0.2 ), 0.5 );
   Preset.FontColor:= vec4( vec3( 0 ), 0.3 );
 
@@ -784,21 +928,23 @@ end;
 procedure TP3DScrollBar.Draw;
 var
   off, tp: Single;
+const
+  sb = 3;
 begin
   inherited Draw;
   Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ), Preset.Color );
   case Kind of
     p3dsbHorizontal:
       begin
-        off:= Math.Max( Height, Width * PageSize );
+        off:= Math.Max( Height, ( Width - 2*sb ) * PageSize );
         tp:= ( Width - off ) * Percentage;
-        Canvas.RenderRect( vec2( tp, 0 ), vec2( tp + off, Height ), Preset.FontColor );
+        Canvas.RenderRoundRect( vec2( tp + sb, sb ), vec2( tp + off - sb, Height - sb ), Height / 6, 4, Preset.FontColor );
       end;
     p3dsbVertical:
       begin
-        off:= Math.Max( Width, Height * PageSize );
+        off:= Math.Max( Width, ( Height - 2*sb ) * PageSize );
         tp:= ( Height - off ) * Percentage;
-        Canvas.RenderRect( vec2( 0, tp ), vec2( Width, tp + off ), Preset.FontColor );
+        Canvas.RenderRoundRect( vec2( sb, tp + sb ), vec2( Width - sb, tp + off - sb ), Width / 6, 4, Preset.FontColor );
       end;
   end;
 end;
@@ -842,6 +988,210 @@ begin
         end;
     end;
 end;
+
+{ TP3DVectorEdit }
+
+function TP3DVectorEdit.GetEd(Index: Integer): TP3DEventValueEdit;
+begin
+  Result:= FEds[ Index ];
+end;
+
+function TP3DVectorEdit.GetEdValueName(Sender: TP3DEventValueEdit): String;
+begin
+  if ( Sender = Editors[ 0 ]) then
+    Result:= 'X'
+  else if ( Sender = Editors[ 1 ]) then
+    Result:= 'Y'
+  else if ( Sender = Editors[ 2 ]) then
+    Result:= 'Z'
+  else if ( Sender = Editors[ 3 ]) then
+    Result:= 'W'
+  else
+    Result:= '';
+end;
+
+function TP3DVectorEdit.GetValue: TVec4;
+begin
+  if ( Assigned( GetValueEvent )) then
+    Result:= GetValueEvent( Self )
+  else
+    Result:= vec4( -NaN, -NaN, -NaN, -NaN );
+end;
+
+procedure TP3DVectorEdit.SetEd(Index: Integer; AValue: TP3DEventValueEdit);
+begin
+  FEds[ Index ]:= AValue;
+end;
+
+procedure TP3DVectorEdit.SetEdCount(AValue: Integer);
+var
+  i: Integer;
+begin
+  if FEdCount=AValue then Exit;
+
+  for i:= EdCount to AValue - 1 do
+    begin
+      Editors[ i ]:= TP3DEventValueEdit.Create( nil, Self );
+      Editors[ i ].SetValueEvent:= @SetEdValue;
+      Editors[ i ].GetValueEvent:= @GetEdValue;
+      Editors[ i ].GetValueNameEvent:= @GetEdValueName;
+    end;
+  for i:= EdCount downto AValue do
+    Editors[ i ].Free;
+  FEdCount:=AValue;
+  Update;
+end;
+
+procedure TP3DVectorEdit.SetStep(AValue: Single);
+var
+  i: Integer;
+begin
+  if FStep=AValue then Exit;
+  FStep:= AValue;
+  for i:= 0 to EdCount - 1 do
+    Editors[ i ].Step:= AValue;
+end;
+
+procedure TP3DVectorEdit.SetTransmission(AValue: Single);
+var
+  i: Integer;
+begin
+  if FTransmission=AValue then Exit;
+  FTransmission:=AValue;
+  for i:= 0 to EdCount - 1 do
+    Editors[ i ].Transmission:= AValue;
+end;
+
+procedure TP3DVectorEdit.SetValue(AValue: TVec4);
+begin
+  if ( Assigned( SetValueEvent )) then
+    SetValueEvent( Self, AValue );
+end;
+
+function TP3DVectorEdit.GetEdValue(Sender: TP3DEventValueEdit): Single;
+var
+  i: Integer;
+begin
+  for i:= 0 to EdCount do
+    if (( i < EdCount ) and ( Sender = Editors[ i ])) then
+      break;
+  if ( i < EdCount ) then
+    Result:= Value[ i ]
+  else
+    Result:= 0;
+end;
+
+procedure TP3DVectorEdit.SetEdValue(Sender: TP3DEventValueEdit; AValue: Single);
+var
+  i: Integer;
+  Vec: TVec4;
+begin
+  for i:= 0 to EdCount do
+    if (( i < EdCount ) and ( Sender = Editors[ i ])) then
+      break;
+  if ( i < EdCount ) then
+    begin
+      Vec:= Value;
+      Vec[ i ]:= AValue;
+      Value:= Vec;
+    end;
+end;
+
+constructor TP3DVectorEdit.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AParent );
+  EdCount:= 3;
+end;
+
+destructor TP3DVectorEdit.Destroy;
+var
+  i: Integer;
+begin
+  for i:= 0 to EdCount - 1 do
+    Editors[ i ].Free;
+  inherited Destroy;
+end;
+
+procedure TP3DVectorEdit.Realign;
+begin
+  inherited Realign;
+  Update;
+end;
+
+procedure TP3DVectorEdit.Update;
+var
+  i: Integer;
+begin
+  for i:= 0 to EdCount - 1 do
+    begin
+      Editors[ i ].FWidth:= Width / EdCount;
+      Editors[ i ].FLeft:= ( Width / EdCount ) * i;
+      Editors[ i ].FHeight:= Height;
+    end;
+end;
+
+
+{ TP3DComboBox }
+
+procedure TP3DComboBox.DropDownItemClick(Sender: TP3DMenuItem);
+begin
+  if ( Assigned( Sender )) then
+    Caption:= Sender.Caption;
+  FDropDownMenu.Hide;
+end;
+
+function TP3DComboBox.GetItems: TP3DMenuItemList;
+begin
+  Result:= FDropDownMenu.FItems;
+end;
+
+procedure TP3DComboBox.SetCaption(AValue: String);
+begin
+  if ( Assigned( OnChange )) then
+    OnChange( Self, AValue );
+  inherited SetCaption(AValue);
+end;
+
+constructor TP3DComboBox.Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl );
+begin
+  inherited Create( AOwner, AParent );
+  FDropDownMenu:= TP3DPopupMenu.Create();
+  FDropDownMenu.OnItemClick:= @DropDownItemClick;
+end;
+
+destructor TP3DComboBox.Destroy;
+begin
+  FreeAndNil( FDropDownMenu );
+  FreeAndNil( FDownSymbol );
+  inherited Destroy;
+end;
+
+procedure TP3DComboBox.Draw;
+var
+  P: TVec2;
+begin
+  inherited Draw;
+  Canvas.Font.Name:= 'Pascal3D-Symbols';
+  if ( Assigned( FDownSymbol )) then
+    P:= vec2( Width - FDownSymbol.Width, ( Height - FDownSymbol.Height ) / 2 )
+  else
+    P:= vec2( 0 );
+  Canvas.RenderText( TP3DSymbolTriangleDown, P, FDownSymbol );
+end;
+
+procedure TP3DComboBox.DropDown;
+begin
+  FDropDownMenu.Width:= Width;
+  FDropDownMenu.PopUp( Canvas.Left, Canvas.Top + Canvas.Height );
+end;
+
+procedure TP3DComboBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  DropDown;
+  inherited MouseClick( mb1, mb2, mb3, X, Y );
+end;
+
 
 {$ENDIF}
 

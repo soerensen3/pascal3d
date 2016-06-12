@@ -1,12 +1,11 @@
 {$IFDEF INTERFACE}
-{.$DEFINE DEBUG_GUI}
 
 
 TP3DGraphicControlClass = class of TP3DGraphicControl;
 
 { TP3DGraphicControl }
                             // 1                  2                4               8              16
-TP3DGCInputState = ( gcisMouseBtn1Down, gcisMouseBtn2Down, gcisMouseBtn3Down, gcisMouseOver {, gcisMouseOverOccl} );
+TP3DGCInputState = ( gcisEmpty, gcisMouseBtn1Down, gcisMouseBtn2Down, gcisMouseBtn3Down, gcisMouseOver {, gcisMouseOverOccl} );
 TP3DGCInputFlags = set of TP3DGCInputState;
 // 1 = M1
 // 2 = M2
@@ -25,6 +24,12 @@ TP3DGCInputFlags = set of TP3DGCInputState;
 // 15 = MO + M1 + M2 + M3
 //...
 TP3DGraphicControl = class ( TP3DObject )
+  private
+    FBoundsBR: TVec2;
+    FBoundsTL: TVec2;
+    procedure SetBoundsBR(AValue: TVec2);
+    procedure SetBoundsTL(AValue: TVec2);
+
   protected
     FAlign: TP3DControlAlign;
     FCanvas: TP3DCanvas2D;
@@ -53,14 +58,12 @@ TP3DGraphicControl = class ( TP3DObject )
     FVisible: Boolean;
     FWidth: Float;
     FCursor: TP3DCursor;
-    FBounds: TP3DRect;
     FHeight: Float;
     FMaxHeight: Float;
     FMaxWidth: Float;
     FMinHeight: Float;
     FMinWidth: Float;
 
-    procedure SetBounds(AValue: TP3DRect);
     function GetFocused: Boolean; virtual;
     procedure SetFocused(AValue: Boolean); virtual;
     procedure SetCursor(AValue: TP3DCursor);
@@ -103,11 +106,13 @@ TP3DGraphicControl = class ( TP3DObject )
     procedure OneLayerDown;
     procedure OneLayerUp;
     procedure SendToBack;
+    procedure SetBounds(left, top, right, bottom: Float);
 
     class function IsFocusControl(): Boolean; virtual;
     class function HasShadow(): Boolean; virtual;
 
-    property Bounds: TP3DRect read FBounds write SetBounds;
+    property BoundsTL: TVec2 read FBoundsTL write SetBoundsTL;
+    property BoundsBR: TVec2 read FBoundsBR write SetBoundsBR;
     property Canvas: TP3DCanvas2D read FCanvas write FCanvas;
     property ClientRect: TP3DRect read FClientRect;
     property Controls: TP3DControlList read FControls write FControls;
@@ -189,9 +194,26 @@ begin
     FOnDraw( Self, Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height );
 end;
 
-procedure TP3DGraphicControl.SetBounds(AValue: TP3DRect);
+procedure TP3DGraphicControl.SetBoundsBR(AValue: TVec2);
 begin
-  FBounds:=AValue;
+  if FBoundsBR=AValue then Exit;
+  FBoundsBR:=AValue;
+  Realign;
+  Controls.Realign;
+end;
+
+procedure TP3DGraphicControl.SetBoundsTL(AValue: TVec2);
+begin
+  if FBoundsTL=AValue then Exit;
+  FBoundsTL:=AValue;
+  Realign;
+  Controls.Realign;
+end;
+
+procedure TP3DGraphicControl.SetBounds( left, top, right, bottom: Float );
+begin
+  FBoundsTL:= vec2( left,  top );
+  FBoundsBR:= vec2( right, bottom );
   Realign;
   Controls.Realign;
 end;
@@ -462,23 +484,23 @@ begin
   {$IFDEF DEBUG_GUI}
   if ( Self = LastMouseOverCtrl ) then
     begin
-      Manager.ScreenCanvas.Lock;
-      Manager.ScreenCanvas.RenderLineRect( vec2( Canvas.Left + ClientRect.Left, Canvas.Top + ClientRect.Top ), vec2( Canvas.Left + ClientRect.Left + ClientRect.Right, Canvas.Top + ClientRect.Top + ClientRect.Bottom ), vec4( 0, 1, 0, 1 ));
-      Manager.ScreenCanvas.RenderLineRect( vec2( Canvas.Left, Canvas.Top ), vec2( Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), vec4( 1, 0, 0, 1 ));
+      P3DGUIManager.ScreenCanvas.Lock;
+      P3DGUIManager.ScreenCanvas.RenderLineRect( vec2( Canvas.Left + ClientRect.Left, Canvas.Top + ClientRect.Top ), vec2( Canvas.Left + ClientRect.Left + ClientRect.Right, Canvas.Top + ClientRect.Top + ClientRect.Bottom ), vec4( 0, 1, 0, 1 ));
+      P3DGUIManager.ScreenCanvas.RenderLineRect( vec2( Canvas.Left, Canvas.Top ), vec2( Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), vec4( 1, 0, 0, 1 ));
 
       txt:= p3dTextSimple( LastMouseOverCtrl.Name, P3DFontManager.Fonts[ Canvas.Font.Name, Canvas.Font.Size ]);
       p:= vec2( Canvas.Left, Canvas.Top + Canvas.Height + 5 );
-      Manager.ScreenCanvas.RenderRect( p, p + vec2( txt.Width, txt.Height ), vec4( 1, 1, 1, 0.5 ));
-      Manager.ScreenCanvas.RenderText( txt, p );
+      P3DGUIManager.ScreenCanvas.RenderRect( p, p + vec2( txt.Width, txt.Height ), vec4( 1, 1, 1, 0.5 ));
+      P3DGUIManager.ScreenCanvas.RenderText( txt, p );
       txt.Free;
-      Manager.ScreenCanvas.Unlock();
+      P3DGUIManager.ScreenCanvas.Unlock();
     end;
   for i:= 0 to 2 do
     if ( Self = LastMouseDownCtrl[ i ]) then
       begin
-        Manager.ScreenCanvas.Lock;
-        Manager.ScreenCanvas.RenderRect( vec2( Canvas.Left, Canvas.Top ), vec2( Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), vec4( Ord( i = 0 ), Ord( i = 1 ), Ord( i = 2 ), 0.2 ));
-        Manager.ScreenCanvas.Unlock();
+        P3DGUIManager.ScreenCanvas.Lock;
+        P3DGUIManager.ScreenCanvas.RenderRect( vec2( Canvas.Left, Canvas.Top ), vec2( Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), vec4( Ord( i = 0 ), Ord( i = 1 ), Ord( i = 2 ), 0.2 ));
+        P3DGUIManager.ScreenCanvas.Unlock();
       end;
   {$ENDIF}
 end;
@@ -576,7 +598,7 @@ end;
 
 procedure TP3DGraphicControl.UpdateClientRect;
 begin
-  FClientRect:= P3DRect( Bounds.Left, Bounds.Top, Width - Bounds.Right - Bounds.Left, Height - Bounds.Bottom - Bounds.Top );
+  FClientRect:= P3DRect( BoundsTL.X, BoundsTL.Y, Width - BoundsTL.X - BoundsBR.X, Height - BoundsTL.Y - BoundsBR.Y );
 end;
 
 function TP3DGraphicControl.MouseRay(X, Y: Integer): Boolean;

@@ -11,6 +11,7 @@ type
       FCameras: TP3DCameraList;
       FDataBlocks: TP3DObjectList;
       FFileWatch: TP3DFileWatch;
+      FIsDesignerPackage: Boolean;
       FLibraries: TP3DDataList;
       FLights: TP3DLightList;
       FMaterials: TP3DMaterialList;
@@ -48,6 +49,7 @@ type
       property Shaders: TP3DShaderList read FShaders write FShaders;
       property Textures: TP3DTextureList read FTextures write FTextures;
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
+      property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
   end;
 
   TP3DCustomDataList = specialize gP3DCustomObjectList < TP3DData >;
@@ -187,7 +189,7 @@ begin
 
   case ADOMNode.NodeName of
     'p3dfile': //DO NOTHING FOR NOW
-      AppendAllFromDom( ADOMNode, TP3DActor, AParent );
+      AppendAllFromDom( ADOMNode, TP3DScene, AParent );
     'object':
       Result:= Parent.Add( TP3DActor.CreateFromDOM( ADOMNode, Self ));
     'mesh', 'material',
@@ -270,12 +272,15 @@ end;
 function OpenLibrary( FileName: String ): Integer;
 var
   F: TP3DData;
+  FName: String;
 begin
-  FileName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
-  Result:= P3DData.Libraries.FindByFileName( FileName );
+  FName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
+  if ( FName = '' ) then
+    raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ FileName ]));
+  Result:= P3DData.Libraries.FindByFileName( FName );
   if ( Result = -1 ) then
     begin
-      F:= TP3DData.CreateFromFile( FileName );
+      F:= TP3DData.CreateFromFile( FName );
       Result:= P3DData.Libraries.Add( F );
     end;
 end;
@@ -288,7 +293,7 @@ var
 begin
   Result:= -1;
   for i:= 0 to Count - 1 do
-    if ( Items[ i ].FileWatch.FileName = ExpandFileName( AFileName )) then
+    if ( P3DMatchFileName( Items[ i ].FileWatch.FileName, AFileName )) then
       begin
         Result:= i;
         break;

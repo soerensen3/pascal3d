@@ -8,10 +8,12 @@ program engineplayer;
 {.$DEFINE DEBUG_DEFERRED}
 
 uses
+  //heaptrc,
   strutils,
   LCLIntf,
   SDL2,
   dglOpenGL,
+  p3dutils,
   p3devents,
   p3dgraphics,
   sysutils,
@@ -20,10 +22,6 @@ uses
   Math,
   p3dMath,
   p3dgui,
-  p3dgui_buttons,
-  p3dgui_forms,
-  //p3dgui_commonctrls,
-  p3dgui_stdctrls,
   XMLRead,
   DOM
   ;
@@ -38,6 +36,13 @@ uses
 {$INCLUDE inputscene.inc}
 
 Begin
+  // Assuming your build mode sets -dDEBUG in Project Options/Other when defining -gh
+  // This avoids interference when running a production/default build without -gh
+
+  // Set up -gh output for the Leakview package:
+  //if FileExists('heap.trc') then
+  //  DeleteFile('heap.trc');
+  //SetHeapTraceOutput('heap.trc');
   //SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
   //                  exOverflow, exUnderflow, exPrecision]);
   P3DEventsInit;
@@ -55,11 +60,17 @@ Begin
   P3DApplication.MainWindow.OnResize:= @ResizeWnd;
 
   P3DApplication.Initialize;
+  P3DUtilsInit;
+  P3DLoadConfig( '../../../settings_default.xml' );
   P3DGraphicsInit;
+
   Init( P3DApplication );
 
   P3DApplication.Run;
 
+  P3DUtilsFinish;
+  P3DGraphicssFinish;
   P3DApplication.MainWindow.Free;
   P3DEventsFinish;
+  SDL_Quit()
 End.

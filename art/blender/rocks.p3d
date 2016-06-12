@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<p3dscene>
+  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
+  <mesh binary="rocks.Cube.001.p3dmesh" cotangents="414" faces="1536" name="Cube_001" normals="390" tangents="398" texcoords="289" vertices="1538">
+    <matrix c0=" 0.463286, 0.188059, 0.000000, 0.000000" c1="-0.188059, 0.463286, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 0.500000, 0.000000" c3=" 0.000000, 0.000000, 1.500000, 1.000000" />
+    <material end="1535" name="Material.001" start="0" />
+    <mesh binary="rocks.Cube.p3dmesh" cotangents="511" faces="1536" name="Camera" normals="390" tangents="496" texcoords="1729" vertices="1538">
+      <matrix c0=" 0.978531,-0.206101, 0.000000, 0.000000" c1=" 0.206101, 0.978531, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
+      <material end="1535" name="Material" start="0" />
+      <light>
+        <camera />
+        <material diffuse="0.262895, 0.259063, 0.266761" name="Material.001" specular="7.000000, 0.152672, 0.152672, 0.152672">
+          <texture diffuse="1.0" file="rock.jpg" layer="0" mode="multiply" />
+          <texture file="rock_spec.png" layer="0" mode="mix" normal="0.20000000298023224" specular="1.0" specular_intensity="1.0" />
+        </material>
+        <material diffuse="1.000000, 0.729992, 0.635917" name="Material" specular="7.000000, 0.152672, 0.152672, 0.152672">
+          <texture diffuse="1.0" file="rock.jpg" layer="0" mode="multiply" />
+          <texture file="rock_spec.png" layer="0" mode="mix" normal="0.20000000298023224" specular="1.0" specular_intensity="1.0" />
+          <texture diffuse="1.0" file="" layer="1" mode="multiply" />
+        </material>
+      </light>
+    </mesh>
+  </mesh>
+</p3dscene>

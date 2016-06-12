@@ -9,7 +9,9 @@ uses
   SysUtils,
   LazFileUtils,
   LazUTF8,
-  XMLRead, DOM;
+  Math,
+  XMLRead,
+  DOM;
 
 
 {$DEFINE INTERFACE}
@@ -25,6 +27,8 @@ var
 
 procedure P3DUtilsInit;
 procedure P3DUtilsFinish;
+
+function P3DStrToBoolDef( S: String; Default: Boolean ): Boolean;
 
 implementation
 
@@ -49,6 +53,16 @@ begin
     FreeAndNil( P3DFileWatch );
   if ( Assigned( P3DSearchPaths )) then
     FreeAndNil( P3DSearchPaths );
+end;
+
+function P3DStrToBoolDef(S: String; Default: Boolean): Boolean;
+begin
+  case ( S ) of
+    'yes': Result:= True;
+    'no': Result:= False;
+    else
+      Result:= Default;
+  end;
 end;
 
 finalization

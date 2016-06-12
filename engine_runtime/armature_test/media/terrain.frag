@@ -31,7 +31,7 @@ const int p3dltPoint = 0;
 const int p3dltSun = 1;
 const int p3dltSpot = 2;
 
-const vec4 mat_specular = vec4( 0.020958, 0.020958, 0.020958, 1 );
+const vec4 mat_specular = vec4( 1 );//vec4( 0.020958, 0.020958, 0.020958, 1 );
 const float mat_hardness = 5.000000;
 
 struct LightSourceParameters {
@@ -48,6 +48,7 @@ uniform int numLightSource;
 uniform LightSourceParameters LightSource[8];
 
 uniform mat4 view;
+uniform mat4 mnormal;
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
@@ -176,8 +177,8 @@ void main()
   Normal = Normal * 2.0 - 1.0;
   normalize( Normal );
   Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal ).xyz;
-  
-  Normal = ( view * vec4( Normal, 0 )).xyz;
+  Normal = vNormal.xyz;
+
   vec3 shadow = vec3( 0 );
   vec3 spec = vec3( 0 );
   viewDir = normalize( -vPosition.xyz );
@@ -186,13 +187,14 @@ void main()
       util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec );
     if ( LightSource[ i ].type == p3dltSun )
       util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
-  
   }
   shadow*= color.a;
   spec = color.a * spec * mix( mix( vec3( 1 ), detail_spec, 0.3 ), detail_spec2, 0.4 );
   FragColor.rgb = mix( color.rgb, detail_diff*detail_diff2*detail_diff3, 0.4 );//mix( color, mix( detail_diff, detail_diff2, 0.6 ), 0.3 );
   FragColor.rgb = FragColor.rgb * shadow + spec;
   FragColor.rgb = mix( FragColor.rgb, mix( fogcolor, fogcolor2, smoothstep( fogend, fogend2, length( vPosition ))), smoothstep( fogstart, fogend, length( vPosition )));
+
+  FragColor.rgb = vec3( dot( Normal.xyz, LightSource[ 0 ].direction.xyz ));
   FragColor.a = 1;
   #if (__VERSION__ < 130)
   gl_FragColor = FragColor;

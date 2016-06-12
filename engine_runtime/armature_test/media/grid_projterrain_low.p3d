@@ -7,15 +7,15 @@
       name = "Grid"
       type = "mesh">
       <transform
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000"
         scale = "16.000000,16.000000, 1.000000"
-        position = " 0.000000, 0.000000, 0.000000">
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
       </transform>
     </object>
     <object
-      type = "lamp"
       data = "lamp_Lamp"
-      name = "Lamp">
+      name = "Lamp"
+      type = "lamp">
       <transform
         scale = " 1.000000, 1.000000, 1.000000"
         quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
@@ -24,14 +24,16 @@
     </object>
   </scene>
   <mesh
-    binary = "grid_projterrain_low.mesh_Grid.p3dmesh"
-    name = "mesh_Grid"
-    vertices = "68889"
-    cotangents = "275264"
+    texlayers = "1"
+    loops = "275264"
     texcoords = "275264"
     normals = "68889"
+    name = "mesh_Grid"
+    cotangents = "275264"
+    tangents = "275264"
     faces = "68816"
-    tangents = "275264">
+    binary = "grid_projterrain_low.mesh_Grid.p3dmesh"
+    vertices = "68889">
     <material
       start = "0"
       name = "material_Material"
@@ -42,19 +44,18 @@
     color = "0.729, 0.808, 1.0"
     name = "lamp_Lamp"
     type = "sun"
-    energy = "2.0">
+    energy = "1.0">
   </lamp>
   <material
     specular = "50.000000, 0.500000, 0.500000, 0.500000"
     name = "material_Material"
-    diffuse = "0.640000, 0.640000, 0.640000"
-    type = "shader"
-    vshader = "terrain.vert"
-    fshader = "terrain.frag">
+    diffuse = "0.640000, 0.640000, 0.640000">
     <texture
       mode = "mix"
       file = "megt00n270hb_diff_4k_high.png"
-      diffuse = "1.0">
+      diffuse = "1.0"
+      texture_filter = "nearest"
+      mipmap_filter = "nearest">
     </texture>
     <texture
       mode = "mix"

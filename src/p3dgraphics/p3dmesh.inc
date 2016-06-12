@@ -30,13 +30,9 @@
 
      TP3DMeshMaterialGroupList = specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >;
 
-     TP3DFaceVertex = record
-       v, n, t, c: Integer;
-       texc: array of Integer;
-     end;
-
      TP3DFace = record
-       verts: array of TP3DFaceVertex;
+       loop_start: Integer;
+       loop_count: Integer;
        mat: TP3DMaterialShader;
      end;
 
@@ -57,6 +53,7 @@
         Cotangents: TP3DVec3BufferGL;
         Faces: TP3DFaceArray;
         TexCoords: array of TP3DVec2BufferGL;
+        Edges: TP3DIntBufferGL;
 
         Indices: TP3DIntBufferGL;
         VBArray: TP3DVertexBufferArray;
@@ -69,7 +66,10 @@
 
         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
         procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
+        procedure RenderSimple;
         procedure RenderMaterialGroup( world: TMat4; Idx: Integer; Scene: TP3DScene );
+        procedure RenderEdges( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor );
+        function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; override;
         procedure UnpackBuffers;
         procedure ClearVBO;
         procedure CreateVBO;
@@ -85,42 +85,27 @@
 {$IFDEF IMPLEMENTATION}
 
 { TP3DMesh }
-
-procedure LoadFaceFromStream( Faces: PP3DFaceArray; S: TStream; ACount: Integer );
+procedure LoadFaceFromStream( Faces: PP3DFaceArray; S: TStream; ACount, LoopCount: Integer );
 var
-  i: Integer;
-  j: Integer;
-  k: Integer;
-  c, tc: LongInt;
-  base: LongInt;
+  ints: array of Integer;
+  base, i: Integer;
 begin
+  if ( ACount = 0 ) then
+    exit;
   base:= Length( Faces^ );
   SetLength( Faces^, base + ACount );
-  for i:= 0 to ACount - 1 do
-    begin
-      S.Read( c, SizeOf( c ));
-      S.Read( tc, SizeOf( tc ));
+  SetLength( ints, base + ACount );
+  S.Read( ints[ 0 ], SizeOf( Integer ) * ACount );
 
-      if ( c > 30 ) then
-        begin
-          P3DLog.LogException( Nil, 'Error: Possible data corruption in file stream "' + TFileStream( S ).FileName + '" at position ' + IntToStr( S.Position ) + '! Too many vertices in one poly!' );
-          Exception.Create( 'Error: Possible data corruption in file stream "' + TFileStream( S ).FileName + '" at position ' + IntToStr( S.Position ) + '! Too many vertices in one poly!' )
-        end
-      else
-        begin
-          SetLength( Faces^[ i + base ].verts, c );
-          for j:= 0 to c - 1 do
-            begin
-              SetLength( Faces^[ i + base ].verts[ j ].texc, tc );
-              S.Read( Faces^[ i + base ].verts[ j ].v, SizeOf( Integer ));
-              S.Read( Faces^[ i + base ].verts[ j ].n, SizeOf( Integer ));
-              S.Read( Faces^[ i + base ].verts[ j ].t, SizeOf( Integer ));
-              S.Read( Faces^[ i + base ].verts[ j ].c, SizeOf( Integer ));
-              for k:= 0 to tc - 1 do
-                S.Read( Faces^[ i + base ].verts[ j ].texc[ k ], SizeOf( Integer ));
-            end;
-        end;
-    end;
+  Faces^[ 0 ].loop_start:= 0;
+
+  if ( ACount > 1 ) then
+    for i:= 1 to ACount - 1 do
+      begin
+        Faces^[ i ].loop_start:= ints[ i ];
+        Faces^[ i - 1 ].loop_count:= ints[ i ]- Faces^[ i - 1 ].loop_start;
+      end;
+  Faces^[ ACount - 1 ].loop_count:= LoopCount - Faces^[ ACount - 1 ].loop_start;
 end;
 
 procedure LoadVec3FromStream( Vectors: TVec4List; S: TStream; ACount: Integer );
@@ -159,6 +144,18 @@ begin
     end;
 end;
 
+procedure LoadIntFromStream( IntArray: TIntList; S: TStream; ACount: Integer );
+var
+  i: Integer;
+  int: Integer;
+begin
+  for i:= 0 to ACount - 1 do
+    begin
+      S.Read( int, SizeOf( Integer ));
+      IntArray.Add( int );
+    end;
+end;
+
 procedure TP3DMesh.LoadMaterialFromDOM(DOM: TDOMElement);
 var
   MatIdx: Integer;
@@ -188,6 +185,7 @@ begin
   Cotangents:= TP3DVec3BufferGL.Create( True );
   Tangents:= TP3DVec3BufferGL.Create( True );
   Indices:= TP3DIntBufferGL.Create( True );
+  Edges:= TP3DIntBufferGL.Create( True );
   VBArray:= TP3DVertexBufferArray.Create;
   MaterialGroups:= TP3DMeshMaterialGroupList.Create;
 
@@ -209,6 +207,7 @@ begin
   Cotangents.Free;
   Tangents.Free;
   Indices.Free;
+  Edges.Free;
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].Free;
 
@@ -221,18 +220,18 @@ end;
 procedure TP3DMesh.LoadFromDOM(ADOMNode: TDOMElement);
 var
   Element: TDOMElement;
-  Ext: String;
-  cnt: Integer;
+  ext: String;
+  cnt, numTex, i: Integer;
   F: TFileStream;
 begin
   Name:= ADOMNode.GetAttribute( 'name' );
 
   if ( ADOMNode.hasAttribute( 'binary' )) then
     begin
-      Ext:= ADOMNode.GetAttribute( 'binary' );
-      FName:= P3DSearchPaths.Models.FindFileEx( Ext, GetCurrentDir );
+      ext:= ADOMNode.GetAttribute( 'binary' );
+      ext:= ExpandFileName( P3DSearchPaths.Models.FindFileEx( ext, GetCurrentDir ));
       try
-        if ( not FileExists( FName )) then
+        if ( not FileExists( ext )) then
           raise Exception.Create( Format( 'Error while loading mesh "%s"! The specified file does not exist!', [ Ext ]));
         F:= TFileStream.Create( Ext, fmOpenRead );
         cnt:= StrToIntDef( ADOMNode.GetAttribute( 'vertices' ), 0 );
@@ -243,12 +242,19 @@ begin
         if ( cnt > 0 ) then
           LoadVec3FromStream( Normals, F, cnt );
 
+        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'loops' ), 0 );
+        LoadIntFromStream( Edges, F, cnt );
+
         cnt:= StrToIntDef( ADOMNode.GetAttribute( 'texcoords' ), 0 );
+        numtex:= StrToIntDef( ADOMNode.GetAttribute( 'texlayers' ), 0 );
         if ( cnt > 0 ) then
           begin
-            SetLength( TexCoords, 1 );
-            TexCoords[ 0 ]:= TP3DVec2BufferGL.Create( True );
-            LoadVec2FromStream( TexCoords[ 0 ], F, cnt );
+            SetLength( TexCoords, numTex );
+            for i:= 0 to numTex - 1 do
+              begin
+                TexCoords[ i ]:= TP3DVec2BufferGL.Create( True );
+                LoadVec2FromStream( TexCoords[ i ], F, cnt );
+              end;
 
             cnt:= StrToIntDef( ADOMNode.GetAttribute( 'tangents' ), 0 );
             if ( cnt > 0 ) then
@@ -261,10 +267,10 @@ begin
 
         cnt:= StrToInt( ADOMNode.GetAttribute( 'faces' ));
         if ( cnt > 0 ) then
-          LoadFaceFromStream( @Faces, F, cnt );
+          LoadFaceFromStream( @Faces, F, cnt, Edges.Count );
 
         F.Free;
-        FileWatch.FileName:= ExpandFileName( Ext );
+        FileWatch.FileName:= ext;
       except on E: Exception do
         begin
           P3DLog.LogException( Self, E );
@@ -299,6 +305,26 @@ var
 begin
   for i:= 0 to MaterialGroups.Count - 1 do
     RenderMaterialGroup( world, i, Scene );
+end;
+
+procedure TP3DMesh.RenderSimple;
+var
+  i: Integer;
+begin
+  if ( Positions.Count > 0 ) then
+    Positions.SetAttribArray( P3DAttribPosition );
+  if ( Normals.Count > 0 ) then
+    Normals.SetAttribArray( P3DAttribNormal );
+  if ( Cotangents.Count > 0 ) then
+    Cotangents.SetAttribArray( P3DAttribCotangent );
+  if ( Tangents.Count > 0 ) then
+    Tangents.SetAttribArray( P3DAttribTangent );
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+
+  Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
+
+  glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
 end;
 
 procedure TP3DMesh.RenderMaterialGroup(world: TMat4; Idx: Integer;
@@ -337,142 +363,169 @@ begin
   glDrawElements( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint ))); cle( Self );
 end;
 
+procedure TP3DMesh.RenderEdges(world: TMat4; Scene: TP3DScene;
+  RenderObject: TP3DActor);
+var
+  i: Integer;
+begin
+  Scene.PassToShader( world );
+  if ( Positions.Count > 0 ) then
+    Positions.SetAttribArray( P3DAttribPosition );
+  if ( Normals.Count > 0 ) then
+    Normals.SetAttribArray( P3DAttribNormal );
+  if ( Cotangents.Count > 0 ) then
+    Cotangents.SetAttribArray( P3DAttribCotangent );
+  if ( Tangents.Count > 0 ) then
+    Tangents.SetAttribArray( P3DAttribTangent );
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+
+  Edges.Bind( GL_ELEMENT_ARRAY_BUFFER );
+
+  glDrawElements( GL_LINES, Edges.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
+end;
+
+function intersectRayTriangle( orig, dir, v0, v1, v2: TVec3; out baryPosition: TVec3 ): Boolean;
+var
+  e1, e2: TVec3;
+  p: TVec3;
+  a: Float;
+  f: Extended;
+  s: TVec3;
+  q: TVec3;
+begin
+  Result:= False;
+
+  e1:= v1 - v0;
+  e2:= v2 - v0;
+
+  p:= cross( dir, e2 );
+
+  a:= dot( e1, p );
+
+  if ( a < epsilon ) then
+    exit;
+  f:= 1 / a;
+
+  s:= orig - v0;
+  baryPosition.x:= f * dot( s, p );
+  if( baryPosition.x < 0 ) then
+    exit;
+  if( baryPosition.x > 1 ) then
+    exit;
+
+  q:= cross( s, e1 );
+  baryPosition.y:= f * dot( dir, q );
+
+  if( baryPosition.y < 0.0 ) then
+    exit;
+
+  if( baryPosition.y + baryPosition.x > 1 ) then
+    exit;
+
+  baryPosition.z:= f * dot( e2, q );
+
+  Result:= baryPosition.z >= 0.0;
+end;
+
+
+function TP3DMesh.CastRay(Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean;
+var
+  i: Integer;
+  mInv: TMat4;
+  transOrig, transDir: TVec3;
+
+  function TestPoly( n: Integer ): Boolean;
+  var
+    v0: TVec3;
+    v1: TVec3;
+    v2: TVec3;
+  begin
+    Result:= False;
+    v0:= Positions[ Indices[ n * 3 ]];
+    v1:= Positions[ Indices[ n * 3 + 1 ]];
+    v2:= Positions[ Indices[ n * 3 + 2 ]];
+    Result:= intersectRayTriangle( transOrig, transDir, v0, v1, v2, HitPos );
+  end;
+
+begin
+  Result:= inherited CastRay( Orig, Dir, Actor, HitPos );
+  mat4inverse( Actor.Matrix, mInv );
+  transOrig:= ( mInv * vec4( Orig, 1 )).xyz;
+  transDir:= ( mInv * vec4( Dir, 0 )).xyz.Normalize;
+  for i:= 0 to Indices.Count div 3 do
+    if ( TestPoly( i )) then
+      begin
+        Result:= True;
+        HitPos:= ( Actor.Matrix * vec4( HitPos, 1 )).xyz;
+        break;
+      end;
+end;
+
 procedure TP3DMesh.UnpackBuffers;
 var
   i: Integer;
   j: Integer;
-  ibase: Integer;
   vbase: Integer;
-  N: TVec3;
-  T: TVec3;
-  B: TVec3;
+  Idx: Integer;
 
   _Positions,
-  _Tangents,
-  _Cotangents,
   _Normals: TP3DVec3BufferGL;
-  _Textures: array of TP3DVec2BufferGL;
+  _Edges: TP3DIntBufferGL;
 
-  numTex: Integer;
-  k: Integer;
-  baseTex: Integer;
-
-  function FindMatGroup( Idx: Integer ): Integer;
-  var
-    l: Integer;
-  begin
-    Result:= -1;
-    for l:= 0 to MaterialGroups.Count - 1 do
-      with ( MaterialGroups[ l ]) do
-        if ( InRange( Idx, PolyStart, PolyEnd )) then
-          begin
-            Result:= l;
-            break;
-          end;
-  end;
-
-  procedure SetTexLen( n: Integer );
-  var
-    c: Integer;
-    l: Integer;
-  begin
-    c:= Length( _Textures );
-    if ( n > c ) then
-      begin
-        SetLength( _Textures, n );
-        for l:= c to n - 1 do
-          _Textures[ l ]:= TP3DVec2BufferGL.Create( True );
-      end;
-  end;
-
-  var
-    ActiveMatGroup: Integer;
+  vidx: Integer;
 
 begin
   ClearVBO;
   _Positions:= TP3DVec3BufferGL.Create( True );
-  _Tangents:= TP3DVec3BufferGL.Create( True );
-  _Cotangents:= TP3DVec3BufferGL.Create( True );
   _Normals:= TP3DVec3BufferGL.Create( True );
+  _Normals:= TP3DVec3BufferGL.Create( True );
+  _Edges:= TP3DIntBufferGL.Create( True );
 
-  baseTex:= 0;
-
-  ActiveMatGroup:= FindMatGroup( 0 );
 
   for i:= 0 to high( Faces ) do
     begin
+      Idx:= Indices.Count;
       vbase:= _Positions.Count;
-      _Positions.Count:= vbase + Length( Faces[ i ].verts );
-      ibase:= Indices.Count;
-      Indices.Count:= ibase + ( Length( Faces[ i ].verts ) - 2 ) * 3;
-      if ( ActiveMatGroup <> -1 ) then
-        with ( MaterialGroups[ ActiveMatGroup ]) do
-          if ( not InRange( i, PolyStart, PolyEnd )) then
-            begin
-              IndexEnd:= ibase - 1;
-              ActiveMatGroup:= FindMatGroup( i );
-              if ( ActiveMatGroup > -1 ) then
-                MaterialGroups[ ActiveMatGroup ].IndexStart:= ibase;
-            end;
-
-      for j:= 0 to high( Faces[ i ].verts ) do
+      for j:= 0 to Faces[ i ].loop_count - 1 do
         begin
-          _Positions[ vbase + j ]:= Positions[ Faces[ i ].verts[ j ].v ];
-          Faces[ i ].verts[ j ].v:= vbase + j;
-          if ( Faces[ i ].verts[ j ].n >= 0 ) then
-            begin
-              _Normals.Count:= _Positions.Count;
-              _Normals [ vbase + j ]:= Normals[ Faces[ i ].verts[ j ].n ];
-              Faces[ i ].verts[ j ].n:= vbase + j;
-            end;
-
-          if ( Faces[ i ].verts[ j ].t >= 0 ) then
-            begin
-              _Tangents.Count:= _Positions.Count;
-              _Tangents[ vbase + j ]:= Tangents[ Faces[ i ].verts[ j ].t ];
-              Faces[ i ].verts[ j ].t:= vbase + j;
-            end;
-
-          if ( Faces[ i ].verts[ j ].c >= 0 ) then
-            begin
-              _Cotangents.Count:= _Positions.Count;
-              _Cotangents[ vbase + j ]:= Cotangents[ Faces[ i ].verts[ j ].c ];
-              Faces[ i ].verts[ j ].c:= vbase + j;
-            end;
-
-
-          numTex:= Length( Faces[ i ].verts[ j ].texc );
-
-          if ( numTex > 0 ) then
-            begin
-              SetTexLen( numTex ); //TODO: This should be fine in the most cases but could cause in some cases
-//              baseTex:= _Textures.Count;
-//              _Textures.Count:= _Textures.Count + numTex;
-              for k:= 0 to numTex - 1 do
-                Faces[ i ].verts[ j ].texc[ k ]:= _Textures[ k ].Add( TexCoords[ 0 ][ Faces[ i ].verts[ j ].texc[ k ]]);
-            end;
-
-          if ( j >= 2 ) then
-            begin
-              Indices[ ibase + ( j - 2 ) * 3 + 0 ]:= vbase + 0;
-              Indices[ ibase + ( j - 2 ) * 3 + 1 ]:= vbase + j - 1;
-              Indices[ ibase + ( j - 2 ) * 3 + 2 ]:= vbase + j;
-            end;
+          vidx:= Edges[ Faces[ i ].loop_start + j ];
+          _Positions.Add( Positions[ vidx ]);
+          _Normals.Add( Normals[ vidx ]);
         end;
+      for j:= 1 to Faces[ i ].loop_count - 1 do
+        begin
+          _Edges.Add([ vbase + j -1, vbase + j ]);
+          if ( j > 1 ) then
+            Indices.Add([ vbase,
+                          vbase + j - 1,
+                          vbase + j ]);
+        end;
+      _Edges.Add([ vbase + Faces[ i ].loop_count - 1, vbase ]);
+      Faces[ i ].loop_start:= Idx;
+      Faces[ i ].loop_count:= Indices.Count - Idx;
+      //WriteLn( 'FACE: ', i, ' (idx) ', Faces[ i ].loop_start, ' (loopstart) ',
+      //         Faces[ i ].loop_count, ' (loopcount) ');
     end;
-  if ( ActiveMatGroup <> -1 ) then
-    MaterialGroups[ ActiveMatGroup ].IndexEnd:= Indices.Count;
+  for i:= 0 to MaterialGroups.Count - 1 do
+    begin
+      MaterialGroups[ i ].FIndexStart:= Faces[ MaterialGroups[ i ].PolyStart ].loop_start;
+      MaterialGroups[ i ].FIndexEnd:= Faces[ MaterialGroups[ i ].PolyEnd ].loop_start
+                                    + Faces[ MaterialGroups[ i ].PolyEnd ].loop_count - 1;
+//      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].FIndexStart, ' (loopstart) ',
+//               MaterialGroups[ i ].FIndexEnd, ' (loopend) ');
+    end;
+//  Write( 'Edges: [' );
+//  for i:= 0 to _Edges.Count - 1 do
+//    Write( _Edges[ i ], ', ' );
+//  Write( ']' );
+//  WriteLn( 'Edges before: ', Edges.Count, ' Edges now: ', _Edges.Count );
   Positions.Free;
   Positions:= _Positions;
   Normals.Free;
   Normals:= _Normals;
-  Tangents.Free;
-  Tangents:= _Tangents;
-  Cotangents.Free;
-  Cotangents:= _Cotangents;
-  for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].Free;
-  TexCoords:= _Textures;
+  Edges.Free;
+  Edges:= _Edges;
 
   CreateVBO;
 end;
@@ -517,6 +570,9 @@ begin
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   Indices.PushData;
+
+  Edges.PushData;
+
   VBArray.Unbind;
 end;
 
@@ -526,16 +582,20 @@ var
   j: Integer;
 begin
   Cotangents.Count:= Tangents.Count;
-  for i:= 0 to high( Faces ) - 1 do
+  for i:= 0 to Tangents.Count do
+    Cotangents[ i ]:= cross( Tangents[ i ], Normals[ i ]);
+  {for i:= 0 to high( Faces ) - 1 do
     for j:= 0 to high( Faces[ i ].verts) do
       begin
         Cotangents[ Faces[ i ].verts[ j ].t ]:= cross( Tangents[ Faces[ i ].verts[ j ].t ], Normals[ Faces[ i ].verts[ j ].n ]);
         Faces[ i ].verts[ j ].c:= Faces[ i ].verts[ j ].t;
-      end;
+      end;}
 end;
 
 
 procedure TP3DMesh.Calc_Tangents_Cotangents;
+begin
+{
   procedure CalcTriangleTB( f: Integer; v0, v1, v2: Integer );
   var
     deltaPos1: TVec3;  // Edges
@@ -609,7 +669,7 @@ begin
             CalcTriangleTB( i, j, j+1, j+2);
           flip:= not flip;
         end;
-    end;
+    end;}
 end;
 
 function TP3DMesh.CalcBoundingBox: TP3DBoundingBox;

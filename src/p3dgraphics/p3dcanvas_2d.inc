@@ -10,6 +10,49 @@ end;
 
 TP3DPenStyle = ( psSolid, psStippled1, psStippled2, psStippled3, psStippled4, psStippled5, psStippled6 );
 
+{ TP3DRect }
+
+TP3DRect = object
+  private
+    FHeight: Float;
+    FTop: Float;
+    FLeft: Float;
+    FWidth: Float;
+
+    function GetBottom: Float;
+    function GetBottomI: Integer;
+    function GetBottomRight: TVec2;
+    function GetHeightI: Integer;
+    function GetLeftI: Integer;
+    function GetRight: Float;
+    function GetRightI: Integer;
+    function GetTopI: Integer;
+    function GetTopLeft: TVec2;
+    function GetWidthI: Integer;
+    procedure SetBottom(AValue: Float);
+    procedure SetBottomRight(AValue: TVec2);
+    procedure SetRight(AValue: Float);
+    procedure SetTopLeft(AValue: TVec2);
+
+  public
+    function PtInRect( P: TVec2 ): Boolean;
+
+    property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
+    property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
+    property Left: Float read FLeft write FLeft;
+    property Top: Float read FTop write FTop;
+    property Width: Float read FWidth write FWidth;
+    property Height: Float read FHeight write FHeight;
+    property Bottom: Float read GetBottom write SetBottom;
+    property Right: Float read GetRight write SetRight;
+    property LeftI: Integer read GetLeftI;
+    property TopI: Integer read GetTopI;
+    property WidthI: Integer read GetWidthI;
+    property HeightI: Integer read GetHeightI;
+    property RightI: Integer read GetRightI;
+    property BottomI: Integer read GetBottomI;
+  end;
+
 { TP3DPen }
 
 TP3DPen = class
@@ -61,10 +104,16 @@ TP3DCanvas2D = class ( TP3DCanvas )
     procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );
     procedure RenderRect( p1, p2: TVec2; Color: TVec4 );
     procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
+    procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer;
+      Color: TVec4);
+    procedure RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
+      num_segments: Integer; Color: TVec4);
     procedure RenderLineCircle( c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
     procedure RenderQuad( p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TVec4 );
     procedure RenderQuad( p1, p2, p3, p4: TVec2; Color: TVec4 );
     procedure RenderText( Text: TP3DText; P: TVec2 );
+    procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
+    procedure RenderLetter( Text: TP3DText; Idx: Integer; P: TVec2 );
     procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TVec4 );
     procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TVec4);
     procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TVec4 );
@@ -79,6 +128,10 @@ TP3DCanvas2D = class ( TP3DCanvas )
     property Pen: TP3DPen read FPen;
 end;
 
+function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
+function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;
+function P3DRectEx( TopLeft, BottomRight: TVec2 ): TP3DRect;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -86,25 +139,36 @@ end;
 { TP3DCanvas2D }
 
 procedure TP3DCanvas2D.RenderLine(p1, p2: TVec2; Color: TVec4);
+var
+  LineDir: TVec2;
 begin
   if ( not PrepareForDrawing ) then exit;
 
+  LineDir:= ( p2 - p1 ).Normalize * Pen.Width / 2;
   glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
-  glBegin( GL_LINES );
-  glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
-  glVertex2f( p2.X, p2.Y );
+  glBegin( GL_TRIANGLE_STRIP );
+  glVertexAttrib2f( P3DAttribPosition, p1.X - LineDir.y, p1.Y + LineDir.x );
+  glVertexAttrib2f( P3DAttribPosition, p2.X - LineDir.y, p2.Y + LineDir.x );
+  glVertexAttrib2f( P3DAttribPosition, p1.X + LineDir.y, p1.Y - LineDir.x );
+  glVertexAttrib2f( P3DAttribPosition, p2.X + LineDir.y, p2.Y - LineDir.x );
   glEnd(); cle( Self );
 end;
 
 procedure TP3DCanvas2D.RenderLine(p1, p2: TVec2; Color1, Color2: TVec4);
+var
+  LineDir: TVec2;
 begin
   if ( not PrepareForDrawing ) then exit;
 
-  glBegin( GL_LINES );
+  LineDir:= ( p2 - p1 ).Normalize * Pen.Width / 2;
+
+  glBegin( GL_TRIANGLE_STRIP );
   glVertexAttrib4f( P3DAttribColor, Color1.R, Color1.G, Color1.B, Color1.A );
-  glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
+  glVertexAttrib2f( P3DAttribPosition, p1.X - LineDir.y, p1.Y + LineDir.x );
+  glVertexAttrib2f( P3DAttribPosition, p2.X - LineDir.y, p2.Y + LineDir.x );
   glVertexAttrib4f( P3DAttribColor, Color2.R, Color2.G, Color2.B, Color2.A );
-  glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
+  glVertexAttrib2f( P3DAttribPosition, p1.X + LineDir.y, p1.Y - LineDir.x );
+  glVertexAttrib2f( P3DAttribPosition, p2.X + LineDir.y, p2.Y - LineDir.x );
   glEnd(); cle( Self );
 end;
 
@@ -114,7 +178,7 @@ var
 begin
   if ( not PrepareForDrawing ) then exit;
 
-  glBegin( GL_LINE_STRIP );
+  glBegin( GL_LINES );
   for i:= low( points ) to high( points ) do
     begin
       glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
@@ -206,6 +270,65 @@ begin
   glEnd(); cle( Self );
 end;
 
+procedure TP3DCanvas2D.RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TVec4);
+begin
+  RenderArc( p1 + r, r, 180, 270, num_segments, Color );
+  RenderArc( vec2( p2.x - r, p1.y + r ), r, 270, 360, num_segments, Color );
+  RenderArc( p2 - r, r, 0, 90, num_segments, Color );
+  RenderArc( vec2( p1.x + r, p2.y - r ), r, 90, 180, num_segments, Color );
+  RenderRect( vec2( p1.x + r, p1.y ), vec2( p2.x - r, p2.y ), Color );
+  RenderRect( vec2( p1.x, p1.y + r ), vec2( p1.x + r, p2.y - r ), Color );
+  RenderRect( vec2( p2.x - r, p1.y + r ), vec2( p2.x, p2.y - r ), Color );
+end;
+
+procedure TP3DCanvas2D.RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
+  num_segments: Integer; Color: TVec4);
+var
+  theta, co, si, t: Single;
+  p: TVec2;
+  i: Integer;
+  num_segments_draw: Integer;
+begin
+  if ( not PrepareForDrawing ) then exit;
+
+  glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
+  theta:= 2 * PI / num_segments;
+
+  co:= cos( startangle*deg2rad );
+  si:= sin( startangle*deg2rad );
+  p:= vec2( r, 0 );
+  p:= vec2( co * p.x - si * p.y, si * p.x + co * p.y );
+  //we start at the start_angle
+
+  co:= cos( theta );//precalculate the sine and cosine
+  si:= sin( theta );
+
+  num_segments:= num_segments div 4 * 4;
+
+  glBegin(GL_TRIANGLE_FAN);
+  glVertexAttrib2f( P3DAttribPosition, c.x, c.y );//start with center
+  glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y );//add first point
+  num_segments_draw:= round( int(( endangle - startangle ) * deg2rad / theta ));
+
+  for i:= 0 to num_segments_draw do
+    begin
+      glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y);//output vertex
+
+		//apply the rotation matrix
+      t:= p.x;
+      p:= vec2( co * p.x - si * p.y, si * t + co * p.y );
+    end;
+
+  co:= cos( endangle*deg2rad );
+  si:= sin( endangle*deg2rad );
+  p:= vec2( r, 0 );
+  p:= vec2( co * p.x - si * p.y, si * p.x + co * p.y );
+
+  glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y );//add last point
+
+  glEnd(); cle( Self );
+end;
+
 procedure TP3DCanvas2D.RenderLineCircle(c: TVec2; r: Single;
   num_segments: Integer; Color: TVec4);
 var
@@ -225,8 +348,6 @@ begin
 
   p:= vec2( r, 0 );//we start at angle = 0
 
-
-//  glBegin();
   for i:= 0 to num_segments - 1 do
     begin
       VBO.Add( vec2( p.x + c.x, p.y + c.y ));//output vertex
@@ -276,6 +397,26 @@ begin
   if ( not PrepareForDrawing ) then exit;
   if ( Assigned( Text )) then
     Text.Render( P, ScreenColor * Font.Color, Proj );
+end;
+
+procedure TP3DCanvas2D.RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
+begin
+  if ( Text = '' ) then
+    exit;
+
+  if (( not Assigned( CacheObj )) or ( CacheObj.Text <> Text )) then
+    begin
+      FreeAndNil( CacheObj );
+      CacheObj:= p3dTextSimple( Text, P3DFontManager[ Font.Name, Font.Size ]);
+    end;
+  RenderText( CacheObj, P );
+end;
+
+procedure TP3DCanvas2D.RenderLetter(Text: TP3DText; Idx: Integer; P: TVec2);
+begin
+  if ( not PrepareForDrawing ) then exit;
+  if ( Assigned( Text )) then
+    Text.RenderLetter( P, Idx, ScreenColor * Font.Color, Proj );
 end;
 
 procedure TP3DCanvas2D.RenderBezier(p1, p2, p3, p4: TVec2;
@@ -414,7 +555,6 @@ end;
 
 procedure TP3DCanvas2D.UpdateProj;
 var
-  n: Integer;
   NewProj: TMat4;
   Uniform: TP3DShaderDecl;
 begin
@@ -473,12 +613,117 @@ begin
   FPen:= TP3DPen.Create( vec4( 0, 0, 0, 1 ), 1.0, psSolid );
   FPen.OnChange:= @PenChange;
   FBrush:= TP3DBrush.Create( vec4( 1 ));
-  FMaterial.Unlit:= True;
 end;
 
 destructor TP3DCanvas2D.Destroy;
 begin
   inherited Destroy;
+end;
+
+{ TP3DRect }
+
+function TP3DRect.GetBottomRight: TVec2;
+begin
+  Result:= TopLeft + vec2( Width, Height );
+end;
+
+function TP3DRect.GetHeightI: Integer;
+begin
+  Result:= round( Height );
+end;
+
+function TP3DRect.GetLeftI: Integer;
+begin
+  Result:= round( Left );
+end;
+
+function TP3DRect.GetBottom: Float;
+begin
+  Result:= TopLeft.y + Height;
+end;
+
+function TP3DRect.GetBottomI: Integer;
+begin
+  Result:= round( Bottom );
+end;
+
+function TP3DRect.GetRight: Float;
+begin
+  Result:= TopLeft.x + Width;
+end;
+
+function TP3DRect.GetRightI: Integer;
+begin
+  Result:= round( Right );
+end;
+
+function TP3DRect.GetTopI: Integer;
+begin
+  Result:= round( Top );
+end;
+
+function TP3DRect.GetTopLeft: TVec2;
+begin
+  Result:= vec2( Left, Top );
+end;
+
+function TP3DRect.GetWidthI: Integer;
+begin
+  Result:= round( Width );
+end;
+
+procedure TP3DRect.SetBottom(AValue: Float);
+begin
+  Height:= Max( 0, AValue - Top );
+end;
+
+
+procedure TP3DRect.SetBottomRight(AValue: TVec2);
+begin
+  Width:= Max( 0, AValue.x - Left );
+  Height:= Max( 0, AValue.y - Top );
+end;
+
+
+procedure TP3DRect.SetRight(AValue: Float);
+begin
+  Width:= Max( 0, AValue - Left );
+end;
+
+
+procedure TP3DRect.SetTopLeft(AValue: TVec2);
+begin
+  Left:= AValue.X;
+  Top:= AValue.Y;
+end;
+
+
+function TP3DRect.PtInRect(P: TVec2): Boolean;
+begin
+  Result:= ( P.x >= Left ) and ( P.x < Right )
+       and ( P.Y >= Top )  and ( P.y < Bottom );
+end;
+
+function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
+begin
+  Result.Left:= Left;
+  Result.Top:= Top;
+  Result.Width:= Width;
+  Result.Height:= Height;
+end;
+
+function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;
+begin
+  Result.Left:= Left;
+  Result.Top:= Top;
+  Result.Right:= Right;
+  Result.Bottom:= Bottom;
+end;
+
+function P3DRectEx(TopLeft, BottomRight: TVec2): TP3DRect;
+begin
+  Result.TopLeft:= TopLeft;
+  Result.BottomRight:= BottomRight;
 end;
 
 {$ENDIF}

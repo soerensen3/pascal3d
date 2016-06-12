@@ -46,10 +46,11 @@ void main()
   float offset = texture2D( tex1, vTexCoord0.st ).a;
   vPosition = Position;
   vPosition.z+= offset * height;
-  vPosition = view * world * vPosition;
+  vPosition = world * vPosition;
   vPosition.z-= length( vPosition.xy ) / 10.0;
-  vNormal = world * vec4( Normal.xyz, 0 );
-  vTangent = world * vec4( Tangent.xyz, 0 );
-  vCotangent = world * vec4( Cotangent.xyz, 0 );
+  vPosition = view * vPosition;
+  vNormal = normalize( view * world * vec4( Normal.xyz, 0 ));
+  vTangent = view * world * vec4( Tangent.xyz, 0 );
+  vCotangent = view * world * vec4( Cotangent.xyz, 0 );
   gl_Position = proj * vPosition;
 }

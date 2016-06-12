@@ -4,8 +4,8 @@ const
 
 procedure OnMouseMotion( Sender: TP3DApplication; Event: TSDL_MouseMotionEvent );
 begin
-  CamYawPitchRoll.X:= ( min( 180, max( 0, CamYawPitchRoll.X - Event.yrel * mouse_speed )));
-  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z - Event.xrel * mouse_speed );
+  CamYawPitchRoll.X:= ( min( 0, max( -180, CamYawPitchRoll.X + Event.yrel * mouse_speed )));
+  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z + Event.xrel * mouse_speed );
 end;
 
 procedure OnMouseButton( Sender: TP3DApplication; Event: TSDL_MouseButtonEvent );
@@ -65,20 +65,21 @@ var
 var
   m: TMat4;
 begin
+  P3DGUIManager.Input;
   Keys:= SDL_GetKeyboardState( nil );
   m:= TP3DCamera( maincamera.Data ).View;
   mat4inverse( m, m );
   if ( KeyPressed( SDL_SCANCODE_S )) then
-    CamPos:= CamPos - m.Row[ 2 ].xyz * move_speed;
-  if ( KeyPressed( SDL_SCANCODE_A )) then
-    CamPos:= CamPos + m.Row[ 0 ].xyz * move_speed;
-  if ( KeyPressed( SDL_SCANCODE_W )) then
     CamPos:= CamPos + m.Row[ 2 ].xyz * move_speed;
-  if ( KeyPressed( SDL_SCANCODE_D )) then
+  if ( KeyPressed( SDL_SCANCODE_A )) then
     CamPos:= CamPos - m.Row[ 0 ].xyz * move_speed;
+  if ( KeyPressed( SDL_SCANCODE_W )) then
+    CamPos:= CamPos - m.Row[ 2 ].xyz * move_speed;
+  if ( KeyPressed( SDL_SCANCODE_D )) then
+    CamPos:= CamPos + m.Row[ 0 ].xyz * move_speed;
   if ( KeyPressed( SDL_SCANCODE_SPACE )) then
-    CamPos.Z:= CamPos.Z - move_speed;
-  if ( KeyPressed( SDL_SCANCODE_LSHIFT )) then
     CamPos.Z:= CamPos.Z + move_speed;
+  if ( KeyPressed( SDL_SCANCODE_LSHIFT )) then
+    CamPos.Z:= CamPos.Z - move_speed;
 end;
 

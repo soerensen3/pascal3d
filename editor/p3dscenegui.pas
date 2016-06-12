@@ -7,68 +7,91 @@ interface
 uses
   Classes,
   SysUtils,
+  LazFileUtils,
+  dglOpenGL,
   p3devents,
   p3dutils,
   p3dgraphics,
+  p3dMath,
   p3dgui;
 
 type
+  {$DEFINE INTERFACE}
+    {$INCLUDE p3dscene_sceneviewer.inc}
+    {$INCLUDE p3dscene_dataviewer.inc}
+    {$INCLUDE p3dscene_assetviewer.inc}
+    {$INCLUDE p3dscene_objectinspector.inc}
+  {$UNDEF INTERFACE}
 
-  { TP3DSToolbar }
-
-  TP3DSToolbar = class ( TP3DGraphicControl )
-    private
-      FButtons: TP3DControlList;
-
-    public
-      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
-      destructor Destroy; override;
-
-      function AddButton( Text: String ): TP3DButton;
-
-    published
-      property Buttons: TP3DControlList read FButtons write FButtons;
-  end;
-
-  { TP3DSAssetPanel }
-
-  TP3DSAssetPanel = class( TP3DGraphicControl )
-    private
-      FAssetView: TP3DListViewFile;
-      FDirectoryView: TP3DTreeViewDirectory;
-
-    public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
-      destructor Destroy; override;
-
-    published
-      property DirectoryView: TP3DTreeViewDirectory read FDirectoryView write FDirectoryView;
-      property AssetView: TP3DListViewFile read FAssetView write FAssetView;
-  end;
 
   procedure P3DSceneGUIInit;
+  procedure P3DSceneGUIFinish;
 
 var
-  ToolbarFile: TP3DSToolbar;
   AssetView: TP3DSAssetPanel;
-  SceneTree: TP3DTreeView;
+  DataView: TP3DDataPanel;
+  SceneView: TP3DScenePanel;
+  TestScene: TP3DScene;
+  OIPanel: TP3DOIPanel;
+
+  MeshArrows: TP3DActor;
+  MeshGrid: TP3DActor;
+
+  SymbolActor, SymbolMesh,
+    SymbolScene, SymbolFont,
+    SymbolCamera, SymbolTexture,
+    SymbolMaterial, SymbolShader,
+    SymbolLight, SymbolLibrary: TP3DText;
 
 implementation
 
-procedure CreateToolbarFile;
-begin
-  ToolbarFile:= TP3DSToolbar.Create();
-  ToolbarFile.AddButton( 'O' );
-  ToolbarFile.AddButton( 'X' );
-  ToolbarFile.Width:= 128;
-end;
+{$DEFINE IMPLEMENTATION}
+  {$INCLUDE p3dscene_sceneviewer.inc}
+  {$INCLUDE p3dscene_dataviewer.inc}
+  {$INCLUDE p3dscene_assetviewer.inc}
+  {$INCLUDE p3dscene_objectinspector.inc}
+{$UNDEF IMPLEMENTATION}
+
 
 procedure CreateSceneTree;
 var
   ListView: TP3DListView;
+  i, j, n: Integer;
 begin
+  P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
+  TestScene:= TP3DScene.Create();
   AssetView:= TP3DSAssetPanel.Create();
   AssetView.Align:= alBottom;
+  SceneView:= TP3DScenePanel.Create();
+  SceneView.Align:= alClient;
+  DataView:= TP3DDataPanel.Create();
+  DataView.Align:= alLeft;
+
+  SceneView.Scene:= TestScene;
+  OIPanel:= TP3DOIPanel.Create();
+  OIPanel.Align:= alRight;
+  OIPanel.ObjectInspector.Obj:= OIPanel;
+
+  {n:= 1;
+  for i:= 0 to ( Random( 10 ) + 5 ) do
+    with ( TestScene.Objects[ TestScene.Objects.Add( TP3DActor.Create())]) do
+      begin
+        Name:= 'TestActor' + IntToStr( n );
+        Inc( n );
+        case random( 3 ) of
+          0: Data:= TP3DMesh.Create();
+          1: Data:= TP3DCamera.Create();
+          2: Data:= TP3DScene.Create();
+        end;;
+        for j:= 0 to Random( 5 ) do
+          with ( Children[ Children.Add( TP3DActor.Create())]) do
+            begin
+              Name:= 'TestActor' + IntToStr( n );
+              Inc( n );
+            end;
+      end;}
+
+  //ActorList.ActorList:= TestScene.Objects;
 {  SceneTree:= TP3DTreeViewDirectory.Create();
   SceneTree.Width:= 200;
   SceneTree.Align:= alLeft;
@@ -113,63 +136,29 @@ end;
 
 procedure P3DSceneGUIInit;
 begin
-  //CreateToolbarFile;
   CreateSceneTree;
+  CreateEditorScenes;
   P3DGUIManager.Controls.Realign;
   P3DGUIManager.UpdateExtents;
 end;
 
-{ TP3DSAssetPanel }
-
-constructor TP3DSAssetPanel.Create(const AOwner: TP3DObjectList;
-  const AParent: TP3DGraphicControl);
+procedure P3DSceneGUIFinish;
 begin
-  inherited;
-  Height:= 200;
-  FDirectoryView:= TP3DTreeViewDirectory.Create( nil, Self );
-  FAssetView:= TP3DListViewFile.Create( nil, Self );
-  FDirectoryView.Directory:= P3DSearchPaths.BaseDir;
-  FDirectoryView.ShowSymbols:= True;
-  FDirectoryView.Align:= alLeft;
-  FDirectoryView.Width:= 200;
-  FAssetView.ShowSymbols:= True;
-  FAssetView.TreeViewDirectory:= FDirectoryView;
-  FAssetView.ShowFolderUp:= True;
-  FAssetView.Align:= alClient;
+  FreeAndNil( SymbolActor );
+  FreeAndNil( SymbolMesh );
+  FreeAndNil( SymbolScene );
+  FreeAndNil( SymbolFont );
+  FreeAndNil( SymbolCamera );
+  FreeAndNil( SymbolTexture );
+  FreeAndNil( SymbolMaterial );
+  FreeAndNil( SymbolShader );
+  FreeAndNil( SymbolLight );
+  FreeAndNil( SymbolLibrary );
 end;
 
-destructor TP3DSAssetPanel.Destroy;
-begin
-  FDirectoryView.Free;
-  FAssetView.Free;
-  inherited Destroy;
-end;
 
-{ TP3DSToolbar }
-
-constructor TP3DSToolbar.Create(const AOwner: TP3DObjectList;
-  const AParent: TP3DGraphicControl);
-begin
-  inherited;
-  Buttons:= TP3DControlList.Create( Self );
-  Height:= 32;
-end;
-
-destructor TP3DSToolbar.Destroy;
-begin
-  Buttons.Clear( True );
-  Buttons.Free;
-  inherited Destroy;
-end;
-
-function TP3DSToolbar.AddButton( Text: String ): TP3DButton;
-begin
-  Result:= TP3DButton.Create( nil, Self );
-  Buttons.Add( Result );
-  Result.Align:= alLeft;
-  Result.Width:= 32;
-  Result.Caption:= Text;
-end;
+finalization
+  P3DSceneGUIFinish;
 
 end.
 

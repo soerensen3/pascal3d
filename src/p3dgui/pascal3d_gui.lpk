@@ -11,7 +11,7 @@
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="13">
+    <Files Count="14">
       <Item1>
         <Filename Value="pascal3d_gui.pas"/>
         <UnitName Value="pascal3d_gui"/>
@@ -64,6 +64,10 @@
         <Filename Value="p3dgui_shadernodes.inc"/>
         <Type Value="Include"/>
       </Item13>
+      <Item14>
+        <Filename Value="p3dgui_objectinspector.inc"/>
+        <Type Value="Binary"/>
+      </Item14>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

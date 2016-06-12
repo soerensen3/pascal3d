@@ -7,6 +7,8 @@
 // # P3D Interface                  #
 // ##################################
 
+{.$DEFINE DEBUG_GUI}
+
 unit p3dgui;
 
 interface
@@ -19,6 +21,7 @@ interface
     strutils,
     SDL2,
     LazFileUtils,
+    dglOpenGL,
     p3dutils,
     p3devents,
     p3dgraphics,
@@ -36,51 +39,20 @@ interface
 
     TP3DControlAlign = ( alNone, alLeft, alRight, alClient, alTop, alBottom );
 
-    { TP3DRect }
-
-    TP3DRect = object
-      private
-        FHeight: Float;
-        FTop: Float;
-        FLeft: Float;
-        FWidth: Float;
-
-        function GetBottom: Float;
-        function GetBottomRight: TVec2;
-        function GetRight: Float;
-        function GetTopLeft: TVec2;
-        procedure SetBottom(AValue: Float);
-        procedure SetBottomRight(AValue: TVec2);
-        procedure SetRight(AValue: Float);
-        procedure SetTopLeft(AValue: TVec2);
-
-      public
-        function PtInRect( P: TVec2 ): Boolean;
-
-        property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
-        property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
-        property Left: Float read FLeft write FLeft;
-        property Top: Float read FTop write FTop;
-        property Width: Float read FWidth write FWidth;
-        property Height: Float read FHeight write FHeight;
-        property Bottom: Float read GetBottom write SetBottom;
-        property Right: Float read GetRight write SetRight;
-    end;
-
   {$DEFINE INTERFACE}
   {$INCLUDE p3dgui_manager.inc}
   {$INCLUDE p3dgui_controllist.inc}
   {$INCLUDE p3dgui_graphiccontrol.inc}
 
   {$INCLUDE p3dgui_buttons.inc}
+  {$INCLUDE p3dgui_menus.inc}
   {$INCLUDE p3dgui_stdctrls.inc}
   {$INCLUDE p3dgui_commonctrls.inc}
+  {$INCLUDE p3dgui_sceneviewer.inc}
+  {$INCLUDE p3dgui_objectinspector.inc}
 
   {$UNDEF INTERFACE}
 
-  function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
-  function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;
-  function P3DRectEx( TopLeft, BottomRight: TVec2 ): TP3DRect;
 
 var
   P3DGUIManager: TP3DGUIManager;
@@ -98,78 +70,6 @@ var
   LastMouseOverCtrl: TP3DGraphicControl;
   LastMouseDownCtrl: array[ 0..2 ] of TP3DGraphicControl;
 
-{ TP3DRect }
-
-function TP3DRect.GetBottomRight: TVec2;
-begin
-  Result:= TopLeft + vec2( Width, Height );
-end;
-
-function TP3DRect.GetBottom: Float;
-begin
-  Result:= TopLeft.y + Height;
-end;
-
-function TP3DRect.GetRight: Float;
-begin
-  Result:= TopLeft.x + Width;
-end;
-
-function TP3DRect.GetTopLeft: TVec2;
-begin
-  Result:= vec2( Left, Top );
-end;
-
-procedure TP3DRect.SetBottom(AValue: Float);
-begin
-  Height:= Max( 0, AValue - Top );
-end;
-
-procedure TP3DRect.SetBottomRight(AValue: TVec2);
-begin
-  Width:= Max( 0, AValue.x - Left );
-  Height:= Max( 0, AValue.y - Top );
-end;
-
-procedure TP3DRect.SetRight(AValue: Float);
-begin
-  Width:= Max( 0, AValue - Left );
-end;
-
-procedure TP3DRect.SetTopLeft(AValue: TVec2);
-begin
-  Left:= AValue.X;
-  Top:= AValue.Y;
-end;
-
-function TP3DRect.PtInRect(P: TVec2): Boolean;
-begin
-  Result:= ( P.x >= Left ) and ( P.x < Right )
-       and ( P.Y >= Top )  and ( P.y < Bottom );
-end;
-
-function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
-begin
-  Result.Left:= Left;
-  Result.Top:= Top;
-  Result.Width:= Width;
-  Result.Height:= Height;
-end;
-
-function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;
-begin
-  Result.Left:= Left;
-  Result.Top:= Top;
-  Result.Right:= Right;
-  Result.Bottom:= Bottom;
-end;
-
-function P3DRectEx(TopLeft, BottomRight: TVec2): TP3DRect;
-begin
-  Result.TopLeft:= TopLeft;
-  Result.BottomRight:= BottomRight;
-end;
-
 
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dgui_manager.inc}
@@ -179,6 +79,9 @@ end;
 {$INCLUDE p3dgui_buttons.inc}
 {$INCLUDE p3dgui_stdctrls.inc}
 {$INCLUDE p3dgui_commonctrls.inc}
+{$INCLUDE p3dgui_sceneviewer.inc}
+{$INCLUDE p3dgui_menus.inc}
+{$INCLUDE p3dgui_objectinspector.inc}
 
 
 procedure P3DGUIInit;

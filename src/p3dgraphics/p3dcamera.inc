@@ -12,7 +12,11 @@ type
       FAspect: Single;
       FFar: Single;
       FForward: TVec3;
+      FFOV: Single;
       FHandedness: TP3DCameraHandedness;
+      FInvView: TMat4;
+      FIsIsometric: Boolean;
+      FIsoZoom: Single;
       FLeft: TVec3;
       FMatNormal: TMat3;
       FNear: Single;
@@ -21,11 +25,12 @@ type
       FUp: TVec3;
       FView: TMat4;
       FYawPitchRoll: TVec3;
+
       function GetView: TMat4;
       procedure SetView(AValue: TMat4);
 
     public
-      procedure UpdateMatrices;
+      procedure UpdateMatrices(CamObject: TP3DActor);
       procedure PassToShader( world: TMat4 );
       procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
 
@@ -39,14 +44,18 @@ type
       property Left: TVec3 read FLeft;
       property YawPitchRoll: TVec3 read FYawPitchRoll write FYawPitchRoll;
       property View: TMat4 read FView write FView; //GetView write SetView;
+      property InView: TMat4 read FInvView write FInvView;
       property MatNormal: TMat3 read FMatNormal write FMatNormal;
       property Proj: TMat4 read FProj write FProj;
+      property FOV: Single read FFOV write FFOV;
+      property IsIsometric: Boolean read FIsIsometric write FIsIsometric;
 
     published
       property Handedness: TP3DCameraHandedness read fHandedness write fHandedness;
       property Near: Single read FNear write FNear;
       property Far: Single read FFar write FFar;
       property Aspect: Single read FAspect write FAspect;
+      property IsoZoom: Single read FIsoZoom write FIsoZoom;
   end;
   TP3DCameraList = specialize gP3DCustomDatablockList < TP3DCamera >;
 
@@ -76,49 +85,21 @@ begin
       TP3DActor( Users[ 0 ] ).FMatrix:= AValue;
 end;
 
-procedure TP3DCamera.UpdateMatrices;
-var
-  _mdlview: TMat4;
-  cosx: ValReal;
-  cosy: ValReal;
-  cosz: ValReal;
-  sinx: ValReal;
-  siny: ValReal;
-  sinz: ValReal;
+procedure TP3DCamera.UpdateMatrices( CamObject: TP3DActor );
 begin
-  {View:= mat4translate( vec4( -Position, 1.0 ));
-{  _mdlview:= Mat4Rot( vec3_Axis_PZ, deg2rad* YawPitchRoll.z );
-  _mdlview*= Mat4Rot( vec3_Axis_PX, deg2rad* YawPitchRoll.x );
-  _mdlview*= Mat4Rot( vec3_Axis_PY, deg2rad* YawPitchRoll.y );}
-
-  //  http://stackoverflow.com/questions/23009549/roll-pitch-yaw-calculation
-{  _mdlview:= Mat4Rot( vec3_Axis_PZ, deg2rad* YawPitchRoll.z ); // Yaw
-  _mdlview*= Mat4Rot( vec3_Axis_PX, deg2rad* YawPitchRoll.x + PI / 2 ); // Roll
-  _mdlview*= Mat4Rot( vec3_Axis_PY, deg2rad* YawPitchRoll.y ); // Pitch}
-  with ( YawPitchRoll ) do
-    begin
-      cosx:= cos( -deg2rad * X );
-      cosy:= cos( -deg2rad * Y );
-      cosz:= cos( -deg2rad * Z );
-      sinx:= sin( -deg2rad * X );
-      siny:= sin( -deg2rad * Y );
-      sinz:= sin( -deg2rad * Z );
+  if ( Assigned( CamObject )) then
+    mat4inverse( CamObject.Matrix, FView );
+  if ( IsIsometric ) then
+    case Handedness of
+      p3dchLeft: Proj:= mat4orthoLH( Aspect * IsoZoom, 1 * IsoZoom, Near, Far );
+      //p3dchRight: Proj:= mat4orthoRH( Aspect * IsoZoom, 1 * IsoZoom, Near, Far );
+    end
+  else
+    case Handedness of
+      p3dchLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, Aspect, Near, Far );
+      p3dchRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, Aspect, Near, Far );
     end;
-  _mdlview:= mat4(   cosy * cosz,   cosx * sinz + sinx * siny * cosz, sinx * sinz - cosx * siny * cosz, 0,
-                   - cosy * sinz,   cosx * cosz - sinx * siny * sinz, sinx * cosz + cosx * siny * sinz, 0,
-                     siny,        - sinx * cosy,                      cosx * cosy,                      0,
-                     0,             0,                                0,                                1 );
-  MatNormal:= mat3( _mdlview );
-  View:= View * _mdlview;
-
-  FLeft:= vec3( MatNormal._00, MatNormal._01, MatNormal._02 );
-  FUp:= vec3( MatNormal._10, MatNormal._11, MatNormal._12 );
-  FForward:= vec3( MatNormal._20, MatNormal._21, MatNormal._22 );}
-
-  case Handedness of
-    p3dchLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, Aspect, Near, Far );
-    p3dchRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, Aspect, Near, Far );
-  end;
+  InView:= CamObject.Matrix;
 end;
 
 procedure TP3DCamera.PassToShader(world: TMat4);
@@ -128,7 +109,6 @@ var
 begin
   if ( Assigned( P3DShaderActive )) then
     begin
-      UpdateMatrices;
       matview:= View;
       glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'view'), 1, False, @matview ); cle( Self );
       glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'proj'), 1, False, @Proj ); cle( Self );
@@ -163,6 +143,8 @@ begin
   Aspect:= 4/3;
   FNear:= 0.1;
   FFar:= 100;
+  FFOV:= 90;
+  FIsoZoom:= 1.0;
   //FHandedness:= coRight;
   Parent.Cameras.Add( Self );
 end;

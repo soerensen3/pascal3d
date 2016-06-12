@@ -6,9 +6,12 @@
   type
     TP3DMenuItem = class;
 
+    TP3DCustomMenuItemList = specialize gP3DCustomObjectList < TP3DMenuItem >;
+
+    TP3DPopupItemClick = procedure ( Sender: TP3DMenuItem ) of object;
+
     { TP3DMenuItemList }
 
-    TP3DCustomMenuItemList = specialize gP3DCustomObjectList < TP3DMenuItem >;
     TP3DMenuItemList = class( TP3DCustomMenuItemList )
       private
         FParent: TP3DGraphicControl;
@@ -20,16 +23,17 @@
         property Parent: TP3DGraphicControl read FParent write FParent;
     end;
 
+    { TP3DMenuItem }
+
     TP3DMenuItem = class( TP3DButton )
       private
         FUserData: TObject;
 
       public
         constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+
         property UserData: TObject read FUserData write FUserData;
     end;
-
-    { TP3DPopupMenu }
 
     { TP3DCustomPopupMenu }
 
@@ -43,14 +47,19 @@
         procedure Draw; override;
 
         procedure PopUp( X, Y: Integer ); virtual;
-
+        procedure Hide;
     end;
+
+    { TP3DPopupMenu }
 
     TP3DPopupMenu = class ( TP3DCustomPopupMenu )
       private
         FItems: TP3DMenuItemList;
+        FOnItemClick: TP3DPopupItemClick;
 
         procedure ItemsChange( Sender: TObject );
+        procedure ItemMouseClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X,
+          Y: Integer);
 
       public
         constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
@@ -60,6 +69,7 @@
 
       published
         property Items: TP3DMenuItemList read FItems write FItems;
+        property OnItemClick: TP3DPopupItemClick read FOnItemClick write FOnItemClick;
     end;
 
 {$ENDIF}
@@ -71,7 +81,7 @@
 constructor TP3DMenuItem.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AOwner, AParent );
   HAlignment:= haLeft;
 end;
 
@@ -100,6 +110,13 @@ begin
   Update;
 end;
 
+procedure TP3DPopupMenu.ItemMouseClick(Sender: TP3DGraphicControl; mb1, mb2,
+  mb3: Boolean; X, Y: Integer);
+begin
+  if ( Sender is TP3DMenuItem and Assigned( OnItemClick )) then
+    OnItemClick( TP3DMenuItem( Sender ));
+end;
+
 constructor TP3DPopupMenu.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
@@ -124,6 +141,7 @@ begin
     begin
       for Ctrl in Items do
         begin
+          Ctrl.OnMouseClick:= @ItemMouseClick;
           Ctrl.Height:= Round( Ctrl.TextHeight );
           MinSize:= Max( MinSize, Round( Ctrl.TextWidth ));
         end;
@@ -175,6 +193,11 @@ begin
   Focused:= True;
 end;
 
+procedure TP3DCustomPopupMenu.Hide;
+begin
+  Visible:= False;
+end;
 
-end.
+
+{$ENDIF}
 

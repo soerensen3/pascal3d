@@ -1,43 +1,187 @@
 <?xml version="1.0" ?>
-<p3dscene>
-  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
-  <object data="light_Lamp.003" name="Lamp.003" type="lamp">
-    <transform position="-2.148687,11.957614, 6.639953" quaternion="-0.019405, 0.346730, 0.887314, 0.303441" scale=" 1.000000, 1.000000, 1.000000" />
-  </object>
-  <object data="light_Lamp.002" name="Lamp.002" type="lamp">
-    <transform position="-1.762631,10.429528, 6.512953" quaternion=" 0.308297, 0.184034, 0.573586, 0.736263" scale=" 1.000000, 1.000000, 1.000000" />
-  </object>
-  <object data="light_Lamp.001" name="Lamp.001" type="lamp">
-    <transform position="-1.555738, 9.190848, 6.384214" quaternion=" 0.416885, 0.083850, 0.350377, 0.834513" scale=" 1.000000, 1.000000, 1.000000" />
-  </object>
-  <object data="mesh_Cube.001" name="Cube.001" type="mesh">
-    <transform position=" 0.000000, 0.000000, 2.500000" quaternion=" 0.000000, 0.000000, 0.191609, 0.981471" scale=" 0.500000, 0.500000, 0.500000" />
-  </object>
-  <object data="mesh_Cube" name="Cube" type="mesh">
-    <transform position=" 0.000000, 0.000000, 1.000000" quaternion=" 0.000000, 0.000000,-0.103608, 0.994618" scale=" 1.000000, 1.000000, 1.000000" />
-  </object>
-  <object data="light_Lamp" name="Lamp" type="lamp">
-    <transform position="-1.532449, 7.905378, 6.204060" quaternion="-0.743808,-0.074142, 0.108670, 0.655319" scale=" 1.000000, 1.000000, 1.000000" />
-  </object>
-  <mesh binary="rocks.Cube.001.p3dmesh" cotangents="414" faces="1536" name="mesh_Cube.001" normals="390" tangents="398" texcoords="289" vertices="1538">
-    <material end="1535" name="material_Material.001" start="0" />
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      name = "Lamp.003"
+      type = "lamp"
+      data = "lamp_Lamp.003">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = "-2.148687,11.957614, 6.639953"
+        quaternion = "-0.019405, 0.346730, 0.887314, 0.303441">
+      </transform>
+    </object>
+    <object
+      name = "Lamp.002"
+      type = "lamp"
+      data = "lamp_Lamp.002">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = "-1.762631,10.429528, 6.512953"
+        quaternion = " 0.308297, 0.184034, 0.573586, 0.736263">
+      </transform>
+    </object>
+    <object
+      name = "Lamp.001"
+      type = "lamp"
+      data = "lamp_Lamp.001">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = "-1.555738, 9.190848, 6.384214"
+        quaternion = " 0.416885, 0.083850, 0.350377, 0.834513">
+      </transform>
+    </object>
+    <object
+      name = "Cube.001"
+      type = "mesh"
+      data = "mesh_Cube.001">
+      <transform
+        scale = " 0.500000, 0.500000, 0.500000"
+        position = " 0.000000, 0.000000, 1.500000"
+        quaternion = " 0.000000, 0.000000, 0.191609, 0.981471">
+      </transform>
+    </object>
+    <object
+      name = "Cube"
+      type = "mesh"
+      data = "mesh_Cube">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.103608, 0.994618">
+      </transform>
+    </object>
+    <object
+      name = "Lamp"
+      type = "lamp"
+      data = "lamp_Lamp">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = "-1.532449, 7.905378, 6.204060"
+        quaternion = "-0.743808,-0.074142, 0.108670, 0.655319">
+      </transform>
+    </object>
+    <object
+      name = "Camera"
+      type = "camera"
+      data = "camera_Camera">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 7.481132,-6.507640, 5.343665"
+        quaternion = " 0.481707, 0.212922, 0.334251, 0.781600">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    texcoords = "6144"
+    vertices = "1538"
+    loops = "6144"
+    texlayers = "1"
+    tangents = "6144"
+    name = "mesh_Cube.001"
+    faces = "1536"
+    cotangents = "6144"
+    binary = "rocks.mesh_Cube.001.p3dmesh"
+    normals = "1538">
+    <material
+      name = "material_Material.001"
+      end = "1535"
+      start = "0">
+    </material>
   </mesh>
-  <mesh binary="rocks.Cube.p3dmesh" cotangents="414" faces="1536" name="mesh_Cube" normals="390" tangents="398" texcoords="1729" vertices="1538">
-    <material end="1535" name="material_Material" start="0" />
+  <mesh
+    texcoords = "6144"
+    vertices = "1538"
+    loops = "6144"
+    texlayers = "2"
+    tangents = "6144"
+    name = "mesh_Cube"
+    faces = "1536"
+    cotangents = "6144"
+    binary = "rocks.mesh_Cube.p3dmesh"
+    normals = "1538">
+    <material
+      name = "material_Material"
+      end = "1535"
+      start = "0">
+    </material>
   </mesh>
-  <light color="1.000000, 0.152920, 0.437146" energy="1.0" name="light_Lamp.003" type="sun" />
-  <light color="1.000000, 0.000000, 0.018247" energy="1.0" name="light_Lamp.002" type="sun" />
-  <light color="0.000000, 1.000000, 0.001529" energy="0.5199999809265137" name="light_Lamp.001" type="sun" />
-  <light color="0.000000, 0.043119, 1.000000" energy="0.5299999713897705" name="light_Lamp" type="sun" />
-  <material diffuse="0.262895, 0.259063, 0.266761" name="material_Material.001" specular="7.000000, 0.152672, 0.152672, 0.152672">
-    <texture diffuse="1.0" file="rock.jpg" layer="0" mode="multiply" />
-    <texture file="rock_spec.png" layer="0" mode="multiply" specular="1.0" specular_intensity="1.0" />
-    <texture file="rock_normal.png" mode="mix" normal="1.0" />
+  <lamp
+    name = "lamp_Lamp.003"
+    type = "sun"
+    energy = "1.0"
+    color = "1.000000, 0.152920, 0.437146">
+  </lamp>
+  <lamp
+    name = "lamp_Lamp.002"
+    type = "sun"
+    energy = "1.0"
+    color = "1.000000, 0.000000, 0.018247">
+  </lamp>
+  <lamp
+    name = "lamp_Lamp.001"
+    type = "sun"
+    energy = "0.5199999809265137"
+    color = "0.000000, 1.000000, 0.001529">
+  </lamp>
+  <lamp
+    name = "lamp_Lamp"
+    type = "sun"
+    energy = "0.5299999713897705"
+    color = "0.000000, 0.043119, 1.000000">
+  </lamp>
+  <camera
+    name = "camera_Camera"
+    far = "100.0"
+    near = "0.10000000149011612"
+    fov = "0.8575560450553894">
+  </camera>
+  <material
+    name = "material_Material.001"
+    diffuse = "0.262895, 0.259063, 0.266761"
+    specular = "7.000000, 0.152672, 0.152672, 0.152672">
+    <texture
+      diffuse = "1.0"
+      file = "rock.jpg"
+      layer = "0"
+      mode = "multiply">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_spec.png"
+      specular = "1.0"
+      layer = "0"
+      specular_intensity = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_normal.png"
+      normal = "1.0">
+    </texture>
   </material>
-  <material diffuse="1.000000, 0.729992, 0.635917" name="material_Material" specular="36.000000, 0.030769, 0.030769, 0.030769">
-    <texture diffuse="1.0" file="shadow_bigcube.png" layer="1" mode="mix"/>
-    <texture diffuse="1.0" file="rock.jpg" layer="0" mode="multiply" />
-    <texture file="rock_spec.png" layer="0" mode="multiply" specular_intensity="1.0" />
-    <texture file="rock_normal.png" layer="0" mode="mix" normal="1.0" />
+  <material
+    name = "material_Material"
+    diffuse = "1.000000, 0.729992, 0.635917"
+    specular = "7.000000, 0.152672, 0.152672, 0.152672">
+    <texture
+      diffuse = "1.0"
+      file = "rock.jpg"
+      layer = "0"
+      mode = "multiply">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_spec.png"
+      specular = "1.0"
+      layer = "0"
+      specular_intensity = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_normal.png"
+      layer = "0"
+      normal = "1.0">
+    </texture>
   </material>
-</p3dscene>
+</p3dfile>

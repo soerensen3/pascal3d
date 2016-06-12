@@ -51,7 +51,9 @@ type
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dtext.inc}
+{$INCLUDE p3dsymbols.inc}
 {$INCLUDE p3dcanvas.inc}
+{$INCLUDE p3dselection.inc}
 
 {$INCLUDE p3dresource.inc}
 {$UNDEF INTERFACE}
@@ -62,6 +64,7 @@ var
   P3DShaderNodeLib: TP3DShaderNodeLibrary = nil;
   P3DData: TP3DData = nil;
   P3DFontManager: TP3DFontManager = nil;
+  P3DCanvasMaterialDefault: TP3DMaterialBase;
 
 procedure P3DGraphicsInit;
 procedure P3DGraphicssFinish;
@@ -74,45 +77,6 @@ begin
   P3DCheckLastError( Sender, AddMsg );
 end;
 
-procedure P3DGraphicsInit;
-begin
-  InitOpenGL();
-  ReadExtensions;
-
-  // Some OpenGL configurations
-  glClearColor( 0.0, 0.5, 1.0, 1.0 );
-  glClearDepth( 1.0 );
-  //glEnable( GL_DEPTH_TEST ); cle( nil );
-  glDepthFunc( GL_LESS ); cle( nil );
-  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST ); cle( nil );
-  glEnable( GL_BLEND ); cle( nil );
-  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); cle( nil );
-
-  if ( not Assigned( P3DViewports )) then
-    P3DViewports:= TP3DViewportStack.Create;
-  if ( not Assigned( P3DData )) then
-    P3DData:= TP3DData.Create;
-  if ( not Assigned( P3DShaderNodeLib )) then
-    P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create;
-
-  if ( TTF_Init() <> 0 ) then
-    raise Exception.Create( 'Cannot initialize sdl2_text!' );
-  if ( not Assigned( P3DFontManager )) then
-    P3DFontManager:= TP3DFontManager.Create;
-end;
-
-procedure P3DGraphicssFinish;
-begin
-  if ( Assigned( P3DFontManager )) then
-    FreeAndNil( P3DFontManager );
-  if ( Assigned( P3DViewports )) then
-    FreeAndNil( P3DViewports );
-  if ( Assigned( P3DShaderNodeLib )) then
-    FreeAndNil( P3DShaderNodeLib );
-  if ( Assigned( P3DData )) then
-    FreeAndNil( P3DData );
-  TTF_Quit();
-end;
 
 var
   P3DAssertSender: TObject = nil;
@@ -161,10 +125,52 @@ end;
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dtext.inc}
+{$INCLUDE p3dsymbols.inc}
 {$INCLUDE p3dcanvas.inc}
+{$INCLUDE p3dselection.inc}
 
 {$INCLUDE p3dresource.inc}
 {$UNDEF IMPLEMENTATION}
+
+procedure P3DGraphicsInit;
+begin
+  InitOpenGL();
+  ReadExtensions;
+
+  // Some OpenGL configurations
+  glClearColor( 0.0, 0.5, 1.0, 1.0 );
+  glClearDepth( 1.0 );
+  //glEnable( GL_DEPTH_TEST ); cle( nil );
+  glDepthFunc( GL_LESS ); cle( nil );
+  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST ); cle( nil );
+  glEnable( GL_BLEND ); cle( nil );
+  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); cle( nil );
+
+  if ( not Assigned( P3DViewports )) then
+    P3DViewports:= TP3DViewportStack.Create;
+  if ( not Assigned( P3DData )) then
+    P3DData:= TP3DData.Create;
+  if ( not Assigned( P3DShaderNodeLib )) then
+    P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create;
+
+  if ( TTF_Init() <> 0 ) then
+    raise Exception.Create( 'Cannot initialize sdl2_text!' );
+  if ( not Assigned( P3DFontManager )) then
+    P3DFontManager:= TP3DFontManager.Create;
+end;
+
+procedure P3DGraphicssFinish;
+begin
+  if ( Assigned( P3DFontManager )) then
+    FreeAndNil( P3DFontManager );
+  if ( Assigned( P3DViewports )) then
+    FreeAndNil( P3DViewports );
+  if ( Assigned( P3DShaderNodeLib )) then
+    FreeAndNil( P3DShaderNodeLib );
+  if ( Assigned( P3DData )) then
+    FreeAndNil( P3DData );
+  TTF_Quit();
+end;
 
 finalization
   P3DGraphicssFinish;

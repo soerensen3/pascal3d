@@ -13,8 +13,8 @@ uses
   p3dutils,
   p3dgraphics,
   p3dgui,
-  p3dscenegui
-  { you can add units after this };
+  p3dscenegui,
+  p3dMath;
 
 {$INCLUDE initscene.inc}
 

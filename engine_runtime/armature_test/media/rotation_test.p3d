@@ -1,0 +1,343 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    camera = "Camera"
+    name = "Scene">
+    <object
+      data = "camera_Camera.001"
+      type = "camera"
+      name = "Camera">
+      <transform
+        position = "11.525238,-17.857670,15.968151"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.422831, 0.141061, 0.283287, 0.849155">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.011"
+      type = "mesh"
+      name = "Cube.011">
+      <transform
+        position = " 2.566359,-4.348662,13.305260"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.166167,-0.013832,-0.215853, 0.962084">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.010"
+      type = "mesh"
+      name = "Cube.010">
+      <transform
+        position = " 1.370582,-2.093829,15.189222"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.133818,-0.048752, 0.287062, 0.947265">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.009"
+      type = "mesh"
+      name = "Cube.009">
+      <transform
+        position = "-1.501551,-1.692923,13.340650"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.121321,-0.105860, 0.140002, 0.976972">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.008"
+      type = "mesh"
+      name = "Cube.008">
+      <transform
+        position = "-0.272628,-4.363420,12.703871"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.292908,-0.082617, 0.274172, 0.912255">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.007"
+      type = "mesh"
+      name = "Cube.007">
+      <transform
+        position = "-0.752611,-4.288291, 5.683054"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.008631, 0.003332,-0.070477, 0.997471">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.006"
+      type = "mesh"
+      name = "Cube.006">
+      <transform
+        position = "-1.981533,-1.617794, 6.319833"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.064328, 0.015157,-0.055391, 0.996275">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.005"
+      type = "mesh"
+      name = "Cube.005">
+      <transform
+        position = " 0.890600,-2.018700, 8.168406"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.474712,-0.237419, 0.378061, 0.758519">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.004"
+      type = "mesh"
+      name = "Cube.004">
+      <transform
+        position = " 2.086377,-4.273533, 6.284443"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.002014,-0.003284,-0.215068, 0.976592">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Plane"
+      type = "mesh"
+      name = "Plane">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 8.049586, 8.049586, 8.049586"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.003"
+      type = "mesh"
+      name = "Cube.003">
+      <transform
+        position = " 2.685017,-0.754920, 5.339774"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000415, 0.001565,-0.132761, 0.991147">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.002"
+      type = "mesh"
+      name = "Cube.002">
+      <transform
+        position = " 1.489240, 1.499913, 7.223737"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.489192, 0.492244, 0.201453, 0.691233">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.001"
+      type = "mesh"
+      name = "Cube.001">
+      <transform
+        position = "-1.382893, 1.900819, 5.375164"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.000762,-0.000345, 0.202634, 0.979254">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube"
+      type = "mesh"
+      name = "Cube">
+      <transform
+        position = "-0.153971,-0.769678, 4.738385"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.001229,-0.006410, 0.612851, 0.790172">
+      </transform>
+    </object>
+    <object
+      data = "lamp_Lamp"
+      type = "lamp"
+      name = "Lamp">
+      <transform
+        position = " 4.076245, 1.005454, 5.903862"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.011"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.011.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.010"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.010.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.009"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.009.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.008"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.008.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.007"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.007.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.006"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.006.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.005"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.005.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.004"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.004.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "4"
+    name = "mesh_Plane"
+    faces = "1"
+    loops = "4"
+    binary = "rotation_test.mesh_Plane.p3dmesh"
+    vertices = "4">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "0">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.003"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.003.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.002"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.002.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube.001"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.001.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    normals = "8"
+    name = "mesh_Cube"
+    faces = "6"
+    loops = "24"
+    binary = "rotation_test.mesh_Cube.p3dmesh"
+    vertices = "8">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "5">
+    </material>
+  </mesh>
+  <lamp
+    color = "1.000000, 1.000000, 1.000000"
+    type = "point"
+    name = "lamp_Lamp"
+    energy = "1.0">
+  </lamp>
+  <camera
+    far = "100.0"
+    near = "0.10000000149011612"
+    fov = "0.8575560450553894"
+    name = "camera_Camera.001">
+  </camera>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material"
+    diffuse = "0.640000, 0.640000, 0.640000">
+  </material>
+</p3dfile>

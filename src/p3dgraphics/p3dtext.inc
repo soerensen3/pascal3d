@@ -3,8 +3,36 @@
 
 {$IFDEF INTERFACE}
 
-type
+const
+  TP3DSymbolArrowUp: Char         = 'A';
+  TP3DSymbolArrowDown: Char       = 'B';
+  TP3DSymbolArrowLeft: Char       = 'C';
+  TP3DSymbolArrowRight: Char      = 'D';
+  TP3DSymbolTriangleUp: Char      = 'E';
+  TP3DSymbolTriangleDown: Char    = 'F';
+  TP3DSymbolTriangleLeft: Char    = 'G';
+  TP3DSymbolTriangleRight: Char   = 'H';
+  TP3DSymbolTriangleUpDown: Char  = 'I';
+  TP3DSymbolPlus: Char            = 'J';
+  TP3DSymbolMinus: Char           = 'K';
+  TP3DSymbolOptions: Char         = 'L';
+  TP3DSymbolClose: Char           = 'M';
+  TP3DSymbolShrink: Char          = 'N';
+  TP3DSymbolExpand: Char          = 'O';
+  TP3DSymbolFolder: Char          = 'P';
+  TP3DSymbolFile: Char            = 'Q';
+  TP3DSymbolActor: Char           = 'R';
+  TP3DSymbolMesh: Char            = 'S';
+  TP3DSymbolScene: Char           = 'T';
+  TP3DSymbolFont: Char            = 'U';
+  TP3DSymbolCamera: Char          = 'V';
+  TP3DSymbolTexture: Char         = 'W';
+  TP3DSymbolMaterial: Char        = 'X';
+  TP3DSymbolShader: Char          = 'Y';
+  TP3DSymbolLight: Char           = 'Z';
+  TP3DSymbolLibrary: Char         = '[';
 
+type
   TP3DFontManager = class;
 
 	{ TP3DFont }
@@ -71,6 +99,7 @@ type
       FWidth: Single;
 
       procedure ApplyShader;
+      procedure Render;
 
       //function AppendLetter( L: WideChar; fs: Single; p: TVec2 ): TVec2;
 
@@ -79,6 +108,8 @@ type
       destructor Destroy; override;
 
       procedure Render( p: TVec2; Color: TVec4 );
+      procedure RenderLetter(p: TVec2; Idx: Integer; Color: TVec4);
+      procedure RenderLetter(p: TVec2; Idx: Integer; Color: TVec4; proj: TMat4);
       procedure Render( p: TVec2; Color: TVec4; proj: TMat4 );
 
       function WidthFromTo( idx1: Integer; idx2: Integer ): TPoint;
@@ -146,6 +177,7 @@ begin
     Result:= Point( -1, -1 );
 end;
 
+
 { TP3DText }
 
 procedure TP3DText.ApplyShader;
@@ -173,52 +205,15 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DText.Render(p: TVec2; Color: TVec4);
-var
-  cl: GLint;
-  vt: GLint;
-  tc: GLint;
-  tx: GLint;
-  mat: GLint;
-  mt: TMat4;
-  m: TMat4;
-  OldShader: TP3DShader;
-
+procedure TP3DText.Render;
 begin
+  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
 
-  {OldShader:= ActShad;
-  if ( Assigned( Font.FontManager.Shader )) then
-    Font.FontManager.Shader.Enable;
-  cl:= ActShad.Attributes.AddrByName( 'in_color' );
-  //vt:= ActShad.Attributes.AddrByName( 'in_vertex' );
-
-  //tc:= ActShad.Attributes.AddrByName( 'in_texc0' );
-  tx:= ActShad.Uniforms.AddrByName( 'tex0' );
-  mat:= ActShad.Uniforms.AddrByName( 'mat' );
-
-  glActiveTexture( GL_TEXTURE0 );
-  glEnable( GL_TEXTURE_2D );
-  glBindTexture( GL_TEXTURE_2D, Font.Textures[ 0 ].fGLTexture );
-
-  mt:= mat4translate( vec4( p, 0, 1 ));
-  m:= mt * p3dgeometry.proj2D;
-  glUniform1i( tx, 0 );
-  glUniformMatrix4fv( mat, 1, False, @m );
-  glVertexAttrib4f( cl, Color.X, Color.Y, Color.Z, Color.A );
-  Vertices.SetAttribArray( 0 );
-  Vertices.Bind();
-  TexCoords.SetAttribArray( 4 );
-  TexCoords.Bind();
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
-  glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
-  glUniformMatrix4fv( mat, 1, False, @p3dgeometry.proj2D );
-  if ( Assigned( OldShader )) then
-    OldShader.Enable
-  else
-    ActShad.Disable;}
+  glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
 end;
 
-procedure TP3DText.Render(p: TVec2; Color: TVec4; proj: TMat4);
+procedure TP3DText.Render(p: TVec2; Color: TVec4);
 var
   mt: TMat4;
   m: TMat4;
@@ -232,13 +227,34 @@ begin
 
   Shader:= P3DFontManager.Material.Shader;
 
-  mt:= mat4translate( vec4( p, 0, 1 ));
-  m:= mt * proj;
+  if ( Shader.Uniforms.FindByName( 'tex0', Uniform )) then
+    Uniform.AsInt:= 0;
+
+  if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
+    Uniform.AsMat4:= Mat4Identity;
+  if ( Shader.Uniforms.FindByName( 'world', Uniform )) then
+    Uniform.AsMat4:= Mat4Identity;
+
+  glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
+  Vertices.SetAttribArray( P3DAttribPosition );
+  Render;
+end;
+
+procedure TP3DText.RenderLetter(p: TVec2; Idx: Integer; Color: TVec4);
+var
+  Shader: TP3DShader;
+  Uniform: TP3DShaderDecl;
+begin
+  ApplyShader;
+
+  if ( not Assigned( P3DFontManager.Material.Shader )) then
+    exit;
+
+  Shader:= P3DFontManager.Material.Shader;
 
   if ( Shader.Uniforms.FindByName( 'tex0', Uniform )) then
     Uniform.AsInt:= 0;
-  if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
-    Uniform.AsMat4:= m;
+
   if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
     Uniform.AsMat4:= Mat4Identity;
   if ( Shader.Uniforms.FindByName( 'world', Uniform )) then
@@ -250,7 +266,52 @@ begin
   TexCoords.SetAttribArray( P3DAttribTexCoord0 );
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
-  glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
+  glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
+//  glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, Pointer( Idx * 6 )); cle( Self );
+end;
+
+procedure TP3DText.RenderLetter(p: TVec2; Idx: Integer; Color: TVec4; proj: TMat4 );
+var
+  Shader: TP3DShader;
+  Uniform: TP3DShaderDecl;
+  mt, m: TMat4;
+begin
+  ApplyShader;
+
+  if ( not Assigned( P3DFontManager.Material.Shader )) then
+    exit;
+
+  Shader:= P3DFontManager.Material.Shader;
+
+
+  mt:= mat4translate( vec4( p, 0, 1 ));
+  m:= mt * proj;
+
+  if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
+    Uniform.AsMat4:= m;
+  RenderLetter( p, Idx, Color );
+end;
+
+procedure TP3DText.Render(p: TVec2; Color: TVec4; proj: TMat4);
+var
+  Shader: TP3DShader;
+  Uniform: TP3DShaderDecl;
+  mt, m: TMat4;
+begin
+  ApplyShader;
+
+  if ( not Assigned( P3DFontManager.Material.Shader )) then
+    exit;
+
+  Shader:= P3DFontManager.Material.Shader;
+
+
+  mt:= mat4translate( vec4( p, 0, 1 ));
+  m:= mt * proj;
+
+  if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
+    Uniform.AsMat4:= m;
+  Render( p, Color );
 end;
 
 function TP3DText.WidthFromTo(idx1: Integer; idx2: Integer): TPoint;

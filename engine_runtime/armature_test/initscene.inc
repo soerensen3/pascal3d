@@ -19,6 +19,8 @@ var
   FramesCounter: Integer;
   FPSLastPoll: Integer;
 
+
+
 const
   FPSUpdate: Integer = 2000;
 
@@ -159,6 +161,8 @@ begin
 end;
 
 procedure Init( Sender: TP3DApplication );
+var
+  SceneViewer: TP3DTreeViewActors;
 begin
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
@@ -175,12 +179,14 @@ begin
   maincamera:= TP3DActor.Create();
   maincamera.Position:= vec3( 0, 0, -10 );
   maincamera.Data:= TP3DCamera.Create();
+  maincamera.RotationOrder:= roZYX;
   TP3DCamera( maincamera.Data ).Far:= 2000;
 
   skyboxscene:= TP3DScene.Create();
   skycamera:= TP3DActor.Create();
   skycamera.Position:= vec3( 0, 0, 0 );
   skycamera.Data:= TP3DCamera.Create();
+  skycamera.RotationOrder:= roZYX;
   TP3DCamera( skycamera.Data ).Far:= 2000;
   skyboxscene.Cam:= skycamera;
 
@@ -194,6 +200,17 @@ begin
   SDL_SetRelativeMouseMode( TSDL_Bool( CatchMouse ));
   glEnable( GL_DEPTH_TEST );
   glCullFace( GL_NONE );
+
+  P3DGUIInit;
+  //P3DGUIManager.Window:= P3DApplication.MainWindow;
+  {SceneViewer:= TP3DTreeViewActors.Create();
+  SceneViewer.Width:= 200;
+  //SceneViewer.Height:= 600;
+  SceneViewer.ShowSymbols:= True;
+  SceneViewer.Update;
+  SceneViewer.Children.ExpandAll( True );
+  SceneViewer.Align:= alLeft;
+  SceneViewer.Visible:= False;}
 end;
 
 procedure DeInit( Sender: TP3DApplication );

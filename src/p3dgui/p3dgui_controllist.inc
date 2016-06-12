@@ -104,7 +104,9 @@ begin
     end
   else if P3DViewports.Count > 0 then
     with ( P3DViewports[ 0 ]) do
-      R:= P3DRect( 0, 0, Width, Height );
+      R:= P3DRect( 0, 0, Width, Height )
+  else //NO VIEWPORTS AND NO PARENT
+    exit;
   for Control in Self do
     if ( Control.Visible ) then
       begin
@@ -260,9 +262,14 @@ var
   i: Integer;
   Accept: Boolean;
 
-  function BtnInpState( Idx: Integer ): TP3DGCInputFlags; // Hack for the use in an array
+  function BtnInpState( Idx: Integer ): TP3DGCInputFlags;
   begin
-    Result:= TP3DGCInputFlags([ TP3DInputState( Integer( gcisMouseBtn1Down ) shl Idx )]);
+    Result:= [];
+    case Idx of
+      0: Result:= [ gcisMouseBtn1Down ];
+      1: Result:= [ gcisMouseBtn2Down ];
+      2: Result:= [ gcisMouseBtn3Down ];
+  end;
   end;
 
 begin
