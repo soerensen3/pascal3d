@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p3dshader>
+
+<node name="Geometry">
+  <output name="Position" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 0 ) in vec4 Position;<br /></declaration>
+      <main>Position</main>
+    </vshader>
+  </output>
+
+  <output name="Normal" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 2 ) in vec4 Normal;<br /></declaration>
+      <main>Normal</main>
+    </vshader>
+  </output>
+
+  <output name="Color" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 3 ) in vec4 Color;<br /></declaration>
+      <main>Color</main>
+    </vshader>
+  </output>
+
+  <output name="Binormal" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 4 ) in vec4 Binormal;<br /></declaration>
+      <main>Binormal</main>
+    </vshader>
+  </output>
+
+  <output name="Tangent" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 5 ) in vec4 Tangent;<br /></declaration>
+      <main>Tangent</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord0" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 8 ) in vec4 TexCoord0;<br /></declaration>
+      <main>TexCoord0</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord1" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 9 ) in vec4 TexCoord1;<br /></declaration>
+      <main>TexCoord1</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord2" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 10 ) in vec4 TexCoord2;<br /></declaration>
+      <main>TexCoord2</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord3" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 11 ) in vec4 TexCoord3;<br /></declaration>
+      <main>TexCoord3</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord4" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 12 ) in vec4 TexCoord4;<br /></declaration>
+      <main>TexCoord4</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord5" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 13 ) in vec4 TexCoord5;<br /></declaration>
+      <main>TexCoord5</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord6" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 14 ) in vec4 TexCoord6;<br /></declaration>
+      <main>TexCoord6</main>
+    </vshader>
+  </output>
+
+  <output name="TexCoord7" type="vec4">
+    <vshader>
+      <declaration>layout ( location = 15 ) in vec4 TexCoord7;<br /></declaration>
+      <main>TexCoord7</main>
+    </vshader>
+  </output>
+</node>
+
+
+</p3dshader>

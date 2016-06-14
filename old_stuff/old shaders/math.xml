@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p3dshader>
+
+<node name="VectorMath">
+<input type="vec4" name="Vec1" />
+<input type="vec4" name="Vec2" />
+
+<output name="Add" type="vec4">
+<main>
+<input name="Vec1" /> + <input name="Vec2" />
+</main>
+</output>
+
+<output name="Subtract" type="vec4">
+<main>
+<input name="Vec1" /> - <input name="Vec2" />
+</main>
+</output>
+
+<output name="Multiply" type="vec4">
+<main>
+<input name="Vec1" /> * <input name="Vec2" />
+</main>
+</output>
+
+<output name="Divide" type="vec4">
+<main>
+<input name="Vec1" /> / <input name="Vec2" />
+</main>
+</output>
+
+</node>
+
+
+</p3dshader>

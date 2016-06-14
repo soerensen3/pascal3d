@@ -67,9 +67,12 @@ type
 
   TP3DOIEditorDataLight = class ( TP3DOIEditor )
     private
+      FLightColorCombo: TP3DColorComboBox;
       FLightType: TP3DComboBox;
 
       procedure ComboChange( Sender: TP3DGraphicControl; var AValue: String );
+      function GetLightColor( Sender: TP3DColorPicker ): TVec4;
+      procedure SetLightColor( Sender: TP3DColorPicker; AValue: TVec4 );
 
     public
       procedure Update; override;
@@ -81,7 +84,7 @@ type
 
     published
       property LightTypeCombo: TP3DComboBox read FLightType write FLightType;
-
+      property LightColorCombo: TP3DColorComboBox read FLightColorCombo write FLightColorCombo;
   end;
 
   TP3DOIEditorList = specialize gP3DCustomObjectList < TP3DOIEditor >;
@@ -349,6 +352,32 @@ begin
     end;
 end;
 
+function TP3DOIEditorDataLight.GetLightColor(Sender: TP3DColorPicker): TVec4;
+var
+  L: TP3DLight;
+begin
+  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
+    L:= TP3DLight( TP3DActor( Obj ).Data )
+  else if ( Obj is TP3DLight ) then
+    L:= TP3DLight( Obj )
+  else
+    L:= nil;
+  Result:= vec4( L.Color, 1 );
+end;
+
+procedure TP3DOIEditorDataLight.SetLightColor(Sender: TP3DColorPicker; AValue: TVec4);
+var
+  L: TP3DLight;
+begin
+  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
+    L:= TP3DLight( TP3DActor( Obj ).Data )
+  else if ( Obj is TP3DLight ) then
+    L:= TP3DLight( Obj )
+  else
+    L:= nil;
+  L.Color:= AValue.XYZ;
+end;
+
 procedure TP3DOIEditorDataLight.Update;
 var
   L: TP3DLight;
@@ -396,6 +425,19 @@ begin
   LightTypeCombo.Items.Add( 'Point' );
   LightTypeCombo.Items.Add( 'Spot' );
   LightTypeCombo.OnChange:= @ComboChange;
+
+  Container:= TP3DGraphicControl.Create( nil, Self );
+  Container.Align:= alTop;
+  Container.Height:= 20;
+  Lbl:= TP3DLabel.Create( nil, Container );
+  Lbl.Align:= alLeft;
+  Lbl.Caption:= 'Light color ';
+  Lbl.AutoSize:= True;
+  LightColorCombo:= TP3DColorComboBox.Create( nil, Container );
+  LightColorCombo.GetValueEvent:= @GetLightColor;
+  LightColorCombo.SetValueEvent:= @SetLightColor;
+  LightColorCombo.Align:= alClient;
+
   AutoSize:= True;
 end;
 

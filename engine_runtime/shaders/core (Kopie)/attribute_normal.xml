@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- New document created with EditiX at Tue Nov 04 13:42:45 CET 2014 -->
+
+<p3dnodes>
+<node name="declarations_vshader" unique="yes">
+layout ( location = 2 ) in vec3 vnormal;<br/>
+out vec3 fnormal;<br/>
+</node>
+<node name="forward_vshader" unique="yes">
+  fnormal= vnormal;<br/>
+</node>
+<node name="declarations_fshader" unique="yes">
+in vec3 fnormal;<br/>
+</node>
+<node name="vshader">
+vec4( vnormal, 1 )
+</node>
+<node name="fshader">
+vec4( fnormal, 1 )
+</node>
+</p3dnodes>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unit name="pascal3d">
+  <uses>
+    <file name="p3devents"/>
+    <file name="p3dgraphics"/>
+    <file name="LazarusPackageIntf"/>
+  </uses>
+</unit>

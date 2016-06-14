@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p3dshader>
+
+<node name="Simple shading">
+<input name="Normal" type="vec4"/>
+<input name="Light" type="vec4"/>
+<output name="shadow" type="mat4">
+<declaration>
+vec4 SimpleShading( vec4 N, vec4 L ) {<br/>
+  return vec4( vec3( max( 0, dot( N.xyz, normalize( L.xyz )))), 1 );<br/>
+}<br/>
+</declaration>
+<main>
+SimpleShading( <input name="Normal"/>, <input name="Light"/>)
+</main>
+</output>
+</node>
+
+
+
+</p3dshader>

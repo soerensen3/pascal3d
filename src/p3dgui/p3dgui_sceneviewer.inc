@@ -7,6 +7,8 @@ type
 
   { TP3DGUISceneViewer }
 
+  { TP3DSceneViewer }
+
   TP3DSceneViewer = class ( TP3DGroupBox )
     protected
       FAfterRender: TNotifyEvent;
@@ -21,6 +23,7 @@ type
       procedure SetOrbitCamera(AValue: Boolean);
       procedure UpdateCamPos;
       procedure ResetOrbit;
+      procedure PushVPClientRect;
 
     public
       procedure Render(BaseColor: TVec4; ScrollAcc: TVec2); override;
@@ -120,14 +123,19 @@ begin
     end;
 end;
 
+procedure TP3DSceneViewer.PushVPClientRect;
+begin
+  P3DViewports.Push( Round( Canvas.Left + ClientRect.Left ), Round( Canvas.Top + ClientRect.Top ),
+                     Round( ClientRect.Width ), Round( ClientRect.Height ));
+end;
+
 procedure TP3DSceneViewer.Render(BaseColor: TVec4; ScrollAcc: TVec2);
 var
   txt: TP3DText;
 begin
   inherited Render(BaseColor, ScrollAcc);
   //Canvas.Lock;
-  P3DViewports.Push( Round( Canvas.Left + ClientRect.Left ), Round( Canvas.Top + ClientRect.Top ),
-                     Round( ClientRect.Width ), Round( ClientRect.Height ));
+  PushVPClientRect;
 
   if ( Assigned( Scene )) then
     begin

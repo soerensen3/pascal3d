@@ -1,0 +1,1009 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unit name="p3dgraphics">
+  <uses>
+    <file name="Classes"/>
+    <file name="SysUtils"/>
+    <file name="FileUtil"/>
+    <file name="strutils"/>
+    <file name="Math"/>
+    <file name="dglOpenGL"/>
+    <file name="p3dMath"/>
+    <file name="p3dutils"/>
+    <file name="DOM"/>
+    <file name="XMLRead"/>
+    <file name="sdl2"/>
+    <file name="sdl2_image"/>
+    <file name="sdl2_ttf"/>
+  </uses>
+  <class name="TP3DVertexBufferArray" type="class" parent="TPersistent" definition="@code`class TP3DVertexBufferArray ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="VBA" type="GLuint" definition="@code`VBA: GLuint`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind;`"/>
+      <procedure name="Unbind" proctype="procedure" definition="@code`procedure Unbind;`"/>
+    </section>
+  </class>
+  <class name="TP3DIntBufferGL" type="class" parent="TIntList" definition="@code`class TP3DIntBufferGL ( TIntList );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <procedure name="SetAttribArray" proctype="procedure" definition="@code`procedure SetAttribArray( idx: Integer );`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DFloatBufferGL" type="class" parent="TFloatList" definition="@code`class TP3DFloatBufferGL ( TFloatList );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <procedure name="SetAttribArray" proctype="procedure" definition="@code`procedure SetAttribArray( idx: Integer );`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DVec2BufferGL" type="class" parent="TVec2List" definition="@code`class TP3DVec2BufferGL ( TVec2List );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <procedure name="SetAttribArray" proctype="procedure" definition="@code`procedure SetAttribArray( idx: Integer );`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DVec3BufferGL" type="class" parent="TVec3List" definition="@code`class TP3DVec3BufferGL ( TVec3List );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <procedure name="SetAttribArray" proctype="procedure" definition="@code`procedure SetAttribArray( idx: Integer );`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DVec4BufferGL" type="class" parent="TVec4List" definition="@code`class TP3DVec4BufferGL ( TVec4List );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <procedure name="SetAttribArray" proctype="procedure" definition="@code`procedure SetAttribArray( idx: Integer );`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DMat2BufferGL" type="class" parent="TMat2List" definition="@code`class TP3DMat2BufferGL ( TMat2List );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DMat3BufferGL" type="class" parent="TMat3List" definition="@code`class TP3DMat3BufferGL ( TMat3List );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DMat4BufferGL" type="class" parent="TMat4List" definition="@code`class TP3DMat4BufferGL ( TMat4List );`">
+    <section visibility="Private">
+      <variable name="FBufferObject" type="GLuint" definition="@code`FBufferObject: GLuint`"/>
+      <variable name="FStatic" type="Boolean" definition="@code`FStatic: Boolean`"/>
+      <variable name="FIdx" type="Integer" definition="@code`FIdx: Integer`"/>
+      <procedure name="GenBufferObject" proctype="procedure" definition="@code`procedure GenBufferObject;`"/>
+      <procedure name="DeleteBufferObject" proctype="procedure" definition="@code`procedure DeleteBufferObject;`"/>
+      <procedure name="SetStatic" proctype="procedure" definition="@code`procedure SetStatic(AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(const AStatic: Boolean);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Bind" proctype="procedure" definition="@code`procedure Bind(const Target: GLenum = GL_ARRAY_BUFFER );`"/>
+      <procedure name="UnsetAttribArray" proctype="procedure" definition="@code`procedure UnsetAttribArray;`"/>
+      <procedure name="PushData" proctype="procedure" definition="@code`procedure PushData;`"/>
+      <property name="Static" type="Boolean" definition="@code`property Static:Boolean`"/>
+      <property name="BufferObject" type="GLuint" definition="@code`property BufferObject:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DViewport" type="record" definition="@code`record TP3DViewport;`">
+    <section visibility="Public">
+      <variable name="Left" type="Integer" definition="@code`Left: Integer`"/>
+      <variable name="Top" type="Integer" definition="@code`Top: Integer`"/>
+      <variable name="Width" type="Integer" definition="@code`Width: Integer`"/>
+      <variable name="Height" type="Integer" definition="@code`Height: Integer`"/>
+    </section>
+  </class>
+  <class name="TP3DViewportStack" type="class" definition="@code`class TP3DViewportStack;`">
+    <section visibility="Private">
+      <variable name="FWndHeight" type="Integer" definition="@code`FWndHeight: Integer`"/>
+      <variable name="VPs" type="array of TP3DViewport" definition="@code`VPs: array of TP3DViewport`"/>
+      <procedure name="GetCount" proctype="function" definition="@code`function GetCount: Integer;`"/>
+      <procedure name="GetVP" proctype="function" definition="@code`function GetVP( Index: Integer ): TP3DViewport;`"/>
+      <procedure name="SetVP" proctype="procedure" definition="@code`procedure SetVP( Index: Integer ; AValue: TP3DViewport);`"/>
+      <procedure name="ApplyVP" proctype="procedure" definition="@code`procedure ApplyVP( VP: TP3DViewport );`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Push" proctype="function" definition="@code`function Push( Left, Top, Width, Height: Integer ): Integer;`"/>
+      <procedure name="Push" proctype="function" definition="@code`function Push( VP: TP3DViewport ): Integer;`"/>
+      <procedure name="Pop" proctype="function" definition="@code`function Pop: TP3DViewport;`"/>
+      <procedure name="Peek" proctype="function" definition="@code`function Peek: TP3DViewport;`"/>
+      <property name="VP" type="TP3DViewport" definition="@code`property VP[Index:Integer]:TP3DViewport`"/>
+      <property name="Count" type="Integer" definition="@code`property Count:Integer`"/>
+      <property name="WndHeight" type="Integer" definition="@code`property WndHeight:Integer`"/>
+    </section>
+  </class>
+  <class name="TP3DObjectList" type="class" parent="TP3DCustomObjectList" definition="@code`class TP3DObjectList ( TP3DCustomObjectList );`">
+    <section visibility="Published">
+      <procedure name="FindUniqueName" proctype="function" definition="@code`function FindUniqueName( BaseStr: String ): String;`"/>
+      <procedure name="FindByName" proctype="function" definition="@code`function FindByName( AName: String ): Integer;`"/>
+      <procedure name="Clear" proctype="procedure" definition="@code`procedure Clear(const FreeObjects: Boolean = True );`"/>
+    </section>
+  </class>
+  <class name="TP3DObject" type="class" parent="TPersistent" definition="@code`class TP3DObject ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FName" type="TComponentName" definition="@code`FName: TComponentName`"/>
+      <variable name="FParentList" type="TP3DObjectList" definition="@code`FParentList: TP3DObjectList`"/>
+      <procedure name="SetName" proctype="procedure" definition="@code`procedure SetName( const NewName: TComponentName );`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AParentList: TP3DObjectList );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <property name="ParentList" type="TP3DObjectList" definition="@code`property ParentList:TP3DObjectList`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Name" type="TComponentName" definition="@code`property Name:TComponentName`"/>
+    </section>
+  </class>
+  <class name="TP3DBoundingBox" type="record" definition="@code`record TP3DBoundingBox;`">
+    <section visibility="Public">
+      <variable name="Min" type="TVec3" definition="@code`Min: TVec3`"/>
+      <variable name="Max" type="TVec3" definition="@code`Max: TVec3`"/>
+      <variable name="Center" type="TVec3" definition="@code`Center: TVec3`"/>
+    </section>
+  </class>
+  <operator name="=" proctype="operator" definition="@code`operator = ( A, B: TP3DBoundingBox ): Boolean;`"/>
+  <operator name="+" proctype="operator" definition="@code`operator + ( A: TP3DBoundingBox; B: TVec3 ): TP3DBoundingBox;`"/>
+  <operator name="-" proctype="operator" definition="@code`operator - ( A: TP3DBoundingBox; B: TVec3 ): TP3DBoundingBox;`"/>
+  <class name="TP3DDataBlock" type="class" parent="TP3DObject" definition="@code`class TP3DDataBlock ( TP3DObject );`">
+    <section visibility="Private">
+      <variable name="FBoundingBox" type="TP3DBoundingBox" definition="@code`FBoundingBox: TP3DBoundingBox`"/>
+      <variable name="FFileWatch" type="TP3DFileWatch" definition="@code`FFileWatch: TP3DFileWatch`"/>
+      <variable name="FUsers" type="TP3DDataBlockList" definition="@code`FUsers: TP3DDataBlockList`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( const AData: TP3DData = nil );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor );`"/>
+      <procedure name="LoadFromDOM" proctype="procedure" definition="@code`procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <procedure name="CalcBoundingBox" proctype="function" definition="@code`function CalcBoundingBox: TP3DBoundingBox;`"/>
+      <procedure name="NotifyDeleteOfData" proctype="procedure" definition="@code`procedure NotifyDeleteOfData( Sender: TP3DDataBlock );`"/>
+      <property name="BoundingBox" type="TP3DBoundingBox" definition="@code`property BoundingBox:TP3DBoundingBox`"/>
+    </section>
+    <section visibility="Published">
+      <property name="FileWatch" type="TP3DFileWatch" definition="@code`property FileWatch:TP3DFileWatch`"/>
+      <property name="Users" type="TP3DDataBlockList" definition="@code`property Users:TP3DDataBlockList`"/>
+    </section>
+  </class>
+  <class name="TP3DDataBlockList" type="class" parent="TP3DCustomDataBlockList" definition="@code`class TP3DDataBlockList ( TP3DCustomDataBlockList );`"/>
+  <procedure name="P3DBoundingBox" proctype="function" definition="@code`function P3DBoundingBox( vMin, vMax, vCenter: TVec3 ): TP3DBoundingBox;`"/>
+  <procedure name="P3DBoundingBoxTransform" proctype="function" definition="@code`function P3DBoundingBoxTransform( Box: TP3DBoundingBox; Matrix: TMat4 ): TP3DBoundingBox;`"/>
+  <class name="TP3DShaderDecl" type="class" definition="@code`class TP3DShaderDecl;`">
+    <section visibility="Private">
+      <variable name="FAddr" type="GLuint" definition="@code`FAddr: GLuint`"/>
+      <variable name="FName" type="String" definition="@code`FName: String`"/>
+      <variable name="FProgramObject" type="GLuint" definition="@code`FProgramObject: GLuint`"/>
+      <variable name="FShaderDeclType" type="TP3DShaderDeclType" definition="@code`FShaderDeclType: TP3DShaderDeclType`"/>
+      <variable name="FVarType" type="Integer" definition="@code`FVarType: Integer`"/>
+      <procedure name="GetAsFloat" proctype="function" definition="@code`function GetAsFloat: Float;`"/>
+      <procedure name="GetAsInt" proctype="function" definition="@code`function GetAsInt: Integer;`"/>
+      <procedure name="GetAsMat2" proctype="function" definition="@code`function GetAsMat2: TMat2;`"/>
+      <procedure name="GetAsMat3" proctype="function" definition="@code`function GetAsMat3: TMat3;`"/>
+      <procedure name="GetAsMat4" proctype="function" definition="@code`function GetAsMat4: TMat4;`"/>
+      <procedure name="GetAsVec2" proctype="function" definition="@code`function GetAsVec2: TVec2;`"/>
+      <procedure name="GetAsVec3" proctype="function" definition="@code`function GetAsVec3: TVec3;`"/>
+      <procedure name="GetAsVec4" proctype="function" definition="@code`function GetAsVec4: TVec4;`"/>
+      <procedure name="SetAsFloat" proctype="procedure" definition="@code`procedure SetAsFloat( AValue: Float );`"/>
+      <procedure name="SetAsInt" proctype="procedure" definition="@code`procedure SetAsInt( AValue: Integer );`"/>
+      <procedure name="SetAsMat2" proctype="procedure" definition="@code`procedure SetAsMat2( AValue: TMat2 );`"/>
+      <procedure name="SetAsMat3" proctype="procedure" definition="@code`procedure SetAsMat3( AValue: TMat3 );`"/>
+      <procedure name="SetAsMat4" proctype="procedure" definition="@code`procedure SetAsMat4( AValue: TMat4 );`"/>
+      <procedure name="SetAsVec2" proctype="procedure" definition="@code`procedure SetAsVec2( AValue: TVec2 );`"/>
+      <procedure name="SetAsVec3" proctype="procedure" definition="@code`procedure SetAsVec3( AValue: TVec3 );`"/>
+      <procedure name="SetAsVec4" proctype="procedure" definition="@code`procedure SetAsVec4( AValue: TVec4 );`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AProgramObject: GLuint; ADeclType: TP3DShaderDeclType; AName: String; AAddr: GLuint );`"/>
+      <property name="AsInt" type="Integer" definition="@code`property AsInt:Integer`"/>
+      <property name="AsFloat" type="Float" definition="@code`property AsFloat:Float`"/>
+      <property name="AsVec2" type="TVec2" definition="@code`property AsVec2:TVec2`"/>
+      <property name="AsVec3" type="TVec3" definition="@code`property AsVec3:TVec3`"/>
+      <property name="AsVec4" type="TVec4" definition="@code`property AsVec4:TVec4`"/>
+      <property name="AsMat2" type="TMat2" definition="@code`property AsMat2:TMat2`"/>
+      <property name="AsMat3" type="TMat3" definition="@code`property AsMat3:TMat3`"/>
+      <property name="AsMat4" type="TMat4" definition="@code`property AsMat4:TMat4`"/>
+      <property name="VarType" type="Integer" definition="@code`property VarType:Integer`"/>
+      <property name="DeclType" type="TP3DShaderDeclType" definition="@code`property DeclType:TP3DShaderDeclType`"/>
+      <property name="ProgramObject" type="GLuint" definition="@code`property ProgramObject:GLuint`"/>
+      <property name="Name" type="String" definition="@code`property Name:String`"/>
+      <property name="Addr" type="GLuint" definition="@code`property Addr:GLuint`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderDeclList" type="class" parent="TP3DCustomShaderDeclList" definition="@code`class TP3DShaderDeclList ( TP3DCustomShaderDeclList );`">
+    <section visibility="Private">
+      <procedure name="GetNames" proctype="function" definition="@code`function GetNames( Name: String ): TP3DShaderDecl;`"/>
+      <procedure name="SetNames" proctype="procedure" definition="@code`procedure SetNames( Name: String ; AValue: TP3DShaderDecl );`"/>
+    </section>
+    <section visibility="Published">
+      <procedure name="FindByName" proctype="function" definition="@code`function FindByName( Name: String ): Integer;`"/>
+      <procedure name="AddrByName" proctype="function" definition="@code`function AddrByName( Name: String ): GLint;`"/>
+      <procedure name="Delete" proctype="procedure" definition="@code`procedure Delete( Index: Integer );`"/>
+      <procedure name="Clear" proctype="procedure" definition="@code`procedure Clear( const FreeObjects: Boolean = True );`"/>
+    </section>
+    <section visibility="Public">
+      <property name="Names" type="TP3DShaderDecl" definition="@code`property Names[AName:String]:TP3DShaderDecl`"/>
+    </section>
+  </class>
+  <class name="TP3DShader" type="class" parent="TP3DDataBlock" definition="@code`class TP3DShader ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <variable name="FAttributes" type="TP3DShaderDeclList" definition="@code`FAttributes: TP3DShaderDeclList`"/>
+      <variable name="FShaderObj" type="GLHandle" definition="@code`FShaderObj: GLHandle`"/>
+      <variable name="FUniforms" type="TP3DShaderDeclList" definition="@code`FUniforms: TP3DShaderDeclList`"/>
+      <variable name="FVShaderWatch" type="TP3DFileWatch" definition="@code`FVShaderWatch: TP3DFileWatch`"/>
+      <variable name="FFShaderWatch" type="TP3DFileWatch" definition="@code`FFShaderWatch: TP3DFileWatch`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Enable" proctype="procedure" definition="@code`procedure Enable;`"/>
+      <procedure name="Disable" proctype="procedure" definition="@code`procedure Disable;`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="CreateFromVertexAndFragmentShaderFile" proctype="constructor" definition="@code`constructor CreateFromVertexAndFragmentShaderFile( fnvshader, fnfshader: String );`"/>
+      <procedure name="CreateFromVertexAndFragmentShader" proctype="constructor" definition="@code`constructor CreateFromVertexAndFragmentShader( vshader, fshader: String );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="UpdateUniforms" proctype="procedure" definition="@code`procedure UpdateUniforms;`"/>
+      <property name="ShaderObj" type="GLHandle" definition="@code`property ShaderObj:GLHandle`"/>
+      <property name="Uniforms" type="TP3DShaderDeclList" definition="@code`property Uniforms:TP3DShaderDeclList`"/>
+      <property name="Attributes" type="TP3DShaderDeclList" definition="@code`property Attributes:TP3DShaderDeclList`"/>
+      <property name="VShaderWatch" type="TP3DFileWatch" definition="@code`property VShaderWatch:TP3DFileWatch`"/>
+      <property name="FShaderWatch" type="TP3DFileWatch" definition="@code`property FShaderWatch:TP3DFileWatch`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeSocketList" type="class" parent="TP3DCustomShaderNodeSocketList" definition="@code`class TP3DShaderNodeSocketList ( TP3DCustomShaderNodeSocketList );`">
+    <section visibility="Published">
+      <procedure name="GetStringOutput" proctype="function" definition="@code`function GetStringOutput(Buffer: TP3DShaderBuffer): String;`"/>
+      <procedure name="FindSocketByName" proctype="function" definition="@code`function FindSocketByName( Name: String ): Integer;`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeFragment" type="class" definition="@code`class TP3DShaderNodeFragment;`" description="TP3DShaderNodeFragment@br Base Type for all Nodes@br ">
+    <section visibility="Private">
+      <variable name="FVarType" type="String" definition="@code`FVarType: String`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="GetStringOutput" proctype="function" definition="@code`function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String;`" description="Parse the node and return string output@br "/>
+      <procedure name="MakeCopy" proctype="function" definition="@code`function MakeCopy( ANode: TP3DShaderNode ): TP3DShaderNodeFragment;`"/>
+    </section>
+    <section visibility="Published">
+      <property name="VarType" type="String" definition="@code`property VarType:String`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeFragmentInput" type="class" parent="TP3DShaderNodeFragment" definition="@code`class TP3DShaderNodeFragmentInput ( TP3DShaderNodeFragment );`">
+    <section visibility="Private">
+      <variable name="FInputName" type="String" definition="@code`FInputName: String`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="GetStringOutput" proctype="function" definition="@code`function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String;`"/>
+      <procedure name="MakeCopy" proctype="function" definition="@code`function MakeCopy(ANode: TP3DShaderNode): TP3DShaderNodeFragment;`"/>
+      <property name="InputName" type="String" definition="@code`property InputName:String`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeFragmentInline" type="class" parent="TP3DShaderNodeFragment" definition="@code`class TP3DShaderNodeFragmentInline ( TP3DShaderNodeFragment );`">
+    <section visibility="Private">
+      <variable name="FText" type="String" definition="@code`FText: String`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="GetStringOutput" proctype="function" definition="@code`function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String;`"/>
+      <procedure name="MakeCopy" proctype="function" definition="@code`function MakeCopy(ANode: TP3DShaderNode): TP3DShaderNodeFragment;`"/>
+      <property name="Text" type="String" definition="@code`property Text:String`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeFragmentIfDef" type="class" parent="TP3DShaderNodeFragment" definition="@code`class TP3DShaderNodeFragmentIfDef ( TP3DShaderNodeFragment );`">
+    <section visibility="Private">
+      <variable name="FCaption" type="String" definition="@code`FCaption: String`"/>
+      <variable name="FFragments" type="TP3DShaderNodeFragmentList" definition="@code`FFragments: TP3DShaderNodeFragmentList`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="GetStringOutput" proctype="function" definition="@code`function GetStringOutput( ANode: TP3DShaderNode; Buffer: TP3DShaderBuffer ): String;`"/>
+      <property name="Caption" type="String" definition="@code`property Caption:String`"/>
+      <property name="Fragments" type="TP3DShaderNodeFragmentList" definition="@code`property Fragments:TP3DShaderNodeFragmentList`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNode" type="class" parent="TP3DNode" definition="@code`class TP3DShaderNode ( TP3DNode );`">
+    <section visibility="Public">
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM(DomNode: TDOMElement);`"/>
+      <procedure name="MakeCopy" proctype="function" definition="@code`function MakeCopy: TP3DShaderNode;`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeSocket" type="class" parent="TP3DNodeSocket" definition="@code`class TP3DShaderNodeSocket ( TP3DNodeSocket );`">
+    <section visibility="Private">
+      <variable name="FFragments" type="TP3DShaderNodeFragmentList" definition="@code`FFragments: TP3DShaderNodeFragmentList`"/>
+      <variable name="FIsCopy" type="Boolean" definition="@code`FIsCopy: Boolean`"/>
+      <procedure name="SetConnected" proctype="procedure" definition="@code`procedure SetConnected( AValue: TP3DNodeSocket);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( ANode: TP3DNode; ADirection: TP3DNodeSocketDirection );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="GetOutput" proctype="function" definition="@code`function GetOutput( Buffer: TP3DShaderBuffer ): String;`" description="function GetMainOutput( Buffer: TP3DShaderBuffer ): String; virtual;@br function GetDeclarationOutput( Buffer: TP3DShaderBuffer ): String; virtual;@br "/>
+      <procedure name="MakeCopy" proctype="function" definition="@code`function MakeCopy( ANode: TP3DNode ): TP3DShaderNodeSocket;`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Fragments" type="TP3DShaderNodeFragmentList" definition="@code`property Fragments:TP3DShaderNodeFragmentList`"/>
+      <property name="IsCopy" type="Boolean" definition="@code`property IsCopy:Boolean`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeDynamic" type="class" parent="TP3DShaderNode" definition="@code`class TP3DShaderNodeDynamic ( TP3DShaderNode );`">
+    <section visibility="Published">
+      <procedure name="SocketChanged" proctype="procedure" definition="@code`procedure SocketChanged( ASocket: TP3DShaderNodeSocket );`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeLibrary" type="class" parent="TP3DNodeTree" definition="@code`class TP3DShaderNodeLibrary ( TP3DNodeTree );`">
+    <section visibility="Published">
+      <procedure name="LoadLibrary" proctype="procedure" definition="@code`procedure LoadLibrary( FileName: String );`"/>
+      <procedure name="LoadLibraryPath" proctype="procedure" definition="@code`procedure LoadLibraryPath( PathName: String; const Ext: String = '*.*' );`"/>
+      <procedure name="FindNode" proctype="function" definition="@code`function FindNode( ANode: String ): TP3DShaderNode;`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderBuffer" type="class" definition="@code`class TP3DShaderBuffer;`">
+    <section visibility="Private">
+      <variable name="FCode" type="String" definition="@code`FCode: String`"/>
+      <variable name="FDeclarations" type="TP3DShaderNodeSocketList" definition="@code`FDeclarations: TP3DShaderNodeSocketList`"/>
+      <variable name="FDefines" type="TStringList" definition="@code`FDefines: TStringList`"/>
+      <variable name="FName" type="String" definition="@code`FName: String`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="RegisterSocket" proctype="procedure" definition="@code`procedure RegisterSocket( Socket: TP3DShaderNodeSocket );`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Code" type="String" definition="@code`property Code:String`"/>
+      <property name="Name" type="String" definition="@code`property Name:String`"/>
+      <property name="Defines" type="TStringList" definition="@code`property Defines:TStringList`"/>
+      <property name="Declarations" type="TP3DShaderNodeSocketList" definition="@code`property Declarations:TP3DShaderNodeSocketList`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderCompiled" type="class" definition="@code`class TP3DShaderCompiled;`">
+    <section visibility="Private">
+      <variable name="FBuffers" type="TP3DShaderBufferList" definition="@code`FBuffers: TP3DShaderBufferList`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="FindBuffer" proctype="function" definition="@code`function FindBuffer( Name: String ): TP3DShaderBuffer;`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Buffers" type="TP3DShaderBufferList" definition="@code`property Buffers:TP3DShaderBufferList`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeTree" type="class" parent="TP3DNodeTree" definition="@code`class TP3DShaderNodeTree ( TP3DNodeTree );`">
+    <section visibility="Private">
+      <procedure name="GetShaderOutputFromNodes" proctype="function" definition="@code`function GetShaderOutputFromNodes( Buffer: TP3DShaderBuffer ): String;`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Compile" proctype="function" definition="@code`function Compile: TP3DShaderCompiled;`"/>
+      <procedure name="CompileToBuffer" proctype="function" definition="@code`function CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;`"/>
+    </section>
+  </class>
+  <procedure name="ParseMarkdown" proctype="function" definition="@code`function ParseMarkdown( S: String ): TP3DShaderNodeLibrary;`"/>
+  <procedure name="ParseMarkdownAppend" proctype="procedure" definition="@code`procedure ParseMarkdownAppend( S: String; Lib: TP3DShaderNodeLibrary );`"/>
+  <procedure name="ParseMarkdownFile" proctype="function" definition="@code`function ParseMarkdownFile( FN: String ): TP3DShaderNodeLibrary;`"/>
+  <procedure name="ParseMarkdownFileAppend" proctype="procedure" definition="@code`procedure ParseMarkdownFileAppend( FN: String; Lib: TP3DShaderNodeLibrary );`"/>
+  <class name="TP3DShaderNodeSocketShader" type="class" parent="TP3DShaderNodeSocket" definition="@code`class TP3DShaderNodeSocketShader ( TP3DShaderNodeSocket );`">
+    <section visibility="Private">
+      <procedure name="GetSocketType" proctype="class" definition="@code`class function GetSocketType: String;`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="GetStringOutput" proctype="function" definition="@code`function GetStringOutput( Buffer: TP3DShaderBuffer ): String;`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeSocketInt" type="class" parent="TP3DShaderNodeSocket" definition="@code`class TP3DShaderNodeSocketInt ( TP3DShaderNodeSocket );`">
+    <section visibility="Private">
+      <variable name="FValue" type="Integer" definition="@code`FValue: Integer`"/>
+      <procedure name="GetSocketType" proctype="class" definition="@code`class function GetSocketType: String;`"/>
+      <procedure name="SetValue" proctype="procedure" definition="@code`procedure SetValue(AValue: Integer);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="GetOutput" proctype="function" definition="@code`function GetOutput( Buffer: TP3DShaderBuffer ): String;`"/>
+      <property name="Value" type="Integer" definition="@code`property Value:Integer`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeSocketFloat" type="class" parent="TP3DShaderNodeSocket" definition="@code`class TP3DShaderNodeSocketFloat ( TP3DShaderNodeSocket );`">
+    <section visibility="Private">
+      <variable name="FValue" type="Single" definition="@code`FValue: Single`"/>
+      <procedure name="GetSocketType" proctype="class" definition="@code`class function GetSocketType: String;`"/>
+      <procedure name="SetValue" proctype="procedure" definition="@code`procedure SetValue(AValue: Single);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="GetOutput" proctype="function" definition="@code`function GetOutput( Buffer: TP3DShaderBuffer ): String;`"/>
+      <property name="Value" type="Single" definition="@code`property Value:Single`"/>
+    </section>
+  </class>
+  <class name="TP3DShaderNodeSocketVector" type="class" parent="TP3DShaderNodeSocket" definition="@code`class TP3DShaderNodeSocketVector ( TP3DShaderNodeSocket );`">
+    <section visibility="Private">
+      <variable name="FNumFields" type="Integer" definition="@code`FNumFields: Integer`"/>
+      <variable name="FValue" type="TVec4" definition="@code`FValue: TVec4`"/>
+      <procedure name="GetSocketType" proctype="class" definition="@code`class function GetSocketType: String;`"/>
+      <procedure name="SetValue" proctype="procedure" definition="@code`procedure SetValue(AValue: TVec4);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="GetOutput" proctype="function" definition="@code`function GetOutput( Buffer: TP3DShaderBuffer ): String;`"/>
+      <property name="Value" type="TVec4" definition="@code`property Value:TVec4`"/>
+      <property name="NumFields" type="Integer" definition="@code`property NumFields:Integer`"/>
+    </section>
+  </class>
+  <class name="TP3DCamera" type="class" parent="TP3DDataBlock" definition="@code`class TP3DCamera ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <variable name="FAspect" type="Single" definition="@code`FAspect: Single`"/>
+      <variable name="FFar" type="Single" definition="@code`FFar: Single`"/>
+      <variable name="FForward" type="TVec3" definition="@code`FForward: TVec3`"/>
+      <variable name="FHandedness" type="TP3DCameraHandedness" definition="@code`FHandedness: TP3DCameraHandedness`"/>
+      <variable name="FLeft" type="TVec3" definition="@code`FLeft: TVec3`"/>
+      <variable name="FMatNormal" type="TMat3" definition="@code`FMatNormal: TMat3`"/>
+      <variable name="FNear" type="Single" definition="@code`FNear: Single`"/>
+      <variable name="FPosition" type="TVec3" definition="@code`FPosition: TVec3`"/>
+      <variable name="FProj" type="TMat4" definition="@code`FProj: TMat4`"/>
+      <variable name="FUp" type="TVec3" definition="@code`FUp: TVec3`"/>
+      <variable name="FView" type="TMat4" definition="@code`FView: TMat4`"/>
+      <variable name="FYawPitchRoll" type="TVec3" definition="@code`FYawPitchRoll: TVec3`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="UpdateMatrices" proctype="procedure" definition="@code`procedure UpdateMatrices;`"/>
+      <procedure name="PassToShader" proctype="procedure" definition="@code`procedure PassToShader( world: TMat4 );`"/>
+      <procedure name="LoadFromDOM" proctype="procedure" definition="@code`procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( const AData: TP3DData = nil );`"/>
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <property name="Position" type="TVec3" definition="@code`property Position:TVec3`"/>
+      <property name="Forward" type="TVec3" definition="@code`property Forward:TVec3`"/>
+      <property name="Up" type="TVec3" definition="@code`property Up:TVec3`"/>
+      <property name="Left" type="TVec3" definition="@code`property Left:TVec3`"/>
+      <property name="YawPitchRoll" type="TVec3" definition="@code`property YawPitchRoll:TVec3`"/>
+      <property name="View" type="TMat4" definition="@code`property View:TMat4`"/>
+      <property name="MatNormal" type="TMat3" definition="@code`property MatNormal:TMat3`"/>
+      <property name="Proj" type="TMat4" definition="@code`property Proj:TMat4`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Handedness" type="TP3DCameraHandedness" definition="@code`property Handedness:TP3DCameraHandedness`"/>
+      <property name="Near" type="Single" definition="@code`property Near:Single`"/>
+      <property name="Far" type="Single" definition="@code`property Far:Single`"/>
+      <property name="Aspect" type="Single" definition="@code`property Aspect:Single`"/>
+    </section>
+  </class>
+  <class name="TP3DLight" type="class" parent="TP3DDataBlock" definition="@code`class TP3DLight ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <variable name="FColor" type="TVec3" definition="@code`FColor: TVec3`"/>
+      <variable name="FEnergy" type="Float" definition="@code`FEnergy: Float`"/>
+      <variable name="FLightType" type="TP3DLightType" definition="@code`FLightType: TP3DLightType`"/>
+      <variable name="FLinearAttenuation" type="Float" definition="@code`FLinearAttenuation: Float`"/>
+      <variable name="FQuadraticAttenuation" type="Float" definition="@code`FQuadraticAttenuation: Float`"/>
+      <procedure name="GetLightRange" proctype="function" definition="@code`function GetLightRange: Float;`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( const AData: TP3DData = nil );`"/>
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor );`"/>
+      <procedure name="LoadFromDOM" proctype="procedure" definition="@code`procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <property name="Color" type="TVec3" definition="@code`property Color:TVec3`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Energy" type="Float" definition="@code`property Energy:Float`"/>
+      <property name="LinearAttenuation" type="Float" definition="@code`property LinearAttenuation:Float`"/>
+      <property name="QuadraticAttenuation" type="Float" definition="@code`property QuadraticAttenuation:Float`"/>
+      <property name="LightRange" type="Float" definition="@code`property LightRange:Float`"/>
+      <property name="LightType" type="TP3DLightType" definition="@code`property LightType:TP3DLightType`"/>
+    </section>
+  </class>
+  <class name="TP3DLightList" type="class" parent="TP3DCustomLightList" definition="@code`class TP3DLightList ( TP3DCustomLightList );`">
+    <section visibility="Published">
+      <procedure name="Delete" proctype="procedure" definition="@code`procedure Delete( Index: Integer );`"/>
+      <procedure name="PassToActiveShader" proctype="procedure" definition="@code`procedure PassToActiveShader( MaxLights: Integer; Scene: TP3DScene; matWorld, matView: TMat4; Params: TP3DLightInformationSet );`"/>
+    </section>
+  </class>
+  <class name="TP3DTexture" type="class" parent="TP3DDataBlock" definition="@code`class TP3DTexture ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <variable name="FGLTexture" type="Integer" definition="@code`FGLTexture: Integer`"/>
+      <variable name="FHeight" type="Integer" definition="@code`FHeight: Integer`"/>
+      <variable name="FWidth" type="Integer" definition="@code`FWidth: Integer`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AName: String; const AData: TP3DData = nil );`"/>
+      <procedure name="CreateFromSurface" proctype="constructor" definition="@code`constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DData = nil );`"/>
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Width" type="Integer" definition="@code`property Width:Integer`"/>
+      <property name="Height" type="Integer" definition="@code`property Height:Integer`"/>
+      <property name="GLTexture" type="Integer" definition="@code`property GLTexture:Integer`"/>
+    </section>
+  </class>
+  <class name="TP3DMaterialMap" type="class" parent="TPersistent" definition="@code`class TP3DMaterialMap ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FDiffuseFactor" type="Single" definition="@code`FDiffuseFactor: Single`"/>
+      <variable name="FMap" type="TP3DTexture" definition="@code`FMap: TP3DTexture`"/>
+      <variable name="FMode" type="TP3DMapMode" definition="@code`FMode: TP3DMapMode`"/>
+      <variable name="FNormalFactor" type="Single" definition="@code`FNormalFactor: Single`"/>
+      <variable name="FParentMaterial" type="TP3DMaterial" definition="@code`FParentMaterial: TP3DMaterial`"/>
+      <variable name="FSpecularFactor" type="Single" definition="@code`FSpecularFactor: Single`"/>
+      <variable name="FTexChannel" type="Integer" definition="@code`FTexChannel: Integer`"/>
+      <procedure name="SetMap" proctype="procedure" definition="@code`procedure SetMap(AValue: TP3DTexture);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM( AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+    </section>
+    <section visibility="Published">
+      <property name="DiffuseFactor" type="Single" definition="@code`property DiffuseFactor:Single`"/>
+      <property name="NormalFactor" type="Single" definition="@code`property NormalFactor:Single`"/>
+      <property name="SpecularFactor" type="Single" definition="@code`property SpecularFactor:Single`"/>
+      <property name="TexChannel" type="Integer" definition="@code`property TexChannel:Integer`"/>
+      <property name="Mode" type="TP3DMapMode" definition="@code`property Mode:TP3DMapMode`"/>
+      <property name="Map" type="TP3DTexture" definition="@code`property Map:TP3DTexture`"/>
+      <property name="ParentMaterial" type="TP3DMaterial" definition="@code`property ParentMaterial:TP3DMaterial`"/>
+    </section>
+  </class>
+  <class name="TP3DMaterial" type="class" parent="TP3DDataBlock" definition="@code`class TP3DMaterial ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <variable name="FAlpha" type="Single" definition="@code`FAlpha: Single`"/>
+      <variable name="FDiff" type="TVec3" definition="@code`FDiff: TVec3`"/>
+      <variable name="FMaps" type="TP3DMaterialMapList" definition="@code`FMaps: TP3DMaterialMapList`"/>
+      <variable name="FShader" type="TP3DShader" definition="@code`FShader: TP3DShader`"/>
+      <variable name="FSpec" type="TVec3" definition="@code`FSpec: TVec3`"/>
+      <variable name="FSpec_Hardness" type="Single" definition="@code`FSpec_Hardness: Single`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="BuildShader" proctype="procedure" definition="@code`procedure BuildShader;`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( const AData: TP3DData = nil );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="LoadFromDOM" proctype="procedure" definition="@code`procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <property name="Diff" type="TVec3" definition="@code`property Diff:TVec3`"/>
+      <property name="Spec" type="TVec3" definition="@code`property Spec:TVec3`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Maps" type="TP3DMaterialMapList" definition="@code`property Maps:TP3DMaterialMapList`"/>
+      <property name="Spec_Hardness" type="Single" definition="@code`property Spec_Hardness:Single`"/>
+      <property name="Alpha" type="Single" definition="@code`property Alpha:Single`"/>
+      <property name="Shader" type="TP3DShader" definition="@code`property Shader:TP3DShader`"/>
+    </section>
+  </class>
+  <class name="TP3DMeshMaterialGroup" type="class" parent="TPersistent" definition="@code`class TP3DMeshMaterialGroup ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FIndexEnd" type="Integer" definition="@code`FIndexEnd: Integer`"/>
+      <variable name="FIndexStart" type="Integer" definition="@code`FIndexStart: Integer`"/>
+      <variable name="FMaterial" type="TP3DMaterial" definition="@code`FMaterial: TP3DMaterial`"/>
+      <variable name="FParentMesh" type="TP3DMesh" definition="@code`FParentMesh: TP3DMesh`"/>
+      <variable name="FPolyEnd" type="Integer" definition="@code`FPolyEnd: Integer`"/>
+      <variable name="FPolyStart" type="Integer" definition="@code`FPolyStart: Integer`"/>
+      <procedure name="SetMaterial" proctype="procedure" definition="@code`procedure SetMaterial( AValue: TP3DMaterial );`"/>
+    </section>
+    <section visibility="Published">
+      <property name="PolyStart" type="Integer" definition="@code`property PolyStart:Integer`"/>
+      <property name="PolyEnd" type="Integer" definition="@code`property PolyEnd:Integer`"/>
+      <property name="IndexStart" type="Integer" definition="@code`property IndexStart:Integer`"/>
+      <property name="IndexEnd" type="Integer" definition="@code`property IndexEnd:Integer`"/>
+      <property name="Material" type="TP3DMaterial" definition="@code`property Material:TP3DMaterial`"/>
+      <property name="ParentMesh" type="TP3DMesh" definition="@code`property ParentMesh:TP3DMesh`"/>
+    </section>
+  </class>
+  <class name="TP3DFaceVertex" type="record" definition="@code`record TP3DFaceVertex;`">
+    <section visibility="Public">
+      <variable name="v" type="Integer" definition="@code`v: Integer`"/>
+      <variable name="n" type="Integer" definition="@code`n: Integer`"/>
+      <variable name="t" type="Integer" definition="@code`t: Integer`"/>
+      <variable name="c" type="Integer" definition="@code`c: Integer`"/>
+      <variable name="texc" type="array of Integer" definition="@code`texc: array of Integer`"/>
+    </section>
+  </class>
+  <class name="TP3DFace" type="record" definition="@code`record TP3DFace;`">
+    <section visibility="Public">
+      <variable name="verts" type="array of TP3DFaceVertex" definition="@code`verts: array of TP3DFaceVertex`"/>
+      <variable name="mat" type="TP3DMaterial" definition="@code`mat: TP3DMaterial`"/>
+    </section>
+  </class>
+  <class name="TP3DMesh" type="class" parent="TP3DDataBlock" definition="@code`class TP3DMesh ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <procedure name="LoadMaterialFromDOM" proctype="procedure" definition="@code`procedure LoadMaterialFromDOM( DOM: TDOMElement; AData: TP3DData );`"/>
+    </section>
+    <section visibility="Public">
+      <variable name="Positions" type="TP3DVec3BufferGL" definition="@code`Positions: TP3DVec3BufferGL`"/>
+      <variable name="Normals" type="TP3DVec3BufferGL" definition="@code`Normals: TP3DVec3BufferGL`"/>
+      <variable name="Tangents" type="TP3DVec3BufferGL" definition="@code`Tangents: TP3DVec3BufferGL`"/>
+      <variable name="Cotangents" type="TP3DVec3BufferGL" definition="@code`Cotangents: TP3DVec3BufferGL`"/>
+      <variable name="Faces" type="TP3DFaceArray" definition="@code`Faces: TP3DFaceArray`"/>
+      <variable name="TexCoords" type="array of TP3DVec2BufferGL" definition="@code`TexCoords: array of TP3DVec2BufferGL`"/>
+      <variable name="Indices" type="TP3DIntBufferGL" definition="@code`Indices: TP3DIntBufferGL`"/>
+      <variable name="VBArray" type="TP3DVertexBufferArray" definition="@code`VBArray: TP3DVertexBufferArray`"/>
+      <variable name="MaterialGroups" type="TP3DMeshMaterialGroupList" definition="@code`MaterialGroups: TP3DMeshMaterialGroupList`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( const AData: TP3DData = nil );`"/>
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="LoadFromDOM" proctype="procedure" definition="@code`procedure LoadFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor );`"/>
+      <procedure name="RenderMaterialGroup" proctype="procedure" definition="@code`procedure RenderMaterialGroup( world: TMat4; Idx: Integer; Scene: TP3DScene );`"/>
+      <procedure name="UnpackBuffers" proctype="procedure" definition="@code`procedure UnpackBuffers;`"/>
+      <procedure name="ClearVBO" proctype="procedure" definition="@code`procedure ClearVBO;`"/>
+      <procedure name="CreateVBO" proctype="procedure" definition="@code`procedure CreateVBO;`"/>
+      <procedure name="CalcCotangentsFromTangents" proctype="procedure" definition="@code`procedure CalcCotangentsFromTangents;`"/>
+      <procedure name="Calc_Tangents_Cotangents" proctype="procedure" definition="@code`procedure Calc_Tangents_Cotangents;`"/>
+      <procedure name="CalcBoundingBox" proctype="function" definition="@code`function CalcBoundingBox: TP3DBoundingBox;`"/>
+      <procedure name="NotifyDeleteOfData" proctype="procedure" definition="@code`procedure NotifyDeleteOfData(Sender: TP3DDataBlock);`"/>
+    </section>
+  </class>
+  <class name="TP3DActor" type="class" parent="TP3DDataBlock" definition="@code`class TP3DActor ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <variable name="FChildren" type="TP3DActorList" definition="@code`FChildren: TP3DActorList`"/>
+      <variable name="FData" type="TP3DDataBlock" definition="@code`FData: TP3DDataBlock`"/>
+      <variable name="FVisible" type="Boolean" definition="@code`FVisible: Boolean`"/>
+      <procedure name="GetDirection" proctype="function" definition="@code`function GetDirection: TVec3;`"/>
+      <procedure name="GetPosition" proctype="function" definition="@code`function GetPosition: TVec3;`"/>
+      <procedure name="SetData" proctype="procedure" definition="@code`procedure SetData(AValue: TP3DDataBlock);`"/>
+      <procedure name="SetDirection" proctype="procedure" definition="@code`procedure SetDirection(AValue: TVec3);`"/>
+      <procedure name="SetPosition" proctype="procedure" definition="@code`procedure SetPosition(AValue: TVec3);`"/>
+      <property name="BoundingBox" type="" definition="@code`property BoundingBox`"/>
+    </section>
+    <section visibility="Public">
+      <variable name="Matrix" type="TMat4" definition="@code`Matrix: TMat4`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AParentList: TP3DObjectList );`"/>
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM( AParentList: TP3DObjectList; ADOMNode: TDOMElement; AData: TP3DData = nil );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render( world: TMat4; Scene: TP3DScene );`"/>
+      <procedure name="CalcBoundingBox" proctype="function" definition="@code`function CalcBoundingBox: TP3DBoundingBox;`"/>
+      <procedure name="NotifyDeleteOfData" proctype="procedure" definition="@code`procedure NotifyDeleteOfData(Sender: TP3DDataBlock);`"/>
+      <property name="Position" type="TVec3" definition="@code`property Position:TVec3`"/>
+      <property name="Direction" type="TVec3" definition="@code`property Direction:TVec3`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Children" type="TP3DActorList" definition="@code`property Children:TP3DActorList`"/>
+      <property name="Visible" type="Boolean" definition="@code`property Visible:Boolean`"/>
+      <property name="Data" type="TP3DDataBlock" definition="@code`property Data:TP3DDataBlock`"/>
+    </section>
+  </class>
+  <class name="TP3DActorList" type="class" parent="TP3DCustomActorList" definition="@code`class TP3DActorList ( TP3DCustomActorList );`" description="TP3DActorList@br ">
+    <section visibility="Public">
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render( world: TMat4; Scene: TP3DScene );`"/>
+      <procedure name="OutputDebugInfo" proctype="function" definition="@code`function OutputDebugInfo: String;`"/>
+      <procedure name="CalcBoundingBox" proctype="function" definition="@code`function CalcBoundingBox: TP3DBoundingBox;`"/>
+    </section>
+  </class>
+  <class name="TP3DScene" type="class" parent="TP3DDataBlock" definition="@code`class TP3DScene ( TP3DDataBlock );`">
+    <section visibility="Private">
+      <variable name="FCam" type="TP3DCamera" definition="@code`FCam: TP3DCamera`"/>
+      <variable name="FObjects" type="TP3DActorList" definition="@code`FObjects: TP3DActorList`"/>
+      <procedure name="SetCam" proctype="procedure" definition="@code`procedure SetCam(AValue: TP3DCamera);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( const AData: TP3DData = nil );`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DData = nil );`"/>
+      <procedure name="CreateFromDOM" proctype="constructor" definition="@code`constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Clear" proctype="procedure" definition="@code`procedure Clear;`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render;`"/>
+      <procedure name="AppendFromDom" proctype="procedure" definition="@code`procedure AppendFromDom(ADOMNode: TDOMElement; const AParent: TP3DActor = nil; const AutoNames: Boolean=False);`"/>
+      <procedure name="AppendFile" proctype="procedure" definition="@code`procedure AppendFile( AFileName: String; const AParent: TP3DActor = nil; const AutoNames: Boolean = False );`"/>
+      <procedure name="PassToShader" proctype="procedure" definition="@code`procedure PassToShader( world: TMat4 );`"/>
+      <procedure name="NotifyDeleteOfData" proctype="procedure" definition="@code`procedure NotifyDeleteOfData(Sender: TP3DDataBlock);`"/>
+      <property name="Objects" type="TP3DActorList" definition="@code`property Objects:TP3DActorList`"/>
+      <property name="Cam" type="TP3DCamera" definition="@code`property Cam:TP3DCamera`"/>
+    </section>
+  </class>
+  <class name="TP3DFont" type="class" definition="@code`class TP3DFont;`">
+    <section visibility="Private">
+      <variable name="FFileName" type="String" definition="@code`FFileName: String`"/>
+      <variable name="FFontManager" type="TP3DFontManager" definition="@code`FFontManager: TP3DFontManager`"/>
+      <variable name="FFontName" type="String" definition="@code`FFontName: String`"/>
+      <variable name="FSize" type="Integer" definition="@code`FSize: Integer`"/>
+      <variable name="FFont" type="sdl2_ttf.PTTF_Font" definition="@code`FFont: sdl2_ttf.PTTF_Font`"/>
+      <procedure name="SetFileName" proctype="procedure" definition="@code`procedure SetFileName(AValue: String);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AFileName: String; ASize: Integer );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <property name="Font" type="sdl2_ttf" definition="@code`property Font:sdl2_ttf.PTTF_Font`"/>
+    </section>
+    <section visibility="Published">
+      <property name="FileName" type="String" definition="@code`property FileName:String`"/>
+      <property name="FontName" type="String" definition="@code`property FontName:String`"/>
+      <property name="Size" type="Integer" definition="@code`property Size:Integer`"/>
+      <property name="FontManager" type="TP3DFontManager" definition="@code`property FontManager:TP3DFontManager`"/>
+    </section>
+  </class>
+  <class name="TP3DFontManager" type="class" parent="TP3DCustomFontList" definition="@code`class TP3DFontManager ( TP3DCustomFontList );`">
+    <section visibility="Private">
+      <variable name="FDefaultFontsPath" type="String" definition="@code`FDefaultFontsPath: String`"/>
+      <variable name="FMaterial" type="TP3DMaterial" definition="@code`FMaterial: TP3DMaterial`"/>
+      <procedure name="GetFont" proctype="function" definition="@code`function GetFont( FontName: String; Height: Integer ): TP3DFont;`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Add" proctype="function" definition="@code`function Add( Item: TP3DFont ): Integer;`"/>
+      <procedure name="Add" proctype="function" definition="@code`function Add( FontName: String; Height: Integer ): Integer;`"/>
+      <property name="Fonts" type="TP3DFont" definition="@code`property Fonts[FontName:String;Height:Integer]:TP3DFont`"/>
+    </section>
+    <section visibility="Published">
+      <procedure name="Find" proctype="function" definition="@code`function Find( FontName: String; Height: Integer ): Integer;`"/>
+      <property name="Material" type="TP3DMaterial" definition="@code`property Material:TP3DMaterial`"/>
+      <property name="DefaultFontsPath" type="String" definition="@code`property DefaultFontsPath:String`"/>
+    </section>
+  </class>
+  <class name="TP3DText" type="class" definition="@code`class TP3DText;`">
+    <section visibility="Private">
+      <variable name="FFont" type="TP3DFont" definition="@code`FFont: TP3DFont`"/>
+      <variable name="FHeight" type="Single" definition="@code`FHeight: Single`"/>
+      <variable name="FLetterPosAndSize" type="TVec4List" definition="@code`FLetterPosAndSize: TVec4List`"/>
+      <variable name="FTexture" type="TP3DTexture" definition="@code`FTexture: TP3DTexture`"/>
+      <variable name="FIndices" type="TP3DIntBufferGL" definition="@code`FIndices: TP3DIntBufferGL`"/>
+      <variable name="FTexCoords" type="TP3DVec2BufferGL" definition="@code`FTexCoords: TP3DVec2BufferGL`"/>
+      <variable name="FVertices" type="TP3DVec2BufferGL" definition="@code`FVertices: TP3DVec2BufferGL`"/>
+      <variable name="FText" type="String" definition="@code`FText: String`"/>
+      <variable name="FWidth" type="Single" definition="@code`FWidth: Single`"/>
+      <procedure name="ApplyShader" proctype="procedure" definition="@code`procedure ApplyShader;`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render( p: TVec2; Color: TVec4 );`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render( p: TVec2; Color: TVec4; proj: TMat4 );`"/>
+      <procedure name="WidthFromTo" proctype="function" definition="@code`function WidthFromTo( idx1: Integer; idx2: Integer ): TPoint;`"/>
+      <procedure name="BuildIndex" proctype="procedure" definition="@code`procedure BuildIndex;`"/>
+      <property name="Text" type="String" definition="@code`property Text:String`"/>
+      <property name="Width" type="Single" definition="@code`property Width:Single`"/>
+      <property name="Height" type="Single" definition="@code`property Height:Single`"/>
+      <property name="Font" type="TP3DFont" definition="@code`property Font:TP3DFont`"/>
+      <property name="Vertices" type="TP3DVec2BufferGL" definition="@code`property Vertices:TP3DVec2BufferGL`"/>
+      <property name="TexCoords" type="TP3DVec2BufferGL" definition="@code`property TexCoords:TP3DVec2BufferGL`"/>
+      <property name="Indices" type="TP3DIntBufferGL" definition="@code`property Indices:TP3DIntBufferGL`"/>
+      <property name="LetterPosAndSize" type="TVec4List" definition="@code`property LetterPosAndSize:TVec4List`"/>
+      <property name="Texture" type="TP3DTexture" definition="@code`property Texture:TP3DTexture`"/>
+    </section>
+  </class>
+  <procedure name="p3dTextSimple" proctype="function" definition="@code`function p3dTextSimple( AText: String; AFont: TP3DFont ): TP3DText;`"/>
+  <procedure name="p3dTextSize" proctype="function" definition="@code`function p3dTextSize( AText: String; AFont: TP3DFont ): TPoint;`"/>
+  <class name="TP3DCanvasFont" type="class" parent="TPersistent" definition="@code`class TP3DCanvasFont ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FFontColor" type="TVec4" definition="@code`FFontColor: TVec4`"/>
+      <variable name="FFontName" type="String" definition="@code`FFontName: String`"/>
+      <variable name="FFontSize" type="Integer" definition="@code`FFontSize: Integer`"/>
+      <variable name="FOnChange" type="TNotifyEvent" definition="@code`FOnChange: TNotifyEvent`"/>
+      <procedure name="SetFontColor" proctype="procedure" definition="@code`procedure SetFontColor(AValue: TVec4);`"/>
+      <procedure name="SetFontName" proctype="procedure" definition="@code`procedure SetFontName(AValue: String);`"/>
+      <procedure name="SetFontSize" proctype="procedure" definition="@code`procedure SetFontSize(AValue: Integer);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Assign" proctype="procedure" definition="@code`procedure Assign( Font: TP3DCanvasFont );`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <property name="Color" type="TVec4" definition="@code`property Color:TVec4`" description="Object properties can't be published for some reason@br "/>
+    </section>
+    <section visibility="Published">
+      <property name="Name" type="String" definition="@code`property Name:String`"/>
+      <property name="Size" type="Integer" definition="@code`property Size:Integer`"/>
+      <property name="OnChange" type="TNotifyEvent" definition="@code`property OnChange:TNotifyEvent`"/>
+    </section>
+  </class>
+  <class name="TP3DCanvas" type="class" parent="TPersistent" definition="@code`class TP3DCanvas ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FFont" type="TP3DCanvasFont" definition="@code`FFont: TP3DCanvasFont`"/>
+      <variable name="FLockID" type="Integer" definition="@code`FLockID: Integer`"/>
+      <variable name="FLeft" type="Integer" definition="@code`FLeft: Integer`"/>
+      <variable name="FOwner" type="TPersistent" definition="@code`FOwner: TPersistent`"/>
+      <variable name="FScreenColor" type="TVec4" definition="@code`FScreenColor: TVec4`"/>
+      <variable name="FTop" type="Integer" definition="@code`FTop: Integer`"/>
+      <variable name="FWidth" type="Integer" definition="@code`FWidth: Integer`"/>
+      <variable name="FHeight" type="Integer" definition="@code`FHeight: Integer`"/>
+      <procedure name="SetExtent" proctype="procedure" definition="@code`procedure SetExtent(AIndex: Integer; AValue: Integer);`"/>
+      <procedure name="UpdateLockedArea" proctype="procedure" definition="@code`procedure UpdateLockedArea;`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Lock" proctype="function" definition="@code`function Lock: Integer;`"/>
+      <procedure name="Unlock" proctype="procedure" definition="@code`procedure Unlock;`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AOwner: TPersistent );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <property name="Left" type="Integer" definition="@code`property Left:Integer`"/>
+      <property name="Top" type="Integer" definition="@code`property Top:Integer`"/>
+      <property name="Width" type="Integer" definition="@code`property Width:Integer`"/>
+      <property name="Height" type="Integer" definition="@code`property Height:Integer`"/>
+      <property name="LockID" type="Integer" definition="@code`property LockID:Integer`"/>
+      <property name="Owner" type="TPersistent" definition="@code`property Owner:TPersistent`"/>
+      <property name="Font" type="TP3DCanvasFont" definition="@code`property Font:TP3DCanvasFont`" description="TODO: OnChange event for font will fire redraw of texts in components@br "/>
+      <property name="ScreenColor" type="TVec4" definition="@code`property ScreenColor:TVec4`"/>
+    </section>
+  </class>
+  <class name="TP3DBrush" type="class" definition="@code`class TP3DBrush;`">
+    <section visibility="Published">
+      <variable name="Color" type="TVec4" definition="@code`Color: TVec4`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(AColor: TVec4);`"/>
+    </section>
+  </class>
+  <class name="TP3DPen" type="class" definition="@code`class TP3DPen;`">
+    <section visibility="Private">
+      <variable name="FColor" type="TVec4" definition="@code`FColor: TVec4`"/>
+      <variable name="FOnChange" type="TNotifyEvent" definition="@code`FOnChange: TNotifyEvent`"/>
+      <variable name="FWidth" type="Single" definition="@code`FWidth: Single`"/>
+      <variable name="FStyle" type="TP3DPenStyle" definition="@code`FStyle: TP3DPenStyle`"/>
+      <procedure name="SetStyle" proctype="procedure" definition="@code`procedure SetStyle(AValue: TP3DPenStyle);`"/>
+      <procedure name="SetWidth" proctype="procedure" definition="@code`procedure SetWidth(AValue: Single);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AColor: TVec4; AWidth: Single; AStyle: TP3DPenStyle );`"/>
+      <property name="Width" type="Single" definition="@code`property Width:Single`"/>
+      <property name="Color" type="TVec4" definition="@code`property Color:TVec4`"/>
+      <property name="Style" type="TP3DPenStyle" definition="@code`property Style:TP3DPenStyle`"/>
+      <property name="OnChange" type="TNotifyEvent" definition="@code`property OnChange:TNotifyEvent`"/>
+    </section>
+  </class>
+  <class name="TP3DCanvas2D" type="class" parent="TP3DCanvas" definition="@code`class TP3DCanvas2D ( TP3DCanvas );`">
+    <section visibility="Private">
+      <variable name="FBrush" type="TP3DBrush" definition="@code`FBrush: TP3DBrush`"/>
+      <variable name="FPen" type="TP3DPen" definition="@code`FPen: TP3DPen`"/>
+      <variable name="FProj" type="TMat4" definition="@code`FProj: TMat4`"/>
+      <variable name="FScreenAligned" type="Boolean" definition="@code`FScreenAligned: Boolean`"/>
+      <variable name="FScroll" type="TVec2" definition="@code`FScroll: TVec2`"/>
+      <procedure name="SetScreenAligned" proctype="procedure" definition="@code`procedure SetScreenAligned(AValue: Boolean);`"/>
+      <procedure name="SetScroll" proctype="procedure" definition="@code`procedure SetScroll(AValue: TVec2);`"/>
+      <procedure name="UpdateLockedArea" proctype="procedure" definition="@code`procedure UpdateLockedArea;`"/>
+      <procedure name="UpdateProj" proctype="procedure" definition="@code`procedure UpdateProj;`"/>
+      <procedure name="UpdateParams" proctype="procedure" definition="@code`procedure UpdateParams;`"/>
+      <procedure name="PenChange" proctype="procedure" definition="@code`procedure PenChange( Sender: TObject );`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create(AOwner: TPersistent);`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="RenderLine" proctype="procedure" definition="@code`procedure RenderLine( p1, p2: TVec2; Color: TVec4 );`"/>
+      <procedure name="RenderLine" proctype="procedure" definition="@code`procedure RenderLine( p1, p2: TVec2; Color1, Color2: TVec4 );`"/>
+      <procedure name="RenderLines" proctype="procedure" definition="@code`procedure RenderLines( points: array of TVec2; Color: TVec4 );`"/>
+      <procedure name="RenderLines" proctype="procedure" definition="@code`procedure RenderLines( points: TVec2List; Color: TVec4 );`"/>
+      <procedure name="RenderLineRect" proctype="procedure" definition="@code`procedure RenderLineRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );`"/>
+      <procedure name="RenderLineRect" proctype="procedure" definition="@code`procedure RenderLineRect( p1, p2: TVec2; Color: TVec4 );`"/>
+      <procedure name="RenderRect" proctype="procedure" definition="@code`procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );`"/>
+      <procedure name="RenderRect" proctype="procedure" definition="@code`procedure RenderRect( p1, p2: TVec2; Color: TVec4 );`"/>
+      <procedure name="RenderCircle" proctype="procedure" definition="@code`procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );`"/>
+      <procedure name="RenderLineCircle" proctype="procedure" definition="@code`procedure RenderLineCircle( c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );`"/>
+      <procedure name="RenderQuad" proctype="procedure" definition="@code`procedure RenderQuad( p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TVec4 );`"/>
+      <procedure name="RenderQuad" proctype="procedure" definition="@code`procedure RenderQuad( p1, p2, p3, p4: TVec2; Color: TVec4 );`"/>
+      <procedure name="RenderText" proctype="procedure" definition="@code`procedure RenderText( Text: TP3DText; P: TVec2 );`"/>
+      <procedure name="RenderBezier" proctype="procedure" definition="@code`procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TVec4 );`"/>
+      <procedure name="RenderRectShadow" proctype="procedure" definition="@code`procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TVec4);`"/>
+      <procedure name="Lock" proctype="function" definition="@code`function Lock: Integer;`"/>
+      <property name="Proj" type="TMat4" definition="@code`property Proj:TMat4`"/>
+      <property name="Scroll" type="TVec2" definition="@code`property Scroll:TVec2`"/>
+      <property name="ScreenAligned" type="Boolean" definition="@code`property ScreenAligned:Boolean`"/>
+      <property name="Brush" type="TP3DBrush" definition="@code`property Brush:TP3DBrush`"/>
+      <property name="Pen" type="TP3DPen" definition="@code`property Pen:TP3DPen`"/>
+    </section>
+  </class>
+  <class name="TP3DData" type="class" parent="TPersistent" definition="@code`class TP3DData ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FCameras" type="TP3DCameraList" definition="@code`FCameras: TP3DCameraList`"/>
+      <variable name="FDataBlocks" type="TP3DObjectList" definition="@code`FDataBlocks: TP3DObjectList`"/>
+      <variable name="FFileWatch" type="TP3DFileWatch" definition="@code`FFileWatch: TP3DFileWatch`"/>
+      <variable name="FLibraries" type="TP3DDataList" definition="@code`FLibraries: TP3DDataList`"/>
+      <variable name="FLights" type="TP3DLightList" definition="@code`FLights: TP3DLightList`"/>
+      <variable name="FMaterials" type="TP3DMaterialList" definition="@code`FMaterials: TP3DMaterialList`"/>
+      <variable name="FMeshes" type="TP3DMeshList" definition="@code`FMeshes: TP3DMeshList`"/>
+      <variable name="FObjects" type="TP3DActorList" definition="@code`FObjects: TP3DActorList`"/>
+      <variable name="FScenes" type="TP3DSceneList" definition="@code`FScenes: TP3DSceneList`"/>
+      <variable name="FTextures" type="TP3DTextureList" definition="@code`FTextures: TP3DTextureList`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="CreateFromDom" proctype="constructor" definition="@code`constructor CreateFromDom( ADOMNode: TDOMElement );`"/>
+      <procedure name="CreateFromFile" proctype="constructor" definition="@code`constructor CreateFromFile( AFileName: String );`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="AppendFromDom" proctype="procedure" definition="@code`procedure AppendFromDom( ADOMNode: TDOMElement; const AParent: TP3DActor = nil );`"/>
+      <procedure name="AppendFile" proctype="procedure" definition="@code`procedure AppendFile( AFileName: String; const AParent: TP3DActor = nil );`"/>
+      <procedure name="NotifyDeleteOfData" proctype="procedure" definition="@code`procedure NotifyDeleteOfData( Sender: TP3DDataBlock );`"/>
+      <property name="DataBlocks" type="TP3DObjectList" definition="@code`property DataBlocks:TP3DObjectList`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Cameras" type="TP3DCameraList" definition="@code`property Cameras:TP3DCameraList`"/>
+      <property name="Libraries" type="TP3DDataList" definition="@code`property Libraries:TP3DDataList`"/>
+      <property name="Lights" type="TP3DLightList" definition="@code`property Lights:TP3DLightList`"/>
+      <property name="Materials" type="TP3DMaterialList" definition="@code`property Materials:TP3DMaterialList`"/>
+      <property name="Meshes" type="TP3DMeshList" definition="@code`property Meshes:TP3DMeshList`"/>
+      <property name="Objects" type="TP3DActorList" definition="@code`property Objects:TP3DActorList`"/>
+      <property name="Scenes" type="TP3DSceneList" definition="@code`property Scenes:TP3DSceneList`"/>
+      <property name="Textures" type="TP3DTextureList" definition="@code`property Textures:TP3DTextureList`"/>
+      <property name="FileWatch" type="TP3DFileWatch" definition="@code`property FileWatch:TP3DFileWatch`"/>
+    </section>
+  </class>
+  <class name="TP3DDataList" type="class" parent="TP3DCustomDataList" definition="@code`class TP3DDataList ( TP3DCustomDataList );`">
+    <section visibility="Published">
+      <procedure name="FindByFileName" proctype="function" definition="@code`function FindByFileName( AFileName: String ): Integer;`"/>
+    </section>
+  </class>
+  <procedure name="OpenLibrary" proctype="function" definition="@code`function OpenLibrary( FileName: String ): Integer;`"/>
+  <procedure name="P3DGraphicsInit" proctype="procedure" definition="@code`procedure P3DGraphicsInit;`"/>
+  <procedure name="P3DGraphicssFinish" proctype="procedure" definition="@code`procedure P3DGraphicssFinish;`"/>
+</unit>

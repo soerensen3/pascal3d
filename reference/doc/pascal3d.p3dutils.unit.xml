@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unit name="p3dutils">
+  <uses>
+    <file name="Classes"/>
+    <file name="SysUtils"/>
+    <file name="FileUtil"/>
+  </uses>
+  <class name="TP3DFileWatch" type="class" parent="TPersistent" definition="@code`class TP3DFileWatch ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FLastFileAge" type="LongInt" definition="@code`FLastFileAge: LongInt`"/>
+      <variable name="FFileName" type="String" definition="@code`FFileName: String`"/>
+      <variable name="FOnFileChange" type="TP3DFileWatchChange" definition="@code`FOnFileChange: TP3DFileWatchChange`"/>
+      <variable name="FUserPointer" type="Pointer" definition="@code`FUserPointer: Pointer`"/>
+      <procedure name="GetFileAge" proctype="function" definition="@code`function GetFileAge: LongInt;`"/>
+      <procedure name="SetFileName" proctype="procedure" definition="@code`procedure SetFileName(AValue: String);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( AFileName: String; AUserPointer: Pointer = nil );`"/>
+      <procedure name="CheckForChange" proctype="function" definition="@code`function CheckForChange: Boolean;`"/>
+      <procedure name="Reload" proctype="procedure" definition="@code`procedure Reload;`"/>
+      <property name="UserPointer" type="Pointer" definition="@code`property UserPointer:Pointer`"/>
+    </section>
+    <section visibility="Published">
+      <property name="FileName" type="String" definition="@code`property FileName:String`"/>
+      <property name="LastFileAge" type="LongInt" definition="@code`property LastFileAge:LongInt`"/>
+      <property name="OnFileChange" type="TP3DFileWatchChange" definition="@code`property OnFileChange:TP3DFileWatchChange`"/>
+    </section>
+  </class>
+  <class name="TP3DFileWatchList" type="class" parent="specialize" definition="@code`class TP3DFileWatchList ( specialize );`">
+    <section visibility="Published">
+      <procedure name="AddWatch" proctype="function" definition="@code`function AddWatch( AFileName: String; AUserPointer: Pointer = nil ): Integer;`"/>
+      <procedure name="CheckForChange" proctype="procedure" definition="@code`procedure CheckForChange;`"/>
+    </section>
+  </class>
+  <procedure name="P3DListFolderFiles" proctype="function" definition="@code`function P3DListFolderFiles( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;`"/>
+  <class name="TP3DNodeSocket" type="class" parent="TPersistent" definition="@code`class TP3DNodeSocket ( TPersistent );`">
+    <section visibility="Protected">
+      <variable name="FDirection" type="TP3DNodeSocketDirection" definition="@code`FDirection: TP3DNodeSocketDirection`"/>
+      <variable name="FConnected" type="TP3DNodeSocket" definition="@code`FConnected: TP3DNodeSocket`"/>
+      <variable name="FName" type="String" definition="@code`FName: String`"/>
+      <variable name="FNode" type="TP3DNode" definition="@code`FNode: TP3DNode`"/>
+      <variable name="FOnConnect" type="TNotifyEvent" definition="@code`FOnConnect: TNotifyEvent`"/>
+      <variable name="FUserData" type="Pointer" definition="@code`FUserData: Pointer`"/>
+      <procedure name="GetSocketType" proctype="class" definition="@code`class function GetSocketType: String;`"/>
+      <procedure name="SetConnected" proctype="procedure" definition="@code`procedure SetConnected(AValue: TP3DNodeSocket);`"/>
+      <procedure name="SetNode" proctype="procedure" definition="@code`procedure SetNode(AValue: TP3DNode);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create( ANode: TP3DNode; ADirection: TP3DNodeSocketDirection );`"/>
+      <procedure name="AcceptConnection" proctype="procedure" definition="@code`procedure AcceptConnection( ATarget: TP3DNodeSocket; const Accept: Boolean = False );`"/>
+      <property name="SocketType" type="String" definition="@code`class property SocketType:String`" description="- Procedure to check if socket connection is accepted@br "/>
+      <property name="Name" type="String" definition="@code`property Name:String`" description="- Can be of various types (Int, Float, Vector, Color)      The types must be registered the NodeTree    - Same types can be connected but also some different types      can be connected like vector and color.@br "/>
+      <property name="Connected" type="TP3DNodeSocket" definition="@code`property Connected:TP3DNodeSocket`"/>
+      <property name="Node" type="TP3DNode" definition="@code`property Node:TP3DNode`"/>
+      <property name="OnConnect" type="TNotifyEvent" definition="@code`property OnConnect:TNotifyEvent`"/>
+      <property name="UserData" type="Pointer" definition="@code`property UserData:Pointer`"/>
+      <property name="Direction" type="TP3DNodeSocketDirection" definition="@code`property Direction:TP3DNodeSocketDirection`"/>
+    </section>
+  </class>
+  <class name="TP3DNodeSocketList" type="class" parent="TP3DCustomNodeSocketList" definition="@code`class TP3DNodeSocketList ( TP3DCustomNodeSocketList );`">
+    <section visibility="Published">
+      <procedure name="FindSocketByName" proctype="function" definition="@code`function FindSocketByName( Name: String ): Integer;`"/>
+    </section>
+  </class>
+  <class name="TP3DNode" type="class" parent="TPersistent" definition="@code`class TP3DNode ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FInputs" type="TP3DNodeSocketList" definition="@code`FInputs: TP3DNodeSocketList`"/>
+      <variable name="FName" type="String" definition="@code`FName: String`"/>
+      <variable name="FOnChange" type="TNotifyEvent" definition="@code`FOnChange: TNotifyEvent`"/>
+      <variable name="FOutputs" type="TP3DNodeSocketList" definition="@code`FOutputs: TP3DNodeSocketList`"/>
+      <variable name="FUserData" type="Pointer" definition="@code`FUserData: Pointer`"/>
+      <variable name="FX" type="Single" definition="@code`FX: Single`"/>
+      <variable name="FY" type="Single" definition="@code`FY: Single`"/>
+      <procedure name="SetName" proctype="procedure" definition="@code`procedure SetName(AValue: String);`"/>
+      <procedure name="SetX" proctype="procedure" definition="@code`procedure SetX(AValue: Single);`"/>
+      <procedure name="SetY" proctype="procedure" definition="@code`procedure SetY(AValue: Single);`"/>
+      <procedure name="SocketsChange" proctype="procedure" definition="@code`procedure SocketsChange( Sender: TObject );`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <property name="Inputs" type="TP3DNodeSocketList" definition="@code`property Inputs:TP3DNodeSocketList`"/>
+      <property name="Outputs" type="TP3DNodeSocketList" definition="@code`property Outputs:TP3DNodeSocketList`"/>
+      <property name="Name" type="String" definition="@code`property Name:String`" description="- Sockets for Inputs and Outputs@br "/>
+      <property name="X" type="Single" definition="@code`property X:Single`"/>
+      <property name="Y" type="Single" definition="@code`property Y:Single`"/>
+      <property name="OnChange" type="TNotifyEvent" definition="@code`property OnChange:TNotifyEvent`"/>
+      <property name="UserData" type="Pointer" definition="@code`property UserData:Pointer`"/>
+    </section>
+  </class>
+  <class name="TP3DNodeTree" type="class" parent="TPersistent" definition="@code`class TP3DNodeTree ( TPersistent );`">
+    <section visibility="Private">
+      <variable name="FNodes" type="TP3DNodeList" definition="@code`FNodes: TP3DNodeList`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Nodes" type="TP3DNodeList" definition="@code`property Nodes:TP3DNodeList`" description="List of all the nodes.@br "/>
+    </section>
+  </class>
+  <procedure name="P3DUtilsInit" proctype="procedure" definition="@code`procedure P3DUtilsInit;`"/>
+  <procedure name="P3DUtilsFinish" proctype="procedure" definition="@code`procedure P3DUtilsFinish;`"/>
+</unit>

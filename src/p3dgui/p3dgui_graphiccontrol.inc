@@ -23,6 +23,8 @@ TP3DGCInputFlags = set of TP3DGCInputState;
 // 14 = MO + M2 + M3
 // 15 = MO + M1 + M2 + M3
 //...
+
+TP3DNotifyEvent = procedure ( Sender: TP3DGraphicControl ) of object;
 TP3DGraphicControl = class ( TP3DObject )
   private
     FBoundsBR: TVec2;

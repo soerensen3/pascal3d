@@ -166,7 +166,7 @@ end;
 
 function TP3DActor.GetDirection: TVec3;
 begin
-  Result:= vec3( Matrix._20, Matrix._21, Matrix._22 );
+  Result:= Matrix.Row[ 2 ].xyz;//vec3( Matrix._20, Matrix._21, Matrix._22 );
 end;
 
 function TP3DActor.GetMatrix: TMat4;

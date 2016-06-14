@@ -77,7 +77,7 @@ begin
   if ( MipMap ) then
     begin
       glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, Integer( Filtering ) + $100 + Integer( FilteringMipMap ) - $2600 ); cle( Self );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, Integer( Filtering ) + $100 + ( Integer( FilteringMipMap ) - $2600 ) * 2 ); cle( Self );
     end
   else
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, Integer( Filtering )); cle( Self );

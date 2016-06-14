@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package name="pascal3d">
+  <dependencies>
+    <file name="p3d_math"/>
+    <file name="pl_opengl"/>
+    <file name="libsdl2"/>
+    <file name="LCLBase"/>
+    <file name="FCL"/>
+  </dependencies>
+  <file name="pascal3d"/>
+  <file name="p3devents"/>
+  <file name="p3dutils"/>
+  <file name="p3dgraphics"/>
+</package>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unit name="p3devents">
+  <uses>
+    <file name="Classes"/>
+    <file name="SysUtils"/>
+    <file name="XMLWrite"/>
+    <file name="DOM"/>
+    <file name="SDL2"/>
+    <file name="dglOpenGL"/>
+  </uses>
+  <class name="TP3DLogger" type="class" definition="@code`class TP3DLogger;`">
+    <section visibility="Private">
+      <variable name="FFileName" type="String" definition="@code`FFileName: String`"/>
+      <variable name="FLevel" type="TDOMElement" definition="@code`FLevel: TDOMElement`"/>
+      <variable name="FLogFile" type="TXMLDocument" definition="@code`FLogFile: TXMLDocument`"/>
+      <procedure name="SetFileName" proctype="procedure" definition="@code`procedure SetFileName(AValue: String);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="WriteFile" proctype="procedure" definition="@code`procedure WriteFile;`"/>
+      <procedure name="AddChild" proctype="procedure" definition="@code`procedure AddChild( ADOM: TDOMElement );`"/>
+      <procedure name="LogInfo" proctype="function" definition="@code`function LogInfo( Sender: TObject; Message: String ): TDOMElement;`"/>
+      <procedure name="LogException" proctype="function" definition="@code`function LogException( Sender: TObject; Message: String ): TDOMElement;`"/>
+      <procedure name="LogException" proctype="function" definition="@code`function LogException( Sender: TObject; Message: Exception ): TDOMElement;`"/>
+      <property name="LogFile" type="TXMLDocument" definition="@code`property LogFile:TXMLDocument`"/>
+      <property name="FileName" type="String" definition="@code`property FileName:String`"/>
+      <property name="Level" type="TDOMElement" definition="@code`property Level:TDOMElement`"/>
+    </section>
+  </class>
+  <class name="TP3DInputDevice" type="class" definition="@code`class TP3DInputDevice;`">
+    <section visibility="Published">
+      <procedure name="FlushDelta" proctype="procedure" definition="@code`procedure FlushDelta;`"/>
+    </section>
+  </class>
+  <class name="TP3DMouseDevice" type="class" parent="TP3DInputDevice" definition="@code`class TP3DMouseDevice ( TP3DInputDevice );`">
+    <section visibility="Private">
+      <variable name="FDX" type="Integer" definition="@code`FDX: Integer`"/>
+      <variable name="FDY" type="Integer" definition="@code`FDY: Integer`"/>
+      <variable name="FX" type="Integer" definition="@code`FX: Integer`"/>
+      <variable name="FY" type="Integer" definition="@code`FY: Integer`"/>
+      <variable name="FButtons" type="array[0..4]of Boolean" definition="@code`FButtons: array[0..4]of Boolean`"/>
+      <variable name="FDButtons" type="array[0..4]of Boolean" definition="@code`FDButtons: array[0..4]of Boolean`"/>
+      <procedure name="GetButtons" proctype="function" definition="@code`function GetButtons( Index: Integer ): Boolean;`"/>
+      <procedure name="GetDButtons" proctype="function" definition="@code`function GetDButtons( Index: Integer ): Boolean;`"/>
+      <procedure name="SetButtons" proctype="procedure" definition="@code`procedure SetButtons( Index: Integer ; AValue: Boolean);`"/>
+      <procedure name="SetDButtons" proctype="procedure" definition="@code`procedure SetDButtons( Index: Integer ; AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="FlushDelta" proctype="procedure" definition="@code`procedure FlushDelta;`"/>
+      <property name="DX" type="Integer" definition="@code`property DX:Integer`" description="Delta of cursor x position@br "/>
+      <property name="DY" type="Integer" definition="@code`property DY:Integer`" description="Delta of cursor x position@br "/>
+      <property name="X" type="Integer" definition="@code`property X:Integer`" description="Cursor x position on screen, not window.@br "/>
+      <property name="Y" type="Integer" definition="@code`property Y:Integer`" description="Cursor y position on screen, not window.@br "/>
+      <property name="Buttons" type="Boolean" definition="@code`property Buttons[Index:Integer]:Boolean`" description="Button State@br "/>
+      <property name="DButtons" type="Boolean" definition="@code`property DButtons[Index:Integer]:Boolean`" description="Delta Button State@br "/>
+    </section>
+  </class>
+  <class name="TP3DKeyboardDevice" type="class" parent="TP3DInputDevice" definition="@code`class TP3DKeyboardDevice ( TP3DInputDevice );`">
+    <section visibility="Private">
+      <variable name="FKeys" type="array[0..511]of Boolean" definition="@code`FKeys: array[0..511]of Boolean`"/>
+      <variable name="FDKeys" type="array[0..511]of Boolean" definition="@code`FDKeys: array[0..511]of Boolean`"/>
+      <variable name="FReadingTextInput" type="Boolean" definition="@code`FReadingTextInput: Boolean`"/>
+      <variable name="FInputText" type="String" definition="@code`FInputText: String`"/>
+      <procedure name="SetReadingTextInput" proctype="procedure" definition="@code`procedure SetReadingTextInput(AValue: Boolean);`"/>
+      <procedure name="GetDKeys" proctype="function" definition="@code`function GetDKeys( Index: Integer ): Boolean;`"/>
+      <procedure name="GetKeys" proctype="function" definition="@code`function GetKeys( Index: Integer ): Boolean;`"/>
+      <procedure name="SetDKeys" proctype="procedure" definition="@code`procedure SetDKeys( Index: Integer ; AValue: Boolean);`"/>
+      <procedure name="SetKeys" proctype="procedure" definition="@code`procedure SetKeys( Index: Integer ; AValue: Boolean);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="FlushDelta" proctype="procedure" definition="@code`procedure FlushDelta;`"/>
+      <property name="Keys" type="Boolean" definition="@code`property Keys[Index:Integer]:Boolean`"/>
+      <property name="DKeys" type="Boolean" definition="@code`property DKeys[Index:Integer]:Boolean`"/>
+      <property name="ReadingTextInput" type="Boolean" definition="@code`property ReadingTextInput:Boolean`"/>
+      <property name="InputText" type="String" definition="@code`property InputText:String`"/>
+    </section>
+  </class>
+  <class name="TP3DInputEvent" type="class" definition="@code`class TP3DInputEvent;`">
+    <section visibility="Private">
+      <variable name="FTimeStamp" type="Cardinal" definition="@code`FTimeStamp: Cardinal`"/>
+    </section>
+    <section visibility="Published">
+      <property name="TimeStamp" type="Cardinal" definition="@code`property TimeStamp:Cardinal`"/>
+    </section>
+  </class>
+  <class name="TP3DMouseMotionEvent" type="class" parent="TP3DInputEvent" definition="@code`class TP3DMouseMotionEvent ( TP3DInputEvent );`">
+    <section visibility="Private">
+      <variable name="FDX" type="Integer" definition="@code`FDX: Integer`"/>
+      <variable name="FDY" type="Integer" definition="@code`FDY: Integer`"/>
+      <variable name="FX" type="Integer" definition="@code`FX: Integer`"/>
+      <variable name="FY" type="Integer" definition="@code`FY: Integer`"/>
+    </section>
+    <section visibility="Published">
+      <property name="DX" type="Integer" definition="@code`property DX:Integer`"/>
+      <property name="DY" type="Integer" definition="@code`property DY:Integer`"/>
+      <property name="X" type="Integer" definition="@code`property X:Integer`"/>
+      <property name="Y" type="Integer" definition="@code`property Y:Integer`"/>
+    </section>
+  </class>
+  <class name="TP3DMouseButtonEvent" type="class" parent="TP3DInputEvent" definition="@code`class TP3DMouseButtonEvent ( TP3DInputEvent );`">
+    <section visibility="Private">
+      <variable name="FButton" type="TP3DMouseButton" definition="@code`FButton: TP3DMouseButton`"/>
+      <variable name="FState" type="TP3DInputState" definition="@code`FState: TP3DInputState`"/>
+      <variable name="FX" type="Integer" definition="@code`FX: Integer`"/>
+      <variable name="FY" type="Integer" definition="@code`FY: Integer`"/>
+    </section>
+    <section visibility="Published">
+      <property name="X" type="Integer" definition="@code`property X:Integer`"/>
+      <property name="Y" type="Integer" definition="@code`property Y:Integer`"/>
+      <property name="Button" type="TP3DMouseButton" definition="@code`property Button:TP3DMouseButton`"/>
+      <property name="State" type="TP3DInputState" definition="@code`property State:TP3DInputState`"/>
+    </section>
+  </class>
+  <class name="TP3DKeyboardEvent" type="class" parent="TP3DInputEvent" definition="@code`class TP3DKeyboardEvent ( TP3DInputEvent );`">
+    <section visibility="Private">
+      <variable name="FState" type="TP3DInputState" definition="@code`FState: TP3DInputState`"/>
+    </section>
+    <section visibility="Published">
+      <property name="State" type="TP3DInputState" definition="@code`property State:TP3DInputState`"/>
+    </section>
+  </class>
+  <class name="TP3DInputManager" type="class" definition="@code`class TP3DInputManager;`">
+    <section visibility="Private">
+      <variable name="FKeyboard" type="TP3DKeyboardDevice" definition="@code`FKeyboard: TP3DKeyboardDevice`"/>
+      <variable name="FMouse" type="TP3DMouseDevice" definition="@code`FMouse: TP3DMouseDevice`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="Destroy" proctype="destructor" definition="@code`destructor Destroy;`"/>
+      <procedure name="NextCycle" proctype="procedure" definition="@code`procedure NextCycle;`"/>
+    </section>
+    <section visibility="Published">
+      <property name="Mouse" type="TP3DMouseDevice" definition="@code`property Mouse:TP3DMouseDevice`"/>
+      <property name="Keyboard" type="TP3DKeyboardDevice" definition="@code`property Keyboard:TP3DKeyboardDevice`"/>
+    </section>
+  </class>
+  <class name="TP3DWindow" type="class" definition="@code`class TP3DWindow;`">
+    <section visibility="Private">
+      <variable name="FFullScreen" type="Boolean" definition="@code`FFullScreen: Boolean`"/>
+      <variable name="FOnClose" type="TP3DWindowEvent" definition="@code`FOnClose: TP3DWindowEvent`"/>
+      <variable name="FOnInput" type="TP3DWindowEvent" definition="@code`FOnInput: TP3DWindowEvent`"/>
+      <variable name="FOnKey" type="TP3DWindowEventKey" definition="@code`FOnKey: TP3DWindowEventKey`"/>
+      <variable name="FOnMouseButton" type="TP3DWindowEventMouseButton" definition="@code`FOnMouseButton: TP3DWindowEventMouseButton`"/>
+      <variable name="FOnMouseMotion" type="TP3DWindowEventMouseMotion" definition="@code`FOnMouseMotion: TP3DWindowEventMouseMotion`"/>
+      <variable name="FOnMouseWheel" type="TP3DWindowEventMouseWheel" definition="@code`FOnMouseWheel: TP3DWindowEventMouseWheel`"/>
+      <variable name="fOnRender" type="TP3DWindowEvent" definition="@code`fOnRender: TP3DWindowEvent`"/>
+      <variable name="FOnResize" type="TP3DWindowEvent" definition="@code`FOnResize: TP3DWindowEvent`"/>
+      <variable name="FTitle" type="String" definition="@code`FTitle: String`"/>
+      <variable name="FVisible" type="Boolean" definition="@code`FVisible: Boolean`"/>
+      <variable name="FWindow" type="PSDL_Window" definition="@code`FWindow: PSDL_Window`"/>
+      <variable name="context" type="TSDL_GLContext" definition="@code`context: TSDL_GLContext`"/>
+      <variable name="renderer" type="PSDL_Renderer" definition="@code`renderer: PSDL_Renderer`"/>
+      <procedure name="GetHeight" proctype="function" definition="@code`function GetHeight: Integer;`"/>
+      <procedure name="GetLeft" proctype="function" definition="@code`function GetLeft: Integer;`"/>
+      <procedure name="GetTitle" proctype="function" definition="@code`function GetTitle: String;`"/>
+      <procedure name="GetTop" proctype="function" definition="@code`function GetTop: Integer;`"/>
+      <procedure name="GetWidth" proctype="function" definition="@code`function GetWidth: Integer;`"/>
+      <procedure name="SetFullScreen" proctype="procedure" definition="@code`procedure SetFullScreen(AValue: Boolean);`"/>
+      <procedure name="SetHeight" proctype="procedure" definition="@code`procedure SetHeight(AValue: Integer);`"/>
+      <procedure name="SetLeft" proctype="procedure" definition="@code`procedure SetLeft(AValue: Integer);`"/>
+      <procedure name="SetTitle" proctype="procedure" definition="@code`procedure SetTitle(AValue: String);`"/>
+      <procedure name="SetTop" proctype="procedure" definition="@code`procedure SetTop(AValue: Integer);`"/>
+      <procedure name="SetVisible" proctype="procedure" definition="@code`procedure SetVisible(AValue: Boolean);`"/>
+      <procedure name="SetWidth" proctype="procedure" definition="@code`procedure SetWidth(AValue: Integer);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="SetViewportOpenGL" proctype="procedure" definition="@code`procedure SetViewportOpenGL(w,h: Integer);`"/>
+      <procedure name="Render" proctype="procedure" definition="@code`procedure Render;`"/>
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="CreateFrom" proctype="constructor" definition="@code`constructor CreateFrom( Wnd: Pointer );`"/>
+      <procedure name="Show" proctype="procedure" definition="@code`procedure Show;`"/>
+      <procedure name="Hide" proctype="procedure" definition="@code`procedure Hide;`"/>
+      <procedure name="GetRenderer" proctype="function" definition="@code`function GetRenderer: PSDL_Renderer;`"/>
+      <property name="OnRender" type="TP3DWindowEvent" definition="@code`property OnRender:TP3DWindowEvent`"/>
+      <property name="OnMouseMotion" type="TP3DWindowEventMouseMotion" definition="@code`property OnMouseMotion:TP3DWindowEventMouseMotion`"/>
+      <property name="OnMouseButton" type="TP3DWindowEventMouseButton" definition="@code`property OnMouseButton:TP3DWindowEventMouseButton`"/>
+      <property name="OnMouseWheel" type="TP3DWindowEventMouseWheel" definition="@code`property OnMouseWheel:TP3DWindowEventMouseWheel`"/>
+      <property name="OnKey" type="TP3DWindowEventKey" definition="@code`property OnKey:TP3DWindowEventKey`"/>
+      <property name="OnInput" type="TP3DWindowEvent" definition="@code`property OnInput:TP3DWindowEvent`"/>
+      <property name="OnResize" type="TP3DWindowEvent" definition="@code`property OnResize:TP3DWindowEvent`"/>
+      <property name="OnClose" type="TP3DWindowEvent" definition="@code`property OnClose:TP3DWindowEvent`"/>
+      <property name="Title" type="String" definition="@code`property Title:String`"/>
+      <property name="Width" type="Integer" definition="@code`property Width:Integer`"/>
+      <property name="Height" type="Integer" definition="@code`property Height:Integer`"/>
+      <property name="Left" type="Integer" definition="@code`property Left:Integer`"/>
+      <property name="Top" type="Integer" definition="@code`property Top:Integer`"/>
+      <property name="FullScreen" type="Boolean" definition="@code`property FullScreen:Boolean`"/>
+      <property name="Window" type="PSDL_Window" definition="@code`property Window:PSDL_Window`"/>
+      <property name="Visible" type="Boolean" definition="@code`property Visible:Boolean`"/>
+    </section>
+  </class>
+  <procedure name="P3DClientToScreen" proctype="function" definition="@code`function P3DClientToScreen( Window: TP3DWindow; X, Y: Integer ): TPoint;`"/>
+  <procedure name="P3DScreenToClient" proctype="function" definition="@code`function P3DScreenToClient( Window: TP3DWindow; X, Y: Integer ): TPoint;`"/>
+  <class name="TP3DApplication" type="class" definition="@code`class TP3DApplication;`">
+    <section visibility="Private">
+      <variable name="FActiveWindow" type="TP3DWindow" definition="@code`FActiveWindow: TP3DWindow`"/>
+      <variable name="FGLInitialized" type="Boolean" definition="@code`FGLInitialized: Boolean`"/>
+      <variable name="FMainWindow" type="TP3DWindow" definition="@code`FMainWindow: TP3DWindow`"/>
+      <variable name="fOnDeinit" type="TSDLEvent" definition="@code`fOnDeinit: TSDLEvent`"/>
+      <variable name="fOnInit" type="TSDLEvent" definition="@code`fOnInit: TSDLEvent`"/>
+      <variable name="fOnInput" type="TSDLEvent" definition="@code`fOnInput: TSDLEvent`"/>
+      <variable name="FOnKey" type="TSDLEventKey" definition="@code`FOnKey: TSDLEventKey`"/>
+      <variable name="FOnMouseButton" type="TSDLEventMouseButton" definition="@code`FOnMouseButton: TSDLEventMouseButton`"/>
+      <variable name="FOnMouseMotion" type="TSDLEventMouseMotion" definition="@code`FOnMouseMotion: TSDLEventMouseMotion`"/>
+      <variable name="FOnMouseWheel" type="TSDLEventMouseWheel" definition="@code`FOnMouseWheel: TSDLEventMouseWheel`"/>
+      <variable name="FRunning" type="Boolean" definition="@code`FRunning: Boolean`"/>
+      <variable name="FSDLInitialized" type="Boolean" definition="@code`FSDLInitialized: Boolean`"/>
+      <variable name="ReadingTextInput" type="Boolean" definition="@code`ReadingTextInput: Boolean`"/>
+      <procedure name="SetActiveWindow" proctype="procedure" definition="@code`procedure SetActiveWindow(AValue: TP3DWindow);`"/>
+      <procedure name="SetMainWindow" proctype="procedure" definition="@code`procedure SetMainWindow(AValue: TP3DWindow);`"/>
+    </section>
+    <section visibility="Public">
+      <procedure name="Create" proctype="constructor" definition="@code`constructor Create;`"/>
+      <procedure name="InitSDL" proctype="procedure" definition="@code`procedure InitSDL;`"/>
+      <procedure name="InitGL" proctype="procedure" definition="@code`procedure InitGL;`"/>
+      <procedure name="HandleEvents_SDL" proctype="procedure" definition="@code`procedure HandleEvents_SDL;`"/>
+      <procedure name="Initialize" proctype="procedure" definition="@code`procedure Initialize;`"/>
+      <procedure name="Run" proctype="procedure" definition="@code`procedure Run;`"/>
+      <property name="OnMouseMotion" type="TSDLEventMouseMotion" definition="@code`property OnMouseMotion:TSDLEventMouseMotion`"/>
+      <property name="OnMouseButton" type="TSDLEventMouseButton" definition="@code`property OnMouseButton:TSDLEventMouseButton`"/>
+      <property name="OnMouseWheel" type="TSDLEventMouseWheel" definition="@code`property OnMouseWheel:TSDLEventMouseWheel`"/>
+      <property name="OnKey" type="TSDLEventKey" definition="@code`property OnKey:TSDLEventKey`"/>
+      <property name="OnInput" type="TSDLEvent" definition="@code`property OnInput:TSDLEvent`"/>
+      <property name="OnInit" type="TSDLEvent" definition="@code`property OnInit:TSDLEvent`"/>
+      <property name="OnDeinit" type="TSDLEvent" definition="@code`property OnDeinit:TSDLEvent`"/>
+      <property name="MainWindow" type="TP3DWindow" definition="@code`property MainWindow:TP3DWindow`"/>
+      <property name="ActiveWindow" type="TP3DWindow" definition="@code`property ActiveWindow:TP3DWindow`"/>
+      <property name="SDLInitialized" type="Boolean" definition="@code`property SDLInitialized:Boolean`"/>
+      <property name="GLInitialized" type="Boolean" definition="@code`property GLInitialized:Boolean`"/>
+      <property name="Running" type="Boolean" definition="@code`property Running:Boolean`"/>
+    </section>
+  </class>
+  <procedure name="P3DEventsInit" proctype="procedure" definition="@code`procedure P3DEventsInit;`"/>
+  <procedure name="P3DEventsFinish" proctype="procedure" definition="@code`procedure P3DEventsFinish;`"/>
+</unit>

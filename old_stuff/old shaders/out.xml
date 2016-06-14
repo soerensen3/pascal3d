@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p3dshader>
+<node name="gl_Position">
+<input type="vec4" name="gl_Position"/>
+<output name="CODE" type="shader">
+<vshader>
+<main>
+  gl_Position = <input name="gl_Position"/>;<br/>
+</main>
+</vshader>
+</output>
+</node>
+
+<node name="Vertex Vector Out">
+  <input type="vec4" name="Vector"/>
+    <output name="CODE" type="shader">
+      <vshader>
+        <declaration>out vec4 v_vec1;<br/></declaration>
+        <main>  v_vec1 = <input name="Vector"/>;<br/></main>
+      </vshader>
+    </output>
+    <output type="vec4" name="v_vec1">
+      <fshader>
+        <declaration>in vec4 v_vec1;<br/></declaration>
+        <main>v_vec1</main>
+      </fshader>
+    </output>
+</node>
+
+<node name="Vertex Vector Out">
+  <input type="vec4" name="Vector"/>
+    <output name="CODE" type="shader">
+      <vshader>
+        <declaration>out vec4 v_vec2;<br/></declaration>
+        <main>  v_vec2 = <input name="Vector"/>;<br/></main>
+      </vshader>
+    </output>
+    <output type="vec4" name="v_vec2">
+      <fshader>
+        <declaration>in vec4 v_vec2;<br/></declaration>
+        <main>v_vec2</main>
+      </fshader>
+    </output>
+</node>
+
+<node name="Vertex Vector Out">
+  <input type="vec4" name="Vector"/>
+    <output name="CODE" type="shader">
+      <vshader>
+        <declaration>out vec4 v_vec3;<br/></declaration>
+        <main>  v_vec3 = <input name="Vector"/>;<br/></main>
+      </vshader>
+    </output>
+    <output type="vec4" name="v_vec3">
+      <fshader>
+        <declaration>in vec4 v_vec3;<br/></declaration>
+        <main>v_vec3</main>
+      </fshader>
+    </output>
+</node>
+
+<node name="Vertex Vector Out">
+  <input type="vec4" name="Vector"/>
+    <output name="CODE" type="shader">
+      <vshader>
+        <declaration>out vec4 v_vec4;<br/></declaration>
+        <main>  v_vec4 = <input name="Vector"/>;<br/></main>
+      </vshader>
+    </output>
+    <output type="vec4" name="v_vec4">
+      <fshader>
+        <declaration>in vec4 v_vec4;<br/></declaration>
+        <main>v_vec4</main>
+      </fshader>
+    </output>
+</node>
+
+<node name="Fragment Color">
+  <input type="vec4" name="FragColor"/>
+    <output name="CODE" type="shader">
+      <fshader>
+        <declaration>out vec4 FragColor;<br/></declaration>
+        <main>  FragColor = <input name="FragColor"/>;<br/></main>
+      </fshader>
+    </output>
+</node>
+
+
+
+
+</p3dshader>

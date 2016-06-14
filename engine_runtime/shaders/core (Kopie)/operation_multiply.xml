@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- New document created with EditiX at Tue Nov 04 13:42:45 CET 2014 -->
+
+<p3dnodes>
+<input name="a" type="vec4"/>
+<input name="b" type="vec4"/>
+<node name="declarations_vshader">
+<link list="yes" target=":*.declarations_vshader;:*.declarations"/>
+</node>
+
+<node name="forward_vshader">
+<link list="yes" target=":*.forward_vshader"/>
+</node>
+
+<node name="declarations_fshader">
+<link list="yes" target=":*.declarations_fshader;:*.declarations"/>
+</node>
+
+<node name="vshader">
+<link target=":a.vshader"/>
+*
+<link target=":b.vshader"/>
+</node>
+
+<node name="fshader">
+<link target=":a.fshader"/>
+*
+<link target=":b.fshader"/>
+</node>
+
+</p3dnodes>

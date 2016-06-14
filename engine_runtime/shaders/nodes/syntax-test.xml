@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- New document created with EditiX at Mon Nov 03 13:04:40 CET 2014 -->
+
+<p3dshader> <!-- required for every document-->
+	<node name="Name for node" type="Type of node output"> 
+		<inline> 
+			Text entered here will be copied into the final shader without modification.
+		</inline>
+		<input name="Name for input" type="Type of input" required="yes or no"> <!-- input will define a shader input which can be linked to.
+													    name is a required attribute. type can be omitted which is
+													    equal to "any" or set to "vec2" or "mat4" for example.
+													    This is only for syntax checking purposes and for the shader 
+													    editor. Required can be set to yes or be ommitted. 
+													    If required is set to yes, the compiler will throw an error,
+													    if no node is linked to this input.-->
+			<inline>
+				This text will only be visible if the previous input is linked to another variable.
+			</inline> 
+		</input>
+		<inline>
+			Multiple inline blocks are supported and will be parsed in order of appearance.
+		</inline>
+		<link name="assignment.assignment"> 
+			<input name="v1">
+				<inline>ab</inline>
+			</input>
+			<input name="v2">
+				<link name="operators.multiply">
+					<input name="v1">
+						<inline>a</inline>
+					</input>
+					<input name="v2">
+						<inline>b</inline>
+					</input>
+				</link>
+			</input>
+		</link>
+	</node>
+</p3dshader>

@@ -57,7 +57,7 @@ var
   PixelData: array of longword;
   i, idx: Integer;
 
-  function AlreadyInSelection( idx: LongWord ): Boolean; //inline;
+  function AlreadyInSelection( idx: LongWord ): Boolean; inline;
   var
     n: Integer;
   begin
@@ -82,7 +82,7 @@ begin
   for i := 0 to High( PixelData ) do
     begin
       idx:= PixelData[ i ] and $FFFFFF - 1;
-      P3DApplication.MainWindow.Title:= hexStr( idx, 8 );
+      //P3DApplication.MainWindow.Title:= hexStr( idx, 8 );
       if (( idx >= 0 ) and ( idx < P3DPushStackSize ) and ( not AlreadyInSelection( idx ))) then
         begin
           P3DSelection[ P3DSelectionSize ]:= P3DPushStack[ idx ];

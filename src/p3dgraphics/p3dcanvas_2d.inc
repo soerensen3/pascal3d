@@ -89,11 +89,12 @@ TP3DCanvas2D = class ( TP3DCanvas )
     procedure UpdateProj;
     procedure UpdateParams;
     procedure PenChange( Sender: TObject );
-    function PrepareForDrawing: Boolean;
 
   public
     constructor Create(AOwner: TPersistent);
     destructor Destroy; override;
+
+    function PrepareForDrawing: Boolean;
 
     procedure RenderLine( p1, p2: TVec2; Color: TVec4 );
     procedure RenderLine( p1, p2: TVec2; Color1, Color2: TVec4 );
@@ -356,8 +357,10 @@ begin
       t:= p.x;
       p:= vec2( co * p.x - si * p.y, si * t + co * p.y );
     end;
+  VBO.PushData;
   VBO.SetAttribArray( P3DAttribPosition );
   glDrawArrays( GL_LINE_LOOP, 0, VBO.Count ); cle( Self );
+  VBO.UnsetAttribArray();
   VBO.Free;
 end;
 

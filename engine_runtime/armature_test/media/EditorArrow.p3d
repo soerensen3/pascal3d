@@ -4,18 +4,18 @@
     name = "Scene">
     <object
       type = "mesh"
-      name = "ArrowY"
-      data = "mesh_ArrowY">
+      name = "Arrow"
+      data = "mesh_Arrow">
       <transform
         position = " 0.000000, 0.000000, 0.000000"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        scale = " 1.000000, 1.000000, 1.000000">
+        quaternion = " 0.707106769, 0.000000, 0.000000, 0.707106769"
+        scale = " 1.000000, 1.000000, -1.000000">
       </transform>
     </object>
   </scene>
   <mesh
     normals = "19"
-    name = "mesh_ArrowY"
+    name = "mesh_Arrow"
     faces = "19"
     vertices = "19"
     binary = "EditorArrow.mesh_ArrowY.p3dmesh"

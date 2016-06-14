@@ -71,6 +71,7 @@ begin
   OIPanel:= TP3DOIPanel.Create();
   OIPanel.Align:= alRight;
   OIPanel.ObjectInspector.Obj:= OIPanel;
+  TP3DColorComboBox.Create( nil, OIPanel ).Align:= alBottom;
 
   {n:= 1;
   for i:= 0 to ( Random( 10 ) + 5 ) do

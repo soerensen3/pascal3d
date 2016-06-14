@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p3dshader>
+<node name="NormalMap">
+  <input name="Color" type="vec4"/>
+  <output name="Normal" type="vec4">
+    <main>vec4( <input name="Color"/>.xyz *2 - 1, 1 )</main>
+  </output>
+</node>
+
+<node name="Texture0">
+  <input name="TexCoord" type="vec4"/>
+  <output name="Color" type="vec4">
+    <declaration>uniform sampler2D tex0;<br /></declaration>
+    <main>texture2D( tex0, <input name="TexCoord"/>.xy )</main>
+  </output>
+</node>
+
+<node name="Texture1">
+  <input name="TexCoord" type="vec4"/>
+  <output name="Color" type="vec4">
+    <declaration>uniform sampler2D tex1;<br /></declaration>
+    <main>texture2D( tex1, <input name="TexCoord"/>.xy )</main>
+  </output>
+</node>
+
+<node name="Texture2">
+  <input name="TexCoord" type="vec4"/>
+  <output name="Color" type="vec4">
+    <declaration>uniform sampler2D tex2;<br /></declaration>
+    <main>texture( tex2, <input name="TexCoord"/>.xy )</main>
+  </output>
+</node>
+
+<node name="Texture3">
+  <input name="TexCoord" type="vec4"/>
+  <output name="Color" type="vec4">
+    <declaration>uniform sampler2D tex3;<br /></declaration>
+    <main>texture( tex3, <input name="TexCoord"/>.xy )</main>
+  </output>
+</node>
+
+<node name="Texture4">
+  <input name="TexCoord" type="vec4"/>
+  <output name="Color" type="vec4">
+    <declaration>uniform sampler2D tex4;<br /></declaration>
+    <main>texture( tex4, <input name="TexCoord"/>.xy )</main>
+  </output>
+</node>  
+
+<node name="NormalMap">
+  <input name="BumpMapNormal" type="vec4"/>
+  <input name="Normal" type="vec4"/>
+  <input name="Tangent" type="vec4"/>
+  <input name="Bitangent" type="vec4"/>
+  <output name="Normal" type="vec4">
+    <declaration>
+vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Bitangent, vec4 BumpMapNormal)
+{
+    BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
+    vec4 NewNormal;
+    mat3 TBN = mat3(Tangent.xyz, Bitangent.xyz, Normal.xyz);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 1 );
+    NewNormal = normalize(NewNormal);
+    return NewNormal;
+}
+    </declaration>
+    <main>
+CalcBumpedNormal(<input name="Normal"/>, <input name="Tangent"/>, <input name="Bitangent"/>, <input name="BumpMapNormal"/>)
+    </main>
+  </output>
+</node>
+</p3dshader>

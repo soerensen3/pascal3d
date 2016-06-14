@@ -23,6 +23,7 @@ type
     public
       function Add( AActor: TP3DActor; world: TMat4 ): Integer;
       function PickFromCamera( X, Y: Integer; Camera: TP3DActor ): TP3DActor;
+      function Find( AActor: TP3DActor ): Integer;
   end;
 
   { TP3DScene }
@@ -103,6 +104,19 @@ begin
   PickMaterial.PassToShader();
 
   glDisable( GL_SCISSOR_TEST );}
+end;
+
+function TP3DRenderList.Find(AActor: TP3DActor): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Self[ i ].Actor = AActor ) then
+      begin
+        Result:= i;
+        break;
+      end;
 end;
 
 { TP3DScene }

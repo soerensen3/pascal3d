@@ -194,12 +194,15 @@
       FSetValueEvent: TSetValue;
       FStep: Single;
       FTransmission: Single;
+      FLabels: array [ 0..3 ] of String;
 
       function GetEd( Index: Integer ): TP3DEventValueEdit;
       function GetEdValueName( Sender: TP3DEventValueEdit ): String;
+      function GetLabel( Index: Integer ): String;
       function GetValue: TVec4;
       procedure SetEd( Index: Integer ; AValue: TP3DEventValueEdit );
       procedure SetEdCount(AValue: Integer);
+      procedure SetLabel( Index: Integer ; AValue: String);
       procedure SetStep(AValue: Single);
       procedure SetTransmission(AValue: Single);
       procedure SetValue(AValue: TVec4);
@@ -220,6 +223,7 @@
       property SetValueEvent: TSetValue read FSetValueEvent write FSetValueEvent;
       property Step: Single read FStep write SetStep;
       property Transmission: Single read FTransmission write SetTransmission;
+      property Labels[ Index: Integer ]: String read GetLabel write SetLabel;
   end;
 
   TP3DScrollBarKind = ( p3dsbHorizontal, p3dsbVertical );
@@ -275,6 +279,8 @@
 
       procedure DropDownItemClick( Sender: TP3DMenuItem );
       function GetItems: TP3DMenuItemList;
+
+    protected
       procedure SetCaption( AValue: String ); override;
 
     public
@@ -999,15 +1005,20 @@ end;
 function TP3DVectorEdit.GetEdValueName(Sender: TP3DEventValueEdit): String;
 begin
   if ( Sender = Editors[ 0 ]) then
-    Result:= 'X'
+    Result:= Labels [ 0 ]
   else if ( Sender = Editors[ 1 ]) then
-    Result:= 'Y'
+    Result:= Labels [ 1 ]
   else if ( Sender = Editors[ 2 ]) then
-    Result:= 'Z'
+    Result:= Labels [ 2 ]
   else if ( Sender = Editors[ 3 ]) then
-    Result:= 'W'
+    Result:= Labels [ 3 ]
   else
     Result:= '';
+end;
+
+function TP3DVectorEdit.GetLabel( Index: Integer ): String;
+begin
+  Result:= FLabels[ Index ];
 end;
 
 function TP3DVectorEdit.GetValue: TVec4;
@@ -1040,6 +1051,11 @@ begin
     Editors[ i ].Free;
   FEdCount:=AValue;
   Update;
+end;
+
+procedure TP3DVectorEdit.SetLabel( Index: Integer ; AValue: String);
+begin
+  FLabels[ Index ]:= AValue;
 end;
 
 procedure TP3DVectorEdit.SetStep(AValue: Single);
@@ -1102,6 +1118,10 @@ constructor TP3DVectorEdit.Create(const AOwner: TP3DObjectList;
 begin
   inherited Create( AOwner, AParent );
   EdCount:= 3;
+  FLabels[ 0 ]:= 'X';
+  FLabels[ 1 ]:= 'Y';
+  FLabels[ 2 ]:= 'Z';
+  FLabels[ 3 ]:= 'W';
 end;
 
 destructor TP3DVectorEdit.Destroy;
@@ -1188,8 +1208,9 @@ end;
 
 procedure TP3DComboBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
-  DropDown;
-  inherited MouseClick( mb1, mb2, mb3, X, Y );
+  inherited MouseClick(mb1, mb2, mb3, X, Y);
+  if ( mb1 ) then
+    DropDown;
 end;
 
 

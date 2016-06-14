@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<p3dshader>
+
+<node name="Uniform Matrices">
+<output name="World Matrix" type="mat4">
+<declaration>
+uniform mat4 world;<br/>
+</declaration>
+<main>
+world
+</main>
+</output>
+
+<output name="View Matrix" type="mat4">
+<declaration>
+uniform mat4 view;<br/>
+</declaration>
+<main>
+view
+</main>
+</output>
+
+<output name="Projection Matrix" type="mat4">
+<declaration>
+uniform mat4 proj;<br/>
+</declaration>
+<main>
+proj
+</main>
+</output>
+</node>
+
+<node name="Camera2ScreenSpace">
+<input name="Vec" type="vec4"/>
+<output name="Proj*View*World*v" type="vec4">
+<declaration>
+uniform mat4 world;<br/>
+uniform mat4 view;<br/>
+uniform mat4 proj;<br/>
+vec4 vPosition;
+</declaration>
+<main>proj * view * world * <input name="Vec"/></main>
+</output>
+</node>
+
+<node name="Tangent2CameraSpace">
+<input name="Vec" type="vec4"/>
+<input name="Tangent" type="vec4"/>
+<input name="Binormal" type="vec4"/>
+<input name="Normal" type="vec4"/>
+<output name="matTangent" type="vec4">
+<main>vec4( mat3(<input name="Tangent"/>.xyz, <input name="Binormal"/>.xyz, <input name="Normal"/>.xyz ) * <input name="Vec"/>.xyz, 1 )</main>
+</output>
+</node>
+
+
+
+</p3dshader>

@@ -23,6 +23,9 @@
       procedure SetEditMode(AValue: TEditMode);
       procedure SetSelection(AValue: TP3DActor);
       procedure RenderCallback( world: TMat4; AActor: TP3DActor );
+      procedure Render_emGrab;
+      procedure Render_emRotate;
+      procedure Render_emScale;
 
     public
       constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
@@ -61,7 +64,7 @@ var
   n: Integer;
 begin
   n:= OpenLibrary( 'armature_test/media/EditorArrow.p3d' );
-  P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  //P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
   n:= OpenLibrary( 'armature_test/media/EditorArrows.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
@@ -128,6 +131,34 @@ begin
   //FRenderList.Add( AActor );
 end;
 
+procedure TP3DScenePanel.Render_emGrab;
+begin
+
+end;
+
+procedure TP3DScenePanel.Render_emRotate;
+var
+  c: TVec4;
+  m: TMat4;
+  n: Integer;
+begin
+  n:= FRenderList.Find( Selection );
+  if ( n >= 0 ) then
+    begin
+      c:= ( FCam.View * FRenderList[ n ].Matrix.Row[ 3 ]);
+      c:= FCam.Proj * c;
+      c:= vec4( c.x / c.w, -c.y / c.w, c.z / c.w, 1 );
+      c:= vec4(( c.XY * 0.5 + 0.5 ) * vec2( ClientRect.Width, ClientRect.Height ) + ClientRect.TopLeft, ( 1 + c.Z ) * 0.5, 1 );
+      Canvas.RenderCircle( c.XY, 5, 16, vec4( 1, 0, 0, 1 ));
+      Canvas.RenderLine( c.XY, vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ), vec4( 0, 0, 0, 1 ));
+    end;
+end;
+
+procedure TP3DScenePanel.Render_emScale;
+begin
+
+end;
+
 constructor TP3DScenePanel.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
@@ -165,7 +196,7 @@ begin
       if ( EditMode <> emDefault ) then
         CancelTransform
       else
-        Selection:= Pick( x, y );
+        Selection:= Pick( x - ClientRect.LeftI, y - ClientRect.TopI );
     end;
 end;
 
@@ -196,7 +227,9 @@ end;
 procedure TP3DScenePanel.MouseMove(X, Y: Integer);
 var
   MouseDelta: TVec2;
-  AxisX, AxisY, AxisZ: TVec3;
+  AxisX, AxisY, AxisZ, Scale: TVec3;
+  Angle: Float;
+  c: TVec2;
 begin
   inherited MouseMove(X, Y);
   if (( Assigned( Selection )) and ( EditMode <> emDefault )) then
@@ -240,12 +273,27 @@ begin
           end;
         emRotate:
           begin
+            {c:= ( FCam.Proj * FCam.View * vec4( Selection.Position, 1 )).xy;
+            c:= c * vec2( ClientRect.Width, ClientRect.Height );
+            //Angle:= arctan(( Y - Canvas.Height / 2 ) / ( X - Canvas.Width / 2 )) / deg2rad;
             if ( AxisLock in [ alX, alYZ ]) then
-              Selection.RotateAroundGlobalAxis( AxisX, MouseDelta.x / 50 );
+              Selection.RotateAroundGlobalAxis( AxisX, Angle );
             if ( AxisLock in [ alY, alXZ, alNone ]) then
-              Selection.RotateAroundGlobalAxis( AxisY, MouseDelta.x / 50 );
+              Selection.RotateAroundGlobalAxis( AxisY, Angle );
             if ( AxisLock in [ alZ, alXY ]) then
-              Selection.RotateAroundGlobalAxis( AxisZ, MouseDelta.x / 50 );
+              Selection.RotateAroundGlobalAxis( AxisZ, Angle );}
+          end;
+        emScale:
+          begin
+            Scale:= vec3( 1 );
+            if ( AxisLock in [ alX, alXZ, alXY, alNone ]) then
+              Scale.x:= MouseDelta.x;
+            if ( AxisLock in [ alY, alXY, alYZ, alNone ]) then
+              Scale.y:= MouseDelta.y;
+            if ( AxisLock in [ alZ, alXZ, alYZ ]) then
+              Scale.z:= MouseDelta.y;
+            if ( Scale <> vec3( 1 )) then
+              Selection.Scale:= Scale;
           end;
       end;
     end;
@@ -272,8 +320,8 @@ var
   Obj: TP3DRenderObject;
   decl: TP3DShaderDecl;
 begin
-  P3DViewports.Push( Canvas.Left + ClientRect.LeftI, Canvas.Top + ClientRect.TopI, ClientRect.WidthI, ClientRect.HeightI );
-  P3DSelectStart( P3DRect( P3DInput.Mouse.X, P3DInput.Mouse.Y, 1, 1 ));
+  PushVPClientRect;
+  P3DSelectStart( P3DRect( X + Canvas.Left + ClientRect.LeftI, Y + Canvas.Top + ClientRect.TopI, 1, 1 ));
   FCam.PassToShader( Mat4Identity );
   FCam.UpdateMatrices( FCamObject );
   glEnable( GL_DEPTH_TEST );
@@ -380,6 +428,15 @@ begin
   Pick(P3DInput.Mouse.X,P3DInput.Mouse.Y);
   glDisable( GL_SCISSOR_TEST );}
 
+  Canvas.Lock;
+  case ( EditMode ) of
+    emDefault: ;
+    emGrab: Render_emGrab;
+    emRotate: Render_emRotate;
+    emScale: Render_emScale;
+  end;
+  Canvas.Unlock();
+
 
   case ( EditMode ) of
     emDefault: StatusText:= 'Normal mode...';
@@ -412,4 +469,48 @@ begin
 
   Canvas.Unlock();
 end;
+
+
+(* this function only does the delta rotation */
+/* axis-angle is usually internally stored as quats... *)
+//static void protectedAxisAngleBits(short protectflag, float axis[3], float *angle, float oldAxis[3], float oldAngle)
+{
+	/* check that protection flags are set */
+	if ((protectflag & (OB_LOCK_ROTX | OB_LOCK_ROTY | OB_LOCK_ROTZ | OB_LOCK_ROTW)) == 0)
+		return;
+
+	if (protectflag & OB_LOCK_ROT4D) {
+		/* axis-angle getting limited as 4D entities that they are... */
+		if (protectflag & OB_LOCK_ROTW)
+			*angle = oldAngle;
+		if (protectflag & OB_LOCK_ROTX)
+			axis[0] = oldAxis[0];
+		if (protectflag & OB_LOCK_ROTY)
+			axis[1] = oldAxis[1];
+		if (protectflag & OB_LOCK_ROTZ)
+			axis[2] = oldAxis[2];
+	}
+	else {
+		/* axis-angle get limited with euler... */
+		float eul[3], oldeul[3];
+
+		axis_angle_to_eulO(eul, EULER_ORDER_DEFAULT, axis, *angle);
+		axis_angle_to_eulO(oldeul, EULER_ORDER_DEFAULT, oldAxis, oldAngle);
+
+		if (protectflag & OB_LOCK_ROTX)
+			eul[0] = oldeul[0];
+		if (protectflag & OB_LOCK_ROTY)
+			eul[1] = oldeul[1];
+		if (protectflag & OB_LOCK_ROTZ)
+			eul[2] = oldeul[2];
+
+		eulO_to_axis_angle(axis, angle, eul, EULER_ORDER_DEFAULT);
+
+		/* when converting to axis-angle, we need a special exception for the case when there is no axis */
+		if (IS_EQF(axis[0], axis[1]) && IS_EQF(axis[1], axis[2])) {
+			/* for now, rotate around y-axis then (so that it simply becomes the roll) */
+			axis[1] = 1.0f;
+		}
+	}
+}
 {$ENDIF}
