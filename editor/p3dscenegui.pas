@@ -8,6 +8,7 @@ uses
   Classes,
   SysUtils,
   LazFileUtils,
+  Math,
   dglOpenGL,
   p3devents,
   p3dutils,
@@ -71,7 +72,6 @@ begin
   OIPanel:= TP3DOIPanel.Create();
   OIPanel.Align:= alRight;
   OIPanel.ObjectInspector.Obj:= OIPanel;
-  TP3DColorComboBox.Create( nil, OIPanel ).Align:= alBottom;
 
   {n:= 1;
   for i:= 0 to ( Random( 10 ) + 5 ) do
@@ -139,12 +139,14 @@ procedure P3DSceneGUIInit;
 begin
   CreateSceneTree;
   CreateEditorScenes;
+  CreateEditModes;
   P3DGUIManager.Controls.Realign;
   P3DGUIManager.UpdateExtents;
 end;
 
 procedure P3DSceneGUIFinish;
 begin
+  DestroyEditModes;
   FreeAndNil( SymbolActor );
   FreeAndNil( SymbolMesh );
   FreeAndNil( SymbolScene );

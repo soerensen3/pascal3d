@@ -69,7 +69,7 @@
          property Maps: TP3DMaterialMapList read FMaps write FMaps;
      end;
 
-    { TP3DMaterial }
+     { TP3DMaterialBase }
 
      TP3DMaterialBase = class ( TP3DMaterialShader )
        private
@@ -83,6 +83,8 @@
          procedure SetUnlit( AValue: Boolean );
 
        public
+         constructor Create(const AData: TP3DData=nil);
+
          procedure BuildShader();
          procedure PassToShader(); override;
 
@@ -213,6 +215,13 @@ begin
   BuildShader();
 end;
 
+constructor TP3DMaterialBase.Create(const AData: TP3DData);
+begin
+  inherited Create( AData );
+  Alpha:= 1.0;
+  Diff:= vec3( 1 );
+end;
+
 procedure TP3DMaterialBase.BuildShader;
 var
   ShaderTree: TP3DShaderNodeTree;
@@ -333,7 +342,7 @@ begin
       if ( not UseVertexColor ) then
         begin
           glVertexAttrib4f( P3DAttribColor,
-            Diff.R, Diff.G, Diff.B, 1.0 ); cle( Self );
+            Diff.R, Diff.G, Diff.B, Alpha ); cle( Self );
         end;
 
       glUniform4f( Shader.Uniforms.AddrByName( 'mat_specular' ), Spec.r, Spec.g, Spec.b, 1 ); cle( Self );
@@ -368,6 +377,7 @@ var
 
 begin
   Name:= ADOMNode.GetAttribute( 'name' );
+  Alpha:= StrToFloatDef( ADOMNode.GetAttribute( 'alpha' ), 1.0 );
   Diff.FromString( ADOMNode.GetAttribute( 'diffuse' ));
   SpecTmp.FromString( ADOMNode.GetAttribute( 'specular' ));
   Spec:= SpecTmp.YZW;

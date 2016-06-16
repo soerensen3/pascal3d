@@ -4,28 +4,108 @@
   TAxisMode = ( amScreen, amGlobal, amLocal );
   TAxisLock = ( alNone, alX, alY, alZ, alXY, alXZ, alYZ );
 
+
+  TP3DScenePanel = class;
+
+{ TP3DSceneEditModeDefault }
+
+  TP3DSceneEditModeDefault = class ( TPersistent )
+    private
+      FAxisLock: TAxisLock;
+      FAxisMode: TAxisMode;
+      FAxisX: TVec3;
+      FAxisY: TVec3;
+      FAxisZ: TVec3;
+      FMouseDelta: TVec2;
+      FMousePos: TVec2;
+      FMousePosInitial: TVec2;
+      FScenePanel: TP3DScenePanel;
+      FTransCenter: TVec3;
+      FTransMat: TMat4;
+
+    public
+      constructor Create( AScenePanel: TP3DScenePanel );
+
+      procedure Reset; virtual;
+      procedure BeforeRender; virtual;
+      procedure AfterRender; virtual;
+      procedure CheckInput; virtual;
+      function PickPixel( P: TVec2 ): TP3DActor;
+
+      procedure FinishEditing;
+      procedure CancelTransform;
+      procedure RenderSelection( world: TMat4 );
+      function StatusText: String; virtual;
+      function AxisText: String; virtual;
+      procedure UpdateAxis; virtual;
+      procedure ToggleAxis( Axis: TAxisLock ); virtual;
+      procedure RenderSelectionAxis;
+      procedure RenderEditorAxis;
+      function ToScreenCoords( p: TVec3 ): TVec3;
+
+      property AxisLock: TAxisLock read FAxisLock write FAxisLock;
+      property AxisMode: TAxisMode read FAxisMode write FAxisMode;
+      property ScenePanel: TP3DScenePanel read FScenePanel;
+      property TransMat: TMat4 read FTransMat write FTransMat;
+      property MousePosInitial: TVec2 read FMousePosInitial write FMousePosInitial;
+      property MousePos: TVec2 read FMousePos write FMousePos;
+      property MouseDelta: TVec2 read FMouseDelta write FMouseDelta;
+      property AxisX: TVec3 read FAxisX write FAxisX;
+      property AxisY: TVec3 read FAxisY write FAxisY;
+      property AxisZ: TVec3 read FAxisZ write FAxisZ;
+      property TransCenter: TVec3 read FTransCenter write FTransCenter;
+  end;
+
+  { TP3DSceneEditModeGrab }
+
+  TP3DSceneEditModeGrab = class ( TP3DSceneEditModeDefault )
+    private
+      Translation: TVec3;
+
+    public
+      procedure AfterRender; override;
+      procedure CheckInput; override;
+      function StatusText: String; override;
+  end;
+
+  { TP3DSceneEditModeRotate }
+
+  TP3DSceneEditModeRotate = class ( TP3DSceneEditModeDefault )
+    private
+      Angle: Float;
+
+    public
+      procedure CheckInput; override;
+      procedure AfterRender; override;
+      function StatusText: String; override;
+  end;
+
+  { TP3DSceneEditModeScale }
+
+  TP3DSceneEditModeScale = class ( TP3DSceneEditModeDefault )
+    public
+      procedure CheckInput; override;
+  end;
+
   { TP3DScenePanel }
 
   TP3DScenePanel = class( TP3DSceneViewer )
     private
-      FAxisLock: TAxisLock;
-      FAxisMode: TAxisMode;
       FEditMode: TEditMode;
+      FEditor: TP3DSceneEditModeDefault;
       FSelection: TP3DActor;
       FSelectionMaterial: TP3DMaterialBase;
       FPickMaterial: TP3DMaterialBase;
       FInfoText: TP3DText;
-      FEditTransMat: TMat4;
-      FMousePosStored: TVec2;
       FRenderList: TP3DRenderList;
 
+      procedure Push3DMode;
+
+      function GetEditor: TP3DSceneEditModeDefault;
       procedure SceneDragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean );
       procedure SetEditMode(AValue: TEditMode);
       procedure SetSelection(AValue: TP3DActor);
       procedure RenderCallback( world: TMat4; AActor: TP3DActor );
-      procedure Render_emGrab;
-      procedure Render_emRotate;
-      procedure Render_emScale;
 
     public
       constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
@@ -35,17 +115,19 @@
       procedure KeyboardAction; override;
       procedure MouseMove(X, Y: Integer); override;
       function Pick( x, y: Integer ): TP3DActor;
-      procedure ToggleAxis( Axis: TAxisLock );
-      procedure CancelTransform;
+      function GetSelectionCenter: TVec3;
 
+      procedure BeforeDraw( Sender: TObject );
       procedure AfterDraw( Sender: TObject );
 
     published
       property SelectionMaterial: TP3DMaterialBase read FSelectionMaterial write FSelectionMaterial;
       property EditMode: TEditMode read FEditMode write SetEditMode;
-      property AxisMode: TAxisMode read FAxisMode write FAxisMode;
-      property AxisLock: TAxisLock read FAxisLock write FAxisLock;
+      property Editor: TP3DSceneEditModeDefault read GetEditor;
       property Selection: TP3DActor read FSelection write SetSelection;
+      property RenderList: TP3DRenderList read FRenderList write FRenderList;
+      property Cam: TP3DCamera read FCam write FCam;
+      property CamObject: TP3DActor read FCamObject write FCamObject;
   end;
 
 
@@ -54,10 +136,34 @@ var
   EditorSceneArrows: TP3DScene;
   EditorSceneLamp: TP3DScene;
   EditorSceneLampMaterial: TP3DMaterialBase;
+  EditModeDefault: TP3DSceneEditModeDefault;
+  EditModeGrab: TP3DSceneEditModeGrab;
+  EditModeScale: TP3DSceneEditModeScale;
+  EditModeRotate: TP3DSceneEditModeRotate;
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+procedure CreateEditModes;
+begin
+  if ( not Assigned( EditModeDefault )) then
+    EditModeDefault:= TP3DSceneEditModeDefault.Create( SceneView );
+  if ( not Assigned( EditModeGrab )) then
+    EditModeGrab:= TP3DSceneEditModeGrab.Create( SceneView );
+  if ( not Assigned( EditModeScale )) then
+    EditModeScale:= TP3DSceneEditModeScale.Create( SceneView );
+  if ( not Assigned( EditModeRotate )) then
+    EditModeRotate:= TP3DSceneEditModeRotate.Create( SceneView );
+end;
+
+procedure DestroyEditModes;
+begin
+  FreeAndNil( EditModeDefault );
+  FreeAndNil( EditModeGrab );
+  FreeAndNil( EditModeScale );
+  FreeAndNil( EditModeRotate );
+end;
 
 procedure CreateEditorScenes;
 var
@@ -73,6 +179,287 @@ begin
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneLamp:= P3DData.Libraries[ n ].Scenes[ 0 ];
   EditorSceneLampMaterial:= TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]);
+end;
+
+{ TP3DSceneEditModeScale }
+
+procedure TP3DSceneEditModeScale.CheckInput;
+begin
+  inherited CheckInput;
+end;
+
+{ TP3DSceneEditModeRotate }
+
+procedure TP3DSceneEditModeRotate.CheckInput;
+var
+  c: TVec3;
+  dir, dirOld: TVec2;
+begin
+  inherited CheckInput;
+
+  ScenePanel.Selection.Matrix:= TransMat;
+  c:= ToScreenCoords( TransCenter );
+  dir:= ( MousePos - c.XY ).Normalize;
+  dirOld:= ( MousePosInitial - c.XY ).Normalize;
+  Angle:= arctan2( dirOld.x, dirOld.y ) - arctan2( dir.x, dir.y );
+  P3DApplication.MainWindow.Title:= FloatToStr( Angle );
+  if ( AxisLock in [ alX, alYZ ]) then
+    ScenePanel.Selection.RotateAroundGlobalAxis( AxisX, Angle );
+  if ( AxisLock in [ alY, alXZ, alNone ]) then
+    ScenePanel.Selection.RotateAroundGlobalAxis( AxisY, Angle );
+  if ( AxisLock in [ alZ, alXY ]) then
+    ScenePanel.Selection.RotateAroundGlobalAxis( AxisZ, Angle );
+
+end;
+
+procedure TP3DSceneEditModeRotate.AfterRender;
+var
+  c: TVec2;
+  n: Integer;
+begin
+  with ( ScenePanel ) do
+    begin
+      Canvas.Lock;
+      n:= RenderList.Find( Selection );
+      if ( n >= 0 ) then
+        begin
+          c:= ToScreenCoords( TransCenter ).XY;
+          Canvas.RenderCircle( c.XY, 5, 16, vec4( 1, 0, 0, 1 ));
+          Canvas.RenderLine( c.XY, vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ), vec4( 0, 0, 0, 1 ));
+        end;
+      ScenePanel.Canvas.Unlock();
+    end;
+end;
+
+function TP3DSceneEditModeRotate.StatusText: String;
+begin
+  Result:= 'Rotation: ' + AxisText + FloatToStrF( Angle / deg2rad, ffNumber, 8, 2 );
+end;
+
+{ TP3DSceneEditModeGrab }
+
+procedure TP3DSceneEditModeGrab.AfterRender;
+begin
+  inherited AfterRender;
+  RenderEditorAxis;
+end;
+
+procedure TP3DSceneEditModeGrab.CheckInput;
+begin
+  ScenePanel.Selection.Matrix:= TransMat;
+  inherited CheckInput;
+  Translation:= vec3( 0 );
+  if ( AxisLock in [ alX, alXZ, alXY, alNone ]) then
+    Translation:= AxisX * MouseDelta.x;
+  if ( AxisLock in [ alY, alXY, alYZ ]) then
+    Translation+= AxisY * MouseDelta.y;
+  if ( AxisLock in [ alZ, alXZ, alYZ, alNone ]) then
+    Translation+= AxisZ * MouseDelta.y;
+
+  ScenePanel.Selection.Position:= ScenePanel.Selection.Position + Translation;
+  TransCenter:= ScenePanel.GetSelectionCenter;
+end;
+
+function TP3DSceneEditModeGrab.StatusText: String;
+begin
+  Result:= 'Translation: ' + AxisText + Translation.ToString( 2 );
+end;
+
+{ TP3DSceneEditModeDefault }
+
+constructor TP3DSceneEditModeDefault.Create(AScenePanel: TP3DScenePanel);
+begin
+  inherited Create;
+  FScenePanel:= AScenePanel;
+end;
+
+procedure TP3DSceneEditModeDefault.Reset;
+begin
+  if (( ScenePanel.EditMode <> emDefault ) and Assigned( ScenePanel.Selection )) then
+    ScenePanel.Selection.Matrix:= TransMat;
+  MouseDelta:= vec2( 0 );
+  MousePosInitial:= vec2( -1 );
+  AxisMode:= amScreen;
+  AxisLock:= alNone;
+end;
+
+procedure TP3DSceneEditModeDefault.BeforeRender;
+begin
+
+end;
+
+procedure TP3DSceneEditModeDefault.AfterRender;
+begin
+  glDisable( GL_DEPTH_TEST );
+  ScenePanel.Push3DMode;
+  RenderSelectionAxis;
+  P3DViewports.Pop;
+  glEnable( GL_DEPTH_TEST );
+end;
+
+procedure TP3DSceneEditModeDefault.CheckInput;
+begin
+  if ( ScenePanel.EditMode in [ emGrab, emRotate, emScale ]) then
+    begin
+      if ( P3DInput.Keyboard.DKeys[ P3DK_X ] and P3DInput.Keyboard.Keys[ P3DK_X ]) then
+        ToggleAxis( alX );
+      if ( P3DInput.Keyboard.DKeys[ P3DK_Y ] and P3DInput.Keyboard.Keys[ P3DK_Y ]) then
+        ToggleAxis( alY );
+      if ( P3DInput.Keyboard.DKeys[ P3DK_Z ] and P3DInput.Keyboard.Keys[ P3DK_Z ]) then
+        ToggleAxis( alZ );
+      if ( P3DInput.Mouse.Buttons[ 0 ]) then
+        FinishEditing;
+    end;
+
+  if ( P3DInput.Mouse.Buttons[ 2 ]) then
+    if ( ScenePanel.EditMode = emDefault ) then
+      ScenePanel.Selection:= PickPixel( MousePos )
+    else
+      CancelTransform;
+end;
+
+function TP3DSceneEditModeDefault.PickPixel(P: TVec2): TP3DActor;
+begin
+  Result:= ScenePanel.Pick( round( P.X ), round( P.Y ));
+end;
+
+procedure TP3DSceneEditModeDefault.FinishEditing;
+begin
+  ScenePanel.EditMode:= emDefault;
+end;
+
+procedure TP3DSceneEditModeDefault.CancelTransform;
+begin
+  Reset;
+  FinishEditing;
+end;
+
+procedure TP3DSceneEditModeDefault.RenderSelection( world: TMat4 );
+begin
+//  glEnable( GL_DEPTH_TEST );
+  glDepthMask( False );
+  ScenePanel.SelectionMaterial.Diff:= vec3( 1, 1, 0 );
+  //SelectionMaterial.Alpha:= 0.2;
+  ScenePanel.SelectionMaterial.PassToShader();
+  ScenePanel.Cam.PassToShader( Mat4Identity );
+  if ( Assigned( ScenePanel.Selection )) then
+    begin
+      if ( ScenePanel.Selection.Data is TP3DMesh ) then
+        begin
+          glLineWidth( 2 );
+          TP3DMesh( ScenePanel.Selection.Data ).RenderEdges( world, TestScene, ScenePanel.Selection );
+          glLineWidth( 1 );
+        end;
+      ScenePanel.Canvas.Material.PassToShader();
+    end;
+  glDepthMask( True );
+//  glDisable( GL_DEPTH_TEST );
+end;
+
+function TP3DSceneEditModeDefault.StatusText: String;
+begin
+  Result:= ''
+end;
+
+function TP3DSceneEditModeDefault.AxisText: String;
+begin
+  case ( AxisMode ) of
+    amScreen: Result:= ' [screen';
+    amLocal: Result:= ' [local';
+    amGlobal: Result:= ' [global';
+  end;
+
+  case ( AxisLock ) of
+    alX: Result+= ' X]';
+    alY: Result+= ' Y]';
+    alZ: Result+= ' Z]';
+    alXY: Result+= ' XY]';
+    alXZ: Result+= ' XZ]';
+    alYZ: Result+= ' YZ]';
+    alNone: Result+= ']';
+  end;
+end;
+
+procedure TP3DSceneEditModeDefault.UpdateAxis;
+begin
+  case AxisMode of
+    amScreen:
+      begin
+        AxisX:=  ScenePanel.Cam.InView.Row[ 0 ].xyz;
+        AxisY:=  ScenePanel.Cam.InView.Row[ 2 ].xyz;
+        AxisZ:= -ScenePanel.Cam.InView.Row[ 1 ].xyz;
+      end;
+    amGlobal:
+      begin
+        AxisX:=  vec3_Axis_PX;
+        AxisY:=  vec3_Axis_PY;
+        AxisZ:=  vec3_Axis_PZ;
+      end;
+    amLocal:
+      begin
+        AxisX:= TransMat.Row[ 0 ].xyz.Normalize;
+        AxisY:= TransMat.Row[ 1 ].xyz.Normalize;
+        AxisZ:= TransMat.Row[ 2 ].xyz.Normalize;
+      end;
+  end;
+end;
+
+procedure TP3DSceneEditModeDefault.ToggleAxis(Axis: TAxisLock);
+begin
+  if ( Axis <> AxisLock ) then
+    begin
+      AxisMode:= amGlobal;
+      AxisLock:= Axis;
+    end
+  else
+    case AxisMode of
+      amScreen: AxisMode:= amGlobal;
+      amGlobal: AxisMode:= amLocal;
+      amLocal: begin AxisMode:= amScreen; AxisLock:= alNone; end;
+    end;
+end;
+
+procedure TP3DSceneEditModeDefault.RenderSelectionAxis;
+begin
+  if ( Assigned( ScenePanel.Selection )) then
+    EditorSceneArrows.RenderFromCamera( ScenePanel.CamObject, mat4translate( vec4( TransCenter, 1 )));
+end;
+
+procedure TP3DSceneEditModeDefault.RenderEditorAxis;
+var
+  Origin: TVec3;
+  procedure DrawAxis( Dir: TVec3; AColor: TVec3 );
+  var
+    p1, p2: TVec3;
+  begin
+    with ( ScenePanel ) do
+      begin
+        p1:= ToScreenCoords( Origin + Dir * 100 );
+        p2:= ToScreenCoords( Origin - Dir * 100 );
+        Canvas.RenderLine( p1.XY, p2.XY, vec4( AColor, 1.0 ));
+      end;
+  end;
+
+begin
+  ScenePanel.Canvas.Lock;
+  Origin:= ScenePanel.Cam.View.Row[ 3 ].xyz + ScenePanel.Cam.View.Row[ 2 ].xyz * 10;
+  DrawAxis( AxisX, vec3( 1, 0, 0 ));
+  DrawAxis( AxisY, vec3( 0, 1, 0 ));
+  DrawAxis( AxisZ, vec3( 0, 0, 1 ));
+  ScenePanel.Canvas.Unlock();
+end;
+
+function TP3DSceneEditModeDefault.ToScreenCoords(p: TVec3): TVec3;
+var
+  c: TVec4;
+begin
+  with ( ScenePanel ) do
+    begin
+      c:= ( Cam.Proj * Cam.View * vec4( p, 1 ));
+      c:= vec4( c.x / c.w, -c.y / c.w, c.z / c.w, 1 );
+      c:= vec4(( c.XY * 0.5 + 0.5 ) * vec2( ClientRect.Width, ClientRect.Height ) + ClientRect.TopLeft, ( 1 + c.Z ) * 0.5, 1 );
+      Result:= c.XYZ;
+    end;
 end;
 
 { TP3DScenePanel }
@@ -94,28 +481,49 @@ begin
   Accept:= False;
 end;
 
+procedure TP3DScenePanel.Push3DMode;
+begin
+  PushVPClientRect;
+end;
+
+function TP3DScenePanel.GetEditor: TP3DSceneEditModeDefault;
+begin
+  if ( not Assigned( FEditor )) then
+    FEditor:= EditModeDefault;
+  Result:= FEditor;
+end;
+
 procedure TP3DScenePanel.SetEditMode(AValue: TEditMode);
+var
+  n: Integer;
 begin
   if FEditMode=AValue then Exit;
 
   if ( AValue = emDefault ) then
     begin
       FEditMode:= emDefault;
+      FEditor:= EditModeDefault;
     end
   else if ( Assigned( Selection )) then
     begin
-      if ( EditMode = emDefault ) then
-        begin
-          FEditTransMat:= Selection.Matrix;
-          FMousePosStored:= vec2( -1 );
-        end
-      else
-        CancelTransform;
+      Editor.CancelTransform;
+      case AValue of
+        emGrab: FEditor:= EditModeGrab;
+        emRotate: FEditor:= EditModeRotate;
+        emScale: FEditor:= EditModeScale;
+      end;
+
+      n:= FRenderList.Find( Selection );
+      if ( n >= 0 ) then
+        Editor.TransMat:= FRenderList[ n ].Matrix;
+      Editor.MousePosInitial:= vec2( -1 );
+      Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
+
       FEditMode:= AValue;
     end;
 end;
 
-procedure TP3DScenePanel.SetSelection(AValue: TP3DActor);
+procedure TP3DScenePanel.SetSelection( AValue: TP3DActor );
 begin
   if ( FSelection = AValue ) then Exit;
   FSelection:= AValue;
@@ -124,40 +532,17 @@ begin
     DataView.Selection:= DataView.Children.FindByData( Pointer( Selection ), True )
   else
     DataView.Selection:= nil;
+
+  if ( Assigned( Selection )) then
+    Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
 end;
 
-procedure TP3DScenePanel.RenderCallback(world: TMat4; AActor: TP3DActor);
+procedure TP3DScenePanel.RenderCallback( world: TMat4; AActor: TP3DActor );
 begin
-  //FRenderList.Add( AActor );
+  if ( AActor = Selection ) then
+    Editor.RenderSelection( world );
 end;
 
-procedure TP3DScenePanel.Render_emGrab;
-begin
-
-end;
-
-procedure TP3DScenePanel.Render_emRotate;
-var
-  c: TVec4;
-  m: TMat4;
-  n: Integer;
-begin
-  n:= FRenderList.Find( Selection );
-  if ( n >= 0 ) then
-    begin
-      c:= ( FCam.View * FRenderList[ n ].Matrix.Row[ 3 ]);
-      c:= FCam.Proj * c;
-      c:= vec4( c.x / c.w, -c.y / c.w, c.z / c.w, 1 );
-      c:= vec4(( c.XY * 0.5 + 0.5 ) * vec2( ClientRect.Width, ClientRect.Height ) + ClientRect.TopLeft, ( 1 + c.Z ) * 0.5, 1 );
-      Canvas.RenderCircle( c.XY, 5, 16, vec4( 1, 0, 0, 1 ));
-      Canvas.RenderLine( c.XY, vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ), vec4( 0, 0, 0, 1 ));
-    end;
-end;
-
-procedure TP3DScenePanel.Render_emScale;
-begin
-
-end;
 
 constructor TP3DScenePanel.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
@@ -172,8 +557,10 @@ begin
   FPickMaterial:= TP3DMaterialBase.Create();
   FPickMaterial.Unlit:= True;
   AfterRender:= @AfterDraw;
+  BeforeRender:= @BeforeDraw;
   Scene.OnRenderCallback:= @RenderCallback;
   FRenderList:= TP3DRenderList.Create;
+  FEditor:= EditModeDefault;
 end;
 
 destructor TP3DScenePanel.Destroy;
@@ -188,30 +575,18 @@ end;
 procedure TP3DScenePanel.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   inherited MouseClick(mb1, mb2, mb3, X, Y);
-  if ( mb1 and ( EditMode <> emDefault )) then
-    EditMode:= emDefault;
-
-  if ( mb3 ) then
-    begin
-      if ( EditMode <> emDefault ) then
-        CancelTransform
-      else
-        Selection:= Pick( x - ClientRect.LeftI, y - ClientRect.TopI );
-    end;
 end;
 
 procedure TP3DScenePanel.KeyboardAction;
 begin
   inherited KeyboardAction;
-  if ( EditMode in [ emGrab, emRotate, emScale ]) then
-    begin
-      if ( P3DInput.Keyboard.DKeys[ P3DK_X ] and P3DInput.Keyboard.Keys[ P3DK_X ]) then
-        ToggleAxis( alX );
-      if ( P3DInput.Keyboard.DKeys[ P3DK_Y ] and P3DInput.Keyboard.Keys[ P3DK_Y ]) then
-        ToggleAxis( alY );
-      if ( P3DInput.Keyboard.DKeys[ P3DK_Z ] and P3DInput.Keyboard.Keys[ P3DK_Z ]) then
-        ToggleAxis( alZ );
-    end;
+
+  RenderList.Clear;
+  Scene.MakeRenderList( Nil, Mat4Identity, FRenderList );
+
+
+  Editor.UpdateAxis;
+
   if ( P3DInput.Keyboard.DKeys[ P3DK_G ] and P3DInput.Keyboard.Keys[ P3DK_G ]) then
     EditMode:= emGrab;
   if ( P3DInput.Keyboard.DKeys[ P3DK_R ] and P3DInput.Keyboard.Keys[ P3DK_R ]) then
@@ -219,20 +594,22 @@ begin
   if ( P3DInput.Keyboard.DKeys[ P3DK_S ] and P3DInput.Keyboard.Keys[ P3DK_S ]) then
     EditMode:= emScale;
   if ( P3DInput.Keyboard.DKeys[ P3DK_ESCAPE ] and P3DInput.Keyboard.Keys[ P3DK_ESCAPE ]) then
-    CancelTransform;
+    Editor.CancelTransform;
   if ( P3DInput.Keyboard.DKeys[ P3DK_RETURN ] and P3DInput.Keyboard.Keys[ P3DK_RETURN ]) then
     EditMode:= emDefault;
+
+  Editor.CheckInput;
 end;
 
 procedure TP3DScenePanel.MouseMove(X, Y: Integer);
-var
-  MouseDelta: TVec2;
-  AxisX, AxisY, AxisZ, Scale: TVec3;
-  Angle: Float;
-  c: TVec2;
 begin
-  inherited MouseMove(X, Y);
-  if (( Assigned( Selection )) and ( EditMode <> emDefault )) then
+  if ( Editor.MousePosInitial = vec2( -1 )) then
+    Editor.MousePosInitial:= vec2( x, y );
+  Editor.MouseDelta:= ( vec2( X, Y ) - Editor.MousePosInitial ) * 0.05;
+  Editor.MousePos:= vec2( X, Y );
+  if ( EditMode = emDefault ) then
+    inherited MouseMove( X, Y );
+{  if (( Assigned( Selection )) and ( EditMode <> emDefault )) then
     begin
       if ( FMousePosStored = vec2( -1 )) then
         begin
@@ -296,7 +673,7 @@ begin
               Selection.Scale:= Scale;
           end;
       end;
-    end;
+    end;}
 end;
 
 function TP3DScenePanel.Pick(x, y: Integer): TP3DActor;
@@ -311,7 +688,7 @@ var
       if ( Obj.Actor.Data is TP3DMesh ) then
         begin
           if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
-            decl.AsMat4:= Obj.Matrix * world;
+            decl.AsMat4:= world * Obj.Matrix;
           TP3DMesh( Obj.Actor.Data ).RenderSimple;
         end;
   end;
@@ -321,7 +698,7 @@ var
   decl: TP3DShaderDecl;
 begin
   PushVPClientRect;
-  P3DSelectStart( P3DRect( X + Canvas.Left + ClientRect.LeftI, Y + Canvas.Top + ClientRect.TopI, 1, 1 ));
+  P3DSelectStart( P3DRect( X + Canvas.Left, Y + Canvas.Top, 1, 1 ));
   FCam.PassToShader( Mat4Identity );
   FCam.UpdateMatrices( FCamObject );
   glEnable( GL_DEPTH_TEST );
@@ -360,51 +737,26 @@ begin
     Result:= nil;
 end;
 
-procedure TP3DScenePanel.ToggleAxis(Axis: TAxisLock);
+function TP3DScenePanel.GetSelectionCenter: TVec3;
+var
+  n: Integer;
 begin
-  if ( Axis <> AxisLock ) then
-    begin
-      AxisMode:= amGlobal;
-      AxisLock:= Axis;
-    end
+  n:= RenderList.Find( Selection );
+  if ( n >= 0 ) then
+    Result:= RenderList[ n ].Matrix.Row[ 3 ].xyz
   else
-    case AxisMode of
-      amScreen: AxisMode:= amGlobal;
-      amGlobal: AxisMode:= amLocal;
-      amLocal: begin AxisMode:= amScreen; AxisLock:= alNone; end;
-    end;
+    Result:= vec3( 0 );
 end;
 
-procedure TP3DScenePanel.CancelTransform;
+procedure TP3DScenePanel.BeforeDraw(Sender: TObject);
 begin
-  if ( Assigned( Selection ) and ( EditMode <> emDefault )) then
-    Selection.Matrix:= FEditTransMat;
-  FEditMode:= emDefault;
+  Editor.BeforeRender;
 end;
 
 procedure TP3DScenePanel.AfterDraw(Sender: TObject);
 var
-  StatusText: String;
-  FTransform: TMat4;
   Obj: TP3DRenderObject;
 begin
-  glClear( GL_DEPTH_BUFFER_BIT );
-  SelectionMaterial.Diff:= vec3( 1, 1, 0 );
-  SelectionMaterial.PassToShader();
-  if ( Assigned( Selection )) then
-    begin
-      if ( EditMode = emDefault ) then
-        FTransform:= Selection.Matrix
-      else
-        FTransform:= FEditTransMat;
-      if ( Selection.Data is TP3DMesh ) then
-        TP3DMesh( Selection.Data ).RenderEdges( FTransform, TestScene, Selection );
-      Canvas.Material.PassToShader();
-      EditorSceneArrows.RenderFromCamera( FCamObject, mat4translate( vec4( Selection.Position, 1 )));
-    end;
-
-  FRenderList.Clear;
-  Scene.MakeRenderList( Nil, Mat4Identity, FRenderList );
   for Obj in FRenderList do
     if ( Obj.Actor.Data is TP3DLight ) then
       begin
@@ -427,42 +779,10 @@ begin
   glEnable( GL_SCISSOR_TEST );
   Pick(P3DInput.Mouse.X,P3DInput.Mouse.Y);
   glDisable( GL_SCISSOR_TEST );}
+  Editor.AfterRender;
 
   Canvas.Lock;
-  case ( EditMode ) of
-    emDefault: ;
-    emGrab: Render_emGrab;
-    emRotate: Render_emRotate;
-    emScale: Render_emScale;
-  end;
-  Canvas.Unlock();
-
-
-  case ( EditMode ) of
-    emDefault: StatusText:= 'Normal mode...';
-    emGrab: StatusText:= 'Grabbing actor ...';
-    emRotate: StatusText:= 'Rotating actor ...';
-    emScale: StatusText:= 'Scaling actor ...';
-  end;
-
-  case ( AxisMode ) of
-    amScreen: StatusText+= ' [screen';
-    amLocal: StatusText+= ' [local';
-    amGlobal: StatusText+= ' [global';
-  end;
-
-  case ( AxisLock ) of
-    alX: StatusText+= ' X]';
-    alY: StatusText+= ' Y]';
-    alZ: StatusText+= ' Z]';
-    alXY: StatusText+= ' XY]';
-    alXZ: StatusText+= ' XZ]';
-    alYZ: StatusText+= ' YZ]';
-    alNone: StatusText+= ']';
-  end;
-
-  Canvas.Lock;
-  Canvas.RenderText( StatusText, vec2( 0, Height - Font.Size ), FInfoText );
+  Canvas.RenderText( Editor.StatusText, vec2( 0, Height - Font.Size ), FInfoText );
 
   {Canvas.Font.Name:= 'Pascal3D-Symbols';
   Canvas.Font.Size:= 32;}
@@ -470,47 +790,4 @@ begin
   Canvas.Unlock();
 end;
 
-
-(* this function only does the delta rotation */
-/* axis-angle is usually internally stored as quats... *)
-//static void protectedAxisAngleBits(short protectflag, float axis[3], float *angle, float oldAxis[3], float oldAngle)
-{
-	/* check that protection flags are set */
-	if ((protectflag & (OB_LOCK_ROTX | OB_LOCK_ROTY | OB_LOCK_ROTZ | OB_LOCK_ROTW)) == 0)
-		return;
-
-	if (protectflag & OB_LOCK_ROT4D) {
-		/* axis-angle getting limited as 4D entities that they are... */
-		if (protectflag & OB_LOCK_ROTW)
-			*angle = oldAngle;
-		if (protectflag & OB_LOCK_ROTX)
-			axis[0] = oldAxis[0];
-		if (protectflag & OB_LOCK_ROTY)
-			axis[1] = oldAxis[1];
-		if (protectflag & OB_LOCK_ROTZ)
-			axis[2] = oldAxis[2];
-	}
-	else {
-		/* axis-angle get limited with euler... */
-		float eul[3], oldeul[3];
-
-		axis_angle_to_eulO(eul, EULER_ORDER_DEFAULT, axis, *angle);
-		axis_angle_to_eulO(oldeul, EULER_ORDER_DEFAULT, oldAxis, oldAngle);
-
-		if (protectflag & OB_LOCK_ROTX)
-			eul[0] = oldeul[0];
-		if (protectflag & OB_LOCK_ROTY)
-			eul[1] = oldeul[1];
-		if (protectflag & OB_LOCK_ROTZ)
-			eul[2] = oldeul[2];
-
-		eulO_to_axis_angle(axis, angle, eul, EULER_ORDER_DEFAULT);
-
-		/* when converting to axis-angle, we need a special exception for the case when there is no axis */
-		if (IS_EQF(axis[0], axis[1]) && IS_EQF(axis[1], axis[2])) {
-			/* for now, rotate around y-axis then (so that it simply becomes the roll) */
-			axis[1] = 1.0f;
-		}
-	}
-}
 {$ENDIF}

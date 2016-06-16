@@ -68,11 +68,15 @@ type
   TP3DOIEditorDataLight = class ( TP3DOIEditor )
     private
       FLightColorCombo: TP3DColorComboBox;
+      FLightLinearAttenuationEdit: TP3DEventValueEdit;
+      FLightQuadraticAttenuationEdit: TP3DEventValueEdit;
       FLightType: TP3DComboBox;
 
       procedure ComboChange( Sender: TP3DGraphicControl; var AValue: String );
       function GetLightColor( Sender: TP3DColorPicker ): TVec4;
       procedure SetLightColor( Sender: TP3DColorPicker; AValue: TVec4 );
+      function GetLightAttenuation(Sender: TP3DEventValueEdit): Float;
+      procedure SetLightAttenuation(Sender: TP3DEventValueEdit; AValue: Float);
 
     public
       procedure Update; override;
@@ -85,6 +89,8 @@ type
     published
       property LightTypeCombo: TP3DComboBox read FLightType write FLightType;
       property LightColorCombo: TP3DColorComboBox read FLightColorCombo write FLightColorCombo;
+      property LightLinearAttenuationEdit: TP3DEventValueEdit read FLightLinearAttenuationEdit write FLightLinearAttenuationEdit;
+      property LightQuadraticAttenuationEdit: TP3DEventValueEdit read FLightQuadraticAttenuationEdit write FLightQuadraticAttenuationEdit;
   end;
 
   TP3DOIEditorList = specialize gP3DCustomObjectList < TP3DOIEditor >;
@@ -378,6 +384,47 @@ begin
   L.Color:= AValue.XYZ;
 end;
 
+function TP3DOIEditorDataLight.GetLightAttenuation( Sender: TP3DEventValueEdit ): Float;
+var
+  L: TP3DLight;
+begin
+  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
+    L:= TP3DLight( TP3DActor( Obj ).Data )
+  else if ( Obj is TP3DLight ) then
+    L:= TP3DLight( Obj )
+  else
+    L:= nil;
+
+  if ( Assigned( L )) then
+    begin
+      if ( Sender = LightLinearAttenuationEdit ) then
+        Result:= L.LinearAttenuation
+      else if ( Sender = LightQuadraticAttenuationEdit ) then
+        Result:= L.QuadraticAttenuation;
+    end;
+end;
+
+procedure TP3DOIEditorDataLight.SetLightAttenuation(Sender: TP3DEventValueEdit;
+  AValue: Float);
+var
+  L: TP3DLight;
+begin
+  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
+    L:= TP3DLight( TP3DActor( Obj ).Data )
+  else if ( Obj is TP3DLight ) then
+    L:= TP3DLight( Obj )
+  else
+    L:= nil;
+
+  if ( Assigned( L )) then
+    begin
+      if ( Sender = LightLinearAttenuationEdit ) then
+        L.LinearAttenuation:= AValue
+      else if ( Sender = LightQuadraticAttenuationEdit ) then
+        L.QuadraticAttenuation:= AValue;
+    end;
+end;
+
 procedure TP3DOIEditorDataLight.Update;
 var
   L: TP3DLight;
@@ -437,6 +484,30 @@ begin
   LightColorCombo.GetValueEvent:= @GetLightColor;
   LightColorCombo.SetValueEvent:= @SetLightColor;
   LightColorCombo.Align:= alClient;
+
+  Container:= TP3DGraphicControl.Create( nil, Self );
+  Container.Align:= alTop;
+  Container.Height:= 20;
+  Lbl:= TP3DLabel.Create( nil, Container );
+  Lbl.Align:= alLeft;
+  Lbl.Caption:= 'Linear Attenuation ';
+  Lbl.AutoSize:= True;
+  LightLinearAttenuationEdit:= TP3DEventValueEdit.Create( nil, Container );
+  LightLinearAttenuationEdit.GetValueEvent:= @GetLightAttenuation;
+  LightLinearAttenuationEdit.SetValueEvent:= @SetLightAttenuation;
+  LightLinearAttenuationEdit.Align:= alClient;
+
+  Container:= TP3DGraphicControl.Create( nil, Self );
+  Container.Align:= alTop;
+  Container.Height:= 20;
+  Lbl:= TP3DLabel.Create( nil, Container );
+  Lbl.Align:= alLeft;
+  Lbl.Caption:= 'Quadratic Attenuation ';
+  Lbl.AutoSize:= True;
+  LightQuadraticAttenuationEdit:= TP3DEventValueEdit.Create( nil, Container );
+  LightQuadraticAttenuationEdit.GetValueEvent:= @GetLightAttenuation;
+  LightQuadraticAttenuationEdit.SetValueEvent:= @SetLightAttenuation;
+  LightQuadraticAttenuationEdit.Align:= alClient;
 
   AutoSize:= True;
 end;

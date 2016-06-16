@@ -5,8 +5,6 @@
 
 type
 
-  { TP3DGUISceneViewer }
-
   { TP3DSceneViewer }
 
   TP3DSceneViewer = class ( TP3DGroupBox )
@@ -23,7 +21,7 @@ type
       procedure SetOrbitCamera(AValue: Boolean);
       procedure UpdateCamPos;
       procedure ResetOrbit;
-      procedure PushVPClientRect;
+      procedure PushVPClientRect; virtual;
 
     public
       procedure Render(BaseColor: TVec4; ScrollAcc: TVec2); override;

@@ -91,7 +91,7 @@ begin
       //RenderLine3D( vec3( 0 ), RenderObject.Direction * 10, vec4( 0, 1, 1, 1 ));
     end
   else
-    world:= RenderObject.Matrix * world;
+    world:= world * RenderObject.Matrix;
 end;
 
 procedure TP3DLight.LoadFromDOM( ADOMNode: TDOMElement );

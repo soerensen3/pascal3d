@@ -285,7 +285,7 @@ begin
 
 
   mt:= mat4translate( vec4( p, 0, 1 ));
-  m:= mt * proj;
+  m:= proj * mt;
 
   if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
     Uniform.AsMat4:= m;
@@ -307,7 +307,7 @@ begin
 
 
   mt:= mat4translate( vec4( p, 0, 1 ));
-  m:= mt * proj;
+  m:= proj * mt;
 
   if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
     Uniform.AsMat4:= m;

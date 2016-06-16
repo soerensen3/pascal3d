@@ -133,7 +133,7 @@ end;
 
 procedure TP3DActor.UpdateMatrix;
 begin
-  FMatrix:= mat4scale( vec4( Scale, 1 )) * mat4( mat3( Quaternion )) * mat4translate( vec4( Position, 1 ));
+  FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
 end;
 
 procedure TP3DActor.UpdateEuler;
@@ -160,6 +160,7 @@ begin
   FMatrix:= AValue;
   FPosition:= vec3( Matrix._30, Matrix._31, Matrix._32 );
   FRotation:= MatToEuler( mat3( AValue ), deg2rad * Rotation, RotationOrder ) / deg2rad;
+  FQuaternion:= EulerToQuat( Rotation * deg2rad, RotationOrder );
   FScale:= mat3toScale( mat3( FMatrix ));
 end;
 
@@ -306,22 +307,23 @@ procedure TP3DActor.Render( world: TMat4; Scene: TP3DScene );
 var
   _world: TMat4;
 begin
-  _world:= Matrix * world;
+  _world:= world * Matrix;
+
+  if ( Assigned( Scene.RootScene )) then
+    Scene.RootScene.RenderCallback( _world, Self )
+  else
+    Scene.RenderCallback( _world, Self );
+
   if ( Assigned( Data )) then
     Data.Render( _world, Scene, Self );
   Children.Render( _world, Scene );
-
-  if ( Assigned( Scene.RootScene )) then
-    Scene.RootScene.RenderCallback( world, Self )
-  else
-    Scene.RenderCallback( world, Self );
 end;
 
 procedure TP3DActor.RenderCallbackOnly(world: TMat4; Scene: TP3DScene);
 var
   _world: TMat4;
 begin
-  _world:= Matrix * world;
+  _world:= world * Matrix;
 
   Children.Render( _world, Scene );
 
@@ -372,7 +374,7 @@ end;
 
 procedure TP3DActor.RotateAroundGlobalAxis(AAxis: TVec3; AValue: Float);
 begin
-  Quaternion:= quatRotation( AAxis, AValue ) * Quaternion;
+  Quaternion:= Quaternion * quatRotation( AAxis, AValue );
 end;
 
 procedure TP3DActor.RotateAroundLocalAxis(AAxis: TVec3; AValue: Float);

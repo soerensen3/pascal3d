@@ -614,7 +614,6 @@ begin
   Caption:= Name;
   Color:= vec4( 1 );
   BorderColor:= vec4( 0, 0, 0, 0.1 );
-  Canvas.Pen.Style:= psStippled5;
   SetBounds( 15, 25, 15, 15 );
 end;
 
