@@ -8,8 +8,8 @@
         <Filename Value="engineplayer.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="29"/>
-        <CursorPos X="32" Y="48"/>
+        <TopLine Value="6"/>
+        <CursorPos X="5" Y="11"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -26,6 +26,7 @@
       <Unit3>
         <Filename Value="space_game/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="200"/>
       </Unit3>
       <Unit4>
@@ -80,8 +81,7 @@
       <Unit13>
         <Filename Value="armature_test/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="63"/>
-        <CursorPos X="44" Y="80"/>
+        <CursorPos Y="212"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit13>
@@ -89,18 +89,17 @@
         <Filename Value="armature_test/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="49"/>
-        <CursorPos X="26" Y="83"/>
+        <TopLine Value="56"/>
+        <CursorPos X="64" Y="73"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="armature_test/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="35"/>
-        <CursorPos X="45" Y="53"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="13"/>
+        <CursorPos X="3" Y="59"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit15>
@@ -145,7 +144,7 @@
     </Units>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="4">
+    <BreakPoints Count="2">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -157,23 +156,9 @@
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="../src/p3dgui/p3dgui_controllist.inc"/>
-        <Line Value="172"/>
-      </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="../src/p3dgui/p3dgui_controllist.inc"/>
-        <Line Value="174"/>
-      </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
         <Source Value="../src/p3dgraphics/p3dviewport.inc"/>
         <Line Value="127"/>
-      </Item4>
+      </Item2>
     </BreakPoints>
     <Watches Count="2">
       <Item1>

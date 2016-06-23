@@ -78,26 +78,42 @@
     private
       FAutoSize: Boolean;
       FBorderColor: TVec4;
+      FCanCollapse: Boolean;
       FCaption: String;
       FCaptionTxt: TP3DText;
+      FCollapsed: Boolean;
       FColor: TVec4;
       FFont: TP3DCanvasFont;
+      FStoredHeight: Float;
+      FCollapseSymbolTxt: TP3DText;
+      FCollapseSymbol: Char;
 
-      class function IsFocusControl: Boolean; override;
       procedure SetAutoSize(AValue: Boolean);
+      procedure SetCanCollapse(AValue: Boolean);
       procedure SetCaption(AValue: String);
+      procedure SetCollapsed(AValue: Boolean);
       procedure UpdateAutoSize;
+      procedure UpdateCollapsed;
+
+    protected
+      procedure SetHeight(const Value: Float); override;
+      procedure Realign; override;
 
     public
       constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
+
+      procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure Draw(); override;
+      class function IsFocusControl: Boolean; override;
 
       property Caption: String read FCaption write SetCaption;
       property Font: TP3DCanvasFont read FFont write FFont;
       property Color: TVec4 read FColor write FColor;
       property BorderColor: TVec4 read FBorderColor write FBorderColor;
       property AutoSize: Boolean read FAutoSize write SetAutoSize;
+      property CanCollapse: Boolean read FCanCollapse write SetCanCollapse;
+      property Collapsed: Boolean read FCollapsed write SetCollapsed;
   end;
 
   { TP3DCustomValueEdit }
@@ -269,7 +285,9 @@
 
   { TP3DComboBox }
 
-  TP3DComboBoxChange = procedure ( Sender: TP3DGraphicControl; var AValue: String ) of object;
+  TP3DComboBox = class;
+
+  TP3DComboBoxChange = procedure ( Sender: TP3DComboBox; var AValue: String ) of object;
 
   TP3DComboBox = class ( TP3DButton )
     private
@@ -294,6 +312,27 @@
     published
       property Items: TP3DMenuItemList read GetItems;
       property OnChange: TP3DComboBoxChange read FOnChange write FOnChange;
+  end;
+
+  { TP3DCheckBox }
+
+  TP3DCheckBox = class ( TP3DButton )
+    private
+      FChecked: Boolean;
+      FOnChange: TP3DNotifyEvent;
+      FSymbolChecked: TP3DText;
+
+      procedure SetChecked( AValue: Boolean );
+
+    public
+      constructor Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl= nil );
+      destructor Destroy; override;
+      procedure Draw; override;
+      procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
+
+    published
+      property Checked: Boolean read FChecked write SetChecked;
+      property OnChange: TP3DNotifyEvent read FOnChange write FOnChange;
   end;
 
 {$ENDIF}
@@ -577,6 +616,13 @@ begin
   FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
+procedure TP3DGroupBox.SetCollapsed(AValue: Boolean);
+begin
+  if FCollapsed= AValue then Exit;
+  FCollapsed:= AValue;
+  UpdateCollapsed;
+end;
+
 procedure TP3DGroupBox.UpdateAutoSize;
   function GetMaxXY: TVec2;
   var
@@ -584,7 +630,8 @@ procedure TP3DGroupBox.UpdateAutoSize;
   begin
     Result:= vec2( 0 );
     for Control in Controls do
-      Result:= max( vec2( Control.Left + Control.Width, Control.Top + Control.Height ), Result );
+      if ( Control.Visible ) then
+        Result:= max( vec2( Control.Left + Control.Width, Control.Top + Control.Height ), Result );
     Result:= Result + vec2( BoundsTL.X + BoundsBR.X, BoundsTL.Y + BoundsBR.Y );
   end;
 
@@ -596,15 +643,47 @@ begin
     case Align of
       alNone:
         begin
-          Width:= MaxXY.x;
-          Height:= MaxXY.y;
+          FWidth:= MaxXY.x;
+          FHeight:= MaxXY.y;
         end;
       alLeft, alRight:
-        Width:= MaxXY.x;
+        FWidth:= MaxXY.x;
       alTop, alBottom:
-        Height:= MaxXY.y;
+        FHeight:= MaxXY.y;
     end;
 end;
+
+procedure TP3DGroupBox.UpdateCollapsed;
+begin
+  if ( CanCollapse and Collapsed ) then
+    begin
+      Height:= BoundsTL.Y + BoundsBR.Y;
+      FCollapseSymbol:= P3DSymbolTriangleRight;
+      HideChildren:= True;
+    end
+  else
+    begin
+      Height:= FStoredHeight;
+      FCollapseSymbol:= P3DSymbolTriangleDown;
+      HideChildren:= False;
+    end;
+end;
+
+
+procedure TP3DGroupBox.SetHeight(const Value: Float);
+begin
+  inherited SetHeight(Value);
+  if ( not ( CanCollapse and Collapsed )) then
+    FStoredHeight:= Height;
+end;
+
+procedure TP3DGroupBox.Realign;
+begin
+  if ( not ( CanCollapse and Collapsed )) then
+    UpdateAutoSize;
+  inherited Realign;
+end;
+
 
 constructor TP3DGroupBox.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
@@ -615,13 +694,26 @@ begin
   Color:= vec4( 1 );
   BorderColor:= vec4( 0, 0, 0, 0.1 );
   SetBounds( 15, 25, 15, 15 );
+  FCollapseSymbol:= P3DSymbolTriangleDown;
 end;
 
 destructor TP3DGroupBox.Destroy;
 begin
   Font.Free;
   FCaptionTxt.Free;
+  FCollapseSymbolTxt.Free;
   inherited Destroy;
+end;
+
+procedure TP3DGroupBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  inherited MouseClick(mb1, mb2, mb3, X, Y);
+
+  FCollapseSymbolTxt:= Canvas.GetValidText( FCollapseSymbol, FCollapseSymbolTxt,
+    P3DFontManager[ P3DSymbolFontName, Canvas.Font.Size ]);
+
+  if ( mb1 and CanCollapse and P3DRect( 3, 3, FCollapseSymbolTxt.Width, FCollapseSymbolTxt.Height ).PtInRect( vec2( X, Y ))) then
+    Collapsed:= not Collapsed;
 end;
 
 procedure TP3DGroupBox.Draw;
@@ -645,6 +737,13 @@ begin
   //Canvas.RenderRect( vec2( hw * 2, 0 ), vec2( FCaptionTxt.Width, FCaptionTxt.Height ) + hw * 2, Color );
   Canvas.Font.Assign( Font );
   Canvas.RenderText( FCaptionTxt, vec2( hw * 2, 2 ));
+
+  if ( CanCollapse ) then
+    begin
+      Canvas.RenderText(
+        Canvas.GetValidText( FCollapseSymbol, FCollapseSymbolTxt,
+          P3DFontManager[ P3DSymbolFontName, Canvas.Font.Size ]), vec2( 3 ));
+    end;
 end;
 
 class function TP3DGroupBox.IsFocusControl: Boolean;
@@ -658,6 +757,13 @@ begin
   FAutoSize:=AValue;
 
   UpdateAutoSize;
+end;
+
+procedure TP3DGroupBox.SetCanCollapse(AValue: Boolean);
+begin
+  if FCanCollapse= AValue then Exit;
+  FCanCollapse:= AValue;
+  UpdateCollapsed;
 end;
 
 { TP3DEdit }
@@ -1191,12 +1297,14 @@ var
   P: TVec2;
 begin
   inherited Draw;
-  Canvas.Font.Name:= 'Pascal3D-Symbols';
+
   if ( Assigned( FDownSymbol )) then
     P:= vec2( Width - FDownSymbol.Width, ( Height - FDownSymbol.Height ) / 2 )
   else
     P:= vec2( 0 );
-  Canvas.RenderText( TP3DSymbolTriangleDown, P, FDownSymbol );
+  Canvas.Font.Name:= 'Pascal3D-Symbols';
+  Canvas.RenderText( P3DSymbolTriangleDown, P, FDownSymbol );
+  Canvas.Font.Name:= 'RobotoCondensed-Light';
 end;
 
 procedure TP3DComboBox.DropDown;
@@ -1211,6 +1319,113 @@ begin
   if ( mb1 ) then
     DropDown;
 end;
+
+
+
+{ TP3DCheckBox }
+
+procedure TP3DCheckBox.SetChecked(AValue: Boolean);
+begin
+  if FChecked= AValue then Exit;
+  FChecked:= AValue;
+
+  if ( Assigned( OnChange )) then
+    OnChange( Self );
+end;
+
+constructor TP3DCheckBox.Create(AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AParent );
+  FSymbolChecked:= p3dTextSimple( P3DSymbolCheck, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
+end;
+
+destructor TP3DCheckBox.Destroy;
+begin
+  FSymbolChecked.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DCheckBox.Draw;
+var
+  Preset: TP3DButtonPreset;
+  clf, ColorChecked: TVec4;
+  P: TVec2;
+  R: TP3DRect;
+
+  CheckBoxWidth: Float;
+  OffSet: Float;
+begin
+  if ( gcisMouseBtn1Down in InputState ) then
+    Preset:= PresetDown
+  else if ( gcisMouseOver in InputState ) then
+    Preset:= PresetHover
+  else
+    Preset:= PresetNormal;
+
+  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+
+
+  if ( Focused ) then
+    begin
+      clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
+      Canvas.RenderLineRect( vec2( 4 ), vec2( Width, Height ) - 4, clf, clf, clf, clf );
+    end;
+
+  CheckBoxWidth:= FCaptionTxt.Height;
+  OffSet:= CheckBoxWidth + 10;
+
+  if ( Caption > '' ) then
+    begin
+      if ( not Assigned( FCaptionTxt )) then
+        FCaptionTxt:= p3dTextSimple( Caption, P3DFontManager[ Font.Name, Font.Size ]);
+
+      case HAlignment of
+        haLeft: P.x:= OffSet;
+        haRight: P.x:= Width - FCaptionTxt.Width - OffSet;
+        haCenter: P.x:= ( Width - FCaptionTxt.Width + OffSet ) / 2;
+      end;
+      case VAlignment of
+        vaTop: P.y:= 0;
+        vaBottom: P.y:= Height - FCaptionTxt.Height;
+        vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
+      end;
+    end;
+
+  if ( Checked ) then
+    ColorChecked:= vec4( $78 / 255, $F2 / 255, $2C / 255, 1 )
+  else
+    ColorChecked:= vec4( 1 );
+
+  case HAlignment of
+    haLeft: R:= P3DRect( 5, P.Y, CheckBoxWidth, CheckBoxWidth );
+    haRight: R:= P3DRect( Width - CheckBoxWidth - 5, P.Y, CheckBoxWidth, CheckBoxWidth );
+    haCenter: R:= P3DRect( P.X - OffSet, P.Y, CheckBoxWidth, CheckBoxWidth );
+  end;
+
+  Canvas.RenderRectShadow( R.TopLeft + 1, R.BottomRight + 1, 2, vec4( 0, 0, 0, 0.1 ));
+  Canvas.RenderRect( R.TopLeft, R.BottomRight, ColorChecked );
+  if ( Checked ) then
+    begin
+      Canvas.Font.Color:= vec4( 1 );
+      Canvas.RenderText( FSymbolChecked, R.TopLeft );
+    end;
+
+  Canvas.Font.Color:= Preset.FontColor;
+  Canvas.Font.Size:= Font.Size;
+  Canvas.Font.Name:= Font.Name;
+  Canvas.RenderText( Caption, P, FCaptionTxt );
+end;
+
+procedure TP3DCheckBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  inherited MouseClick(mb1, mb2, mb3, X, Y);
+
+  if ( mb1 ) then
+    Checked:= not Checked;
+end;
+
 
 
 {$ENDIF}

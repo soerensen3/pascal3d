@@ -4,33 +4,36 @@
 {$IFDEF INTERFACE}
 
 const
-  TP3DSymbolArrowUp: Char         = 'A';
-  TP3DSymbolArrowDown: Char       = 'B';
-  TP3DSymbolArrowLeft: Char       = 'C';
-  TP3DSymbolArrowRight: Char      = 'D';
-  TP3DSymbolTriangleUp: Char      = 'E';
-  TP3DSymbolTriangleDown: Char    = 'F';
-  TP3DSymbolTriangleLeft: Char    = 'G';
-  TP3DSymbolTriangleRight: Char   = 'H';
-  TP3DSymbolTriangleUpDown: Char  = 'I';
-  TP3DSymbolPlus: Char            = 'J';
-  TP3DSymbolMinus: Char           = 'K';
-  TP3DSymbolOptions: Char         = 'L';
-  TP3DSymbolClose: Char           = 'M';
-  TP3DSymbolShrink: Char          = 'N';
-  TP3DSymbolExpand: Char          = 'O';
-  TP3DSymbolFolder: Char          = 'P';
-  TP3DSymbolFile: Char            = 'Q';
-  TP3DSymbolActor: Char           = 'R';
-  TP3DSymbolMesh: Char            = 'S';
-  TP3DSymbolScene: Char           = 'T';
-  TP3DSymbolFont: Char            = 'U';
-  TP3DSymbolCamera: Char          = 'V';
-  TP3DSymbolTexture: Char         = 'W';
-  TP3DSymbolMaterial: Char        = 'X';
-  TP3DSymbolShader: Char          = 'Y';
-  TP3DSymbolLight: Char           = 'Z';
-  TP3DSymbolLibrary: Char         = '[';
+  P3DSymbolFontName: String      = 'Pascal3D-Symbols';
+  P3DSymbolArrowUp               = 'A';
+  P3DSymbolArrowDown             = 'B';
+  P3DSymbolArrowLeft             = 'C';
+  P3DSymbolArrowRight            = 'D';
+  P3DSymbolTriangleUp            = 'E';
+  P3DSymbolTriangleDown          = 'F';
+  P3DSymbolTriangleLeft          = 'G';
+  P3DSymbolTriangleRight         = 'H';
+  P3DSymbolTriangleUpDown        = 'I';
+  P3DSymbolPlus                  = 'J';
+  P3DSymbolMinus                 = 'K';
+  P3DSymbolOptions               = 'L';
+  P3DSymbolClose                 = 'M';
+  P3DSymbolShrink                = 'N';
+  P3DSymbolExpand                = 'O';
+  P3DSymbolFolder                = 'P';
+  P3DSymbolFile                  = 'Q';
+  P3DSymbolActor                 = 'R';
+  P3DSymbolMesh                  = 'S';
+  P3DSymbolScene                 = 'T';
+  P3DSymbolFont                  = 'U';
+  P3DSymbolCamera                = 'V';
+  P3DSymbolTexture               = 'W';
+  P3DSymbolMaterial              = 'X';
+  P3DSymbolShader                = 'Y';
+  P3DSymbolLight                 = 'Z';
+  P3DSymbolLibrary               = '[';
+  P3DSymbolCheck                 = '\';
+  P3DSymbolTerrain               = ']';
 
 type
   TP3DFontManager = class;

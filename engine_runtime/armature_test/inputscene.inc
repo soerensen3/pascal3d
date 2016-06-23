@@ -4,8 +4,8 @@ const
 
 procedure OnMouseMotion( Sender: TP3DApplication; Event: TSDL_MouseMotionEvent );
 begin
-  CamYawPitchRoll.X:= ( min( 0, max( -180, CamYawPitchRoll.X + Event.yrel * mouse_speed )));
-  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z + Event.xrel * mouse_speed );
+  CamYawPitchRoll.X:= ( min( 180, max( 0, CamYawPitchRoll.X - Event.yrel * mouse_speed )));
+  CamYawPitchRoll.Z:= ( CamYawPitchRoll.Z - Event.xrel * mouse_speed );
 end;
 
 procedure OnMouseButton( Sender: TP3DApplication; Event: TSDL_MouseButtonEvent );

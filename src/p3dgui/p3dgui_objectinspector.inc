@@ -4,274 +4,184 @@
 {$IFDEF INTERFACE}
 type
 
-  { TP3DGUIOIEditor }
+  { TP3DOIEditorGroup }
 
-  { TP3DOIEditor }
-
-  TP3DOIEditor = class ( TP3DGroupBox )
+  TP3DOIEditorGroup = class ( TP3DGroupBox )
     private
       FObj: TInterfacedPersistent;
 
       procedure SetObj(AValue: TInterfacedPersistent); virtual;
 
     public
-      procedure Update; virtual; abstract;
+      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      destructor Destroy; override;
+
+      procedure Update; virtual;
+
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; virtual;
 
     published
       property Obj: TInterfacedPersistent read FObj write SetObj;
   end;
 
-  { TP3DOIEditorObject }
 
-  TP3DOIEditorObject = class ( TP3DOIEditor )
+  TP3DOIEditorList = specialize gP3DCustomObjectList < TP3DOIEditorGroup >;
+
+
+  { TP3DOIEditorPage }
+
+  TP3DOIEditorPage = class ( TP3DGraphicControl )
     private
-      FNameEdit: TP3DEdit;
+      FButton: TP3DGroupButton;
+      FGroups: TP3DOIEditorList;
+      FObj: TInterfacedPersistent;
+
+      procedure SetButton(AValue: TP3DGroupButton);
+      procedure SetObj(AValue: TInterfacedPersistent);
 
     public
-      procedure Update; override;
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
-      destructor Destroy; override;
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
-
-    published
-      property NameEdit: TP3DEdit read FNameEdit write FNameEdit;
-  end;
-
-  { TP3DOIEditorTransform }
-
-  TP3DOIEditorTransform = class ( TP3DOIEditor )
-    private
-      FPositionEdit: TP3DVectorEdit;
-      FRotationEdit: TP3DVectorEdit;
-      FScaleEdit: TP3DVectorEdit;
-
-      function EdGetValue( Sender: TP3DVectorEdit ): TVec4;
-      procedure EdSetValue( Sender: TP3DVectorEdit; AValue: TVec4 );
-
-    public
-      procedure Update; override;
-
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
-
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
       destructor Destroy; override;
 
-    published
-      property PositionEdit: TP3DVectorEdit read FPositionEdit write FPositionEdit;
-      property RotationEdit: TP3DVectorEdit read FRotationEdit write FRotationEdit;
-      property ScaleEdit: TP3DVectorEdit read FScaleEdit write FScaleEdit;
-  end;
+      procedure Update; virtual;
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; virtual;
 
-  { TP3DOIEditorDataLight }
-
-  TP3DOIEditorDataLight = class ( TP3DOIEditor )
-    private
-      FLightColorCombo: TP3DColorComboBox;
-      FLightLinearAttenuationEdit: TP3DEventValueEdit;
-      FLightQuadraticAttenuationEdit: TP3DEventValueEdit;
-      FLightType: TP3DComboBox;
-
-      procedure ComboChange( Sender: TP3DGraphicControl; var AValue: String );
-      function GetLightColor( Sender: TP3DColorPicker ): TVec4;
-      procedure SetLightColor( Sender: TP3DColorPicker; AValue: TVec4 );
-      function GetLightAttenuation(Sender: TP3DEventValueEdit): Float;
-      procedure SetLightAttenuation(Sender: TP3DEventValueEdit; AValue: Float);
-
-    public
-      procedure Update; override;
-
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
-
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
-      destructor Destroy; override;
+      function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; virtual;
+      procedure UpdateButton;
 
     published
-      property LightTypeCombo: TP3DComboBox read FLightType write FLightType;
-      property LightColorCombo: TP3DColorComboBox read FLightColorCombo write FLightColorCombo;
-      property LightLinearAttenuationEdit: TP3DEventValueEdit read FLightLinearAttenuationEdit write FLightLinearAttenuationEdit;
-      property LightQuadraticAttenuationEdit: TP3DEventValueEdit read FLightQuadraticAttenuationEdit write FLightQuadraticAttenuationEdit;
+      property Groups: TP3DOIEditorList read FGroups write FGroups;
+      property Button: TP3DGroupButton read FButton write SetButton;
+      property Obj: TInterfacedPersistent read FObj write SetObj;
   end;
 
-  TP3DOIEditorList = specialize gP3DCustomObjectList < TP3DOIEditor >;
+  TP3DOIPageList = specialize gP3DCustomObjectList < TP3DOIEditorPage >;
 
   { TP3DObjectInspector }
 
   TP3DObjectInspector = class( TP3DGraphicControl )
     private
-      FEditors: TP3DOIEditorList;
+      FActivePage: Integer;
       FObj: TInterfacedPersistent;
+      FPages: TP3DOIPageList;
+      FToolbar: TP3DGraphicControl;
 
+      procedure SetActivePage(AValue: Integer);
       procedure SetObj(AValue: TInterfacedPersistent);
 
     public
       constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
-      procedure AddEditor( Editor: TP3DOIEditor );
+
+      procedure AddPage(Page: TP3DOIEditorPage);
+      procedure ButtonMouseClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
 
       procedure Update;
 
     published
       property Obj: TInterfacedPersistent read FObj write SetObj;
-      property Editors: TP3DOIEditorList read FEditors write FEditors;
+      property Pages: TP3DOIPageList read FPages write FPages;
+      property Toolbar: TP3DGraphicControl read FToolbar write FToolbar;
+      property ActivePage: Integer read FActivePage write SetActivePage;
   end;
+
+  {$INCLUDE p3dgui_objinspector_editors.inc}
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
-{ TP3DOIEditor }
+{ TP3DOIEditorGroup }
 
-procedure TP3DOIEditor.SetObj(AValue: TInterfacedPersistent);
+procedure TP3DOIEditorGroup.SetObj(AValue: TInterfacedPersistent);
 begin
   if FObj=AValue then Exit;
   FObj:=AValue;
   Update;
 end;
 
-class function TP3DOIEditor.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+procedure TP3DOIEditorGroup.Update;
+begin
+  Visible:= IsCompatible( Obj );
+end;
+
+constructor TP3DOIEditorGroup.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AParent );
+  CanCollapse:= True;
+end;
+
+destructor TP3DOIEditorGroup.Destroy;
+begin
+  Controls.Clear( True );
+  inherited Destroy;
+end;
+
+class function TP3DOIEditorGroup.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
   Result:= False;
 end;
 
-{ TP3DOIEditorObject }
+{ TP3DOIEditorPage }
 
-procedure TP3DOIEditorObject.Update;
+procedure TP3DOIEditorPage.SetButton(AValue: TP3DGroupButton);
 begin
-  if ( Assigned( Obj )) then
-    with ( Obj as IP3DObject ) do
-      begin
-        NameEdit.Text:= Name;
-      end;
+  if FButton= AValue then Exit;
+  FButton:= AValue;
+  if ( Assigned( Button )) then
+    UpdateButton;
 end;
 
-constructor TP3DOIEditorObject.Create(const AOwner: TP3DObjectList;
+procedure TP3DOIEditorPage.SetObj(AValue: TInterfacedPersistent);
+begin
+  if FObj= AValue then Exit;
+  FObj:= AValue;
+  Update;
+end;
+
+constructor TP3DOIEditorPage.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
-var
-  Container: TP3DGraphicControl;
-  Lbl: TP3DLabel;
 begin
-  inherited;
-  Caption:= 'Object';
-  Height:= 60;
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Name ';
-  Lbl.AutoSize:= True;
-  NameEdit:= TP3DEdit.Create( nil, Container );
-  NameEdit.Align:= alClient;
-  AutoSize:= True;
+  inherited Create( AOwner, AParent );
+  Groups:= TP3DOIEditorList.Create();
 end;
 
-destructor TP3DOIEditorObject.Destroy;
+destructor TP3DOIEditorPage.Destroy;
 begin
-  Controls.Clear( True );
+  Groups.Clear( True );
+  Groups.Free;
   inherited Destroy;
 end;
 
-class function TP3DOIEditorObject.IsCompatible(AObj: TInterfacedPersistent
-  ): Boolean;
+procedure TP3DOIEditorPage.Update;
 begin
-  Result:= AObj is IP3DObject;
+  UpdateButton;
 end;
 
-{ TP3DOIEditorTransform }
-
-function TP3DOIEditorTransform.EdGetValue(Sender: TP3DVectorEdit): TVec4;
+class function TP3DOIEditorPage.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
-  if ( Assigned( Obj )) then
-    with ( Obj as IP3DTransform ) do
-      begin
-        if ( Sender = PositionEdit ) then
-          Result:= vec4( Position, 0 )
-        else if ( Sender = RotationEdit ) then
-          Result:= vec4( Rotation, 0 )
-        else if ( Sender = ScaleEdit ) then
-          Result:= vec4( Scale, 0 );
-      end;
+  Result:= False;
 end;
 
-procedure TP3DOIEditorTransform.EdSetValue(Sender: TP3DVectorEdit; AValue: TVec4 );
+function TP3DOIEditorPage.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
 begin
-  if ( Assigned( Obj )) then
-    with ( Obj as IP3DTransform ) do
-      begin
-        if ( Sender = PositionEdit ) then
-          Position:= AValue.xyz
-        else if ( Sender = RotationEdit ) then
-          Rotation:= AValue.xyz
-        else if ( Sender = ScaleEdit ) then
-          Scale:= AValue.xyz;
-      end;
+  Result:= TP3DGroupButton.Create( nil, AParent );
+  Result.Align:= alLeft;
+  Result.HAlignment:= haCenter;
+  Result.VAlignment:= vaCenter;
+  Result.Font.Name:= P3DSymbolFontName;
+  Result.Font.Size:= 24;
+  //Result.Caption:= Symbol;
+  Result.Width:= 32;
+  Result.Group:= 'Pages';
+  Result.OnMouseClick:= AMouseClick;
+  Button:= Result;
 end;
 
-procedure TP3DOIEditorTransform.Update;
+procedure TP3DOIEditorPage.UpdateButton;
 begin
-
+  Button.Visible:= IsCompatible( Obj );
 end;
-
-class function TP3DOIEditorTransform.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
-begin
-  Result:= AObj is IP3DTransform;
-end;
-
-constructor TP3DOIEditorTransform.Create(const AOwner: TP3DObjectList;
-  const AParent: TP3DGraphicControl);
-var
-  Container: TP3DGraphicControl;
-  Lbl: TP3DLabel;
-begin
-  inherited;
-  Caption:= 'Transform';
-  Height:= 200;
-
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Position ';
-  Lbl.AutoSize:= True;
-  PositionEdit:= TP3DVectorEdit.Create( nil, Container );
-  PositionEdit.Align:= alClient;
-  PositionEdit.GetValueEvent:= @EdGetValue;
-  PositionEdit.SetValueEvent:= @EdSetValue;
-
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Rotation ';
-  Lbl.AutoSize:= True;
-  RotationEdit:= TP3DVectorEdit.Create( nil, Container );
-  RotationEdit.Align:= alClient;
-  RotationEdit.GetValueEvent:= @EdGetValue;
-  RotationEdit.SetValueEvent:= @EdSetValue;
-  RotationEdit.Transmission:= 5.0;
-
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Scale ';
-  Lbl.AutoSize:= True;
-  ScaleEdit:= TP3DVectorEdit.Create( nil, Container );
-  ScaleEdit.Align:= alClient;
-  ScaleEdit.GetValueEvent:= @EdGetValue;
-  ScaleEdit.SetValueEvent:= @EdSetValue;
-  AutoSize:= True;
-end;
-
-destructor TP3DOIEditorTransform.Destroy;
-begin
-  Controls.Clear( True );
-  inherited Destroy;
-end;
-
 
 
 { TP3DObjectInspector }
@@ -283,239 +193,94 @@ begin
   Update;
 end;
 
+procedure TP3DObjectInspector.SetActivePage(AValue: Integer);
+var
+  i: Integer;
+begin
+  if FActivePage= AValue then Exit;
+  FActivePage:= AValue;
+
+  if ( not Pages[ ActivePage ].Button.Down ) then
+    Pages[ ActivePage ].Button.Down:= True;
+
+  for i:= 0 to Pages.Count - 1 do
+    Pages[ i ].Visible:= i = ActivePage;
+end;
+
 constructor TP3DObjectInspector.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
   inherited;
-  Editors:= TP3DOIEditorList.Create;
-  AddEditor( TP3DOIEditorObject.Create( nil, Self ));
-  AddEditor( TP3DOIEditorTransform.Create( nil, Self ));
-  AddEditor( TP3DOIEditorDataLight.Create( nil, Self ));
+
+  Toolbar:= TP3DGraphicControl.Create( nil, Self );
+  Toolbar.Align:= alTop;
+  Toolbar.Height:= 32;
+
+  Pages:= TP3DOIPageList.Create;
+
+  AddPage( TP3DOIEditorPageObject.Create( nil, Self ));
+  AddPage( TP3DOIEditorPageLight.Create( nil, Self ));
+  AddPage( TP3DOIEditorPageMaterial.Create( nil, Self ));
+  AddPage( TP3DOIEditorPageCamera.Create( nil, Self ));
+{  AddEditor( TP3DOIEditorDataLight.Create( nil, Self ));
+  AddEditor( TP3DOIEditorDataTexture.Create( nil, Self ));
+  AddEditor( TP3DOIEditorDataMaterialBase.Create( nil, Self ));
+  AddEditor( TP3DOIEditorDataMaterialMaps.Create( nil, Self ));
+  AddEditor( TP3DOIEditorDataMesh.Create( nil, Self ));}
 end;
 
 destructor TP3DObjectInspector.Destroy;
 begin
-  Editors.Clear( True );
-  Editors.Free;
+  Pages.Clear( True );
+  Pages.Free;
+  Toolbar.Controls.Clear( True );
+  Toolbar.Free;
   inherited Destroy;
 end;
 
-procedure TP3DObjectInspector.AddEditor(Editor: TP3DOIEditor);
+procedure TP3DObjectInspector.AddPage( Page: TP3DOIEditorPage );
 begin
-  Editor.Align:= alTop;
-  Editor.Obj:= Obj;
-  Editor.Visible:= False;
-  Editors.Add( Editor );
+  Page.Align:= alClient;
+  Page.Obj:= Obj;
+  Page.Visible:= False;
+  Pages.Add( Page );
+  Page.CreateButton( Toolbar, @ButtonMouseClick );
+  if ( Pages.Count = 1 ) then
+    Page.Button.Down:= True;
 end;
+
+procedure TP3DObjectInspector.ButtonMouseClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
+var
+  i: Integer;
+begin
+  if ( mb1 ) then
+    for i:= 0 to Pages.Count - 1 do
+      if ( Pages[ i ].Button = Sender ) then
+        begin
+          Pages[ i ].Visible:= True;
+          ActivePage:= i;
+        end
+      else
+        Pages[ i ].Visible:= False;
+end;
+
 
 procedure TP3DObjectInspector.Update;
 var
   i: Integer;
 begin
-  if ( Assigned( Obj )) then
+  Visible:= Assigned( Obj );
+
+  if ( not Pages[ ActivePage ].IsCompatible( Obj )) then
+    ActivePage:= 0;
+
+  for i:= 0 to Pages.Count - 1 do
     begin
-      for i:= 0 to Editors.Count - 1 do
-        begin
-          if ( Editors[ i ].IsCompatible( Obj )) then
-            begin
-              Editors[ i ].Visible:= True;
-              Editors[ i ].Obj:= Obj;
-            end
-          else
-            begin
-              Editors[ i ].Visible:= False;
-              Editors[ i ].Obj:= nil;
-            end;
-        end;
-    end
-  else
-    for i:= 0 to Editors.Count - 1 do
-      begin
-        Editors[ i ].Obj:= nil;
-        Editors[ i ].Visible:= False;
-      end;
-end;
-
-
-{ TP3DOIEditorDataLight }
-
-procedure TP3DOIEditorDataLight.ComboChange(Sender: TP3DGraphicControl; var AValue: String);
-var
-  L: TP3DLight;
-begin
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
-    L:= TP3DLight( TP3DActor( Obj ).Data )
-  else if ( Obj is TP3DLight ) then
-    L:= TP3DLight( Obj )
-  else
-    L:= nil;
-
-  if ( Assigned( L )) then
-    case AValue of
-      'Point': L.LightType := p3dltPoint;
-      'Spot': L.LightType := p3dltSpot;
-      'Sun': L.LightType := p3dltSun;
+      Pages[ i ].Obj:= Obj;
+      Pages[ i ].Visible:= i = ActivePage;
     end;
 end;
 
-function TP3DOIEditorDataLight.GetLightColor(Sender: TP3DColorPicker): TVec4;
-var
-  L: TP3DLight;
-begin
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
-    L:= TP3DLight( TP3DActor( Obj ).Data )
-  else if ( Obj is TP3DLight ) then
-    L:= TP3DLight( Obj )
-  else
-    L:= nil;
-  Result:= vec4( L.Color, 1 );
-end;
 
-procedure TP3DOIEditorDataLight.SetLightColor(Sender: TP3DColorPicker; AValue: TVec4);
-var
-  L: TP3DLight;
-begin
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
-    L:= TP3DLight( TP3DActor( Obj ).Data )
-  else if ( Obj is TP3DLight ) then
-    L:= TP3DLight( Obj )
-  else
-    L:= nil;
-  L.Color:= AValue.XYZ;
-end;
-
-function TP3DOIEditorDataLight.GetLightAttenuation( Sender: TP3DEventValueEdit ): Float;
-var
-  L: TP3DLight;
-begin
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
-    L:= TP3DLight( TP3DActor( Obj ).Data )
-  else if ( Obj is TP3DLight ) then
-    L:= TP3DLight( Obj )
-  else
-    L:= nil;
-
-  if ( Assigned( L )) then
-    begin
-      if ( Sender = LightLinearAttenuationEdit ) then
-        Result:= L.LinearAttenuation
-      else if ( Sender = LightQuadraticAttenuationEdit ) then
-        Result:= L.QuadraticAttenuation;
-    end;
-end;
-
-procedure TP3DOIEditorDataLight.SetLightAttenuation(Sender: TP3DEventValueEdit;
-  AValue: Float);
-var
-  L: TP3DLight;
-begin
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
-    L:= TP3DLight( TP3DActor( Obj ).Data )
-  else if ( Obj is TP3DLight ) then
-    L:= TP3DLight( Obj )
-  else
-    L:= nil;
-
-  if ( Assigned( L )) then
-    begin
-      if ( Sender = LightLinearAttenuationEdit ) then
-        L.LinearAttenuation:= AValue
-      else if ( Sender = LightQuadraticAttenuationEdit ) then
-        L.QuadraticAttenuation:= AValue;
-    end;
-end;
-
-procedure TP3DOIEditorDataLight.Update;
-var
-  L: TP3DLight;
-begin
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
-    L:= TP3DLight( TP3DActor( Obj ).Data )
-  else if ( Obj is TP3DLight ) then
-    L:= TP3DLight( Obj )
-  else
-    L:= nil;
-
-  if ( Assigned( L )) then
-    begin
-      case L.LightType of
-        p3dltPoint: LightTypeCombo.Caption:= 'Point';
-        p3dltSpot: LightTypeCombo.Caption:= 'Spot';
-        p3dltSun: LightTypeCombo.Caption:= 'Sun';
-      end;
-    end;
-end;
-
-class function TP3DOIEditorDataLight.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
-begin
-  Result:= (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DLight )) or ( AObj is TP3DLight );
-end;
-
-constructor TP3DOIEditorDataLight.Create(const AOwner: TP3DObjectList;
-  const AParent: TP3DGraphicControl);
-var
-  Container: TP3DGraphicControl;
-  Lbl: TP3DLabel;
-begin
-  inherited Create( AOwner, AParent );
-  Caption:= 'Light';
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Light type ';
-  Lbl.AutoSize:= True;
-  LightTypeCombo:= TP3DComboBox.Create( nil, Container );
-  LightTypeCombo.Align:= alClient;
-  LightTypeCombo.Items.Add( 'Sun' );
-  LightTypeCombo.Items.Add( 'Point' );
-  LightTypeCombo.Items.Add( 'Spot' );
-  LightTypeCombo.OnChange:= @ComboChange;
-
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Light color ';
-  Lbl.AutoSize:= True;
-  LightColorCombo:= TP3DColorComboBox.Create( nil, Container );
-  LightColorCombo.GetValueEvent:= @GetLightColor;
-  LightColorCombo.SetValueEvent:= @SetLightColor;
-  LightColorCombo.Align:= alClient;
-
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Linear Attenuation ';
-  Lbl.AutoSize:= True;
-  LightLinearAttenuationEdit:= TP3DEventValueEdit.Create( nil, Container );
-  LightLinearAttenuationEdit.GetValueEvent:= @GetLightAttenuation;
-  LightLinearAttenuationEdit.SetValueEvent:= @SetLightAttenuation;
-  LightLinearAttenuationEdit.Align:= alClient;
-
-  Container:= TP3DGraphicControl.Create( nil, Self );
-  Container.Align:= alTop;
-  Container.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Container );
-  Lbl.Align:= alLeft;
-  Lbl.Caption:= 'Quadratic Attenuation ';
-  Lbl.AutoSize:= True;
-  LightQuadraticAttenuationEdit:= TP3DEventValueEdit.Create( nil, Container );
-  LightQuadraticAttenuationEdit.GetValueEvent:= @GetLightAttenuation;
-  LightQuadraticAttenuationEdit.SetValueEvent:= @SetLightAttenuation;
-  LightQuadraticAttenuationEdit.Align:= alClient;
-
-  AutoSize:= True;
-end;
-
-destructor TP3DOIEditorDataLight.Destroy;
-begin
-  inherited Destroy;
-end;
-
-
+{$INCLUDE p3dgui_objinspector_editors.inc}
 {$ENDIF}

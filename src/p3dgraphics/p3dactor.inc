@@ -244,6 +244,7 @@ begin
   FVisible:= True;
   Parent.Objects.Add( Self );
   FScale:= vec3( 1 );
+  FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
 end;
@@ -262,9 +263,10 @@ var
     FQuaternion.FromString( DOM.GetAttribute( 'quaternion' ));
     FQuaternion:= FQuaternion; //TODO: FIND OUT WHY THIS (*-1) IS NECESSARY
     FScale.FromString( DOM.GetAttribute( 'scale' ));
-    UpdateMatrix;
     UpdateEuler;
+    UpdateMatrix;
   end;
+
 begin
   Create( AData );
   //if ( AutoNames ) then

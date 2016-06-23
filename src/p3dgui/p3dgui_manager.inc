@@ -125,7 +125,7 @@ begin
   if (( ScreenCanvas.Width <> P3DViewports[ 0 ].Width ) or
       ( ScreenCanvas.Height <> P3DViewports[ 0 ].Height )) then
     UpdateExtents;
-  Controls.Render( vec4( 1 ), vec2( 0 ));
+  Controls.Render( vec4( 1 ), vec2( 0 ), P3DRect( ScreenCanvas.Left, ScreenCanvas.Top, ScreenCanvas.Width, ScreenCanvas.Height ));
 
   if ( ShowCursor ) then
     begin

@@ -36,6 +36,8 @@ TP3DRect = object
 
   public
     function PtInRect( P: TVec2 ): Boolean;
+    function RectCollision( R: TP3DRect ): Boolean;
+    function Clip( R: TP3DRect ): TP3DRect;
 
     property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
     property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
@@ -118,6 +120,8 @@ TP3DCanvas2D = class ( TP3DCanvas )
     procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TVec4 );
     procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TVec4);
     procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TVec4 );
+    function GetValidText( Text: String; var CacheObj: TP3DText ): TP3DText; inline;
+    function GetValidText( Text: String; var CacheObj: TP3DText; AFont: TP3DFont ): TP3DText;
     procedure PassToShader;
 
     function Lock: Integer; override;
@@ -407,11 +411,7 @@ begin
   if ( Text = '' ) then
     exit;
 
-  if (( not Assigned( CacheObj )) or ( CacheObj.Text <> Text )) then
-    begin
-      FreeAndNil( CacheObj );
-      CacheObj:= p3dTextSimple( Text, P3DFontManager[ Font.Name, Font.Size ]);
-    end;
+  GetValidText( Text, CacheObj );
   RenderText( CacheObj, P );
 end;
 
@@ -509,6 +509,27 @@ begin
 
   RenderRect( p1, vec2( p1.X + off, p2.Y ), AColor );
   RenderRect( vec2( p1.X + off, p1.Y ), vec2( p2.X, p1.Y + off ), AColor );
+end;
+
+function TP3DCanvas2D.GetValidText(Text: String;
+  var CacheObj: TP3DText): TP3DText;
+begin
+  Result:= GetValidText( Text, CacheObj, P3DFontManager[ Font.Name, Font.Size ]);
+end;
+
+function TP3DCanvas2D.GetValidText(Text: String;
+  var CacheObj: TP3DText; AFont: TP3DFont): TP3DText;
+begin
+  if ( Text = '' ) then
+    exit;
+
+  if (( not Assigned( CacheObj )) or ( CacheObj.Text <> Text )) then
+    begin
+      FreeAndNil( CacheObj );
+      CacheObj:= p3dTextSimple( Text, AFont );
+      WriteLn( Text );
+    end;
+  Result:= CacheObj;
 end;
 
 procedure TP3DCanvas2D.PassToShader;
@@ -707,12 +728,26 @@ begin
        and ( P.Y >= Top )  and ( P.y < Bottom );
 end;
 
+function TP3DRect.RectCollision(R: TP3DRect): Boolean;
+begin
+  Result:= ( Left < R.Right ) and
+           ( Right > R.Left ) and
+           ( Top < R.Bottom ) and
+           ( Bottom > R.Top );
+end;
+
+function TP3DRect.Clip(R: TP3DRect): TP3DRect;
+begin
+  Result.TopLeft:= Max( R.TopLeft, TopLeft );
+  Result.BottomRight:= Min( R.BottomRight, BottomRight );
+end;
+
 function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
 begin
   Result.Left:= Left;
   Result.Top:= Top;
-  Result.Width:= Width;
-  Result.Height:= Height;
+  Result.Width:= Max( 0, Width );
+  Result.Height:= Max( 0, Height );
 end;
 
 function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;

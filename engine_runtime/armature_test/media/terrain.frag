@@ -175,9 +175,9 @@ void main()
   Normal = mix( detail_norm2, Normal, 0.7 );
   Normal = mix( detail_norm3, Normal, 0.4 );
   Normal = Normal * 2.0 - 1.0;
-  normalize( Normal );
+  //normalize( Normal );
   Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal ).xyz;
-  Normal = vNormal.xyz;
+  //Normal = vNormal.xyz;
 
   vec3 shadow = vec3( 0 );
   vec3 spec = vec3( 0 );
@@ -194,7 +194,7 @@ void main()
   FragColor.rgb = FragColor.rgb * shadow + spec;
   FragColor.rgb = mix( FragColor.rgb, mix( fogcolor, fogcolor2, smoothstep( fogend, fogend2, length( vPosition ))), smoothstep( fogstart, fogend, length( vPosition )));
 
-  FragColor.rgb = vec3( dot( Normal.xyz, LightSource[ 0 ].direction.xyz ));
+  //FragColor.rgb = vec3( dot( Normal.xyz, LightSource[ 0 ].direction.xyz ));
   FragColor.a = 1;
   #if (__VERSION__ < 130)
   gl_FragColor = FragColor;

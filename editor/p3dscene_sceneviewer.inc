@@ -170,7 +170,7 @@ var
   n: Integer;
 begin
   n:= OpenLibrary( 'armature_test/media/EditorArrow.p3d' );
-  //P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
   n:= OpenLibrary( 'armature_test/media/EditorArrows.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
@@ -767,8 +767,8 @@ begin
             EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Actor.Data ).Color;
 
         if ( TP3DLight( Obj.Actor.Data ).LightType in [ p3dltSun, p3dltSpot ]) then
-          EditorSceneArrow.RenderFromCamera( FCamObject, mat4( mat3( Obj.Actor.Quaternion )) * mat4translate( vec4( Obj.Actor.Position, 1 )));
-        EditorSceneLamp.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Actor.Position, 1 )));
+          EditorSceneArrow.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )) * mat4( mat3( Obj.Actor.Quaternion )));
+        EditorSceneLamp.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )));
       {Canvas.RenderText( TP3DSymbolActor,
                          vec2( ClientRect.Width, ClientRect.Height ) / 2
                          * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy

@@ -55,7 +55,7 @@ begin
           end;
     end;
   //WriteLn( P3DShaderActive.DumpUniforms );
-  P3DApplication.MainWindow.Title:= 'FPS: ' + FloatToStr( FPS ) + CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
+  P3DApplication.MainWindow.Title:= 'FPS: ' + FloatToStr( FPS ) + ' ' + CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
   mainscene.Render;
 
   glDisable( GL_DEPTH_TEST );

@@ -59,7 +59,7 @@ var
   ListView: TP3DListView;
   i, j, n: Integer;
 begin
-  P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
+  //P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
   TestScene:= TP3DScene.Create();
   AssetView:= TP3DSAssetPanel.Create();
   AssetView.Align:= alBottom;

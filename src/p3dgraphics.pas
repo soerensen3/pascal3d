@@ -50,6 +50,7 @@ type
 {$INCLUDE p3dmesh.inc}
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
+{$INCLUDE p3dterrain.inc}
 {$INCLUDE p3dtext.inc}
 {$INCLUDE p3dsymbols.inc}
 {$INCLUDE p3dcanvas.inc}
@@ -124,6 +125,7 @@ end;
 {$INCLUDE p3dmesh.inc}
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
+{$INCLUDE p3dterrain.inc}
 {$INCLUDE p3dtext.inc}
 {$INCLUDE p3dsymbols.inc}
 {$INCLUDE p3dcanvas.inc}

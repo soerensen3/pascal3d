@@ -40,11 +40,11 @@ Begin
   // This avoids interference when running a production/default build without -gh
 
   // Set up -gh output for the Leakview package:
-  //if FileExists('heap.trc') then
-  //  DeleteFile('heap.trc');
-  //SetHeapTraceOutput('heap.trc');
-  //SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
-  //                  exOverflow, exUnderflow, exPrecision]);
+  {if FileExists('heap.trc') then
+    DeleteFile('heap.trc');
+  SetHeapTraceOutput('heap.trc');
+  SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
+                    exOverflow, exUnderflow, exPrecision]);}
   P3DEventsInit;
   P3DLog.FileName:= 'engineplayer.xml';
   P3DApplication.MainWindow:= TP3DWindow.Create;

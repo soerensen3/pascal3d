@@ -43,7 +43,7 @@
 
         class function IsFocusControl: Boolean; override;
 
-        procedure Render( BaseColor: TVec4; ScrollAcc: TVec2); override;
+        procedure Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
         procedure Draw; override;
 
         procedure PopUp( X, Y: Integer ); virtual;
@@ -150,7 +150,7 @@ begin
   Width:= MinSize;
 end;
 
-procedure TP3DCustomPopupMenu.Render(BaseColor: TVec4; ScrollAcc: TVec2);
+procedure TP3DCustomPopupMenu.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
 var
   p1: TVec2;
 begin
@@ -162,7 +162,7 @@ begin
   P3DGUIManager.ScreenCanvas.RenderRectShadow( p1, p1 + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
   P3DGUIManager.ScreenCanvas.Unlock();
 
-  inherited Render(BaseColor, ScrollAcc);
+  inherited Render(BaseColor, ScrollAcc, ClipRect);
 end;
 
 

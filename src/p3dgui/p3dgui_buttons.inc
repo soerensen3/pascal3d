@@ -51,6 +51,8 @@
         FCaptionTxt: TP3DText;
 
         procedure SetCaption( AValue: String ); virtual;
+        procedure RenderButton( APreset: TP3DButtonPreset );
+        procedure RenderButtonText( APreset: TP3DButtonPreset );
 
       public
         constructor Create(AOwner: TP3DObjectList; const AParent: TP3DGraphicControl=nil);
@@ -71,6 +73,26 @@
         property TextWidth: Single read GetTextWidth;
         property TextHeight: Single read GetTextHeight;
     end;
+
+    { TP3DGroupButton }
+
+    TP3DGroupButton = class ( TP3DButton )
+      private
+        FDown: Boolean;
+        FGroup: String;
+
+        procedure SetDown(AValue: Boolean);
+        procedure SetGroup(AValue: String);
+        procedure DisableGroup;
+
+      public
+        procedure Draw; override;
+        procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+
+        property Down: Boolean read FDown write SetDown;
+        property Group: String read FGroup write SetGroup;
+    end;
+
 
 
 {$ENDIF}
@@ -109,13 +131,49 @@ begin
     FCaptionTxt:= p3dTextSimple( ' ', P3DFontManager[ Font.Name, Font.Size ])
 end;
 
+procedure TP3DButton.RenderButton(APreset: TP3DButtonPreset);
+var
+  clf: TVec4;
+begin
+  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, APreset.Color, APreset.Color, APreset.Color, APreset.Color );
+  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, APreset.OutlineColor, APreset.OutlineColor, APreset.OutlineColor, APreset.OutlineColor );
+
+  if ( Focused ) then
+    begin
+      clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
+      Canvas.RenderLineRect( vec2( 4 ), vec2( Width, Height ) - 4, clf, clf, clf, clf );
+    end;
+end;
+
+procedure TP3DButton.RenderButtonText(APreset: TP3DButtonPreset);
+var
+  P: TVec2;
+begin
+  if ( Caption > '' ) then
+    begin
+      if ( not Assigned( FCaptionTxt )) then
+        FCaptionTxt:= p3dTextSimple( Caption, P3DFontManager[ Font.Name, Font.Size ]);
+
+      case HAlignment of
+        haLeft: P.x:= 0;
+        haRight: P.x:= Width - FCaptionTxt.Width;
+        haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
+      end;
+      case VAlignment of
+        vaTop: P.y:= 0;
+        vaBottom: P.y:= Height - FCaptionTxt.Height;
+        vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
+      end;
+
+      Canvas.Font.Color:= APreset.FontColor;
+      Canvas.Font.Size:= Font.Size;
+      Canvas.Font.Name:= Font.Name;
+      Canvas.RenderText( Caption, P, FCaptionTxt );
+    end;
+end;
+
 
 procedure TP3DButton.Draw;
-  function Brightness( c: TVec4; br: Single ): TVec4;
-  begin
-    Result:= clamp( c + br, 0, 1 );
-  end;
-
 var
   Preset: TP3DButtonPreset;
   clf: TVec4;
@@ -128,35 +186,9 @@ begin
   else
     Preset:= PresetNormal;
 
-  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
-  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+  RenderButton( Preset );
 
-
-  if ( Focused ) then
-    begin
-      clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
-      Canvas.RenderLineRect( vec2( 4 ), vec2( Width, Height ) - 4, clf, clf, clf, clf );
-    end;
-
-  if ( Assigned( FCaptionTxt )) then
-    begin
-      case HAlignment of
-        haLeft: P.x:= 0;
-        haRight: P.x:= Width - FCaptionTxt.Width;
-        haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
-      end;
-      case VAlignment of
-        vaTop: P.y:= 0;
-        vaBottom: P.y:= Height - FCaptionTxt.Height;
-        vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
-      end;
-
-      Canvas.RenderText( FCaptionTxt, P );
-      Canvas.Font.Color:= Preset.FontColor;
-      Canvas.Font.Size:= Font.Size;
-      Canvas.Font.Name:= Font.Name;
-      Canvas.RenderText( FCaptionTxt, P );
-    end;
+  RenderButtonText( Preset );
 end;
 
 procedure TP3DButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -202,6 +234,57 @@ begin
   inherited Destroy;
 end;
 
+
+{ TP3DGroupButton }
+
+procedure TP3DGroupButton.SetDown(AValue: Boolean);
+begin
+  if FDown = AValue then Exit;
+  FDown:= AValue;
+  if ( Down ) then
+    DisableGroup;
+end;
+
+procedure TP3DGroupButton.SetGroup(AValue: String);
+begin
+  if FGroup = AValue then Exit;
+  FGroup:= AValue;
+  if ( Down ) then
+    DisableGroup;
+end;
+
+procedure TP3DGroupButton.DisableGroup;
+var
+  Control: TP3DGraphicControl;
+begin
+  if ( Group > '' ) then
+    for Control in ParentCtrl do
+      if (( Control <> Self ) and ( Control is TP3DGroupButton ) and ( TP3DGroupButton( Control ).Group = Group )) then
+        TP3DGroupButton( Control ).FDown:= False;
+end;
+
+procedure TP3DGroupButton.Draw;
+var
+  Preset: TP3DButtonPreset;
+begin
+  if ( gcisMouseOver in InputState ) then
+    Preset:= PresetHover
+  else if ( Down ) then
+    Preset:= PresetDown
+  else
+    Preset:= PresetNormal;
+
+  RenderButton( Preset );
+
+  RenderButtonText( Preset );
+end;
+
+procedure TP3DGroupButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  inherited MouseDown(mb1, mb2, mb3, X, Y);
+  if ( mb1 ) then
+    Down:= True;
+end;
 
 
 {$ENDIF}

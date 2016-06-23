@@ -49,6 +49,9 @@
   <material
     specular = "50.000000, 0.500000, 0.500000, 0.500000"
     name = "material_Material"
+    vshader = "terrain.vert"
+    fshader = "terrain.frag"
+    type="shader"
     diffuse = "0.640000, 0.640000, 0.640000">
     <texture
       mode = "mix"

@@ -80,6 +80,8 @@
          FUnlit: Boolean;
          FUseVertexColor: Boolean;
 
+         procedure SetAlpha(AValue: Single);
+         procedure SetSpec_Hardness(AValue: Single);
          procedure SetUnlit( AValue: Boolean );
 
        public
@@ -94,8 +96,8 @@
          property Spec: TVec3 read FSpec write FSpec;
 
        published
-         property Spec_Hardness: Single read FSpec_Hardness write FSpec_Hardness;
-         property Alpha: Single read FAlpha write FAlpha;
+         property Spec_Hardness: Single read FSpec_Hardness write SetSpec_Hardness;
+         property Alpha: Single read FAlpha write SetAlpha;
          property UseVertexColor: Boolean read FUseVertexColor write FUseVertexColor;
          property Unlit: Boolean read FUnlit write SetUnlit;
      end;
@@ -213,6 +215,18 @@ begin
   if FUnlit=AValue then Exit;
   FUnlit:=AValue;
   BuildShader();
+end;
+
+procedure TP3DMaterialBase.SetAlpha(AValue: Single);
+begin
+  if FAlpha= AValue then Exit;
+  FAlpha:= clamp( AValue, 0, 1 );
+end;
+
+procedure TP3DMaterialBase.SetSpec_Hardness(AValue: Single);
+begin
+  if FSpec_Hardness= AValue then Exit;
+  FSpec_Hardness:= clamp( AValue, 0, 511 );
 end;
 
 constructor TP3DMaterialBase.Create(const AData: TP3DData);
@@ -351,10 +365,8 @@ begin
       for i:= 0 to Maps.Count - 1 do
         begin
           glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-          //glEnable( GL_TEXTURE_2D ); cle( Self );
           glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
           glUniform1i( Shader.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
-          Maps[ i ].Map.UpdateFiltering;
         end;
     end;
 end;

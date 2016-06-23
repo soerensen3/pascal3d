@@ -91,13 +91,13 @@ begin
     mat4inverse( CamObject.Matrix, FView );
   if ( IsIsometric ) then
     case Handedness of
-      p3dchLeft: Proj:= mat4orthoLH( Aspect * IsoZoom, 1 * IsoZoom, Near, Far );
+      p3dchLeft: Proj:= mat4orthoLH( Aspect / IsoZoom, 1 / IsoZoom, Near, Far );
       //p3dchRight: Proj:= mat4orthoRH( Aspect * IsoZoom, 1 * IsoZoom, Near, Far );
     end
   else
     case Handedness of
-      p3dchLeft: proj:= mat4perspectiveFOVLH( deg2rad* 90, Aspect, Near, Far );
-      p3dchRight: proj:= mat4perspectiveFOVRH( deg2rad* 90, Aspect, Near, Far );
+      p3dchLeft: proj:= mat4perspectiveFOVLH( deg2rad * FOV, Aspect, Near, Far );
+      p3dchRight: proj:= mat4perspectiveFOVRH( deg2rad * FOV, Aspect, Near, Far );
     end;
   InView:= CamObject.Matrix;
 end;

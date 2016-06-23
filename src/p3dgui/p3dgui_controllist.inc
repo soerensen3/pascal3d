@@ -10,7 +10,7 @@ TP3DControlList = class( TP3DCustomControlList )
 
   public
     procedure Realign;
-    procedure Render(base: TVec4; ScrollAcc: TVec2);
+    procedure Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
     function Input: TP3DGraphicControl;
     function MouseRay(X, Y: Integer; const Recurse: Boolean): TP3DGraphicControl;
     procedure Clear( const FreeObjects: Boolean = False ); override;
@@ -162,16 +162,28 @@ begin
 
 end;
 
-procedure TP3DControlList.Render(base: TVec4; ScrollAcc: TVec2);
+procedure TP3DControlList.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
+  procedure RenderIfInRect( Item: TP3DGraphicControl; Scroll: TVec2 );
+  var
+    R: TP3DRect;
+  begin
+    if ( Assigned( Parent )) then
+      R:= Parent.ClientRect
+    else
+      R:= P3DRect( 0, 0, P3DGUIManager.ScreenCanvas.Width, P3DGUIManager.ScreenCanvas.Height );
+    //if ( R.RectCollision( P3DRect( Item.Left + Scroll.x, Item.Top + Scroll.y, Item.Width, Item.Height ))) then
+      Item.Render( BaseColor, Scroll, ClipRect );
+  end;
+
 var
   i: Integer;
 begin
   for i:= 0 to Count - 1 do
     if ( Items[ i ].Visible ) then
       if ( Items[ i ].Align = alNone ) then
-        Items[ i ].Render( base, ScrollAcc )
+        RenderIfInRect( Items[ i ], ScrollAcc )
       else
-        Items[ i ].Render( base, vec2( 0 ));
+        RenderIfInRect( Items[ i ], vec2( 0 ));
 end;
 
 procedure TP3DControlList.BringToFront( Index: Integer );
@@ -321,13 +333,18 @@ begin
             LastMouseDownCtrl[ i ]:= nil;
           end;
 
-  for Control in Self do
+  //for Control in Self do
+  for i:= 0 to Count - 1 do
     begin
+      Control:= Items[ i ];
       //Handle Mouse
 
-      with P3DInput.Mouse do
-        Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
-      Control.KeyboardAction();
+      if ( Control.Name = 'Test123' ) then
+        WriteLn( 'Abc' );
+
+      //with P3DInput.Mouse do
+      //  Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
+      //Control.KeyboardAction();
     end;
 end;
 

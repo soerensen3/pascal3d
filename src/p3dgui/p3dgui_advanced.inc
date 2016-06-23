@@ -126,6 +126,30 @@ type
       //property OnChange: TP3DComboBoxChange read FOnChange write FOnChange;
   end;
 
+  { TP3DImage }
+
+  //Unfinished
+
+  TP3DImage = class ( TP3DGraphicControl )
+    private
+      FAutoSize: Boolean;
+      FColor: TVec4;
+      FKeepAspect: Boolean;
+      FTexture: TP3DTexture;
+
+    public
+      constructor Create(const AOwner: TP3DObjectList= nil;
+        const AParent: TP3DGraphicControl= nil);
+      procedure Draw; override;
+
+      property Color: TVec4 read FColor write FColor;
+
+    published
+      property Texture: TP3DTexture read FTexture write FTexture;
+      property AutoSize: Boolean read FAutoSize write FAutoSize;
+      property KeepAspect: Boolean read FKeepAspect write FKeepAspect;
+  end;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -385,7 +409,10 @@ end;
 procedure TP3DColorPicker.ColorChange(Sender: TP3DGraphicControl);
 begin
   if ( Sender = ColorValue ) then
-    ColorWheel.HSV:= vec3( ColorWheel.HSV[ 0 ], ColorWheel.HSV[ 1 ], ColorValue.Value );
+    begin
+      ColorWheel.HSV:= vec3( ColorWheel.HSV[ 0 ], ColorWheel.HSV[ 1 ], ColorValue.Value );
+      SetValueEvent( Self, vec4( ColorWheel.RGB, Color.A ));
+    end;
   if (( Sender = ColorWheel ) and Assigned( SetValueEvent )) then
     SetValueEvent( Self, vec4( ColorWheel.RGB, Color.A ));
 end;
@@ -450,9 +477,14 @@ begin
 end;
 
 procedure TP3DColorPicker.UpdateColor;
+var
+  c: TVec4;
 begin
-  if ( Color.XYZ <> ColorWheel.RGB ) then
-    ColorWheel.RGB:= Color.XYZ;
+  c:= Color;
+  if ( c.XYZ <> ColorWheel.RGB ) then
+    ColorWheel.RGB:= c.XYZ;
+  if ( ColorWheel.HSV[ 2 ] <> ColorValue.Value ) then
+    ColorValue.FValue:= ColorWheel.HSV[ 2 ];
 end;
 
 procedure TP3DColorPicker.Draw;
@@ -521,6 +553,74 @@ begin
                    ColorPicker.Canvas.Width + 20, ColorPicker.Canvas.Height + Canvas.Height + 10 );
       if ( not r.PtInRect( vec2( X, Y ))) then
         ColorPicker.Visible:= False;
+    end;
+end;
+
+{ TP3DImage }
+
+constructor TP3DImage.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AParent );
+  Color:= vec4( 1 );
+  KeepAspect:= True;
+end;
+
+procedure TP3DImage.Draw;
+var
+  c, p1, p2: TVec2;
+  Shader: TP3DShader;
+  Uniform: TP3DShaderDecl;
+  n: Integer;
+  scale: Single;
+begin
+  if ( Assigned( Texture )) then
+    begin
+      c:= vec2( Width, Height ) / 2;
+      scale:= min( Width / Texture.Width, Height/ Texture.Height ) / 2;
+
+      p1:= c - vec2( Texture.Width, Texture.Height ) * scale;
+      p2:= c + vec2( Texture.Width, Texture.Height ) * scale;
+
+      if ( AutoSize and KeepAspect ) then
+        begin
+          if (( p1.x < 0 ) or ( p1.y < 0 )) then
+            begin
+
+            end;
+        end;
+
+      Shader:= P3DFontManager.Material.Shader;
+      Shader.Enable;
+
+      glActiveTexture( GL_TEXTURE0 );
+      glBindTexture( GL_TEXTURE_2D, Texture.GLTexture );
+
+
+      if ( Shader.Uniforms.FindByName( 'tex0', Uniform )) then
+        Uniform.AsInt:= 0;
+
+      if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
+        Uniform.AsMat4:= Mat4Identity;
+      if ( Shader.Uniforms.FindByName( 'world', Uniform )) then
+        Uniform.AsMat4:= Mat4Identity;
+      if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
+        Uniform.AsMat4:= Canvas.Proj;
+
+      glBegin( GL_TRIANGLE_FAN );
+      glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
+      glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
+      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
+
+      glVertexAttrib2f( P3DAttribPosition, p2.X, p1.Y );
+      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
+
+      glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
+      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
+
+      glVertexAttrib2f( P3DAttribPosition, p1.X, p2.Y );
+      glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
+      glEnd();
     end;
 end;
 

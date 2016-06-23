@@ -141,10 +141,14 @@ type
 
   { TP3DListView }
 
+  TP3DListView = class;
+  TP3DListViewSelectionChangeEvent = procedure ( Sender: TP3DListView; var NewSelection: TP3DListItem ) of object;
   TP3DListView = class ( TP3DCustomItemView )
     private
       FChildren: TP3DListItemList;
+      FOnSelectionChange: TP3DListViewSelectionChangeEvent;
       FSelection: TP3DListItem;
+      procedure SetSelection(AValue: TP3DListItem);
 
     public
       constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
@@ -157,7 +161,8 @@ type
 
     published
       property Children: TP3DListItemList read FChildren write FChildren;
-      property Selection: TP3DListItem read FSelection write FSelection;
+      property Selection: TP3DListItem read FSelection write SetSelection;
+      property OnSelectionChange: TP3DListViewSelectionChangeEvent read FOnSelectionChange write fOnSelectionChange;
   end;
 
   TP3DListViewFile = class;
@@ -212,8 +217,6 @@ type
       property ShowFolderUp: Boolean read FShowFolderUp write SetShowFolderUp;
       property Mask: String read FMask write SetMask;
   end;
-
-  { TP3DListViewActors }
 
   { TP3DTreeViewActors }
 
@@ -689,6 +692,15 @@ end;
 
 { TP3DListView }
 
+procedure TP3DListView.SetSelection(AValue: TP3DListItem);
+begin
+  if ( Assigned( OnSelectionChange )) then
+    OnSelectionChange( Self, AValue );
+
+  if FSelection= AValue then Exit;
+  FSelection:= AValue;
+end;
+
 constructor TP3DListView.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
@@ -888,14 +900,14 @@ procedure TP3DListViewFile.Update;
       and ( TreeViewDirectory.Directory = Directory )))) then
       begin
         Item:= Children[ Children.Add( '..', nil )];
-        Item.SymbolText:= TP3DSymbolFolder;
+        Item.SymbolText:= P3DSymbolFolder;
       end;
 
     Files:= P3DListFolderDirectories( AppendPathDelim( dir ) + '*', False, True );
     for i:= 0 to Files.Count - 1 do
       begin
         Item:= Children[ Children.Add( Files[ i ], nil )];
-        Item.SymbolText:= TP3DSymbolFolder;
+        Item.SymbolText:= P3DSymbolFolder;
       end;
     Files.Free;
     Files:= P3DListFolderFiles( AppendPathDelim( dir ) + Mask, False, True );
@@ -904,12 +916,12 @@ procedure TP3DListViewFile.Update;
         Item:= Children[ Children.Add( Files[ i ], nil )];
         Ext:= lowercase( ExtractFileExt( Files[ i ]));
         case Ext of
-          '.p3d': Item.SymbolText:= TP3DSymbolLibrary;
-          '.p3dmesh': Item.SymbolText:= TP3DSymbolMesh;
-          '.bmp', '.jpg', '.jpeg', '.png': Item.SymbolText:= TP3DSymbolTexture;
-          '.frag', '.vert', '.glsl', '.pmd': Item.SymbolText:= TP3DSymbolShader;
-          '.ttf': Item.SymbolText:= TP3DSymbolFont;
-          else Item.SymbolText:= TP3DSymbolFile;
+          '.p3d': Item.SymbolText:= P3DSymbolLibrary;
+          '.p3dmesh': Item.SymbolText:= P3DSymbolMesh;
+          '.bmp', '.jpg', '.jpeg', '.png': Item.SymbolText:= P3DSymbolTexture;
+          '.frag', '.vert', '.glsl', '.pmd': Item.SymbolText:= P3DSymbolShader;
+          '.ttf': Item.SymbolText:= P3DSymbolFont;
+          else Item.SymbolText:= P3DSymbolFile;
         end;
       end;
     Files.Free;
@@ -956,21 +968,21 @@ procedure TP3DTreeViewActors.Update;
         if ( Assigned( Item.Data )) then
           begin
             if ( Item.Data is TP3DMesh ) then
-              Parent[ n ].SymbolText:= TP3DSymbolMesh
+              Parent[ n ].SymbolText:= P3DSymbolMesh
 //            else if ( Item.Data is TP3DFont ) then
 //              Parent[ n ].SymbolText:= 'U'
             else if ( Item.Data is TP3DCamera ) then
-              Parent[ n ].SymbolText:= TP3DSymbolCamera
+              Parent[ n ].SymbolText:= P3DSymbolCamera
             else if ( Item.Data is TP3DMaterialBase ) then
-              Parent[ n ].SymbolText:= TP3DSymbolMaterial
+              Parent[ n ].SymbolText:= P3DSymbolMaterial
             else if ( Item.Data is TP3DScene ) then
-              Parent[ n ].SymbolText:= TP3DSymbolScene
+              Parent[ n ].SymbolText:= P3DSymbolScene
             else if ( Item.Data is TP3DLight ) then
-              Parent[ n ].SymbolText:= TP3DSymbolLight
+              Parent[ n ].SymbolText:= P3DSymbolLight
             else if ( Item.Data is TP3DShader ) then
-              Parent[ n ].SymbolText:= TP3DSymbolShader
+              Parent[ n ].SymbolText:= P3DSymbolShader
             else if ( Item.Data is TP3DTexture ) then
-              Parent[ n ].SymbolText:= TP3DSymbolTexture
+              Parent[ n ].SymbolText:= P3DSymbolTexture
             //else if ( Item.Data is TP3DData ) then
             //  Parent[ n ].SymbolText:= TP3DSymbolLibrary
             else;
@@ -990,7 +1002,7 @@ procedure TP3DTreeViewActors.Update;
     for Scene in SceneList do
       begin
         n:= Parent.Add( Scene.Name, Scene );
-        Parent[ n ].SymbolText:= TP3DSymbolScene;
+        Parent[ n ].SymbolText:= P3DSymbolScene;
         AddList( Scene.Objects, Parent[ n ].Children, True );
       end;
   end;
@@ -1003,7 +1015,7 @@ procedure TP3DTreeViewActors.Update;
     for Cam in List do
       begin
         n:= Parent.Add( Cam.Name, Cam );
-        Parent[ n ].SymbolText:= TP3DSymbolCamera;
+        Parent[ n ].SymbolText:= P3DSymbolCamera;
       end;
   end;
 
@@ -1018,7 +1030,7 @@ procedure TP3DTreeViewActors.Update;
       if ( ShowDesignerPackages or ( not Lib.IsDesignerPackage )) then
         begin
           n:= Parent.Add( ExtractFileName( Lib.FileWatch.FileName ), Lib );
-          Parent[ n ].SymbolText:= TP3DSymbolLibrary;
+          Parent[ n ].SymbolText:= P3DSymbolLibrary;
 
           AddDataList( Lib, Parent[ n ].Children );
         end;
@@ -1033,7 +1045,7 @@ procedure TP3DTreeViewActors.Update;
     for Light in List do
       begin
         n:= Parent.Add( Light.Name, Light );
-        Parent[ n ].SymbolText:= TP3DSymbolLight;
+        Parent[ n ].SymbolText:= P3DSymbolLight;
       end;
   end;
 
@@ -1045,7 +1057,7 @@ procedure TP3DTreeViewActors.Update;
     for Mat in List do
       begin
         n:= Parent.Add( Mat.Name, Mat );
-        Parent[ n ].SymbolText:= TP3DSymbolMaterial;
+        Parent[ n ].SymbolText:= P3DSymbolMaterial;
       end;
   end;
 
@@ -1057,7 +1069,7 @@ procedure TP3DTreeViewActors.Update;
     for Mesh in List do
       begin
         n:= Parent.Add( Mesh.Name, Mesh );
-        Parent[ n ].SymbolText:= TP3DSymbolMesh;
+        Parent[ n ].SymbolText:= P3DSymbolMesh;
       end;
   end;
 
@@ -1069,7 +1081,7 @@ procedure TP3DTreeViewActors.Update;
     for Shader in List do
       begin
         n:= Parent.Add( Shader.Name, Shader );
-        Parent[ n ].SymbolText:= TP3DSymbolShader;
+        Parent[ n ].SymbolText:= P3DSymbolShader;
       end;
   end;
 
@@ -1081,7 +1093,7 @@ procedure TP3DTreeViewActors.Update;
     for Tex in List do
       begin
         n:= Parent.Add( Tex.Name, Tex );
-        Parent[ n ].SymbolText:= TP3DSymbolTexture;
+        Parent[ n ].SymbolText:= P3DSymbolTexture;
       end;
   end;
 
@@ -1090,34 +1102,34 @@ procedure TP3DTreeViewActors.Update;
     Node: TP3DTreeNodeList;
   begin
 
-    Node:= Parent[ Parent.Add( 'Cameras', Data.Cameras, False, TP3DSymbolCamera )].Children;
+    Node:= Parent[ Parent.Add( 'Cameras', Data.Cameras, False, P3DSymbolCamera )].Children;
     AddCameraList( Data.Cameras, Node );
 
     if ( Data.FileWatch.FileName = '' ) then
       begin
-        Node:= Parent[ Parent.Add( 'Libraries', Data.Libraries, False, TP3DSymbolLibrary )].Children;
+        Node:= Parent[ Parent.Add( 'Libraries', Data.Libraries, False, P3DSymbolLibrary )].Children;
         AddLibraryList( Data.Libraries, Node );
       end;
 
-    Node:= Parent[ Parent.Add( 'Lights', Data.Lights, False, TP3DSymbolLight )].Children;
+    Node:= Parent[ Parent.Add( 'Lights', Data.Lights, False, P3DSymbolLight )].Children;
     AddLightList( Data.Lights, Node );
 
-    Node:= Parent[ Parent.Add( 'Materials', Data.Materials, False, TP3DSymbolMaterial )].Children;
+    Node:= Parent[ Parent.Add( 'Materials', Data.Materials, False, P3DSymbolMaterial )].Children;
     AddMaterialList( Data.Materials, Node );
 
-    Node:= Parent[ Parent.Add( 'Meshes', Data.Meshes, False, TP3DSymbolMesh )].Children;
+    Node:= Parent[ Parent.Add( 'Meshes', Data.Meshes, False, P3DSymbolMesh )].Children;
     AddMeshList( Data.Meshes, Node );
 
-    Node:= Parent[ Parent.Add( 'Objects', Data.Objects, False, TP3DSymbolActor )].Children;
+    Node:= Parent[ Parent.Add( 'Objects', Data.Objects, False, P3DSymbolActor )].Children;
     AddList( Data.Objects, Node );
 
-    Node:= Parent[ Parent.Add( 'Scenes', Data.Scenes, False, TP3DSymbolScene )].Children;
+    Node:= Parent[ Parent.Add( 'Scenes', Data.Scenes, False, P3DSymbolScene )].Children;
     AddSceneList( Data.Scenes, Node );
 
-    Node:= Parent[ Parent.Add( 'Shaders', Data.Shaders, False, TP3DSymbolShader )].Children;
+    Node:= Parent[ Parent.Add( 'Shaders', Data.Shaders, False, P3DSymbolShader )].Children;
     AddShaderList( Data.Shaders, Node );
 
-    Node:= Parent[ Parent.Add( 'Textures', Data.Textures, False, TP3DSymbolTexture )].Children;
+    Node:= Parent[ Parent.Add( 'Textures', Data.Textures, False, P3DSymbolTexture )].Children;
     AddTextureList( Data.Textures, Node );
   end;
 

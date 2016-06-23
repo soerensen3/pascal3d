@@ -72,14 +72,14 @@ begin
     begin
       OIPanel.ObjectInspector.Obj:= TInterfacedPersistent( NewSelection.Data );
       if ( TInterfacedPersistent( NewSelection.Data ) is TP3DActor ) then
-        SceneView.Selection:= TP3DActor( NewSelection.Data )
+        SceneView.FSelection:= TP3DActor( NewSelection.Data )
       else
-        SceneView.Selection:= nil;
+        SceneView.FSelection:= nil;
     end
   else
     begin
       OIPanel.ObjectInspector.Obj:= nil;
-      SceneView.Selection:= nil;
+      SceneView.FSelection:= nil;
     end;
 end;
 

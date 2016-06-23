@@ -29,6 +29,8 @@ TP3DGraphicControl = class ( TP3DObject )
   private
     FBoundsBR: TVec2;
     FBoundsTL: TVec2;
+    FHideChildren: Boolean;
+
     procedure SetBoundsBR(AValue: TVec2);
     procedure SetBoundsTL(AValue: TVec2);
 
@@ -75,7 +77,7 @@ TP3DGraphicControl = class ( TP3DObject )
     procedure DragCancel( Sender: TP3DGraphicControl; X, Y: Integer );
     procedure DragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean );
     procedure Realign; virtual;
-    procedure Render( BaseColor: TVec4; ScrollAcc: TVec2 ); virtual;
+    procedure Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); virtual;
     procedure SetAlign( const Value: TP3DControlAlign ); virtual;
     procedure SetHeight( const Value: Float ); virtual;
     procedure SetInputState(AValue: TP3DGCInputFlags); virtual;
@@ -86,6 +88,8 @@ TP3DGraphicControl = class ( TP3DObject )
     procedure SetVisible( const Value: Boolean ); virtual;
     procedure SetWidth( const Value: Float ); virtual;
     procedure UpdateClientRect;
+
+    property HideChildren: Boolean read FHideChildren write FHideChildren;
 
   public
     constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
@@ -457,13 +461,20 @@ begin
   Canvas.Scroll:= AValue;
 end;
 
-procedure TP3DGraphicControl.Render(BaseColor: TVec4; ScrollAcc: TVec2);
+procedure TP3DGraphicControl.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect );
 var
   OldScroll: TVec2;
+  {$IFDEF DEBUG_GUI}
   i: Integer;
   txt: TP3DText;
+  {$ENDIF}
   p: TVec2;
+  R: TP3DRect;
 begin
+  R:= P3DRect( Canvas.Left, Canvas.Top, Canvas.Width, Canvas.Height ).Clip( ClipRect );
+  if ( R.Width * R.Height = 0 ) then
+    exit;
+
   if ( HasShadow()) then
     begin
       p:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
@@ -474,7 +485,9 @@ begin
 
   Canvas.Lock;
   OldScroll:= Scroll;
-  Canvas.Scroll:= ScrollAcc + Scroll;
+  Canvas.Scroll:= ScrollAcc + Scroll + vec2( R.Left, R.Top ) - vec2( Canvas.Left, Canvas.Top );
+  Canvas.Width:= R.WidthI;
+  Canvas.Height:= R.HeightI;
 
   //Canvas.ScreenColor:= vec4( 1 * Ord( gcisMouseBtn1Down in InputState ), 1 * Ord( gcisMouseBtn2Down in InputState ), 1 * Ord( gcisMouseBtn3Down in InputState ), 0.25 + 0.75 * Ord( gcisMouseOver in InputState ) + 0.25 * Ord( gcisMouseOverOccl in InputState ));
 
@@ -482,7 +495,8 @@ begin
 
   Canvas.Unlock();
   Canvas.Scroll:= OldScroll;
-  Controls.Render( BaseColor, ScrollAcc + Scroll );
+  if ( not HideChildren ) then
+    Controls.Render( BaseColor, ScrollAcc + Scroll, R );
   {$IFDEF DEBUG_GUI}
   if ( Self = LastMouseOverCtrl ) then
     begin
@@ -573,7 +587,8 @@ begin
   if ( FVisible <> Value ) then
     begin
       FVisible:= Value;
-      FOwnerCtrlBuf.Realign;
+      if ( Align <> alNone ) then
+        FOwnerCtrlBuf.Realign;
     end;
 end;
 

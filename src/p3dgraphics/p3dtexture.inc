@@ -2,11 +2,16 @@
 //part of p3dgraphics.pas
 {$IFDEF INTERFACE}
 type
+  TP3DTextureRepeat = ( trRepeat = GL_REPEAT, trRepeatMiror = GL_MIRRORED_REPEAT );
+  TP3DTextureFiltering = ( tfNearest, tfLinear );
 
+const
+  P3DTextureFilteringToGL: array [ tfNearest..tfLinear ] of Cardinal = ( GL_NEAREST, GL_LINEAR );
+  P3DTextureFilteringMipMapToGL: array [ tfNearest..tfLinear, tfNearest..tfLinear ] of Cardinal = (( GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST ), ( GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR ));
+
+type
   { TP3DTexture }
 
-  TP3DTextureRepeat = ( trRepeat = GL_REPEAT, trRepeatMiror = GL_MIRRORED_REPEAT );
-  TP3DTextureFiltering = ( tfNearest = GL_NEAREST, tfLinear = GL_LINEAR );
   TP3DTexture = class ( TP3DDataBlock )
     private
       FFiltering: TP3DTextureFiltering;
@@ -19,6 +24,7 @@ type
       procedure SetFilteringMipMap(AValue: TP3DTextureFiltering);
       procedure SetMipMap(AValue: Boolean);
       procedure UpdateFiltering;
+      procedure LoadFromSurface( ASurface: PSDL_Surface );
 
     public
       constructor Create( AName: String; const AData: TP3DData = nil );
@@ -74,15 +80,44 @@ end;
 
 procedure TP3DTexture.UpdateFiltering;
 begin
+  glBindTexture( GL_TEXTURE_2D, FGLTexture ); cle( Self );
   if ( MipMap ) then
-    begin
-      glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, Integer( Filtering ) + $100 + ( Integer( FilteringMipMap ) - $2600 ) * 2 ); cle( Self );
-    end
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, P3DTextureFilteringMipMapToGL[ Filtering, FilteringMipMap ])
   else
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, Integer( Filtering )); cle( Self );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, P3DTextureFilteringToGL[ Filtering ]);
+  cle( Self );
 
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, Integer( Filtering )); cle( Self );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, P3DTextureFilteringToGL[ Filtering ]); cle( Self );
+  glBindTexture( GL_TEXTURE_2D, 0 ); cle( Self );
+end;
+
+procedure TP3DTexture.LoadFromSurface(ASurface: PSDL_Surface);
+var
+  Mode: Integer;
+begin
+  glGenTextures( 1, @FGLTexture ); cle( Self );
+  glBindTexture( GL_TEXTURE_2D, FGLTexture ); cle( Self );
+
+  if ( ASurface^.format^.BytesPerPixel = 4 ) then
+    Mode:= GL_RGBA
+  else
+    Mode:= GL_RGB;
+
+  glTexImage2D( GL_TEXTURE_2D, 0, Mode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
+
+  glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
+
+  FFiltering:= tfLinear;
+  FFilteringMipMap:= tfLinear;
+  FMipMap:= True;
+  UpdateFiltering;
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
+
+  FWidth:= ASurface^.w;
+  FHeight:= ASurface^.h;
+
+  SDL_FreeSurface( ASurface );
 end;
 
 constructor TP3DTexture.Create( AName: String; const AData: TP3DData );
@@ -102,67 +137,16 @@ begin
   {$IFDEF VERBOSE}
   WriteLn( 'Texture loaded: ' + AName );
   {$ENDIF}
-  CreateFromSurface( FSurface, AData );
-{  if ( not Assigned( glGenTextures )) then
-    exit;
-  glGenTextures(1, @FGLTexture ); cle( Self );
-  glBindTexture(GL_TEXTURE_2D, FGLTexture ); cle( Self );
-
-  if ( fSurface^.format^.BytesPerPixel = 4 ) then
-    Mode:= GL_RGBA
-  else
-    Mode:= GL_RGB;
-
-  glTexImage2D( GL_TEXTURE_2D, 0, Mode, FSurface^.w, FSurface^.h, 0, Mode, GL_UNSIGNED_BYTE, fSurface^.pixels ); cle( Self );
-
-  glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
-
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR ); cle( Self );
-  //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); cle( Self );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); cle( Self );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER ); cle( Self );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER ); cle( Self );
-
-  FWidth:= FSurface^.w;
-  FHeight:= FSurface^.h;
-
-  SDL_FreeSurface( FSurface );
-  AData.Textures.Add( Self );}
+  LoadFromSurface( FSurface );
 end;
 
 constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface;
   const AData: TP3DData);
-var
-  Mode: Integer;
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
   inherited Create( AData );
-  glGenTextures( 1, @FGLTexture ); cle( Self );
-  glBindTexture( GL_TEXTURE_2D, FGLTexture ); cle( Self );
-
-  if ( ASurface^.format^.BytesPerPixel = 4 ) then
-    Mode:= GL_RGBA
-  else
-    Mode:= GL_RGB;
-
-  glTexImage2D( GL_TEXTURE_2D, 0, Mode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
-
-  glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
-
-  //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR ); cle( Self );
-  //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); cle( Self );
-  FFiltering:= tfLinear;
-  FFilteringMipMap:= tfLinear;
-  FMipMap:= True;
-  UpdateFiltering;
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
-
-  FWidth:= ASurface^.w;
-  FHeight:= ASurface^.h;
-
-  SDL_FreeSurface( ASurface );
+  LoadFromSurface( ASurface );
 end;
 
 constructor TP3DTexture.CreateFromDOM(ADOMNode: TDOMElement;

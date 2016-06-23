@@ -17,32 +17,32 @@
     end;
 
      { gP3DCustomListEnumeratorClass }
-     generic gP3DCustomListEnumeratorClass < TCustomItem: TObject >
+    generic gP3DCustomListEnumeratorClass < TCustomItem: TObject >
        = class ( TInterfacedPersistent, specialize IP3DEnumeratorClass < TCustomItem >)
-       private type
-         TMoveNext = function ( var Index: Integer ): TCustomItem of object;
+      private type
+        TMoveNext = function ( var Index: Integer ): TCustomItem of object;
 
-       private
-         FCurrent: TCustomItem;
-         FCurrentIdx: Integer;
-         FMoveNext: TMoveNext;
+      private
+        FCurrent: TCustomItem;
+        FCurrentIdx: Integer;
+        FMoveNext: TMoveNext;
 
-         function GetCurrent(): TCustomItem;
-         procedure Reset();
+        function GetCurrent(): TCustomItem;
+        procedure Reset();
 
-       public
-         constructor Create( AMoveNext: TMoveNext );
+      public
+        constructor Create( AMoveNext: TMoveNext );
 
-         function MoveNext: Boolean;
+        function MoveNext: Boolean;
 
-         property Current: TCustomItem read GetCurrent;
-         property CurrentIdx: Integer read FCurrentIdx;
-     end;
+        property Current: TCustomItem read GetCurrent;
+        property CurrentIdx: Integer read FCurrentIdx;
+    end;
 
     { gP3DCustomObjectList }
 
     generic gP3DCustomObjectList <TCustomItem: TObject>
-    = class ( TInterfacedPersistent, specialize IP3DEnumerableClass < TCustomItem > )
+    = class ( TInterfacedPersistent{, specialize IP3DEnumerableClass < TCustomItem >} )
       type
         TP3DCustomObjectListEnumeratorClass = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
 
@@ -62,7 +62,7 @@
         procedure Delete( Index: Integer ); virtual;
         function IndexOf( Item: TCustomItem ): Integer; virtual;
         procedure Clear( const FreeObjects: Boolean = False ); virtual;
-        function GetEnumerator: specialize IP3DEnumeratorClass < TCustomItem >;
+        function GetEnumerator: TP3DCustomObjectListEnumeratorClass;
         //IP3DEnumerator.GetEnumerator = GetEnumerator;
         procedure Insert( Index: Integer; Item: TCustomItem );
 
@@ -234,7 +234,7 @@ begin
     OnChange( Self );
 end;
 
-function gP3DCustomObjectList.GetEnumerator: specialize IP3DEnumeratorClass < TCustomItem >;
+function gP3DCustomObjectList.GetEnumerator: TP3DCustomObjectListEnumeratorClass;
 begin
   Result:= TP3DCustomObjectListEnumeratorClass.Create( @MoveNext );
 end;

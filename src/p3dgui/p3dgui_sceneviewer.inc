@@ -24,7 +24,7 @@ type
       procedure PushVPClientRect; virtual;
 
     public
-      procedure Render(BaseColor: TVec4; ScrollAcc: TVec2); override;
+      procedure Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
       procedure MouseMove(X, Y: Integer); override;
       procedure MouseWheel(delta: Integer); override;
       procedure KeyboardAction; override;
@@ -93,7 +93,7 @@ begin
       FCam:= TP3DCamera.Create();
       FCamObject:= TP3DActor.Create();
       FCamObject.Data:= FCam;
-      FCamObject.RotationOrder:= roYZX;
+      FCamObject.RotationOrder:= roXZY;
       ResetOrbit;
       UpdateCamPos;
     end
@@ -102,11 +102,8 @@ begin
 end;
 
 procedure TP3DSceneViewer.UpdateCamPos;
-var
-  m: TMat4;
 begin
   FCam.UpdateMatrices( FCamObject );
-  m:= FCam.View;
   FCamObject.Position:= FCamObject.Matrix.Row[ 2 ].xyz * OrbitDistance + OrbitCenter;
 end;
 
@@ -127,15 +124,15 @@ begin
                      Round( ClientRect.Width ), Round( ClientRect.Height ));
 end;
 
-procedure TP3DSceneViewer.Render(BaseColor: TVec4; ScrollAcc: TVec2);
+procedure TP3DSceneViewer.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
 var
   txt: TP3DText;
 begin
-  inherited Render(BaseColor, ScrollAcc);
+  inherited Render(BaseColor, ScrollAcc, ClipRect);
   //Canvas.Lock;
   PushVPClientRect;
 
-  if ( Assigned( Scene )) then
+  if ( Assigned( Scene ) and ( ClientRect.Width * ClientRect.Height > 0 )) then
     begin
       if ( Assigned( BeforeRender )) then
         BeforeRender( Self );
@@ -186,7 +183,7 @@ begin
               OrbitCenter:= OrbitCenter + m.Row[ 2 ].xyz * P3DInput.Mouse.DY * 0.2;
           end
         else
-          FCamObject.Rotation:= FCamObject.Rotation + vec3( P3DInput.Mouse.DY, 0, P3DInput.Mouse.DX ) * 2.5;
+          FCamObject.Rotation:= FCamObject.Rotation - vec3( P3DInput.Mouse.DY, 0, P3DInput.Mouse.DX ) * 2.5;
     end;
 end;
 
