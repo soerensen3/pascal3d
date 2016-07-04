@@ -83,7 +83,11 @@
   { TP3DSceneEditModeScale }
 
   TP3DSceneEditModeScale = class ( TP3DSceneEditModeDefault )
+    protected
+      Scale: TVec3;
+
     public
+      function StatusText: String; override;
       procedure CheckInput; override;
   end;
 
@@ -183,9 +187,31 @@ end;
 
 { TP3DSceneEditModeScale }
 
+function TP3DSceneEditModeScale.StatusText: String;
+begin
+  Result:= 'Scale: ' + AxisText + Scale.ToString( 2 );
+end;
+
 procedure TP3DSceneEditModeScale.CheckInput;
 begin
   inherited CheckInput;
+
+  if ( not Assigned( ScenePanel.Selection )) then
+    begin
+      ScenePanel.EditMode:= emDefault;
+      exit;
+    end;
+
+  ScenePanel.Selection.Matrix:= TransMat;
+  Scale:= vec3( 1 );
+  if ( AxisLock in [ alX, alXZ, alXY, alNone ]) then
+    Scale.x:= MouseDelta.x;
+  if ( AxisLock in [ alY, alXY, alYZ, alNone ]) then
+    Scale.y:= MouseDelta.y;
+  if ( AxisLock in [ alZ, alXZ, alYZ ]) then
+    Scale.z:= MouseDelta.y;
+  if ( Scale <> vec3( 1 )) then
+    ScenePanel.Selection.Scale:= Scale;
 end;
 
 { TP3DSceneEditModeRotate }
@@ -197,11 +223,17 @@ var
 begin
   inherited CheckInput;
 
+  if ( not Assigned( ScenePanel.Selection )) then
+    begin
+      ScenePanel.EditMode:= emDefault;
+      exit;
+    end;
+
   ScenePanel.Selection.Matrix:= TransMat;
   c:= ToScreenCoords( TransCenter );
   dir:= ( MousePos - c.XY ).Normalize;
   dirOld:= ( MousePosInitial - c.XY ).Normalize;
-  Angle:= arctan2( dirOld.x, dirOld.y ) - arctan2( dir.x, dir.y );
+  Angle:= arctan2( dirOld.y, dirOld.x ) - arctan2( dir.y, dir.x );
   P3DApplication.MainWindow.Title:= FloatToStr( Angle );
   if ( AxisLock in [ alX, alYZ ]) then
     ScenePanel.Selection.RotateAroundGlobalAxis( AxisX, Angle );
@@ -209,13 +241,13 @@ begin
     ScenePanel.Selection.RotateAroundGlobalAxis( AxisY, Angle );
   if ( AxisLock in [ alZ, alXY ]) then
     ScenePanel.Selection.RotateAroundGlobalAxis( AxisZ, Angle );
-
 end;
 
 procedure TP3DSceneEditModeRotate.AfterRender;
 var
-  c: TVec2;
+  c, dir, dirOld: TVec2;
   n: Integer;
+  Angle1, Angle2: Float;
 begin
   with ( ScenePanel ) do
     begin
@@ -226,6 +258,11 @@ begin
           c:= ToScreenCoords( TransCenter ).XY;
           Canvas.RenderCircle( c.XY, 5, 16, vec4( 1, 0, 0, 1 ));
           Canvas.RenderLine( c.XY, vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ), vec4( 0, 0, 0, 1 ));
+          dir:= ( MousePos - c.XY ).Normalize;
+          dirOld:= ( MousePosInitial - c.XY ).Normalize;
+          Angle1:= arctan2( dirOld.y, dirOld.x ) / deg2rad;
+          Angle2:= arctan2( dir.y, dir.x ) / deg2rad;
+          Canvas.RenderArc( c, 50, Angle1, Angle2, 64, vec4( 0, 0, 1, 0.2 ));
         end;
       ScenePanel.Canvas.Unlock();
     end;
@@ -248,13 +285,18 @@ procedure TP3DSceneEditModeGrab.CheckInput;
 begin
   ScenePanel.Selection.Matrix:= TransMat;
   inherited CheckInput;
+  if ( not Assigned( ScenePanel.Selection )) then
+    begin
+      ScenePanel.EditMode:= emDefault;
+      exit;
+    end;
   Translation:= vec3( 0 );
   if ( AxisLock in [ alX, alXZ, alXY, alNone ]) then
     Translation:= AxisX * MouseDelta.x;
   if ( AxisLock in [ alY, alXY, alYZ ]) then
-    Translation+= AxisY * MouseDelta.y;
+    Translation-= AxisY * MouseDelta.y;
   if ( AxisLock in [ alZ, alXZ, alYZ, alNone ]) then
-    Translation+= AxisZ * MouseDelta.y;
+    Translation-= AxisZ * MouseDelta.y;
 
   ScenePanel.Selection.Position:= ScenePanel.Selection.Position + Translation;
   TransCenter:= ScenePanel.GetSelectionCenter;
@@ -385,15 +427,15 @@ begin
   case AxisMode of
     amScreen:
       begin
-        AxisX:=  ScenePanel.Cam.InView.Row[ 0 ].xyz;
-        AxisY:=  ScenePanel.Cam.InView.Row[ 2 ].xyz;
-        AxisZ:= -ScenePanel.Cam.InView.Row[ 1 ].xyz;
+        AxisX:= ScenePanel.Cam.InView.Row[ 0 ].xyz;
+        AxisY:= ScenePanel.Cam.InView.Row[ 2 ].xyz;
+        AxisZ:= ScenePanel.Cam.InView.Row[ 1 ].xyz;
       end;
     amGlobal:
       begin
-        AxisX:=  vec3_Axis_PX;
-        AxisY:=  vec3_Axis_PY;
-        AxisZ:=  vec3_Axis_PZ;
+        AxisX:= vec3_Axis_PX;
+        AxisY:= vec3_Axis_PY;
+        AxisZ:= vec3_Axis_PZ;
       end;
     amLocal:
       begin
@@ -710,14 +752,6 @@ begin
           P3DSelectPush( Obj.Actor );
           RenderLight( mat4translate( vec4( Obj.Actor.Position, 1 )));
         end;
-      {if ( Obj.Actor.Data is TP3DLight ) then
-        begin
-          if ( Assigned( EditorSceneLampMaterial )) then
-            EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Actor.Data ).Color;
-          if ( TP3DLight( Obj.Actor.Data ).LightType in [ p3dltSun, p3dltSpot ]) then
-            EditorSceneArrow.RenderFromCamera( FCamObject, mat4( mat3( Obj.Actor.Quaternion )) * mat4translate( vec4( Obj.Actor.Position, 1 )));
-          EditorSceneLamp.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Actor.Position, 1 )));
-        end;}
       if ( Obj.Actor.Data is TP3DMesh ) then
         begin
           P3DSelectPush( Obj.Actor );

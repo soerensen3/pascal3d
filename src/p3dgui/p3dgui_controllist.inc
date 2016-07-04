@@ -322,10 +322,7 @@ begin
               begin
                 Accept:= False;
                 if ( Assigned( LastMouseOverCtrl )) then
-                  begin
-                    P3DApplication.ActiveWindow.Title:= DragDropSrc.Name + '->' + LastMouseOverCtrl.Name;
-                    LastMouseOverCtrl.DragDrop( LastMouseOverCtrl, DragDropSrc, X, Y, Accept );
-                  end;
+                  LastMouseOverCtrl.DragDrop( LastMouseOverCtrl, DragDropSrc, X, Y, Accept );
                 if ( not Accept ) then
                   DragDropSrc.DragCancel( DragDropSrc, X, Y );
                 DragDropSrc:= nil;
@@ -333,18 +330,13 @@ begin
             LastMouseDownCtrl[ i ]:= nil;
           end;
 
-  //for Control in Self do
-  for i:= 0 to Count - 1 do
+  for Control in Self do
     begin
-      Control:= Items[ i ];
       //Handle Mouse
 
-      if ( Control.Name = 'Test123' ) then
-        WriteLn( 'Abc' );
-
-      //with P3DInput.Mouse do
-      //  Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
-      //Control.KeyboardAction();
+      with P3DInput.Mouse do
+        Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
+      Control.KeyboardAction();
     end;
 end;
 

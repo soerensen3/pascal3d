@@ -185,6 +185,10 @@ type
       function GetShaderOutputFromNodes( Buffer: TP3DShaderBuffer ): String;
 
     public
+      function AddCopy( Item: TP3DShaderNode ): Integer; virtual;
+      function AddCopy( Name: String ): Integer; virtual;
+      //function AddCopy( Name: String ): TP3DShaderNode;
+
       function Compile: TP3DShaderCompiled;
       function CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
   end;
@@ -248,6 +252,25 @@ begin
                 + s + '}';
   P3DLog.LogInfo( Self, 'Built shader from chunks &gt;'  + LineEnding + Result.Code + LineEnding + '&lt; End of Shader' );
 end;
+
+function TP3DShaderNodeTree.AddCopy(Item: TP3DShaderNode): Integer;
+var
+  Node: TP3DShaderNode;
+begin
+  Node:= Item.MakeCopy;
+  Result:= Nodes.Add( Node );
+end;
+
+function TP3DShaderNodeTree.AddCopy(Name: String): Integer;
+var
+  Node: TP3DShaderNode;
+begin
+  Node:= P3DShaderNodeLib.FindNode( Name );
+  if ( not Assigned( Node )) then
+    raise Exception.Create( 'Cannot add copy of shader node: Node "' + Name + '" not found!' );
+  Result:= AddCopy( Node );
+end;
+
 
 { TP3DShaderNodeDynamic }
 
@@ -391,6 +414,7 @@ begin
         break;
       end;
 end;
+
 
 { TP3DShaderNodeFragmentInput }
 

@@ -293,41 +293,42 @@ var
   p: TVec2;
   i: Integer;
   num_segments_draw: Integer;
+  sa, ea: Float;
 begin
   if ( not PrepareForDrawing ) then exit;
 
   glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
   theta:= 2 * PI / num_segments;
 
-  co:= cos( startangle*deg2rad );
-  si:= sin( startangle*deg2rad );
-  p:= vec2( r, 0 );
-  p:= vec2( co * p.x - si * p.y, si * p.x + co * p.y );
-  //we start at the start_angle
+  sa:= Min( startangle, endangle );
+  ea:= Max( startangle, endangle );
+  co:= cos( sa * deg2rad );
+  si:= sin( sa * deg2rad );
+  p:= vec2( co * r, si * r );
+  //we start at the start angle
 
   co:= cos( theta );//precalculate the sine and cosine
   si:= sin( theta );
 
   num_segments:= num_segments div 4 * 4;
 
-  glBegin(GL_TRIANGLE_FAN);
+  glBegin( GL_TRIANGLE_FAN );
   glVertexAttrib2f( P3DAttribPosition, c.x, c.y );//start with center
   glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y );//add first point
-  num_segments_draw:= round( int(( endangle - startangle ) * deg2rad / theta ));
+  num_segments_draw:= round( int(( ea - sa ) * deg2rad / theta ));
 
   for i:= 0 to num_segments_draw do
     begin
-      glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y);//output vertex
+      glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y );//output vertex
 
 		//apply the rotation matrix
       t:= p.x;
       p:= vec2( co * p.x - si * p.y, si * t + co * p.y );
     end;
 
-  co:= cos( endangle*deg2rad );
-  si:= sin( endangle*deg2rad );
-  p:= vec2( r, 0 );
-  p:= vec2( co * p.x - si * p.y, si * p.x + co * p.y );
+  co:= cos( ea * deg2rad );
+  si:= sin( ea * deg2rad );
+  p:= vec2( co * r, si * r );
 
   glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y );//add last point
 

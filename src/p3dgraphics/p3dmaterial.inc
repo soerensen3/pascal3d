@@ -243,15 +243,6 @@ var
   Compiled: TP3DShaderCompiled;
   i: Integer;
 
-  function AddNode( Name: String ): TP3DShaderNode;
-  begin
-    Node:= P3DShaderNodeLib.FindNode( Name );
-    if ( not Assigned( Node )) then
-      raise Exception.Create( 'Cannot build shader: Node "' + Name + '" not found!' );
-    Result:= Node.MakeCopy;
-    ShaderTree.Nodes.Add( Result );
-  end;
-
   function ChangeSocketValueInt( Node: TP3DShaderNode; Name: String; Value: Integer ): TP3DShaderNode;
   var
     Socket: Integer;
@@ -288,29 +279,28 @@ var
     Result:= Node1;
   end;
 
-const Mode: array [ p3dmmMix .. p3dmmSubtract ] of String = ( 'mix', 'multiply', 'add', 'subtract' );
+  function AddNode( Name: String ): TP3DShaderNode;
+  begin
+    Result:= TP3DShaderNode( ShaderTree.Nodes[ ShaderTree.AddCopy( Name )]);
+  end;
+
+const
+  Mode: array [ p3dmmMix .. p3dmmSubtract ] of String = ( 'mix', 'multiply', 'add', 'subtract' );
 
 begin
   ShaderTree:= TP3DShaderNodeTree.Create;
   Compiled:= nil;
 
   try
-    if ( not Unlit ) then
-      AddNode( 'lib_common' );
+    {PASS MAPS}
+    ShaderTree.AddCopy( 'lib_maps' );
 
-    AddNode( 'lib_maps' );
+    ShaderTree.AddCopy( 'Pass_Init' );
 
-    AddNode( 'Pass_Init' );
-
-    if ( not Unlit ) then
-      AddNode( 'lib_lighting' );
-
-
-    for i:= 0 to 7 do
-      ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
 
     for i:= 0 to Maps.Count - 1 do
       begin
+        ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
         ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'Pass_Read' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
         if ( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor > 0 ) then
           ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
@@ -319,18 +309,29 @@ begin
           ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
           AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
         if ( TP3DMaterialMapBase( Maps[ i ]).SpecularFactor > 0 ) then
-           ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
-           AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
+          AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
       end;
 
     AddNode( 'Pass_Mix' );
+
+    {END PASS MAPS}
+
+    {PASS LIGHTNING}
+    if ( not Unlit ) then
+      begin
+        ShaderTree.AddCopy( 'lib_common' );
+        AddNode( 'lib_lighting' );
+      end;
     if ( Unlit ) then
       AddNode( 'Unlit' )
     else
       AddNode( 'Lighting' );
-    AddNode( 'Pass_Final' );
-    //AddNode( 'lib_test' );
+    {END PASS LIGHTNING}
 
+    {PASS FINAL}
+    AddNode( 'Pass_Final' );
+    {END PASS FINAL}
 
     Compiled:= ShaderTree.Compile;
 

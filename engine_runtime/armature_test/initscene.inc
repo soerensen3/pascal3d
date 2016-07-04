@@ -210,7 +210,7 @@ begin
   SceneViewer.Update;
   SceneViewer.Children.ExpandAll( True );
   SceneViewer.Align:= alLeft;
-  //SceneViewer.Visible:= False;
+  SceneViewer.Visible:= False;
 end;
 
 procedure DeInit( Sender: TP3DApplication );

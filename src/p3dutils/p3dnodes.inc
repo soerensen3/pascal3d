@@ -69,6 +69,8 @@ type
       constructor Create;
       destructor Destroy; override;
 
+      procedure ConnectToNodeSocket(ANode: TP3DNode; SrcSocket, DestSocket: String);
+
       property Inputs: TP3DNodeSocketList read FInputs;
       property Outputs: TP3DNodeSocketList read FOutputs;
   //- Sockets for Inputs and Outputs
@@ -183,6 +185,40 @@ begin
   Inputs.Free;
   Outputs.Free;
   inherited Destroy;
+end;
+
+procedure TP3DNode.ConnectToNodeSocket( ANode: TP3DNode; SrcSocket, DestSocket: String );
+var
+  Socket1n, Socket2n: Integer;
+  Socket1, Socket2: TP3DNodeSocket;
+begin
+  Socket1n:= Inputs.FindSocketByName( SrcSocket );
+
+  if ( Socket1n < 0 ) then
+    Socket1n:= Outputs.FindSocketByName( SrcSocket )
+  else
+    Socket1:= Inputs[ Socket1n ];
+
+  if ( Socket1n < 0 ) then
+    raise Exception.Create( 'Cannot connect to socket: Source socket "' + SrcSocket + '" not found!' )
+  else
+    Socket1:= Outputs[ Socket1n ];
+
+  if ( Socket1.Direction = nsdInput ) then
+    begin
+      Socket2n:= ANode.Outputs.FindSocketByName( DestSocket );
+      Socket2:= ANode.Outputs[ Socket1n ];
+    end
+  else
+    begin
+      Socket2n:= ANode.Inputs.FindSocketByName( DestSocket );
+      Socket2:= ANode.Inputs[ Socket1n ];
+    end;
+
+  if ( Socket2n < 0 ) then
+    raise Exception.Create( 'Cannot connect to socket: Destination socket "' + DestSocket + '" not found!' );
+
+  Socket1.Connected:= Socket2;
 end;
 
 { TP3DNodeSocket }
