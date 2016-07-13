@@ -634,7 +634,7 @@ end;
 
 constructor TP3DCanvas2D.Create(AOwner: TPersistent);
 begin
-  inherited;
+  inherited Create( AOwner );
   FPen:= TP3DPen.Create( vec4( 0, 0, 0, 1 ), 1.0, psSolid );
   FPen.OnChange:= @PenChange;
   FBrush:= TP3DBrush.Create( vec4( 1 ));
@@ -642,6 +642,8 @@ end;
 
 destructor TP3DCanvas2D.Destroy;
 begin
+  Pen.Free;
+  Brush.Free;
   inherited Destroy;
 end;
 

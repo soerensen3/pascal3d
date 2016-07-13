@@ -102,6 +102,7 @@
       FPickMaterial: TP3DMaterialBase;
       FInfoText: TP3DText;
       FRenderList: TP3DRenderList;
+      FCanvas3D: TP3DCanvas3D;
 
       procedure Push3DMode;
 
@@ -110,6 +111,7 @@
       procedure SetEditMode(AValue: TEditMode);
       procedure SetSelection(AValue: TP3DActor);
       procedure RenderCallback( world: TMat4; AActor: TP3DActor );
+      procedure DrawArmature( ArmatureObject: TP3DActor ); // TEMP
 
     public
       constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
@@ -120,6 +122,8 @@
       procedure MouseMove(X, Y: Integer); override;
       function Pick( x, y: Integer ): TP3DActor;
       function GetSelectionCenter: TVec3;
+      procedure Realign; override;
+      procedure UpdateCanvas3D;
 
       procedure BeforeDraw( Sender: TObject );
       procedure AfterDraw( Sender: TObject );
@@ -132,6 +136,7 @@
       property RenderList: TP3DRenderList read FRenderList write FRenderList;
       property Cam: TP3DCamera read FCam write FCam;
       property CamObject: TP3DActor read FCamObject write FCamObject;
+      property Canvas3D: TP3DCanvas3D read FCanvas3D write FCanvas3D;
   end;
 
 
@@ -340,14 +345,16 @@ begin
 end;
 
 procedure TP3DSceneEditModeDefault.CheckInput;
+var
+  x, y, z: LongInt;
 begin
   if ( ScenePanel.EditMode in [ emGrab, emRotate, emScale ]) then
     begin
-      if ( P3DInput.Keyboard.DKeys[ P3DK_X ] and P3DInput.Keyboard.Keys[ P3DK_X ]) then
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_X ] = ksPressed ) then
         ToggleAxis( alX );
-      if ( P3DInput.Keyboard.DKeys[ P3DK_Y ] and P3DInput.Keyboard.Keys[ P3DK_Y ]) then
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_Y ] = ksPressed ) then
         ToggleAxis( alY );
-      if ( P3DInput.Keyboard.DKeys[ P3DK_Z ] and P3DInput.Keyboard.Keys[ P3DK_Z ]) then
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_Z ] = ksPressed ) then
         ToggleAxis( alZ );
       if ( P3DInput.Mouse.Buttons[ 0 ]) then
         FinishEditing;
@@ -585,6 +592,23 @@ begin
     Editor.RenderSelection( world );
 end;
 
+procedure TP3DScenePanel.DrawArmature(ArmatureObject: TP3DActor);
+  procedure RenderBone( startp: TVec3; Bone: TP3DBone );
+  begin
+
+  end;
+
+var
+  Bone: TP3DBone;
+
+begin
+  if (( Assigned( ArmatureObject )) and ( ArmatureObject.Data is TP3DArmature )) then
+    begin
+      for Bone in TP3DArmature( ArmatureObject.Data ).Bones do
+        ;
+    end;
+end;
+
 
 constructor TP3DScenePanel.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
@@ -603,10 +627,15 @@ begin
   Scene.OnRenderCallback:= @RenderCallback;
   FRenderList:= TP3DRenderList.Create;
   FEditor:= EditModeDefault;
+
+  Canvas3D:= TP3DCanvas3D.Create( nil );
+  UpdateCanvas3D;
 end;
 
 destructor TP3DScenePanel.Destroy;
 begin
+  FCanvas3D.Free;
+
   SelectionMaterial.Free;
   SceneView.Free;
   FreeAndNil( FInfoText );
@@ -629,15 +658,15 @@ begin
 
   Editor.UpdateAxis;
 
-  if ( P3DInput.Keyboard.DKeys[ P3DK_G ] and P3DInput.Keyboard.Keys[ P3DK_G ]) then
+  if ( P3DInput.Keyboard.DKeysLayout[ P3DK_G ] = ksPressed ) then
     EditMode:= emGrab;
-  if ( P3DInput.Keyboard.DKeys[ P3DK_R ] and P3DInput.Keyboard.Keys[ P3DK_R ]) then
+  if ( P3DInput.Keyboard.DKeysLayout[ P3DK_R ] = ksPressed ) then
     EditMode:= emRotate;
-  if ( P3DInput.Keyboard.DKeys[ P3DK_S ] and P3DInput.Keyboard.Keys[ P3DK_S ]) then
+  if ( P3DInput.Keyboard.DKeysLayout[ P3DK_S ] = ksPressed ) then
     EditMode:= emScale;
-  if ( P3DInput.Keyboard.DKeys[ P3DK_ESCAPE ] and P3DInput.Keyboard.Keys[ P3DK_ESCAPE ]) then
+  if ( P3DInput.Keyboard.DKeysLayout[ P3DK_ESCAPE ] = ksPressed ) then
     Editor.CancelTransform;
-  if ( P3DInput.Keyboard.DKeys[ P3DK_RETURN ] and P3DInput.Keyboard.Keys[ P3DK_RETURN ]) then
+  if ( P3DInput.Keyboard.DKeysLayout[ P3DK_RETURN ] = ksPressed ) then
     EditMode:= emDefault;
 
   Editor.CheckInput;
@@ -782,6 +811,23 @@ begin
     Result:= vec3( 0 );
 end;
 
+procedure TP3DScenePanel.Realign;
+begin
+  inherited Realign;
+  UpdateCanvas3D;
+end;
+
+procedure TP3DScenePanel.UpdateCanvas3D;
+begin
+  if ( Assigned( Canvas3D )) then
+    begin
+      Canvas3D.Left:= Canvas.Left + round( BoundsTL.X );
+      Canvas3D.Top:= Canvas.Top + round( BoundsTL.Y );
+      Canvas3D.Width:= Canvas.Width - round( BoundsTL.X ) - round( BoundsBR.X );
+      Canvas3D.Height:= Canvas.Height - round( BoundsTL.Y ) - round( BoundsBR.Y );
+    end;
+end;
+
 procedure TP3DScenePanel.BeforeDraw(Sender: TObject);
 begin
   Editor.BeforeRender;
@@ -808,7 +854,17 @@ begin
                          * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy
                          + vec2( ClientRect.Width, ClientRect.Height ) / 2,
                          SymbolActor );}
+      end
+    else if ( Obj.Actor.Data is TP3DArmature ) then
+      begin
+        DrawArmature( Obj.Actor );
+      {Canvas.RenderText( TP3DSymbolActor,
+                         vec2( ClientRect.Width, ClientRect.Height ) / 2
+                         * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy
+                         + vec2( ClientRect.Width, ClientRect.Height ) / 2,
+                         SymbolActor );}
       end;
+
   {glScissor( P3DInput.Mouse.X - 50, P3DViewports[ 0 ].Height - P3DInput.Mouse.Y - 50, 100, 100 );
   glEnable( GL_SCISSOR_TEST );
   Pick(P3DInput.Mouse.X,P3DInput.Mouse.Y);
@@ -822,6 +878,13 @@ begin
   Canvas.Font.Size:= 32;}
 
   Canvas.Unlock();
+  FCanvas3D.Proj:= Cam.Proj;
+  FCanvas3D.View:= Cam.View;
+  FCanvas3D.Lock;
+
+  FCanvas3D.RenderLine( vec3( 0, 0, 0 ), vec3( 10, 10, 10 ), vec4( 1, 0, 0, 1 ));
+
+  FCanvas3D.Unlock();
 end;
 
 {$ENDIF}

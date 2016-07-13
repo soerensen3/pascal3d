@@ -261,7 +261,6 @@ var
   begin
     FPosition.FromString( DOM.GetAttribute( 'position' ));
     FQuaternion.FromString( DOM.GetAttribute( 'quaternion' ));
-    FQuaternion:= FQuaternion; //TODO: FIND OUT WHY THIS (*-1) IS NECESSARY
     FScale.FromString( DOM.GetAttribute( 'scale' ));
     UpdateEuler;
     UpdateMatrix;

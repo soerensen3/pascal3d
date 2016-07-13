@@ -48,6 +48,7 @@ type
 {$INCLUDE p3dtexture.inc}
 {$INCLUDE p3dmaterial.inc}
 {$INCLUDE p3dmesh.inc}
+{$INCLUDE p3darmature.inc}
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dterrain.inc}
@@ -111,6 +112,8 @@ begin
 end;
 
 
+
+
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dbuffers.inc}
 {$INCLUDE p3dviewport.inc}
@@ -123,6 +126,7 @@ end;
 {$INCLUDE p3dtexture.inc}
 {$INCLUDE p3dmaterial.inc}
 {$INCLUDE p3dmesh.inc}
+{$INCLUDE p3darmature.inc}
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dterrain.inc}

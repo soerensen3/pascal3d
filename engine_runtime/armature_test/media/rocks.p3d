@@ -180,6 +180,7 @@
     <texture
       mode = "mix"
       file = "rock_normal.png"
+      displace = "-0.5"
       layer = "0"
       normal = "1.0">
     </texture>

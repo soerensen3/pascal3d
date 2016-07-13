@@ -65,6 +65,7 @@ type
   end;
 
   {$INCLUDE p3dcanvas_2d.inc}
+  {$INCLUDE p3dcanvas_3d.inc}
 
 
 {$ENDIF}
@@ -240,6 +241,7 @@ begin
 end;
 
 {$INCLUDE p3dcanvas_2d.inc}
+{$INCLUDE p3dcanvas_3d.inc}
 
 {$ENDIF}
 

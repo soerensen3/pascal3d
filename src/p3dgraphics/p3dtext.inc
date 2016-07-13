@@ -34,6 +34,7 @@ const
   P3DSymbolLibrary               = '[';
   P3DSymbolCheck                 = '\';
   P3DSymbolTerrain               = ']';
+  P3DSymbolArmature              = '^';
 
 type
   TP3DFontManager = class;
@@ -186,8 +187,9 @@ end;
 procedure TP3DText.ApplyShader;
 begin
   if ( P3DFontManager.Material.Maps.Count = 0 ) then
-    P3DFontManager.Material.Maps.Add( TP3DMaterialMapBase.Create );
+    P3DFontManager.Material.Maps.Add( TP3DMaterialMapBase.Create( P3DFontManager.Material ));
   P3DFontManager.Material.Maps[ 0 ].Map:= Texture;
+  TP3DMaterialMapBase( P3DFontManager.Material.Maps[ 0 ]).AlphaFactor:= 1;
   if ( not Assigned( P3DFontManager.Material.Shader )) then
     P3DFontManager.Material.BuildShader();
   P3DFontManager.Material.Shader.Enable;

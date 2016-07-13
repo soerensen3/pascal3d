@@ -983,6 +983,8 @@ procedure TP3DTreeViewActors.Update;
               Parent[ n ].SymbolText:= P3DSymbolShader
             else if ( Item.Data is TP3DTexture ) then
               Parent[ n ].SymbolText:= P3DSymbolTexture
+            else if ( Item.Data is TP3DArmature ) then
+              Parent[ n ].SymbolText:= P3DSymbolArmature
             //else if ( Item.Data is TP3DData ) then
             //  Parent[ n ].SymbolText:= TP3DSymbolLibrary
             else;
@@ -1097,6 +1099,18 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
+  procedure AddArmatureList( List: TP3DArmatureList; Parent: TP3DTreeNodeList );
+  var
+    Armature: TP3DArmature;
+    n: LongInt;
+  begin
+    for Armature in List do
+      begin
+        n:= Parent.Add( Armature.Name, Armature );
+        Parent[ n ].SymbolText:= P3DSymbolArmature;
+      end;
+  end;
+
   procedure AddDataList( Data: TP3DData; Parent: TP3DTreeNodeList );
   var
     Node: TP3DTreeNodeList;
@@ -1131,6 +1145,9 @@ procedure TP3DTreeViewActors.Update;
 
     Node:= Parent[ Parent.Add( 'Textures', Data.Textures, False, P3DSymbolTexture )].Children;
     AddTextureList( Data.Textures, Node );
+
+    Node:= Parent[ Parent.Add( 'Armatures', Data.Armatures, False, P3DSymbolArmature )].Children;
+    AddArmatureList( Data.Armatures, Node );
   end;
 
 begin

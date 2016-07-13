@@ -73,7 +73,7 @@ type
       constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
 
-      procedure AddPage(Page: TP3DOIEditorPage);
+      function AddPage(Page: TP3DOIEditorPage): TP3DOIEditorPage;
       procedure ButtonMouseClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
 
       procedure Update;
@@ -220,8 +220,9 @@ begin
 
   AddPage( TP3DOIEditorPageObject.Create( nil, Self ));
   AddPage( TP3DOIEditorPageLight.Create( nil, Self ));
-  AddPage( TP3DOIEditorPageMaterial.Create( nil, Self ));
   AddPage( TP3DOIEditorPageCamera.Create( nil, Self ));
+  with ( AddPage( TP3DOIEditorPageMaterial.Create( nil, Self )) as TP3DOIEditorPageMaterial ) do
+     EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( nil, Self )));
 {  AddEditor( TP3DOIEditorDataLight.Create( nil, Self ));
   AddEditor( TP3DOIEditorDataTexture.Create( nil, Self ));
   AddEditor( TP3DOIEditorDataMaterialBase.Create( nil, Self ));
@@ -238,7 +239,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DObjectInspector.AddPage( Page: TP3DOIEditorPage );
+function TP3DObjectInspector.AddPage(Page: TP3DOIEditorPage): TP3DOIEditorPage;
 begin
   Page.Align:= alClient;
   Page.Obj:= Obj;
@@ -247,6 +248,7 @@ begin
   Page.CreateButton( Toolbar, @ButtonMouseClick );
   if ( Pages.Count = 1 ) then
     Page.Button.Down:= True;
+  Result:= Page;
 end;
 
 procedure TP3DObjectInspector.ButtonMouseClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);

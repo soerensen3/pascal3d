@@ -39,7 +39,7 @@ begin
     with ( mainscene.Objects[ Obj ] as TP3DRenderableObject ) do
       Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 )); }
 
-  if( P3DData.Libraries.Count > 0 ) then
+  {if( P3DData.Libraries.Count > 0 ) then
     begin
       Obj:= P3DData.Libraries[ 0 ].Objects.FindByName( 'Grid' );
       if ( Obj >= 0 ) then
@@ -53,7 +53,7 @@ begin
             glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -0.05 );
             glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'cellNumber' ), cell );
           end;
-    end;
+    end;}
   //WriteLn( P3DShaderActive.DumpUniforms );
   P3DApplication.MainWindow.Title:= 'FPS: ' + FloatToStr( FPS ) + ' ' + CamPos.ToString() + ' <' + CamYawPitchRoll.ToString() + '>';
   mainscene.Render;

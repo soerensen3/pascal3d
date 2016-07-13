@@ -245,11 +245,56 @@ published
       property UnlitEdit: TP3DCheckBox read FUnlitEdit write FUnlitEdit;
   end;
 
+  { TP3DOIEditorDataMaterialMap }
+
+  TP3DOIEditorDataMaterialMap = class ( TP3DOIEditorGroup )
+    private
+      FDiffuseEdit: TP3DEventValueEdit;
+      FDisplaceEdit: TP3DEventValueEdit;
+      FInfluence: TP3DGraphicControl;
+      FMapping: TP3DGraphicControl;
+      FMap: TP3DMaterialMapShader;
+      FModeCombo: TP3DComboBox;
+      FNormalEdit: TP3DEventValueEdit;
+      FSpecularEdit: TP3DEventValueEdit;
+      FTextureEditor: TP3DOIEditorDataTexture;
+
+      procedure SetMap(AValue: TP3DMaterialMapShader);
+      //property Mapping: TP3DGraphicControl read FMapping write FMapping;
+      property Influence: TP3DGraphicControl read FInfluence write FInfluence;
+      function GetFloatParam(Sender: TP3DEventValueEdit): Float;
+      procedure SetFloatParam(Sender: TP3DEventValueEdit; AValue: Float);
+      procedure ComboChange( Sender: TP3DComboBox; var AValue: String );
+
+    public
+      procedure Update; override;
+      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
+
+    published
+      property TextureEditor: TP3DOIEditorDataTexture read FTextureEditor write FTextureEditor;
+      property Map: TP3DMaterialMapShader read FMap write SetMap;
+
+      property DiffuseEdit: TP3DEventValueEdit read FDiffuseEdit write FDiffuseEdit;
+      property SpecularEdit: TP3DEventValueEdit read FSpecularEdit write FSpecularEdit;
+      property NormalEdit: TP3DEventValueEdit read FNormalEdit write FNormalEdit;
+      property DisplaceEdit: TP3DEventValueEdit read FDisplaceEdit write FDisplaceEdit;
+      property ModeCombo: TP3DComboBox read FModeCombo write FModeCombo;
+  end;
+
+  {
+  property DiffuseFactor: Single read FDiffuseFactor write FDiffuseFactor;
+  property NormalFactor: Single read FNormalFactor write FNormalFactor;
+  property SpecularFactor: Single read FSpecularFactor write FSpecularFactor;
+  property DisplaceFactor: Single read FDisplaceFactor write FDisplaceFactor;
+  property Mode: TP3DMapMode read FMode write FMode;
+  }
+
   { TP3DOIEditorDataMaterialMaps }
 
   TP3DOIEditorDataMaterialMaps = class ( TP3DOIEditorGroup )
     private
-      FMapSelectedEditor: TP3DOIEditorDataTexture;
+      FMapSelectedEditor: TP3DOIEditorDataMaterialMap;
       FMapsListView: TP3DListView;
       FMaterial: TP3DMaterialShader;
 
@@ -263,7 +308,7 @@ published
 
     published
       property MapsListView: TP3DListView read FMapsListView write FMapsListView;
-      property MapSelectedEditor: TP3DOIEditorDataTexture read FMapSelectedEditor write FMapSelectedEditor;
+      property MapSelectedEditor: TP3DOIEditorDataMaterialMap read FMapSelectedEditor write FMapSelectedEditor;
       property Material: TP3DMaterialShader read FMaterial write SetMaterial;
   end;
 
@@ -289,13 +334,31 @@ published
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read GetSelectionChange write SetSelectionChange;
   end;
 
+  { TP3DOIEditorPageMaps }
+
+  TP3DOIEditorPageMaps = class ( TP3DOIEditorPage )
+    private
+      FEditorMatMaps: TP3DOIEditorDataMaterialMaps;
+
+    public
+      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
+
+    published
+      property EditorMatMaps: TP3DOIEditorDataMaterialMaps read FEditorMatMaps write FEditorMatMaps;
+  end;
+
   { TP3DOIEditorPageMaterial }
 
   TP3DOIEditorPageMaterial = class ( TP3DOIEditorPage )
     private
       FEditorMatBase: TP3DOIEditorDataMaterialBase;
-      FEditorMatMaps: TP3DOIEditorDataMaterialMaps;
       FEditorMatMesh: TP3DOIEditorDataMeshMaterial;
+      FEditorPageMaps: TP3DOIEditorPageMaps;
 
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
@@ -310,7 +373,7 @@ published
     published
       property EditorMatMesh: TP3DOIEditorDataMeshMaterial read FEditorMatMesh write FEditorMatMesh;
       property EditorMatBase: TP3DOIEditorDataMaterialBase read FEditorMatBase write FEditorMatBase;
-      property EditorMatMaps: TP3DOIEditorDataMaterialMaps read FEditorMatMaps write FEditorMatMaps;
+      property EditorPageMaps: TP3DOIEditorPageMaps read FEditorPageMaps write FEditorPageMaps;
   end;
 
 {$ENDIF}
@@ -989,7 +1052,7 @@ procedure TP3DOIEditorDataMaterialMaps.SelectionChange(Sender: TP3DListView;
   var NewSelection: TP3DListItem);
 begin
   if ( Assigned( NewSelection )) then
-    MapSelectedEditor.Obj:= TP3DMaterialMapShader( NewSelection.Data ).Map
+    MapSelectedEditor.Obj:= TP3DMaterialMapShader( NewSelection.Data )
   else
     MapSelectedEditor.Obj:= nil;
   MapSelectedEditor.Visible:= Assigned( MapSelectedEditor.Obj );
@@ -1031,7 +1094,7 @@ begin
   MapsListView.Height:= 100;
   MapsListView.OnSelectionChange:= @SelectionChange;
 
-  MapSelectedEditor:= TP3DOIEditorDataTexture.Create( nil, Self );
+  MapSelectedEditor:= TP3DOIEditorDataMaterialMap.Create( nil, Self );
   MapSelectedEditor.Align:= alTop;
   AutoSize:= True;
 end;
@@ -1040,6 +1103,141 @@ class function TP3DOIEditorDataMaterialMaps.IsCompatible(AObj: TInterfacedPersis
 begin
   Result:= AObj is TP3DMaterialShader;
 end;
+
+{ TP3DOIEditorDataMaterialMap }
+
+procedure TP3DOIEditorDataMaterialMap.SetMap(AValue: TP3DMaterialMapShader);
+begin
+  if FMap= AValue then Exit;
+  FMap:= AValue;
+end;
+
+function TP3DOIEditorDataMaterialMap.GetFloatParam(Sender: TP3DEventValueEdit): Float;
+begin
+  Result:= 0;
+
+  if ( not ( Assigned( Map ) and ( Map is TP3DMaterialMapBase ))) then
+    exit;
+
+  if ( Sender = DiffuseEdit ) then
+    Result:= TP3DMaterialMapBase( Map ).DiffuseFactor
+  else if ( Sender = NormalEdit ) then
+    Result:= TP3DMaterialMapBase( Map ).NormalFactor
+  else if ( Sender = SpecularEdit ) then
+    Result:= TP3DMaterialMapBase( Map ).SpecularFactor
+  else if ( Sender = DisplaceEdit ) then
+    Result:= TP3DMaterialMapBase( Map ).DisplaceFactor;
+end;
+
+procedure TP3DOIEditorDataMaterialMap.SetFloatParam(Sender: TP3DEventValueEdit; AValue: Float);
+begin
+  if ( not ( Assigned( Map ) and ( Map is TP3DMaterialMapBase ))) then
+    exit;
+
+  if ( Sender = DiffuseEdit ) then
+    TP3DMaterialMapBase( Map ).DiffuseFactor := AValue
+  else if ( Sender = NormalEdit ) then
+    TP3DMaterialMapBase( Map ).NormalFactor := AValue
+  else if ( Sender = SpecularEdit ) then
+    TP3DMaterialMapBase( Map ).SpecularFactor := AValue
+  else if ( Sender = DisplaceEdit ) then
+    TP3DMaterialMapBase( Map ).DisplaceFactor := AValue;
+end;
+
+procedure TP3DOIEditorDataMaterialMap.ComboChange(Sender: TP3DComboBox;
+  var AValue: String);
+begin
+  if ( not ( Assigned( Map ) and ( Map is TP3DMaterialMapBase ))) then
+    exit;
+
+  case AValue of
+    'add': TP3DMaterialMapBase( Map ).Mode:= p3dmmAdd;
+    'mix': TP3DMaterialMapBase( Map ).Mode:= p3dmmMix;
+    'multiply': TP3DMaterialMapBase( Map ).Mode:= p3dmmMultiply;
+    'subtract': TP3DMaterialMapBase( Map ).Mode:= p3dmmSubtract;
+  end;
+end;
+
+procedure TP3DOIEditorDataMaterialMap.Update;
+begin
+  //Mapping.Visible:= Obj is TP3DMaterialMapShader;
+  Influence.Visible:= Obj is TP3DMaterialMapBase;
+
+  if ( Obj is TP3DMaterialMapShader ) then
+    begin
+      Map:= TP3DMaterialMapShader( Obj );
+      TextureEditor.Obj:= Map.Map;
+      case TP3DMaterialMapBase( Map ).Mode of
+        p3dmmAdd: ModeCombo.Caption:= 'add';
+        p3dmmMix: ModeCombo.Caption:= 'mix';
+        p3dmmMultiply: ModeCombo.Caption:= 'multiply';
+        p3dmmSubtract: ModeCombo.Caption:= 'subtract';
+      end;
+    end
+  else
+    begin
+      Map:= nil;
+      TextureEditor.Obj:= nil;
+    end;
+end;
+
+constructor TP3DOIEditorDataMaterialMap.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AParent );
+  Caption:= '';
+  NoBounds:= True;
+
+  //Mapping:= AddContainer( Self, 'Mapping' );
+
+  TextureEditor:= TP3DOIEditorDataTexture.Create( nil, Self );
+  TextureEditor.Align:= alTop;
+
+  Influence:= TP3DGraphicControl.Create( nil, Self ); //AddContainer( Self, 'Influence' );
+  Influence.Align:= alTop;
+  Influence.Height:= 5 * 20;
+
+  DiffuseEdit:= TP3DEventValueEdit.Create( nil, AddContainer( Influence, 'Diffuse factor' ));
+  DiffuseEdit.GetValueEvent:= @GetFloatParam;
+  DiffuseEdit.SetValueEvent:= @SetFloatParam;
+  DiffuseEdit.Align:= alClient;
+  DiffuseEdit.Parent.Align:= alTop;
+
+  SpecularEdit:= TP3DEventValueEdit.Create( nil, AddContainer( Influence, 'Specular factor' ));
+  SpecularEdit.GetValueEvent:= @GetFloatParam;
+  SpecularEdit.SetValueEvent:= @SetFloatParam;
+  SpecularEdit.Align:= alClient;
+  SpecularEdit.Parent.Align:= alTop;
+
+  NormalEdit:= TP3DEventValueEdit.Create( nil, AddContainer( Influence, 'Normal factor' ));
+  NormalEdit.GetValueEvent:= @GetFloatParam;
+  NormalEdit.SetValueEvent:= @SetFloatParam;
+  NormalEdit.Align:= alClient;
+  NormalEdit.Parent.Align:= alTop;
+
+  DisplaceEdit:= TP3DEventValueEdit.Create( nil, AddContainer( Influence, 'Displace factor' ));
+  DisplaceEdit.GetValueEvent:= @GetFloatParam;
+  DisplaceEdit.SetValueEvent:= @SetFloatParam;
+  DisplaceEdit.Align:= alClient;
+  DisplaceEdit.Parent.Align:= alTop;
+
+
+  ModeCombo:= TP3DComboBox.Create( nil, AddContainer( Influence, 'Mix Mode' ));
+  ModeCombo.OnChange:= @ComboChange;
+  ModeCombo.Align:= alClient;
+  ModeCombo.Items.Add( 'add' );
+  ModeCombo.Items.Add( 'subtract' );
+  ModeCombo.Items.Add( 'multiply' );
+  ModeCombo.Items.Add( 'mix' );
+
+  AutoSize:= True;
+end;
+
+class function TP3DOIEditorDataMaterialMap.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= AObj is TP3DMaterialMapShader;
+end;
+
 
 { TP3DOIEditorDataMesh }
 
@@ -1100,12 +1298,14 @@ begin
   if ( Assigned( NewSelection )) then
     begin
       EditorMatBase.Obj:= TInterfacedPersistent( NewSelection.Data );
-      EditorMatMaps.Obj:= TInterfacedPersistent( NewSelection.Data );
+      if ( Assigned( EditorPageMaps )) then
+        EditorPageMaps.Obj:= TInterfacedPersistent( NewSelection.Data );
     end
   else
     begin
       EditorMatBase.Obj:= nil;
-      EditorMatMaps.Obj:= nil;
+      if ( Assigned( EditorPageMaps )) then
+        EditorPageMaps.Obj:= nil;
     end;
 end;
 
@@ -1120,16 +1320,13 @@ begin
 
   EditorMatBase:= TP3DOIEditorDataMaterialBase.Create( nil, Self );
   EditorMatBase.Align:= alTop;
-
-  EditorMatMaps:= TP3DOIEditorDataMaterialMaps.Create( nil, Self );
-  EditorMatMaps.Align:= alTop;
 end;
 
 procedure TP3DOIEditorPageMaterial.Update;
 begin
   inherited Update;
   EditorMatMesh.Obj:= Obj;
-  EditorMatMaps.Obj:= Obj;
+  //EditorMatMaps.Obj:= Obj;
   EditorMatBase.Obj:= Obj;
 end;
 
@@ -1142,6 +1339,34 @@ function TP3DOIEditorPageMaterial.CreateButton(AParent: TP3DGraphicControl; AMou
 begin
   Result:= inherited CreateButton(AParent, AMouseClick);
   Result.Caption:= P3DSymbolMaterial;
+end;
+
+{ TP3DOIEditorPageMaps }
+
+constructor TP3DOIEditorPageMaps.Create(const AOwner: TP3DObjectList;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AOwner, AParent );
+
+  EditorMatMaps:= TP3DOIEditorDataMaterialMaps.Create( nil, Self );
+  EditorMatMaps.Align:= alTop;
+end;
+
+procedure TP3DOIEditorPageMaps.Update;
+begin
+  inherited Update;
+  EditorMatMaps.Obj:= Obj;
+end;
+
+class function TP3DOIEditorPageMaps.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= TP3DOIEditorDataMeshMaterial.IsCompatible( AObj ) or TP3DOIEditorDataMaterialMaps.IsCompatible( AObj );
+end;
+
+function TP3DOIEditorPageMaps.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
+begin
+  Result:= inherited CreateButton(AParent, AMouseClick);
+  Result.Caption:= P3DSymbolTexture;
 end;
 
 { TP3DOIEditorPageLight }

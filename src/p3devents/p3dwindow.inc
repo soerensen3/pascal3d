@@ -98,6 +98,7 @@ type
 
 {$IFDEF IMPLEMENTATION}
 
+
 function P3DClientToScreen(Window: TP3DWindow; X, Y: Integer): TPoint;
 begin
   Result:= Point( Window.Left + X, Window.Top + Y );

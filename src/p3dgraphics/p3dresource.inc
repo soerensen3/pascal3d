@@ -8,6 +8,7 @@ type
   TP3DDataList = class;
   TP3DData = class ( TPersistent )
     private
+      FArmatures: TP3DArmatureList;
       FCameras: TP3DCameraList;
       FDataBlocks: TP3DObjectList;
       FFileWatch: TP3DFileWatch;
@@ -48,6 +49,7 @@ type
       property Scenes: TP3DSceneList read FScenes write FScenes;
       property Shaders: TP3DShaderList read FShaders write FShaders;
       property Textures: TP3DTextureList read FTextures write FTextures;
+      property Armatures: TP3DArmatureList read FArmatures write FArmatures;
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
   end;
@@ -83,6 +85,7 @@ begin
   Scenes:= TP3DSceneList.Create;
   Shaders:= TP3DShaderList.Create;
   Textures:= TP3DTextureList.Create;
+  Armatures:= TP3DArmatureList.Create;
   FileWatch:= TP3DFileWatch.Create( '', Self );
 end;
 
@@ -110,6 +113,7 @@ begin
   Scenes.Free;
   Shaders.Free;
   Textures.Free;
+  Armatures.Free;
   FileWatch.Free;
 
   DataBlocks.Free;
@@ -157,6 +161,11 @@ var
             DB:= TP3DScene.Create( Self );
             Scenes.Add( TP3DScene( DB ));
           end;
+        'armature':
+          begin
+            DB:= TP3DArmature.Create( Self );
+            Armatures.Add( TP3DArmature( DB ));
+          end;
       end;
       Result:= DataBlocks.IndexOf( DB );
     end;
@@ -194,7 +203,8 @@ begin
       Result:= Parent.Add( TP3DActor.CreateFromDOM( ADOMNode, Self ));
     'mesh', 'material',
       'camera', 'light',
-      'lamp', 'scene': Result:= LoadData();
+      'lamp', 'scene',
+      'armature': Result:= LoadData();
     else
       P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ADOMNode.NodeName + '". Skipping.' );
   end;

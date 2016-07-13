@@ -29,6 +29,7 @@ class P3DXMLFile:
   lamps = set()
   cameras = set()
   materials = set()
+  armatures = set()
   root = et.Element( 'p3dfile' )
   docstack = [ root ]
 
@@ -93,7 +94,7 @@ class P3DExporter( bpy.types.Operator ):
 
   filepath = StringProperty( subtype='FILE_PATH' )
 
-  supported_types = [ 'MESH', 'LAMP', 'CAMERA' ]
+  supported_types = [ 'MESH', 'LAMP', 'CAMERA', 'ARMATURE' ]
 
 ## CONFIG ------------------------------------------------------------------------
   Verbose = BoolProperty(
@@ -163,11 +164,14 @@ class P3DExporter( bpy.types.Operator ):
       
     for data in self.file.materials:
       self.ExportMaterial( data )
+      
+    for data in self.file.armatures:
+      self.ExportArmature( data )
 
     self.file.write()
 
     if ( self.Verbose ):
-      self.report({ 'INFO' }, 'Written file' )
+      self.report({ 'INFO' }, 'Written file123' )
 
     del self.file
 
@@ -206,6 +210,8 @@ class P3DExporter( bpy.types.Operator ):
         self.file.lamps.add( obj.data )
       elif ( type == 'camera' ):
         self.file.cameras.add( obj.data )
+      elif ( type == 'armature' ):
+        self.file.armatures.add( obj.data )
     
     self.ExportTransform( obj )
     
@@ -432,6 +438,39 @@ class P3DExporter( bpy.types.Operator ):
     el.attrib[ 'near' ] = str( cam.clip_start )
     el.attrib[ 'far' ] = str( cam.clip_end )
     el.attrib[ 'fov' ] = str( cam.angle )    
+
+    self.file.pop()
+##--------------------------------------------------------------------------------
+
+##EXPORTING CAMERA ---------------------------------------------------------------
+
+  def ExportBone( self, bone ):
+    if ( self.Verbose ):
+      self.report({ 'INFO' }, 'Exporting data ' + bone.name )
+
+    el = self.file.push( 'bone' )
+    el.attrib[ 'name' ] = 'bone_' + bone.name 
+    
+    position = bone.head_local
+    el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+    quat = bone.matrix_local.to_quaternion()
+    el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+
+    self.file.pop()
+##--------------------------------------------------------------------------------
+
+##EXPORTING ARMATURE -------------------------------------------------------------
+
+  def ExportArmature( self, armature ):
+    if ( self.Verbose ):
+      self.report({ 'INFO' }, 'Exporting data ' + armature.name )
+
+    el = self.file.push( 'armature' )
+    el.attrib[ 'name' ] = 'armature_' + armature.name
+    
+    bones = armature.bones
+    for bone in bones:
+      self.ExportBone( bone )
 
     self.file.pop()
 

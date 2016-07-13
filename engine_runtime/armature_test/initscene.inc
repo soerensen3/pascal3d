@@ -65,6 +65,7 @@ var
   Obj, i, n: Integer;
   BBox: TP3DBoundingBox;
   lib: TP3DData;
+  Modifier: TP3DMaterialModifierTerrain;
 
 begin
   Result:= False;
@@ -77,7 +78,8 @@ begin
   //mainscene.AppendFile( 'terrain_simple.p3d' );
   //mainscene.AppendFile( 'grid_projterrain_high.p3d' );
   //mainscene.AppendFile( 'grid_projterrain_med.p3d' );
-  mainscene.AppendFile( 'grid_projterrain_low.p3d' );
+  //mainscene.AppendFile( 'grid_projterrain_low.p3d' );
+  mainscene.AppendFile( 'grid_projterrain_low (copy 1).p3d' );
 
   skyboxscene.AppendFile( 'skybox.p3d' );
   skyboxscene.AppendFile( 'sun.p3d' );
@@ -102,13 +104,23 @@ begin
   //n:= OpenLibrary( 'bulb.p3d' );
   //mainscene.AppendFile( 'bulb.p3d', nil, True );
 
-  Obj:= mainscene.Objects.FindByName( 'grid' );
+  //Obj:= mainscene.Objects.FindByName( 'Grid' );
+  Obj:= -1;
+  if( P3DData.Libraries.Count > 0 ) then
+    Obj:= P3DData.Libraries[ 0 ].Objects.FindByName( 'Grid' );
   if ( Obj >= 0 ) then
-    with ( mainscene.Objects[ Obj ] as TP3DActor ) do
+    if ( mainscene.Objects[ Obj ] is TP3DActor ) then
+    with ( P3DData.Libraries[ 0 ].Objects[ Obj ] as TP3DActor ) do
       begin
-        //TP3DMesh( mainscene.Objects[ Obj ].Data ).MaterialGroups[ 0 ].Material.Unlit:= True;
+        with ( TP3DMaterialBase( TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data ).MaterialGroups[ 0 ].Material )) do
+          begin
+            Modifier:= TP3DMaterialModifierTerrain.Create;
+            Modifiers.Add( Modifier );
+            Modifier.CamObject:= maincamera;
+            BuildShader();
+          end;
         Position:= vec3( 0, 0, -1 );
-        Scale:= vec3( 10 );
+        //Scale:= vec3( 100 );
 //      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
       end;
 

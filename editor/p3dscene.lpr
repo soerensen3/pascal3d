@@ -7,6 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Classes,
+  sysutils,
   dglOpenGL,
   SDL2,
   p3devents,

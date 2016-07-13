@@ -709,7 +709,7 @@ procedure TP3DGroupBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   inherited MouseClick(mb1, mb2, mb3, X, Y);
 
-  FCollapseSymbolTxt:= Canvas.GetValidText( FCollapseSymbol, FCollapseSymbolTxt,
+  Canvas.GetValidText( FCollapseSymbol, FCollapseSymbolTxt,
     P3DFontManager[ P3DSymbolFontName, Canvas.Font.Size ]);
 
   if ( mb1 and CanCollapse and P3DRect( 3, 3, FCollapseSymbolTxt.Width, FCollapseSymbolTxt.Height ).PtInRect( vec2( X, Y ))) then
@@ -724,12 +724,18 @@ var
 begin
   inherited Draw;
   Canvas.RenderRect( vec2( 0, 0 ), vec2( Width, Height ), Color );
-  hw:= FCaptionTxt.Height / 2;
+  Canvas.GetValidText( Caption, FCaptionTxt,
+    P3DFontManager[ Canvas.Font.Name, Canvas.Font.Size ]);
+  if ( not Assigned( FCaptionTxt  )) then
+    hw:= 0
+  else
+    hw:= FCaptionTxt.Height / 2;
   //Canvas.RenderLineRect( vec2( hw ), vec2( Width, Height ) - hw, BorderColor );
   pt1:= vec2( hw );
   pt2:= vec2( Width, Height ) - hw;
   Canvas.RenderLine( pt1, vec2( hw * 2, pt1.y ), BorderColor );
-  Canvas.RenderLine( vec2( FCaptionTxt.Width + hw * 2, pt1.y ), vec2( pt2.x, pt1.y ), BorderColor );
+  if ( Assigned( FCaptionTxt )) then
+    Canvas.RenderLine( vec2( FCaptionTxt.Width + hw * 2, pt1.y ), vec2( pt2.x, pt1.y ), BorderColor );
   Canvas.RenderLine( vec2( pt1.x, pt2.y ), pt2, BorderColor );
   Canvas.RenderLine( pt1, vec2( pt1.x, pt2.y ), BorderColor );
   Canvas.RenderLine( vec2( pt2.x, pt1.y ), pt2, BorderColor );
@@ -952,20 +958,20 @@ procedure TP3DEdit.KeyboardAction;
 begin
   if ( Focused ) then
     begin
-      if ( P3DInput.Keyboard.Keys[ P3DK_BACKSPACE ] AND P3DInput.Keyboard.DKeys[ P3DK_BACKSPACE ]) then
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_BACKSPACE ] = ksPressed ) then
         DeleteLeftOfCursor;
-      if ( P3DInput.Keyboard.Keys[ P3DK_DELETE ] AND P3DInput.Keyboard.DKeys[ P3DK_DELETE ]) then
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_DELETE ] = ksPressed ) then
         DeleteRightOfCursor;
-      if ( P3DInput.Keyboard.Keys[ P3DK_LEFT ] AND P3DInput.Keyboard.DKeys[ P3DK_LEFT ]) then
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_LEFT ] = ksPressed ) then
         begin
           Sel1:= Sel1 - 1;
-          if not ( P3DInput.Keyboard.Keys[ P3DK_LSHIFT ] OR P3DInput.Keyboard.Keys[ P3DK_RSHIFT ]) then
+          if not ( P3DInput.Keyboard.KeysLayout[ P3DK_LSHIFT ] OR Boolean( P3DInput.Keyboard.KeysLayout[ P3DK_RSHIFT ])) then
             Sel2:= Sel1;
         end;
-      if ( P3DInput.Keyboard.Keys[ P3DK_RIGHT ] AND P3DInput.Keyboard.DKeys[ P3DK_RIGHT ]) then
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_RIGHT ] = ksPressed ) then
         begin
           Sel1:= Sel1 + 1;
-          if not ( P3DInput.Keyboard.Keys[ P3DK_LSHIFT ] OR P3DInput.Keyboard.Keys[ P3DK_RSHIFT ]) then
+          if not ( P3DInput.Keyboard.KeysLayout[ P3DK_LSHIFT ] OR P3DInput.Keyboard.KeysLayout[ P3DK_RSHIFT ]) then
             Sel2:= Sel1;
         end;
       if ( P3DInput.Keyboard.InputText > '' ) then

@@ -187,7 +187,7 @@ type
     public
       function AddCopy( Item: TP3DShaderNode ): Integer; virtual;
       function AddCopy( Name: String ): Integer; virtual;
-      //function AddCopy( Name: String ): TP3DShaderNode;
+      function AddCopyEx( Name: String ): TP3DShaderNode; inline;
 
       function Compile: TP3DShaderCompiled;
       function CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
@@ -269,6 +269,11 @@ begin
   if ( not Assigned( Node )) then
     raise Exception.Create( 'Cannot add copy of shader node: Node "' + Name + '" not found!' );
   Result:= AddCopy( Node );
+end;
+
+function TP3DShaderNodeTree.AddCopyEx(Name: String): TP3DShaderNode;
+begin
+  Result:= TP3DShaderNode( Nodes[ AddCopy( Name )]);
 end;
 
 

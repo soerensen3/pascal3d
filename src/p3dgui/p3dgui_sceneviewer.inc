@@ -200,7 +200,7 @@ end;
 procedure TP3DSceneViewer.KeyboardAction;
   function KeyEvent( Key: Word ): Boolean;
   begin
-    Result:= P3DInput.Keyboard.Keys[ Key ] and P3DInput.Keyboard.DKeys[ Key ];
+    Result:= P3DInput.Keyboard.DKeysLayout[ Key ] = ksPressed;
   end;
 
 begin

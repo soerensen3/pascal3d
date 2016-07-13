@@ -112,32 +112,32 @@ end;
 
 function FindClassForDOM( ADOMName: String ): TP3DDataBlockType;
 begin
-  case
-    ADOMName of
-      'material': Result:= TP3DMaterialShader;
-      'mesh': Result:= TP3DMesh;
-      'light', 'lamp': Result:= TP3DLight;
-      'camera': Result:= TP3DCamera;
-      'object': Result:= TP3DActor;
-      'scene': Result:= TP3DScene;
-    end;
+  case ADOMName of
+    'material': Result:= TP3DMaterialShader;
+    'mesh': Result:= TP3DMesh;
+    'light', 'lamp': Result:= TP3DLight;
+    'camera': Result:= TP3DCamera;
+    'object': Result:= TP3DActor;
+    'scene': Result:= TP3DScene;
+    'armature': Result:= TP3DArmature;
+  end;
 end;
 
 function FindClassForDOM( ADOMNode: TDOMElement ): TP3DDataBlockType;
 begin
-  case
-    ADOMNode.NodeName of
-      'material':
-        if ( ADOMNode.GetAttribute( 'type' ) = 'shader' ) then
-          Result:= TP3DMaterialShader
-        else
-          Result:= TP3DMaterialBase;
-      'mesh': Result:= TP3DMesh;
-      'light', 'lamp': Result:= TP3DLight;
-      'camera': Result:= TP3DCamera;
-      'object': Result:= TP3DActor;
-      'scene': Result:= TP3DScene;
-    end;
+  case ADOMNode.NodeName of
+    'material':
+      if ( ADOMNode.GetAttribute( 'type' ) = 'shader' ) then
+        Result:= TP3DMaterialShader
+      else
+        Result:= TP3DMaterialBase;
+    'mesh': Result:= TP3DMesh;
+    'light', 'lamp': Result:= TP3DLight;
+    'camera': Result:= TP3DCamera;
+    'object': Result:= TP3DActor;
+    'scene': Result:= TP3DScene;
+    'armature': Result:= TP3DArmature;
+  end;
 end;
 
 { gP3DCustomDatablockList }

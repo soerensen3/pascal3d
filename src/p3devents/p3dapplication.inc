@@ -201,9 +201,13 @@ procedure TP3DApplication.HandleEvents_SDL;
     end;
     {$ENDIF}
   end;
+
+const
+  SDL2P3DKeystate: array [ SDL_KEYDOWN..SDL_KEYUP ] of TP3DKeyState = ( ksPressed, ksReleased );
 var
   event: TSDL_Event;
   wnd: Pointer;
+  ScanCode: TSDL_ScanCode;
 begin
   while ( SDL_PollEvent( @event ) > 0 ) do
     case event.type_ of
@@ -258,7 +262,10 @@ begin
             continue;
           debug_printevent( event );
           P3DInput.Keyboard.Keys[ event.key.keysym.scancode ]:= Boolean( event.key.state );
-          P3DInput.Keyboard.DKeys[ event.key.keysym.scancode ]:= True;
+          P3DInput.Keyboard.DKeys[ event.key.keysym.scancode ]:= SDL2P3DKeystate[ event.key.type_ ];
+          ScanCode:= SDL_GetScancodeFromName( SDL_GetKeyName( event.key.keysym.sym ));
+          P3DInput.Keyboard.KeysLayout[ ScanCode ]:= Boolean( event.key.state );
+          P3DInput.Keyboard.DKeysLayout[ ScanCode ]:= SDL2P3DKeystate[ event.key.type_ ];
           if ( Assigned( FOnKey )) then
             FOnKey( Self, event.key );
         end;

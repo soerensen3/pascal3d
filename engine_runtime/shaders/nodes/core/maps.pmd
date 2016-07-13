@@ -77,6 +77,18 @@ IN vec4 vTexCoord$TexCoordIndex$;
 ```
 
 ---
+node: TC_Transform
+input: {name="TexCoordIndex", type="int"}
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform mat4 TexMat$TexCoordIndex$;
+```
+
+```{restrict="vshader,main"}
+vTexCoord$TexCoordIndex$ = TexMat$TexCoordIndex$ * vTexCoord$TexCoordIndex$;
+```
+
+---
 node: Pass_Init
 ---
 
@@ -95,6 +107,7 @@ OUT vec3 cameye;
 ```
 
 ```{restrict="vshader,main"}
+float Displace = 0.0;
 vPosition = Position;
 vColor = Color;
 vNormal = world * vec4( Normal.xyz, 0 );
@@ -116,7 +129,7 @@ uniform float mat_hardness;
 ```
 
 ```{restrict="fshader,main"}
-vec4 Normal = vec4( 0, 0, 1, 1 );
+vec4 Normal = vec4( 0, 0, 1, 0 );
 vec4 Color = vec4( 1 );
 vec4 Specular = mat_specular;
 ```
@@ -137,7 +150,7 @@ color_add```
 color_sub```
 
 ---
-node: Pass_Read
+node: Pass_ReadF
 input: {name="TexCoordIndex", type="int"}
 input: {name="Index", type="int"}
 ---
@@ -151,6 +164,31 @@ vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$TexCoordIndex$.xy );
 ```
 
 ---
+node: Pass_ReadV
+input: {name="TexCoordIndex", type="int"}
+input: {name="Index", type="int"}
+---
+
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform sampler2D tex$Index$;
+```
+
+```{restrict="vshader,main"}
+vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$TexCoordIndex$.xy );
+```
+
+---
+node: Pass_Displace
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="vshader,main"}
+Displace= mix( Displace, $Mode$( vec4( Displace ), val$Index$.aaaa ).a, $Factor$ );
+```
+
+---
 node: Pass_Normal
 input: {name="Index", type="int"}
 input: {name="Factor", type="float"}
@@ -158,18 +196,21 @@ input: {name="Mode", type="text"}
 ---
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
-Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz *2 - 1, 1 )), $Factor$ );
+Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz *2 - 1, 0 )), $Factor$ );
 ```
 
 ---
 node: Pass_Diffuse
 input: {name="Index", type="int"}
 input: {name="Factor", type="float"}
+input: {name="Alpha", type="float"}
 input: {name="Mode", type="text"}
 ---
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
-Color= mix( Color, $Mode$( Color, val$Index$ ), $Factor$ );
+Color.rgb = mix( Color.rgb, $Mode$( Color, val$Index$ ).rgb, $Factor$ );
+Color.a = mix( Color.a, $Mode$( vec4( Color.a ), vec4( val$Index$.a )).a, $Alpha$ );
+//MIX INDEPENTLY
 ```
 
 
@@ -194,12 +235,21 @@ Normal = normalize( view * vec4( Normal.xyz, 0 ));
 ```
 
 ---
+node: Pass_Transform
+---
+
+
+```{name="CODE", type="shader", restrict="vshader,main"}
+vPosition = view * world * ( vPosition + Displace * vNormal );
+```
+
+---
 node: Pass_Final
 ---
 
+
 ```{name="CODE", type="shader", restrict="vshader,main"}
-cameye = - ( view * Position ).xyz;
-vPosition = view * world * Position;
+//cameye = - ( view * Position ).xyz;
 gl_Position = proj * vPosition;
 ```
 

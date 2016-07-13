@@ -8,4 +8,5 @@ begin
   glClear( GL_DEPTH_BUFFER_BIT or GL_COLOR_BUFFER_BIT );
   glDisable( GL_DEPTH_TEST );
   P3DGUIManager.Render;
+  P3DApplication.MainWindow.Title:= IntToStr( Integer( P3DInput.Keyboard.DKeysLayout[ P3DK_Z ]));
 end;

@@ -42,32 +42,47 @@ type
       property DButtons[ Index: Integer ]: Boolean read GetDButtons write SetDButtons;
   end;
 
+  TP3DKeyState = ( ksUnchanged, ksPressed, ksReleased );
+
   { TP3DKeyboardDevice }
 
   TP3DKeyboardDevice = class( TP3DInputDevice )
     private
       FKeys: array [ 0..511 ] of Boolean;
-      FDKeys: array [ 0..511 ] of Boolean;
+      FDKeys: array [ 0..511 ] of TP3DKeyState;
+      FKeysLayout: array [ 0..511 ] of Boolean;
+      FDKeysLayout: array [ 0..511 ] of TP3DKeyState;
       FReadingTextInput: Boolean;
       FInputText: String;
 
+      function GetDKeysLayout( Index: Integer ): TP3DKeyState;
+      function GetKeysLayout( Index: Integer ): Boolean;
+      procedure SetDKeysLayout( Index: Integer ; AValue: TP3DKeyState);
+      procedure SetKeysLayout( Index: Integer ; AValue: Boolean);
       procedure SetReadingTextInput(AValue: Boolean);
-      function GetDKeys( Index: Integer ): Boolean;
+      function GetDKeys( Index: Integer ): TP3DKeyState;
       function GetKeys( Index: Integer ): Boolean;
-      procedure SetDKeys( Index: Integer ; AValue: Boolean);
+      procedure SetDKeys( Index: Integer ; AValue: TP3DKeyState);
       procedure SetKeys( Index: Integer ; AValue: Boolean);
 
     public
       procedure FlushDelta; override;
 
       property Keys[ Index: Integer ]: Boolean read GetKeys write SetKeys;
-      property DKeys[ Index: Integer ]: Boolean read GetDKeys write SetDKeys;
+      property DKeys[ Index: Integer ]: TP3DKeyState read GetDKeys write SetDKeys;
+      property KeysLayout[ Index: Integer ]: Boolean read GetKeysLayout write SetKeysLayout;
+      property DKeysLayout[ Index: Integer ]: TP3DKeyState read GetDKeysLayout write SetDKeysLayout;
       property ReadingTextInput: Boolean read FReadingTextInput write SetReadingTextInput;
       property InputText: String read FInputText write FInputText;
   end;
 
+  // Key
+  // - pressed
+  // - state: unchanged, released, pressed
+
   { TInputEvent }
 
+type
   TP3DInputEvent = class
     private
       FTimeStamp: Cardinal;
@@ -140,23 +155,25 @@ type
       property Keyboard: TP3DKeyboardDevice read FKeyboard write FKeyboard;
   end;
 
+  function P3DGetKeyByScancode( ScanCode: LongInt ): LongInt;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
 { TP3DKeyboardDevice }
 
-function TP3DKeyboardDevice.GetKeys( Index: Integer ): Boolean;
+function TP3DKeyboardDevice.GetKeys(Index: Integer): Boolean;
 begin
   Result:= FKeys[ Index ];
 end;
 
-function TP3DKeyboardDevice.GetDKeys( Index: Integer ): Boolean;
+function TP3DKeyboardDevice.GetDKeys(Index: Integer): TP3DKeyState;
 begin
   Result:= FDKeys[ Index ];
 end;
 
-procedure TP3DKeyboardDevice.SetDKeys( Index: Integer ; AValue: Boolean);
+procedure TP3DKeyboardDevice.SetDKeys(Index: Integer; AValue: TP3DKeyState);
 begin
   FDKeys[ Index ]:= AValue;
 end;
@@ -169,6 +186,7 @@ end;
 procedure TP3DKeyboardDevice.FlushDelta;
 begin
   FillByte( FDKeys, SizeOf( FDKeys ), 0 );
+  FillByte( FDKeysLayout, SizeOf( FDKeysLayout ), 0 );
   FInputText:= '';
 end;
 
@@ -180,6 +198,27 @@ begin
   FReadingTextInput:=AValue;
   FInputText:= '';
 end;
+
+function TP3DKeyboardDevice.GetDKeysLayout( Index: Integer ): TP3DKeyState;
+begin
+  Result:= FDKeysLayout[ Index ];
+end;
+
+function TP3DKeyboardDevice.GetKeysLayout( Index: Integer ): Boolean;
+begin
+  Result:= FKeysLayout[ Index ];
+end;
+
+procedure TP3DKeyboardDevice.SetDKeysLayout( Index: Integer ; AValue: TP3DKeyState);
+begin
+  FDKeysLayout[ Index ]:= AValue;
+end;
+
+procedure TP3DKeyboardDevice.SetKeysLayout( Index: Integer ; AValue: Boolean);
+begin
+  FKeysLayout[ Index ]:= AValue;
+end;
+
 
 constructor TP3DInputManager.Create;
 begin
@@ -228,6 +267,11 @@ begin
   FillByte( FDButtons, SizeOf( FDButtons ), 0 );
 end;
 
+
+function P3DGetKeyByScancode( ScanCode: LongInt ): LongInt;
+begin
+  Result:= SDL_GetKeyFromScancode( ScanCode );
+end;
 
 {$ENDIF}
 

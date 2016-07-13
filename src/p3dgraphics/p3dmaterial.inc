@@ -8,7 +8,7 @@
 
      { TP3DMaterialMapShader }
 
-     TP3DMaterialMapShader = class ( TPersistent )
+     TP3DMaterialMapShader = class ( TInterfacedPersistent )
        private
          FMap: TP3DTexture;
          FParentMaterial: TP3DMaterialShader;
@@ -17,7 +17,7 @@
          procedure SetMap( AValue: TP3DTexture );
 
        public
-         constructor Create;
+         constructor Create( AParentMaterial: TP3DMaterialShader );
          constructor CreateFromDOM( AParentMaterial: TP3DMaterialShader; ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
        published
@@ -30,22 +30,37 @@
 
      TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
 
+     { TP3DMaterialMapBase }
+
      TP3DMaterialMapBase = class ( TP3DMaterialMapShader )
        private
+         FAlphaFactor: Single;
          FDiffuseFactor: Single;
+         FDisplaceFactor: Single;
          FMode: TP3DMapMode;
          FNormalFactor: Single;
          FSpecularFactor: Single;
+         FTransform: TMat4;
+         procedure SetAlphaFactor(AValue: Single);
+         procedure SetDiffuseFactor(AValue: Single);
+         procedure SetDisplaceFactor(AValue: Single);
+         procedure SetMode(AValue: TP3DMapMode);
+         procedure SetNormalFactor(AValue: Single);
+         procedure SetSpecularFactor(AValue: Single);
 
        public
-         constructor Create;
+         constructor Create( AParentMaterial: TP3DMaterialShader );
          constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
+         property Transform: TMat4 read FTransform write FTransform;
+
        published
-         property DiffuseFactor: Single read FDiffuseFactor write FDiffuseFactor;
-         property NormalFactor: Single read FNormalFactor write FNormalFactor;
-         property SpecularFactor: Single read FSpecularFactor write FSpecularFactor;
-         property Mode: TP3DMapMode read FMode write FMode;
+         property DiffuseFactor: Single read FDiffuseFactor write SetDiffuseFactor;
+         property AlphaFactor: Single read FAlphaFactor write SetAlphaFactor;
+         property NormalFactor: Single read FNormalFactor write SetNormalFactor;
+         property SpecularFactor: Single read FSpecularFactor write SetSpecularFactor;
+         property DisplaceFactor: Single read FDisplaceFactor write SetDisplaceFactor;
+         property Mode: TP3DMapMode read FMode write SetMode;
      end;
 
      TP3DMaterialMapList = specialize gP3DCustomObjectList < TP3DMaterialMapShader >;
@@ -69,12 +84,78 @@
          property Maps: TP3DMaterialMapList read FMaps write FMaps;
      end;
 
+     { TP3DMaterialModifier }
+
+     TP3DMaterialModifier = class( TInterfacedPersistent )
+       class function GetIndex: Integer; virtual; abstract;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); virtual; abstract;
+       procedure PassToShader( Material: TP3DMaterialBase ); virtual; abstract;
+     end;
+
+     { TP3DMaterialModifierList }
+
+     TP3DMaterialModifierList = class ( specialize gP3DCustomObjectList < TP3DMaterialModifier >)
+       public
+         procedure SortByIndex;
+         function Add( Item: TP3DMaterialModifier ): Integer; override;
+     end;
+
+     { TP3DMaterialModifierTexTransform }
+
+     TP3DMaterialModifierTexTransform = class ( TP3DMaterialModifier )
+       class function GetIndex: Integer; override;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+       procedure PassToShader( Material: TP3DMaterialBase ); override;
+     end;
+
+     { TP3DMaterialModifierInit }
+
+     TP3DMaterialModifierInit = class ( TP3DMaterialModifier )
+       class function GetIndex: Integer; override;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+       procedure PassToShader( Material: TP3DMaterialBase ); override;
+     end;
+
+     { TP3DMaterialModifierMaps }
+
+     TP3DMaterialModifierMaps = class ( TP3DMaterialModifier )
+       class function GetIndex: Integer; override;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+       procedure PassToShader( Material: TP3DMaterialBase ); override;
+     end;
+
+     { TP3DMaterialModifierLightning }
+
+     TP3DMaterialModifierLightning = class ( TP3DMaterialModifier )
+       class function GetIndex: Integer; override;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+       procedure PassToShader( Material: TP3DMaterialBase ); override;
+     end;
+
+     { TP3DMaterialModifierTransform }
+
+     TP3DMaterialModifierTransform = class ( TP3DMaterialModifier )
+       class function GetIndex: Integer; override;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+       procedure PassToShader( Material: TP3DMaterialBase ); override;
+     end;
+
+
+     { TP3DMaterialModifierCombine }
+
+     TP3DMaterialModifierCombine = class ( TP3DMaterialModifier )
+       class function GetIndex: Integer; override;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+       procedure PassToShader( Material: TP3DMaterialBase ); override;
+     end;
+
      { TP3DMaterialBase }
 
      TP3DMaterialBase = class ( TP3DMaterialShader )
        private
          FAlpha: Single;
          FDiff: TVec3;
+         FModifiers: TP3DMaterialModifierList;
          FSpec: TVec3;
          FSpec_Hardness: Single;
          FUnlit: Boolean;
@@ -83,11 +164,13 @@
          procedure SetAlpha(AValue: Single);
          procedure SetSpec_Hardness(AValue: Single);
          procedure SetUnlit( AValue: Boolean );
+         procedure AddPasses(ShaderTree: TP3DShaderNodeTree); virtual;
 
        public
          constructor Create(const AData: TP3DData=nil);
+         destructor Destroy; override;
 
-         procedure BuildShader();
+         procedure BuildShader(); virtual;
          procedure PassToShader(); override;
 
          procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
@@ -100,8 +183,8 @@
          property Alpha: Single read FAlpha write SetAlpha;
          property UseVertexColor: Boolean read FUseVertexColor write FUseVertexColor;
          property Unlit: Boolean read FUnlit write SetUnlit;
+         property Modifiers: TP3DMaterialModifierList read FModifiers write FModifiers;
      end;
-
 
      TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterialShader >;
 
@@ -124,9 +207,10 @@ begin
     FMap.Users.Add( ParentMaterial );
 end;
 
-constructor TP3DMaterialMapShader.Create;
+constructor TP3DMaterialMapShader.Create(AParentMaterial: TP3DMaterialShader);
 begin
-  inherited;
+  inherited Create;
+  FParentMaterial:= AParentMaterial;
   FTexChannel:= 0;
 end;
 
@@ -138,7 +222,7 @@ var
   _Data: TP3DData;
   n: LongInt;
 begin
-  Create;
+  Create( AParentMaterial );
   TexName:= ADOMNode.GetAttribute( 'file' );
   if ( not FileExists( TexName )) then
     raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );
@@ -158,13 +242,56 @@ end;
 
 { TP3DMaterialMapBase }
 
-constructor TP3DMaterialMapBase.Create;
+procedure TP3DMaterialMapBase.SetDiffuseFactor(AValue: Single);
+begin
+  if FDiffuseFactor= AValue then Exit;
+  FDiffuseFactor:= AValue;
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+procedure TP3DMaterialMapBase.SetAlphaFactor(AValue: Single);
+begin
+  if FAlphaFactor= AValue then Exit;
+  FAlphaFactor:= AValue;
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+procedure TP3DMaterialMapBase.SetDisplaceFactor(AValue: Single);
+begin
+  if FDisplaceFactor= AValue then Exit;
+  FDisplaceFactor:= AValue;
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+procedure TP3DMaterialMapBase.SetMode(AValue: TP3DMapMode);
+begin
+  if FMode= AValue then Exit;
+  FMode:= AValue;
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+procedure TP3DMaterialMapBase.SetNormalFactor(AValue: Single);
+begin
+  if FNormalFactor= AValue then Exit;
+  FNormalFactor:= AValue;
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+procedure TP3DMaterialMapBase.SetSpecularFactor(AValue: Single);
+begin
+  if FSpecularFactor= AValue then Exit;
+  FSpecularFactor:= AValue;
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+constructor TP3DMaterialMapBase.Create(AParentMaterial: TP3DMaterialShader);
 begin
   inherited;
   FDiffuseFactor:= 1.0;
   FNormalFactor:= 0.0;
   FSpecularFactor:= 0.0;
   FMode:= p3dmmMix;
+  FTransform:= Mat4Identity;
   TexChannel:= 0;
 end;
 
@@ -175,7 +302,7 @@ var
   n: LongInt;
   _Data: TP3DData;
 begin
-  Create;
+  Create( AParentMaterial );
 
   TexName:= ADOMNode.GetAttribute( 'file' );
   FullTexName:= P3DSearchPaths.Models.FindFileEx( TexName, GetCurrentDir );
@@ -197,6 +324,7 @@ begin
   DiffuseFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'diffuse' ), 0.0 );
   NormalFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'normal' ), 0.0 );
   SpecularFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'specular' ), 0.0 );
+  DisplaceFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'displace' ), 0.0 );
   TexChannel:= StrToIntDef( ADOMNode.GetAttribute( 'layer' ), 0 );
   case ADOMNode.GetAttribute( 'mode' ) of
     'add': Mode:= p3dmmAdd;
@@ -216,32 +344,8 @@ begin
   FUnlit:=AValue;
   BuildShader();
 end;
-
-procedure TP3DMaterialBase.SetAlpha(AValue: Single);
-begin
-  if FAlpha= AValue then Exit;
-  FAlpha:= clamp( AValue, 0, 1 );
-end;
-
-procedure TP3DMaterialBase.SetSpec_Hardness(AValue: Single);
-begin
-  if FSpec_Hardness= AValue then Exit;
-  FSpec_Hardness:= clamp( AValue, 0, 511 );
-end;
-
-constructor TP3DMaterialBase.Create(const AData: TP3DData);
-begin
-  inherited Create( AData );
-  Alpha:= 1.0;
-  Diff:= vec3( 1 );
-end;
-
-procedure TP3DMaterialBase.BuildShader;
-var
-  ShaderTree: TP3DShaderNodeTree;
-  Node: TP3DShaderNode;
-  Compiled: TP3DShaderCompiled;
-  i: Integer;
+{
+procedure TP3DMaterialBase.AddPassMaps(ShaderTree: TP3DShaderNodeTree);
 
   function ChangeSocketValueInt( Node: TP3DShaderNode; Name: String; Value: Integer ): TP3DShaderNode;
   var
@@ -278,60 +382,119 @@ var
     Node1.Inputs[ Socket1n ].Connected:= Node2.Outputs[ Socket2n ];
     Result:= Node1;
   end;
-
-  function AddNode( Name: String ): TP3DShaderNode;
-  begin
-    Result:= TP3DShaderNode( ShaderTree.Nodes[ ShaderTree.AddCopy( Name )]);
-  end;
-
 const
   Mode: array [ p3dmmMix .. p3dmmSubtract ] of String = ( 'mix', 'multiply', 'add', 'subtract' );
+
+var
+  i: Integer;
+begin
+  ShaderTree.AddCopy( 'lib_maps' );
+
+  ShaderTree.AddCopy( 'Pass_Init' );
+
+  for i:= 0 to Maps.Count - 1 do
+    begin
+      ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
+      ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_ReadF' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+      ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_ReadV' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+      if ( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor <> 0 ) then
+        ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
+        ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+      if ( TP3DMaterialMapBase( Maps[ i ]).NormalFactor <> 0 ) then
+        ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
+        ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+      if ( TP3DMaterialMapBase( Maps[ i ]).SpecularFactor <> 0 ) then
+        ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
+        ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+      if ( TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor <> 0 ) then
+        ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Displace' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor ),
+        ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+    end;
+
+  ShaderTree.AddCopy( 'Pass_Mix' );
+end;
+
+procedure TP3DMaterialBase.AddPassLightning(ShaderTree: TP3DShaderNodeTree);
+begin
+  if ( not Unlit ) then
+    begin
+      ShaderTree.AddCopy( 'lib_common' );
+      ShaderTree.AddCopy( 'lib_lighting' );
+    end;
+  if ( Unlit ) then
+    ShaderTree.AddCopy( 'Unlit' )
+  else
+    ShaderTree.AddCopy( 'Lighting' );
+end;
+
+procedure TP3DMaterialBase.AddPassFinal(ShaderTree: TP3DShaderNodeTree);
+begin
+  ShaderTree.AddCopy( 'Pass_Final' );
+end;
+}
+procedure TP3DMaterialBase.AddPasses(ShaderTree: TP3DShaderNodeTree);
+var
+  Modifier: TP3DMaterialModifier;
+begin
+  for Modifier in Modifiers do
+    Modifier.AddPass( ShaderTree, Self );
+
+  {{PASS MAPS}
+  AddPassMaps( ShaderTree );
+  {END PASS MAPS}
+
+  {PASS LIGHTNING}
+  AddPassLightning( ShaderTree );
+  {END PASS LIGHTNING}
+
+  {PASS FINAL}
+  AddPassFinal( ShaderTree );
+  {END PASS FINAL}}
+end;
+
+procedure TP3DMaterialBase.SetAlpha(AValue: Single);
+begin
+  if FAlpha= AValue then Exit;
+  FAlpha:= clamp( AValue, 0, 1 );
+end;
+
+procedure TP3DMaterialBase.SetSpec_Hardness(AValue: Single);
+begin
+  if FSpec_Hardness= AValue then Exit;
+  FSpec_Hardness:= clamp( AValue, 0, 511 );
+end;
+
+constructor TP3DMaterialBase.Create(const AData: TP3DData);
+begin
+  inherited Create( AData );
+  Alpha:= 1.0;
+  Diff:= vec3( 1 );
+  Modifiers:= TP3DMaterialModifierList.Create;
+  Modifiers.Add( TP3DMaterialModifierInit.Create );
+  Modifiers.Add( TP3DMaterialModifierTexTransform.Create );
+  Modifiers.Add( TP3DMaterialModifierMaps.Create );
+  Modifiers.Add( TP3DMaterialModifierLightning.Create );
+  Modifiers.Add( TP3DMaterialModifierTransform.Create );
+  Modifiers.Add( TP3DMaterialModifierCombine.Create );
+end;
+
+destructor TP3DMaterialBase.Destroy;
+begin
+  Modifiers.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DMaterialBase.BuildShader;
+var
+  ShaderTree: TP3DShaderNodeTree;
+  Compiled: TP3DShaderCompiled;
 
 begin
   ShaderTree:= TP3DShaderNodeTree.Create;
   Compiled:= nil;
 
   try
-    {PASS MAPS}
-    ShaderTree.AddCopy( 'lib_maps' );
-
-    ShaderTree.AddCopy( 'Pass_Init' );
-
-
-    for i:= 0 to Maps.Count - 1 do
-      begin
-        ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
-        ChangeSocketValueInt( ChangeSocketValueInt( AddNode( 'Pass_Read' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
-        if ( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor > 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
-          AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
-        if ( TP3DMaterialMapBase( Maps[ i ]).NormalFactor > 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
-          AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
-        if ( TP3DMaterialMapBase( Maps[ i ]).SpecularFactor > 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( AddNode( 'Pass_Specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
-          AddNode( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
-      end;
-
-    AddNode( 'Pass_Mix' );
-
-    {END PASS MAPS}
-
-    {PASS LIGHTNING}
-    if ( not Unlit ) then
-      begin
-        ShaderTree.AddCopy( 'lib_common' );
-        AddNode( 'lib_lighting' );
-      end;
-    if ( Unlit ) then
-      AddNode( 'Unlit' )
-    else
-      AddNode( 'Lighting' );
-    {END PASS LIGHTNING}
-
-    {PASS FINAL}
-    AddNode( 'Pass_Final' );
-    {END PASS FINAL}
+    AddPasses( ShaderTree );
 
     Compiled:= ShaderTree.Compile;
 
@@ -369,6 +532,8 @@ begin
           glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
           glUniform1i( Shader.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
         end;
+      for i:= 0 to Modifiers.Count - 1 do
+        Modifiers[ i ].PassToShader( Self );
     end;
 end;
 
@@ -480,6 +645,279 @@ begin
     tex:= TDOMElement( tex.NextSibling );
   end;
 end;
+
+
+{ TP3DMaterialModifierTexTransform }
+
+class function TP3DMaterialModifierTexTransform.GetIndex: Integer;
+begin
+  Result:= 50;
+end;
+
+procedure TP3DMaterialModifierTexTransform.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+  function ChangeSocketValueInt( Node: TP3DShaderNode; Name: String; Value: Integer ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketInt( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+
+var
+  i: Integer;
+begin
+  with ( Material ) do
+    for i:= 0 to Maps.Count - 1 do
+      ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_Transform' ), 'TexCoordIndex', i );
+end;
+
+procedure TP3DMaterialModifierTexTransform.PassToShader(Material: TP3DMaterialBase);
+var
+  i: Integer;
+  decl: TP3DShaderDecl;
+begin
+  with ( Material ) do
+    for i:= 0 to Maps.Count - 1 do
+      if ( Maps[ i ] is TP3DMaterialMapBase ) then
+        begin
+          if ( P3DShaderActive.Uniforms.FindByName( 'TexMat' + IntToStr( i ), decl )) then
+            begin
+              decl.AsMat4:= TP3DMaterialMapBase( Maps[ i ]).FTransform;
+              WriteLn( decl.AsMat4.ToString());
+            end;
+        end;
+
+end;
+
+{ TP3DMaterialModifierInit }
+
+class function TP3DMaterialModifierInit.GetIndex: Integer;
+begin
+  Result:= 0;
+end;
+
+procedure TP3DMaterialModifierInit.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+  function ChangeSocketValueInt( Node: TP3DShaderNode; Name: String; Value: Integer ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketInt( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+var
+  i: Integer;
+begin
+  ShaderTree.AddCopy( 'lib_maps' );
+  ShaderTree.AddCopy( 'Pass_Init' );
+
+  with ( Material ) do
+    for i:= 0 to Maps.Count - 1 do
+      ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
+end;
+
+procedure TP3DMaterialModifierInit.PassToShader(Material: TP3DMaterialBase);
+begin
+
+end;
+
+
+
+{ TP3DMaterialModifierMaps }
+
+class function TP3DMaterialModifierMaps.GetIndex: Integer;
+begin
+  Result:= 100;
+end;
+
+procedure TP3DMaterialModifierMaps.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+
+  function ChangeSocketValueInt( Node: TP3DShaderNode; Name: String; Value: Integer ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketInt( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+
+  function ChangeSocketValueFloat( Node: TP3DShaderNode; Name: String; Value: Single ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketFloat( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+
+  function ConnectSocket( Node1: TP3DShaderNode; Node2: TP3DShaderNode; Socket1: String; Socket2: String ): TP3DShaderNode;
+  var
+    Socket1n, Socket2n: Integer;
+  begin
+    Socket1n:= Node1.Inputs.FindSocketByName( Socket1 );
+    Socket2n:= Node2.Outputs.FindSocketByName( Socket2 );
+    if ( Socket1n < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Socket1 + '" not found!' );
+    if ( Socket2n < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Socket2 + '" not found!' );
+    Node1.Inputs[ Socket1n ].Connected:= Node2.Outputs[ Socket2n ];
+    Result:= Node1;
+  end;
+
+const
+  Mode: array [ p3dmmMix .. p3dmmSubtract ] of String = ( 'mix', 'multiply', 'add', 'subtract' );
+
+var
+  i: Integer;
+begin
+  with ( Material ) do
+    for i:= 0 to Maps.Count - 1 do
+      begin
+        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_ReadF' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_ReadV' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+        if (( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor <> 0 ) or ( TP3DMaterialMapBase( Maps[ i ]).AlphaFactor <> 0 )) then
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
+                         'Alpha', TP3DMaterialMapBase( Maps[ i ]).AlphaFactor ),
+                         ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+        if ( TP3DMaterialMapBase( Maps[ i ]).NormalFactor <> 0 ) then
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
+          ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+        if ( TP3DMaterialMapBase( Maps[ i ]).SpecularFactor <> 0 ) then
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
+          ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+        if ( TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor <> 0 ) then
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Displace' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor ),
+          ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+      end;
+
+  ShaderTree.AddCopy( 'Pass_Mix' );
+end;
+
+
+procedure TP3DMaterialModifierMaps.PassToShader(Material: TP3DMaterialBase);
+begin
+
+end;
+
+{ TP3DMaterialModifierTransform }
+
+class function TP3DMaterialModifierTransform.GetIndex: Integer;
+begin
+  Result:= 5000;
+end;
+
+procedure TP3DMaterialModifierTransform.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+begin
+  ShaderTree.AddCopy( 'Pass_Transform' );
+end;
+
+procedure TP3DMaterialModifierTransform.PassToShader(Material: TP3DMaterialBase);
+begin
+
+end;
+
+{ TP3DMaterialModifierCombine }
+
+class function TP3DMaterialModifierCombine.GetIndex: Integer;
+begin
+  Result:= 10000;
+end;
+
+procedure TP3DMaterialModifierCombine.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+begin
+  ShaderTree.AddCopy( 'Pass_Final' );
+end;
+
+procedure TP3DMaterialModifierCombine.PassToShader(Material: TP3DMaterialBase);
+begin
+
+end;
+
+{ TP3DMaterialModifierLightning }
+
+class function TP3DMaterialModifierLightning.GetIndex: Integer;
+begin
+  Result:= 1000;
+end;
+
+procedure TP3DMaterialModifierLightning.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+begin
+  if ( not Material.Unlit ) then
+    begin
+      ShaderTree.AddCopy( 'lib_common' );
+      ShaderTree.AddCopy( 'lib_lighting' );
+      ShaderTree.AddCopy( 'Lighting' );
+    end
+  else
+    ShaderTree.AddCopy( 'Unlit' );
+end;
+
+procedure TP3DMaterialModifierLightning.PassToShader(Material: TP3DMaterialBase);
+begin
+
+end;
+
+
+{ TP3DMaterialModifierList }
+
+procedure TP3DMaterialModifierList.SortByIndex;
+
+  procedure swap( a, b: Integer );
+  var
+    Element: TP3DMaterialModifier;
+  begin
+    Element:= Self[ a ];
+    FItems[ a ]:= Self[ b ];
+    FItems[ b ]:= Element;
+  end;
+
+  function partition( lo, hi: Integer ): Integer;
+  var
+    pivot, i, j: Integer;
+  begin
+    pivot:= Self[ hi ].GetIndex;
+    i:= lo;        // place for swapping
+    for j := lo to hi - 1 do
+      if ( Self[ j ].GetIndex <= pivot ) then
+        begin
+          swap( i, j );
+          Inc( i );
+        end;
+    swap( i, hi );
+    Result:= i;
+  end;
+
+  procedure quicksort( lo, hi: Integer );
+  var
+    p: Integer;
+  begin
+    if lo < hi then
+      begin
+        p:= partition( lo, hi );
+        quicksort( lo, p - 1 );
+        quicksort( p + 1, hi );
+      end;
+  end;
+
+begin
+  quicksort( 0, Count - 1 );
+end;
+
+function TP3DMaterialModifierList.Add(Item: TP3DMaterialModifier): Integer;
+begin
+  Result:= inherited Add(Item);
+  SortByIndex;
+end;
+
 
 
 {$ENDIF}
