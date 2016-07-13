@@ -29,7 +29,7 @@ type
   { - Procedure to check if socket connection is accepted  }
       class property SocketType: String read GetSocketType;
 
-  { - Can be of various types (Int, Float, Vector, Color)
+  { - Can be of various types (Int, Float, Vector, Color, ...)
       The types must be registered the NodeTree
     - Same types can be connected but also some different types
       can be connected like vector and color.

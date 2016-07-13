@@ -113,7 +113,6 @@ end;
 
 
 
-
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dbuffers.inc}
 {$INCLUDE p3dviewport.inc}

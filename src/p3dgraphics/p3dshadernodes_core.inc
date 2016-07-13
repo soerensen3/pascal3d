@@ -60,17 +60,37 @@ type
       FNumFields: Integer;
       FValue: TVec4;
 
-      class function GetSocketType: String; static; override;
-
       procedure SetValue(AValue: TVec4);
 
     public
       constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection ); override;
       destructor Destroy; override;
 
+      class function GetSocketType: String; static; override;
       function GetOutput( Buffer: TP3DShaderBuffer ): String; override;
 
       property Value: TVec4 read FValue write SetValue;
+      property NumFields: Integer read FNumFields write FNumFields;
+  end;
+
+  { TP3DShaderNodeSocketMatrix }
+
+  TP3DShaderNodeSocketMatrix = class ( TP3DShaderNodeSocket )
+    private
+      FNumFields: Integer;
+      FValue: TMat4;
+
+      procedure SetValue(AValue: TMat4);
+
+    public
+      constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection ); override;
+      destructor Destroy; override;
+
+      class function GetSocketType: String; static; override;
+
+      function GetOutput( Buffer: TP3DShaderBuffer ): String; override;
+
+      property Value: TMat4 read FValue write SetValue;
       property NumFields: Integer read FNumFields write FNumFields;
   end;
 
@@ -178,6 +198,41 @@ begin
   else
     Result:= IntToStr( Value );
 end;
+
+{ TP3DShaderNodeSocketMatrix }
+
+class function TP3DShaderNodeSocketMatrix.GetSocketType: String;
+begin
+  Result:= 'mat4';
+end;
+
+procedure TP3DShaderNodeSocketMatrix.SetValue(AValue: TMat4);
+begin
+  if FValue=AValue then Exit;
+  FValue:=AValue;
+end;
+
+constructor TP3DShaderNodeSocketMatrix.Create(ANode: TP3DNode;
+  ADirecton: TP3DNodeSocketDirection);
+begin
+  inherited Create(ANode, ADirecton);
+  NumFields:= 4;
+  Value:= Mat4Identity;
+end;
+
+destructor TP3DShaderNodeSocketMatrix.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TP3DShaderNodeSocketMatrix.GetOutput(Buffer: TP3DShaderBuffer): String;
+begin
+  if (( Direction = nsdOutput ) or Assigned( Connected )) then
+    Result:= inherited GetOutput(Buffer)
+  else
+    Result:= 'mat4( ' + Value.ToString(False, 0) + ')';
+end;
+
 
 
 {$ENDIF}

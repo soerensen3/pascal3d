@@ -77,11 +77,24 @@ IN vec4 vTexCoord$TexCoordIndex$;
 ```
 
 ---
-node: TC_Transform
+node: TC_TransformDynamic
 input: {name="TexCoordIndex", type="int"}
 ---
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
 uniform mat4 TexMat$TexCoordIndex$;
+```
+
+```{restrict="vshader,main"}
+vTexCoord$TexCoordIndex$ = TexMat$TexCoordIndex$ * vTexCoord$TexCoordIndex$;
+
+```
+---
+node: TC_TransformFixed
+input: {name="TexCoordIndex", type="int"}
+input: {name="Transform", type="mat4"}
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+const mat4 TexMat$TexCoordIndex$ = $Transform$;
 ```
 
 ```{restrict="vshader,main"}

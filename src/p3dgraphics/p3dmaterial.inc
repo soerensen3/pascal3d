@@ -41,6 +41,7 @@
          FNormalFactor: Single;
          FSpecularFactor: Single;
          FTransform: TMat4;
+         FTransformDynamic: Boolean;
          procedure SetAlphaFactor(AValue: Single);
          procedure SetDiffuseFactor(AValue: Single);
          procedure SetDisplaceFactor(AValue: Single);
@@ -53,6 +54,7 @@
          constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
          property Transform: TMat4 read FTransform write FTransform;
+         property TransformDynamic: Boolean read FTransformDynamic write FTransformDynamic;
 
        published
          property DiffuseFactor: Single read FDiffuseFactor write SetDiffuseFactor;
@@ -666,12 +668,29 @@ procedure TP3DMaterialModifierTexTransform.AddPass(ShaderTree: TP3DShaderNodeTre
     Result:= Node;
   end;
 
+  function ChangeSocketValueMat( Node: TP3DShaderNode; Name: String; Value: TMat4 ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketMatrix( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+
 var
   i: Integer;
 begin
   with ( Material ) do
     for i:= 0 to Maps.Count - 1 do
-      ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_Transform' ), 'TexCoordIndex', i );
+      if ( Maps[ i ] is TP3DMaterialMapBase ) then
+        with ( Maps[ i ] as TP3DMaterialMapBase ) do
+          if ( TransformDynamic ) then
+            ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_TransformDynamic' ), 'TexCoordIndex', i )
+          else
+            ChangeSocketValueMat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_TransformFixed' ), 'TexCoordIndex', i ),
+              'Transform', Transform );
 end;
 
 procedure TP3DMaterialModifierTexTransform.PassToShader(Material: TP3DMaterialBase);

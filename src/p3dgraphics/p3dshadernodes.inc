@@ -641,6 +641,7 @@ constructor TP3DShaderNode.CreateFromDOM( DomNode: TDOMElement );
         'float': Result:= TP3DShaderNodeSocketFloat.Create( Self, Dir );
         'int': Result:= TP3DShaderNodeSocketInt.Create( Self, Dir );
         'shader': Result:= TP3DShaderNodeSocketShader.Create( Self, Dir );
+        'mat4': Result:= TP3DShaderNodeSocketMatrix.Create( Self, Dir );
       else
         Result:= TP3DShaderNodeSocket.Create( Self, Dir );
       end;

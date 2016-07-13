@@ -149,6 +149,7 @@ begin
     'float': Result:= TP3DShaderNodeSocketFloat.Create( Node, Direction );
     'int': Result:= TP3DShaderNodeSocketInt.Create( Node, Direction );
     'shader': Result:= TP3DShaderNodeSocketShader.Create( Node, Direction );
+    'mat4': Result:= TP3DShaderNodeSocketMatrix.Create( Node, Direction );
   else
     Result:= TP3DShaderNodeSocket.Create( GlobalActiveNode, Direction );
   end;
