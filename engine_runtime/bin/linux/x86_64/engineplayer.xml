@@ -58,9 +58,9 @@
     </xsl:template>
   </xsl:stylesheet>
   <info Time="0" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="684" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
-  <info Time="684" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
-  <info Time="4097" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="557" Unit="p3devents" Sender="TP3DApplication" function="SetMainWindow">SetMainWindow</info>
+  <info Time="558" Unit="p3devents" Sender="TP3DApplication" function="Initialize">initializing application</info>
+  <info Time="3514" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -263,7 +263,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4098" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3515" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -576,7 +576,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4100" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3517" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -779,7 +779,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4101" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3517" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1092,7 +1092,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4103" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3519" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1295,7 +1295,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4103" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3520" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1608,7 +1608,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4154" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3570" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -1819,7 +1819,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4155" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3572" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -2136,7 +2136,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4239" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3665" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -2354,7 +2354,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4241" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3668" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -2677,7 +2677,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4244" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3671" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -2895,7 +2895,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4246" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3673" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -3218,7 +3218,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4255" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3684" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -3443,7 +3443,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4258" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3686" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -3770,7 +3770,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4262" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3691" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -3995,7 +3995,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4264" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3694" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -4322,7 +4322,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4268" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3698" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -4554,7 +4554,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4271" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3702" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -4885,7 +4885,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4546" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3961" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -4958,7 +4958,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4550" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3963" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -5031,7 +5031,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4562" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3974" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -5104,7 +5104,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4565" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3976" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -5177,7 +5177,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4568" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3980" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -5416,7 +5416,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4572" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3983" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -5747,7 +5747,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <info Time="4576" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3987" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -5813,7 +5813,7 @@ vPosition = view * world * ( vPosition + Displace * vNormal );
 gl_Position = proj * vPosition;
 }
 &amp;lt; End of Shader</info>
-  <info Time="4579" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
+  <info Time="3990" Unit="p3dgraphics" Sender="TP3DShaderNodeTree">Built shader from chunks &amp;gt;
 #version 120
 #if (__VERSION__ &gt; 120)
 # define IN in
@@ -5880,7 +5880,7 @@ gl_FragColor = FragColor;
 #endif
 }
 &amp;lt; End of Shader</info>
-  <exception Time="4582">p3dshaders.inc(407): OpenGL Error: invalid enumerant</exception>
-  <info Time="4588" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
-  <info Time="54252" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
+  <exception Time="3993">p3dshaders.inc(407): OpenGL Error: invalid enumerant</exception>
+  <info Time="3999" Unit="p3devents" Sender="TP3DApplication" function="Run">Running application</info>
+  <info Time="6125" Unit="p3devents" Sender="TP3DApplication">exit mainloop</info>
 </p3dlog>

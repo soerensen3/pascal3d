@@ -4,7 +4,9 @@
 
 { TP3DMaterialModifierTerrain }
 
-TP3DMaterialModifierTerrain = class ( TP3DMaterialModifier )
+{ TP3DMeshModifierTerrain }
+
+TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
   private
     FCamObject: TP3DActor;
     FNumCells: Integer;
@@ -12,10 +14,9 @@ TP3DMaterialModifierTerrain = class ( TP3DMaterialModifier )
 
   published
     constructor Create;
+    destructor Destroy; override;
 
-    procedure AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase); override;
-    procedure PassToShader( Material: TP3DMaterialBase ); override;
-    class function GetIndex: Integer; override;
+    procedure PassToShader(Mesh: TP3DMesh; Material: TP3DMaterialShader); override;
 
     property TerrainSize: Integer read FTerrainSize write FTerrainSize;
     property NumCells: Integer read FNumCells write FNumCells;
@@ -27,21 +28,21 @@ end;
 {$IFDEF IMPLEMENTATION}
 
 
-{ TP3DMaterialModifierTerrain }
+{ TP3DMeshModifierTerrain }
 
-constructor TP3DMaterialModifierTerrain.Create;
+constructor TP3DMeshModifierTerrain.Create;
 begin
   inherited Create;
   TerrainSize:= 4096;
   NumCells:= 64;
 end;
 
-procedure TP3DMaterialModifierTerrain.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+destructor TP3DMeshModifierTerrain.Destroy;
 begin
-  ShaderTree.AddCopy( 'pass_terrainshift' );
+  inherited Destroy;
 end;
 
-procedure TP3DMaterialModifierTerrain.PassToShader(Material: TP3DMaterialBase);
+procedure TP3DMeshModifierTerrain.PassToShader(Mesh: TP3DMesh; Material: TP3DMaterialShader);
 var
   hcell: Single;
   //Position: TVec3;
@@ -49,7 +50,7 @@ begin
   if ( not Assigned( CamObject )) then
     exit;
   hcell:= NumCells * 2;
-  //Position:= vec3( Int( CamObject.Position.X / hcell ) * hcell, Int( CamObject.Position.Y / hcell ) * hcell, 0 );
+  Position:= vec3( Int( CamObject.Position.X / hcell ) * hcell, Int( CamObject.Position.Y / hcell ) * hcell, 0 );
   glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvX' ), Round( -CamObject.Position.X / hcell ));
   glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), Round( -CamObject.Position.Y / hcell ));
   //glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -0.05 );
@@ -57,9 +58,5 @@ begin
   glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'cellNumber' ), NumCells );
 end;
 
-class function TP3DMaterialModifierTerrain.GetIndex: Integer;
-begin
-  Result:= 55;
-end;
 
 {$ENDIF}

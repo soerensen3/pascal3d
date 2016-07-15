@@ -2,48 +2,56 @@
 //part of p3dgraphics.pas
 {$IFDEF INTERFACE}
   type
-     TP3DMesh = class;
-     TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowBoundingBox, rfDebugShowArmature );
-     TP3DRenderFlags = set of TP3DRenderFlag;
+    TP3DMesh = class;
+    TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowBoundingBox, rfDebugShowArmature );
+    TP3DRenderFlags = set of TP3DRenderFlag;
 
-     { TP3DMeshMaterialGroup }
+    { TP3DMeshMaterialGroup }
 
-     TP3DMeshMaterialGroup = class ( TPersistent )
-       private
-         FIndexEnd: Integer;
-         FIndexStart: Integer;
-         FMaterial: TP3DMaterialShader;
-         FParentMesh: TP3DMesh;
-         FPolyEnd: Integer;
-         FPolyStart: Integer;
+    TP3DMeshMaterialGroup = class ( TPersistent )
+     private
+       FIndexEnd: Integer;
+       FIndexStart: Integer;
+       FMaterial: TP3DMaterialShader;
+       FParentMesh: TP3DMesh;
+       FPolyEnd: Integer;
+       FPolyStart: Integer;
 
-         procedure SetMaterial( AValue: TP3DMaterialShader );
+       procedure SetMaterial( AValue: TP3DMaterialShader );
 
-       published
-         property PolyStart: Integer read FPolyStart write FPolyStart;
-         property PolyEnd: Integer read FPolyEnd write FPolyEnd;
-         property IndexStart: Integer read FIndexStart write FIndexStart;
-         property IndexEnd: Integer read FIndexEnd write FIndexEnd;
-         property Material: TP3DMaterialShader read FMaterial write SetMaterial;
-         property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
-     end;
+     published
+       property PolyStart: Integer read FPolyStart write FPolyStart;
+       property PolyEnd: Integer read FPolyEnd write FPolyEnd;
+       property IndexStart: Integer read FIndexStart write FIndexStart;
+       property IndexEnd: Integer read FIndexEnd write FIndexEnd;
+       property Material: TP3DMaterialShader read FMaterial write SetMaterial;
+       property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
+    end;
 
-     TP3DMeshMaterialGroupList = specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >;
+    TP3DMeshMaterialGroupList = specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >;
 
-     TP3DFace = record
-       loop_start: Integer;
-       loop_count: Integer;
-       mat: TP3DMaterialShader;
-     end;
+    TP3DFace = record
+     loop_start: Integer;
+     loop_count: Integer;
+     mat: TP3DMaterialShader;
+    end;
 
 
-     PP3DFaceArray = ^TP3DFaceArray;
-     TP3DFaceArray = array of TP3DFace;
+    PP3DFaceArray = ^TP3DFaceArray;
+    TP3DFaceArray = array of TP3DFace;
 
-     { TP3DMesh }
+    TP3DMeshModifier = class( TInterfacedPersistent )
+     procedure PassToShader( Mesh: TP3DMesh; Material: TP3DMaterialShader ); virtual; abstract;
+    end;
+
+    TP3DMeshModifierList = specialize gP3DCustomObjectList < TP3DMaterialModifier >;
+
+    { TP3DMesh }
 
     TP3DMesh = class( TP3DDataBlock )
       private
+        FModifiers: TP3DMeshModifierList;
+
         procedure LoadMaterialFromDOM( DOM: TDOMElement );
 
       public
@@ -77,9 +85,10 @@
         procedure Calc_Tangents_Cotangents;
         function CalcBoundingBox(): TP3DBoundingBox; override;
         procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
-//        procedure ClearChildren;
-    end;
-    TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
+        //        procedure ClearChildren;
+        property Modifiers: TP3DMeshModifierList read FModifiers write FModifiers;
+      end;
+        TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -188,6 +197,7 @@ begin
   Edges:= TP3DIntBufferGL.Create( True );
   VBArray:= TP3DVertexBufferArray.Create;
   MaterialGroups:= TP3DMeshMaterialGroupList.Create;
+  Modifiers:= TP3DMeshModifierList.Create;
 
   Parent.Meshes.Add( Self );
 end;
@@ -202,6 +212,8 @@ destructor TP3DMesh.Destroy;
 var
   i: Integer;
 begin
+  Modifiers.Clear( True );
+  Modifiers.Free;
   Positions.Free;
   Normals.Free;
   Cotangents.Free;
@@ -331,6 +343,7 @@ procedure TP3DMesh.RenderMaterialGroup(world: TMat4; Idx: Integer;
   Scene: TP3DScene);
 var
   Material: TP3DMaterialShader;
+  Modifier: TP3DMeshModifier;
   offset: Integer;
   count, i: Integer;
 
@@ -342,6 +355,8 @@ begin
   if (( not Assigned( Material )) or ( not Assigned( Material.Shader ))) then
     exit;
   Material.PassToShader();
+  for Modifier in Modifiers do
+    Modifier.PassToShader( Self );
   Scene.PassToShader( world );
 
   if ( Positions.Count > 0 ) then

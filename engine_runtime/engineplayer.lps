@@ -7,7 +7,7 @@
       <Unit0>
         <Filename Value="engineplayer.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="1"/>
         <TopLine Value="33"/>
         <CursorPos X="25" Y="49"/>
         <UsageCount Value="200"/>
@@ -89,7 +89,7 @@
       <Unit14>
         <Filename Value="armature_test/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="52"/>
         <CursorPos X="64" Y="73"/>
         <UsageCount Value="200"/>
@@ -98,9 +98,9 @@
       <Unit15>
         <Filename Value="armature_test/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="7"/>
-        <CursorPos X="21" Y="25"/>
+        <CursorPos X="17" Y="19"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit15>
