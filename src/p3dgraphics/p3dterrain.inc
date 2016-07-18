@@ -2,24 +2,22 @@
 //part of p3dgraphics.pas
 {$IFDEF INTERFACE}
 
-{ TP3DMaterialModifierTerrain }
-
 { TP3DMeshModifierTerrain }
 
 TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
   private
-    FCamObject: TP3DActor;
     FNumCells: Integer;
     FTerrainSize: Integer;
 
   published
-    constructor Create;
+    constructor Create( AMesh: TP3DMesh );
     destructor Destroy; override;
 
-    procedure PassToShader( Mesh: TP3DMesh; var world: TMat4; Scene: TP3DScene; Material: TP3DMaterialShader ); override;
+    procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); override;
 
     property TerrainSize: Integer read FTerrainSize write FTerrainSize;
     property NumCells: Integer read FNumCells write FNumCells;
+    //property MatModifier: TP3DMaterialModifierTerrain
 end;
 
 {$ENDIF}
@@ -29,11 +27,16 @@ end;
 
 { TP3DMeshModifierTerrain }
 
-constructor TP3DMeshModifierTerrain.Create;
+constructor TP3DMeshModifierTerrain.Create(AMesh: TP3DMesh);
+var
+  i: Integer;
 begin
-  inherited Create;
+  inherited Create( AMesh );
   TerrainSize:= 4096;
   NumCells:= 64;
+  for i:= 0 to Mesh.MaterialGroups.Count -1 do
+    if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
+      TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( );
 end;
 
 destructor TP3DMeshModifierTerrain.Destroy;
@@ -41,8 +44,8 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DMeshModifierTerrain.PassToShader(Mesh: TP3DMesh;
-  var world: TMat4; Scene: TP3DScene; Material: TP3DMaterialShader);
+procedure TP3DMeshModifierTerrain.PassToShader(Scene: TP3DScene;
+  Material: TP3DMaterialShader; var world: TMat4);
 var
   hcell: Single;
   Position: TVec3;

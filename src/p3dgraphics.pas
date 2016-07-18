@@ -111,6 +111,14 @@ begin
     end;
 end;
 
+{ TP3DMeshModifier }
+
+constructor TP3DMeshModifier.Create(AMesh: TP3DMesh);
+begin
+  inherited Create;
+  Mesh:= AMesh;
+end;
+
 
 
 {$DEFINE IMPLEMENTATION}

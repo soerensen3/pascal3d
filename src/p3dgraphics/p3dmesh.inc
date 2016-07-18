@@ -40,8 +40,15 @@
     PP3DFaceArray = ^TP3DFaceArray;
     TP3DFaceArray = array of TP3DFace;
 
+    { TP3DMeshModifier }
+
     TP3DMeshModifier = class( TInterfacedPersistent )
-     procedure PassToShader( Mesh: TP3DMesh; var world: TMat4; Scene: TP3DScene; Material: TP3DMaterialShader ); virtual; abstract;
+    private
+      FMesh: TP3DMesh;
+    published
+      constructor Create( AMesh: TP3DMesh );
+      procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); virtual; abstract;
+      property Mesh: TP3DMesh read FMesh write FMesh;
     end;
 
     TP3DMeshModifierList = specialize gP3DCustomObjectList < TP3DMeshModifier >;
@@ -356,7 +363,7 @@ begin
     exit;
   Material.PassToShader();
   for Modifier in Modifiers do
-    Modifier.PassToShader( Self, world, Scene, Material );
+    Modifier.PassToShader( Scene, Material, world );
   Scene.PassToShader( world );
 
   if ( Positions.Count > 0 ) then
