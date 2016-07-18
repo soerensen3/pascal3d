@@ -65,7 +65,7 @@ var
   Obj, i, n: Integer;
   BBox: TP3DBoundingBox;
   lib: TP3DData;
-  Modifier: TP3DMaterialModifierTerrain;
+  //Modifier: TP3DMaterialModifierTerrain;
 
 begin
   Result:= False;
@@ -112,13 +112,14 @@ begin
     if ( mainscene.Objects[ Obj ] is TP3DActor ) then
     with ( P3DData.Libraries[ 0 ].Objects[ Obj ] as TP3DActor ) do
       begin
-        with ( TP3DMaterialBase( TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data ).MaterialGroups[ 0 ].Material )) do
+        TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data ).Modifiers.Add( TP3DMeshModifierTerrain.Create );
+        {with ( TP3DMaterialBase( TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data ).MaterialGroups[ 0 ].Material )) do
           begin
-            Modifier:= TP3DMaterialModifierTerrain.Create;
-            Modifiers.Add( Modifier );
-            Modifier.CamObject:= maincamera;
+            //Modifier:= TP3DMaterialModifierTerrain.Create;
+            //Modifiers.Add( Modifier );
+            //Modifier.CamObject:= maincamera;
             BuildShader();
-          end;
+          end;}
         Position:= vec3( 0, 0, -1 );
         //Scale:= vec3( 100 );
 //      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));

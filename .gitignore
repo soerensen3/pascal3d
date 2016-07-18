@@ -28,4 +28,5 @@ lib/
 !*.xml
 !reference
 !pascal3d
+!gtksourceview
 !.gitignore
