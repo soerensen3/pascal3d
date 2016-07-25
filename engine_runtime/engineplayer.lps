@@ -9,7 +9,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="33"/>
-        <CursorPos X="25" Y="49"/>
+        <CursorPos Y="48"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -81,8 +81,8 @@
       <Unit13>
         <Filename Value="armature_test/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="100"/>
-        <CursorPos X="77" Y="115"/>
+        <TopLine Value="169"/>
+        <CursorPos X="4" Y="108"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit13>
@@ -98,10 +98,9 @@
       <Unit15>
         <Filename Value="armature_test/renderscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="7"/>
-        <CursorPos X="40" Y="28"/>
+        <CursorPos X="68" Y="25"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit15>

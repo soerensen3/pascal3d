@@ -105,14 +105,14 @@ begin
   //mainscene.AppendFile( 'bulb.p3d', nil, True );
 
   //Obj:= mainscene.Objects.FindByName( 'Grid' );
-  Obj:= -1;
+  {Obj:= -1;
   if( P3DData.Libraries.Count > 0 ) then
     Obj:= P3DData.Libraries[ 0 ].Objects.FindByName( 'Grid' );
   if ( Obj >= 0 ) then
     if ( mainscene.Objects[ Obj ] is TP3DActor ) then
     with ( P3DData.Libraries[ 0 ].Objects[ Obj ] as TP3DActor ) do
       begin
-        TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data ).Modifiers.Add( TP3DMeshModifierTerrain.Create );
+        TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data ).Modifiers.Add( TP3DMeshModifierTerrain.Create( TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data )));
         {with ( TP3DMaterialBase( TP3DMesh( P3DData.Libraries[ 0 ].Objects[ Obj ].Data ).MaterialGroups[ 0 ].Material )) do
           begin
             //Modifier:= TP3DMaterialModifierTerrain.Create;
@@ -123,7 +123,7 @@ begin
         Position:= vec3( 0, 0, -1 );
         //Scale:= vec3( 100 );
 //      Matrix:= mat4scale( vec4(( BBox.Max - BBox.Min ) / 2, 1 )) * mat4translate( vec4( BBox.Center, 1 ));
-      end;
+      end;}
 
   //TArmature( Mdl.Children[ 1 ]).CurrentAction:= 0;
   WriteLn( mainscene.Objects.OutputDebugInfo );

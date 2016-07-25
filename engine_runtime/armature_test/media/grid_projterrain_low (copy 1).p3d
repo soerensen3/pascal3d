@@ -39,6 +39,11 @@
       name = "material_Material"
       end = "68815">
     </material>
+    <modifier
+      name = "terrain"
+      numcells = "64"
+      terrainsize = "4096">
+    </modifier>
   </mesh>
   <lamp
     color = "0.729, 0.808, 1.0"

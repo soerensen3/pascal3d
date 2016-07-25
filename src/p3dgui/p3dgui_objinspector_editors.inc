@@ -23,7 +23,7 @@ type
 
   { TP3DOIEditorTransform }
 
-  TP3DOIEditorTransform = class ( TP3DOIEditorGroup )
+  TP3DOIEditorTransform3D = class ( TP3DOIEditorGroup )
     private
       FPositionEdit: TP3DVectorEdit;
       FQuaternionLbl: TP3DLabel;
@@ -55,7 +55,7 @@ type
   TP3DOIEditorPageObject = class ( TP3DOIEditorPage )
     private
       FEditorObject: TP3DOIEditorObject;
-      FEditorTransform: TP3DOIEditorTransform;
+      FEditorTransform: TP3DOIEditorTransform3D;
 
     public
       constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
@@ -67,7 +67,7 @@ type
 
     published
       property EditorObject: TP3DOIEditorObject read FEditorObject write FEditorObject;
-      property EditorTransform: TP3DOIEditorTransform read FEditorTransform write FEditorTransform;
+      property EditorTransform: TP3DOIEditorTransform3D read FEditorTransform write FEditorTransform;
   end;
 
   { TP3DOIEditorDataLight }
@@ -106,7 +106,6 @@ type
   TP3DOIEditorPageLight = class ( TP3DOIEditorPage )
     private
       FEditorLight: TP3DOIEditorDataLight;
-
 
     public
       constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
@@ -430,7 +429,7 @@ end;
 
 { TP3DOIEditorTransform }
 
-function TP3DOIEditorTransform.EdGetValue(Sender: TP3DVectorEdit): TVec4;
+function TP3DOIEditorTransform3D.EdGetValue(Sender: TP3DVectorEdit): TVec4;
 begin
   if ( Obj is IP3DTransform ) then
     with ( Obj as IP3DTransform ) do
@@ -446,7 +445,7 @@ begin
     Result:= vec4( 0 );
 end;
 
-procedure TP3DOIEditorTransform.EdSetValue(Sender: TP3DVectorEdit; AValue: TVec4 );
+procedure TP3DOIEditorTransform3D.EdSetValue(Sender: TP3DVectorEdit; AValue: TVec4 );
 begin
   if ( Obj is IP3DTransform ) then
     with ( Obj as IP3DTransform ) do
@@ -460,7 +459,7 @@ begin
       end;
 end;
 
-procedure TP3DOIEditorTransform.ComboChange(Sender: TP3DComboBox;
+procedure TP3DOIEditorTransform3D.ComboChange(Sender: TP3DComboBox;
   var AValue: String);
 begin
   if ( Obj is IP3DTransform ) then
@@ -475,7 +474,7 @@ begin
       end;
 end;
 
-procedure TP3DOIEditorTransform.Update;
+procedure TP3DOIEditorTransform3D.Update;
 begin
   inherited;
   if ( Obj is IP3DTransform ) then
@@ -492,12 +491,12 @@ begin
     end;
 end;
 
-class function TP3DOIEditorTransform.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
+class function TP3DOIEditorTransform3D.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
 begin
   Result:= AObj is IP3DTransform;
 end;
 
-constructor TP3DOIEditorTransform.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorTransform3D.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
   inherited;
@@ -545,7 +544,7 @@ begin
   EditorObject:= TP3DOIEditorObject.Create( nil, Self );
   EditorObject.Align:= alTop;
 
-  EditorTransform:= TP3DOIEditorTransform.Create( nil, Self );
+  EditorTransform:= TP3DOIEditorTransform3D.Create( nil, Self );
   EditorTransform.Align:= alTop;
 end;
 

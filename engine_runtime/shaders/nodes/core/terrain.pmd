@@ -9,7 +9,7 @@ uniform int cellNumber;
 ```
 
 ```{name="CODE", type="shader", restrict="vshader,main"}
-  vTexCoord0.s = vTexCoord0.x-float(uvX)/float(cellNumber);
-  vTexCoord0.t = vTexCoord0.y+float(uvY)/float(cellNumber);
-  vPosition.xy-= vec2( uvX, uvY ) * hcell;
+vTexCoord0.s = vTexCoord0.x-float(uvX)/float(cellNumber);
+vTexCoord0.t = vTexCoord0.y+float(uvY)/float(cellNumber);
+//vPosition.xy-= vec2( uvX, uvY ) * hcell;
 ```

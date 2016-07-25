@@ -2,6 +2,22 @@
 //part of p3dgraphics.pas
 {$IFDEF INTERFACE}
 
+{ TP3DMaterialModifierTerrain }
+
+TP3DMaterialModifierTerrain = class ( TP3DMaterialModifier )
+  private
+    FMeshModifier: TP3DMeshModifier;
+
+  published
+    constructor Create( AMeshModifier: TP3DMeshModifier );
+
+    procedure AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase); override;
+    procedure PassToShader( Material: TP3DMaterialBase ); override;
+    class function GetIndex: Integer; override;
+
+    property MeshModifier: TP3DMeshModifier read FMeshModifier write FMeshModifier;
+end;
+
 { TP3DMeshModifierTerrain }
 
 TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
@@ -10,14 +26,14 @@ TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
     FTerrainSize: Integer;
 
   published
-    constructor Create( AMesh: TP3DMesh );
+    constructor Create( AMesh: TP3DMesh ); override;
     destructor Destroy; override;
 
     procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); override;
+    procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
     property TerrainSize: Integer read FTerrainSize write FTerrainSize;
     property NumCells: Integer read FNumCells write FNumCells;
-    //property MatModifier: TP3DMaterialModifierTerrain
 end;
 
 {$ENDIF}
@@ -36,7 +52,10 @@ begin
   NumCells:= 64;
   for i:= 0 to Mesh.MaterialGroups.Count -1 do
     if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
-      TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( );
+      begin
+        TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierTerrain.Create( Self ));
+        TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
+      end;
 end;
 
 destructor TP3DMeshModifierTerrain.Destroy;
@@ -59,6 +78,35 @@ begin
   //glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -0.05 );
   glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'hcell' ), hcell / TerrainSize );
   glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'cellNumber' ), NumCells );
+end;
+
+procedure TP3DMeshModifierTerrain.LoadFromDOM(ADOMNode: TDOMElement);
+begin
+  TerrainSize:= StrToIntDef( ADOMNode.GetAttribute( 'terrainsize' ), 4096 );
+  NumCells:= StrToIntDef( ADOMNode.GetAttribute( 'numcells' ), 64 );
+end;
+
+{ TP3DMaterialModifierTerrain }
+
+constructor TP3DMaterialModifierTerrain.Create(AMeshModifier: TP3DMeshModifier);
+begin
+  inherited Create;
+  MeshModifier:= AMeshModifier;
+end;
+
+procedure TP3DMaterialModifierTerrain.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+begin
+  ShaderTree.AddCopy( 'pass_terrainshift' );
+end;
+
+procedure TP3DMaterialModifierTerrain.PassToShader(Material: TP3DMaterialBase);
+begin
+  //Already done somewhere else
+end;
+
+class function TP3DMaterialModifierTerrain.GetIndex: Integer;
+begin
+  Result:= 55;
 end;
 
 

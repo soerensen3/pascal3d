@@ -43,12 +43,17 @@
     { TP3DMeshModifier }
 
     TP3DMeshModifier = class( TInterfacedPersistent )
-    private
-      FMesh: TP3DMesh;
-    published
-      constructor Create( AMesh: TP3DMesh );
-      procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); virtual; abstract;
-      property Mesh: TP3DMesh read FMesh write FMesh;
+      private
+        FMesh: TP3DMesh;
+
+      published
+        constructor Create( AMesh: TP3DMesh ); virtual;
+        constructor CreateFromDOM( ADOMNode: TDOMElement; AMesh: TP3DMesh );
+
+        procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual; abstract;
+
+        procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); virtual; abstract;
+        property Mesh: TP3DMesh read FMesh write FMesh;
     end;
 
     TP3DMeshModifierList = specialize gP3DCustomObjectList < TP3DMeshModifier >;
@@ -60,6 +65,7 @@
         FModifiers: TP3DMeshModifierList;
 
         procedure LoadMaterialFromDOM( DOM: TDOMElement );
+        procedure LoadModifierFromDOM( DOM: TDOMElement );
 
       public
         Positions: TP3DVec3BufferGL;
@@ -192,6 +198,20 @@ begin
   MaterialGroups.Add( MaterialGroup );
 end;
 
+procedure TP3DMesh.LoadModifierFromDOM(DOM: TDOMElement);
+var
+  M: TP3DMeshModifier;
+begin
+  M:= nil;
+  case DOM.GetAttribute( 'name' ) of
+    'terrain': M:= TP3DMeshModifierTerrain.CreateFromDOM( DOM, Self );
+    else
+      raise Exception.Create( 'Cannot create mesh modifier. Modifier type not found!' ); //TODO: Improve msg
+  end;
+  if ( Assigned( M )) then
+    Modifiers.Add( M );
+end;
+
 constructor TP3DMesh.Create(const AData: TP3DData);
 begin
   inherited;
@@ -284,7 +304,7 @@ begin
             LoadVec3FromStream( Cotangents, F, cnt );
           end;
 
-        cnt:= StrToInt( ADOMNode.GetAttribute( 'faces' ));
+        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'faces' ), 0 );
         if ( cnt > 0 ) then
           LoadFaceFromStream( @Faces, F, cnt, Edges.Count );
 
@@ -306,7 +326,7 @@ begin
       case Element.NodeName of
         'matrix': ;//Matrix:= LoadMat4FromDOM( Element );
         'material': LoadMaterialFromDOM( Element );
-        'mesh': ;//Children.Add( TP3DMesh.CreateFromDOM( Children, Scene, Element ));
+        'modifier': LoadModifierFromDOM( Element );
       else
         raise Exception.Create( 'Unknown tag inside Mesh Element: '+ Element.NodeName );
       end;
@@ -738,6 +758,21 @@ begin
   if ( Assigned( FMaterial )) then
     FMaterial.Users.Add( ParentMesh );
 end;
+
+{ TP3DMeshModifier }
+
+constructor TP3DMeshModifier.Create(AMesh: TP3DMesh);
+begin
+  inherited Create;
+  Mesh:= AMesh;
+end;
+
+constructor TP3DMeshModifier.CreateFromDOM(ADOMNode: TDOMElement; AMesh: TP3DMesh);
+begin
+  Create( AMesh );
+  LoadFromDOM( ADOMNode );
+end;
+
 
 
 {$ENDIF}
