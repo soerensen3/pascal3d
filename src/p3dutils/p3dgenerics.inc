@@ -60,6 +60,7 @@
 
         function Add( Item: TCustomItem ): Integer; virtual;
         procedure Delete( Index: Integer ); virtual;
+        procedure Remove( Item: TCustomItem ); virtual;
         function IndexOf( Item: TCustomItem ): Integer; virtual;
         procedure Clear( const FreeObjects: Boolean = False ); virtual;
         function GetEnumerator: TP3DCustomObjectListEnumeratorClass;
@@ -212,6 +213,13 @@ end;
 procedure gP3DCustomObjectList.Delete( Index: Integer );
 begin
   FItems.Delete( Index );
+  if ( Assigned( OnChange )) then
+    OnChange( Self );
+end;
+
+procedure gP3DCustomObjectList.Remove(Item: TCustomItem);
+begin
+  FItems.Remove( Item );
   if ( Assigned( OnChange )) then
     OnChange( Self );
 end;

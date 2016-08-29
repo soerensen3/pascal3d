@@ -55,7 +55,7 @@ begin
   P3DApplication.Initialize;
 
   P3DLoadConfig( 'settings_default.xml' );
-  P3DShaderNodeLib.LoadLibraryPath( 'nodes/core/', '*.pmd' );
+  P3DShaderNodeLib.LoadLibraryPath( P3DSearchPaths.BaseDir + 'shaders/nodes/core/', '*.pmd' );
   //Init( P3DApplication );
   P3DGUIInit;
   InitScene;

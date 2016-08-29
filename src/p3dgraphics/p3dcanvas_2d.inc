@@ -107,8 +107,7 @@ TP3DCanvas2D = class ( TP3DCanvas )
     procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );
     procedure RenderRect( p1, p2: TVec2; Color: TVec4 );
     procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
-    procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer;
-      Color: TVec4);
+    procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TVec4);
     procedure RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
       num_segments: Integer; Color: TVec4);
     procedure RenderLineCircle( c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
@@ -522,7 +521,7 @@ function TP3DCanvas2D.GetValidText(Text: String;
   var CacheObj: TP3DText; AFont: TP3DFont): TP3DText;
 begin
   if ( Text = '' ) then
-    exit;
+    Text:= ' ';
 
   if (( not Assigned( CacheObj )) or ( CacheObj.Text <> Text )) then
     begin

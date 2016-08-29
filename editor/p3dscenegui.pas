@@ -8,6 +8,7 @@ uses
   Classes,
   SysUtils,
   LazFileUtils,
+  SDL2,
   Math,
   dglOpenGL,
   p3devents,
@@ -72,6 +73,13 @@ begin
   OIPanel:= TP3DOIPanel.Create();
   OIPanel.Align:= alRight;
   OIPanel.ObjectInspector.Obj:= OIPanel;
+
+  {TestScene.AppendFile( 'armature_test/media/colorwheel.p3d' );
+  with ( TP3DComboBoxDataBlock.Create()) do
+    begin
+      Align:= alBottom;
+      TypeFilter:= TP3DScene;
+    end;}
 
   {n:= 1;
   for i:= 0 to ( Random( 10 ) + 5 ) do

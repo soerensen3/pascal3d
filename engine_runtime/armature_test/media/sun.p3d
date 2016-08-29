@@ -37,6 +37,7 @@
     unlit = "yes">
     <texture
       diffuse = "1.0"
+      name = "sun"
       file = "sun.png"
       mode = "mix"
       alpha = "1.0">

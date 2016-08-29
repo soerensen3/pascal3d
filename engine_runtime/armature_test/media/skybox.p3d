@@ -37,6 +37,7 @@
     unlit = "yes">
     <texture
       diffuse = "1.0"
+      name = "martian_sunset"
       file = "martian_sunset.png"
       mode = "mix">
     </texture>

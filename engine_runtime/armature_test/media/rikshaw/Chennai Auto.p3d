@@ -1,0 +1,2640 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      name = "Plane.015"
+      data = "mesh_Plane.018"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.014"
+      data = "mesh_Plane.015"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.005"
+      data = "mesh_Plane.014"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.003"
+      data = "mesh_Plane.013"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.001"
+      data = "mesh_Plane.012"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto Top.002"
+      data = "mesh_Plane.009"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto Top.001"
+      data = "mesh_Plane.001"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.037"
+      data = "mesh_Cylinder.019"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.013"
+      data = "mesh_Plane.008"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.012"
+      data = "mesh_Plane.007"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Empty.001"
+      type = "empty">
+      <transform
+        position = " 0.573997,-0.830333, 0.503324"
+        scale = " 0.119232, 0.119232, 0.119232"
+        quaternion = "-0.004589, 0.000000,-0.000000, 0.999990">
+      </transform>
+    </object>
+    <object
+      name = "Camera.002"
+      data = "camera_Camera.002"
+      type = "camera">
+      <transform
+        position = "-1.044826,-2.945520, 0.778656"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.634359,-0.214892,-0.238250, 0.703312">
+      </transform>
+    </object>
+    <object
+      name = "Plane.011"
+      data = "mesh_Plane.004"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.036"
+      data = "mesh_Cylinder.017"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.008"
+      data = "mesh_Plane.003"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.007"
+      data = "mesh_Plane"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "CurveCircle.001"
+      type = "curve">
+      <transform
+        position = " 0.113769,-0.674817, 0.510140"
+        scale = "-0.001265,-0.001265,-0.001265"
+        quaternion = " 0.000000, 0.000000, 1.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      name = "Curve.002"
+      type = "curve">
+      <transform
+        position = " 0.249495,-0.603577, 0.687854"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.018"
+      data = "mesh_Cube.017"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.017"
+      data = "mesh_Cube.019"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.006"
+      data = "mesh_Plane.017"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Lamp.002"
+      data = "lamp_Lamp.001"
+      type = "lamp">
+      <transform
+        position = " 6.728605, 1.356791, 3.018165"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.011173, 0.652324, 0.404740, 0.640730">
+      </transform>
+    </object>
+    <object
+      name = "Tube.013"
+      data = "mesh_Tube.013"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.012"
+      data = "mesh_Tube.012"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.011"
+      data = "mesh_Tube.011"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.010"
+      data = "mesh_Tube.010"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.005"
+      data = "mesh_Plane.011"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.004"
+      data = "mesh_Plane.010"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane"
+      data = "mesh_Plane.006"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.027"
+      data = "mesh_Cylinder.016"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.026"
+      data = "mesh_Cylinder.015"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.025"
+      data = "mesh_Cylinder.014"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.021"
+      data = "mesh_Cylinder.012"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Lamp.001"
+      data = "lamp_Lamp"
+      type = "lamp">
+      <transform
+        position = "-4.743919,-3.686312, 4.129776"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.284680,-0.313162,-0.300815, 0.854633">
+      </transform>
+    </object>
+    <object
+      name = "Empty"
+      type = "empty">
+      <transform
+        position = " 0.499689,-0.629007, 0.429868"
+        scale = " 0.119232, 0.119232, 0.119232"
+        quaternion = "-0.004589, 0.000000,-0.000000, 0.999990">
+      </transform>
+    </object>
+    <object
+      name = "Camera.001"
+      data = "camera_Camera.001"
+      type = "camera">
+      <transform
+        position = " 2.234336, 1.374940, 0.840295"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.227262, 0.609785, 0.711480, 0.265162">
+      </transform>
+    </object>
+    <object
+      name = "Camera"
+      data = "camera_Camera"
+      type = "camera">
+      <transform
+        position = "-1.472185, 1.114395, 0.834123"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.267569,-0.593719,-0.691870, 0.311802">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.020"
+      data = "mesh_Cylinder.010"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.016"
+      data = "mesh_Cylinder.008"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.015"
+      data = "mesh_Cylinder.007"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.014"
+      data = "mesh_Cylinder.006"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.002"
+      data = "mesh_Plane.002"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Lamp"
+      data = "lamp_Spot"
+      type = "lamp">
+      <transform
+        position = "-1.354972, 3.333965,12.738727"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = "-0.297283, 0.013676, 0.449606, 0.842194">
+      </transform>
+    </object>
+    <object
+      name = "CurveCircle"
+      data = "mesh_Mesh"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder"
+      data = "mesh_Cylinder.002"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.001"
+      data = "mesh_Cylinder.003"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.002"
+      data = "mesh_Cylinder.004"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.012"
+      data = "mesh_Cylinder.011"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.010"
+      data = "mesh_Cube.012"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.009"
+      data = "mesh_Cube.011"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.006"
+      data = "mesh_Plane.016"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.001"
+      data = "mesh_Cube.018"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.035"
+      data = "mesh_Cylinder.024"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Curve.003"
+      type = "curve">
+      <transform
+        position = " 0.857008,-0.178763, 0.826616"
+        scale = " 0.313599, 0.313599, 0.313599"
+        quaternion = "-0.000000,-0.808928, 0.000000, 0.587907">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.034"
+      data = "mesh_Cylinder.023"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Sphere"
+      data = "mesh_Sphere.002"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.003"
+      data = "mesh_Plane.021"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.008"
+      data = "mesh_Plane.019"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.004"
+      data = "mesh_Plane.022"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.009"
+      data = "mesh_Plane.023"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Sphere.003"
+      data = "mesh_Sphere.004"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.033"
+      data = "mesh_Cylinder.025"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Curve.001"
+      type = "curve">
+      <transform
+        position = " 0.266190,-0.178763, 0.822156"
+        scale = " 0.313599, 0.313599, 0.313599"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.032"
+      data = "mesh_Cylinder.026"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Sphere.002"
+      data = "mesh_Sphere.006"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.007"
+      data = "mesh_Plane.024"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.009"
+      data = "mesh_Tube.014"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.002"
+      data = "mesh_Plane.026"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto.010"
+      data = "mesh_Plane.027"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Glass"
+      data = "mesh_Plane.028"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Sphere.001"
+      data = "mesh_Sphere.007"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.003"
+      data = "mesh_Cube.020"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.002"
+      data = "mesh_Cube.021"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube"
+      data = "mesh_Cube.022"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Torus.001"
+      data = "mesh_Torus.003"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.004"
+      data = "mesh_Cube.023"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.004"
+      data = "mesh_Tube.015"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.005"
+      data = "mesh_Tube.016"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.005"
+      data = "mesh_Cube.024"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.006"
+      data = "mesh_Cube.025"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.006"
+      data = "mesh_Tube.017"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.007"
+      data = "mesh_Tube.018"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.028"
+      data = "mesh_Cylinder.027"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.007"
+      data = "mesh_Cube.026"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cylinder.029"
+      data = "mesh_Cylinder.028"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Tube.008"
+      data = "mesh_Tube.019"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Plane.010"
+      data = "mesh_Plane.029"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.008"
+      data = "mesh_Cube.027"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.011"
+      data = "mesh_Cube.028"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Curve"
+      type = "curve">
+      <transform
+        position = " 0.445618,-0.035720, 0.720887"
+        scale = " 0.066221, 0.052803, 0.035996"
+        quaternion = " 0.198224,-0.899949,-0.068888, 0.382171">
+      </transform>
+    </object>
+    <object
+      name = "Cube.012"
+      data = "mesh_Cube.029"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.013"
+      data = "mesh_Cube.030"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.014"
+      data = "mesh_Cube.031"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.015"
+      data = "mesh_Cube.001"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Cube.016"
+      data = "mesh_Cube"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Auto Top"
+      data = "mesh_Plane.005"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Mat"
+      data = "mesh_Cube.002"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "CurveCircle.002"
+      data = "mesh_Mesh.001"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "CurveCircle.003"
+      type = "curve">
+      <transform
+        position = " 0.541495, 0.034399, 0.820466"
+        scale = " 0.206515, 0.206515, 0.206515"
+        quaternion = " 0.500000, 0.500000,-0.500000, 0.500000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    tangents = "24"
+    name = "mesh_Plane.018"
+    texlayers = "1"
+    texcoords = "24"
+    loops = "24"
+    cotangents = "24"
+    binary = "Chennai Auto.mesh_Plane.018.p3dmesh"
+    vertices = "9"
+    normals = "9"
+    faces = "8">
+    <material
+      name = "material_Auto .018"
+      start = "0"
+      end = "7">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "1590"
+    name = "mesh_Plane.014"
+    texlayers = "1"
+    texcoords = "1590"
+    loops = "1590"
+    cotangents = "1590"
+    binary = "Chennai Auto.mesh_Plane.014.p3dmesh"
+    vertices = "294"
+    normals = "294"
+    faces = "530">
+    <material
+      name = "material_Auto .007"
+      start = "0"
+      end = "529">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.019"
+    loops = "720"
+    binary = "Chennai Auto.mesh_Cylinder.019.p3dmesh"
+    vertices = "152"
+    normals = "152"
+    faces = "212">
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "211">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane"
+    loops = "272"
+    binary = "Chennai Auto.mesh_Plane.p3dmesh"
+    vertices = "70"
+    normals = "70"
+    faces = "68">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "67">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.017"
+    loops = "280"
+    binary = "Chennai Auto.mesh_Cube.017.p3dmesh"
+    vertices = "72"
+    normals = "72"
+    faces = "70">
+    <material
+      name = "material_Material.013"
+      start = "0"
+      end = "69">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.012"
+    loops = "720"
+    binary = "Chennai Auto.mesh_Tube.012.p3dmesh"
+    vertices = "180"
+    normals = "180"
+    faces = "180">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "179">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.004"
+    loops = "4"
+    binary = "Chennai Auto.mesh_Plane.004.p3dmesh"
+    vertices = "4"
+    normals = "4"
+    faces = "1">
+    <material
+      name = "material_Material.020"
+      start = "0"
+      end = "0">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.006"
+    loops = "4"
+    binary = "Chennai Auto.mesh_Plane.006.p3dmesh"
+    vertices = "4"
+    normals = "4"
+    faces = "1">
+    <material
+      name = "material_Material.009"
+      start = "0"
+      end = "0">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.016"
+    loops = "3050"
+    binary = "Chennai Auto.mesh_Cylinder.016.p3dmesh"
+    vertices = "813"
+    normals = "813"
+    faces = "775">
+    <material
+      name = "material_Material.002"
+      start = "0"
+      end = "774">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.010"
+    loops = "22416"
+    binary = "Chennai Auto.mesh_Cylinder.010.p3dmesh"
+    vertices = "5804"
+    normals = "5804"
+    faces = "5604">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "5603">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.016"
+    loops = "3496"
+    binary = "Chennai Auto.mesh_Plane.016.p3dmesh"
+    vertices = "940"
+    normals = "940"
+    faces = "874">
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "873">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "368"
+    name = "mesh_Plane.019"
+    texlayers = "1"
+    texcoords = "368"
+    loops = "368"
+    cotangents = "368"
+    binary = "Chennai Auto.mesh_Plane.019.p3dmesh"
+    vertices = "102"
+    normals = "102"
+    faces = "92">
+    <material
+      name = "material_Auto .009"
+      start = "0"
+      end = "-1">
+    </material>
+    <material
+      name = "material_Material.028"
+      start = "0"
+      end = "91">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Sphere.007"
+    loops = "2144"
+    binary = "Chennai Auto.mesh_Sphere.007.p3dmesh"
+    vertices = "545"
+    normals = "545"
+    faces = "544">
+    <material
+      name = "material_Material.038"
+      start = "0"
+      end = "543">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.002"
+    loops = "280"
+    binary = "Chennai Auto.mesh_Cube.002.p3dmesh"
+    vertices = "72"
+    normals = "72"
+    faces = "70">
+    <material
+      name = "material_Material.041"
+      start = "0"
+      end = "69">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.027"
+    loops = "52"
+    binary = "Chennai Auto.mesh_Cube.027.p3dmesh"
+    vertices = "16"
+    normals = "16"
+    faces = "13">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "12">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.014"
+    loops = "240"
+    binary = "Chennai Auto.mesh_Tube.014.p3dmesh"
+    vertices = "58"
+    normals = "58"
+    faces = "64">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "63">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.015"
+    loops = "192"
+    binary = "Chennai Auto.mesh_Tube.015.p3dmesh"
+    vertices = "56"
+    normals = "56"
+    faces = "48">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "47">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.027"
+    loops = "576"
+    binary = "Chennai Auto.mesh_Cylinder.027.p3dmesh"
+    vertices = "130"
+    normals = "130"
+    faces = "160">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "159">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.029"
+    loops = "2960"
+    binary = "Chennai Auto.mesh_Plane.029.p3dmesh"
+    vertices = "796"
+    normals = "796"
+    faces = "740">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "739">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.011"
+    loops = "22416"
+    binary = "Chennai Auto.mesh_Cylinder.011.p3dmesh"
+    vertices = "5804"
+    normals = "5804"
+    faces = "5604">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "5603">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "312"
+    name = "mesh_Plane.021"
+    texlayers = "1"
+    texcoords = "312"
+    loops = "312"
+    cotangents = "312"
+    binary = "Chennai Auto.mesh_Plane.021.p3dmesh"
+    vertices = "108"
+    normals = "108"
+    faces = "78">
+    <material
+      name = "material_Material.025"
+      start = "0"
+      end = "77">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.023"
+    loops = "24"
+    binary = "Chennai Auto.mesh_Cube.023.p3dmesh"
+    vertices = "8"
+    normals = "8"
+    faces = "6">
+    <material
+      name = "material_Material.033"
+      start = "0"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.029"
+    loops = "52"
+    binary = "Chennai Auto.mesh_Cube.029.p3dmesh"
+    vertices = "16"
+    normals = "16"
+    faces = "13">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "12">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.019"
+    loops = "1802"
+    binary = "Chennai Auto.mesh_Tube.019.p3dmesh"
+    vertices = "513"
+    normals = "513"
+    faces = "453">
+    <material
+      name = "material_Material.039"
+      start = "0"
+      end = "452">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "22662"
+    name = "mesh_Plane.012"
+    texlayers = "1"
+    texcoords = "22662"
+    loops = "22662"
+    cotangents = "22662"
+    binary = "Chennai Auto.mesh_Plane.012.p3dmesh"
+    vertices = "4090"
+    normals = "4090"
+    faces = "7554">
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "7553">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "1056"
+    name = "mesh_Plane.009"
+    texlayers = "1"
+    texcoords = "1056"
+    loops = "1056"
+    cotangents = "1056"
+    binary = "Chennai Auto.mesh_Plane.009.p3dmesh"
+    vertices = "432"
+    normals = "432"
+    faces = "264">
+    <material
+      name = "material_Material.024"
+      start = "0"
+      end = "263">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.017"
+    loops = "192"
+    binary = "Chennai Auto.mesh_Cylinder.017.p3dmesh"
+    vertices = "68"
+    normals = "68"
+    faces = "48">
+    <material
+      name = "material_Material"
+      start = "0"
+      end = "47">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.019"
+    loops = "1940"
+    binary = "Chennai Auto.mesh_Cube.019.p3dmesh"
+    vertices = "504"
+    normals = "504"
+    faces = "485">
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "484">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.011"
+    loops = "720"
+    binary = "Chennai Auto.mesh_Tube.011.p3dmesh"
+    vertices = "180"
+    normals = "180"
+    faces = "180">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "179">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "112"
+    name = "mesh_Plane.017"
+    texlayers = "1"
+    texcoords = "112"
+    loops = "112"
+    cotangents = "112"
+    binary = "Chennai Auto.mesh_Plane.017.p3dmesh"
+    vertices = "32"
+    normals = "32"
+    faces = "28">
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "27">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.015"
+    loops = "1800"
+    binary = "Chennai Auto.mesh_Cylinder.015.p3dmesh"
+    vertices = "500"
+    normals = "500"
+    faces = "450">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "449">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.008"
+    loops = "2600"
+    binary = "Chennai Auto.mesh_Cylinder.008.p3dmesh"
+    vertices = "700"
+    normals = "700"
+    faces = "650">
+    <material
+      name = "material_Material.003"
+      start = "0"
+      end = "649">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.004"
+    loops = "2600"
+    binary = "Chennai Auto.mesh_Cylinder.004.p3dmesh"
+    vertices = "700"
+    normals = "700"
+    faces = "650">
+    <material
+      name = "material_Material.003"
+      start = "0"
+      end = "649">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.011"
+    loops = "184"
+    binary = "Chennai Auto.mesh_Cube.011.p3dmesh"
+    vertices = "48"
+    normals = "48"
+    faces = "46">
+    <material
+      name = "material_Material.007"
+      start = "0"
+      end = "-1">
+    </material>
+    <material
+      name = "material_Material.005"
+      start = "33"
+      end = "45">
+    </material>
+    <material
+      name = "material_Material.006"
+      start = "16"
+      end = "32">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Sphere.002"
+    loops = "2880"
+    binary = "Chennai Auto.mesh_Sphere.002.p3dmesh"
+    vertices = "729"
+    normals = "729"
+    faces = "728">
+    <material
+      name = "material_Auto .009"
+      start = "0"
+      end = "511">
+    </material>
+    <material
+      name = "material_Auto .010"
+      start = "512"
+      end = "727">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.024"
+    loops = "240"
+    binary = "Chennai Auto.mesh_Plane.024.p3dmesh"
+    vertices = "88"
+    normals = "88"
+    faces = "60">
+    <material
+      name = "material_Auto .009"
+      start = "0"
+      end = "59">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.026"
+    loops = "112"
+    binary = "Chennai Auto.mesh_Plane.026.p3dmesh"
+    vertices = "32"
+    normals = "32"
+    faces = "28">
+    <material
+      name = "material_Auto .009"
+      start = "0"
+      end = "-1">
+    </material>
+    <material
+      name = "material_Auto .008"
+      start = "0"
+      end = "27">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.020"
+    loops = "1616"
+    binary = "Chennai Auto.mesh_Cube.020.p3dmesh"
+    vertices = "406"
+    normals = "406"
+    faces = "404">
+    <material
+      name = "material_Seat.001"
+      start = "0"
+      end = "403">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.023"
+    loops = "72"
+    binary = "Chennai Auto.mesh_Cylinder.023.p3dmesh"
+    vertices = "25"
+    normals = "25"
+    faces = "24">
+    <material
+      name = "material_Material.025"
+      start = "0"
+      end = "23">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Torus.003"
+    loops = "1578"
+    binary = "Chennai Auto.mesh_Torus.003.p3dmesh"
+    vertices = "441"
+    normals = "441"
+    faces = "396">
+    <material
+      name = "material_Auto .009"
+      start = "0"
+      end = "395">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.026"
+    loops = "312"
+    binary = "Chennai Auto.mesh_Cube.026.p3dmesh"
+    vertices = "80"
+    normals = "80"
+    faces = "78">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "77">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Mesh.001"
+    loops = "20640"
+    binary = "Chennai Auto.mesh_Mesh.001.p3dmesh"
+    vertices = "5178"
+    normals = "5178"
+    faces = "5160">
+    <material
+      name = "material_Seat"
+      start = "0"
+      end = "5159">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.028"
+    loops = "52"
+    binary = "Chennai Auto.mesh_Cube.028.p3dmesh"
+    vertices = "16"
+    normals = "16"
+    faces = "13">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "12">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.018"
+    loops = "132"
+    binary = "Chennai Auto.mesh_Tube.018.p3dmesh"
+    vertices = "66"
+    normals = "66"
+    faces = "33">
+    <material
+      name = "material_Material.039"
+      start = "0"
+      end = "32">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "544"
+    name = "mesh_Plane.005"
+    texlayers = "1"
+    texcoords = "544"
+    loops = "544"
+    cotangents = "544"
+    binary = "Chennai Auto.mesh_Plane.005.p3dmesh"
+    vertices = "265"
+    normals = "265"
+    faces = "136">
+    <material
+      name = "material_Material.040"
+      start = "0"
+      end = "135">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.025"
+    loops = "72"
+    binary = "Chennai Auto.mesh_Cylinder.025.p3dmesh"
+    vertices = "25"
+    normals = "25"
+    faces = "24">
+    <material
+      name = "material_Material.025"
+      start = "0"
+      end = "23">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.021"
+    loops = "2288"
+    binary = "Chennai Auto.mesh_Cube.021.p3dmesh"
+    vertices = "574"
+    normals = "574"
+    faces = "572">
+    <material
+      name = "material_Seat.001"
+      start = "0"
+      end = "571">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "102"
+    name = "mesh_Plane.015"
+    texlayers = "1"
+    texcoords = "102"
+    loops = "102"
+    cotangents = "102"
+    binary = "Chennai Auto.mesh_Plane.015.p3dmesh"
+    vertices = "46"
+    normals = "46"
+    faces = "34">
+    <material
+      name = "material_Auto .016"
+      start = "0"
+      end = "33">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.008"
+    loops = "156"
+    binary = "Chennai Auto.mesh_Plane.008.p3dmesh"
+    vertices = "48"
+    normals = "48"
+    faces = "39">
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "38">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.010"
+    loops = "128"
+    binary = "Chennai Auto.mesh_Tube.010.p3dmesh"
+    vertices = "64"
+    normals = "64"
+    faces = "32">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "31">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.011"
+    loops = "536"
+    binary = "Chennai Auto.mesh_Plane.011.p3dmesh"
+    vertices = "160"
+    normals = "160"
+    faces = "134">
+    <material
+      name = "material_Material.022"
+      start = "102"
+      end = "115">
+    </material>
+    <material
+      name = "material_Material.014"
+      start = "88"
+      end = "89">
+    </material>
+    <material
+      name = "material_Material.015"
+      start = "120"
+      end = "133">
+    </material>
+    <material
+      name = "material_Material"
+      start = "116"
+      end = "119">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.014"
+    loops = "2600"
+    binary = "Chennai Auto.mesh_Cylinder.014.p3dmesh"
+    vertices = "700"
+    normals = "700"
+    faces = "650">
+    <material
+      name = "material_Material.003"
+      start = "0"
+      end = "649">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.007"
+    loops = "1800"
+    binary = "Chennai Auto.mesh_Cylinder.007.p3dmesh"
+    vertices = "500"
+    normals = "500"
+    faces = "450">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "449">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.003"
+    loops = "1800"
+    binary = "Chennai Auto.mesh_Cylinder.003.p3dmesh"
+    vertices = "500"
+    normals = "500"
+    faces = "450">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "449">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.024"
+    loops = "1224"
+    binary = "Chennai Auto.mesh_Cylinder.024.p3dmesh"
+    vertices = "313"
+    normals = "313"
+    faces = "312">
+    <material
+      name = "material_Auto .008"
+      start = "0"
+      end = "311">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "4"
+    name = "mesh_Plane.022"
+    texlayers = "1"
+    texcoords = "4"
+    loops = "4"
+    cotangents = "4"
+    binary = "Chennai Auto.mesh_Plane.022.p3dmesh"
+    vertices = "4"
+    normals = "4"
+    faces = "1">
+    <material
+      name = "material_Material.029"
+      start = "0"
+      end = "0">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "4"
+    name = "mesh_Plane.023"
+    texlayers = "1"
+    texcoords = "4"
+    loops = "4"
+    cotangents = "4"
+    binary = "Chennai Auto.mesh_Plane.023.p3dmesh"
+    vertices = "4"
+    normals = "4"
+    faces = "1">
+    <material
+      name = "material_Material.030"
+      start = "0"
+      end = "0">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.025"
+    loops = "168"
+    binary = "Chennai Auto.mesh_Cube.025.p3dmesh"
+    vertices = "44"
+    normals = "44"
+    faces = "42">
+    <material
+      name = "material_Material.027"
+      start = "0"
+      end = "41">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Sphere.004"
+    loops = "464"
+    binary = "Chennai Auto.mesh_Sphere.004.p3dmesh"
+    vertices = "116"
+    normals = "116"
+    faces = "116">
+    <material
+      name = "material_Auto .009"
+      start = "0"
+      end = "115">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.028"
+    loops = "576"
+    binary = "Chennai Auto.mesh_Cylinder.028.p3dmesh"
+    vertices = "130"
+    normals = "130"
+    faces = "160">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "159">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.001"
+    loops = "600"
+    binary = "Chennai Auto.mesh_Cube.001.p3dmesh"
+    vertices = "152"
+    normals = "152"
+    faces = "150">
+    <material
+      name = "material_Material.010"
+      start = "0"
+      end = "149">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "2088"
+    name = "mesh_Cube"
+    texlayers = "1"
+    texcoords = "2088"
+    loops = "2088"
+    cotangents = "2088"
+    binary = "Chennai Auto.mesh_Cube.p3dmesh"
+    vertices = "524"
+    normals = "524"
+    faces = "522">
+    <material
+      name = "material_Material.010"
+      start = "396"
+      end = "521">
+    </material>
+    <material
+      name = "material_Material.017"
+      start = "384"
+      end = "385">
+    </material>
+    <material
+      name = "material_Material.018"
+      start = "394"
+      end = "395">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.012"
+    loops = "24"
+    binary = "Chennai Auto.mesh_Cube.012.p3dmesh"
+    vertices = "8"
+    normals = "8"
+    faces = "6">
+    <material
+      name = "material_Material.005"
+      start = "0"
+      end = "5">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.017"
+    loops = "1624"
+    binary = "Chennai Auto.mesh_Tube.017.p3dmesh"
+    vertices = "429"
+    normals = "429"
+    faces = "414">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "413">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.018"
+    loops = "1616"
+    binary = "Chennai Auto.mesh_Cube.018.p3dmesh"
+    vertices = "406"
+    normals = "406"
+    faces = "404">
+    <material
+      name = "material_Seat.001"
+      start = "0"
+      end = "403">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.026"
+    loops = "1224"
+    binary = "Chennai Auto.mesh_Cylinder.026.p3dmesh"
+    vertices = "313"
+    normals = "313"
+    faces = "312">
+    <material
+      name = "material_Auto .008"
+      start = "0"
+      end = "311">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "168"
+    name = "mesh_Plane.013"
+    texlayers = "1"
+    texcoords = "168"
+    loops = "168"
+    cotangents = "168"
+    binary = "Chennai Auto.mesh_Plane.013.p3dmesh"
+    vertices = "48"
+    normals = "48"
+    faces = "56">
+    <material
+      name = "material_Auto .006"
+      start = "0"
+      end = "55">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "5776"
+    name = "mesh_Plane.001"
+    texlayers = "1"
+    texcoords = "5776"
+    loops = "5776"
+    cotangents = "5776"
+    binary = "Chennai Auto.mesh_Plane.001.p3dmesh"
+    vertices = "1654"
+    normals = "1654"
+    faces = "1456">
+    <material
+      name = "material_Material.021"
+      start = "0"
+      end = "1455">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "16"
+    name = "mesh_Plane.007"
+    texlayers = "1"
+    texcoords = "16"
+    loops = "16"
+    cotangents = "16"
+    binary = "Chennai Auto.mesh_Plane.007.p3dmesh"
+    vertices = "9"
+    normals = "9"
+    faces = "4">
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "-1">
+    </material>
+    <material
+      name = "material_Auto "
+      start = "0"
+      end = "3">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.013"
+    loops = "128"
+    binary = "Chennai Auto.mesh_Tube.013.p3dmesh"
+    vertices = "64"
+    normals = "64"
+    faces = "32">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "31">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.003"
+    loops = "272"
+    binary = "Chennai Auto.mesh_Plane.003.p3dmesh"
+    vertices = "70"
+    normals = "70"
+    faces = "68">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "67">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.010"
+    loops = "832"
+    binary = "Chennai Auto.mesh_Plane.010.p3dmesh"
+    vertices = "204"
+    normals = "204"
+    faces = "220">
+    <material
+      name = "material_Material.011"
+      start = "196"
+      end = "219">
+    </material>
+    <material
+      name = "material_Material.012"
+      start = "122"
+      end = "195">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.012"
+    loops = "22416"
+    binary = "Chennai Auto.mesh_Cylinder.012.p3dmesh"
+    vertices = "5804"
+    normals = "5804"
+    faces = "5604">
+    <material
+      name = "material_Material.001"
+      start = "0"
+      end = "5603">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.006"
+    loops = "3050"
+    binary = "Chennai Auto.mesh_Cylinder.006.p3dmesh"
+    vertices = "813"
+    normals = "813"
+    faces = "775">
+    <material
+      name = "material_Material.002"
+      start = "0"
+      end = "774">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "528"
+    name = "mesh_Plane.002"
+    texlayers = "1"
+    texcoords = "528"
+    loops = "528"
+    cotangents = "528"
+    binary = "Chennai Auto.mesh_Plane.002.p3dmesh"
+    vertices = "106"
+    normals = "106"
+    faces = "176">
+    <material
+      name = "material_Auto .019"
+      start = "0"
+      end = "175">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Mesh"
+    loops = "1869"
+    binary = "Chennai Auto.mesh_Mesh.p3dmesh"
+    vertices = "508"
+    normals = "508"
+    faces = "503">
+    <material
+      name = "material_Material.033"
+      start = "0"
+      end = "502">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cylinder.002"
+    loops = "3050"
+    binary = "Chennai Auto.mesh_Cylinder.002.p3dmesh"
+    vertices = "813"
+    normals = "813"
+    faces = "775">
+    <material
+      name = "material_Material.002"
+      start = "0"
+      end = "774">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Sphere.006"
+    loops = "3013"
+    binary = "Chennai Auto.mesh_Sphere.006.p3dmesh"
+    vertices = "760"
+    normals = "760"
+    faces = "759">
+    <material
+      name = "material_Material.031"
+      start = "598"
+      end = "620">
+    </material>
+    <material
+      name = "material_Material.032"
+      start = "621"
+      end = "758">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.027"
+    loops = "552"
+    binary = "Chennai Auto.mesh_Plane.027.p3dmesh"
+    vertices = "144"
+    normals = "144"
+    faces = "138">
+    <material
+      name = "material_Material.035"
+      start = "136"
+      end = "136">
+    </material>
+    <material
+      name = "material_Material.019"
+      start = "137"
+      end = "137">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.024"
+    loops = "312"
+    binary = "Chennai Auto.mesh_Cube.024.p3dmesh"
+    vertices = "80"
+    normals = "80"
+    faces = "78">
+    <material
+      name = "material_Material.027"
+      start = "0"
+      end = "77">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.031"
+    loops = "52"
+    binary = "Chennai Auto.mesh_Cube.031.p3dmesh"
+    vertices = "16"
+    normals = "16"
+    faces = "13">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "12">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Plane.028"
+    loops = "392"
+    binary = "Chennai Auto.mesh_Plane.028.p3dmesh"
+    vertices = "120"
+    normals = "120"
+    faces = "98">
+    <material
+      name = "material_Glass.001"
+      start = "0"
+      end = "97">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Tube.016"
+    loops = "96"
+    binary = "Chennai Auto.mesh_Tube.016.p3dmesh"
+    vertices = "32"
+    normals = "32"
+    faces = "24">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "23">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.022"
+    loops = "1632"
+    binary = "Chennai Auto.mesh_Cube.022.p3dmesh"
+    vertices = "410"
+    normals = "410"
+    faces = "408">
+    <material
+      name = "material_Seat.001"
+      start = "0"
+      end = "407">
+    </material>
+  </mesh>
+  <mesh
+    name = "mesh_Cube.030"
+    loops = "36"
+    binary = "Chennai Auto.mesh_Cube.030.p3dmesh"
+    vertices = "12"
+    normals = "12"
+    faces = "9">
+    <material
+      name = "material_Material.026"
+      start = "0"
+      end = "8">
+    </material>
+  </mesh>
+  <lamp
+    energy = "0.5"
+    name = "lamp_Lamp.001"
+    color = "1.000000, 1.000000, 1.000000"
+    type = "sun">
+  </lamp>
+  <lamp
+    energy = "0.699999988079071"
+    name = "lamp_Spot"
+    color = "1.000000, 1.000000, 1.000000"
+    type = "sun">
+  </lamp>
+  <lamp
+    energy = "0.30000001192092896"
+    name = "lamp_Lamp"
+    color = "1.000000, 1.000000, 1.000000"
+    type = "sun">
+  </lamp>
+  <camera
+    name = "camera_Camera.002"
+    fov = "0.8575560450553894"
+    near = "0.10000000149011612"
+    far = "100.0">
+  </camera>
+  <camera
+    name = "camera_Camera.001"
+    fov = "0.8575560450553894"
+    near = "0.10000000149011612"
+    far = "100.0">
+  </camera>
+  <camera
+    name = "camera_Camera"
+    fov = "0.8575560450553894"
+    near = "0.10000000149011612"
+    far = "100.0">
+  </camera>
+  <material
+    name = "material_Auto .018"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.236752, 0.193822, 0.008687">
+    <map
+      alpha = "1.0"
+      name = "Tex.015"
+      diffuse = "1.0"
+      mode = "mix"
+      data = "tex_Tex.015">
+    </map>
+  </material>
+  <material
+    name = "material_Material.001"
+    specular = "50.000000, 0.656051, 0.656051, 0.656051"
+    diffuse = "0.301885, 0.301885, 0.301885">
+  </material>
+  <material
+    name = "material_Material.013"
+    specular = "50.000000, 0.326070, 0.326070, 0.326070"
+    diffuse = "0.199377, 0.190949, 0.190949">
+    <map
+      normal = "1.0"
+      name = "Tex.007"
+      mode = "mix"
+      data = "tex_Tex.007">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 3.000000, 3.000000, 3.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </map>
+    <map
+      mode = "mix"
+      name = "Tex.008"
+      alpha = "1.0"
+      data = "tex_Tex.008">
+    </map>
+  </material>
+  <material
+    name = "material_Material.009"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000">
+  </material>
+  <material
+    name = "material_Material.038"
+    specular = "146.000000, 1.000000, 1.000000, 1.000000"
+    diffuse = "0.959436, 0.959436, 0.959436">
+  </material>
+  <material
+    name = "material_Material.025"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.800000, 0.800000">
+  </material>
+  <material
+    name = "material_Material.033"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000">
+  </material>
+  <material
+    name = "material_Material.007"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000">
+  </material>
+  <material
+    name = "material_Material.005"
+    specular = "50.000000, 0.211375, 0.211375, 0.211375"
+    diffuse = "0.770689, 0.660675, 0.177447">
+  </material>
+  <material
+    name = "material_Material.003"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.788526, 0.560729, 0.532645">
+  </material>
+  <material
+    name = "material_Material.029"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000">
+    <map
+      mode = "mix"
+      name = "Tex.011"
+      diffuse = "1.0"
+      data = "tex_Tex.011">
+    </map>
+  </material>
+  <material
+    name = "material_Material.014"
+    specular = "50.000000, 0.963814, 0.963814, 0.963814"
+    diffuse = "0.800000, 0.800000, 0.800000">
+  </material>
+  <material
+    name = "material_Material.027"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000">
+  </material>
+  <material
+    name = "material_Auto .019"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.000000, 0.000000, 0.000000">
+  </material>
+  <material
+    name = "material_Material.031"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.194028, 0.242092, 0.163997">
+  </material>
+  <material
+    name = "material_Material.018"
+    specular = "50.000000, 0.789884, 0.789884, 0.789884"
+    diffuse = "0.190075, 0.185847, 0.185847">
+    <map
+      mode = "mix"
+      name = "Tex.018"
+      diffuse = "1.0"
+      data = "tex_Tex.018">
+    </map>
+  </material>
+  <material
+    name = "material_Material.035"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.129965, 0.129965, 0.129965">
+  </material>
+  <material
+    name = "material_Material.006"
+    specular = "50.000000, 0.211375, 0.211375, 0.211375"
+    diffuse = "0.332861, 0.332861, 0.332861">
+  </material>
+  <material
+    name = "material_Seat"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.199377, 0.198934, 0.198934">
+  </material>
+  <material
+    name = "material_Material.010"
+    specular = "50.000000, 0.789884, 0.789884, 0.789884"
+    diffuse = "0.195535, 0.189881, 0.189881">
+  </material>
+  <material
+    name = "material_Material.012"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.000000, 0.000000, 0.000000">
+  </material>
+  <material
+    name = "material_Material.022"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.491462, 0.000000">
+  </material>
+  <material
+    name = "material_Material.024"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.800000, 0.800000">
+  </material>
+  <material
+    name = "material_Material.020"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.244246, 0.248489, 0.274128">
+  </material>
+  <material
+    name = "material_Auto .007"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.525078, 0.525078, 0.525078">
+  </material>
+  <material
+    name = "material_Auto "
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.649412, 0.000000">
+  </material>
+  <material
+    name = "material_Material.002"
+    specular = "511.000000, 1.000000, 1.000000, 1.000000"
+    diffuse = "0.519897, 0.511802, 0.511802">
+  </material>
+  <material
+    name = "material_Auto .009"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.649412, 0.000000">
+  </material>
+  <material
+    name = "material_Material.028"
+    specular = "50.000000, 0.656051, 0.656051, 0.656051"
+    diffuse = "0.301885, 0.301885, 0.301885">
+  </material>
+  <material
+    name = "material_Material.026"
+    specular = "50.000000, 0.211375, 0.211375, 0.211375"
+    diffuse = "0.151322, 0.151322, 0.151322">
+  </material>
+  <material
+    name = "material_Material.039"
+    specular = "50.000000, 0.211375, 0.211375, 0.211375"
+    diffuse = "0.770689, 0.660675, 0.177447">
+  </material>
+  <material
+    name = "material_Material.041"
+    specular = "50.000000, 0.326070, 0.326070, 0.326070"
+    diffuse = "0.199377, 0.190949, 0.190949">
+    <map
+      normal = "1.0"
+      name = "Tex.005"
+      mode = "mix"
+      data = "tex_Tex.005">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 3.000000, 3.000000, 3.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </map>
+    <map
+      mode = "mix"
+      name = "Tex.009"
+      alpha = "1.0"
+      data = "tex_Tex.009">
+    </map>
+  </material>
+  <material
+    name = "material_Material"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.129965, 0.129965, 0.129965">
+  </material>
+  <material
+    name = "material_Auto .016"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.000000, 0.000000">
+    <map
+      mode = "mix"
+      name = "Tex.020"
+      diffuse = "1.0"
+      data = "tex_Tex.020">
+    </map>
+  </material>
+  <material
+    name = "material_Material.030"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000">
+    <map
+      mode = "mix"
+      name = "Tex.012"
+      diffuse = "1.0"
+      data = "tex_Tex.012">
+    </map>
+  </material>
+  <material
+    name = "material_Material.015"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.000000, 0.000000">
+  </material>
+  <material
+    name = "material_Glass.001"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000">
+  </material>
+  <material
+    name = "material_Material.032"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.800000, 0.800000">
+  </material>
+  <material
+    name = "material_Material.017"
+    specular = "50.000000, 0.789884, 0.789884, 0.789884"
+    diffuse = "0.654762, 0.653307, 0.653307">
+    <map
+      mode = "mix"
+      name = "Tex.017"
+      diffuse = "1.0"
+      data = "tex_Tex.017">
+    </map>
+  </material>
+  <material
+    name = "material_Material.019"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.081910, 0.080088, 0.080088">
+  </material>
+  <material
+    name = "material_Auto .006"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.000000, 0.000000, 0.000000">
+    <map
+      mode = "mix"
+      name = "Tex"
+      diffuse = "1.0"
+      data = "tex_Tex">
+    </map>
+  </material>
+  <material
+    name = "material_Auto .008"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.140643, 0.140643, 0.140643">
+  </material>
+  <material
+    name = "material_Auto .010"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.108607, 0.108607, 0.108607">
+  </material>
+  <material
+    name = "material_Seat.001"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.199377, 0.198934, 0.198934">
+  </material>
+  <material
+    name = "material_Material.040"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.000000, 0.000000">
+    <map
+      normal = "4.0"
+      name = "Tex.006"
+      diffuse = "1.0"
+      mode = "mix"
+      data = "tex_Tex.006">
+    </map>
+  </material>
+  <material
+    name = "material_Material.011"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.800000, 0.299245, 0.000000">
+  </material>
+  <material
+    name = "material_Material.021"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.188235, 0.188235, 0.188235">
+    <map
+      mode = "mix"
+      name = "Tex.001"
+      diffuse = "1.0"
+      data = "tex_Tex.001">
+    </map>
+  </material>
+  <texture
+    name = "tex_Tex.020"
+    file = "numbr plate.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex"
+    file = "numbr plate.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.006"
+    file = "stitch.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.001"
+    file = "stitch.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.015"
+    file = "green plate.png">
+  </texture>
+  <texture
+    name = "tex_Tex.008"
+    file = "Metals.Ornamental Metals.Plate.Mesh.cutout.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.018"
+    file = "metre brand.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.009"
+    file = "Metals.Ornamental Metals.Plate.Mesh.cutout.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.012"
+    file = "stop.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.017"
+    file = "metre.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.011"
+    file = "numbr plate.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.007"
+    file = "Metals.Ornamental Metals.Plate.Mesh.jpg">
+  </texture>
+  <texture
+    name = "tex_Tex.005"
+    file = "Metals.Ornamental Metals.Plate.Mesh.jpg">
+  </texture>
+</p3dfile>

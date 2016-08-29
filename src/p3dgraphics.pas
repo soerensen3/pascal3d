@@ -37,6 +37,8 @@ type
 {$IfDef CHECKFORERRORS}{$Assertions ON}{$EndIf}
 
 {$DEFINE INTERFACE}
+{$INCLUDE p3dcolors.inc}
+
 {$INCLUDE p3dbuffers.inc}
 {$INCLUDE p3dviewport.inc}
 {$INCLUDE p3dobject.inc}
@@ -56,6 +58,7 @@ type
 {$INCLUDE p3dsymbols.inc}
 {$INCLUDE p3dcanvas.inc}
 {$INCLUDE p3dselection.inc}
+
 
 {$INCLUDE p3dresource.inc}
 {$UNDEF INTERFACE}

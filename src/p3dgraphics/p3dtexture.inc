@@ -14,6 +14,7 @@ type
 
   TP3DTexture = class ( TP3DDataBlock )
     private
+      FFileWatch: TP3DFileWatch;
       FFiltering: TP3DTextureFiltering;
       FFilteringMipMap: TP3DTextureFiltering;
       FGLTexture: Integer;
@@ -30,7 +31,10 @@ type
       constructor Create( AName: String; const AData: TP3DData = nil );
       constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DData = nil );
       constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
+      procedure LoadFromBinary( FileName: String ); override;
+      procedure LoadFromDOM(ADOMNode: TDOMElement); override;
       destructor Destroy; override;
+      procedure Reload; reintroduce;
 
     published
       property Width: Integer read FWidth;
@@ -39,6 +43,7 @@ type
       property Filtering: TP3DTextureFiltering read FFiltering write SetFiltering;
       property FilteringMipMap: TP3DTextureFiltering read FFilteringMipMap write SetFilteringMipMap;
       property MipMap: Boolean read FMipMap write SetMipMap;
+      property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
   end;
   TP3DTextureList = specialize gP3DCustomDatablockList < TP3DTexture >;
 {$ENDIF}
@@ -94,9 +99,10 @@ end;
 procedure TP3DTexture.LoadFromSurface(ASurface: PSDL_Surface);
 var
   Mode: Integer;
+  Tex: GLint;
 begin
-  glGenTextures( 1, @FGLTexture ); cle( Self );
-  glBindTexture( GL_TEXTURE_2D, FGLTexture ); cle( Self );
+  glGenTextures( 1, @Tex ); cle( Self );
+  glBindTexture( GL_TEXTURE_2D, Tex ); cle( Self );
 
   if ( ASurface^.format^.BytesPerPixel = 4 ) then
     Mode:= GL_RGBA
@@ -118,26 +124,62 @@ begin
   FHeight:= ASurface^.h;
 
   SDL_FreeSurface( ASurface );
+  if ( FGLTexture > 0 ) then
+    glDeleteTextures( 1, @FGLTexture ); cle( Self );
+  FGLTexture:= Tex;
+end;
+
+procedure TP3DTexture.LoadFromBinary(FileName: String);
+var
+  FSurface: PSDL_Surface;
+begin
+  if (( FileName = FileWatch.FileName ) and ( not FileWatch.CheckForChange )) then
+    begin
+      {$IFDEF VERBOSE}
+      WriteLn( 'File did not change. Skipped reload of ' + ExtractFileName( FileName ));
+      {$ENDIF}
+      exit;
+    end;
+
+  inherited LoadFromBinary( FileName );
+  FSurface:= IMG_Load( PChar( FileName ));
+  FileWatch.FileName:= FileName;
+  if ( FSurface = nil ) then
+    raise Exception.Create( Format( 'The specified file "%s" could not be loaded!', [ ExtractFileName( FileName )]));
+
+  {$IFDEF VERBOSE}
+  WriteLn( 'Texture loaded: ' + ExtractFileName( FileName ));
+  {$ENDIF}
+  LoadFromSurface( FSurface );
+end;
+
+procedure TP3DTexture.LoadFromDOM(ADOMNode: TDOMElement);
+var
+  FullTexName: String;
+begin
+  inherited LoadFromDOM(ADOMNode);
+  FullTexName:= P3DSearchPaths.Models.FindFileEx( ADOMNode.GetAttribute( 'file' ), GetCurrentDir );
+
+  if ( not FileExists( FullTexName )) then
+    raise Exception.Create( 'Error: The specified texture "' + ExtractFileName( FullTexName ) + '" could not be found!' );
+
+  LoadFromBinary( FullTexName );
+  FMipMap:= P3DStrToBoolDef( ADOMNode.GetAttribute( 'mipmap' ), True );
+  FFilteringMipMap:= StrToFilterDef( ADOMNode.GetAttribute( 'mipmap_filter' ), tfLinear );
+  FFiltering:= StrToFilterDef( ADOMNode.GetAttribute( 'texture_filter' ), tfLinear );
+  UpdateFiltering;
 end;
 
 constructor TP3DTexture.Create( AName: String; const AData: TP3DData );
 var
-  FSurface: PSDL_Surface;
   FileName: String;
 begin
   FileName:= P3DSearchPaths.Models.FindFileEx( AName, GetCurrentDir );
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AName ]));
   inherited Create( AData );
-  FSurface:= IMG_Load( PChar( FileName ));
-  FileWatch.FileName:= FileName;
-  if ( FSurface = nil ) then
-    raise Exception.Create( Format( 'The specified file "%s" could not be loaded!', [ AName ]));
-
-  {$IFDEF VERBOSE}
-  WriteLn( 'Texture loaded: ' + AName );
-  {$ENDIF}
-  LoadFromSurface( FSurface );
+  FFileWatch:= TP3DFileWatch.Create( FileName );
+  LoadFromFile( FileName );
 end;
 
 constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface;
@@ -146,25 +188,16 @@ begin
   if ( not Assigned( glGenTextures )) then
     exit;
   inherited Create( AData );
+  FFileWatch:= TP3DFileWatch.Create( '' );
   LoadFromSurface( ASurface );
 end;
 
 constructor TP3DTexture.CreateFromDOM(ADOMNode: TDOMElement;
   const AData: TP3DData);
-var
-  TexName: DOMString;
-  FullTexName: String;
 begin
-  FullTexName:= P3DSearchPaths.Models.FindFileEx( ADOMNode.GetAttribute( 'file' ), GetCurrentDir );
-
-  if ( not FileExists( FullTexName )) then
-    raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );
-
-  Create( FullTexName, AData );
-  FMipMap:= P3DStrToBoolDef( ADOMNode.GetAttribute( 'mipmap' ), True );
-  FFilteringMipMap:= StrToFilterDef( ADOMNode.GetAttribute( 'mipmap_filter' ), tfLinear );
-  FFiltering:= StrToFilterDef( ADOMNode.GetAttribute( 'texture_filter' ), tfLinear );
-  UpdateFiltering;
+  inherited Create( AData );
+  FFileWatch:= TP3DFileWatch.Create( '' );
+  LoadFromDOM( ADOMNode );
 end;
 
 destructor TP3DTexture.Destroy;
@@ -172,5 +205,17 @@ begin
   if ( Assigned( glDeleteTextures )) then
     glDeleteTextures( 1, @FGLTexture ); cle( Self );
   inherited Destroy;
+  FileWatch.Free;
 end;
+
+procedure TP3DTexture.Reload;
+var
+  tex: Integer;
+begin
+  tex:= FGLTexture;
+  LoadFromFile( FileWatch.FileName );
+  if ( Assigned( glDeleteTextures )) then
+    glDeleteTextures( 1, @tex ); cle( Self );
+end;
+
 {$ENDIF}

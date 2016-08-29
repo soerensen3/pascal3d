@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<p3dfile>
+<p3dfile
+  name = "grid_projterrain_low">
   <scene
     name = "Scene">
     <object
@@ -8,7 +9,7 @@
       type = "mesh">
       <transform
         position = " 0.000000, 0.000000, 0.000000"
-        scale = "4096.000000,4096.000000, 1.000000"
+        scale = "16.000000,16.000000, 1.000000"
         quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
       </transform>
     </object>
@@ -41,8 +42,8 @@
     </material>
     <modifier
       name = "terrain"
-      numcells = "64"
-      terrainsize = "4096">
+      uvmultiplier = "0.5"
+      gridsize = "16">
     </modifier>
   </mesh>
   <lamp
@@ -55,31 +56,117 @@
     specular = "10.000000, 0.200000, 0.200000, 0.200000"
     name = "material_Material"
     diffuse = "0.640000, 0.640000, 0.640000">
-    <texture
+    <map
       mode = "mix"
+      data = "diffuse"
       file = "megt00n270hb_diff_4k_high.png"
       diffuse = "1.0">
-    </texture>
-    <texture
+      <transform
+        position = " 0, 0, 0"
+        scale = " 0.100000, 0.100000, 0.100000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>      
+    </map>
+    <map
       mode = "mix"
+      data = "normal_displace"
       file = "megt00n270hb_n_displ_high.png"
-      displace = "-100.0"
+      displace = "-5.0"
       normal = "1.0">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 0.100000, 0.100000, 0.100000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>      
+    </map>
+    <map
+      mode = "multiply"
+      data = "rock"
+      file = "rock.jpg"
+      diffuse = "0.5">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 100.00000, 100.00000, 100.00000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>      
+    </map>
+    <map
+      mode = "mix"
+      file = "rock_normal.png"
+      data = "rock_normal"
+      normal = "0.5">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 100.00000, 100.00000, 100.00000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>          
+    </map>
+    <map
+      mode = "mix"
+      file = "rock_spec.png"
+      data = "rock_spec"
+      specular = "0.5">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 100.00000, 100.00000, 100.00000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>          
+    </map>
+  </material>
+    <texture
+      mode = "mix"
+      name = "diffuse"
+      file = "megt00n270hb_diff_4k_high.png"
+      diffuse = "1.0">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 0.100000, 0.100000, 0.100000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>      
     </texture>
     <texture
       mode = "mix"
+      name = "normal_displace"
+      file = "megt00n270hb_n_displ_high.png"
+      displace = "-5.0"
+      normal = "1.0">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 0.100000, 0.100000, 0.100000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>      
+    </texture>
+    <texture
+      mode = "multiply"
+      name = "rock"
       file = "rock.jpg"
-      diffuse = "0.1">
+      diffuse = "0.5">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 100.00000, 100.00000, 100.00000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>      
     </texture>
     <texture
       mode = "mix"
       file = "rock_normal.png"
-      normal = "0.1">
+      name = "rock_normal"
+      normal = "0.5">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 100.00000, 100.00000, 100.00000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>          
     </texture>
     <texture
       mode = "mix"
       file = "rock_spec.png"
-      specular = "0.1">
+      name = "rock_spec"
+      specular = "0.5">
+      <transform
+        position = " 0, 0, 0"
+        scale = " 100.00000, 100.00000, 100.00000"
+        quaternion = " 0, 0, 0, 1">
+      </transform>          
     </texture>
-  </material>
 </p3dfile>

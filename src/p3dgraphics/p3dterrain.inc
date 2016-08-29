@@ -22,18 +22,19 @@ end;
 
 TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
   private
-    FNumCells: Integer;
-    FTerrainSize: Integer;
+    FGridSize: Single;
+    FUVMultiplier: Float;
 
-  published
+  public
     constructor Create( AMesh: TP3DMesh ); override;
     destructor Destroy; override;
 
     procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); override;
     procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
-    property TerrainSize: Integer read FTerrainSize write FTerrainSize;
-    property NumCells: Integer read FNumCells write FNumCells;
+  published
+    property GridSize: Single read FGridSize write FGridSize;
+    property UVMultiplier: Float read FUVMultiplier write FUVMultiplier;
 end;
 
 {$ENDIF}
@@ -48,8 +49,8 @@ var
   i: Integer;
 begin
   inherited Create( AMesh );
-  TerrainSize:= 4096;
-  NumCells:= 64;
+  GridSize:= 1.0;
+  UVMultiplier:= 1.0;
   for i:= 0 to Mesh.MaterialGroups.Count -1 do
     if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
       begin
@@ -66,24 +67,20 @@ end;
 procedure TP3DMeshModifierTerrain.PassToShader(Scene: TP3DScene;
   Material: TP3DMaterialShader; var world: TMat4);
 var
-  hcell: Single;
   Position: TVec3;
   //Position: TVec3;
 begin
-  hcell:= NumCells * 2;
-  Position:= vec3( round( Scene.ActiveCam.Position.X / hcell ), round( Scene.ActiveCam.Position.Y / hcell ), 0 );
-  world.Row[ 3 ]:= vec4( Position * hcell, 1 );
-  glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvX' ), -round( Position.x ));
-  glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), -round( Position.y ));
-  //glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'height' ), -0.05 );
-  glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'hcell' ), hcell / TerrainSize );
-  glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'cellNumber' ), NumCells );
+  Position:= vec3( round( Scene.ActiveCam.Position.X / GridSize ), round( Scene.ActiveCam.Position.Y / GridSize ), 0 );
+  world.Row[ 3 ]:= vec4( Position * GridSize, 1 );
+  glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvX' ),  Position.x{ * UVMultiplier });
+  glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), -Position.y{ * UVMultiplier });
+  glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvMultiplier' ), UVMultiplier );
 end;
 
 procedure TP3DMeshModifierTerrain.LoadFromDOM(ADOMNode: TDOMElement);
 begin
-  TerrainSize:= StrToIntDef( ADOMNode.GetAttribute( 'terrainsize' ), 4096 );
-  NumCells:= StrToIntDef( ADOMNode.GetAttribute( 'numcells' ), 64 );
+  GridSize:= StrToFloatDef( ADOMNode.GetAttribute( 'gridsize' ), 1 );
+  UVMultiplier:= StrToFloatDef( ADOMNode.GetAttribute( 'uvmultiplier' ), 1 );
 end;
 
 { TP3DMaterialModifierTerrain }
@@ -95,8 +92,22 @@ begin
 end;
 
 procedure TP3DMaterialModifierTerrain.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+  function ChangeSocketValueInt( Node: TP3DShaderNode; Name: String; Value: Integer ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketInt( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+var
+  i: Integer;
 begin
-  ShaderTree.AddCopy( 'pass_terrainshift' );
+  ShaderTree.AddCopy( 'pass_terraininit' );
+  for i:= 0 to Material.Maps.Count - 1 do
+    ChangeSocketValueInt( ShaderTree.AddCopyEx( 'pass_terrainshift' ), 'MapIndex', i );
 end;
 
 procedure TP3DMaterialModifierTerrain.PassToShader(Material: TP3DMaterialBase);
@@ -106,7 +117,7 @@ end;
 
 class function TP3DMaterialModifierTerrain.GetIndex: Integer;
 begin
-  Result:= 55;
+  Result:= 45;
 end;
 
 

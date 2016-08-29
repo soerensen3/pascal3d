@@ -360,7 +360,7 @@ begin
         FinishEditing;
     end;
 
-  if ( P3DInput.Mouse.Buttons[ 2 ]) then
+  if ( P3DInput.Mouse.Buttons[ 2 ] and ( gcisMouseOver in ScenePanel.InputState )) then
     if ( ScenePanel.EditMode = emDefault ) then
       ScenePanel.Selection:= PickPixel( MousePos )
     else
@@ -387,7 +387,7 @@ procedure TP3DSceneEditModeDefault.RenderSelection( world: TMat4 );
 begin
 //  glEnable( GL_DEPTH_TEST );
   glDepthMask( False );
-  ScenePanel.SelectionMaterial.Diff:= vec3( 1, 1, 0 );
+  ScenePanel.SelectionMaterial.Diff:= Accent500.XYZ;//vec3( 1, 1, 0 );
   //SelectionMaterial.Alpha:= 0.2;
   ScenePanel.SelectionMaterial.PassToShader();
   ScenePanel.Cam.PassToShader( Mat4Identity );
@@ -522,7 +522,12 @@ begin
       if ( Assigned( Selection )) then
         if ( P3DMatchFileName( Selection.Caption, '*.p3d' )) then
           begin
-            TestScene.AppendFile( AppendPathDelim( Directory ) + Selection.Caption );
+            try
+              TestScene.AppendFile( AppendPathDelim( Directory ) + Selection.Caption );
+            except
+              on E: Exception do
+                SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + Selection.Caption ), PChar( E.Message ), Nil );
+            end;
             DataView.Update;
             DataView.Children.ExpandAll();
           end;
@@ -616,7 +621,7 @@ begin
   inherited;
   Scene:= TestScene;
   OrbitCamera:= True;
-  Color:= vec4( 225/255, 230/255, 234/255, 1 );
+  Color:= Primary50; //vec4( 225/255, 230/255, 234/255, 1 );
   OnDragDrop:= @SceneDragDrop;
   SelectionMaterial:= TP3DMaterialBase.Create();
   SelectionMaterial.Unlit:= True;
@@ -842,7 +847,7 @@ begin
       begin
         if ( Assigned( EditorSceneLampMaterial )) then
           if ( Selection = Obj.Actor ) then
-            EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Actor.Data ).Color + 0.5 + vec3( 0.5, 0.5, 0.0 )
+            EditorSceneLampMaterial.Diff:= Accent500.XYZ
           else
             EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Actor.Data ).Color;
 
@@ -878,13 +883,13 @@ begin
   Canvas.Font.Size:= 32;}
 
   Canvas.Unlock();
-  FCanvas3D.Proj:= Cam.Proj;
+  {FCanvas3D.Proj:= Cam.Proj;
   FCanvas3D.View:= Cam.View;
   FCanvas3D.Lock;
 
   FCanvas3D.RenderLine( vec3( 0, 0, 0 ), vec3( 10, 10, 10 ), vec4( 1, 0, 0, 1 ));
 
-  FCanvas3D.Unlock();
+  FCanvas3D.Unlock();}
 end;
 
 {$ENDIF}

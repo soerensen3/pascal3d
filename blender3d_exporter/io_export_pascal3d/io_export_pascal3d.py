@@ -11,6 +11,7 @@ bl_info = {
   'category': 'Import-Export' }
 
 import bpy, os, struct
+from mathutils import Vector
 
 from bpy.props import StringProperty, EnumProperty, BoolProperty
 
@@ -25,18 +26,16 @@ PathModes = (
 ## P3DXMLFile ------------------------------------------------------------------
 
 class P3DXMLFile:
-  meshes = set()
-  lamps = set()
-  cameras = set()
-  materials = set()
-  armatures = set()
-  root = et.Element( 'p3dfile' )
-  docstack = [ root ]
-
   def __init__( self, fname ):
     self.fname = fname
-    root = et.Element( 'p3dfile' )
-    docstack = [ root ]
+    self.root = et.Element( 'p3dfile' )
+    self.docstack = [ self.root ]
+    self.meshes = set()
+    self.lamps = set()
+    self.cameras = set()
+    self.materials = set()
+    self.armatures = set()
+    self.textures = set()    
 
   def push( self, name ):
     el = et.Element( name )
@@ -62,7 +61,6 @@ class P3DXMLFile:
 
   def write( self ):
     file = open( self.fname, 'w')
-
     xml_text = self.tostring( self.root )
 
     file.write('<?xml version="1.0" ?>\n' + xml_text )
@@ -112,6 +110,11 @@ class P3DExporter( bpy.types.Operator ):
     description = 'Export links to external files like textures and objects in relative or absolute mode or just export file names',
     items = PathModes,
     default = '2' )
+    
+  ExportSceneCamera = BoolProperty(
+    name = 'Export scene camera',
+    description = 'The exporter can set the scene''s camera to match the blender scene. This might however be undesired in most cases so this is disabled by default.',
+    default = False )
 ## -------------------------------------------------------------------------------
 
   def execute( self, context ):
@@ -165,13 +168,16 @@ class P3DExporter( bpy.types.Operator ):
     for data in self.file.materials:
       self.ExportMaterial( data )
       
+    for data in self.file.textures:
+      self.ExportTexture( data )
+      
     for data in self.file.armatures:
       self.ExportArmature( data )
 
     self.file.write()
 
     if ( self.Verbose ):
-      self.report({ 'INFO' }, 'Written file123' )
+      self.report({ 'INFO' }, 'Written file' )
 
     del self.file
 
@@ -184,8 +190,9 @@ class P3DExporter( bpy.types.Operator ):
       self.report({ 'INFO' }, 'Exporting scene ' + scene.name )
     el = self.file.push( 'scene' )
     el.attrib[ 'name' ] = scene.name
-    if ( not ( scene.camera is None )):
-      el.attrib[ 'camera' ] = scene.camera.name
+    if ( self.ExportSceneCamera ):
+      if ( not ( scene.camera is None )):
+        el.attrib[ 'camera' ] = scene.camera.name
     for obj in scene.objects:
       self.ExportObject( obj )
     self.file.pop()
@@ -298,7 +305,7 @@ class P3DExporter( bpy.types.Operator ):
       mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
       
     if ( self.Verbose ):
-      self.report({ 'INFO' }, 'Exporting data ' + obj.data.name )
+      self.report({ 'INFO' }, 'Exporting data ' + obj.data.name + ' for object ' + obj.name )
 
     el = self.file.push( 'mesh' )
     el.attrib[ 'name' ] = 'mesh_' + obj.data.name
@@ -340,46 +347,79 @@ class P3DExporter( bpy.types.Operator ):
 
 ##--------------------------------------------------------------------------------
 
-##EXPORTING TEXTURE --------------------------------------------------------------
+##EXPORTING MAP --------------------------------------------------------------
 
-  def ExportTexture( self, tex ):
-    filepath = tex.texture.image.filepath
+  def ExportMap( self, map ):
+    filepath = map.texture.image.filepath
     if not filepath:  # may be '' for generated images
       return
     if ( self.Verbose ):
-      self.report({ 'INFO' }, 'Exporting data ' + tex.name )
+      self.report({ 'INFO' }, 'Exporting data ' + map.name )
+
+    el = self.file.push( 'map' )
+    
+    el.attrib[ 'name' ] = map.name
+
+    # write relative image path
+    #filepath = bpy_extras.io_utils.path_reference(filepath, , Config.FilePath,
+    #                                  'AUTO', '', copy_set, face_img.library)        
+
+    #el.attrib[ 'file' ] = self.ExportPath( filepath )
+    el.attrib[ 'data' ] = 'tex_' + map.texture.name
+    self.file.textures.add( map )
+
+    if ( map.use_map_color_diffuse ):
+      el.attrib[ 'diffuse' ] = str( map.diffuse_color_factor )
+
+    if ( map.use_map_diffuse ):
+      el.attrib[ 'diffuse_intensity' ] = str( map.diffuse_factor )
+
+    if ( map.use_map_normal ):
+      el.attrib[ 'normal' ] = str( map.normal_factor )
+
+    if ( map.use_map_color_spec ):
+      el.attrib[ 'specular' ] = str( map.specular_color_factor )
+
+    if ( map.use_map_specular ):
+      el.attrib[ 'specular_intensity' ] = str( map.specular_factor )
+
+    if ( map.use_map_alpha ):
+      el.attrib[ 'alpha' ] = str( map.alpha_factor )
+      
+    if ( not(( map.offset == Vector(( 0.0, 0.0, 0.0 )) and ( map.scale == Vector(( 1.0, 1.0, 1.0 )))))):
+      transform = self.file.push( 'transform' )
+      transform.attrib[ 'position' ] = '{:9f},{:9f},{:9f}'.format( *map.offset )
+      transform.attrib[ 'quaternion' ] = '{:9f},{:9f},{:9f},{:9f}'.format( 0.0, 0.0, 0.0, 1.0 )
+      transform.attrib[ 'scale' ] = '{:9f},{:9f},{:9f}'.format( *map.scale )
+      self.file.pop()
+
+    el.attrib[ 'mode' ] = str( map.blend_type.lower())
+    
+    if ( map.uv_layer != '' ):
+      el.attrib[ 'layer' ] = 0 #self.file.mesh.uv_layers.find( map.uv_layer )
+
+    self.file.pop()
+
+##--------------------------------------------------------------------------------
+
+##EXPORTING TEXTURE --------------------------------------------------------------
+
+  def ExportTexture( self, map ):
+    filepath = map.texture.image.filepath
+    if not filepath:  # may be '' for generated images
+      return
+    if ( self.Verbose ):
+      self.report({ 'INFO' }, 'Exporting data ' + map.name )
 
     el = self.file.push( 'texture' )
     
+    el.attrib[ 'name' ] = 'tex_' + map.texture.name
 
     # write relative image path
     #filepath = bpy_extras.io_utils.path_reference(filepath, , Config.FilePath,
     #                                  'AUTO', '', copy_set, face_img.library)        
 
     el.attrib[ 'file' ] = self.ExportPath( filepath )
-
-    if ( tex.use_map_color_diffuse ):
-      el.attrib[ 'diffuse' ] = str( tex.diffuse_color_factor )
-
-    if ( tex.use_map_diffuse ):
-      el.attrib[ 'diffuse_intensity' ] = str( tex.diffuse_factor )
-
-    if ( tex.use_map_normal ):
-      el.attrib[ 'normal' ] = str( tex.normal_factor )
-
-    if ( tex.use_map_color_spec ):
-      el.attrib[ 'specular' ] = str( tex.specular_color_factor )
-
-    if ( tex.use_map_specular ):
-      el.attrib[ 'specular_intensity' ] = str( tex.specular_factor )
-
-    if ( tex.use_map_alpha ):
-      el.attrib[ 'alpha' ] = str( tex.alpha_factor )
-
-    el.attrib[ 'mode' ] = str( tex.blend_type.lower())
-    
-    if ( tex.uv_layer != '' ):
-      el.attrib[ 'layer' ] = 0 #self.file.mesh.uv_layers.find( tex.uv_layer )
 
     self.file.pop()
 
@@ -400,10 +440,10 @@ class P3DExporter( bpy.types.Operator ):
     
     if ( material.use_shadeless ):
       el.attrib[ 'unlit' ] = 'yes';        
-    texlist = (tex for tex in material.texture_slots if ( not ( tex is None )) and tex.use and ( tex.texture.type == 'IMAGE' ) and ( not ( tex.texture.image is None )))
+    texlist = (map for map in material.texture_slots if ( not ( map is None )) and map.use and ( map.texture.type == 'IMAGE' ) and ( not ( map.texture.image is None )))
     
-    for tex in texlist:
-      self.ExportTexture( tex )
+    for map in texlist:
+      self.ExportMap( map )
 
     self.file.pop()
 
@@ -442,7 +482,7 @@ class P3DExporter( bpy.types.Operator ):
     self.file.pop()
 ##--------------------------------------------------------------------------------
 
-##EXPORTING CAMERA ---------------------------------------------------------------
+##EXPORTING BONE -----------------------------------------------------------------
 
   def ExportBone( self, bone ):
     if ( self.Verbose ):

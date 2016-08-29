@@ -9,9 +9,11 @@ type
     private
       FActor: TP3DActor;
       FMatrix: TMat4;
+      FScene: TP3DScene;
 
     public
       property Actor: TP3DActor read FActor write FActor;
+      property Scene: TP3DScene read FScene write FScene;
       property Matrix: TMat4 read FMatrix write FMatrix;
   end;
 
@@ -20,10 +22,19 @@ type
   { TP3DRenderList }
 
   TP3DRenderList = class ( TP3DCustomRenderList )
+    private
+      FLights: TP3DLightList;
+
     public
-      function Add( AActor: TP3DActor; world: TMat4 ): Integer;
+      constructor Create;
+      destructor Destroy; override;
+
+      function Add( AActor: TP3DActor; world: TMat4; AScene: TP3DScene ): Integer;
       function PickFromCamera( X, Y: Integer; Camera: TP3DActor ): TP3DActor;
       function Find( AActor: TP3DActor ): Integer;
+      procedure Render;
+
+      property Lights: TP3DLightList read FLights write FLights;
   end;
 
   { TP3DScene }
@@ -33,6 +44,7 @@ type
     private
       FCam: TP3DActor;
       FIsDesignTime: Boolean;
+      FLights: TP3DLightList;
       FObjects: TP3DActorList;
       FActiveCam: TP3DActor;
       FDesignTime: Boolean;
@@ -41,10 +53,12 @@ type
 
       procedure SetCam(AValue: TP3DActor);
       procedure RenderCallback( world: TMat4; AActor: TP3DActor ); virtual;
+      procedure OnObjChange(Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction);
 
     protected
       property ActiveCam: TP3DActor read FActiveCam write FActiveCam;
       property RootScene: TP3DScene read FRootScene write FRootScene;
+      property Lights: TP3DLightList read FLights write FLights;
 
     public
       constructor Create( const AData: TP3DData = nil );
@@ -52,6 +66,7 @@ type
       constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
       destructor Destroy; override;
+      procedure UpdateLights;
 
       procedure Clear;
 
@@ -82,12 +97,27 @@ type
 
 { TP3DRenderList }
 
-function TP3DRenderList.Add(AActor: TP3DActor; world: TMat4): Integer;
+constructor TP3DRenderList.Create;
+begin
+  inherited Create;
+  Lights:= TP3DLightList.Create;
+end;
+
+destructor TP3DRenderList.Destroy;
+begin
+  FreeAndNil( FLights );
+  inherited Destroy;
+end;
+
+function TP3DRenderList.Add(AActor: TP3DActor; world: TMat4; AScene: TP3DScene): Integer;
 var
   Obj: TP3DRenderObject;
 begin
   Obj.Actor:= AActor;
   Obj.Matrix:= world;
+  Obj.Scene:= AScene;
+  if ( AActor.Data is TP3DLight ) then
+    Lights.Add( AActor.Data as TP3DLight );
   Result:= inherited Add( Obj );
 end;
 
@@ -119,6 +149,11 @@ begin
       end;
 end;
 
+procedure TP3DRenderList.Render;
+begin
+  //Lights.PassToActiveShader( );
+end;
+
 { TP3DScene }
 
 procedure TP3DScene.SetCam(AValue: TP3DActor);
@@ -140,10 +175,20 @@ begin
     OnRenderCallback( world, AActor );
 end;
 
+procedure TP3DScene.OnObjChange(Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction);
+begin
+  if ( Action = actAdd ) then
+    Item.Users.Add( Self )
+  else if ( Action in [ actDelete, actClear ]) then
+    Item.Users.Remove( Self );
+end;
+
 constructor TP3DScene.Create(const AData: TP3DData);
 begin
   inherited Create( AData );
   FObjects:= TP3DActorList.Create;
+  FObjects.OnChange:= @OnObjChange;
+  Lights:= TP3DLightList.Create;
   Parent.Scenes.Add( Self );
 end;
 
@@ -204,13 +249,38 @@ destructor TP3DScene.Destroy;
 begin
   Clear;
   Objects.Free;
+  Lights.Clear();
+  Lights.Free;
   inherited Destroy;
+end;
+
+procedure TP3DScene.UpdateLights;
+var
+  Obj: TP3DActor;
+  light: TP3DLight;
+begin
+  Lights.Clear();
+  for Obj in Objects do
+    if ( Obj.Data is TP3DLight ) then
+      Lights.Add( TP3DLight( Obj.Data ))
+    else if ( Obj.Data is TP3DScene ) then
+      begin
+        TP3DScene( Obj.Data ).UpdateLights;
+        for light in TP3DScene( Obj.Data ).Lights do
+          Lights.Add( light );
+      end;
+  {WriteLn( Name + ' light list:' );
+  for light in Lights do
+    WriteLn( ExtractFileName( light.Parent.FileWatch.FileName ) + '.' + light.Name );
+  WriteLn( '-------------------' );}
 end;
 
 
 procedure TP3DScene.Clear;
+var
+  i: Integer;
 begin
-  Objects.Clear( True );
+  Objects.Clear( False );
 end;
 
 procedure TP3DScene.Render(world: TMat4; Scene: TP3DScene;
@@ -221,7 +291,10 @@ begin
     if ( Assigned( Scene.RootScene )) then
       RootScene:= Scene.RootScene
     else
-      RootScene:= Scene;
+      begin
+        RootScene:= Scene;
+        RootScene.UpdateLights;
+      end;
   if ( Scene.FDesignTime or IsDesignTime ) then
     FDesignTime:= True;
   if ( Assigned( Cam )) then
@@ -229,10 +302,10 @@ begin
       ActiveCam:= Cam;
       if ( Assigned( Cam.Data )) then
         TP3DCamera( Cam.Data ).UpdateMatrices( Cam );
-      Objects.Render( world * RenderObject.Matrix, Self );
+      Objects.Render( world, Self );
     end
   else
-    RenderFromCamera( Scene.ActiveCam, world * RenderObject.Matrix );
+    RenderFromCamera( Scene.ActiveCam, world );
 end;
 
 procedure TP3DScene.Render( const ARootScene: TP3DScene = nil );
@@ -241,6 +314,7 @@ begin
   RootScene:= ARootScene;
   if ( Assigned( Cam.Data )) then
     TP3DCamera( Cam.Data ).UpdateMatrices( Cam );
+  UpdateLights;
   Objects.Render( Mat4Identity, Self );
 end;
 
@@ -293,15 +367,19 @@ end;
 procedure TP3DScene.PassToShader(world: TMat4);
 var
   LightList: TP3DLightList;
-  Obj: TP3DActor;
   decl: TP3DShaderDecl;
 begin
   if ( Assigned( ActiveCam )) then
     begin
-      LightList:= TP3DLightList.Create;
-      for Obj in Objects do
+      //LightList:= TP3DLightList.Create;
+      {for Obj in Objects do
         if ( Obj.Data is TP3DLight ) then
-          LightList.Add( TP3DLight( Obj.Data ));
+          LightList.Add( TP3DLight( Obj.Data ));}
+      if ( Assigned( RootScene )) then
+        LightList:= RootScene.Lights
+      else
+        LightList:= Lights;
+
       if ( ActiveCam.Data is TP3DCamera ) then
         begin
           //TP3DCamera( ActiveCam.Data ).UpdateMatrices( ActiveCam );
@@ -310,7 +388,6 @@ begin
         end;
       if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
         decl.AsMat4:= world;
-      LightList.Free;
     end;
 end;
 
@@ -319,6 +396,8 @@ begin
   inherited NotifyDeleteOfData( Sender );
   if ( Sender = Cam ) then
     Cam:= nil;
+  if ( Sender is TP3DActor ) then
+    Objects.Remove( TP3DActor( Sender ));
 end;
 
 {

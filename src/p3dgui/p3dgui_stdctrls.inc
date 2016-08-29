@@ -28,6 +28,7 @@
 
     public
       constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+
       procedure Draw(); override;
       procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
       procedure MouseMove( X, Y: Integer ); override;
@@ -120,6 +121,7 @@
 
   TP3DCustomValueEdit = class ( TP3DEdit )
     private
+      FPrecision: Integer;
       FStep: Single;
       FTransmission: Single;
       FTyping: Boolean;
@@ -142,6 +144,7 @@
     public
       constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
       destructor Destroy; override;
+
       procedure Draw; override;
       procedure MouseMove(X, Y: Integer); override;
       procedure MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -154,6 +157,7 @@
       property Typing: Boolean read FTyping write SetTyping;
       property Step: Single read FStep write FStep;
       property Transmission: Single read FTransmission write FTransmission;
+      property Precision: Integer read FPrecision write FPrecision;
   end;
 
   { TP3DEventValueEdit }
@@ -302,7 +306,7 @@
       procedure SetCaption( AValue: String ); override;
 
     public
-      constructor Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl = nil );
+      constructor Create( const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl = nil );
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -312,6 +316,19 @@
     published
       property Items: TP3DMenuItemList read GetItems;
       property OnChange: TP3DComboBoxChange read FOnChange write FOnChange;
+  end;
+
+  { TP3DComboBoxDataBlock }
+
+  TP3DComboBoxDataBlock = class ( TP3DComboBox )
+    private
+      FTypeFilter: TP3DDataBlockType;
+      procedure SetTypeFilter(AValue: TP3DDataBlockType);
+      property Items: TP3DMenuItemList read GetItems;
+
+    public
+      procedure Update;
+      property TypeFilter: TP3DDataBlockType read FTypeFilter write SetTypeFilter;
   end;
 
   { TP3DCheckBox }
@@ -327,6 +344,7 @@
     public
       constructor Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl= nil );
       destructor Destroy; override;
+
       procedure Draw; override;
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
 
@@ -403,7 +421,7 @@ procedure TP3DCustomValueEdit.SetTyping(AValue: Boolean);
 begin
   if FTyping=AValue then Exit;
   FTyping:=AValue;
-  Text:= FloatToStr( Value );
+  Text:= FormatFloat( '0.0' + DupeString( '#', Precision ), Value );
 end;
 
 function TP3DCustomValueEdit.GetValueName: String;
@@ -415,7 +433,7 @@ procedure TP3DCustomValueEdit.UpdateValueText( AValue: Single );
 begin
   if ( Assigned( FValueText )) then
     FValueText.Free;
-  FValueText:= p3dTextSimple( FloatToStrF( AValue, ffGeneral, 4, 0 ), P3DFontManager[ Font.Name, Font.Size ]);
+  FValueText:= p3dTextSimple( FormatFloat( '0.0' + DupeString( '#', Precision ), AValue ), P3DFontManager[ Font.Name, Font.Size ]);
   FValueCached:= AValue;
 end;
 
@@ -452,6 +470,7 @@ begin
   UpdateNameText( GetValueName );
   FStep:= 0.1;
   FTransmission:= 0.1;
+  FPrecision:= 2;
 end;
 
 destructor TP3DCustomValueEdit.Destroy;
@@ -502,7 +521,7 @@ begin
       FCursorMoved:= True;
       Cursor:= curMoveLeftRight;
     end;
-  if ( FCursorMoved ) then
+  if ( FCursorMoved and not Typing  ) then
     begin
       if ( gcisMouseBtn1Down in InputState ) then
         begin
@@ -542,6 +561,8 @@ begin
         On E: Exception do;
       end;
     end;
+  if ( Typing AND P3DInput.Keyboard.Keys[ P3DK_ESCAPE ]) then
+    Typing:= False;
 end;
 
 { TP3DLabel }
@@ -657,7 +678,7 @@ procedure TP3DGroupBox.UpdateCollapsed;
 begin
   if ( CanCollapse and Collapsed ) then
     begin
-      Height:= BoundsTL.Y + BoundsBR.Y;
+      Height:= 20;
       FCollapseSymbol:= P3DSymbolTriangleRight;
       HideChildren:= True;
     end
@@ -692,7 +713,7 @@ begin
   Font:= TP3DCanvasFont.Create;
   Caption:= Name;
   Color:= vec4( 1 );
-  BorderColor:= vec4( 0, 0, 0, 0.1 );
+  BorderColor:= Primary200; //vec4( 0, 0, 0, 0.1 );
   SetBounds( 15, 25, 15, 15 );
   FCollapseSymbol:= P3DSymbolTriangleDown;
 end;
@@ -900,7 +921,7 @@ begin
           s:= tp;
           if ( Sel1 > Sel2 ) then
             s.x:= s.x - swidth.x;
-          Canvas.RenderRect( s + vec2( soff.X, 0 ), s + vec2( soff.X + swidth.X, swidth.Y ), Preset.FontColor * 0.3 );
+          Canvas.RenderRect( s + vec2( soff.X, 0 ), s + vec2( soff.X + swidth.X, swidth.Y ), vec4( accent900.xyz, 0.5 ), vec4( accent400.xyz, 0.5), vec4( accent600.xyz, 0.5 ), vec4( accent900.xyz, 0.5 ));
         end;
 
       swidth:= p3dTextSize( 'W', FCaptionTxt.Font );
@@ -955,6 +976,13 @@ begin
 end;
 
 procedure TP3DEdit.KeyboardAction;
+  procedure SetSel( Value: Integer );
+  begin
+    Sel1:= Value;
+    if not ( P3DInput.Keyboard.KeysLayout[ P3DK_LSHIFT ] OR Boolean( P3DInput.Keyboard.KeysLayout[ P3DK_RSHIFT ])) then
+      Sel2:= Sel1;
+  end;
+
 begin
   if ( Focused ) then
     begin
@@ -963,17 +991,13 @@ begin
       if ( P3DInput.Keyboard.DKeysLayout[ P3DK_DELETE ] = ksPressed ) then
         DeleteRightOfCursor;
       if ( P3DInput.Keyboard.DKeysLayout[ P3DK_LEFT ] = ksPressed ) then
-        begin
-          Sel1:= Sel1 - 1;
-          if not ( P3DInput.Keyboard.KeysLayout[ P3DK_LSHIFT ] OR Boolean( P3DInput.Keyboard.KeysLayout[ P3DK_RSHIFT ])) then
-            Sel2:= Sel1;
-        end;
+        SetSel( Sel1 - 1 );
       if ( P3DInput.Keyboard.DKeysLayout[ P3DK_RIGHT ] = ksPressed ) then
-        begin
-          Sel1:= Sel1 + 1;
-          if not ( P3DInput.Keyboard.KeysLayout[ P3DK_LSHIFT ] OR P3DInput.Keyboard.KeysLayout[ P3DK_RSHIFT ]) then
-            Sel2:= Sel1;
-        end;
+        SetSel( Sel1 + 1 );
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_HOME ] = ksPressed ) then
+        SetSel( 0 );
+      if ( P3DInput.Keyboard.DKeysLayout[ P3DK_END ] = ksPressed ) then
+        SetSel( Length( Text ));
       if ( P3DInput.Keyboard.InputText > '' ) then
         Insert( P3DInput.Keyboard.InputText );
     end;
@@ -1025,9 +1049,9 @@ constructor TP3DScrollBar.Create(const AOwner: TP3DObjectList;
 begin
   inherited;
   Preset:= TP3DButtonPreset.Create;
-  Preset.Color:= vec4( 225/255, 230/255, 234/255, 1 );
-  Preset.OutlineColor:= vec4( vec3( 0.2 ), 0.5 );
-  Preset.FontColor:= vec4( vec3( 0 ), 0.3 );
+  Preset.Color:= accent50; //vec4( 225/255, 230/255, 234/255, 1 );
+  Preset.OutlineColor:= accent50; //vec4( vec3( 0.2 ), 0.5 );
+  Preset.FontColor:= accent900;// vec4( vec3( 0 ), 0.3 );
 
   PageSize:= 0.5;
   Percentage:= 0.0;
@@ -1284,7 +1308,7 @@ begin
   inherited SetCaption(AValue);
 end;
 
-constructor TP3DComboBox.Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl );
+constructor TP3DComboBox.Create(const AOwner: TP3DObjectList; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner, AParent );
   FDropDownMenu:= TP3DPopupMenu.Create();
@@ -1432,6 +1456,62 @@ begin
     Checked:= not Checked;
 end;
 
+
+{ TP3DComboBoxDataBlock }
+
+procedure TP3DComboBoxDataBlock.SetTypeFilter(AValue: TP3DDataBlockType);
+begin
+  if FTypeFilter=AValue then Exit;
+  FTypeFilter:=AValue;
+  Update;
+end;
+
+procedure TP3DComboBoxDataBlock.Update;
+  procedure AddLibrary( Lib: TP3DData );
+  var
+    HeaderAdded: Boolean;
+    i: Integer;
+    LibTitle: String;
+  begin
+    HeaderAdded:= False;
+    if ( Lib = P3DData ) then
+      LibTitle:= '<main scene>'
+    else
+      LibTitle:= ExtractFileNameOnly( Lib.FileWatch.FileName );
+    for i:= 0 to Lib.DataBlocks.Count - 1 do
+      if ( Lib.DataBlocks[ i ] is TypeFilter ) then
+        begin
+          if (( not HeaderAdded )) then
+            begin
+              Items[ Items.Add( LibTitle )].Enabled:= False;
+              HeaderAdded:= True;
+            end;
+          if ( i = 20 ) then
+            with ( Items[ Items.Add( '...')]) do
+              begin
+                Enabled:= False;
+                break;
+              end;
+          with ( Items[ Items.Add( '  ' + Lib.DataBlocks[ i ].Name )]) do
+        end;
+  end;
+
+var
+  i: Integer;
+begin
+  Canvas.Font.Size:= 12;
+  with ( Items[ Items.Add( 'Clear' )]) do
+    begin
+      PresetNormal.FontColor:= vec4( 1.0, 0.5, 0.5, 1 );
+      UserData:= nil;
+    end;
+
+  AddLibrary( P3DData );
+
+  for i:= 0 to P3DData.Libraries.Count - 1 do
+    if ( not P3DData.Libraries[ i ].IsDesignerPackage ) then
+      AddLibrary( P3DData.Libraries[ i ]);
+end;
 
 
 {$ENDIF}

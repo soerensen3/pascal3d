@@ -230,7 +230,7 @@ begin
   if (( Direction = nsdOutput ) or Assigned( Connected )) then
     Result:= inherited GetOutput(Buffer)
   else
-    Result:= 'mat4( ' + Value.ToString(False, 0) + ')';
+    Result:= 'mat4( ' + Value.ToString(False, 8) + ')';
 end;
 
 

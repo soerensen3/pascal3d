@@ -62,12 +62,15 @@ type
   TP3DObjectInspector = class( TP3DGraphicControl )
     private
       FActivePage: Integer;
+      FContainer: TP3DGraphicControl;
       FObj: TInterfacedPersistent;
       FPages: TP3DOIPageList;
+      FScrollbar: TP3DScrollBar;
       FToolbar: TP3DGraphicControl;
 
       procedure SetActivePage(AValue: Integer);
       procedure SetObj(AValue: TInterfacedPersistent);
+      procedure ScrollBarChange( Sender: TObject );
 
     public
       constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
@@ -77,12 +80,16 @@ type
       procedure ButtonMouseClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
 
       procedure Update;
+      procedure UpdateScrollBar;
+      procedure Realign; override;
 
     published
       property Obj: TInterfacedPersistent read FObj write SetObj;
       property Pages: TP3DOIPageList read FPages write FPages;
       property Toolbar: TP3DGraphicControl read FToolbar write FToolbar;
       property ActivePage: Integer read FActivePage write SetActivePage;
+      property Container: TP3DGraphicControl read FContainer write FContainer;
+      property Scrollbar: TP3DScrollBar read FScrollbar write FScrollbar;
   end;
 
   {$INCLUDE p3dgui_objinspector_editors.inc}
@@ -193,6 +200,11 @@ begin
   Update;
 end;
 
+procedure TP3DObjectInspector.ScrollBarChange(Sender: TObject);
+begin
+  Container.Scroll:= vec2( Scroll.x, Scrollbar.Position );
+end;
+
 procedure TP3DObjectInspector.SetActivePage(AValue: Integer);
 var
   i: Integer;
@@ -205,6 +217,8 @@ begin
 
   for i:= 0 to Pages.Count - 1 do
     Pages[ i ].Visible:= i = ActivePage;
+
+  UpdateScrollBar;
 end;
 
 constructor TP3DObjectInspector.Create(const AOwner: TP3DObjectList;
@@ -216,18 +230,21 @@ begin
   Toolbar.Align:= alTop;
   Toolbar.Height:= 32;
 
-  Pages:= TP3DOIPageList.Create;
+  Scrollbar:= TP3DScrollBar.Create( nil, Self );
+  Scrollbar.Align:= alRight;
+  Scrollbar.Kind:= p3dsbVertical;
+  Scrollbar.Width:= 10;
+  Scrollbar.OnChange:= @ScrollBarChange;
 
-  AddPage( TP3DOIEditorPageObject.Create( nil, Self ));
-  AddPage( TP3DOIEditorPageLight.Create( nil, Self ));
-  AddPage( TP3DOIEditorPageCamera.Create( nil, Self ));
+  Pages:= TP3DOIPageList.Create;
+  Container:= TP3DGraphicControl.Create( nil, Self );
+  Container.Align:= alClient;
+
+  AddPage( TP3DOIEditorPageObject.Create( nil, Container ));
+  AddPage( TP3DOIEditorPageLight.Create( nil, Container ));
+  AddPage( TP3DOIEditorPageCamera.Create( nil, Container ));
   with ( AddPage( TP3DOIEditorPageMaterial.Create( nil, Self )) as TP3DOIEditorPageMaterial ) do
-     EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( nil, Self )));
-{  AddEditor( TP3DOIEditorDataLight.Create( nil, Self ));
-  AddEditor( TP3DOIEditorDataTexture.Create( nil, Self ));
-  AddEditor( TP3DOIEditorDataMaterialBase.Create( nil, Self ));
-  AddEditor( TP3DOIEditorDataMaterialMaps.Create( nil, Self ));
-  AddEditor( TP3DOIEditorDataMesh.Create( nil, Self ));}
+    EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( nil, Container )));
 end;
 
 destructor TP3DObjectInspector.Destroy;
@@ -236,6 +253,8 @@ begin
   Pages.Free;
   Toolbar.Controls.Clear( True );
   Toolbar.Free;
+  Container.Free;
+  Scrollbar.Free;
   inherited Destroy;
 end;
 
@@ -281,6 +300,28 @@ begin
       Pages[ i ].Obj:= Obj;
       Pages[ i ].Visible:= i = ActivePage;
     end;
+  UpdateScrollBar;
+end;
+
+procedure TP3DObjectInspector.UpdateScrollBar;
+begin
+  if ( Container.Controls.PageSize.y > 0 ) then
+    begin
+      Scrollbar.PageSize:= Container.Height / Container.Controls.PageSize.y;
+      Scrollbar.Max:= Container.Controls.PageSize.y
+    end
+  else
+    begin
+      Scrollbar.PageSize:= 1;
+      Scrollbar.Max:= 1;
+    end;
+end;
+
+procedure TP3DObjectInspector.Realign;
+begin
+  inherited Realign;
+  if ( Assigned( Scrollbar ) and Assigned( Container )) then
+    UpdateScrollBar;
 end;
 
 

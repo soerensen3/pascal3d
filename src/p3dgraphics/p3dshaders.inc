@@ -99,7 +99,7 @@ type
       procedure UpdateUniforms();
       procedure BindAttribLocations();
       function DumpUniforms: String;
-      procedure Reload; override;
+      procedure Reload; reintroduce;
 
     published
       property ProgramObj: GLHandle read FProgramObj write FProgramObj;
@@ -822,7 +822,8 @@ var
   Changed: Boolean;
   FileName: String;
 begin
-  inherited Reload;
+  //TODO: REIMPLEMENT
+  {inherited Reload;
   Changed:= False;
   if ( Assigned( VShaderWatch ) and VShaderWatch.CheckForChange ) then
     begin
@@ -837,7 +838,7 @@ begin
       FShader:= LoadShaderToText( FileName );
     end;
   if ( Changed ) then
-    LinkProgram;
+    LinkProgram;}
 end;
 
 {$ENDIF}

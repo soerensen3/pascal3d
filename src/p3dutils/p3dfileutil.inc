@@ -22,6 +22,7 @@ type
 
     public
       constructor Create( AFileName: String; AUserPointer: Pointer = nil );
+      destructor Destroy; override;
 
       function CheckForChange: Boolean;
       procedure Reload;
@@ -102,8 +103,7 @@ type
 
 { TP3DFileWatchList }
 
-function TP3DFileWatchList.AddWatch(AFileName: String; AUserPointer: Pointer
-  ): Integer;
+function TP3DFileWatchList.AddWatch( AFileName: String; AUserPointer: Pointer ): Integer;
 begin
   Result:= Add( TP3DFileWatch.Create( AFileName, AUserPointer ));
 end;
@@ -145,6 +145,23 @@ begin
   inherited Create;
   FFileName:= AFileName;
   Reload;
+
+  if ( Assigned( P3DFileWatch )) then
+    P3DFileWatch.Add( Self );
+
+  //Add Self to FileWatches
+  //TP3DData has Filewatch
+  //TP3DData has also a LibName which should be unique in Scope
+  //Scope means the engine's searchpaths
+  //TP3DDatablock has only a string to the corresponding object, <LibName> or similar will reference a different library
+  //Descendants, like textures or meshes, can define their own filewatch if needed
+end;
+
+destructor TP3DFileWatch.Destroy;
+begin
+  if ( Assigned( P3DFileWatch )) then
+    P3DFileWatch.Remove( Self );
+  inherited Destroy;
 end;
 
 function TP3DFileWatch.CheckForChange: Boolean;
@@ -288,6 +305,14 @@ begin
     end;
 end;
 
+procedure ReadWindow( BaseNode: TDOMElement );
+var
+  Wnd: TDOMElement;
+begin
+  Wnd:= TDOMElement( BaseNode.FirstChild );
+  //p3dapplication. Wnd.GetAttribute( 'title' );
+end;
+
 procedure P3DLoadConfig( FileName: String );
 var
   F: TXMLDocument;
@@ -306,6 +331,10 @@ begin
     BaseNode:= DocRoot.FindNode( 'paths' );
     if ( Assigned( BaseNode )) then
       ReadPaths( TDOMElement( BaseNode ));
+    BaseNode:= DocRoot.FindNode( 'window' );
+    if ( Assigned( BaseNode )) then
+      ReadWindow( TDOMElement( BaseNode ));
+
   finally
     FreeAndNil( F );
   end;

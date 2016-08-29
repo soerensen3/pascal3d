@@ -27,12 +27,14 @@
 
     TP3DMenuItem = class( TP3DButton )
       private
+        FIsSelectable: Boolean;
         FUserData: TObject;
 
       public
         constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
 
         property UserData: TObject read FUserData write FUserData;
+        property IsSelectable: Boolean read FIsSelectable write FIsSelectable;
     end;
 
     { TP3DCustomPopupMenu }

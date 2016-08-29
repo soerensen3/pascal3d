@@ -11,6 +11,7 @@ type
       FArmatures: TP3DArmatureList;
       FCameras: TP3DCameraList;
       FDataBlocks: TP3DObjectList;
+      FDOMFile: TXMLDocument;
       FFileWatch: TP3DFileWatch;
       FIsDesignerPackage: Boolean;
       FLibraries: TP3DDataList;
@@ -24,12 +25,15 @@ type
 
     public
       constructor Create;
-      constructor CreateFromDom( ADOMNode: TDOMElement );
+      constructor CreateFromDOM( ADOMNode: TDOMElement );
       constructor CreateFromFile( AFileName: String );
       destructor Destroy; override;
 
-      function AppendFromDom( ADOMNode: TDOMElement;
-        const AParent: TP3DActor = nil ): Integer;
+      procedure OpenDOMFile;
+      procedure CloseDOMFile;
+      function FindDOMToPath( DOMPath: String ): TDOMElement;
+
+      function AppendFromDom( ADOMNode: TDOMElement; const AParent: TP3DActor = nil ): Integer;
       function AppendFromDom( ADOMNode: TDOMElement; AName: String;
         AType: TP3DDataBlockType; const AParent: TP3DActor = nil ): Integer;
       function AppendAllFromDom( ADOMNode: TDOMElement; AType: TP3DDataBlockType;
@@ -51,6 +55,7 @@ type
       property Textures: TP3DTextureList read FTextures write FTextures;
       property Armatures: TP3DArmatureList read FArmatures write FArmatures;
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
+      property DOMFile: TXMLDocument read FDOMFile write FDOMFile;
       property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
   end;
 
@@ -60,7 +65,7 @@ type
 
   TP3DDataList = class ( TP3DCustomDataList )
     function FindByFileName( AFileName: String ): Integer;
-  end; //Workaround because you cannot forward declare generics
+  end;
 
   function OpenLibrary( FileName: String ): Integer; //TODO: Move to libraries
 
@@ -89,7 +94,7 @@ begin
   FileWatch:= TP3DFileWatch.Create( '', Self );
 end;
 
-constructor TP3DData.CreateFromDom(ADOMNode: TDOMElement);
+constructor TP3DData.CreateFromDOM(ADOMNode: TDOMElement);
 begin
   Create;
   AppendFromDom( ADOMNode );
@@ -121,7 +126,22 @@ begin
   inherited Destroy;
 end;
 
-function TP3DData.AppendFromDom( ADOMNode: TDOMElement; const AParent: TP3DActor ): Integer;
+procedure TP3DData.OpenDOMFile;
+begin
+  ReadXMLFile( FDOMFile, FileWatch.FileName );
+end;
+
+procedure TP3DData.CloseDOMFile;
+begin
+  FreeAndNil( FDOMFile );
+end;
+
+function TP3DData.FindDOMToPath(DOMPath: String): TDOMElement;
+begin
+  Result:= FindDOMByIdentifier( DOMPath, DOMFile.DocumentElement );
+end;
+
+function TP3DData.AppendFromDom(ADOMNode: TDOMElement; const AParent: TP3DActor): Integer;
 var
   Parent: TP3DActorList;
 
@@ -131,6 +151,7 @@ var
       DB: TP3DDataBlock;
     begin
       Result:= -1;
+
       case ADOMNode.NodeName of
         'mesh':
           begin
@@ -197,7 +218,7 @@ begin
     Parent:= Objects;
 
   case ADOMNode.NodeName of
-    'p3dfile': //DO NOTHING FOR NOW
+    'p3dfile':
       AppendAllFromDom( ADOMNode, TP3DScene, AParent );
     'object':
       Result:= Parent.Add( TP3DActor.CreateFromDOM( ADOMNode, Self ));
@@ -205,13 +226,15 @@ begin
       'camera', 'light',
       'lamp', 'scene',
       'armature': Result:= LoadData();
+    'texture':
+        Result:= DataBlocks.IndexOf( Textures[ Textures.Add( TP3DTexture.CreateFromDOM( ADOMNode, Self ))])
     else
       P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ADOMNode.NodeName + '". Skipping.' );
   end;
 end;
 
-function TP3DData.AppendFromDom( ADOMNode: TDOMElement; AName: String;
-  AType: TP3DDataBlockType; const AParent: TP3DActor ): Integer;
+function TP3DData.AppendFromDom(ADOMNode: TDOMElement;
+  AName: String; AType: TP3DDataBlockType; const AParent: TP3DActor): Integer;
 var
   Element: TDOMElement;
 begin
@@ -236,8 +259,8 @@ begin
   Result:= AppendFromDom( Element, AParent );
 end;
 
-function TP3DData.AppendAllFromDom( ADOMNode: TDOMElement;
-  AType: TP3DDataBlockType; const AParent: TP3DActor ): Integer;
+function TP3DData.AppendAllFromDom(ADOMNode: TDOMElement;
+  AType: TP3DDataBlockType; const AParent: TP3DActor): Integer;
 var
   filter: String;
   lst: TDOMNodeList;
@@ -255,28 +278,50 @@ end;
 
 function TP3DData.AppendFile( AFileName: String; const AParent: TP3DActor ): String;
 var
-  xml: TXMLDocument;
   dir, FName: String;
 begin
   Result:= '';
+  FName:= P3DSearchPaths.Models.FindFileEx( AFileName, GetCurrentDir );
+  if ( FName = '' ) then
+    raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ AFileName ]));
   FName:= P3DSearchPaths.Models.FindFile( AFileName );
   if ( not FileExists( FName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
-  ReadXMLFile( xml, FName );
+
+  FileWatch.FileName:= AFileName;
+  OpenDOMFile;
   dir:= GetCurrentDir;
   try
+    DOMFile.DocumentElement.SetAttribute( 'filename', AFileName );
     SetCurrentDir( ExtractFilePath( FName ));
-    AppendFromDom( xml.DocumentElement, AParent );
+    AppendFromDom( DOMFile.DocumentElement, AParent );
   finally
     SetCurrentDir( dir );
-    xml.Free;
+    CloseDOMFile;
   end;
   Result:= FName;
 end;
 
 procedure TP3DData.NotifyDeleteOfData(Sender: TP3DDataBlock);
 begin
-
+  if ( Sender is TP3DCamera ) then
+    Cameras.Remove( TP3DCamera( Sender ))
+  else if ( Sender is TP3DLight ) then
+    Lights.Remove( TP3DLight( Sender ))
+  else if ( Sender is TP3DMaterialShader ) then
+    Materials.Remove( TP3DMaterialShader( Sender ))
+  else if ( Sender is TP3DMesh ) then
+    Meshes.Remove( TP3DMesh( Sender ))
+  else if ( Sender is TP3DActor ) then
+    Objects.Remove( TP3DActor( Sender ))
+  else if ( Sender is TP3DScene ) then
+    Scenes.Remove( TP3DScene( Sender ))
+  else if ( Sender is TP3DShader ) then
+    Shaders.Remove( TP3DShader( Sender ))
+  else if ( Sender is TP3DTexture ) then
+    Textures.Remove( TP3DTexture( Sender ))
+  else if ( Sender is TP3DArmature ) then
+    Armatures.Remove( TP3DArmature( Sender ));
 end;
 
 function OpenLibrary( FileName: String ): Integer;

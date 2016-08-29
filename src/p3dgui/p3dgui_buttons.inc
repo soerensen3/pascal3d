@@ -10,6 +10,7 @@
     TP3DButtonPreset = class
       private
         FColor: TVec4;
+        FColorBright: TVec4;
         FFontColor: TVec4;
         FOutlineColor: TVec4;
 
@@ -51,11 +52,11 @@
         FCaptionTxt: TP3DText;
 
         procedure SetCaption( AValue: String ); virtual;
-        procedure RenderButton( APreset: TP3DButtonPreset );
-        procedure RenderButtonText( APreset: TP3DButtonPreset );
+        procedure RenderButton( C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4 );//APreset: TP3DButtonPreset );
+        procedure RenderButtonText( C: TVec4 );
 
       public
-        constructor Create(AOwner: TP3DObjectList; const AParent: TP3DGraphicControl=nil);
+        constructor Create( const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
         destructor Destroy; override;
 
         procedure Draw; override;
@@ -131,12 +132,12 @@ begin
     FCaptionTxt:= p3dTextSimple( ' ', P3DFontManager[ Font.Name, Font.Size ])
 end;
 
-procedure TP3DButton.RenderButton(APreset: TP3DButtonPreset);
+procedure TP3DButton.RenderButton(C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4);
 var
   clf: TVec4;
 begin
-  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, APreset.Color, APreset.Color, APreset.Color, APreset.Color );
-  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, APreset.OutlineColor, APreset.OutlineColor, APreset.OutlineColor, APreset.OutlineColor );
+  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, C1, C2, C3, C4 );
+  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, CE1, CE2, CE3, CE4 );
 
   if ( Focused ) then
     begin
@@ -145,7 +146,7 @@ begin
     end;
 end;
 
-procedure TP3DButton.RenderButtonText(APreset: TP3DButtonPreset);
+procedure TP3DButton.RenderButtonText(C: TVec4);
 var
   P: TVec2;
 begin
@@ -165,7 +166,7 @@ begin
         vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
       end;
 
-      Canvas.Font.Color:= APreset.FontColor;
+      Canvas.Font.Color:= C * vec4( 1, 1, 1, 0.5 + 0.5 * Ord( Enabled ));
       Canvas.Font.Size:= Font.Size;
       Canvas.Font.Name:= Font.Name;
       Canvas.RenderText( Caption, P, FCaptionTxt );
@@ -179,22 +180,29 @@ var
   clf: TVec4;
   P: TVec2;
 begin
-  if ( gcisMouseBtn1Down in InputState ) then
-    Preset:= PresetDown
-  else if ( gcisMouseOver in InputState ) then
-    Preset:= PresetHover
+  if (( Enabled ) and
+    ( gcisMouseBtn1Down in InputState )) then
+    begin
+      RenderButton( Accent900, Accent400, Accent600, Accent900, Accent900, Accent900, Accent900, Accent900 );
+      RenderButtonText( Accent50 );
+    end
+  else if (( Enabled ) and
+    ( gcisMouseOver in InputState )) then
+      begin
+        RenderButton( Accent100, vec4( 1 ), Accent50, Accent100, Accent900, Accent900, Accent900, Accent900 );
+        RenderButtonText( Accent700 );
+      end
   else
-    Preset:= PresetNormal;
-
-  RenderButton( Preset );
-
-  RenderButtonText( Preset );
+    begin
+      RenderButton( Accent200, Accent100, Accent200, Accent200, Accent900, Accent900, Accent900, Accent900 );
+      RenderButtonText( Accent900 );
+    end
 end;
 
 procedure TP3DButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   inherited MouseDown( mb1, mb2, mb3, X, Y );
-  if ( gcisMouseOver in InputState ) then
+  if ( Enabled and ( gcisMouseOver in InputState )) then
     Focused:= True;
 end;
 
@@ -204,8 +212,7 @@ begin
 end;
 
 
-constructor TP3DButton.Create(AOwner: TP3DObjectList;
-  const AParent: TP3DGraphicControl);
+constructor TP3DButton.Create(const AOwner: TP3DObjectList; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AOwner, AParent );
   PresetDown:= TP3DButtonPreset.Create;
@@ -214,15 +221,15 @@ begin
   Font:= TP3DCanvasFont.Create;
   Caption:= Name;
 
-  PresetNormal.Color:= vec4( vec3( 0.93 ), 1 );
+  PresetNormal.Color:= accent50;//vec4( vec3( 0.93 ), 1 );
   PresetNormal.OutlineColor:= vec4( vec3( 0.4 ), 1 );
   PresetNormal.FontColor:= vec4( vec3( 0 ), 1 );
-  PresetHover.Color:= vec4( vec3( 0 ), 1 );
+  PresetHover.Color:= Accent400;
   PresetHover.OutlineColor:= vec4( 0.875, 0.27, 0.07, 1 );
-  PresetHover.FontColor:= vec4( 1 );
-  PresetDown.Color:= vec4( 1 );
+  PresetHover.FontColor:= PrimaryText;//vec4( vec3( 0 ), 1 );
+  PresetDown.Color:= Accent900;
   PresetDown.OutlineColor:= vec4( 0.875, 0.27, 0.07, 1 );
-  PresetDown.FontColor:= vec4( vec3( 0 ), 1 );
+  PresetDown.FontColor:= Accent50;
   HAlignment:= haCenter;
   VAlignment:= vaCenter;
 end;
@@ -267,16 +274,21 @@ procedure TP3DGroupButton.Draw;
 var
   Preset: TP3DButtonPreset;
 begin
-  if ( gcisMouseOver in InputState ) then
-    Preset:= PresetHover
-  else if ( Down ) then
-    Preset:= PresetDown
+  if (( Enabled ) and ( gcisMouseOver in InputState )) then
+    begin
+      RenderButton( Accent100, vec4( 1 ), Accent50, Accent100, Accent900, Accent900, Accent900, Accent900 );
+      RenderButtonText( Accent700 );
+    end
+  else if (( Enabled ) and ( Down )) then
+    begin
+      RenderButton( Accent900, Accent400, Accent600, Accent900, Accent900, Accent900, Accent900, Accent900 );
+      RenderButtonText( Accent50 );
+    end
   else
-    Preset:= PresetNormal;
-
-  RenderButton( Preset );
-
-  RenderButtonText( Preset );
+    begin
+      RenderButton( Accent200, Accent100, Accent200, Accent200, Accent900, Accent900, Accent900, Accent900 );
+      RenderButtonText( Accent900 );
+    end;
 end;
 
 procedure TP3DGroupButton.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);

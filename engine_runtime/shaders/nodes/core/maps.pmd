@@ -56,6 +56,11 @@ vec4 color_div( vec4 v1, vec4 v2 ){
 vec4 color_mix( vec4 v1, vec4 v2 ){
   return v2;
 }
+
+vec3 color_overlay(vec3 base, vec3 blend) {
+  return mix(1.0 - 2.0 * (1.0 - base) * (1.0 - blend), 2.0 * base * blend, step(base, vec3(0.5)));
+}
+
 ```
 
 ---
@@ -65,15 +70,23 @@ input: {name="TexCoordIndex", type="int"}
 ---
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
 /* layout ( location = $Location$ ) */ IN vec4 TexCoord$TexCoordIndex$;
-OUT vec4 vTexCoord$TexCoordIndex$;
+```
+
+---
+node: Map_Init
+input: {name="MapIndex", type="int"}
+input: {name="TexCoordIndex", type="int"}
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+OUT vec4 vTexCoord$MapIndex$;
 ```
 
 ```{restrict="vshader,main"}
-vTexCoord$TexCoordIndex$ = TexCoord$TexCoordIndex$;
+vTexCoord$MapIndex$ = TexCoord$TexCoordIndex$;
 ```
 
 ```{restrict="fshader,declaration"}
-IN vec4 vTexCoord$TexCoordIndex$;
+IN vec4 vTexCoord$MapIndex$;
 ```
 
 ---
@@ -163,6 +176,7 @@ color_add```
 color_sub```
 
 ---
+
 node: Pass_ReadF
 input: {name="TexCoordIndex", type="int"}
 input: {name="Index", type="int"}
@@ -267,7 +281,7 @@ gl_Position = proj * vPosition;
 ```
 
 ```{restrict="fshader,main"}
-FragColor = vec4( Color.rgb * vColor.rgb * shadow.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( color_overlay( shadow.rgb, Color.rgb * vColor.rgb ) + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ < 130)
 gl_FragColor = FragColor;
 #endif

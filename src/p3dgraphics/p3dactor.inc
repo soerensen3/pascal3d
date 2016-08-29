@@ -72,12 +72,16 @@ type
       constructor Create( const AData: TP3DData = nil );
       constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
 
+      procedure LoadFromDOM(ADOMNode: TDOMElement); override;
+
       destructor Destroy; override;
       procedure Render( world: TMat4; Scene: TP3DScene ); reintroduce;
       procedure RenderCallbackOnly( world: TMat4; Scene: TP3DScene ); reintroduce;
       function CalcBoundingBox(): TP3DBoundingBox; override;
       procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
       function CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): Boolean; reintroduce;
+      procedure Unlink( UnlinkFrom: TP3DDataBlock );
+      procedure MakeLink( LinkTo: TP3DDataBlock );
 
       procedure MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
@@ -146,12 +150,12 @@ begin
   if FData=AValue then Exit;
 
   if ( Assigned( FData )) then
-    FData.Users.Delete( FData.Users.IndexOf( Self ));
+    Unlink( FData );
 
   FData:= AValue;
 
   if ( Assigned( FData )) then
-    FData.Users.Add( Self );
+    MakeLink( FData );
 end;
 
 procedure TP3DActor.SetMatrix(AValue: TMat4);
@@ -239,7 +243,7 @@ end;
 
 constructor TP3DActor.Create(const AData: TP3DData);
 begin
-  inherited;
+  inherited Create( AData );
   FChildren:= TP3DActorList.Create;
   FVisible:= True;
   Parent.Objects.Add( Self );
@@ -250,10 +254,16 @@ begin
 end;
 
 constructor TP3DActor.CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData );
+begin
+  Create( AData );
+  LoadFromDOM( ADOMNode );
+end;
+
+procedure TP3DActor.LoadFromDOM(ADOMNode: TDOMElement);
 var
   Element: TDOMElement;
   DataType: DOMString;
-  DataName: DOMString;
+  DataName, filename: DOMString;
   Child: TP3DActor;
   n: Integer;
 
@@ -267,19 +277,16 @@ var
   end;
 
 begin
-  Create( AData );
-  //if ( AutoNames ) then
-  //  Name:= AParentList.FindUniqueName( ADOMNode.GetAttribute( 'name' ))
-  //else
-  Name:= ADOMNode.GetAttribute( 'name' );
-
+  inherited LoadFromDOM( ADOMNode );
   DataType:= ADOMNode.GetAttribute( 'type' );
   DataName:= ADOMNode.GetAttribute( 'data' );
   if ( DataName > '' ) then
     begin
-      n:= AData.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), DataName, FindClassForDOM( DataType ));
-      Data:= TP3DDataBlock( AData.DataBlocks[ n ]);
-    end;
+      n:= Parent.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.DocumentElement ), DataName, FindClassForDOM( DataType ));
+      Data:= TP3DDataBlock( Parent.DataBlocks[ n ]);
+    end
+  else
+    Data:= nil;
 
   Element:= TDOMElement( ADOMNode.FirstChild );
   while ( Assigned( Element )) do
@@ -287,14 +294,23 @@ begin
       case Element.NodeName of
         'matrix': Matrix:= LoadMat4FromDOM( Element );
         'transform': LoadTransformFromDom( Element );
-        'object': begin Child:= TP3DActor.CreateFromDOM( Element, Parent ); Children.Add( Child ); end;
+        'object':
+          begin
+            n:= Children.FindByName( Element.GetAttribute( 'name' ));
+            if ( n > -1 ) then
+              Children[ n ].LoadFromDOM( Element )
+            else
+              begin
+                Child:= TP3DActor.CreateFromDOM( Element, Parent );
+                Children.Add( Child );
+              end;
+          end;
       else
         raise Exception.Create( 'Unknown tag inside Object Element: '+ Element.NodeName );
       end;
       Element:= TDOMElement( Element.NextSibling );
     end;
 end;
-
 
 destructor TP3DActor.Destroy;
 begin
@@ -363,6 +379,16 @@ begin
     Result:= Data.CastRay( Orig, Dir, Self, HitPos );
 end;
 
+procedure TP3DActor.Unlink(UnlinkFrom: TP3DDataBlock);
+begin
+  UnlinkFrom.Users.Delete( UnlinkFrom.Users.IndexOf( Self ));
+end;
+
+procedure TP3DActor.MakeLink(LinkTo: TP3DDataBlock);
+begin
+  LinkTo.Users.Add( Self );
+end;
+
 procedure TP3DActor.MoveAlongGlobalAxis(AAxis: TVec3; AValue: Float);
 begin
   Position:= Position + AAxis * AValue;
@@ -416,7 +442,7 @@ begin
   for Actor in Self do
     begin
       mat:= world * Actor.Matrix;
-      ARenderList.Add( Actor, mat );
+      ARenderList.Add( Actor, mat, ARootScene );
       if ( Actor.Data is TP3DScene ) then
         TP3DScene( Actor.Data ).Objects.MakeRenderList( ARootScene, mat, ARenderList );
       Actor.Children.MakeRenderList( ARootScene, mat, ARenderList );

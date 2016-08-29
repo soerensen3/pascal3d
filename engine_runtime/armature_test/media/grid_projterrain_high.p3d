@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<p3dfile>
+<p3dfile
+  name = "grid_projterrain_high">
   <scene
     name = "Scene">
     <object
@@ -69,26 +70,31 @@
     diffuse = "0.640000, 0.640000, 0.640000">
     <texture
       diffuse = "1.0"
+      name = "normal_displace"      
       file = "megt00n270hb_n_displ_high.png"
       mode = "mix">
     </texture>
     <texture
+      name = "diffuse"          
       diffuse = "1.0"
       file = "megt00n270hb_diff_4k_high.jpg"
       mode = "mix">
     </texture>
     <texture
       diffuse = "1.0"
+      name = "rock"
       file = "rock.jpg"
       mode = "mix">
     </texture>
     <texture
       diffuse = "1.0"
+      name = "rock_normal"
       file = "rock_normal.png"
       mode = "mix">
     </texture>
     <texture
       diffuse = "1.0"
+      name = "rock_spec"
       file = "rock_spec.png"
       mode = "mix">
     </texture>

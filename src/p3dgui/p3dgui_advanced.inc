@@ -577,7 +577,7 @@ begin
   if ( Assigned( Texture )) then
     begin
       c:= vec2( Width, Height ) / 2;
-      scale:= min( Width / Texture.Width, Height/ Texture.Height ) / 2;
+      scale:= min( Width / Texture.Width, Height / Texture.Height ) / 2;
 
       p1:= c - vec2( Texture.Width, Texture.Height ) * scale;
       p2:= c + vec2( Texture.Width, Texture.Height ) * scale;
@@ -610,13 +610,13 @@ begin
       glBegin( GL_TRIANGLE_FAN );
       glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
       glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
-      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
+      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
 
       glVertexAttrib2f( P3DAttribPosition, p2.X, p1.Y );
       glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
 
       glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
-      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
+      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
 
       glVertexAttrib2f( P3DAttribPosition, p1.X, p2.Y );
       glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );

@@ -249,14 +249,14 @@ end;
 constructor TP3DCustomItemView.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AOwner, AParent );
   SymbolsFontName:= 'Pascal3D-Symbols';
   Font:= TP3DCanvasFont.Create;
   Font.Size:= 16;
   Preset:= TP3DButtonPreset.Create;
-  Preset.Color:= vec4( vec3( 0.93 ), 1 );
-  Preset.OutlineColor:= vec4( 225/255, 230/255, 234/255, 1 );
-  Preset.FontColor:= vec4( vec3( 0 ), 1 );
+  Preset.Color:= Primary50;//vec4( vec3( 0.93 ), 1 );
+  //Preset.OutlineColor:= Accent900;//vec4( 225/255, 230/255, 234/255, 1 );
+  Preset.FontColor:= Accent50;//vec4( vec3( 0 ), 1 );
   ScrollBarV:= TP3DScrollBar.Create( nil, Self );
   ScrollBarV.Kind:= p3dsbVertical;
   ScrollBarV.Align:= alRight;
@@ -265,7 +265,7 @@ begin
   ScrollBarH.Kind:= p3dsbHorizontal;
   ScrollBarH.Align:= alBottom;
   ScrollBarH.OnChange:= @OnScroll;
-  ScrollBarWidth:= 15;
+  ScrollBarWidth:= 10;
 end;
 
 destructor TP3DCustomItemView.Destroy;
@@ -327,7 +327,7 @@ end;
 constructor TP3DTreeView.Create(const AOwner: TP3DObjectList;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AOwner, AParent );
   Children:= TP3DTreeNodeList.Create;
 
   SymbolPlus:= p3dTextSimple( 'H', P3DFontManager[ 'Pascal3D-Symbols', Font.Size ]);
@@ -351,18 +351,22 @@ procedure TP3DTreeView.Draw;
     Result:= p;
     Node.FRenderPos:= p;
     if ( not Assigned( Node.Text )) then
-      Node.Text:= p3dTextSimple( Node.Caption, P3DFontManager[ Font.Name, Font.Size ]);
+      Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
+    Canvas.Font.Color:= Accent900;
     if ( Node = Selection ) then
       begin
+        Canvas.Font.Color:= Accent50;
         Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
-          Preset.OutlineColor, vec4( Preset.OutlineColor.xyz, 0 ), vec4( Preset.OutlineColor.xyz, 0 ), Preset.OutlineColor );
+                           Accent900, Accent400, Accent600, Accent900 );
+ //Preset.OutlineColor, vec4( Preset.OutlineColor.xyz, 0 ), vec4( Preset.OutlineColor.xyz, 0 ), Preset.OutlineColor );
       end;
     if ( ShowSymbols ) then
       begin
         if ( not Assigned( Node.Symbol )) then
-          Node.Symbol:= p3dTextSimple( Node.SymbolText, P3DFontManager[ SymbolsFontName, Font.Size ]);
+          Canvas.GetValidText( Node.SymbolText, Node.Symbol, P3DFontManager[ SymbolsFontName, Font.Size ]);
         Canvas.RenderText( Node.Symbol, p + vec2( Font.Size, 0 ));
       end;
+
     Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * ( 1.5 + Ord( ShowSymbols )));
     MaxX:= Max( MaxX, p.x + Font.Size * ( 1 + Ord( ShowSymbols )) + Node.Text.Width );
     Result.y:= Result.y + Node.Text.Height;
@@ -726,7 +730,7 @@ function TP3DListView.ItemAtPos(p: TVec2): TP3DListItem;
     for Child in ItemList do
       begin
         if ( not Assigned( Child.Text )) then
-          Child.Text:= p3dTextSimple( Child.Caption, P3DFontManager[ Font.Name, Font.Size ]);
+          Canvas.GetValidText( Child.Caption, Child.FText, P3DFontManager[ Font.Name, Font.Size ]);
         if ( P3DRect( Child.FRenderPos.x, Child.FRenderPos.y,
                       ClientRect.Width - Child.FRenderPos.x, Child.Text.Height ).PtInRect( p )) then
           begin
@@ -745,16 +749,19 @@ procedure TP3DListView.Draw;
     Result:= p;
     Node.FRenderPos:= p;
     if ( not Assigned( Node.Text )) then
-      Node.Text:= p3dTextSimple( Node.Caption, P3DFontManager[ Font.Name, Font.Size ]);
+      Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
+    Canvas.Font.Color:= Accent900;
     if ( Node = Selection ) then
       begin
+        Canvas.Font.Color:= Accent50;
         Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
-          Preset.OutlineColor, vec4( Preset.OutlineColor.xyz, 0 ), vec4( Preset.OutlineColor.xyz, 0 ), Preset.OutlineColor );
+          Accent900, Accent400, Accent600, Accent900 );
+          //Preset.OutlineColor, vec4( Preset.OutlineColor.xyz, 0 ), vec4( Preset.OutlineColor.xyz, 0 ), Preset.OutlineColor );
       end;
     if ( ShowSymbols ) then
       begin
         if ( not Assigned( Node.Symbol )) then
-          Node.Symbol:= p3dTextSimple( Node.SymbolText, P3DFontManager[ SymbolsFontName, Font.Size ]);
+          Canvas.GetValidText( Node.SymbolText, Node.Symbol, P3DFontManager[ SymbolsFontName, Font.Size ]);
         Canvas.RenderText( Node.Symbol, p );
       end;
     Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * Ord( ShowSymbols ));

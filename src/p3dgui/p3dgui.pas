@@ -40,6 +40,7 @@ interface
     TP3DControlAlign = ( alNone, alLeft, alRight, alClient, alTop, alBottom );
 
   {$DEFINE INTERFACE}
+  {$INCLUDE p3dgui_colors.inc}
   {$INCLUDE p3dgui_manager.inc}
   {$INCLUDE p3dgui_controllist.inc}
   {$INCLUDE p3dgui_graphiccontrol.inc}
@@ -71,8 +72,8 @@ var
   LastMouseOverCtrl: TP3DGraphicControl;
   LastMouseDownCtrl: array[ 0..2 ] of TP3DGraphicControl;
 
-
 {$DEFINE IMPLEMENTATION}
+{$INCLUDE p3dgui_colors.inc}
 {$INCLUDE p3dgui_manager.inc}
 {$INCLUDE p3dgui_controllist.inc}
 {$INCLUDE p3dgui_graphiccontrol.inc}
@@ -88,6 +89,7 @@ var
 
 procedure P3DGUIInit;
 begin
+  P3DGUIInitColors;
   if ( not Assigned( P3DGUIManager )) then
     P3DGUIManager:= TP3DGUIManager.Create;
   LastMouseOverCtrl:= nil;

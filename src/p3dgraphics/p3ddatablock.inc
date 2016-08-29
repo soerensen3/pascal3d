@@ -25,7 +25,8 @@ type
   TP3DDataBlock = class ( TP3DObject )
     private
       FBoundingBox: TP3DBoundingBox;
-      FFileWatch: TP3DFileWatch;
+      FDOMPath: String;
+//      FFileWatch: TP3DFileWatch;
       FParent: TP3DData;
       FUsers: TP3DDataBlockList;
 
@@ -35,7 +36,9 @@ type
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); virtual;
       procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual;
-      procedure Reload; virtual;
+      procedure LoadFromFile( FileName: String );
+      procedure LoadFromBinary( FileName: String ); virtual;
+      procedure Reload;
       function CalcBoundingBox(): TP3DBoundingBox; virtual;
       procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
       function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; virtual;
@@ -44,22 +47,26 @@ type
       property Parent: TP3DData read FParent write FParent;
 
     published
-      property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
+//      property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
+      property DOMPath: String read FDOMPath write FDOMPath;
       property Users: TP3DDataBlockList read FUsers;
   end;
 
   TP3DDataBlockType = class of TP3DDataBlock;
 
 
+  TP3DCustomListOnChangeAction = ( actAdd, actDelete, actClear );
+
   { gP3DCustomDatablockList }
 
   generic gP3DCustomDatablockList <TCustomItem: TP3DDataBlock> = class ( TPersistent )
     type
       TP3DCustomObjectListEnumerator = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
+      TP3DCustomListOnChangeEvent = procedure ( Sender: {specialize gP3DCustomDatablockList < TCustomItem >}TPersistent; Item: TCustomItem; Action: TP3DCustomListOnChangeAction ) of object;
     private
       FFreeChildrenOnDestroy: Boolean;
       FItems: TList;
-      FOnChange: TNotifyEvent;
+      FOnChange: TP3DCustomListOnChangeEvent;
       function GetCount: Integer;
       procedure SetCount( AValue: Integer );
       function GetItems( Index: Integer ): TCustomItem;
@@ -71,6 +78,7 @@ type
 
       function Add( Item: TCustomItem ): Integer; virtual;
       procedure Delete( Index: Integer ); virtual;
+      procedure Remove( Item: TCustomItem ); virtual;
       function IndexOf( Item: TCustomItem ): Integer; virtual;
       procedure Clear( const FreeObjects: Boolean = False ); virtual;
       function GetEnumerator(): TP3DCustomObjectListEnumerator;
@@ -83,7 +91,7 @@ type
 
     published
       property Count: Integer read GetCount write SetCount;
-      property OnChange: TNotifyEvent read FOnChange write FOnChange;
+      property OnChange: TP3DCustomListOnChangeEvent read FOnChange write FOnChange;
       property FreeChildrenOnDestroy: Boolean read FFreeChildrenOnDestroy write FFreeChildrenOnDestroy;
   end;
 
@@ -120,6 +128,7 @@ begin
     'object': Result:= TP3DActor;
     'scene': Result:= TP3DScene;
     'armature': Result:= TP3DArmature;
+    'texture': Result:= TP3DTexture;
   end;
 end;
 
@@ -137,8 +146,51 @@ begin
     'object': Result:= TP3DActor;
     'scene': Result:= TP3DScene;
     'armature': Result:= TP3DArmature;
+    'texture': Result:= TP3DTexture;
   end;
 end;
+
+procedure StringSplit( S: String; Delim: Char; var S1, S2: String );
+begin
+  S1:= ExtractWord( 1, S, [ Delim ]);
+  S2:= Copy( S, Length( S1 ) + Length( Delim ) + 1, Length( S ));
+end;
+
+function FindDOMByIdentifier( Identifier: String; RootNode: TDOMElement ): TDOMElement;
+var
+  Node: TDOMNode;
+  RestStr, Name: String;
+
+  function FindNode: TDOMElement;
+  var
+    Element: TDOMNode;
+  begin
+    Result:= nil;
+    Element:= RootNode.FirstChild;
+    while Assigned( Element ) do
+      if ( TDOMElement( Element ).GetAttribute( 'name' ) = Name ) then
+        begin
+          Result:= TDOMElement( Element );
+          break;
+        end
+      else
+        Element:= Element.NextSibling;
+  end;
+
+begin
+  Result:= nil;
+
+  if ( not Assigned( RootNode )) then
+    exit;
+
+  StringSplit( Identifier, '/', Name, RestStr );
+  Node:= FindNode();
+  if ( RestStr > '' ) then
+    Result:= FindDOMByIdentifier( RestStr, TDOMElement( Node ))
+  else
+    Result:= TDOMElement( Node );
+end;
+
 
 { gP3DCustomDatablockList }
 function gP3DCustomDatablockList.GetCount: Integer;
@@ -179,7 +231,7 @@ begin
     begin
       Result:= FItems.Add( Item );
       if ( Assigned( OnChange )) then
-        OnChange( Self );
+        OnChange( Self, Item, actAdd );
     end;
 end;
 
@@ -187,7 +239,7 @@ procedure gP3DCustomDatablockList.Insert( Index: Integer; Item: TCustomItem );
 begin
   FItems.Insert( Index, Item );
   if ( Assigned( OnChange )) then
-    OnChange( Self );
+    OnChange( Self, Item, actAdd );
 end;
 
 function gP3DCustomDatablockList.FindUniqueName(BaseStr: String): String;
@@ -219,19 +271,26 @@ var
   i: Integer;
 begin
   Result:= -1;
-  for i:= 0 to Count - 1 do
+  {for i:= 0 to Count - 1 do
     if ( Self[ i ].FileWatch.FileName = ExpandFileName( AFileName )) then
       begin
         Result:= i;
         break;
-      end;
+      end;}
 end;
 
 procedure gP3DCustomDatablockList.Delete( Index: Integer );
 begin
-  FItems.Delete( Index );
   if ( Assigned( OnChange )) then
-    OnChange( Self );
+    OnChange( Self, Items[ Index ], actDelete );
+  FItems.Delete( Index );
+end;
+
+procedure gP3DCustomDatablockList.Remove(Item: TCustomItem);
+begin
+  if ( Assigned( OnChange )) then
+    OnChange( Self, Item, actDelete );
+  FItems.Remove( Item );
 end;
 
 function gP3DCustomDatablockList.IndexOf( Item: TCustomItem ): Integer;
@@ -245,11 +304,13 @@ var
 begin
   if ( FreeObjects ) then
     for i:= 0 to Self.Count - 1 do
-      Items[ i ].Free;
+      begin
+        if ( Assigned( OnChange )) then
+          OnChange( Self, Items[ i ], actClear );
+        Items[ i ].Free;
+      end;
 
   FItems.Clear;
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
 end;
 
 function gP3DCustomDatablockList.GetEnumerator(): TP3DCustomObjectListEnumerator;
@@ -274,7 +335,7 @@ begin
 end;
 
 function P3DBoundingBoxTransform(Box: TP3DBoundingBox; Matrix: TMat4 ): TP3DBoundingBox;
-  procedure _MinMax( p: TVec3 ); inline;
+  procedure _MinMax( p: TVec3 );// inline;
   begin
     p:= ( Matrix * vec4( p, 1 )).xyz;
     P3DBoundingBoxTransform.Min:= Min( P3DBoundingBoxTransform.Min, p );
@@ -285,7 +346,9 @@ begin  // This could be optimized more ... but well..
   Result:= P3DBoundingBox( vec3( 0 ), vec3( 0 ), vec3( 0 ));
   with ( Box ) do
     begin
-      _MinMax( Min );
+      Result.Min:= ( Matrix * vec4( Min, 1 )).xyz;
+      Result.Max:= Result.Min;
+      //_MinMax( Min );
       _MinMax( vec3( Min.xy, Max.z ));
       _MinMax( vec3( Min.x, Max.y, Min.z ));
       _MinMax( vec3( Min.x, Max.yz ));
@@ -306,7 +369,8 @@ begin
   else
     Parent:= AData;
   inherited Create( Parent.DataBlocks );
-  FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
+  //FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
+  DOMPath:= '';
   BoundingBox:= P3DInvalidBoundingBox;
   FUsers:= TP3DDataBlockList.Create;
 end;
@@ -318,7 +382,8 @@ begin
   for User in Users do
     User.NotifyDeleteOfData( Self );
   FUsers.Free;
-  FFileWatch.Free;
+  Parent.NotifyDeleteOfData( Self );
+  //FFileWatch.Free;
   inherited Destroy;
 end;
 
@@ -329,13 +394,82 @@ begin
 end;
 
 procedure TP3DDataBlock.LoadFromDOM(ADOMNode: TDOMElement);
+  function GetFullPath(): String;
+  var
+    Node: TDOMElement;
+  begin
+    Node:= ADOMNode;
+    Result:= '';
+    Node:= TDOMElement( Node.ParentNode );
+
+    while ( Assigned( Node )) and ( Node.NodeName <> 'p3dfile' ) do
+      begin
+        Result:= Node.GetAttribute( 'name' ) + '/' + Result;
+        Node:= TDOMElement( Node.ParentNode );
+      end;
+  end;
+
+var
+  filename: DOMString;
+begin
+  //filename:= ADOMNode.OwnerDocument.DocumentElement.GetAttribute( 'filename' );
+  Name:= ADOMNode.GetAttribute( 'name' );
+  {FileWatch.FileName:= filename + '?' + }DOMPath:= GetFullPath() + Name;
+//  WriteLn( FileWatch.FileName );
+end;
+
+procedure TP3DDataBlock.LoadFromFile(FileName: String);
+var
+  XMLPath, FN, dir: String;
+  xml: TXMLDocument;
+  Root: TDOMElement;
+begin
+  StringSplit( FileName, '?', FN, XMLPath );
+
+  if ( lowercase( ExtractFileExt( FN )) = '.p3d' ) then
+    begin
+      FName:= P3DSearchPaths.Models.FindFileEx( FN, GetCurrentDir );
+      if ( FName = '' ) then
+        raise Exception.Create( Format( 'Cannot load datablock from file! The specified file "%s" was not found!', [ FileName ]));
+      ReadXMLFile( xml, FName );
+      dir:= GetCurrentDir;
+      try
+        xml.DocumentElement.SetAttribute( 'filename', FName );
+        SetCurrentDir( ExtractFilePath( FName ));
+
+        Root:= FindDOMByIdentifier( XMLPath, xml.DocumentElement );
+        if ( not Assigned( Root )) then
+          raise Exception.Create( Format( 'Cannot load datablock from file! The specified node "%s" was not found in the file "%s"!', [ XMLPath, FName ]));
+        LoadFromDOM( Root );
+      finally
+        SetCurrentDir( dir );
+        xml.Free;
+      end;
+    end
+  else
+    LoadFromBinary( FN );
+end;
+
+procedure TP3DDataBlock.LoadFromBinary(FileName: String);
 begin
 
 end;
 
 procedure TP3DDataBlock.Reload;
+var
+  Node: TDOMElement;
+  Dir: String;
 begin
-
+  Parent.OpenDOMFile;
+  Node:= Parent.FindDOMToPath( DOMPath );
+  Dir:= GetCurrentDir;
+  SetCurrentDir( ExtractFilePath( Parent.FileWatch.FileName ));
+  if ( Assigned( Node )) then
+    LoadFromDOM( Node )
+  else
+    WriteLn( 'Warning, cannot reload. Not found in DOM file!' );
+  Parent.CloseDOMFile;
+  SetCurrentDir( Dir );
 end;
 
 function TP3DDataBlock.CalcBoundingBox: TP3DBoundingBox;

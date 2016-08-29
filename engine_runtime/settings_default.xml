@@ -18,5 +18,8 @@
     <path 
     type="shaders"
     value="shaders"/>
+    <path
+    type="fonts"
+    value="fonts"/>
   </paths>
 </p3dsettings>

@@ -62,9 +62,10 @@
 
     TP3DMesh = class( TP3DDataBlock )
       private
+        FFileWatch: TP3DFileWatch;
         FModifiers: TP3DMeshModifierList;
 
-        procedure LoadMaterialFromDOM( DOM: TDOMElement );
+        procedure LoadMaterialFromDOM(DOM: TDOMElement);
         procedure LoadModifierFromDOM( DOM: TDOMElement );
 
       public
@@ -100,8 +101,10 @@
         procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
         //        procedure ClearChildren;
         property Modifiers: TP3DMeshModifierList read FModifiers write FModifiers;
+        property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       end;
-        TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
+
+      TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -227,6 +230,7 @@ begin
   Modifiers:= TP3DMeshModifierList.Create;
 
   Parent.Meshes.Add( Self );
+  FileWatch:= TP3DFileWatch.Create( '' );
 end;
 
 constructor TP3DMesh.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData);
@@ -252,6 +256,7 @@ begin
 
   VBArray.Free;
   MaterialGroups.Free;
+  FileWatch.Free;
 
   inherited Destroy;
 end;

@@ -397,6 +397,7 @@ begin
       Canvas.Height:= Round( Min( P3DGUIManager.ScreenCanvas.Height - Top, Height ));
     end;
   UpdateClientRect;
+  ParentCtrl.FPageSize:= max( ParentCtrl.FPageSize, vec2( Left + Width, Top + Height ));
 end;
 
 function TP3DGraphicControl.GetScroll: TVec2;
@@ -547,6 +548,7 @@ begin
     ParentCtrl.Realign
   else
     Controls.Realign;
+  ParentCtrl.FPageSize:= max( ParentCtrl.FPageSize, vec2( Left + Width, Top + Height ));
 end;
 
 procedure TP3DGraphicControl.SetLeft(const Value: Float);

@@ -1,4 +1,5 @@
 {$IFDEF INTERFACE}
+type
 
 TP3DCursor = ( curArrow = 'A', curHourGlass = 'B', curHResize = 'C', curVResize = 'D', curMoveLeftRight = 'E', curMoveTopBottom = 'F', curNodeEdit = 'G', curDragDrop = 'H' );
 

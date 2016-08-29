@@ -205,7 +205,7 @@ procedure TP3DSceneViewer.KeyboardAction;
 
 begin
   inherited KeyboardAction;
-  if ( OrbitCamera ) then
+  if ( OrbitCamera and ( gcisMouseOver in InputState )) then
     begin
       if ( KeyEvent( P3DK_7 ) or KeyEvent( P3DK_KP_7 )) then
         FCamObject.Rotation:= vec3( 0, 180 * Ord( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]), 0 );

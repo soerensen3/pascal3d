@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<p3dfile>
+<p3dfile
+  name = "grid">
   <scene
     name = "Scene">
     <object
@@ -34,6 +35,7 @@
     name = "material_Material"
     diffuse = "1.000000, 1.000000, 1.000000">
     <texture
+      name = "grid"
       mode = "mix"
       alpha = "1.0"
       layer = "0"

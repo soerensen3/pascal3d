@@ -6,6 +6,7 @@ TP3DCustomControlList = specialize gP3DCustomObjectList < TP3DGraphicControl >;
 
 TP3DControlList = class( TP3DCustomControlList )
   private
+    FPageSize: TVec2;
     FParent: TP3DGraphicControl;
 
   public
@@ -27,6 +28,7 @@ TP3DControlList = class( TP3DCustomControlList )
     destructor Destroy; override;
 
     property Parent: TP3DGraphicControl read FParent;
+    property PageSize: TVec2 read FPageSize;
 end;
 
 {$ENDIF}
@@ -107,6 +109,7 @@ begin
       R:= P3DRect( 0, 0, Width, Height )
   else //NO VIEWPORTS AND NO PARENT
     exit;
+  FPageSize:= vec2( 0 );
   for Control in Self do
     if ( Control.Visible ) then
       begin
@@ -149,6 +152,7 @@ begin
         Control.Realign;
         Control.Controls.Realign;
       end;
+
   for Control in Self do
     if (( Control.Visible ) and ( Control.Align = alClient )) then
       begin
@@ -158,8 +162,8 @@ begin
         Control.FHeight:= R.Bottom - R.Top;
         Control.Realign;
         Control.Controls.Realign;
+        //FPageSize:= max( FPageSize, vec2( Control.Left + Control.Width, Control.Top + Control.Height ));
       end;
-
 end;
 
 procedure TP3DControlList.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);

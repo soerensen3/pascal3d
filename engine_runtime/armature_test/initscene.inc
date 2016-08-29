@@ -174,8 +174,6 @@ begin
 end;
 
 procedure Init( Sender: TP3DApplication );
-var
-  SceneViewer: TP3DTreeViewActors;
 begin
   pathshaders:= ExtractFilePath( ParamStr( 0 )) + pathshaders;
   pathmodels:= ExtractFilePath( ParamStr( 0 )) + pathmodels;
@@ -190,6 +188,7 @@ begin
 
   mainscene:= TP3DScene.Create();
   maincamera:= TP3DActor.Create();
+
   maincamera.Position:= vec3( 0, 0, -10 );
   maincamera.Data:= TP3DCamera.Create();
   maincamera.RotationOrder:= roXZY;

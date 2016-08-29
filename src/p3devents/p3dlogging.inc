@@ -166,8 +166,7 @@ begin
   Result:= Node;
 end;
 
-function TP3DLogger.LogException(Sender: TObject; Message: Exception
-  ): TDOMElement;
+function TP3DLogger.LogException(Sender: TObject; Message: Exception ): TDOMElement;
 begin
   Result:= LogException( Sender, Message );//StringReplace( Message.Message, LineEnding, '<br />', [ rfReplaceAll ]));
 end;

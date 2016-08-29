@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<p3dfile>
+<p3dfile
+  name="rocks">
   <scene
     name = "Scene">
     <object
@@ -143,12 +144,14 @@
     specular = "7.000000, 0.152672, 0.152672, 0.152672">
     <texture
       diffuse = "1.0"
+      name = "rock"
       file = "rock.jpg"
       layer = "0"
       mode = "multiply">
     </texture>
     <texture
       mode = "mix"
+      name = "rock_spec"
       file = "rock_spec.png"
       specular = "1.0"
       layer = "0"
@@ -156,6 +159,7 @@
     </texture>
     <texture
       mode = "mix"
+      name = "rock_normal"
       file = "rock_normal.png"
       normal = "1.0">
     </texture>
@@ -166,12 +170,14 @@
     specular = "7.000000, 0.152672, 0.152672, 0.152672">
     <texture
       diffuse = "1.0"
+      name = "rock"
       file = "rock.jpg"
       layer = "0"
       mode = "multiply">
     </texture>
     <texture
       mode = "mix"
+      name = "rock_spec"
       file = "rock_spec.png"
       specular = "1.0"
       layer = "0"
@@ -179,6 +185,7 @@
     </texture>
     <texture
       mode = "mix"
+      name = "rock_normal"
       file = "rock_normal.png"
       displace = "-0.5"
       layer = "0"

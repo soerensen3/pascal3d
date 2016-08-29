@@ -134,7 +134,7 @@ begin
   if ( AttrS > '' ) then
     Far:= StrToFloatDef( AttrS, 0.0 );
 
-  FileWatch.FileName:= '';
+  //FileWatch.FileName:= '';
 end;
 
 constructor TP3DCamera.Create(const AData: TP3DData);

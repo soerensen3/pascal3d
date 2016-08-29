@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      data = "mesh_Plane"
+      type = "mesh"
+      name = "Plane">
+      <transform
+        position = " 0.000000, 0.000000,-0.549173"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.046625, 2.046625, 2.046625">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Mesh"
+      type = "mesh"
+      name = "Text">
+      <transform
+        position = "-0.582724,-0.335222,-0.360305"
+        quaternion = " 0.241165,-0.217466, 0.101905, 0.940300"
+        scale = " 1.644466, 1.644466, 1.644466">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Circle"
+      type = "mesh"
+      name = "Circle">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "lamp_Lamp"
+      type = "lamp"
+      name = "Lamp">
+      <transform
+        position = " 4.076245, 1.005454, 5.903862"
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    binary = "colorwheel.mesh_Plane.p3dmesh"
+    vertices = "4"
+    normals = "4"
+    cotangents = "4"
+    loops = "4"
+    texlayers = "1"
+    texcoords = "4"
+    faces = "1"
+    tangents = "4"
+    name = "mesh_Plane">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material.002">
+    </material>
+  </mesh>
+  <mesh
+    binary = "colorwheel.mesh_Circle.p3dmesh"
+    vertices = "192"
+    normals = "192"
+    cotangents = "512"
+    loops = "512"
+    texlayers = "1"
+    texcoords = "512"
+    faces = "128"
+    tangents = "512"
+    name = "mesh_Circle">
+    <material
+      end = "127"
+      start = "0"
+      name = "material_Material.001">
+    </material>
+  </mesh>
+  <mesh
+    binary = "colorwheel.mesh_Mesh.p3dmesh"
+    vertices = "5576"
+    normals = "5576"
+    loops = "12534"
+    faces = "3481"
+    name = "mesh_Mesh">
+    <material
+      end = "3480"
+      start = "0"
+      name = "material_Material.000">
+    </material>
+  </mesh>
+  <lamp
+    color = "1.000000, 1.000000, 1.000000"
+    energy = "1.0"
+    type = "point"
+    name = "lamp_Lamp">
+  </lamp>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000"
+    name = "material_Material.002">
+    <map
+      data = "tex_Texture"
+      diffuse = "1.0"
+      mode = "mix"
+      name = "Texture">
+    </map>
+  </material>
+  <material
+    specular = "10.000000, 0.039877, 0.039877, 0.039877"
+    diffuse = "0.640000, 0.340006, 0.021493"
+    name = "material_Material.000">
+  </material>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000"
+    unlit = "yes"
+    name = "material_Material.001">
+    <map
+      data = "tex_Tex"
+      diffuse = "1.0"
+      mode = "mix"
+      name = "Tex">
+    </map>
+  </material>
+  <texture
+    file = "checkerboard.png"
+    name = "tex_Texture">
+  </texture>
+  <texture
+    file = "gradient.png"
+    name = "tex_Tex">
+  </texture>
+</p3dfile>
