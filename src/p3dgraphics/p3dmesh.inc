@@ -575,6 +575,7 @@ begin
   Edges:= _Edges;
 
   CreateVBO;
+  BoundingBox:= CalcBoundingBox();
 end;
 
 procedure TP3DMesh.ClearVBO;

@@ -64,7 +64,7 @@ type
       procedure SetRotation(AValue: TVec3);
       procedure SetRotationOrder(AValue: TRotationOrder);
       procedure SetScale(AValue: TVec3);
-      property BoundingBox;
+      //property BoundingBox;
       procedure UpdateMatrix;
       procedure UpdateEuler;
 
@@ -138,6 +138,7 @@ end;
 procedure TP3DActor.UpdateMatrix;
 begin
   FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
+  FBoundingBox:= CalcBoundingBox();
 end;
 
 procedure TP3DActor.UpdateEuler;

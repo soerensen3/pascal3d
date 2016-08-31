@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      data = "mesh_Cube"
+      name = "Cube"
+      type = "mesh">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "lamp_Lamp"
+      name = "Lamp"
+      type = "lamp">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 4.076245, 1.005454, 5.903862"
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947">
+      </transform>
+    </object>
+    <object
+      data = "camera_Camera"
+      name = "Camera"
+      type = "camera">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 7.481132,-6.507640, 5.343665"
+        quaternion = " 0.481707, 0.212922, 0.334251, 0.781600">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    binary = "box.mesh_Cube.p3dmesh"
+    normals = "8"
+    loops = "24"
+    faces = "6"
+    name = "mesh_Cube"
+    vertices = "8">
+    <material
+      name = "material_Material"
+      start = "0"
+      end = "5">
+    </material>
+  </mesh>
+  <lamp
+    color = "1.000000, 1.000000, 1.000000"
+    name = "lamp_Lamp"
+    energy = "1.0"
+    type = "point">
+  </lamp>
+  <camera
+    near = "0.10000000149011612"
+    name = "camera_Camera"
+    far = "100.0"
+    fov = "0.8575560450553894">
+  </camera>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    diffuse = "0.640000, 0.640000, 0.640000"
+    name = "material_Material">
+  </material>
+</p3dfile>
