@@ -129,6 +129,7 @@ begin
     'scene': Result:= TP3DScene;
     'armature': Result:= TP3DArmature;
     'texture': Result:= TP3DTexture;
+    'action': Result:= TP3DArmatureAction;
   end;
 end;
 
@@ -147,6 +148,7 @@ begin
     'scene': Result:= TP3DScene;
     'armature': Result:= TP3DArmature;
     'texture': Result:= TP3DTexture;
+    'action': Result:= TP3DArmatureAction;
   end;
 end;
 

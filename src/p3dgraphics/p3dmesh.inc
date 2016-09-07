@@ -58,17 +58,44 @@
 
     TP3DMeshModifierList = specialize gP3DCustomObjectList < TP3DMeshModifier >;
 
+    { TP3DMeshGroup }
+
+    TP3DMeshWeightGroup = class( TPersistent )
+      private
+        FMesh: TP3DMesh;
+        FName: String;
+
+        function GetWeight( VIndex: Integer ): Float;
+
+      public
+        //property Weight[ VIndex: Integer ]: Float read GetWeight;
+
+      published
+        constructor Create( AMesh: TP3DMesh );
+
+        property Name: String read FName write FName;
+        property Mesh: TP3DMesh read FMesh write FMesh;
+    end;
+
+    TP3DMeshWeightGroupList = specialize gP3DCustomObjectList < TP3DMeshWeightGroup >;
+
+    TP3DArmature = class;
+
     { TP3DMesh }
 
     TP3DMesh = class( TP3DDataBlock )
       private
+        FArmature: TP3DArmature;
         FFileWatch: TP3DFileWatch;
         FModifiers: TP3DMeshModifierList;
 
         procedure LoadMaterialFromDOM(DOM: TDOMElement);
         procedure LoadModifierFromDOM( DOM: TDOMElement );
+        function LoadWeightGroupsFromDOM( DOM: TDOMElement ): Boolean;
 
       public
+        VertexGroups: TP3DIntBufferGL;
+        VertexWeights: TP3DVec3BufferGL;
         Positions: TP3DVec3BufferGL;
         Normals: TP3DVec3BufferGL;
         Tangents: TP3DVec3BufferGL;
@@ -80,6 +107,7 @@
         Indices: TP3DIntBufferGL;
         VBArray: TP3DVertexBufferArray;
         MaterialGroups: TP3DMeshMaterialGroupList;
+        WeightGroups: TP3DMeshWeightGroupList;
 
         constructor Create( const AData: TP3DData = nil );
         constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
@@ -102,6 +130,7 @@
         //        procedure ClearChildren;
         property Modifiers: TP3DMeshModifierList read FModifiers write FModifiers;
         property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
+//        property Armature: TP3DArmature read FArmature write SetArmature;
       end;
 
       TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
@@ -208,11 +237,30 @@ begin
   M:= nil;
   case DOM.GetAttribute( 'name' ) of
     'terrain': M:= TP3DMeshModifierTerrain.CreateFromDOM( DOM, Self );
+    'armature': M:= TP3DMeshModifierArmature.CreateFromDOM( DOM, Self );
     else
       raise Exception.Create( 'Cannot create mesh modifier. Modifier type not found!' ); //TODO: Improve msg
   end;
   if ( Assigned( M )) then
     Modifiers.Add( M );
+end;
+
+function TP3DMesh.LoadWeightGroupsFromDOM(DOM: TDOMElement): Boolean;
+var
+  L: TDOMNodeList;
+  i: Integer;
+  grp: TP3DMeshWeightGroup;
+begin
+  L:= DOM.GetElementsByTagName( 'weightgroup' );
+
+  for i:= 0 to L.Count - 1 do
+    begin
+      grp:= TP3DMeshWeightGroup.Create( Self );
+      grp.Name:= TDOMElement( L.Item[ i ]).GetAttribute( 'name' );
+      WeightGroups.Add( grp );
+    end;
+
+  Result:= L.Count > 0;
 end;
 
 constructor TP3DMesh.Create(const AData: TP3DData);
@@ -225,8 +273,12 @@ begin
   Tangents:= TP3DVec3BufferGL.Create( True );
   Indices:= TP3DIntBufferGL.Create( True );
   Edges:= TP3DIntBufferGL.Create( True );
+  VertexGroups:= TP3DIntBufferGL.Create( True );
+  VertexWeights:= TP3DVec3BufferGL.Create( True );
   VBArray:= TP3DVertexBufferArray.Create;
+
   MaterialGroups:= TP3DMeshMaterialGroupList.Create;
+  WeightGroups:= TP3DMeshWeightGroupList.Create();
   Modifiers:= TP3DMeshModifierList.Create;
 
   Parent.Meshes.Add( Self );
@@ -251,11 +303,14 @@ begin
   Tangents.Free;
   Indices.Free;
   Edges.Free;
+  VertexGroups.Free;
+  VertexWeights.Free;
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].Free;
 
   VBArray.Free;
   MaterialGroups.Free;
+  WeightGroups.Free;
   FileWatch.Free;
 
   inherited Destroy;
@@ -280,7 +335,18 @@ begin
         F:= TFileStream.Create( Ext, fmOpenRead );
         cnt:= StrToIntDef( ADOMNode.GetAttribute( 'vertices' ), 0 );
         if ( cnt > 0 ) then
-          LoadVec3FromStream( Positions, F, cnt );
+          begin
+            LoadVec3FromStream( Positions, F, cnt );
+            if ( LoadWeightGroupsFromDOM( ADOMNode )) then
+              begin
+                LoadVec3FromStream( VertexWeights, F, cnt );
+                for i:= 0 to 50 do
+                  WriteLn( VertexWeights[ i ].ToString());
+                LoadIntFromStream( VertexGroups, F, cnt * 4 );
+                for i:= 0 to 50 do
+                  WriteLn( Format( '%d, %d, %d, %d', [ VertexGroups[ i * 4 ], VertexGroups[ i * 4 + 1 ], VertexGroups[ i * 4 + 2 ], VertexGroups[ i * 4 + 3 ]]));
+              end;
+          end;
 
         cnt:= StrToIntDef( ADOMNode.GetAttribute( 'normals' ), 0 );
         if ( cnt > 0 ) then
@@ -313,6 +379,7 @@ begin
         if ( cnt > 0 ) then
           LoadFaceFromStream( @Faces, F, cnt, Edges.Count );
 
+
         F.Free;
         FileWatch.FileName:= ext;
       except on E: Exception do
@@ -332,6 +399,7 @@ begin
         'matrix': ;//Matrix:= LoadMat4FromDOM( Element );
         'material': LoadMaterialFromDOM( Element );
         'modifier': LoadModifierFromDOM( Element );
+        'weightgroup': ; //Do nothing. Loaded elsewhere!
       else
         raise Exception.Create( 'Unknown tag inside Mesh Element: '+ Element.NodeName );
       end;
@@ -378,6 +446,7 @@ var
   Modifier: TP3DMeshModifier;
   offset: Integer;
   count, i: Integer;
+  decl: TP3DShaderDecl;
 
 begin
   if (( Idx < 0 ) or ( Idx >= MaterialGroups.Count )) then
@@ -401,6 +470,12 @@ begin
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+  decl:= Material.Shader.Attributes.Names[ 'jointID' ];
+  if ( Assigned( decl )) and ( WeightGroups.Count > 0 ) then
+    VertexGroups.SetAttribArray( decl.Addr );
+  decl:= Material.Shader.Attributes.Names[ 'jointWeight' ];
+  if ( Assigned( decl )) and ( WeightGroups.Count > 0 ) then
+    VertexWeights.SetAttribArray( decl.Addr );
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
@@ -517,8 +592,8 @@ var
   Idx: Integer;
 
   _Positions,
-  _Normals: TP3DVec3BufferGL;
-  _Edges: TP3DIntBufferGL;
+  _Normals, _Weights: TP3DVec3BufferGL;
+  _Edges, _WeightGroups: TP3DIntBufferGL;
 
   vidx: Integer;
 
@@ -528,6 +603,8 @@ begin
   _Normals:= TP3DVec3BufferGL.Create( True );
   _Normals:= TP3DVec3BufferGL.Create( True );
   _Edges:= TP3DIntBufferGL.Create( True );
+  _Weights:= TP3DVec3BufferGL.Create( True );
+  _WeightGroups:= TP3DIntBufferGL.Create( True );
 
 
   for i:= 0 to high( Faces ) do
@@ -539,6 +616,9 @@ begin
           vidx:= Edges[ Faces[ i ].loop_start + j ];
           _Positions.Add( Positions[ vidx ]);
           _Normals.Add( Normals[ vidx ]);
+          _Weights.Add( VertexWeights[ vidx ]);
+          _WeightGroups.Add([ VertexGroups[ vidx * 4 ],     VertexGroups[ vidx * 4 + 1 ],
+                              VertexGroups[ vidx * 4 + 2 ], VertexGroups[ vidx * 4 + 3 ]]);
         end;
       for j:= 1 to Faces[ i ].loop_count - 1 do
         begin
@@ -574,6 +654,11 @@ begin
   Edges.Free;
   Edges:= _Edges;
 
+  VertexGroups.Free;
+  VertexGroups:= _WeightGroups;
+  VertexWeights.Free;
+  VertexWeights:= _Weights;
+
   CreateVBO;
   BoundingBox:= CalcBoundingBox();
 end;
@@ -608,6 +693,16 @@ begin
     begin
       Tangents.PushData;
       Tangents.SetAttribArray( P3DAttribTangent );
+    end;
+  if ( VertexGroups.Count > 0 ) then
+    begin
+      VertexGroups.PushData;
+      //VertexGroups.SetAttribArray( jointID );
+    end;
+  if ( VertexWeights.Count > 0 ) then
+    begin
+      VertexWeights.PushData;
+      //VertexWeights.SetAttribArray(  );
     end;
   for i:= 0 to high( TexCoords ) do
     if ( TexCoords[ i ].Count > 0 ) then
@@ -777,6 +872,19 @@ constructor TP3DMeshModifier.CreateFromDOM(ADOMNode: TDOMElement; AMesh: TP3DMes
 begin
   Create( AMesh );
   LoadFromDOM( ADOMNode );
+end;
+
+{ TP3DMeshWeightGroup }
+
+function TP3DMeshWeightGroup.GetWeight( VIndex: Integer ): Float;
+begin
+  Result:= 0.0;//Mesh.;
+end;
+
+constructor TP3DMeshWeightGroup.Create(AMesh: TP3DMesh);
+begin
+  inherited Create;
+  Mesh:= AMesh;
 end;
 
 

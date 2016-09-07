@@ -3,9 +3,9 @@
   <scene
     name = "Scene">
     <object
-      type = "armature"
       name = "Armature"
-      data = "armature_Armature">
+      data = "armature_Armature"
+      type = "armature">
       <transform
         scale = " 3.399950, 3.399950, 3.399950"
         position = "-0.000478,-0.053792, 0.033314"
@@ -13,9 +13,9 @@
       </transform>
     </object>
     <object
-      type = "mesh"
       name = "Cube"
-      data = "mesh_Cube">
+      data = "mesh_Cube"
+      type = "mesh">
       <transform
         scale = " 1.000000, 1.000000, 1.000000"
         position = "-0.000478,-0.053792, 0.033313"
@@ -23,538 +23,3742 @@
       </transform>
     </object>
     <object
-      type = "lamp"
       name = "Sun"
-      data = "lamp_Sun">
+      data = "lamp_Sun"
+      type = "lamp">
       <transform
         scale = " 1.000000, 1.000000, 1.000000"
-        position = " 9.548807,-39.676670,147.804199"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
-      </transform>
-    </object>
-    <object
-      type = "camera"
-      name = "Camera"
-      data = "camera_Camera">
-      <transform
-        scale = " 1.000000, 1.000000, 1.000000"
-        position = "10.000000,-10.000000,11.350000"
-        quaternion = " 0.461940, 0.191342, 0.331414, 0.800103">
+        position = "15.796679,-2.125610, 6.243928"
+        quaternion = " 0.161139, 0.188519,-0.359907, 0.899423">
       </transform>
     </object>
   </scene>
   <mesh
-    loops = "3162"
-    binary = "character.mesh_Cube.p3dmesh"
-    normals = "529"
-    texcoords = "3162"
-    tangents = "3162"
-    name = "mesh_Cube"
-    texlayers = "1"
+    cotangents = "3162"
     vertices = "529"
+    texcoords = "3162"
+    texlayers = "1"
+    name = "mesh_Cube"
+    binary = "character.mesh_Cube.p3dmesh"
+    tangents = "3162"
+    normals = "529"
     faces = "1054"
-    cotangents = "3162">
+    loops = "3162">
+    <weightgroup
+      name = "hips">
+    </weightgroup>
+    <weightgroup
+      name = "spine">
+    </weightgroup>
+    <weightgroup
+      name = "ribs">
+    </weightgroup>
+    <weightgroup
+      name = "neck">
+    </weightgroup>
+    <weightgroup
+      name = "head">
+    </weightgroup>
+    <weightgroup
+      name = "shoulder.L">
+    </weightgroup>
+    <weightgroup
+      name = "upper_arm.L">
+    </weightgroup>
+    <weightgroup
+      name = "forearm.L">
+    </weightgroup>
+    <weightgroup
+      name = "hand.L">
+    </weightgroup>
+    <weightgroup
+      name = "thumb.01.L">
+    </weightgroup>
+    <weightgroup
+      name = "thumb.02.L">
+    </weightgroup>
+    <weightgroup
+      name = "thumb.03.L">
+    </weightgroup>
+    <weightgroup
+      name = "palm.02.L">
+    </weightgroup>
+    <weightgroup
+      name = "finger_middle.01.L">
+    </weightgroup>
+    <weightgroup
+      name = "finger_middle.02.L">
+    </weightgroup>
+    <weightgroup
+      name = "finger_middle.03.L">
+    </weightgroup>
+    <weightgroup
+      name = "shoulder.R">
+    </weightgroup>
+    <weightgroup
+      name = "upper_arm.R">
+    </weightgroup>
+    <weightgroup
+      name = "forearm.R">
+    </weightgroup>
+    <weightgroup
+      name = "hand.R">
+    </weightgroup>
+    <weightgroup
+      name = "thumb.01.R">
+    </weightgroup>
+    <weightgroup
+      name = "thumb.02.R">
+    </weightgroup>
+    <weightgroup
+      name = "thumb.03.R">
+    </weightgroup>
+    <weightgroup
+      name = "palm.02.R">
+    </weightgroup>
+    <weightgroup
+      name = "finger_middle.01.R">
+    </weightgroup>
+    <weightgroup
+      name = "finger_middle.02.R">
+    </weightgroup>
+    <weightgroup
+      name = "finger_middle.03.R">
+    </weightgroup>
+    <weightgroup
+      name = "thigh.L">
+    </weightgroup>
+    <weightgroup
+      name = "shin.L">
+    </weightgroup>
+    <weightgroup
+      name = "foot.L">
+    </weightgroup>
+    <weightgroup
+      name = "toe.L">
+    </weightgroup>
+    <weightgroup
+      name = "heel.L">
+    </weightgroup>
+    <weightgroup
+      name = "heel.02.L">
+    </weightgroup>
+    <weightgroup
+      name = "thigh.R">
+    </weightgroup>
+    <weightgroup
+      name = "shin.R">
+    </weightgroup>
+    <weightgroup
+      name = "foot.R">
+    </weightgroup>
+    <weightgroup
+      name = "toe.R">
+    </weightgroup>
+    <weightgroup
+      name = "heel.R">
+    </weightgroup>
+    <weightgroup
+      name = "heel.02.R">
+    </weightgroup>
     <material
-      end = "1053"
       name = "material_Body"
-      start = "0">
+      start = "0"
+      end = "1053">
     </material>
-  </mesh>
-  <lamp
-    color = "1.000000, 1.000000, 1.000000"
-    type = "sun"
-    energy = "1.0"
-    name = "lamp_Sun">
-  </lamp>
-  <camera
-    near = "0.10000000149011612"
-    fov = "0.8575560450553894"
-    name = "camera_Camera"
-    far = "100.0">
-  </camera>
-  <material
-    diffuse = "0.640000, 0.640000, 0.640000"
-    specular = "10.000000, 0.000000, 0.000000, 0.000000"
-    name = "material_Body">
-  </material>
-  <armature
-    name = "armature_Armature">
-    <bone
-      position = " 0.000000, 0.055200, 1.009900"
-      name = "bone_hips"
-      quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
-    </bone>
-    <bone
-      position = " 0.000000, 0.017200, 1.183700"
-      name = "bone_spine"
-      quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
-    </bone>
-    <bone
-      position = " 0.000000, 0.000400, 1.341800"
-      name = "bone_ribs"
-      quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
-    </bone>
-    <bone
-      position = " 0.000000, 0.011400, 1.658200"
-      name = "bone_neck"
-      quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
-    </bone>
-    <bone
-      position = "-0.000000,-0.020506, 1.762427"
-      name = "bone_head"
-      quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
-    </bone>
-    <bone
-      position = " 0.018300,-0.068400, 1.605100"
-      name = "bone_shoulder.L"
-      quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
-    </bone>
-    <bone
-      position = " 0.195300, 0.026700, 1.584600"
-      name = "bone_upper_arm.L"
-      quaternion = " 0.153396, 0.707967,-0.638937, 0.258867">
-    </bone>
-    <bone
-      position = " 0.350847, 0.065433, 1.350348"
-      name = "bone_forearm.L"
-      quaternion = " 0.240205, 0.654621,-0.690220, 0.193315">
-    </bone>
-    <bone
-      position = " 0.489213, 0.049200, 1.157372"
-      name = "bone_hand.L"
-      quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
-    </bone>
-    <bone
-      position = " 0.514875, 0.021400, 1.117797"
-      name = "bone_thumb.01.L"
-      quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
-    </bone>
-    <bone
-      position = " 0.544298, 0.001500, 1.065433"
-      name = "bone_thumb.02.L"
-      quaternion = "-0.742122,-0.105675,-0.288038, 0.595921">
-    </bone>
-    <bone
-      position = " 0.557764,-0.005700, 1.043258"
-      name = "bone_thumb.03.L"
-      quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
-    </bone>
-    <bone
-      position = " 0.495318, 0.038900, 1.136100"
-      name = "bone_palm.02.L"
-      quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
-    </bone>
-    <bone
-      position = " 0.550118, 0.027700, 1.097100"
-      name = "bone_finger_middle.01.L"
-      quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
-    </bone>
-    <bone
-      position = " 0.574518, 0.023400, 1.054200"
-      name = "bone_finger_middle.02.L"
-      quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
-    </bone>
-    <bone
-      position = " 0.583418, 0.021800, 1.023300"
-      name = "bone_finger_middle.03.L"
-      quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
-    </bone>
-    <bone
-      position = "-0.018300,-0.068400, 1.605100"
-      name = "bone_shoulder.R"
-      quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
-    </bone>
-    <bone
-      position = "-0.195300, 0.026700, 1.584600"
-      name = "bone_upper_arm.R"
-      quaternion = " 0.153396,-0.707967, 0.638937, 0.258867">
-    </bone>
-    <bone
-      position = "-0.350847, 0.065433, 1.350348"
-      name = "bone_forearm.R"
-      quaternion = " 0.240205,-0.654621, 0.690220, 0.193315">
-    </bone>
-    <bone
-      position = "-0.489213, 0.049200, 1.157372"
-      name = "bone_hand.R"
-      quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
-    </bone>
-    <bone
-      position = "-0.514875, 0.021400, 1.117797"
-      name = "bone_thumb.01.R"
-      quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
-    </bone>
-    <bone
-      position = "-0.544298, 0.001500, 1.065433"
-      name = "bone_thumb.02.R"
-      quaternion = "-0.742122, 0.105675, 0.288038, 0.595921">
-    </bone>
-    <bone
-      position = "-0.557764,-0.005700, 1.043258"
-      name = "bone_thumb.03.R"
-      quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
-    </bone>
-    <bone
-      position = "-0.495318, 0.038900, 1.136100"
-      name = "bone_palm.02.R"
-      quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
-    </bone>
-    <bone
-      position = "-0.550118, 0.027700, 1.097100"
-      name = "bone_finger_middle.01.R"
-      quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
-    </bone>
-    <bone
-      position = "-0.574518, 0.023400, 1.054200"
-      name = "bone_finger_middle.02.R"
-      quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
-    </bone>
-    <bone
-      position = "-0.583418, 0.021800, 1.023300"
-      name = "bone_finger_middle.03.R"
-      quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
-    </bone>
-    <bone
-      position = " 0.098000, 0.012400, 1.072000"
-      name = "bone_thigh.L"
-      quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
-    </bone>
-    <bone
-      position = " 0.106522,-0.020881, 0.470053"
-      name = "bone_shin.L"
-      quaternion = "-0.601453, 0.009668, 0.009162, 0.798798">
-    </bone>
-    <bone
-      position = " 0.096183, 0.087888, 0.091916"
-      name = "bone_foot.L"
-      quaternion = "-0.971589,-0.001664,-0.000477, 0.236669">
-    </bone>
-    <bone
-      position = " 0.096715,-0.048697, 0.021178"
-      name = "bone_toe.L"
-      quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
-    </bone>
-    <bone
-      position = " 0.096183, 0.087888, 0.091916"
-      name = "bone_heel.L"
-      quaternion = " 0.018942,-0.851210, 0.524079, 0.020612">
-    </bone>
-    <bone
-      position = " 0.060000, 0.000000, 0.000000"
-      name = "bone_heel.02.L"
-      quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
-    </bone>
-    <bone
-      position = "-0.098000, 0.012400, 1.072000"
-      name = "bone_thigh.R"
-      quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
-    </bone>
-    <bone
-      position = "-0.106522,-0.020881, 0.470053"
-      name = "bone_shin.R"
-      quaternion = "-0.601453,-0.009668,-0.009162, 0.798798">
-    </bone>
-    <bone
-      position = "-0.096183, 0.087888, 0.091916"
-      name = "bone_foot.R"
-      quaternion = "-0.971589, 0.001664, 0.000477, 0.236669">
-    </bone>
-    <bone
-      position = "-0.096715,-0.048697, 0.021178"
-      name = "bone_toe.R"
-      quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
-    </bone>
-    <bone
-      position = "-0.096183, 0.087888, 0.091916"
-      name = "bone_heel.R"
-      quaternion = " 0.018942, 0.851210,-0.524079, 0.020612">
-    </bone>
-    <bone
-      position = "-0.060000, 0.000000, 0.000000"
-      name = "bone_heel.02.R"
-      quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
-    </bone>
-  </armature>
-  <scene
-    camera = "Camera"
-    name = "Scene">
-    <object
-      type = "armature"
-      name = "Armature"
+    <modifier
+      name = "armature"
       data = "armature_Armature">
-      <transform
-        scale = " 3.399950, 3.399950, 3.399950"
-        position = "-0.000478,-0.053792, 0.033314"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
-      </transform>
-    </object>
-    <object
-      type = "mesh"
-      name = "Cube"
-      data = "mesh_Cube">
-      <transform
-        scale = " 1.000000, 1.000000, 1.000000"
-        position = "-0.000478,-0.053792, 0.033313"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
-      </transform>
-    </object>
-    <object
-      type = "lamp"
-      name = "Sun"
-      data = "lamp_Sun">
-      <transform
-        scale = " 1.000000, 1.000000, 1.000000"
-        position = " 9.548807,-39.676670,147.804199"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
-      </transform>
-    </object>
-    <object
-      type = "camera"
-      name = "Camera"
-      data = "camera_Camera">
-      <transform
-        scale = " 1.000000, 1.000000, 1.000000"
-        position = "10.000000,-10.000000,11.350000"
-        quaternion = " 0.461940, 0.191342, 0.331414, 0.800103">
-      </transform>
-    </object>
-  </scene>
-  <mesh
-    loops = "3162"
-    binary = "character.mesh_Cube.p3dmesh"
-    normals = "529"
-    texcoords = "3162"
-    tangents = "3162"
-    name = "mesh_Cube"
-    texlayers = "1"
-    vertices = "529"
-    faces = "1054"
-    cotangents = "3162">
-    <material
-      end = "1053"
-      name = "material_Body"
-      start = "0">
-    </material>
+    </modifier>
   </mesh>
   <lamp
+    name = "lamp_Sun"
     color = "1.000000, 1.000000, 1.000000"
-    type = "sun"
     energy = "1.0"
-    name = "lamp_Sun">
+    type = "sun">
   </lamp>
-  <camera
-    near = "0.10000000149011612"
-    fov = "0.8575560450553894"
-    name = "camera_Camera"
-    far = "100.0">
-  </camera>
   <material
-    diffuse = "0.640000, 0.640000, 0.640000"
+    name = "material_Body"
     specular = "10.000000, 0.000000, 0.000000, 0.000000"
-    name = "material_Body">
-    <texture
-      diffuse = "1.0"
-      mode = "mix"
-      file = "character_bk3.png"
-      normal = "0.10000000149011612">
-    </texture>
+    diffuse = "0.640000, 0.640000, 0.640000">
+    <map
+      name = "Texture"
+      data = "tex_Texture"
+      normal = "0.10000000149011612"
+      diffuse = "0.0"
+      mode = "mix">
+    </map>
   </material>
+  <texture
+    name = "tex_Texture"
+    file = "character_bk3.png">
+  </texture>
   <armature
-    name = "armature_Armature">
-    <bone
+    name = "armature_Armature"
+    action = "action_armature_ArmatureArmatureAction">
+    <joint
+      name = "joint_hips"
       position = " 0.000000, 0.055200, 1.009900"
-      name = "bone_hips"
       quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
-    </bone>
-    <bone
-      position = " 0.000000, 0.017200, 1.183700"
-      name = "bone_spine"
-      quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
-    </bone>
-    <bone
-      position = " 0.000000, 0.000400, 1.341800"
-      name = "bone_ribs"
-      quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
-    </bone>
-    <bone
-      position = " 0.000000, 0.011400, 1.658200"
-      name = "bone_neck"
-      quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
-    </bone>
-    <bone
-      position = "-0.000000,-0.020506, 1.762427"
-      name = "bone_head"
-      quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
-    </bone>
-    <bone
-      position = " 0.018300,-0.068400, 1.605100"
-      name = "bone_shoulder.L"
-      quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
-    </bone>
-    <bone
-      position = " 0.195300, 0.026700, 1.584600"
-      name = "bone_upper_arm.L"
-      quaternion = " 0.153396, 0.707967,-0.638937, 0.258867">
-    </bone>
-    <bone
-      position = " 0.350847, 0.065433, 1.350348"
-      name = "bone_forearm.L"
-      quaternion = " 0.240205, 0.654621,-0.690220, 0.193315">
-    </bone>
-    <bone
-      position = " 0.489213, 0.049200, 1.157372"
-      name = "bone_hand.L"
-      quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
-    </bone>
-    <bone
-      position = " 0.514875, 0.021400, 1.117797"
-      name = "bone_thumb.01.L"
-      quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
-    </bone>
-    <bone
-      position = " 0.544298, 0.001500, 1.065433"
-      name = "bone_thumb.02.L"
-      quaternion = "-0.742122,-0.105675,-0.288038, 0.595921">
-    </bone>
-    <bone
-      position = " 0.557764,-0.005700, 1.043258"
-      name = "bone_thumb.03.L"
-      quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
-    </bone>
-    <bone
-      position = " 0.495318, 0.038900, 1.136100"
-      name = "bone_palm.02.L"
-      quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
-    </bone>
-    <bone
-      position = " 0.550118, 0.027700, 1.097100"
-      name = "bone_finger_middle.01.L"
-      quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
-    </bone>
-    <bone
-      position = " 0.574518, 0.023400, 1.054200"
-      name = "bone_finger_middle.02.L"
-      quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
-    </bone>
-    <bone
-      position = " 0.583418, 0.021800, 1.023300"
-      name = "bone_finger_middle.03.L"
-      quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
-    </bone>
-    <bone
-      position = "-0.018300,-0.068400, 1.605100"
-      name = "bone_shoulder.R"
-      quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
-    </bone>
-    <bone
-      position = "-0.195300, 0.026700, 1.584600"
-      name = "bone_upper_arm.R"
-      quaternion = " 0.153396,-0.707967, 0.638937, 0.258867">
-    </bone>
-    <bone
-      position = "-0.350847, 0.065433, 1.350348"
-      name = "bone_forearm.R"
-      quaternion = " 0.240205,-0.654621, 0.690220, 0.193315">
-    </bone>
-    <bone
-      position = "-0.489213, 0.049200, 1.157372"
-      name = "bone_hand.R"
-      quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
-    </bone>
-    <bone
-      position = "-0.514875, 0.021400, 1.117797"
-      name = "bone_thumb.01.R"
-      quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
-    </bone>
-    <bone
-      position = "-0.544298, 0.001500, 1.065433"
-      name = "bone_thumb.02.R"
-      quaternion = "-0.742122, 0.105675, 0.288038, 0.595921">
-    </bone>
-    <bone
-      position = "-0.557764,-0.005700, 1.043258"
-      name = "bone_thumb.03.R"
-      quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
-    </bone>
-    <bone
-      position = "-0.495318, 0.038900, 1.136100"
-      name = "bone_palm.02.R"
-      quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
-    </bone>
-    <bone
-      position = "-0.550118, 0.027700, 1.097100"
-      name = "bone_finger_middle.01.R"
-      quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
-    </bone>
-    <bone
-      position = "-0.574518, 0.023400, 1.054200"
-      name = "bone_finger_middle.02.R"
-      quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
-    </bone>
-    <bone
-      position = "-0.583418, 0.021800, 1.023300"
-      name = "bone_finger_middle.03.R"
-      quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
-    </bone>
-    <bone
-      position = " 0.098000, 0.012400, 1.072000"
-      name = "bone_thigh.L"
-      quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
-    </bone>
-    <bone
-      position = " 0.106522,-0.020881, 0.470053"
-      name = "bone_shin.L"
-      quaternion = "-0.601453, 0.009668, 0.009162, 0.798798">
-    </bone>
-    <bone
-      position = " 0.096183, 0.087888, 0.091916"
-      name = "bone_foot.L"
-      quaternion = "-0.971589,-0.001664,-0.000477, 0.236669">
-    </bone>
-    <bone
-      position = " 0.096715,-0.048697, 0.021178"
-      name = "bone_toe.L"
-      quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
-    </bone>
-    <bone
-      position = " 0.096183, 0.087888, 0.091916"
-      name = "bone_heel.L"
-      quaternion = " 0.018942,-0.851210, 0.524079, 0.020612">
-    </bone>
-    <bone
-      position = " 0.060000, 0.000000, 0.000000"
-      name = "bone_heel.02.L"
-      quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
-    </bone>
-    <bone
-      position = "-0.098000, 0.012400, 1.072000"
-      name = "bone_thigh.R"
-      quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
-    </bone>
-    <bone
-      position = "-0.106522,-0.020881, 0.470053"
-      name = "bone_shin.R"
-      quaternion = "-0.601453,-0.009668,-0.009162, 0.798798">
-    </bone>
-    <bone
-      position = "-0.096183, 0.087888, 0.091916"
-      name = "bone_foot.R"
-      quaternion = "-0.971589, 0.001664, 0.000477, 0.236669">
-    </bone>
-    <bone
-      position = "-0.096715,-0.048697, 0.021178"
-      name = "bone_toe.R"
-      quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
-    </bone>
-    <bone
-      position = "-0.096183, 0.087888, 0.091916"
-      name = "bone_heel.R"
-      quaternion = " 0.018942, 0.851210,-0.524079, 0.020612">
-    </bone>
-    <bone
-      position = "-0.060000, 0.000000, 0.000000"
-      name = "bone_heel.02.R"
-      quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
-    </bone>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+        <joint
+          name = "joint_ribs"
+          position = " 0.000000, 0.000400, 1.341800"
+          quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+          <joint
+            name = "joint_neck"
+            position = " 0.000000, 0.011400, 1.658200"
+            quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+            <joint
+              name = "joint_head"
+              position = "-0.000000,-0.020506, 1.762427"
+              quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+            </joint>
+          </joint>
+          <joint
+            name = "joint_shoulder.L"
+            position = " 0.018300,-0.068400, 1.605100"
+            quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+            <joint
+              name = "joint_upper_arm.L"
+              position = " 0.195300, 0.026700, 1.584600"
+              quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+              <joint
+                name = "joint_forearm.L"
+                position = " 0.350847, 0.065433, 1.350348"
+                quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+                <joint
+                  name = "joint_hand.L"
+                  position = " 0.489213, 0.049200, 1.157372"
+                  quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+                  <joint
+                    name = "joint_thumb.01.L"
+                    position = " 0.514875, 0.021400, 1.117797"
+                    quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+                    <joint
+                      name = "joint_thumb.02.L"
+                      position = " 0.544298, 0.001500, 1.065433"
+                      quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+                      <joint
+                        name = "joint_thumb.03.L"
+                        position = " 0.557764,-0.005700, 1.043258"
+                        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+                      </joint>
+                    </joint>
+                  </joint>
+                  <joint
+                    name = "joint_palm.02.L"
+                    position = " 0.495318, 0.038900, 1.136100"
+                    quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+                    <joint
+                      name = "joint_finger_middle.01.L"
+                      position = " 0.550118, 0.027700, 1.097100"
+                      quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+                      <joint
+                        name = "joint_finger_middle.02.L"
+                        position = " 0.574518, 0.023400, 1.054200"
+                        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+                        <joint
+                          name = "joint_finger_middle.03.L"
+                          position = " 0.583418, 0.021800, 1.023300"
+                          quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+                        </joint>
+                      </joint>
+                    </joint>
+                  </joint>
+                </joint>
+              </joint>
+            </joint>
+          </joint>
+          <joint
+            name = "joint_shoulder.R"
+            position = "-0.018300,-0.068400, 1.605100"
+            quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+            <joint
+              name = "joint_upper_arm.R"
+              position = "-0.195300, 0.026700, 1.584600"
+              quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+              <joint
+                name = "joint_forearm.R"
+                position = "-0.350847, 0.065433, 1.350348"
+                quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+                <joint
+                  name = "joint_hand.R"
+                  position = "-0.489213, 0.049200, 1.157372"
+                  quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+                  <joint
+                    name = "joint_thumb.01.R"
+                    position = "-0.514875, 0.021400, 1.117797"
+                    quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+                    <joint
+                      name = "joint_thumb.02.R"
+                      position = "-0.544298, 0.001500, 1.065433"
+                      quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+                      <joint
+                        name = "joint_thumb.03.R"
+                        position = "-0.557764,-0.005700, 1.043258"
+                        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+                      </joint>
+                    </joint>
+                  </joint>
+                  <joint
+                    name = "joint_palm.02.R"
+                    position = "-0.495318, 0.038900, 1.136100"
+                    quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+                    <joint
+                      name = "joint_finger_middle.01.R"
+                      position = "-0.550118, 0.027700, 1.097100"
+                      quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+                      <joint
+                        name = "joint_finger_middle.02.R"
+                        position = "-0.574518, 0.023400, 1.054200"
+                        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+                        <joint
+                          name = "joint_finger_middle.03.R"
+                          position = "-0.583418, 0.021800, 1.023300"
+                          quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+                        </joint>
+                      </joint>
+                    </joint>
+                  </joint>
+                </joint>
+              </joint>
+            </joint>
+          </joint>
+        </joint>
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+        <joint
+          name = "joint_shin.L"
+          position = " 0.106522,-0.020881, 0.470053"
+          quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+          <joint
+            name = "joint_foot.L"
+            position = " 0.096183, 0.087888, 0.091916"
+            quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+            <joint
+              name = "joint_toe.L"
+              position = " 0.096715,-0.048697, 0.021178"
+              quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+            </joint>
+          </joint>
+          <joint
+            name = "joint_heel.L"
+            position = " 0.096183, 0.087888, 0.091916"
+            quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+            <joint
+              name = "joint_heel.02.L"
+              position = " 0.060000, 0.000000, 0.000000"
+              quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+            </joint>
+          </joint>
+        </joint>
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+        <joint
+          name = "joint_shin.R"
+          position = "-0.106522,-0.020881, 0.470053"
+          quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+          <joint
+            name = "joint_foot.R"
+            position = "-0.096183, 0.087888, 0.091916"
+            quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+            <joint
+              name = "joint_toe.R"
+              position = "-0.096715,-0.048697, 0.021178"
+              quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+            </joint>
+          </joint>
+          <joint
+            name = "joint_heel.R"
+            position = "-0.096183, 0.087888, 0.091916"
+            quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+            <joint
+              name = "joint_heel.02.R"
+              position = "-0.060000, 0.000000, 0.000000"
+              quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+            </joint>
+          </joint>
+        </joint>
+      </joint>
+    </joint>
   </armature>
+  <action
+    name = "action_armature_ArmatureArmatureAction">
+    <frame
+      id = "0">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "1">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "2">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "3">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "4">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "5">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "6">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "7">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "8">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "9">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "10">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "11">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "12">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "13">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "14">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "15">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+    <frame
+      id = "16">
+      <joint
+        name = "joint_hips"
+        position = " 0.000000, 0.055200, 1.009900"
+        quaternion = " 0.778973,-0.000000,-0.000000, 0.627058">
+      </joint>
+      <joint
+        name = "joint_spine"
+        position = " 0.000000, 0.017200, 1.183700"
+        quaternion = " 0.743528, 0.000000, 0.000000, 0.668705">
+      </joint>
+      <joint
+        name = "joint_ribs"
+        position = " 0.000000, 0.000400, 1.341800"
+        quaternion = " 0.694714, 0.000000, 0.000000, 0.719286">
+      </joint>
+      <joint
+        name = "joint_neck"
+        position = " 0.000000, 0.011400, 1.658200"
+        quaternion = " 0.803963,-0.000000, 0.000000, 0.594680">
+      </joint>
+      <joint
+        name = "joint_head"
+        position = "-0.000000,-0.020506, 1.762427"
+        quaternion = " 0.778113, 0.000000, 0.000000, 0.628125">
+      </joint>
+      <joint
+        name = "joint_shoulder.L"
+        position = " 0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229, 0.000174,-0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.L"
+        position = " 0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395, 0.707967,-0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.L"
+        position = " 0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205, 0.654620,-0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.L"
+        position = " 0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749,-0.608501, 0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.L"
+        position = " 0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895,-0.080942,-0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.L"
+        position = " 0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122,-0.105675,-0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.L"
+        position = " 0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493, 0.005135,-0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.L"
+        position = " 0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272,-0.616188, 0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.L"
+        position = " 0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726,-0.569821, 0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.L"
+        position = " 0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797,-0.545966, 0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.L"
+        position = " 0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392,-0.539956, 0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_shoulder.R"
+        position = "-0.018300,-0.068400, 1.605100"
+        quaternion = "-0.000229,-0.000174, 0.496440, 0.868071">
+      </joint>
+      <joint
+        name = "joint_upper_arm.R"
+        position = "-0.195300, 0.026700, 1.584600"
+        quaternion = " 0.153395,-0.707967, 0.638937, 0.258867">
+      </joint>
+      <joint
+        name = "joint_forearm.R"
+        position = "-0.350847, 0.065433, 1.350348"
+        quaternion = " 0.240205,-0.654620, 0.690220, 0.193314">
+      </joint>
+      <joint
+        name = "joint_hand.R"
+        position = "-0.489213, 0.049200, 1.157372"
+        quaternion = "-0.674749, 0.608501,-0.299429, 0.291175">
+      </joint>
+      <joint
+        name = "joint_thumb.01.R"
+        position = "-0.514875, 0.021400, 1.117797"
+        quaternion = "-0.754895, 0.080942, 0.295604, 0.579827">
+      </joint>
+      <joint
+        name = "joint_thumb.02.R"
+        position = "-0.544298, 0.001500, 1.065433"
+        quaternion = "-0.742122, 0.105675, 0.288039, 0.595921">
+      </joint>
+      <joint
+        name = "joint_thumb.03.R"
+        position = "-0.557764,-0.005700, 1.043258"
+        quaternion = "-0.740493,-0.005135, 0.170880, 0.649957">
+      </joint>
+      <joint
+        name = "joint_palm.02.R"
+        position = "-0.495318, 0.038900, 1.136100"
+        quaternion = "-0.726272, 0.616188,-0.233787, 0.195411">
+      </joint>
+      <joint
+        name = "joint_finger_middle.01.R"
+        position = "-0.550118, 0.027700, 1.097100"
+        quaternion = "-0.651726, 0.569821,-0.344460, 0.363188">
+      </joint>
+      <joint
+        name = "joint_finger_middle.02.R"
+        position = "-0.574518, 0.023400, 1.054200"
+        quaternion = "-0.583797, 0.545966,-0.428986, 0.420801">
+      </joint>
+      <joint
+        name = "joint_finger_middle.03.R"
+        position = "-0.583418, 0.021800, 1.023300"
+        quaternion = "-0.538392, 0.539956,-0.463183, 0.451712">
+      </joint>
+      <joint
+        name = "joint_thigh.L"
+        position = " 0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345,-0.005185,-0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.L"
+        position = " 0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453, 0.009668, 0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589,-0.001664,-0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.L"
+        position = " 0.096715,-0.048697, 0.021177"
+        quaternion = "-0.000009,-0.019993, 0.999784,-0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.L"
+        position = " 0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942,-0.851209, 0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.L"
+        position = " 0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107">
+      </joint>
+      <joint
+        name = "joint_thigh.R"
+        position = "-0.098000, 0.012400, 1.072000"
+        quaternion = "-0.726345, 0.005185, 0.004803, 0.687294">
+      </joint>
+      <joint
+        name = "joint_shin.R"
+        position = "-0.106522,-0.020881, 0.470053"
+        quaternion = "-0.601453,-0.009668,-0.009162, 0.798797">
+      </joint>
+      <joint
+        name = "joint_foot.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = "-0.971589, 0.001664, 0.000477, 0.236670">
+      </joint>
+      <joint
+        name = "joint_toe.R"
+        position = "-0.096715,-0.048697, 0.021177"
+        quaternion = " 0.000009,-0.019993, 0.999784, 0.005737">
+      </joint>
+      <joint
+        name = "joint_heel.R"
+        position = "-0.096183, 0.087888, 0.091916"
+        quaternion = " 0.018942, 0.851209,-0.524079, 0.020613">
+      </joint>
+      <joint
+        name = "joint_heel.02.R"
+        position = "-0.060000, 0.000000, 0.000000"
+        quaternion = " 0.000000,-0.000000, 0.707107, 0.707107">
+      </joint>
+    </frame>
+  </action>
 </p3dfile>

@@ -36,6 +36,7 @@ class P3DXMLFile:
     self.materials = set()
     self.armatures = set()
     self.textures = set()    
+    self.actions = set()
 
   def push( self, name ):
     el = et.Element( name )
@@ -85,6 +86,9 @@ class P3DBinaryFile:
     bin = struct.pack( 'i', i )
     self.file.write( bin )      
 
+  def writeintvec( self, ivec ):
+    bin = struct.pack( 'i' * len( ivec ), *ivec )
+    self.file.write( bin )      
 
 class P3DExporter( bpy.types.Operator ):
   bl_idname = 'export.p3d'
@@ -92,8 +96,8 @@ class P3DExporter( bpy.types.Operator ):
 
   filepath = StringProperty( subtype='FILE_PATH' )
 
-  supported_types = [ 'MESH', 'LAMP', 'CAMERA', 'ARMATURE' ]
-
+  #supported_types = [ 'MESH', 'LAMP', 'CAMERA', 'ARMATURE' ]
+  supported_types = []
 ## CONFIG ------------------------------------------------------------------------
   Verbose = BoolProperty(
     name = 'Verbose',
@@ -102,9 +106,34 @@ class P3DExporter( bpy.types.Operator ):
     
   ApplyModifiers = BoolProperty(
     name = 'Apply Modifiers',
-    description = 'Apply object modifiers before export',
+    description = 'Apply object modifiers before export. When used together with Export Armatures the Armature modifier is not applied.',
     default = True )
     
+  ExportCameras = BoolProperty(
+    name = 'Export Cameras',
+    description = 'Select wether to export camera objects.',
+    default = False )    
+    
+  ExportLamps = BoolProperty(
+    name = 'Export Lamps',
+    description = 'Select wether to export lamp objects.',
+    default = True )    
+
+  ExportMeshes = BoolProperty(
+    name = 'Export Meshes',
+    description = 'Select wether to export mesh objects.',
+    default = True )    
+
+  ExportArmatures = BoolProperty(
+    name = 'Export Armatures',
+    description = 'Select wether to export armatures.',
+    default = False )    
+    
+  ExportAnimations = BoolProperty(
+    name = 'Export Animations',
+    description = 'Select wether to export animations.',
+    default = False )        
+
   PathMode = EnumProperty(
     name = 'Path Mode',
     description = 'Export links to external files like textures and objects in relative or absolute mode or just export file names',
@@ -113,7 +142,7 @@ class P3DExporter( bpy.types.Operator ):
     
   ExportSceneCamera = BoolProperty(
     name = 'Export scene camera',
-    description = 'The exporter can set the scene''s camera to match the blender scene. This might however be undesired in most cases so this is disabled by default.',
+    description = 'The exporter can set the scene''s camera to match the blender scene. This might however be undesired in most cases so this is disabled by default.This setting has no effect if Export Cameras is set to False.',
     default = False )
 ## -------------------------------------------------------------------------------
 
@@ -152,7 +181,37 @@ class P3DExporter( bpy.types.Operator ):
       self.report({ 'INFO' }, 'Exporting to ' + self.filepath )
 
     self.file = P3DXMLFile( self.filepath )
+ 
+    self.supported_types = []    
+    if self.ExportMeshes:
+      self.supported_types.append( 'MESH' )
+    if self.ExportArmatures:
+      self.supported_types.append( 'ARMATURE' )
+    if self.ExportLamps:
+      self.supported_types.append( 'LAMP' )
+    if self.ExportCameras:
+      self.supported_types.append( 'CAMERA' )
+    if self.ExportAnimations:
+      self.supported_types.append( 'ACTION' )
 
+    if 'ARMATURE' in self.supported_types:
+        # This is needed so applying modifiers dosnt apply the armature deformation, its also needed
+        # ...so mesh objects return their rest worldspace matrix when joint-parents are exported as weighted meshes.
+        # set every armature to its rest, backup the original values so we done mess up the scene
+        self.ob_arms_orig_rest = [arm.pose_position for arm in bpy.data.armatures]
+
+        for arm in bpy.data.armatures:
+            arm.pose_position = 'REST'
+
+        if self.ob_arms_orig_rest:
+            for ob_base in bpy.data.objects:
+                if ob_base.type == 'ARMATURE':
+                    ob_base.update_tag()
+        scene = bpy.context.scene
+        scene.frame_set(scene.frame_current)
+        # This causes the makeDisplayList command to effect the mesh      
+
+            
     for scene in bpy.data.scenes:
       self.ExportScene( scene )
       
@@ -173,11 +232,28 @@ class P3DExporter( bpy.types.Operator ):
       
     for data in self.file.armatures:
       self.ExportArmature( data )
+      
+    for data in self.file.actions:
+      self.ExportAction( data )      
 
     self.file.write()
 
     if ( self.Verbose ):
       self.report({ 'INFO' }, 'Written file' )
+      
+    if 'ARMATURE' in self.supported_types:
+        # now we have the meshes, restore the rest arm position
+        for i, arm in enumerate(bpy.data.armatures):
+            arm.pose_position = self.ob_arms_orig_rest[i]
+
+        if self.ob_arms_orig_rest:
+            for ob_base in bpy.data.objects:
+                if ob_base.type == 'ARMATURE':
+                    ob_base.update_tag()
+            # This causes the makeDisplayList command to effect the mesh
+            
+            scene = bpy.context.scene
+            scene.frame_set(scene.frame_current)
 
     del self.file
 
@@ -193,8 +269,10 @@ class P3DExporter( bpy.types.Operator ):
     if ( self.ExportSceneCamera ):
       if ( not ( scene.camera is None )):
         el.attrib[ 'camera' ] = scene.camera.name
+    self.report({ 'INFO' }, ', '.join( self.supported_types ))
     for obj in scene.objects:
-      self.ExportObject( obj )
+      if obj.type in self.supported_types:
+        self.ExportObject( obj )
     self.file.pop()
 
 ##--------------------------------------------------------------------------------
@@ -218,7 +296,7 @@ class P3DExporter( bpy.types.Operator ):
       elif ( type == 'camera' ):
         self.file.cameras.add( obj.data )
       elif ( type == 'armature' ):
-        self.file.armatures.add( obj.data )
+        self.file.armatures.add( obj ) #use object instead of data
     
     self.ExportTransform( obj )
     
@@ -261,7 +339,7 @@ class P3DExporter( bpy.types.Operator ):
 
   def ExportUVs( self, file ):
     totno = 0
-    for uv in file.mesh.uv_layers:
+    for uv in file.mesh.uv_layers: 
       for uvloop in uv.data:
         totno += 1  
         file.writevec([ uvloop.uv[ 0 ], 1 - uvloop.uv[ 1 ]])
@@ -294,16 +372,61 @@ class P3DExporter( bpy.types.Operator ):
     materials[ cur_matidx ][ 'end' ] = polygon.index
     return len( file.mesh.polygons ), materials
 
+  def ExportVertexGroups( self, file ):
+    grps = []
+    for vgroup in file.obj.vertex_groups:
+        grps.append( vgroup.name )
+
+    bin = b''
+    for vertex in file.mesh.vertices: #make dictionary of all groups
+        vgrps = {}
+        for vgroup in vertex.groups:
+            vgrps[ vgroup.group ] = vgroup.weight
+        grpssrt = sorted( vgrps, key=vgrps.get ) #sort them by influence
+
+        if ( len( vgrps ) > 4 ): # take the four most influential
+            i = 0
+            tmpvgrps = {}
+            for i in range( 0, 4 ):
+                tmpvgrps[ grpssrt[ i ]]=vgrps[ grpssrt[ i ]]
+                i+= 1       
+            vgrps = sorted( tmpvgrps.items())
+        else:
+            vgrps = sorted( vgrps.items())
+        i = 0
+        vec = [ 0, 0, 0, 0 ] # make sure the length of the vecs is always 4
+        idx = [ -1, -1, -1, -1 ] # fill with negative indices
+        for i in range( 0, len( vgrps )):
+            vec[ i ] = vgrps[ i ][ 1 ]
+            idx[ i ] = vgrps[ i ][ 0 ]
+            i += 1
+        vec = Vector( vec ).normalized()
+        #self.report({ 'INFO' }, str( idx ))
+        #self.report({ 'INFO' }, str( vec ))
+        file.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
+        
+        bin += struct.pack( '4i', *idx )
+        #file.writeintvec( idx )
+    file.file.write( bin )           
+    return grps # no need to return the number of vertices again, instead we return the name of the groups
+      
 ##--------------------------------------------------------------------------------
 
 ##EXPORTING MESH -----------------------------------------------------------------
 
   def ExportMesh( self, obj ):
+    #armature = None
     if self.ApplyModifiers:
+      #if self.ExportArmatures:
+      #  armature = obj.find_armature()
+      #  if ( not ( armature is None )):
+      #    pose_position = armature.data.pose_position
+      #    armature.data.pose_position = 'REST'    
       mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
     else:
       mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
-      
+    #if ( not ( armature is None )):  
+    #  armature.data.pose_position = pose_position
     if ( self.Verbose ):
       self.report({ 'INFO' }, 'Exporting data ' + obj.data.name + ' for object ' + obj.name )
 
@@ -312,35 +435,52 @@ class P3DExporter( bpy.types.Operator ):
 
     file = P3DBinaryFile( os.path.splitext( self.file.fname )[ 0 ] + '.mesh_' + obj.data.name + '.p3dmesh' ) #filename without extension as base
     file.mesh = mesh
+    file.obj = obj
 
   
     el.attrib[ 'binary' ] = self.ExportPath( file.fname )
     
     el.attrib[ 'vertices' ] = self.ExportVertices( file )
+    grps = self.ExportVertexGroups( file )
+    for grp in grps:
+        elgrp = self.file.push( 'weightgroup' )
+        elgrp.attrib[ 'name' ] = grp
+        self.file.pop()
+        
+    #el.attrib['vertexgroups'] = '\'' + '\', \''.join( grps ) + '\''
+    
     el.attrib[ 'normals' ] = self.ExportNormals( file )
     el.attrib[ 'loops' ] = self.ExportLoops( file )
 
     nl, n = self.ExportUVs( file )
     if ( nl > 0 ):
-      el.attrib[ 'texcoords' ] = str( n )
-      el.attrib[ 'texlayers' ] = str( nl )
-      el.attrib[ 'tangents' ] = self.ExportTangents( file )
-      el.attrib[ 'cotangents' ] = self.ExportCotangents( file )
+        el.attrib[ 'texcoords' ] = str( n )
+        el.attrib[ 'texlayers' ] = str( nl )
+        el.attrib[ 'tangents' ] = self.ExportTangents( file )
+        el.attrib[ 'cotangents' ] = self.ExportCotangents( file )
 
     el.attrib['faces'], materials = self.ExportFaces( file )
 
     file.close()
 
     for matidx in materials:
-      mat = mesh.materials[ matidx ]
-      el = self.file.push( 'material' )
-      mat_offset = materials[ matidx ]
-      el.attrib[ 'name' ] = 'material_' + mat.name
-      el.attrib[ 'start' ] = str( mat_offset[ 'start' ])
-      el.attrib[ 'end' ] = str( mat_offset[ 'end' ])
+        mat = mesh.materials[ matidx ]
+        el = self.file.push( 'material' )
+        mat_offset = materials[ matidx ]
+        el.attrib[ 'name' ] = 'material_' + mat.name
+        el.attrib[ 'start' ] = str( mat_offset[ 'start' ])
+        el.attrib[ 'end' ] = str( mat_offset[ 'end' ])
 
-      self.file.materials.add( mat )
-      self.file.pop()
+        self.file.materials.add( mat )
+        self.file.pop()
+
+    if self.ExportArmatures:
+        armature = obj.find_armature()
+        if ( not ( armature is None )):
+            el = self.file.push( 'modifier' )
+            el.attrib[ 'name' ] = 'armature'
+            el.attrib[ 'data' ] = 'armature_' + armature.name
+            self.file.pop()
 
     self.file.pop()
     del mesh
@@ -482,39 +622,96 @@ class P3DExporter( bpy.types.Operator ):
     self.file.pop()
 ##--------------------------------------------------------------------------------
 
-##EXPORTING BONE -----------------------------------------------------------------
+##EXPORTING JOINT ----------------------------------------------------------------
 
-  def ExportBone( self, bone ):
+  def ExportJoint( self, bone ):
     if ( self.Verbose ):
       self.report({ 'INFO' }, 'Exporting data ' + bone.name )
 
-    el = self.file.push( 'bone' )
-    el.attrib[ 'name' ] = 'bone_' + bone.name 
+    el = self.file.push( 'joint' )
+    el.attrib[ 'name' ] = 'joint_' + bone.name 
     
     position = bone.head_local
     el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
     quat = bone.matrix_local.to_quaternion()
     el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
 
+    bones = bone.children
+    for bone in bones:
+      self.ExportJoint( bone )
+
     self.file.pop()
 ##--------------------------------------------------------------------------------
 
+  def get_pose_bone_matrix( self, pose_bone ):
+      local_matrix = pose_bone.matrix_channel.to_3x3()
+      if pose_bone.parent is None:
+          return local_matrix
+      else:
+          return pose_bone.parent.matrix_channel.to_3x3().inverted() * local_matrix
 ##EXPORTING ARMATURE -------------------------------------------------------------
+
+##EXPORTING JOINT ----------------------------------------------------------------
+
+  def ExportPoseJoint( self, bone ):
+    if ( self.Verbose ):
+      self.report({ 'INFO' }, 'Exporting data ' + bone.name )
+
+    el = self.file.push( 'joint' )
+    el.attrib[ 'name' ] = 'joint_' + bone.name 
+    
+    matrix = bone.matrix #self.get_pose_bone_matrix( bone )
+    position = matrix.translation
+    el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+    quat = matrix.to_quaternion()
+    el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+
+    self.file.pop()
+##--------------------------------------------------------------------------------
 
   def ExportArmature( self, armature ):
     if ( self.Verbose ):
-      self.report({ 'INFO' }, 'Exporting data ' + armature.name )
+      self.report({ 'INFO' }, 'Exporting data ' + armature.data.name )
 
     el = self.file.push( 'armature' )
-    el.attrib[ 'name' ] = 'armature_' + armature.name
+    el.attrib[ 'name' ] = 'armature_' + armature.data.name
     
-    bones = armature.bones
+    bones = armature.data.bones
     for bone in bones:
-      self.ExportBone( bone )
+      if bone.parent is None:
+        self.ExportJoint( bone )
+        
+    if ( not ( armature.animation_data is None ) and not ( armature.animation_data.action is None )):
+        self.file.actions.add((armature.animation_data.action, armature ))
+        el.attrib[ 'action' ] = 'action_' + armature.data.name + armature.animation_data.action.name
 
     self.file.pop()
 
 ##--------------------------------------------------------------------------------
+
+##EXPORTING ACTION ---------------------------------------------------------------
+
+  def ExportAction( self, action ):
+    if ( self.Verbose ):
+      self.report({ 'INFO' }, 'Exporting data ' + action[ 0 ].name )
+
+    el = self.file.push( 'action' )
+    el.attrib[ 'name' ] = 'action_' + action[ 1 ].name + action[ 0 ].name
+    scene = bpy.context.scene
+    idx = 0
+    for frame in range( scene.frame_end + 1 ):
+        elframe = self.file.push( 'frame' )
+        scene.frame_set( frame )
+        for pose_bone in action[ 1 ].pose.bones:
+            self.ExportPoseJoint( pose_bone )
+        idx += 1
+        self.file.pop()        
+
+    self.file.pop()
+
+##--------------------------------------------------------------------------------
+
+
 def menu_func( self, context ):
   self.layout.operator( P3DExporter.bl_idname, text='Pascal3D Scene (.p3d)' )
 

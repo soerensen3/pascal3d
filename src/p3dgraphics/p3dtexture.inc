@@ -156,12 +156,14 @@ end;
 procedure TP3DTexture.LoadFromDOM(ADOMNode: TDOMElement);
 var
   FullTexName: String;
+  FileName: DOMString;
 begin
   inherited LoadFromDOM(ADOMNode);
-  FullTexName:= P3DSearchPaths.Models.FindFileEx( ADOMNode.GetAttribute( 'file' ), GetCurrentDir );
+  FileName:= ADOMNode.GetAttribute( 'file' );
+  FullTexName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
 
   if ( not FileExists( FullTexName )) then
-    raise Exception.Create( 'Error: The specified texture "' + ExtractFileName( FullTexName ) + '" could not be found!' );
+    raise Exception.Create( 'Error: The specified texture "' + ExtractFileName( FileName ) + '" could not be found!' );
 
   LoadFromBinary( FullTexName );
   FMipMap:= P3DStrToBoolDef( ADOMNode.GetAttribute( 'mipmap' ), True );

@@ -8,6 +8,7 @@ type
   TP3DDataList = class;
   TP3DData = class ( TPersistent )
     private
+      FActions: TP3DArmatureActionList;
       FArmatures: TP3DArmatureList;
       FCameras: TP3DCameraList;
       FDataBlocks: TP3DObjectList;
@@ -54,6 +55,7 @@ type
       property Shaders: TP3DShaderList read FShaders write FShaders;
       property Textures: TP3DTextureList read FTextures write FTextures;
       property Armatures: TP3DArmatureList read FArmatures write FArmatures;
+      property Actions: TP3DArmatureActionList read FActions write FActions;
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       property DOMFile: TXMLDocument read FDOMFile write FDOMFile;
       property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
@@ -91,6 +93,7 @@ begin
   Shaders:= TP3DShaderList.Create;
   Textures:= TP3DTextureList.Create;
   Armatures:= TP3DArmatureList.Create;
+  Actions:= TP3DArmatureActionList.Create;
   FileWatch:= TP3DFileWatch.Create( '', Self );
 end;
 
@@ -119,6 +122,7 @@ begin
   Shaders.Free;
   Textures.Free;
   Armatures.Free;
+  Actions.Free;
   FileWatch.Free;
 
   DataBlocks.Free;
@@ -187,6 +191,11 @@ var
             DB:= TP3DArmature.Create( Self );
             Armatures.Add( TP3DArmature( DB ));
           end;
+        'action':
+          begin
+            DB:= TP3DArmatureAction.Create( Self );
+            Actions.Add( TP3DArmatureAction( DB ));
+          end;
       end;
       Result:= DataBlocks.IndexOf( DB );
     end;
@@ -225,7 +234,7 @@ begin
     'mesh', 'material',
       'camera', 'light',
       'lamp', 'scene',
-      'armature': Result:= LoadData();
+      'armature', 'action': Result:= LoadData();
     'texture':
         Result:= DataBlocks.IndexOf( Textures[ Textures.Add( TP3DTexture.CreateFromDOM( ADOMNode, Self ))])
     else

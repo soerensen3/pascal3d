@@ -1118,6 +1118,18 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
+  procedure AddActionList( List: TP3DArmatureActionList; Parent: TP3DTreeNodeList );
+  var
+    Action: TP3DArmatureAction;
+    n: LongInt;
+  begin
+    for Action in List do
+      begin
+        n:= Parent.Add( Action.Name, Action );
+        Parent[ n ].SymbolText:= P3DSymbolArmature;
+      end;
+  end;
+
   procedure AddDataList( Data: TP3DData; Parent: TP3DTreeNodeList );
   var
     Node: TP3DTreeNodeList;
@@ -1155,6 +1167,9 @@ procedure TP3DTreeViewActors.Update;
 
     Node:= Parent[ Parent.Add( 'Armatures', Data.Armatures, False, P3DSymbolArmature )].Children;
     AddArmatureList( Data.Armatures, Node );
+
+    Node:= Parent[ Parent.Add( 'Actions', Data.Actions, False, P3DSymbolArmature )].Children;
+    AddActionList( Data.Actions, Node );
   end;
 
 begin

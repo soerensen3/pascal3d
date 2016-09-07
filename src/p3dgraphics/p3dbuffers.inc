@@ -53,6 +53,11 @@
       {$DEFINE TP3DBufferObjectGL:= TP3DVec2BufferGL}
       {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
+      {.$DEFINE GLTYPE:= GL_INT}
+      {.$DEFINE TItemList:= TIVec2List}
+      {.$DEFINE TP3DBufferObjectGL:= TP3DIVec2BufferGL}
+      {.$INCLUDE p3dbuffers_bufferobjectgl.inc}
+
       {$DEFINE GLNUMCOMPONENTS:= 3}
       {$DEFINE TItemList:= TVec3List}
       {$DEFINE TP3DBufferObjectGL:= TP3DVec3BufferGL}

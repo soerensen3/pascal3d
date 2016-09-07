@@ -186,7 +186,7 @@ begin
                 begin
                   pos:= matView * {matWorld * }vec4( Position, 1 );
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
-                  pos:= vec4( normalize( mat3( matView ) * {mat3( matWorld ) * }-Matrix.Row[ 2 ].XYZ ), 0 );
+                  pos:= vec4( normalize( mat3( matView ) * {mat3( matWorld ) * }Matrix.Row[ 2 ].XYZ ), 0 );
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
                   pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );

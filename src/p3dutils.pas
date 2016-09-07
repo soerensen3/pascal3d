@@ -18,6 +18,7 @@ uses
 {$INCLUDE p3dgenerics.inc}
 {$INCLUDE p3dfileutil.inc}
 {$INCLUDE p3dnodes.inc}
+{$INCLUDE p3dsimpletypes.inc}
 {$UNDEF INTERFACE}
 
 var
@@ -36,6 +37,7 @@ implementation
 {$INCLUDE p3dgenerics.inc}
 {$INCLUDE p3dfileutil.inc}
 {$INCLUDE p3dnodes.inc}
+{$INCLUDE p3dsimpletypes.inc}
 {$UNDEF IMPLEMENTATION}
 
 procedure P3DUtilsInit;

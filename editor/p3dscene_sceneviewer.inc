@@ -598,20 +598,28 @@ begin
 end;
 
 procedure TP3DScenePanel.DrawArmature(ArmatureObject: TP3DActor);
-  procedure RenderBone( startp: TVec3; Bone: TP3DBone );
+  procedure RenderBone( startp: TVec3; Joint: TP3DJoint );
+  var
+    Joint2: TP3DJoint;
+    p: TVec3;
   begin
-
+    p:= ( ArmatureObject.Matrix * vec4(( Joint.Position + ArmatureObject.Position ), 1 )).xyz;
+    Canvas3D.RenderLine( startp, p, vec4( 1, 0, 0, 1 ));
+    for Joint2 in Joint.Joints do
+      RenderBone( p, Joint2 );
   end;
 
 var
-  Bone: TP3DBone;
+  Joint: TP3DJoint;
 
 begin
+  Canvas3D.Lock;
   if (( Assigned( ArmatureObject )) and ( ArmatureObject.Data is TP3DArmature )) then
     begin
-      for Bone in TP3DArmature( ArmatureObject.Data ).Bones do
-        ;
+      for Joint in TP3DArmature( ArmatureObject.Data ).Joints do
+        RenderBone(( ArmatureObject.Matrix * vec4( 0 )).XYZ, Joint );
     end;
+  Canvas3D.Unlock();
 end;
 
 
@@ -862,6 +870,8 @@ begin
       end
     else if ( Obj.Actor.Data is TP3DArmature ) then
       begin
+        FCanvas3D.Proj:= Cam.Proj;
+        FCanvas3D.View:= Cam.View;
         DrawArmature( Obj.Actor );
       {Canvas.RenderText( TP3DSymbolActor,
                          vec2( ClientRect.Width, ClientRect.Height ) / 2

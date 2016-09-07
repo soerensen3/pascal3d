@@ -136,10 +136,11 @@ OUT vec3 cameye;
 float Displace = 0.0;
 vPosition = Position;
 vColor = Color;
-vNormal = world * vec4( Normal.xyz, 0 );
-vTangent = world * vec4( Tangent.xyz, 0 );
-vCotangent = world * vec4( Cotangent.xyz, 0 );
+vNormal = vec4( Normal.xyz, 0 );
+vTangent = vec4( Tangent.xyz, 0 );
+vCotangent = vec4( Cotangent.xyz, 0 );
 ```
+
 
 ```{restrict="fshader,declaration"}
 IN vec4 vNormal;
@@ -159,6 +160,17 @@ vec4 Normal = vec4( 0, 0, 1, 0 );
 vec4 Color = vec4( 1 );
 vec4 Specular = mat_specular;
 ```
+---
+node: Pass_WorldTransform
+---
+
+```{name="CODE", type="shader", restrict="vshader,main"}
+vPosition = world * vPosition;
+vNormal = world * vec4( vNormal.xyz, 0 );
+vTangent = world * vec4( vTangent.xyz, 0 );
+vCotangent = world * vec4( vCotangent.xyz, 0 );
+```
+
 ---
 node: Pass_Combine
 ---
@@ -267,7 +279,7 @@ node: Pass_Transform
 
 
 ```{name="CODE", type="shader", restrict="vshader,main"}
-vPosition = view * world * ( vPosition + Displace * vNormal );
+vPosition = view * ( vPosition + Displace * vNormal );
 ```
 
 ---

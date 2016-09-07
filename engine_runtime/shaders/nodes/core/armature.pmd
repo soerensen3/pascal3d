@@ -1,0 +1,57 @@
+---
+node: armature
+input: {name="numJoints", type="int"}
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform vec3 jointPos[ $numJoints$ ];
+uniform vec4 jointQuat[ $numJoints$ ];
+
+IN vec3 jointWeight;
+IN ivec4 jointID;
+
+//OUT vec3 vjointWeight;
+//OUT vec4 vjointID;
+
+vec3 transformNormal(vec3 n, vec4 quat)
+{
+  n += 2.0 * cross(quat.xyz,  cross(quat.xyz, n) + quat.w*n);
+  return n;
+}
+
+vec3 transformPosition(vec3 v, vec4 quat, vec3 trans)
+{
+  return transformNormal(v - trans, quat) + trans;
+}
+
+void getTransform( out vec4 quat, out vec3 trans )
+{
+  float jointWeight3 = 1-jointWeight[ 0 ] - jointWeight[ 1 ] - jointWeight[ 2 ];
+  quat = jointQuat[ jointID[ 0 ]] * jointWeight[ 0 ]
+       + jointQuat[ jointID[ 1 ]] * jointWeight[ 1 ]
+       + jointQuat[ jointID[ 2 ]] * jointWeight[ 2 ]
+       + jointQuat[ jointID[ 3 ]] * jointWeight3;
+  trans = jointPos[ jointID[ 0 ]] * jointWeight[ 0 ]
+        + jointPos[ jointID[ 1 ]] * jointWeight[ 1 ]
+        + jointPos[ jointID[ 2 ]] * jointWeight[ 2 ]
+        + jointPos[ jointID[ 3 ]] * jointWeight3;
+}
+```
+
+```{name="CODE", type="shader", restrict="vshader,main"}
+vec4 quat;
+vec3 trans;
+getTransform( quat, trans );
+vNormal.xyz = transformNormal( vNormal.xyz, quat );
+vTangent.xyz = transformNormal( vTangent.xyz, quat );
+vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
+vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
+//vjointWeight = jointWeight;
+//vjointID = jointID / jointPos.length();
+```
+```{restrict="fshader,declaration"}
+//IN vec4 vjointWeight;
+//IN vec4 vjointID;
+```
+```{restrict="fshader,main"}
+//Color = vec3( jointID / ;
+```

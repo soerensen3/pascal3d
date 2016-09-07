@@ -18,22 +18,34 @@ type
       FVarType: Integer;
 
       function GetAsFloat: Float;
+      function GetAsFloatList: TFloatList;
       function GetAsInt: Integer;
+      function GetAsIntList: TIntList;
       function GetAsMat2: TMat2;
       function GetAsMat3: TMat3;
       function GetAsMat4: TMat4;
+      function GetAsQuatList: TQuaternionList;
       function GetAsString: String;
       function GetAsVec2: TVec2;
+      function GetAsVec2List: TVec2List;
       function GetAsVec3: TVec3;
+      function GetAsVec3List: TVec3List;
       function GetAsVec4: TVec4;
+      function GetAsVec4List: TVec4List;
       procedure SetAsFloat( AValue: Float );
+      procedure SetAsFloatList(AValue: TFloatList);
       procedure SetAsInt( AValue: Integer );
+      procedure SetAsIntList(AValue: TIntList);
       procedure SetAsMat2( AValue: TMat2 );
       procedure SetAsMat3( AValue: TMat3 );
       procedure SetAsMat4( AValue: TMat4 );
+      procedure SetAsQuatList(AValue: TQuaternionList);
       procedure SetAsVec2( AValue: TVec2 );
+      procedure SetAsVec2List(AValue: TVec2List);
       procedure SetAsVec3( AValue: TVec3 );
+      procedure SetAsVec3List(AValue: TVec3List);
       procedure SetAsVec4( AValue: TVec4 );
+      procedure SetAsVec4List(AValue: TVec4List);
 
     public
       constructor Create( AProgramObject: GLuint; ADeclType: TP3DShaderDeclType; AName: String; AAddr: GLuint );
@@ -46,6 +58,12 @@ type
       property AsMat2: TMat2 read GetAsMat2 write SetAsMat2;
       property AsMat3: TMat3 read GetAsMat3 write SetAsMat3;
       property AsMat4: TMat4 read GetAsMat4 write SetAsMat4;
+      property AsIntList: TIntList read GetAsIntList write SetAsIntList;
+      property AsFloatList: TFloatList read GetAsFloatList write SetAsFloatList;
+      property AsVec2List: TVec2List read GetAsVec2List write SetAsVec2List;
+      property AsVec3List: TVec3List read GetAsVec3List write SetAsVec3List;
+      property AsVec4List: TVec4List read GetAsVec4List write SetAsVec4List;
+      property AsQuatList: TQuaternionList read GetAsQuatList write SetAsQuatList;
       property AsString: String read GetAsString;
       property VarType: Integer read FVarType write FVarType;
       property DeclType: TP3DShaderDeclType read FShaderDeclType write FShaderDeclType;
@@ -123,11 +141,63 @@ begin
   glGetUniformiv( ProgramObject, Addr, @Result ); cle( Self );
 end;
 
+function TP3DShaderDecl.GetAsIntList: TIntList;
+var
+  BaseName: String;
+  decl: GLuint;
+  tmp: Integer;
+  i: Integer;
+begin
+  case DeclType of
+    sdtUniform:
+      begin
+        Result:= TIntList.Create;
+        BaseName:= Copy2Symb( Name, '[' );
+        i:= 0;
+        decl:= Addr;
+        while decl > 0 do
+          begin
+            glGetUniformiv( ProgramObject, Addr, @tmp ); cle( Self );
+            Result.Add( tmp );
+            Inc( i );
+            decl:= glGetUniformLocation( ProgramObject, PChar( BaseName + '[' + IntToStr( i ) + ']' )); cle( Self );
+          end;
+      end;
+    sdtAttribute: Result:= nil;
+  end;
+end;
+
 function TP3DShaderDecl.GetAsFloat: Float;
 begin
   case DeclType of
     sdtUniform: begin glGetUniformfv( ProgramObject, Addr, @Result ); cle( Self ); end;
     sdtAttribute: Result:= 0;
+  end;
+end;
+
+function TP3DShaderDecl.GetAsFloatList: TFloatList;
+var
+  BaseName: String;
+  decl: GLuint;
+  tmp: Float;
+  i: Integer;
+begin
+  case DeclType of
+    sdtUniform:
+      begin
+        Result:= TFloatList.Create;
+        BaseName:= Copy2Symb( Name, '[' );
+        i:= 0;
+        decl:= Addr;
+        while decl > 0 do
+          begin
+            glGetUniformfv( ProgramObject, Addr, @tmp ); cle( Self );
+            Result.Add( tmp );
+            Inc( i );
+            decl:= glGetUniformLocation( ProgramObject, PChar( BaseName + '[' + IntToStr( i ) + ']' )); cle( Self );
+          end;
+      end;
+    sdtAttribute: Result:= nil;
   end;
 end;
 
@@ -152,6 +222,32 @@ begin
   case DeclType of
     sdtUniform: begin glGetUniformfv( ProgramObject, Addr, @Result ); cle( Self ); end;
     sdtAttribute: Result:= mat4( 0 );
+  end;
+end;
+
+function TP3DShaderDecl.GetAsQuatList: TQuaternionList;
+var
+  BaseName: String;
+  decl: GLuint;
+  tmp: TQuaternion;
+  i: Integer;
+begin
+  case DeclType of
+    sdtUniform:
+      begin
+        Result:= TQuaternionList.Create;
+        BaseName:= Copy2Symb( Name, '[' );
+        i:= 0;
+        decl:= Addr;
+        while decl > 0 do
+          begin
+            glGetUniformfv( ProgramObject, Addr, @tmp ); cle( Self );
+            Result.Add( tmp );
+            Inc( i );
+            decl:= glGetUniformLocation( ProgramObject, PChar( BaseName + '[' + IntToStr( i ) + ']' )); cle( Self );
+          end;
+      end;
+    sdtAttribute: Result:= nil;
   end;
 end;
 
@@ -185,11 +281,63 @@ begin
   end;
 end;
 
+function TP3DShaderDecl.GetAsVec2List: TVec2List;
+var
+  BaseName: String;
+  decl: GLuint;
+  tmp: TVec2;
+  i: Integer;
+begin
+  case DeclType of
+    sdtUniform:
+      begin
+        Result:= TVec2List.Create;
+        BaseName:= Copy2Symb( Name, '[' );
+        i:= 0;
+        decl:= Addr;
+        while decl > 0 do
+          begin
+            glGetUniformfv( ProgramObject, Addr, @tmp ); cle( Self );
+            Result.Add( tmp );
+            Inc( i );
+            decl:= glGetUniformLocation( ProgramObject, PChar( BaseName + '[' + IntToStr( i ) + ']' )); cle( Self );
+          end;
+      end;
+    sdtAttribute: Result:= nil;
+  end;
+end;
+
 function TP3DShaderDecl.GetAsVec3: TVec3;
 begin
   case DeclType of
     sdtUniform: begin glGetUniformfv( ProgramObject, Addr, @Result ); cle( Self ); end;
     sdtAttribute: Result:= vec3( 0 );
+  end;
+end;
+
+function TP3DShaderDecl.GetAsVec3List: TVec3List;
+var
+  BaseName: String;
+  decl: GLuint;
+  tmp: TVec3;
+  i: Integer;
+begin
+  case DeclType of
+    sdtUniform:
+      begin
+        Result:= TVec3List.Create;
+        BaseName:= Copy2Symb( Name, '[' );
+        i:= 0;
+        decl:= Addr;
+        while decl > 0 do
+          begin
+            glGetUniformfv( ProgramObject, Addr, @tmp ); cle( Self );
+            Result.Add( tmp );
+            Inc( i );
+            decl:= glGetUniformLocation( ProgramObject, PChar( BaseName + '[' + IntToStr( i ) + ']' )); cle( Self );
+          end;
+      end;
+    sdtAttribute: Result:= nil;
   end;
 end;
 
@@ -201,6 +349,32 @@ begin
   end;
 end;
 
+function TP3DShaderDecl.GetAsVec4List: TVec4List;
+var
+  BaseName: String;
+  decl: GLuint;
+  tmp: TVec4;
+  i: Integer;
+begin
+  case DeclType of
+    sdtUniform:
+      begin
+        Result:= TVec4List.Create;
+        BaseName:= Copy2Symb( Name, '[' );
+        i:= 0;
+        decl:= Addr;
+        while decl > 0 do
+          begin
+            glGetUniformfv( ProgramObject, Addr, @tmp ); cle( Self );
+            Result.Add( tmp );
+            Inc( i );
+            decl:= glGetUniformLocation( ProgramObject, PChar( BaseName + '[' + IntToStr( i ) + ']' )); cle( Self );
+          end;
+      end;
+    sdtAttribute: Result:= nil;
+  end;
+end;
+
 procedure TP3DShaderDecl.SetAsFloat(AValue: Float);
 begin
   case DeclType of
@@ -208,10 +382,24 @@ begin
   end;
 end;
 
+procedure TP3DShaderDecl.SetAsFloatList(AValue: TFloatList);
+begin
+  case DeclType of
+    sdtUniform: begin glUniform1fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+  end;
+end;
+
 procedure TP3DShaderDecl.SetAsInt(AValue: Integer);
 begin
   case DeclType of
     sdtUniform: begin glUniform1i( Addr, AValue ); cle( Self ); end;
+  end;
+end;
+
+procedure TP3DShaderDecl.SetAsIntList(AValue: TIntList);
+begin
+  case DeclType of
+    sdtUniform: begin glUniform1iv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
 end;
 
@@ -236,10 +424,29 @@ begin
   end;
 end;
 
+procedure TP3DShaderDecl.SetAsQuatList(AValue: TQuaternionList);
+var
+  i: Integer;
+begin
+  case DeclType of
+    sdtUniform: for i:= 0 to AValue.Count - 1 do
+      glUniform4f( Addr + i, AValue[ i ].x, AValue[ i ].y, AValue[ i ].z, AValue[ i ].w );//begin glUniform4fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+  end;
+  for i:= 0 to 10 do
+    WriteLn( AValue[ i ].ToString());
+end;
+
 procedure TP3DShaderDecl.SetAsVec2(AValue: TVec2);
 begin
   case DeclType of
     sdtUniform: begin glUniform2fv( Addr, 1, @AValue ); cle( Self ); end;
+  end;
+end;
+
+procedure TP3DShaderDecl.SetAsVec2List(AValue: TVec2List);
+begin
+  case DeclType of
+    sdtUniform: begin glUniform2fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
 end;
 
@@ -250,10 +457,24 @@ begin
   end;
 end;
 
+procedure TP3DShaderDecl.SetAsVec3List(AValue: TVec3List);
+begin
+  case DeclType of
+    sdtUniform: begin glUniform3fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+  end;
+end;
+
 procedure TP3DShaderDecl.SetAsVec4(AValue: TVec4);
 begin
   case DeclType of
     sdtUniform: begin glUniform4fv( Addr, 1, @AValue ); cle( Self ); end;
+  end;
+end;
+
+procedure TP3DShaderDecl.SetAsVec4List(AValue: TVec4List);
+begin
+  case DeclType of
+    sdtUniform: begin glUniform4fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
 end;
 

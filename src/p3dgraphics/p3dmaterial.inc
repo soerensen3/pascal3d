@@ -137,6 +137,14 @@
        procedure PassToShader( Material: TP3DMaterialBase ); override;
      end;
 
+     { TP3DMaterialModifierWorldTransform }
+
+     TP3DMaterialModifierWorldTransform = class ( TP3DMaterialModifier )
+       class function GetIndex: Integer; override;
+       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+       procedure PassToShader( Material: TP3DMaterialBase ); override;
+     end;
+
      { TP3DMaterialModifierTransform }
 
      TP3DMaterialModifierTransform = class ( TP3DMaterialModifier )
@@ -397,6 +405,7 @@ begin
   Diff:= vec3( 1 );
   Modifiers:= TP3DMaterialModifierList.Create;
   Modifiers.Add( TP3DMaterialModifierInit.Create );
+  Modifiers.Add( TP3DMaterialModifierWorldTransform.Create );
   Modifiers.Add( TP3DMaterialModifierTexTransform.Create );
   Modifiers.Add( TP3DMaterialModifierMaps.Create );
   Modifiers.Add( TP3DMaterialModifierLightning.Create );
@@ -782,6 +791,25 @@ procedure TP3DMaterialModifierMaps.PassToShader(Material: TP3DMaterialBase);
 begin
 
 end;
+
+{ TP3DMaterialModifierWorldTransform }
+
+class function TP3DMaterialModifierWorldTransform.GetIndex: Integer;
+begin
+  Result:= 30;
+
+end;
+
+procedure TP3DMaterialModifierWorldTransform.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+begin
+  ShaderTree.AddCopy( 'Pass_WorldTransform' );
+end;
+
+procedure TP3DMaterialModifierWorldTransform.PassToShader(Material: TP3DMaterialBase);
+begin
+
+end;
+
 
 { TP3DMaterialModifierTransform }
 
