@@ -7,33 +7,59 @@ uniform vec3 jointPos[ $numJoints$ ];
 uniform vec4 jointQuat[ $numJoints$ ];
 
 IN vec3 jointWeight;
-IN ivec4 jointID;
+IN vec4 fjointID;
 
-//OUT vec3 vjointWeight;
-//OUT vec4 vjointID;
+OUT vec3 vjointWeight;
+OUT vec4 vjointID;
 
 vec3 transformNormal(vec3 n, vec4 quat)
 {
   n += 2.0 * cross(quat.xyz,  cross(quat.xyz, n) + quat.w*n);
   return n;
 }
+vec4 quat_mult(vec4 q1, vec4 q2)
+{ 
+  vec4 qr;
+  qr.x = (q1.w * q2.x) + (q1.x * q2.w) + (q1.y * q2.z) - (q1.z * q2.y);
+  qr.y = (q1.w * q2.y) - (q1.x * q2.z) + (q1.y * q2.w) + (q1.z * q2.x);
+  qr.z = (q1.w * q2.z) + (q1.x * q2.y) - (q1.y * q2.x) + (q1.z * q2.w);
+  qr.w = (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z);
+  return qr;
+}
 
+vec4 quat_conj(vec4 q)
+{ 
+  return vec4(-q.x, -q.y, -q.z, q.w); 
+}
+
+vec3 quat_mult_trans( vec4 quat, vec3 trans ){
+  vec4 qr_conj = quat_conj(quat);
+  vec4 q_pos = vec4(trans.x, trans.y, trans.z, 0);
+  
+  vec4 q_tmp = quat_mult(quat, q_pos);
+  vec4 qr = quat_mult(q_tmp, qr_conj);
+  return vec3(qr.x, qr.y, qr.z);  
+}
 vec3 transformPosition(vec3 v, vec4 quat, vec3 trans)
 {
-  return transformNormal(v - trans, quat) + trans;
+  //vec3 finaltrans = quat_mult_trans(quat,-trans) + trans;
+  return transformNormal(v, quat) + trans;
 }
 
 void getTransform( out vec4 quat, out vec3 trans )
 {
+  //ivec4 jointID = int( fjointID );
   float jointWeight3 = 1-jointWeight[ 0 ] - jointWeight[ 1 ] - jointWeight[ 2 ];
-  quat = jointQuat[ jointID[ 0 ]] * jointWeight[ 0 ]
-       + jointQuat[ jointID[ 1 ]] * jointWeight[ 1 ]
-       + jointQuat[ jointID[ 2 ]] * jointWeight[ 2 ]
-       + jointQuat[ jointID[ 3 ]] * jointWeight3;
-  trans = jointPos[ jointID[ 0 ]] * jointWeight[ 0 ]
-        + jointPos[ jointID[ 1 ]] * jointWeight[ 1 ]
-        + jointPos[ jointID[ 2 ]] * jointWeight[ 2 ]
-        + jointPos[ jointID[ 3 ]] * jointWeight3;
+  quat = jointQuat[ int( fjointID[ 0 ])] * jointWeight[ 0 ]
+       + jointQuat[ int( fjointID[ 1 ])] * jointWeight[ 1 ]
+       + jointQuat[ int( fjointID[ 2 ])] * jointWeight[ 2 ]
+       + jointQuat[ int( fjointID[ 3 ])] * jointWeight3;
+  trans = jointPos[ int( fjointID[ 0 ])] * jointWeight[ 0 ]
+        + jointPos[ int( fjointID[ 1 ])] * jointWeight[ 1 ]
+        + jointPos[ int( fjointID[ 2 ])] * jointWeight[ 2 ]
+        + jointPos[ int( fjointID[ 3 ])] * jointWeight3;
+  //quat = jointQuat[ int( fjointID[ 0 ])];
+  //trans = jointPos[ int( fjointID[ 0 ])];
 }
 ```
 
@@ -45,13 +71,35 @@ vNormal.xyz = transformNormal( vNormal.xyz, quat );
 vTangent.xyz = transformNormal( vTangent.xyz, quat );
 vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
 vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
-//vjointWeight = jointWeight;
-//vjointID = jointID / jointPos.length();
+vjointWeight = jointWeight;
+vjointID = fjointID;
 ```
 ```{restrict="fshader,declaration"}
-//IN vec4 vjointWeight;
-//IN vec4 vjointID;
+IN vec4 vjointWeight;
+IN vec4 vjointID;
+uniform vec3 jointPos[ $numJoints$ ];
+uniform vec4 jointQuat[ $numJoints$ ];
+void getTransform( out vec4 quat, out vec3 trans )
+{
+  //ivec4 jointID = int( fjointID );
+  /*float vjointWeight3 = 1-vjointWeight[ 0 ] - vjointWeight[ 1 ] - vjointWeight[ 2 ];
+  quat = jointQuat[ int( vjointID[ 0 ])] * vjointWeight[ 0 ]
+       + jointQuat[ int( vjointID[ 1 ])] * vjointWeight[ 1 ]
+       + jointQuat[ int( vjointID[ 2 ])] * vjointWeight[ 2 ]
+       + jointQuat[ int( vjointID[ 3 ])] * vjointWeight3;
+  trans = jointPos[ int( vjointID[ 0 ])] * vjointWeight[ 0 ]
+        + jointPos[ int( vjointID[ 1 ])] * vjointWeight[ 1 ]
+        + jointPos[ int( vjointID[ 2 ])] * vjointWeight[ 2 ]
+        + jointPos[ int( vjointID[ 3 ])] * vjointWeight3;*/
+  quat = jointQuat[ int( vjointID[ 0 ])];
+  trans = jointPos[ int( vjointID[ 0 ])];
+  
+}
+
 ```
 ```{restrict="fshader,main"}
-//Color = vec3( jointID / ;
+  vec4 quat;
+  vec3 trans;
+  getTransform( quat, trans );
+  Color.xyz = vec3( vjointID[ 0 ] / $numJoints$, 0.0, 0.0 );//vec3( normalize(length( trans.xyz ) + length( quat-vec4(0,0,0,1))));
 ```

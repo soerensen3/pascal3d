@@ -95,6 +95,7 @@
 
       public
         VertexGroups: TP3DIntBufferGL;
+        VertexGroupsf: TP3DVec4BufferGL;
         VertexWeights: TP3DVec3BufferGL;
         Positions: TP3DVec3BufferGL;
         Normals: TP3DVec3BufferGL;
@@ -275,6 +276,7 @@ begin
   Edges:= TP3DIntBufferGL.Create( True );
   VertexGroups:= TP3DIntBufferGL.Create( True );
   VertexWeights:= TP3DVec3BufferGL.Create( True );
+  VertexGroupsf:= TP3DVec4BufferGL.Create( True );
   VBArray:= TP3DVertexBufferArray.Create;
 
   MaterialGroups:= TP3DMeshMaterialGroupList.Create;
@@ -304,6 +306,7 @@ begin
   Indices.Free;
   Edges.Free;
   VertexGroups.Free;
+  VertexGroupsf.Free;
   VertexWeights.Free;
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].Free;
@@ -340,10 +343,10 @@ begin
             if ( LoadWeightGroupsFromDOM( ADOMNode )) then
               begin
                 LoadVec3FromStream( VertexWeights, F, cnt );
-                for i:= 0 to 50 do
-                  WriteLn( VertexWeights[ i ].ToString());
+                //for i:= 0 to 50 do
+                 // WriteLn( VertexWeights[ i ].ToString());
                 LoadIntFromStream( VertexGroups, F, cnt * 4 );
-                for i:= 0 to 50 do
+                for i:= 0 to VertexGroups.Count div 4 - 1 do
                   WriteLn( Format( '%d, %d, %d, %d', [ VertexGroups[ i * 4 ], VertexGroups[ i * 4 + 1 ], VertexGroups[ i * 4 + 2 ], VertexGroups[ i * 4 + 3 ]]));
               end;
           end;
@@ -470,11 +473,11 @@ begin
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
-  decl:= Material.Shader.Attributes.Names[ 'jointID' ];
-  if ( Assigned( decl )) and ( WeightGroups.Count > 0 ) then
-    VertexGroups.SetAttribArray( decl.Addr );
+  decl:= Material.Shader.Attributes.Names[ 'fjointID' ];
+  if ( Assigned( decl )) and ( VertexGroupsf.Count > 0 ) then
+    VertexGroupsf.SetAttribArray( decl.Addr );
   decl:= Material.Shader.Attributes.Names[ 'jointWeight' ];
-  if ( Assigned( decl )) and ( WeightGroups.Count > 0 ) then
+  if ( Assigned( decl )) and ( VertexWeights.Count > 0 ) then
     VertexWeights.SetAttribArray( decl.Addr );
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
@@ -605,6 +608,7 @@ begin
   _Edges:= TP3DIntBufferGL.Create( True );
   _Weights:= TP3DVec3BufferGL.Create( True );
   _WeightGroups:= TP3DIntBufferGL.Create( True );
+  VertexGroupsf.Clear;
 
 
   for i:= 0 to high( Faces ) do
@@ -619,6 +623,7 @@ begin
           _Weights.Add( VertexWeights[ vidx ]);
           _WeightGroups.Add([ VertexGroups[ vidx * 4 ],     VertexGroups[ vidx * 4 + 1 ],
                               VertexGroups[ vidx * 4 + 2 ], VertexGroups[ vidx * 4 + 3 ]]);
+          VertexGroupsf.Add(vec4( VertexGroups[ vidx * 4 ], VertexGroups[ vidx * 4 + 1 ], VertexGroups[ vidx * 4 + 2 ], VertexGroups[ vidx * 4 + 3 ]));
         end;
       for j:= 1 to Faces[ i ].loop_count - 1 do
         begin
@@ -702,6 +707,11 @@ begin
   if ( VertexWeights.Count > 0 ) then
     begin
       VertexWeights.PushData;
+      //VertexWeights.SetAttribArray(  );
+    end;
+  if ( VertexGroupsf.Count > 0 ) then
+    begin
+      VertexGroupsf.PushData;
       //VertexWeights.SetAttribArray(  );
     end;
   for i:= 0 to high( TexCoords ) do

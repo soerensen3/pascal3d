@@ -429,11 +429,13 @@ var
   i: Integer;
 begin
   case DeclType of
-    sdtUniform: for i:= 0 to AValue.Count - 1 do
-      glUniform4f( Addr + i, AValue[ i ].x, AValue[ i ].y, AValue[ i ].z, AValue[ i ].w );//begin glUniform4fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+    sdtUniform:
+      //glUniform4fv( Addr, AValue.Count, AValue.Ptr );
+      for i:= 0 to AValue.Count - 1 do
+        glUniform4f( Addr + i, AValue[ i ].x, AValue[ i ].y, AValue[ i ].z, AValue[ i ].w );//begin glUniform4fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
-  for i:= 0 to 10 do
-    WriteLn( AValue[ i ].ToString());
+  //for i:= 0 to 10 do
+  //  WriteLn( AValue[ i ].ToString());
 end;
 
 procedure TP3DShaderDecl.SetAsVec2(AValue: TVec2);

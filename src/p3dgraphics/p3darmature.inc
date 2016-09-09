@@ -327,6 +327,7 @@ var
   poslist: TVec3List;
   quatList: TQuaternionList;
   i: Integer;
+  quat: TQuaternion;
 begin
   if ( Assigned( Armature ) and Assigned( Armature.CurrentAction )) then
     begin
@@ -339,13 +340,18 @@ begin
             poslist.Add( joint.Position );
           decl.SetAsVec3List( poslist );
           poslist.Free;}
-          //decl.AsVec3List:= Armature.Translations;
+          decl.AsVec3List:= Armature.CurrentAction.FrameSample.Translations;
         end;
       //if ( Assigned( decl )) then
       //  decl.SetAsVec3List( Armature.CurrentAction.FrameSample.Translations );
       decl:= Material.Shader.Uniforms.Names[ 'jointQuat[0]' ];
       if ( Assigned( decl )) then
         decl.AsQuatList:= Armature.CurrentAction.FrameSample.Rotations;
+      {for i:= 0 to 5 do //Armature.CurrentAction.FrameSample.Rotations.Count - 1 do
+        begin
+          glGetUniformfv( Material.Shader.ProgramObj, glGetUniformLocation( Material.Shader.ProgramObj, PChar( 'jointPos[' + IntToStr( i ) + ']' )), @quat );
+          WriteLn( quat.xyz.ToString() );
+        end;}
       //WriteLn( Material.Shader.DumpUniforms );
       //quatList:= decl.AsQuatList;
       //for i:= 0 to quatList.Count - 1 do
@@ -441,31 +447,31 @@ var
   FrameStart, FrameEnd, i: Integer;
   blend: Float;
 begin
-  CurrentFrame:= GetTickCount / 1000;
-  {FrameSample.Translations.Clear;
-  FrameSample.Rotations.Clear;}
+  CurrentFrame:= SDL_GetTicks() / 100;
+  FrameSample.Translations.Clear;
+  FrameSample.Rotations.Clear;
   FrameStart:= Trunc( CurrentFrame ) mod Frames.Count;
-  Frames[ 0 ].Translations.AssignTo( FrameSample.Translations );
-  Frames[ 0 ].Rotations.AssignTo( FrameSample.Rotations );
+  //Frames[ FrameStart ].Translations.AssignTo( FrameSample.Translations );
+  //Frames[ FrameStart ].Rotations.AssignTo( FrameSample.Rotations );
   //for i:= 0 to FrameSample.Rotations.Count - 1 do
   //  WriteLn( FrameSample.Rotations[ i ].ToString());
 
   //for i:= 0 to Frames[ FrameStart ].Translations.Count - 1 do
   //  WriteLn( FrameSample.Translations[ i ].ToString());
-  {FrameEnd:= ( FrameStart + 1 ) mod Frames.Count;
+  FrameEnd:= ( FrameStart + 1 ) mod Frames.Count;
   blend:= frac( CurrentFrame );
   for i:= 0 to Frames[ FrameStart ].Translations.Count - 1 do
     begin
-    FrameSample.Translations.Add( Frames[ FrameStart ].Translations[ i ] * blend
+    FrameSample.Translations.Add( Frames[ FrameEnd ].Translations[ i ] * blend
                                 + Frames[ FrameStart ].Translations[ i ] * ( 1 - blend ));
     //WriteLn( FrameSample.Translations[ i ].ToString());
     end;
   for i:= 0 to Frames[ FrameStart ].Rotations.Count - 1 do
     begin
-    FrameSample.Rotations.Add( Quat( Frames[ FrameStart ].Rotations[ i ] * blend
+    FrameSample.Rotations.Add( Quat( Frames[ FrameEnd ].Rotations[ i ] * blend
                              + Frames[ FrameStart ].Rotations[ i ] * ( 1 - blend )));
     //WriteLn( FrameSample.Rotations[ i ].ToString());
-    end;}
+    end;
 end;
 
 { TP3DActionFrame }

@@ -233,6 +233,23 @@ class P3DExporter( bpy.types.Operator ):
     for data in self.file.armatures:
       self.ExportArmature( data )
       
+    if 'ARMATURE' in self.supported_types:
+        # This is needed so applying modifiers dosnt apply the armature deformation, its also needed
+        # ...so mesh objects return their rest worldspace matrix when joint-parents are exported as weighted meshes.
+        # set every armature to its rest, backup the original values so we done mess up the scene
+        self.ob_arms_orig_rest = [arm.pose_position for arm in bpy.data.armatures]
+
+        for arm in bpy.data.armatures:
+            arm.pose_position = 'POSE'
+
+        if self.ob_arms_orig_rest:
+            for ob_base in bpy.data.objects:
+                if ob_base.type == 'ARMATURE':
+                    ob_base.update_tag()
+        scene = bpy.context.scene
+        scene.frame_set(scene.frame_current)
+        # This causes the makeDisplayList command to effect the mesh     
+      
     for data in self.file.actions:
       self.ExportAction( data )      
 
@@ -241,7 +258,7 @@ class P3DExporter( bpy.types.Operator ):
     if ( self.Verbose ):
       self.report({ 'INFO' }, 'Written file' )
       
-    if 'ARMATURE' in self.supported_types:
+    '''if 'ARMATURE' in self.supported_types:
         # now we have the meshes, restore the rest arm position
         for i, arm in enumerate(bpy.data.armatures):
             arm.pose_position = self.ob_arms_orig_rest[i]
@@ -253,7 +270,7 @@ class P3DExporter( bpy.types.Operator ):
             # This causes the makeDisplayList command to effect the mesh
             
             scene = bpy.context.scene
-            scene.frame_set(scene.frame_current)
+            scene.frame_set(scene.frame_current)'''
 
     del self.file
 
@@ -395,7 +412,7 @@ class P3DExporter( bpy.types.Operator ):
             vgrps = sorted( vgrps.items())
         i = 0
         vec = [ 0, 0, 0, 0 ] # make sure the length of the vecs is always 4
-        idx = [ -1, -1, -1, -1 ] # fill with negative indices
+        idx = [ 0, 0, 0, 0 ] # fill with zero indices, weight will be zero if idx not used
         for i in range( 0, len( vgrps )):
             vec[ i ] = vgrps[ i ][ 1 ]
             idx[ i ] = vgrps[ i ][ 0 ]
@@ -644,26 +661,25 @@ class P3DExporter( bpy.types.Operator ):
 ##--------------------------------------------------------------------------------
 
   def get_pose_bone_matrix( self, pose_bone ):
-      local_matrix = pose_bone.matrix_channel.to_3x3()
-      if pose_bone.parent is None:
-          return local_matrix
-      else:
-          return pose_bone.parent.matrix_channel.to_3x3().inverted() * local_matrix
+    bone_matrix = pose_bone.matrix_channel
+    if ( not ( pose_bone.parent is None )):
+        parent_matrix = pose_bone.parent.matrix_channel
+        bone_matrix = parent_matrix.inverted() * bone_matrix
+    return bone_matrix
 ##EXPORTING ARMATURE -------------------------------------------------------------
 
 ##EXPORTING JOINT ----------------------------------------------------------------
 
-  def ExportPoseJoint( self, bone ):
+  def ExportPoseJoint( self, armature, pose_bone ):
     if ( self.Verbose ):
-      self.report({ 'INFO' }, 'Exporting data ' + bone.name )
+      self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
 
     el = self.file.push( 'joint' )
-    el.attrib[ 'name' ] = 'joint_' + bone.name 
+    el.attrib[ 'name' ] = 'joint_' + pose_bone.name 
     
-    matrix = bone.matrix #self.get_pose_bone_matrix( bone )
-    position = matrix.translation
+    matrix = armature.matrix_local * self.get_pose_bone_matrix( pose_bone )
+    position, quat, scale = matrix.decompose()
     el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
-    quat = matrix.to_quaternion()
     el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
 
     self.file.pop()
@@ -703,7 +719,8 @@ class P3DExporter( bpy.types.Operator ):
         elframe = self.file.push( 'frame' )
         scene.frame_set( frame )
         for pose_bone in action[ 1 ].pose.bones:
-            self.ExportPoseJoint( pose_bone )
+            #bone = action[ 1 ].data.bones[ pose_bone.name ]
+            self.ExportPoseJoint( action[ 1 ], pose_bone )
         idx += 1
         self.file.pop()        
 
@@ -730,3 +747,5 @@ def unregister():
 
 if __name__ == '__main__':
   register()
+  
+  
