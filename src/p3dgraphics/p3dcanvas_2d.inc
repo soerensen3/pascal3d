@@ -527,7 +527,6 @@ begin
     begin
       FreeAndNil( CacheObj );
       CacheObj:= p3dTextSimple( Text, AFont );
-      WriteLn( Text );
     end;
   Result:= CacheObj;
 end;

@@ -61,7 +61,7 @@ begin
   InitScene;
 
   P3DApplication.Run;
-  DumpSearchPaths;
+  //DumpSearchPaths;
 
   P3DApplication.MainWindow.Free;
   P3DEventsFinish;

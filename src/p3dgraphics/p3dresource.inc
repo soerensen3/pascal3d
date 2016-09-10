@@ -329,6 +329,8 @@ begin
     Shaders.Remove( TP3DShader( Sender ))
   else if ( Sender is TP3DTexture ) then
     Textures.Remove( TP3DTexture( Sender ))
+  else if ( Sender is TP3DArmatureAction ) then
+    Actions.Remove( TP3DArmatureAction( Sender ))
   else if ( Sender is TP3DArmature ) then
     Armatures.Remove( TP3DArmature( Sender ));
 end;

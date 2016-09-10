@@ -346,8 +346,8 @@ begin
                 //for i:= 0 to 50 do
                  // WriteLn( VertexWeights[ i ].ToString());
                 LoadIntFromStream( VertexGroups, F, cnt * 4 );
-                for i:= 0 to VertexGroups.Count div 4 - 1 do
-                  WriteLn( Format( '%d, %d, %d, %d', [ VertexGroups[ i * 4 ], VertexGroups[ i * 4 + 1 ], VertexGroups[ i * 4 + 2 ], VertexGroups[ i * 4 + 3 ]]));
+                //for i:= 0 to VertexGroups.Count div 4 - 1 do
+                //  WriteLn( Format( '%d, %d, %d, %d', [ VertexGroups[ i * 4 ], VertexGroups[ i * 4 + 1 ], VertexGroups[ i * 4 + 2 ], VertexGroups[ i * 4 + 3 ]]));
               end;
           end;
 

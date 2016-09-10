@@ -108,7 +108,7 @@ begin
       Msg:= 'OpenGL Error: ' + gluErrorString( Code );
       if ( AddMsg > '' ) then
         Msg+= ': ' + AddMsg;
-      Assert( False, Msg );
+      //Assert( False, Msg );
     finally
       AssertErrorProc := S;
     end;

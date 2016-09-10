@@ -597,6 +597,7 @@ begin
   Canvas.Font.Color:= Font.Color;
   Canvas.Font.Size:= Font.Size;
   Canvas.Font.Name:= Font.Name;
+  Canvas.GetValidText( Caption, FCaptionTxt );
   case HAlignment of
     haLeft: P.x:= 0;
     haRight: P.x:= Width - FCaptionTxt.Width;

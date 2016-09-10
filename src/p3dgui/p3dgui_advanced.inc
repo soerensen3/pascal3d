@@ -312,7 +312,7 @@ begin
     H:= 0.5 + arctan2( FSelXY.x, -FSelXY.y ) / ( 2 * PI );
   //Calculate the Angle and convert it to a H value where 0,+1 is located at the bottom
   HSV:= vec3( H, FSelXY.GetDist, FHSV[ 2 ]);
-  WriteLn( 'HSV = <', HSV.ToString(), '> RGB = <', RGB.ToString(), '>' );
+  //WriteLn( 'HSV = <', HSV.ToString(), '> RGB = <', RGB.ToString(), '>' );
   if ( Assigned( OnChange )) then
     OnChange( Self );
 end;

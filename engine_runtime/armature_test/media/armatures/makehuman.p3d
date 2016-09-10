@@ -1,0 +1,348 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      type = "mesh"
+      name = "Plane"
+      data = "mesh_Plane">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 4.814139, 4.814139, 4.814139"
+        position = "-0.721994,-0.137278, 0.739810">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      name = "humanoid_humanf01"
+      data = "mesh_humanoid_humanf01">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      name = "Lamp_left"
+      data = "lamp_Lamp_left">
+      <transform
+        quaternion = "-0.413319, 0.411405,-0.744053, 0.326034"
+        scale = " 0.100000, 0.100000, 0.100000"
+        position = " 1.066423,-0.340224, 1.810163">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      name = "Lamp_right"
+      data = "lamp_Lamp_right">
+      <transform
+        quaternion = "-0.335063,-0.477304, 0.447904, 0.677713"
+        scale = " 0.100000, 0.100000, 0.100000"
+        position = "-1.118762,-0.037166, 1.810163">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      name = "Lamp_top"
+      data = "lamp_Lamp_top">
+      <transform
+        quaternion = " 0.056722,-0.077701, 0.949443, 0.298837"
+        scale = " 0.100000, 0.100000, 0.100000"
+        position = " 0.220265,-0.589581, 4.430489">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      name = "Lamp_back"
+      data = "lamp_Lamp_back">
+      <transform
+        quaternion = "-0.652657,-0.598972, 0.018928, 0.463587"
+        scale = " 0.100000, 0.100000, 0.100000"
+        position = "-1.052112, 0.757056, 0.207860">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      name = "Lamp"
+      data = "lamp_Lamp">
+      <transform
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 4.076245, 1.005454, 5.903862">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    binary = "makehuman.mesh_Plane.p3dmesh"
+    name = "mesh_Plane"
+    faces = "65"
+    vertices = "81"
+    loops = "265"
+    normals = "81">
+    <material
+      end = "64"
+      name = "material_Material.001"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    binary = "makehuman.mesh_humanoid_humanf01.p3dmesh"
+    name = "mesh_humanoid_humanf01"
+    texlayers = "1"
+    tangents = "89301"
+    faces = "29767"
+    vertices = "15795"
+    cotangents = "89301"
+    loops = "89301"
+    texcoords = "89301"
+    normals = "15795">
+    <weightgroup
+      name = "upperarm_L">
+    </weightgroup>
+    <weightgroup
+      name = "upperarm_R">
+    </weightgroup>
+    <weightgroup
+      name = "lowerarm_L">
+    </weightgroup>
+    <weightgroup
+      name = "lowerarm_R">
+    </weightgroup>
+    <weightgroup
+      name = "hand_L">
+    </weightgroup>
+    <weightgroup
+      name = "hand_R">
+    </weightgroup>
+    <weightgroup
+      name = "thumb01_L">
+    </weightgroup>
+    <weightgroup
+      name = "thumb01_R">
+    </weightgroup>
+    <weightgroup
+      name = "thumb02_L">
+    </weightgroup>
+    <weightgroup
+      name = "thumb02_R">
+    </weightgroup>
+    <weightgroup
+      name = "thumb03_L">
+    </weightgroup>
+    <weightgroup
+      name = "thumb03_R">
+    </weightgroup>
+    <weightgroup
+      name = "index01_L">
+    </weightgroup>
+    <weightgroup
+      name = "index01_R">
+    </weightgroup>
+    <weightgroup
+      name = "middle01_L">
+    </weightgroup>
+    <weightgroup
+      name = "middle01_R">
+    </weightgroup>
+    <weightgroup
+      name = "ring01_L">
+    </weightgroup>
+    <weightgroup
+      name = "ring01_R">
+    </weightgroup>
+    <weightgroup
+      name = "pinky01_L">
+    </weightgroup>
+    <weightgroup
+      name = "pinky01_R">
+    </weightgroup>
+    <weightgroup
+      name = "index02_L">
+    </weightgroup>
+    <weightgroup
+      name = "index02_R">
+    </weightgroup>
+    <weightgroup
+      name = "middle02_L">
+    </weightgroup>
+    <weightgroup
+      name = "middle02_R">
+    </weightgroup>
+    <weightgroup
+      name = "ring02_L">
+    </weightgroup>
+    <weightgroup
+      name = "ring02_R">
+    </weightgroup>
+    <weightgroup
+      name = "pinky02_L">
+    </weightgroup>
+    <weightgroup
+      name = "pinky02_R">
+    </weightgroup>
+    <weightgroup
+      name = "pinky03_L">
+    </weightgroup>
+    <weightgroup
+      name = "pinky03_R">
+    </weightgroup>
+    <weightgroup
+      name = "ring03_L">
+    </weightgroup>
+    <weightgroup
+      name = "ring03_R">
+    </weightgroup>
+    <weightgroup
+      name = "middle03_L">
+    </weightgroup>
+    <weightgroup
+      name = "middle03_R">
+    </weightgroup>
+    <weightgroup
+      name = "index03_L">
+    </weightgroup>
+    <weightgroup
+      name = "index03_R">
+    </weightgroup>
+    <weightgroup
+      name = "clavicle_L">
+    </weightgroup>
+    <weightgroup
+      name = "clavicle_R">
+    </weightgroup>
+    <weightgroup
+      name = "spine03">
+    </weightgroup>
+    <weightgroup
+      name = "neck">
+    </weightgroup>
+    <weightgroup
+      name = "spine02">
+    </weightgroup>
+    <weightgroup
+      name = "head">
+    </weightgroup>
+    <weightgroup
+      name = "thigh_L">
+    </weightgroup>
+    <weightgroup
+      name = "thigh_R">
+    </weightgroup>
+    <weightgroup
+      name = "calf_L">
+    </weightgroup>
+    <weightgroup
+      name = "calf_R">
+    </weightgroup>
+    <weightgroup
+      name = "spine01">
+    </weightgroup>
+    <weightgroup
+      name = "foot_L">
+    </weightgroup>
+    <weightgroup
+      name = "foot_R">
+    </weightgroup>
+    <weightgroup
+      name = "toes_L">
+    </weightgroup>
+    <weightgroup
+      name = "toes_R">
+    </weightgroup>
+    <weightgroup
+      name = "pelvis">
+    </weightgroup>
+    <weightgroup
+      name = "index00_L">
+    </weightgroup>
+    <weightgroup
+      name = "index00_R">
+    </weightgroup>
+    <weightgroup
+      name = "middle00_L">
+    </weightgroup>
+    <weightgroup
+      name = "middle00_R">
+    </weightgroup>
+    <weightgroup
+      name = "ring00_L">
+    </weightgroup>
+    <weightgroup
+      name = "ring00_R">
+    </weightgroup>
+    <weightgroup
+      name = "pinky00_L">
+    </weightgroup>
+    <weightgroup
+      name = "pinky00_R">
+    </weightgroup>
+    <material
+      end = "29766"
+      name = "material_humanoid_human_skin"
+      start = "0">
+    </material>
+  </mesh>
+  <lamp
+    type = "point"
+    name = "lamp_Lamp_left"
+    energy = "0.20000000298023224"
+    color = "1.000000, 1.000000, 1.000000">
+  </lamp>
+  <lamp
+    type = "point"
+    name = "lamp_Lamp"
+    energy = "1.0"
+    color = "1.000000, 1.000000, 1.000000">
+  </lamp>
+  <lamp
+    type = "point"
+    name = "lamp_Lamp_top"
+    energy = "0.20000000298023224"
+    color = "1.000000, 1.000000, 1.000000">
+  </lamp>
+  <lamp
+    type = "point"
+    name = "lamp_Lamp_back"
+    energy = "0.20000000298023224"
+    color = "1.000000, 1.000000, 1.000000">
+  </lamp>
+  <lamp
+    type = "point"
+    name = "lamp_Lamp_right"
+    energy = "0.20000000298023224"
+    color = "1.000000, 1.000000, 1.000000">
+  </lamp>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material.001"
+    diffuse = "0.640000, 0.640000, 0.640000">
+  </material>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_humanoid_human_skin"
+    diffuse = "0.800000, 0.800000, 0.800000">
+    <map
+      data = "tex_Texture"
+      name = "Texture"
+      diffuse = "1.0"
+      layer = "0"
+      mode = "mix">
+    </map>
+    <map
+      data = "tex_Texture.001"
+      name = "Texture.001"
+      layer = "0"
+      specular_intensity = "1.0"
+      mode = "multiply">
+    </map>
+  </material>
+  <texture
+    name = "tex_Texture"
+    file = "humanoid_humanf_dermal.png">
+  </texture>
+  <texture
+    name = "tex_Texture.001"
+    file = "humanoid_humanf_complexion.png">
+  </texture>
+</p3dfile>

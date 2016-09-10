@@ -43,6 +43,10 @@ type
       FCurrentFrame: Float;
       FFrames: TP3DActionFrameList;
       FFrameSample: TP3DActionFrame;
+      FJointTex: TP3DTexture;
+
+    public
+      procedure UpdateJointTex;
 
     published
      constructor Create(const AData: TP3DData=nil);
@@ -54,6 +58,7 @@ type
      property Frames: TP3DActionFrameList read FFrames write FFrames;
      property FrameSample: TP3DActionFrame read FFrameSample write FFrameSample;
      property CurrentFrame: Float read FCurrentFrame write FCurrentFrame;
+     property JointTex: TP3DTexture read FJointTex write FJointTex;
   end;
 
   TP3DArmatureActionList = specialize gP3DCustomDatablockList < TP3DArmatureAction >;
@@ -331,7 +336,7 @@ var
 begin
   if ( Assigned( Armature ) and Assigned( Armature.CurrentAction )) then
     begin
-      Armature.CurrentAction.UpdateFrameSample;
+      {Armature.CurrentAction.UpdateFrameSample;
       decl:= Material.Shader.Uniforms.Names[ 'jointPos[0]' ];
       if ( Assigned( decl )) then
         begin
@@ -356,7 +361,16 @@ begin
       //quatList:= decl.AsQuatList;
       //for i:= 0 to quatList.Count - 1 do
       //  WriteLn( quatList[ i ].ToString());
-      //quatList.Free;
+      //quatList.Free;}
+      decl:= Material.Shader.Uniforms.Names[ 'jointTex' ];
+      decl.AsInt:= Armature.CurrentAction.JointTex.GLTexture;
+      decl:= Material.Shader.Uniforms.Names[ 'jointTexWidth' ];
+      decl.AsInt:= Armature.CurrentAction.JointTex.Width;
+      decl:= Material.Shader.Uniforms.Names[ 'jointTexHeight' ];
+      decl.AsInt:= Armature.CurrentAction.JointTex.Height;
+      decl:= Material.Shader.Uniforms.Names[ 'time' ];
+      Armature.CurrentAction.CurrentFrame:= SDL_GetTicks() / 100;
+      decl.AsFloat:= Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count;
     end;
 end;
 
@@ -411,6 +425,36 @@ end;
 
 { TP3DArmatureAction }
 
+procedure TP3DArmatureAction.UpdateJointTex;
+var
+  Buffer: TVec4List;
+  Frame: TP3DActionFrame;
+  i, j, w, h: Integer;
+
+  function getNextPower2( AValue: Integer ): Integer;
+  begin
+    Result:= 2;
+    while Result < AValue do
+      Result:= sqr( Result );
+  end;
+
+begin
+  if ( Assigned( JointTex )) then
+    JointTex.Free;
+  Buffer:= TVec4List.Create;
+  w:= getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
+  h:= getNextPower2( Frames.Count );
+  for i:= 0 to w div 2 - 1 do //TODO: FINISH
+    for j:= 0 to h - 1 do
+      if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
+        Buffer.Add([ vec4( 0 ), vec4( 0 )])
+      else
+        Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), Frames[ i ].Rotations[ j ]]);
+  JointTex:= TP3DTexture.CreateFromBuffer( w, h, 4, Buffer.Ptr );
+  P3DData.Textures.Add( JointTex );
+  Buffer.Free;
+end;
+
 constructor TP3DArmatureAction.Create(const AData: TP3DData);
 begin
   inherited Create( AData );
@@ -422,6 +466,8 @@ destructor TP3DArmatureAction.Destroy;
 begin
   FrameSample.Free;
   Frames.Free;
+  if ( Assigned( JointTex )) then
+    JointTex.Free;
   inherited Destroy;
 end;
 
@@ -440,6 +486,7 @@ begin
       end;
       Element:= TDOMElement( Element.NextSibling );
     end;
+  UpdateJointTex;
 end;
 
 procedure TP3DArmatureAction.UpdateFrameSample;

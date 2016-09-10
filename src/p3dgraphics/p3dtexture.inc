@@ -26,9 +26,11 @@ type
       procedure SetMipMap(AValue: Boolean);
       procedure UpdateFiltering;
       procedure LoadFromSurface( ASurface: PSDL_Surface );
+      procedure LoadFromBuffer( AWidth, AHeight: Integer; BytesPerPixel: Integer; ABuffer: Pointer );
 
     public
       constructor Create( AName: String; const AData: TP3DData = nil );
+      constructor CreateFromBuffer(AWidth, AHeight: Integer; BytesPerPixel: Integer; ABuffer: Pointer; const AData: TP3DData = nil);
       constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DData = nil );
       constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
       procedure LoadFromBinary( FileName: String ); override;
@@ -129,6 +131,41 @@ begin
   FGLTexture:= Tex;
 end;
 
+procedure TP3DTexture.LoadFromBuffer(AWidth, AHeight: Integer; BytesPerPixel: Integer; ABuffer: Pointer);
+var
+  Mode: Integer;
+  Tex: GLint;
+begin
+  glGenTextures( 1, @Tex ); cle( Self );
+  glBindTexture( GL_TEXTURE_2D, Tex ); cle( Self );
+
+  case ( BytesPerPixel ) of
+    1: Mode:= GL_R;
+    2: Mode:= GL_RG;
+    3: Mode:= GL_RGB;
+  else Mode:= GL_RGBA;
+  end;
+
+  Mode:= GL_RGBA32F;
+  glTexImage2D( GL_TEXTURE_2D, 0, Mode, AWidth, AHeight, 0, GL_RGBA, GL_FLOAT, ABuffer ); cle( Self );
+
+  //glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
+
+  FFiltering:= tfNearest;
+  FFilteringMipMap:= tfNearest;
+  FMipMap:= False;
+  UpdateFiltering;
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
+
+  FWidth:= AWidth;
+  FHeight:= AHeight;
+
+  if ( FGLTexture > 0 ) then
+    glDeleteTextures( 1, @FGLTexture ); cle( Self );
+  FGLTexture:= Tex;
+end;
+
 procedure TP3DTexture.LoadFromBinary(FileName: String);
 var
   FSurface: PSDL_Surface;
@@ -182,6 +219,15 @@ begin
   inherited Create( AData );
   FFileWatch:= TP3DFileWatch.Create( FileName );
   LoadFromFile( FileName );
+end;
+
+constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; BytesPerPixel: Integer; ABuffer: Pointer; const AData: TP3DData);
+begin
+  if ( not Assigned( glGenTextures )) then
+    exit;
+  inherited Create( AData );
+  FFileWatch:= TP3DFileWatch.Create( '' );
+  LoadFromBuffer( AWidth, AHeight, BytesPerPixel, ABuffer );
 end;
 
 constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface;

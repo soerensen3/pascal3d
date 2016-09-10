@@ -661,7 +661,6 @@ begin
           if ( P3DShaderActive.Uniforms.FindByName( 'TexMat' + IntToStr( i ), decl )) then
             begin
               decl.AsMat4:= TP3DMaterialMapBase( Maps[ i ]).FTransform;
-              WriteLn( decl.AsMat4.ToString());
             end;
         end;
 

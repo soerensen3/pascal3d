@@ -2,10 +2,22 @@
 node: armature
 input: {name="numJoints", type="int"}
 ---
-```{name="CODE", type="shader", restrict="vshader,declaration"}
-uniform vec3 jointPos[ $numJoints$ ];
-uniform vec4 jointQuat[ $numJoints$ ];
+```{name="CODE", type="shader", restrict="declaration"}
+//uniform vec3 jointPos[ $numJoints$ ];
+//uniform vec4 jointQuat[ $numJoints$ ];
+	uniform sampler2D jointTex;
+	uniform int jointTexWidth;
+	uniform int jointTexHeight;
+	uniform float time;
 
+	void getJointTransform( const in float i, out vec4 quat, out vec3 trans ) {
+		float dx = 1.0 / float( jointTexWidth );
+		trans = texture2D( jointTex, vec2( dx * ( i*2 + 0.5 ), time )).xyz;
+		quat = texture2D( jointTex, vec2( dx * ( i*2 + 1.5 ), time ));
+	}
+```
+
+```{name="CODE", type="shader", restrict="vshader,declaration"}
 IN vec3 jointWeight;
 IN vec4 fjointID;
 
@@ -17,32 +29,9 @@ vec3 transformNormal(vec3 n, vec4 quat)
   n += 2.0 * cross(quat.xyz,  cross(quat.xyz, n) + quat.w*n);
   return n;
 }
-vec4 quat_mult(vec4 q1, vec4 q2)
-{ 
-  vec4 qr;
-  qr.x = (q1.w * q2.x) + (q1.x * q2.w) + (q1.y * q2.z) - (q1.z * q2.y);
-  qr.y = (q1.w * q2.y) - (q1.x * q2.z) + (q1.y * q2.w) + (q1.z * q2.x);
-  qr.z = (q1.w * q2.z) + (q1.x * q2.y) - (q1.y * q2.x) + (q1.z * q2.w);
-  qr.w = (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z);
-  return qr;
-}
 
-vec4 quat_conj(vec4 q)
-{ 
-  return vec4(-q.x, -q.y, -q.z, q.w); 
-}
-
-vec3 quat_mult_trans( vec4 quat, vec3 trans ){
-  vec4 qr_conj = quat_conj(quat);
-  vec4 q_pos = vec4(trans.x, trans.y, trans.z, 0);
-  
-  vec4 q_tmp = quat_mult(quat, q_pos);
-  vec4 qr = quat_mult(q_tmp, qr_conj);
-  return vec3(qr.x, qr.y, qr.z);  
-}
 vec3 transformPosition(vec3 v, vec4 quat, vec3 trans)
 {
-  //vec3 finaltrans = quat_mult_trans(quat,-trans) + trans;
   return transformNormal(v, quat) + trans;
 }
 
@@ -50,56 +39,41 @@ void getTransform( out vec4 quat, out vec3 trans )
 {
   //ivec4 jointID = int( fjointID );
   float jointWeight3 = 1-jointWeight[ 0 ] - jointWeight[ 1 ] - jointWeight[ 2 ];
-  quat = jointQuat[ int( fjointID[ 0 ])] * jointWeight[ 0 ]
+  /*quat = jointQuat[ int( fjointID[ 0 ])] * jointWeight[ 0 ]
        + jointQuat[ int( fjointID[ 1 ])] * jointWeight[ 1 ]
        + jointQuat[ int( fjointID[ 2 ])] * jointWeight[ 2 ]
        + jointQuat[ int( fjointID[ 3 ])] * jointWeight3;
   trans = jointPos[ int( fjointID[ 0 ])] * jointWeight[ 0 ]
         + jointPos[ int( fjointID[ 1 ])] * jointWeight[ 1 ]
         + jointPos[ int( fjointID[ 2 ])] * jointWeight[ 2 ]
-        + jointPos[ int( fjointID[ 3 ])] * jointWeight3;
-  //quat = jointQuat[ int( fjointID[ 0 ])];
-  //trans = jointPos[ int( fjointID[ 0 ])];
+        + jointPos[ int( fjointID[ 3 ])] * jointWeight3;*/
+  getJointTransform( int( fjointID[ 0 ]), quat, trans );
 }
 ```
 
 ```{name="CODE", type="shader", restrict="vshader,main"}
-vec4 quat;
-vec3 trans;
-getTransform( quat, trans );
-vNormal.xyz = transformNormal( vNormal.xyz, quat );
-vTangent.xyz = transformNormal( vTangent.xyz, quat );
-vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
-vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
-vjointWeight = jointWeight;
-vjointID = fjointID;
+  vec4 quat;
+  vec3 trans;
+  getTransform( quat, trans );
+  vNormal.xyz = transformNormal( vNormal.xyz, quat );
+  vTangent.xyz = transformNormal( vTangent.xyz, quat );
+  vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
+  vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
+  vColor.xyz=trans;
+  vjointWeight = jointWeight;
+  vjointID = fjointID;
 ```
 ```{restrict="fshader,declaration"}
 IN vec4 vjointWeight;
 IN vec4 vjointID;
-uniform vec3 jointPos[ $numJoints$ ];
-uniform vec4 jointQuat[ $numJoints$ ];
-void getTransform( out vec4 quat, out vec3 trans )
-{
-  //ivec4 jointID = int( fjointID );
-  /*float vjointWeight3 = 1-vjointWeight[ 0 ] - vjointWeight[ 1 ] - vjointWeight[ 2 ];
-  quat = jointQuat[ int( vjointID[ 0 ])] * vjointWeight[ 0 ]
-       + jointQuat[ int( vjointID[ 1 ])] * vjointWeight[ 1 ]
-       + jointQuat[ int( vjointID[ 2 ])] * vjointWeight[ 2 ]
-       + jointQuat[ int( vjointID[ 3 ])] * vjointWeight3;
-  trans = jointPos[ int( vjointID[ 0 ])] * vjointWeight[ 0 ]
-        + jointPos[ int( vjointID[ 1 ])] * vjointWeight[ 1 ]
-        + jointPos[ int( vjointID[ 2 ])] * vjointWeight[ 2 ]
-        + jointPos[ int( vjointID[ 3 ])] * vjointWeight3;*/
-  quat = jointQuat[ int( vjointID[ 0 ])];
-  trans = jointPos[ int( vjointID[ 0 ])];
-  
-}
+//uniform vec3 jointPos[ $numJoints$ ];
+//uniform vec4 jointQuat[ $numJoints$ ];
+
 
 ```
 ```{restrict="fshader,main"}
-  vec4 quat;
-  vec3 trans;
-  getTransform( quat, trans );
-  Color.xyz = vec3( vjointID[ 0 ] / $numJoints$, 0.0, 0.0 );//vec3( normalize(length( trans.xyz ) + length( quat-vec4(0,0,0,1))));
+  //vec4 quat;
+  //vec3 trans;
+  //getJointTransform( int( vjointID[ 0 ]), quat, trans );
+  Color.xyz = vec3( 1, 0, 0 );
 ```

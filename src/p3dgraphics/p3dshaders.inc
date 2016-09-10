@@ -377,6 +377,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsFloat(AValue: Float);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform1f( Addr, AValue ); cle( Self ); end;
   end;
@@ -384,6 +386,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsFloatList(AValue: TFloatList);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform1fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
@@ -391,6 +395,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsInt(AValue: Integer);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform1i( Addr, AValue ); cle( Self ); end;
   end;
@@ -398,6 +404,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsIntList(AValue: TIntList);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform1iv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
@@ -405,6 +413,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsMat2(AValue: TMat2);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniformMatrix2fv( Addr, 1, False, @AValue ); cle( Self ); end;
   end;
@@ -412,6 +422,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsMat3(AValue: TMat3);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniformMatrix3fv( Addr, 1, False, @AValue ); cle( Self ); end;
   end;
@@ -419,6 +431,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsMat4(AValue: TMat4);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniformMatrix4fv( Addr, 1, False, @AValue.m[ 0 ]); cle( Self ); end;
   end;
@@ -428,6 +442,8 @@ procedure TP3DShaderDecl.SetAsQuatList(AValue: TQuaternionList);
 var
   i: Integer;
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform:
       //glUniform4fv( Addr, AValue.Count, AValue.Ptr );
@@ -440,6 +456,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsVec2(AValue: TVec2);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform2fv( Addr, 1, @AValue ); cle( Self ); end;
   end;
@@ -447,6 +465,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsVec2List(AValue: TVec2List);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform2fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
@@ -454,6 +474,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsVec3(AValue: TVec3);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform3fv( Addr, 1, @AValue ); cle( Self ); end;
   end;
@@ -461,6 +483,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsVec3List(AValue: TVec3List);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform3fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
@@ -468,6 +492,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsVec4(AValue: TVec4);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform4fv( Addr, 1, @AValue ); cle( Self ); end;
   end;
@@ -475,6 +501,8 @@ end;
 
 procedure TP3DShaderDecl.SetAsVec4List(AValue: TVec4List);
 begin
+  if ( not Assigned( Self )) then
+    exit;
   case DeclType of
     sdtUniform: begin glUniform4fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;

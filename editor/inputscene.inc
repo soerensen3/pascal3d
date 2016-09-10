@@ -27,6 +27,8 @@ var
   i: Integer;
 begin
   if ( Event.keysym.scancode = SDL_SCANCODE_F5 ) then
+    begin DataView.Update; DataView.Children.ExpandAll(); end;
+  if ( Event.keysym.scancode = SDL_SCANCODE_F8 ) then
     begin
       P3DShaderNodeLib.Nodes.Clear();
       P3DShaderNodeLib.LoadLibraryPath( P3DSearchPaths.BaseDir + 'shaders/nodes/core/', '*.pmd' );;
