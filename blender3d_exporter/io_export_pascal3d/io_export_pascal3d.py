@@ -394,27 +394,28 @@ class P3DExporter( bpy.types.Operator ):
     for vgroup in file.obj.vertex_groups:
         grps.append( vgroup.name )
 
-    bin = b''
-    for vertex in file.mesh.vertices: #make dictionary of all groups
-        vgrps = {}
-        for vgroup in vertex.groups:
-            vgrps[ vgroup.group ] = vgroup.weight
-        from operator import itemgetter
-        srt = sorted( vgrps.items(), key=itemgetter( 1 ), reverse=True )
+    if ( len( grps ) > 0 ):
+        bin = b''
+        for vertex in file.mesh.vertices: #make dictionary of all groups
+            vgrps = {}
+            for vgroup in vertex.groups:
+                vgrps[ vgroup.group ] = vgroup.weight
+            from operator import itemgetter
+            srt = sorted( vgrps.items(), key=itemgetter( 1 ), reverse=True )
 
-        vec = [ 0, 0, 0, 0 ] # make sure the length of the vecs is always 4
-        idx = [ 0, 0, 0, 0 ] # fill with zero indices, weight will be zero if idx not used
-        for i in range( 0, min( 4, len( vgrps ))):
-            vec[ i ] = srt[ i ][ 1 ]
-            idx[ i ] = srt[ i ][ 0 ]
-        vec = Vector( vec ).normalized()
-        #self.report({ 'INFO' }, str( idx ))
-        #self.report({ 'INFO' }, str( vec ))
-        file.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
-        
-        bin += struct.pack( '4i', *idx )
-        #file.writeintvec( idx )
-    file.file.write( bin )           
+            vec = [ 0, 0, 0, 0 ] # make sure the length of the vecs is always 4
+            idx = [ 0, 0, 0, 0 ] # fill with zero indices, weight will be zero if idx not used
+            for i in range( 0, min( 4, len( vgrps ))):
+                vec[ i ] = srt[ i ][ 1 ]
+                idx[ i ] = srt[ i ][ 0 ]
+            vec = Vector( vec ).normalized()
+            #self.report({ 'INFO' }, str( idx ))
+            #self.report({ 'INFO' }, str( vec ))
+            file.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
+            
+            bin += struct.pack( '4i', *idx )
+            #file.writeintvec( idx )
+        file.file.write( bin )           
     return grps # no need to return the number of vertices again, instead we return the name of the groups
       
 ##--------------------------------------------------------------------------------
