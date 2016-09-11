@@ -149,7 +149,7 @@ begin
   Mode:= GL_RGBA32F;
   glTexImage2D( GL_TEXTURE_2D, 0, Mode, AWidth, AHeight, 0, GL_RGBA, GL_FLOAT, ABuffer ); cle( Self );
 
-  //glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
+  glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
 
   FFiltering:= tfNearest;
   FFilteringMipMap:= tfNearest;

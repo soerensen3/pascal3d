@@ -1,0 +1,5538 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      type = "armature"
+      name = "Armature"
+      data = "armature_Armature">
+      <transform
+        position = "-0.010465, 0.013556,-0.850975"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      name = "Sphere"
+      data = "mesh_Sphere.001">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      type = "lamp"
+      name = "Lamp"
+      data = "lamp_Lamp">
+      <transform
+        position = " 4.076245, 1.005454, 5.903862"
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    vertices = "1602"
+    faces = "1600"
+    normals = "1602"
+    name = "mesh_Sphere.001"
+    binary = "worm.mesh_Sphere.001.p3dmesh"
+    loops = "6400">
+    <weightgroup
+      name = "Bone">
+    </weightgroup>
+    <weightgroup
+      name = "Bone.001">
+    </weightgroup>
+    <weightgroup
+      name = "Bone.002">
+    </weightgroup>
+    <weightgroup
+      name = "Bone.003">
+    </weightgroup>
+    <weightgroup
+      name = "Bone.004">
+    </weightgroup>
+    <material
+      end = "1599"
+      name = "material_Material.001"
+      start = "0">
+    </material>
+    <modifier
+      name = "armature"
+      data = "armature_Armature">
+    </modifier>
+  </mesh>
+  <lamp
+    type = "point"
+    color = "1.000000, 1.000000, 1.000000"
+    energy = "1.0"
+    name = "lamp_Lamp">
+  </lamp>
+  <material
+    specular = "50.000000, 0.500000, 0.382412, 0.046632"
+    name = "material_Material.001"
+    diffuse = "0.640000, 0.127354, 0.018291">
+  </material>
+  <armature
+    action = "action_ArmatureAction"
+    name = "armature_Armature">
+    <joint
+      position = " 0.000000, 0.000000, 0.000000"
+      quaternion = " 0.707107, 0.000000,-0.000000, 0.707107"
+      name = "joint_Bone">
+      <joint
+        position = " 0.000000,-0.000000, 4.170232"
+        quaternion = " 0.707107, 0.000000, 0.000000, 0.707107"
+        name = "joint_Bone.001">
+        <joint
+          position = " 0.000000,-0.000000, 7.536186"
+          quaternion = " 0.707107, 0.000000, 0.000000, 0.707107"
+          name = "joint_Bone.002">
+          <joint
+            position = " 0.000000,-0.000000,11.170233"
+            quaternion = " 0.707107, 0.000000, 0.000000, 0.707107"
+            name = "joint_Bone.003">
+            <joint
+              position = " 0.000000,-0.000000,14.343155"
+              quaternion = " 0.706742, 0.000076,-0.020123, 0.707185"
+              name = "joint_Bone.004">
+            </joint>
+          </joint>
+        </joint>
+      </joint>
+    </joint>
+  </armature>
+  <action
+    name = "action_ArmatureAction">
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.323919, 0.628551,-0.323919, 0.628551"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.999808,-0.000000, 0.000000, 0.019620"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.008914, 0.000000, 0.000000, 0.999960"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.993864,-0.000000,-0.000000, 0.110607"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.102421,-0.012633,-0.015664, 0.994538"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.323919, 0.628551,-0.323919, 0.628551"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.999808,-0.000000, 0.000000, 0.019620"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.008914, 0.000000, 0.000000, 0.999960"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.993864,-0.000000,-0.000000, 0.110607"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.102421,-0.012633,-0.015664, 0.994538"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.323959, 0.628531,-0.323959, 0.628531"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999805,-0.000000, 0.000000, 0.019767"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.008990, 0.000000, 0.000000, 0.999960"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.993878,-0.000000,-0.000000, 0.110480"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.102311,-0.012635,-0.015663, 0.994549"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324079, 0.628468,-0.324079, 0.628468"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999796,-0.000000, 0.000000, 0.020211"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.009221, 0.000000, 0.000000, 0.999958"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.993921,-0.000000,-0.000000, 0.110099"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.101982,-0.012640,-0.015659, 0.994583"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324284, 0.628363,-0.324284, 0.628363"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.999780,-0.000000, 0.000000, 0.020965"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.009611, 0.000000, 0.000000, 0.999954"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.993991,-0.000000,-0.000000, 0.109461"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.101431,-0.012648,-0.015652, 0.994639"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324575, 0.628213,-0.324575, 0.628213"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.999757,-0.000000, 0.000000, 0.022032"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.010166, 0.000000, 0.000000, 0.999948"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.994089,-0.000000,-0.000000, 0.108565"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.100657,-0.012661,-0.015642, 0.994718"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324955, 0.628016,-0.324955, 0.628016"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.999726,-0.000000, 0.000000, 0.023419"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.010888, 0.000000, 0.000000, 0.999941"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.994215,-0.000000,-0.000000, 0.107410"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013555,13.492179"
+        quaternion = " 0.099659,-0.012676,-0.015629, 0.994818"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.325427, 0.627772,-0.325427, 0.627772"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999684,-0.000000, 0.000000, 0.025135"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.011784, 0.000000, 0.000000, 0.999931"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.994367,-0.000000,-0.000000, 0.105997"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.098437,-0.012696,-0.015613, 0.994940"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.325993, 0.627478,-0.325993, 0.627478"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999631,-0.000000, 0.000000, 0.027180"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.012856, 0.000000, 0.000000, 0.999917"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.994543,-0.000000,-0.000000, 0.104324"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.096992,-0.012718,-0.015595, 0.995082"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.326656, 0.627133,-0.326656, 0.627133"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999563,-0.000000, 0.000000, 0.029561"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.014108, 0.000000, 0.000000, 0.999901"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.994744,-0.000000,-0.000000, 0.102396"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.095326,-0.012744,-0.015574, 0.995243"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.327418, 0.626735,-0.327418, 0.626735"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999479,-0.000000, 0.000000, 0.032284"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.015544, 0.000000, 0.000000, 0.999879"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.994966,-0.000000,-0.000000, 0.100214"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.093441,-0.012774,-0.015550, 0.995421"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.328282, 0.626284,-0.328282, 0.626284"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999375,-0.000000, 0.000000, 0.035349"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.017166, 0.000000, 0.000000, 0.999853"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.995208,-0.000000,-0.000000, 0.097781"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.091341,-0.012807,-0.015523, 0.995616"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.329248, 0.625776,-0.329248, 0.625776"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999249,-0.000000, 0.000000, 0.038754"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.018977, 0.000000, 0.000000, 0.999820"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.995467,-0.000000,-0.000000, 0.095105"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.089030,-0.012843,-0.015493, 0.995826"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.330318, 0.625212,-0.330318, 0.625212"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999096,-0.000000, 0.000000, 0.042506"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.020979, 0.000000, 0.000000, 0.999780"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.995741,-0.000000,-0.000000, 0.092192"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492182"
+        quaternion = " 0.086514,-0.012882,-0.015460, 0.996047"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.331494, 0.624589,-0.331494, 0.624589"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.998914,-0.000000, 0.000000, 0.046599"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.023174, 0.000000, 0.000000, 0.999732"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.996027,-0.000000,-0.000000, 0.089049"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.083801,-0.012924,-0.015425, 0.996279"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.332776, 0.623907,-0.332776, 0.623907"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.998697,-0.000000, 0.000000, 0.051033"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.025561, 0.000000, 0.000000, 0.999673"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.996322,-0.000000,-0.000000, 0.085687"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.080899,-0.012969,-0.015387, 0.996519"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.334166, 0.623164,-0.334166, 0.623164"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.998442,-0.000000, 0.000000, 0.055803"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.028141, 0.000000, 0.000000, 0.999604"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.996623,-0.000000,-0.000000, 0.082117"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.077818,-0.013016,-0.015347, 0.996764"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.335662, 0.622359,-0.335662, 0.622360"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.998144,-0.000000, 0.000000, 0.060904"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.030913, 0.000000, 0.000000, 0.999522"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.996926,-0.000000,-0.000000, 0.078353"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492182"
+        quaternion = " 0.074568,-0.013066,-0.015305, 0.997013"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.337264, 0.621493,-0.337264, 0.621493"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.997798,-0.000000, 0.000000, 0.066329"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.033875, 0.000000, 0.000000, 0.999426"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.997228,-0.000000,-0.000000, 0.074408"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.071165,-0.013118,-0.015260, 0.997262"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.338972, 0.620563,-0.338972, 0.620563"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.997399,-0.000000, 0.000000, 0.072072"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.037025, 0.000000, 0.000000, 0.999314"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.997526,-0.000000,-0.000000, 0.070300"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.067620,-0.013172,-0.015213, 0.997508"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.340784, 0.619569,-0.340784, 0.619569"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.996944,-0.000000, 0.000000, 0.078122"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.040359, 0.000000, 0.000000, 0.999185"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.997817,-0.000000,-0.000000, 0.066045"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.063950,-0.013228,-0.015165, 0.997750"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.342699, 0.618512,-0.342699, 0.618513"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.996426,-0.000000, 0.000000, 0.084469"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.043872, 0.000000, 0.000000, 0.999037"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.998097,-0.000000,-0.000000, 0.061665"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.060172,-0.013286,-0.015115, 0.997985"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.344713, 0.617392,-0.344713, 0.617392"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.995842,-0.000000, 0.000000, 0.091100"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.047559, 0.000000, 0.000000, 0.998869"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.998364,-0.000000,-0.000000, 0.057180"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.056303,-0.013344,-0.015063, 0.998211"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.346824, 0.616209,-0.346824, 0.616209"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.995186,-0.000000, 0.000000, 0.098004"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.051413, 0.000000, 0.000000, 0.998678"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.998615,-0.000000,-0.000000, 0.052611"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.052363,-0.013403,-0.015010, 0.998425"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.349029, 0.614962,-0.349029, 0.614962"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.994455,-0.000000, 0.000000, 0.105167"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.055428, 0.000000, 0.000000, 0.998463"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.998848,-0.000000,-0.000000, 0.047981"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.048370,-0.013463,-0.014956, 0.998627"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.351324, 0.613654,-0.351323, 0.613655"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.993644,-0.000000, 0.000000, 0.112572"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.059596, 0.000000, 0.000000, 0.998223"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999062,-0.000000,-0.000000, 0.043316"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492182"
+        quaternion = " 0.044346,-0.013523,-0.014902, 0.998814"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.353703, 0.612286,-0.353703, 0.612286"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.992749,-0.000000, 0.000000, 0.120206"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.063906, 0.000000, 0.000000, 0.997956"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.999253,-0.000000,-0.000000, 0.038636"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.040311,-0.013584,-0.014847, 0.998985"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.356164, 0.610858,-0.356164, 0.610858"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.991767,-0.000000, 0.000000, 0.128054"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.068351, 0.000000, 0.000000, 0.997661"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999423,-0.000000,-0.000000, 0.033968"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.036285,-0.013643,-0.014793, 0.999139"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.358701, 0.609371,-0.358701, 0.609371"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.990696,-0.000000, 0.000000, 0.136097"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.072919, 0.000000, 0.000000, 0.997338"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.999570,-0.000000,-0.000000, 0.029335"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.032290,-0.013702,-0.014738, 0.999276"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.361308, 0.607829,-0.361308, 0.607829"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.989531,-0.000000, 0.000000, 0.144322"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.077602, 0.000000, 0.000000, 0.996984"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.999693,-0.000000,-0.000000, 0.024760"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.028346,-0.013760,-0.014684, 0.999396"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.363981, 0.606232,-0.363981, 0.606232"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.988271,-0.000000, 0.000000, 0.152712"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.082387, 0.000000, 0.000000, 0.996600"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.999795,-0.000000,-0.000000, 0.020268"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.024472,-0.013817,-0.014630, 0.999498"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.366714, 0.604583,-0.366714, 0.604583"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.986913,-0.000000, 0.000000, 0.161253"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.087264, 0.000000, 0.000000, 0.996185"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999874,-0.000000,-0.000000, 0.015878"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.020687,-0.013872,-0.014578, 0.999583"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.369501, 0.602884,-0.369501, 0.602884"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.985456,-0.000000, 0.000000, 0.169928"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.092223, 0.000000, 0.000000, 0.995738"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.999933,-0.000000,-0.000000, 0.011616"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.017010,-0.013926,-0.014527, 0.999653"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.372337, 0.601137,-0.372337, 0.601137"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.983899,-0.000000, 0.000000, 0.178724"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.097251, 0.000000, 0.000000, 0.995260"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.999972,-0.000000,-0.000000, 0.007498"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.013457,-0.013977,-0.014477, 0.999707"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.375216, 0.599344,-0.375215, 0.599344"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.982240,-0.000000, 0.000000, 0.187629"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.102340, 0.000000, 0.000000, 0.994749"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999994,-0.000000,-0.000000, 0.003542"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.010044,-0.014027,-0.014429, 0.999747"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.378132, 0.597508,-0.378132, 0.597508"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.980478,-0.000000, 0.000000, 0.196628"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.107478, 0.000000, 0.000000, 0.994207"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 1.000000,-0.000000,-0.000000,-0.000235"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.006786,-0.014074,-0.014383, 0.999775"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.381081, 0.595632,-0.381081, 0.595632"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.978613,-0.000000, 0.000000, 0.205711"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.112656, 0.000000, 0.000000, 0.993634"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.999993,-0.000000,-0.000000,-0.003818"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.003695,-0.014118,-0.014340, 0.999791"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.384058, 0.593717,-0.384058, 0.593717"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.976643,-0.000000, 0.000000, 0.214867"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.117863, 0.000000, 0.000000, 0.993030"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999974,-0.000000,-0.000000,-0.007193"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.000783,-0.014160,-0.014299, 0.999797"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.387058, 0.591766,-0.387057, 0.591766"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.974569,-0.000000, 0.000000, 0.224087"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.123091, 0.000000, 0.000000, 0.992395"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = "-0.999946, 0.000000, 0.000000, 0.010346"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492182"
+        quaternion = "-0.001940,-0.014199,-0.014260, 0.999796"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.390075, 0.589781,-0.390075, 0.589781"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.972390,-0.000000, 0.000000, 0.233362"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.128331, 0.000000, 0.000000, 0.991732"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = "-0.999912, 0.000000, 0.000000, 0.013273"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.004465,-0.014235,-0.014224, 0.999788"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.393106, 0.587765,-0.393106, 0.587765"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.970105,-0.000000, 0.000000, 0.242685"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.133575, 0.000000, 0.000000, 0.991039"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = "-0.999873, 0.000000, 0.000000, 0.015961"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = "-0.006786,-0.014268,-0.014191, 0.999774"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.396147, 0.585719,-0.396147, 0.585719"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.967714,-0.000000, 0.000000, 0.252049"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.138816, 0.000000, 0.000000, 0.990318"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999831, 0.000000, 0.000000, 0.018406"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.008895,-0.014298,-0.014161, 0.999758"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.399195, 0.583647,-0.399195, 0.583647"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.965217,-0.000000, 0.000000, 0.261449"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.144047, 0.000000, 0.000000, 0.989571"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999788, 0.000000, 0.000000, 0.020598"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = "-0.010789,-0.014324,-0.014134, 0.999739"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.402245, 0.581549,-0.402245, 0.581549"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.962613,-0.000000, 0.000000, 0.270881"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.149263, 0.000000, 0.000000, 0.988798"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999746, 0.000000, 0.000000, 0.022537"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = "-0.012462,-0.014348,-0.014110, 0.999720"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.405294, 0.579428,-0.405294, 0.579428"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.959901,-0.000000, 0.000000, 0.280340"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.154456, 0.000000, 0.000000, 0.988000"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = "-0.999707, 0.000000, 0.000000, 0.024219"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.013914,-0.014369,-0.014089, 0.999701"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.408340, 0.577285,-0.408340, 0.577285"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.957080,-0.000000, 0.000000, 0.289824"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.159622, 0.000000, 0.000000, 0.987178"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999671, 0.000000, 0.000000, 0.025641"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.015142,-0.014386,-0.014071, 0.999683"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.411380, 0.575123,-0.411380, 0.575123"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.954149,-0.000000, 0.000000, 0.299331"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.164758, 0.000000, 0.000000, 0.986334"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999641, 0.000000, 0.000000, 0.026802"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = "-0.016144,-0.014400,-0.014057, 0.999667"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.414412, 0.572942,-0.414412, 0.572942"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.951108,-0.000000, 0.000000, 0.308860"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.169857, 0.000000, 0.000000, 0.985469"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999616, 0.000000, 0.000000, 0.027702"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = "-0.016923,-0.014411,-0.014046, 0.999654"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.417434, 0.570744,-0.417434, 0.570745"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.947954,-0.000000, 0.000000, 0.318409"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.174918, 0.000000, 0.000000, 0.984583"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = "-0.999598, 0.000000, 0.000000, 0.028343"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = "-0.017476,-0.014419,-0.014038, 0.999645"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.420443, 0.568531,-0.420443, 0.568531"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.944685,-0.000000, 0.000000, 0.327978"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.179937, 0.000000, 0.000000, 0.983678"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999587, 0.000000, 0.000000, 0.028728"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492178"
+        quaternion = "-0.017807,-0.014423,-0.014033, 0.999639"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.423438, 0.566304,-0.423438, 0.566304"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.941301,-0.000000, 0.000000, 0.337568"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.184912, 0.000000,-0.000000, 0.982755"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = "-0.999584, 0.000000, 0.000000, 0.028854"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.017917,-0.014425,-0.014031, 0.999637"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.426522, 0.563985,-0.426522, 0.563985"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.937658, 0.000000, 0.000000, 0.347559"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.190010, 0.000000,-0.000000, 0.981782"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999590, 0.000000, 0.000000, 0.028645"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492178"
+        quaternion = "-0.017133,-0.014414,-0.014043, 0.999651"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.429797, 0.561493,-0.429797, 0.561493"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.933591, 0.000000, 0.000000, 0.358340"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.195400, 0.000000,-0.000000, 0.980724"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999608, 0.000000, 0.000000, 0.028011"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = "-0.014766,-0.014381,-0.014077, 0.999688"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.433260, 0.558826,-0.433259, 0.558826"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.929065, 0.000000, 0.000000, 0.369916"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.201081, 0.000000,-0.000000, 0.979575"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999637, 0.000000, 0.000000, 0.026951"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.010789,-0.014324,-0.014134, 0.999739"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.436908, 0.555978,-0.436908, 0.555978"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.924041, 0.000000, 0.000000, 0.382294"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.207052, 0.000000,-0.000000, 0.978330"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999676, 0.000000, 0.000000, 0.025461"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = "-0.005171,-0.014245,-0.014214, 0.999784"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.440737, 0.552947,-0.440737, 0.552947"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.918478, 0.000000, 0.000000, 0.395472"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.213309, 0.000000,-0.000000, 0.976985"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999723, 0.000000, 0.000000, 0.023540"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.002125,-0.014141,-0.014318, 0.999795"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.444743, 0.549730,-0.444743, 0.549730"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.912335, 0.000000, 0.000000, 0.409445"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.219848, 0.000000,-0.000000, 0.975534"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = "-0.999776, 0.000000, 0.000000, 0.021189"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.011142,-0.014011,-0.014445, 0.999735"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.448919, 0.546326,-0.448919, 0.546326"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.905567, 0.000000, 0.000000, 0.424202"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.226663, 0.000000,-0.000000, 0.973973"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999831, 0.000000, 0.000000, 0.018406"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.021924,-0.013854,-0.014595, 0.999557"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.453258, 0.542731,-0.453258, 0.542731"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.898133, 0.000000, 0.000000, 0.439725"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.233746, 0.000000,-0.000000, 0.972298"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = "-0.999885, 0.000000, 0.000000, 0.015196"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.034519,-0.013669,-0.014768, 0.999201"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.457751, 0.538947,-0.457751, 0.538947"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.889987, 0.000000, 0.000000, 0.455987"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.241087, 0.000000,-0.000000, 0.970503"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = "-0.999933, 0.000000, 0.000000, 0.011560"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.048971,-0.013454,-0.014965, 0.998598"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.462389, 0.534973,-0.462389, 0.534974"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.881088, 0.000000, 0.000000, 0.472952"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.248677, 0.000000,-0.000000, 0.968587"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999972,-0.000000,-0.000000,-0.007508"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.065324,-0.013207,-0.015183, 0.997661"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.467160, 0.530812,-0.467160, 0.530812"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.871398, 0.000000, 0.000000, 0.490576"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.256501, 0.000000,-0.000000, 0.966544"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999995,-0.000000,-0.000000,-0.003044"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.083614,-0.012927,-0.015423, 0.996295"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.472052, 0.526466,-0.472052, 0.526466"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.860883, 0.000000, 0.000000, 0.508803"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.264545, 0.000000,-0.000000, 0.964373"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.999998,-0.000000,-0.000000, 0.001820"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.103869,-0.012610,-0.015683, 0.994387"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.477051, 0.521941,-0.477051, 0.521941"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.849515, 0.000000, 0.000000, 0.527565"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.272790, 0.000000,-0.000000, 0.962074"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.999975,-0.000000,-0.000000, 0.007071"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.126098,-0.012256,-0.015961, 0.991814"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.482143, 0.517241,-0.482143, 0.517241"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.837273, 0.000000, 0.000000, 0.546785"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.281218, 0.000000,-0.000000, 0.959644"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.999919,-0.000000,-0.000000, 0.012694"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.150294,-0.011862,-0.016256, 0.988437"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.487310, 0.512376,-0.487310, 0.512376"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319256"
+        quaternion = " 0.824147, 0.000000, 0.000000, 0.566376"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.289807, 0.000000,-0.000000, 0.957085"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.999826,-0.000000,-0.000000, 0.018669"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.176422,-0.011428,-0.016564, 0.984109"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.492536, 0.507354,-0.492536, 0.507354"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.810138, 0.000000, 0.000000, 0.586239"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.298534, 0.000000,-0.000000, 0.954399"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999688,-0.000000,-0.000000, 0.024981"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.204415,-0.010951,-0.016883, 0.978678"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.497802, 0.502188,-0.497802, 0.502188"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.795262, 0.000000, 0.000000, 0.606266"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.307372, 0.000000,-0.000000, 0.951590"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.999501,-0.000000,-0.000000, 0.031599"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.234171,-0.010430,-0.017209, 0.971987"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.503089, 0.496891,-0.503089, 0.496891"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.779546, 0.000000, 0.000000, 0.626345"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.316294, 0.000000,-0.000000, 0.948661"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999259,-0.000000,-0.000000, 0.038502"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.265544,-0.009867,-0.017538, 0.963889"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.508379, 0.491479,-0.508378, 0.491479"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.763035, 0.000000, 0.000000, 0.646357"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.325271, 0.000000,-0.000000, 0.945621"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.998957,-0.000000,-0.000000, 0.045659"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.298345,-0.009262,-0.017865, 0.954246"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.513649, 0.485968,-0.513649, 0.485968"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.745790, 0.000000, 0.000000, 0.666181"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.334274, 0.000000,-0.000000, 0.942476"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.998593,-0.000000,-0.000000, 0.053036"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.332338,-0.008616,-0.018186, 0.942946"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.518880, 0.480378,-0.518880, 0.480378"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.727887, 0.000000, 0.000000, 0.685697"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.343269, 0.000000,-0.000000, 0.939237"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.998162,-0.000000,-0.000000, 0.060601"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.367244,-0.007932,-0.018494, 0.929907"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.524053, 0.474729,-0.524053, 0.474729"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.709416, 0.000000, 0.000000, 0.704790"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.352226, 0.000000,-0.000000, 0.935915"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.997664,-0.000000,-0.000000, 0.068319"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.402746,-0.007215,-0.018786, 0.915091"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.529148, 0.469044,-0.529148, 0.469044"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.690482, 0.000000, 0.000000, 0.723349"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.361111, 0.000000,-0.000000, 0.932523"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.997096,-0.000000,-0.000000, 0.076150"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.438497,-0.006469,-0.019055, 0.898508"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.534145, 0.463345,-0.534145, 0.463345"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.671200, 0.000000, 0.000000, 0.741277"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.369893, 0.000000,-0.000000, 0.929074"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.996461,-0.000000,-0.000000, 0.084055"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013555,13.492179"
+        quaternion = " 0.474134,-0.005701,-0.019299, 0.880223"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.539028, 0.457656,-0.539028, 0.457656"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.651693, 0.000000, 0.000000, 0.758483"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.378539, 0.000000,-0.000000, 0.925586"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.995759,-0.000000,-0.000000, 0.091995"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492178"
+        quaternion = " 0.509292,-0.004917,-0.019514, 0.860358"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.543778, 0.452002,-0.543778, 0.452002"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.632089, 0.000000, 0.000000, 0.774896"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.387017, 0.000000,-0.000000, 0.922072"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.994995,-0.000000,-0.000000, 0.099930"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.543620,-0.004125,-0.019696, 0.839090"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.548380, 0.446407,-0.548380, 0.446407"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.612521, 0.000000, 0.000000, 0.790454"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.395299, 0.000000,-0.000000, 0.918552"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.994171,-0.000000,-0.000000, 0.107818"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.576793,-0.003332,-0.019846, 0.816642"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.552821, 0.440896,-0.552821, 0.440896"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.593117, 0.000000, 0.000000, 0.805116"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.403356, 0.000000,-0.000000, 0.915043"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.993294,-0.000000,-0.000000, 0.115620"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.608529,-0.002548,-0.019962, 0.793276"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.557088, 0.435492,-0.557087, 0.435492"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.574005, 0.000000, 0.000000, 0.818852"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.411161, 0.000000,-0.000000, 0.911563"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.992370,-0.000000,-0.000000, 0.123298"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.638596,-0.001778,-0.020045, 0.769279"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.561170, 0.430219,-0.561170, 0.430219"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.555303, 0.000000, 0.000000, 0.831648"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.418689, 0.000000,-0.000000, 0.908130"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.991407,-0.000000,-0.000000, 0.130814"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.666818,-0.001030,-0.020097, 0.744949"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.565058, 0.425100,-0.565058, 0.425100"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.537122, 0.000000, 0.000000, 0.843505"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.425919, 0.000000,-0.000000, 0.904761"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.990414,-0.000000,-0.000000, 0.138134"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.693077,-0.000309,-0.020121, 0.720583"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.568745, 0.420154,-0.568745, 0.420154"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.519562, 0.000000, 0.000000, 0.854433"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.432830, 0.000000,-0.000000, 0.901475"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.989399,-0.000000,-0.000000, 0.145224"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.717309, 0.000379,-0.020120, 0.696465"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.572226, 0.415401,-0.572226, 0.415401"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.502712, 0.000000, 0.000000, 0.864454"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.439406, 0.000000,-0.000000, 0.898288"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.988372,-0.000000,-0.000000, 0.152054"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.739500, 0.001031,-0.020097, 0.672855"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.575496, 0.410859,-0.575495, 0.410859"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.486649, 0.000000, 0.000000, 0.873597"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.445632, 0.000000,-0.000000, 0.895216"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.987344,-0.000000,-0.000000, 0.158595"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.759679, 0.001643,-0.020056, 0.649987"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.578552, 0.406543,-0.578552, 0.406544"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.471438, 0.000000, 0.000000, 0.881899"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.451495, 0.000000,-0.000000, 0.892274"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.986323,-0.000000,-0.000000, 0.164824"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.777907, 0.002215,-0.020001, 0.628057"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.581394, 0.402469,-0.581394, 0.402469"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.457130, 0.000000, 0.000000, 0.889400"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.456985, 0.000000,-0.000000, 0.889474"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.985320,-0.000000,-0.000000, 0.170717"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.794269, 0.002744,-0.019936, 0.607233"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.584020, 0.398648,-0.584020, 0.398648"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.443769, 0.000000, 0.000000, 0.896141"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.462095, 0.000000,-0.000000, 0.886830"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.984345,-0.000000,-0.000000, 0.176255"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.808869, 0.003230,-0.019863, 0.587645"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.586433, 0.395090,-0.586433, 0.395090"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.431386, 0.000000, 0.000000, 0.902167"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.466819, 0.000000,-0.000000, 0.884353"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.983405,-0.000000,-0.000000, 0.181421"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.821818, 0.003674,-0.019785, 0.569394"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.588634, 0.391804,-0.588634, 0.391804"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.420003, 0.000000, 0.000000, 0.907523"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.471153, 0.000000,-0.000000, 0.882052"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.982512,-0.000000,-0.000000, 0.186202"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.833233, 0.004075,-0.019707, 0.552555"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.590624, 0.388797,-0.590624, 0.388798"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.409635, 0.000000, 0.000000, 0.912249"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.475096, 0.000000,-0.000000, 0.879934"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.981671,-0.000000,-0.000000, 0.190586"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.843230, 0.004436,-0.019629, 0.537177"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.592407, 0.386075,-0.592407, 0.386075"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.400290, 0.000000, 0.000000, 0.916389"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.478646, 0.000000,-0.000000, 0.878008"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.980890,-0.000000,-0.000000, 0.194564"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.851917, 0.004757,-0.019553, 0.523291"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.593987, 0.383640,-0.593987, 0.383640"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.391968, 0.000000, 0.000000, 0.919979"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.481806, 0.000000,-0.000000, 0.876278"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.980176,-0.000000,-0.000000, 0.198128"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.859398, 0.005040,-0.019482, 0.510911"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.595366, 0.381496,-0.595366, 0.381496"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.384668, 0.000000, 0.000000, 0.923055"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.484578, 0.000000,-0.000000, 0.874748"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.979535,-0.000000,-0.000000, 0.201275"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.865768, 0.005285,-0.019417, 0.500040"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.596549, 0.379643,-0.596549, 0.379643"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.378382, 0.000000, 0.000000, 0.925650"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.486963, 0.000000,-0.000000, 0.873423"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.978971,-0.000000,-0.000000, 0.204000"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.871111, 0.005494,-0.019359, 0.490673"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.597540, 0.378081,-0.597540, 0.378082"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.373100, 0.000000, 0.000000, 0.927791"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.488967, 0.000000,-0.000000, 0.872302"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.978488,-0.000000,-0.000000, 0.206303"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.875501, 0.005668,-0.019309, 0.482797"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.598343, 0.376810,-0.598343, 0.376810"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.368811, 0.000000, 0.000000, 0.929504"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.490594, 0.000000,-0.000000, 0.871388"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.978090,-0.000000,-0.000000, 0.208182"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.879001, 0.005809,-0.019267, 0.476395"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.598961, 0.375827,-0.598961, 0.375827"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.365502, 0.000000, 0.000000, 0.930811"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.491850, 0.000000,-0.000000, 0.870680"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.977779,-0.000000,-0.000000, 0.209639"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.881664, 0.005917,-0.019234, 0.471448"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.599398, 0.375129,-0.599398, 0.375130"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.363156, 0.000000, 0.000000, 0.931728"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.492739, 0.000000,-0.000000, 0.870177"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.977556,-0.000000,-0.000000, 0.210676"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.883532, 0.005994,-0.019210, 0.467938"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.599658, 0.374714,-0.599658, 0.374714"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.361760, 0.000000, 0.000000, 0.932271"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.493268, 0.000000,-0.000000, 0.869877"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.977422,-0.000000,-0.000000, 0.211295"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.884638, 0.006039,-0.019196, 0.465844"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.599744, 0.374576,-0.599744, 0.374576"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.361298, 0.000000, 0.000000, 0.932450"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.493443, 0.000000,-0.000000, 0.869778"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.977378,-0.000000,-0.000000, 0.211501"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.885003, 0.006054,-0.019191, 0.465150"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.599658, 0.374714,-0.599658, 0.374714"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.361761, 0.000000, 0.000000, 0.932271"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.493268, 0.000000,-0.000000, 0.869878"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.977422,-0.000000,-0.000000, 0.211295"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.884638, 0.006039,-0.019196, 0.465844"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.599397, 0.375131,-0.599397, 0.375131"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.363159, 0.000000, 0.000000, 0.931727"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.492737, 0.000000,-0.000000, 0.870178"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.977556,-0.000000,-0.000000, 0.210676"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.883533, 0.005994,-0.019210, 0.467937"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.598959, 0.375830,-0.598959, 0.375830"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.365509, 0.000000, 0.000000, 0.930808"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.491845, 0.000000,-0.000000, 0.870683"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.977779,-0.000000,-0.000000, 0.209639"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.881664, 0.005917,-0.019234, 0.471448"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.598340, 0.376815,-0.598339, 0.376815"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.368824, 0.000000, 0.000000, 0.929499"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.490587, 0.000000,-0.000000, 0.871392"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.978090,-0.000000,-0.000000, 0.208182"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.879001, 0.005809,-0.019267, 0.476395"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.597535, 0.378090,-0.597535, 0.378090"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.373120, 0.000000, 0.000000, 0.927783"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.488955, 0.000000,-0.000000, 0.872309"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.978488,-0.000000,-0.000000, 0.206303"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.875501, 0.005668,-0.019309, 0.482797"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.596542, 0.379655,-0.596542, 0.379655"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.378410, 0.000000, 0.000000, 0.925638"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.486946, 0.000000,-0.000000, 0.873432"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.978971,-0.000000,-0.000000, 0.204000"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.871111, 0.005494,-0.019359, 0.490673"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.595356, 0.381512,-0.595356, 0.381512"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.384706, 0.000000, 0.000000, 0.923039"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.484554, 0.000000,-0.000000, 0.874761"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.979535,-0.000000,-0.000000, 0.201275"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.865768, 0.005285,-0.019417, 0.500040"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.593974, 0.383660,-0.593974, 0.383661"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.392018, 0.000000, 0.000000, 0.919958"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.481776, 0.000000,-0.000000, 0.876295"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.980176,-0.000000,-0.000000, 0.198129"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.859398, 0.005040,-0.019482, 0.510911"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.592391, 0.386100,-0.592391, 0.386100"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.400352, 0.000000, 0.000000, 0.916361"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.478608, 0.000000,-0.000000, 0.878029"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.980890,-0.000000,-0.000000, 0.194564"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.851917, 0.004757,-0.019553, 0.523291"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.590604, 0.388828,-0.590603, 0.388828"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.409712, 0.000000, 0.000000, 0.912215"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.475048, 0.000000,-0.000000, 0.879960"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.981671,-0.000000,-0.000000, 0.190586"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.843230, 0.004436,-0.019629, 0.537177"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.588609, 0.391841,-0.588609, 0.391841"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.420095, 0.000000, 0.000000, 0.907480"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.471096, 0.000000,-0.000000, 0.882082"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.982511,-0.000000,-0.000000, 0.186202"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.833234, 0.004075,-0.019707, 0.552555"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.586404, 0.395133,-0.586404, 0.395133"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.431494, 0.000000, 0.000000, 0.902116"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.466751, 0.000000,-0.000000, 0.884389"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.983406,-0.000000,-0.000000, 0.181421"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.821818, 0.003674,-0.019785, 0.569394"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.583986, 0.398698,-0.583986, 0.398698"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.443895, 0.000000, 0.000000, 0.896079"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.462016, 0.000000,-0.000000, 0.886871"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.984345,-0.000000,-0.000000, 0.176255"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.808869, 0.003230,-0.019863, 0.587645"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.581354, 0.402526,-0.581354, 0.402526"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.457274, 0.000000, 0.000000, 0.889326"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.456895, 0.000000,-0.000000, 0.889521"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.985320,-0.000000,-0.000000, 0.170717"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.794269, 0.002744,-0.019936, 0.607233"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.578507, 0.406608,-0.578507, 0.406608"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.471601, 0.000000, 0.000000, 0.881812"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.451392, 0.000000,-0.000000, 0.892326"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.986323,-0.000000,-0.000000, 0.164824"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.777907, 0.002215,-0.020001, 0.628057"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.575444, 0.410931,-0.575444, 0.410931"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.486832, 0.000000, 0.000000, 0.873496"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.445517, 0.000000,-0.000000, 0.895274"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.987344,-0.000000,-0.000000, 0.158595"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.759679, 0.001643,-0.020056, 0.649987"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.572168, 0.415480,-0.572168, 0.415480"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.502915, 0.000000, 0.000000, 0.864336"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.439278, 0.000000,-0.000000, 0.898351"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.988372,-0.000000,-0.000000, 0.152054"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.739500, 0.001031,-0.020097, 0.672855"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.568681, 0.420240,-0.568681, 0.420241"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.519784, 0.000000, 0.000000, 0.854298"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.432688, 0.000000,-0.000000, 0.901544"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.989399,-0.000000,-0.000000, 0.145224"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.717309, 0.000379,-0.020120, 0.696465"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.564987, 0.425194,-0.564987, 0.425194"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.537363, 0.000000, 0.000000, 0.843351"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.425763, 0.000000,-0.000000, 0.904835"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.990414,-0.000000,-0.000000, 0.138134"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.693077,-0.000309,-0.020121, 0.720583"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.561092, 0.430321,-0.561092, 0.430321"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.555562, 0.000000, 0.000000, 0.831475"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.418519, 0.000000,-0.000000, 0.908208"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.991407,-0.000000,-0.000000, 0.130814"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.666818,-0.001030,-0.020097, 0.744949"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.557003, 0.435600,-0.557003, 0.435601"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.574282, 0.000000, 0.000000, 0.818658"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.410976, 0.000000,-0.000000, 0.911646"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.992370,-0.000000,-0.000000, 0.123298"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.638596,-0.001778,-0.020045, 0.769279"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.552729, 0.441011,-0.552729, 0.441011"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.593410, 0.000000, 0.000000, 0.804901"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.403158, 0.000000,-0.000000, 0.915130"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.993293,-0.000000,-0.000000, 0.115620"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.608529,-0.002548,-0.019962, 0.793276"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.548281, 0.446528,-0.548281, 0.446528"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.612827, 0.000000, 0.000000, 0.790217"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.395088, 0.000000,-0.000000, 0.918643"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.994171,-0.000000,-0.000000, 0.107818"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492182"
+        quaternion = " 0.576793,-0.003332,-0.019846, 0.816642"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.543672, 0.452129,-0.543672, 0.452129"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.632408, 0.000000, 0.000000, 0.774636"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.386793, 0.000000,-0.000000, 0.922166"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.994995,-0.000000,-0.000000, 0.099929"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.543620,-0.004125,-0.019696, 0.839090"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.538916, 0.457788,-0.538916, 0.457788"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.652021, 0.000000, 0.000000, 0.758201"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.378302, 0.000000,-0.000000, 0.925682"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.995759,-0.000000,-0.000000, 0.091995"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.509293,-0.004917,-0.019514, 0.860358"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.534027, 0.463481,-0.534027, 0.463481"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.671535, 0.000000, 0.000000, 0.740973"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.369645, 0.000000,-0.000000, 0.929173"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.996461,-0.000000,-0.000000, 0.084055"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.474134,-0.005701,-0.019299, 0.880223"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.529024, 0.469184,-0.529024, 0.469184"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.690822, 0.000000, 0.000000, 0.723025"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.360853, 0.000000,-0.000000, 0.932623"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.997096,-0.000000,-0.000000, 0.076150"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492178"
+        quaternion = " 0.438497,-0.006469,-0.019055, 0.898508"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.523924, 0.474872,-0.523924, 0.474872"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.709758, 0.000000, 0.000000, 0.704446"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.351958, 0.000000,-0.000000, 0.936016"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.997664,-0.000000,-0.000000, 0.068319"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.402745,-0.007215,-0.018786, 0.915091"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.518746, 0.480523,-0.518746, 0.480523"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.728227, 0.000000, 0.000000, 0.685336"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.342993, 0.000000,-0.000000, 0.939338"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.998162,-0.000000,-0.000000, 0.060602"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.367244,-0.007932,-0.018494, 0.929907"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.513511, 0.486114,-0.513510, 0.486114"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.746126, 0.000000, 0.000000, 0.665805"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.333991, 0.000000,-0.000000, 0.942576"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.998593,-0.000000,-0.000000, 0.053037"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.332338,-0.008616,-0.018186, 0.942946"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.508237, 0.491625,-0.508237, 0.491625"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.763364, 0.000000, 0.000000, 0.645969"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.324983, 0.000000,-0.000000, 0.945720"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.998957,-0.000000,-0.000000, 0.045658"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.298345,-0.009262,-0.017865, 0.954246"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.502945, 0.497037,-0.502945, 0.497037"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.779865, 0.000000, 0.000000, 0.625948"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.316002, 0.000000,-0.000000, 0.948758"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999259,-0.000000,-0.000000, 0.038501"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.265544,-0.009867,-0.017538, 0.963889"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.497656, 0.502333,-0.497656, 0.502333"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.795569, 0.000000, 0.000000, 0.605863"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.307078, 0.000000,-0.000000, 0.951684"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.999501,-0.000000,-0.000000, 0.031601"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.234171,-0.010430,-0.017209, 0.971987"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.492389, 0.507496,-0.492389, 0.507497"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.810432, 0.000000, 0.000000, 0.585832"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.298240, 0.000000,-0.000000, 0.954491"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999688,-0.000000,-0.000000, 0.024980"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.204415,-0.010951,-0.016883, 0.978678"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.487164, 0.512515,-0.487164, 0.512515"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.824425, 0.000000, 0.000000, 0.565971"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.289516, 0.000000,-0.000000, 0.957173"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999826,-0.000000,-0.000000, 0.018670"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492178"
+        quaternion = " 0.176422,-0.011428,-0.016564, 0.984109"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.481998, 0.517376,-0.481998, 0.517376"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.837534, 0.000000, 0.000000, 0.546385"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.280931, 0.000000,-0.000000, 0.959728"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.999919,-0.000000,-0.000000, 0.012693"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.150294,-0.011862,-0.016256, 0.988437"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.476909, 0.522071,-0.476909, 0.522071"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.849758, 0.000000, 0.000000, 0.527172"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.272509, 0.000000,-0.000000, 0.962153"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.999975,-0.000000,-0.000000, 0.007071"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.126098,-0.012256,-0.015961, 0.991814"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.471914, 0.526591,-0.471913, 0.526591"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.861108, 0.000000, 0.000000, 0.508422"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.264272, 0.000000,-0.000000, 0.964448"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.999998,-0.000000,-0.000000, 0.001820"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492178"
+        quaternion = " 0.103869,-0.012610,-0.015683, 0.994387"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.467026, 0.530930,-0.467026, 0.530930"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.871604, 0.000000, 0.000000, 0.490211"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.256239, 0.000000,-0.000000, 0.966613"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999995,-0.000000,-0.000000,-0.003044"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492182"
+        quaternion = " 0.083614,-0.012927,-0.015423, 0.996295"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.462261, 0.535084,-0.462261, 0.535084"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.881274, 0.000000, 0.000000, 0.472607"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.248428, 0.000000,-0.000000, 0.968650"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999972,-0.000000,-0.000000,-0.007508"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.065324,-0.013207,-0.015183, 0.997661"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.457631, 0.539049,-0.457631, 0.539049"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.890152, 0.000000, 0.000000, 0.455663"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.240853, 0.000000,-0.000000, 0.970562"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = "-0.999933, 0.000000, 0.000000, 0.011560"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.048971,-0.013454,-0.014965, 0.998598"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.453146, 0.542824,-0.453146, 0.542825"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.898278, 0.000000, 0.000000, 0.439427"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.233529, 0.000000,-0.000000, 0.972350"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999885, 0.000000, 0.000000, 0.015195"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.034519,-0.013669,-0.014768, 0.999201"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.448817, 0.546409,-0.448817, 0.546409"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.905694, 0.000000, 0.000000, 0.423932"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.226465, 0.000000,-0.000000, 0.974019"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = "-0.999831, 0.000000, 0.000000, 0.018407"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.021924,-0.013854,-0.014595, 0.999557"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.444652, 0.549804,-0.444652, 0.549804"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.912442, 0.000000, 0.000000, 0.409206"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.219673, 0.000000,-0.000000, 0.975574"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999775, 0.000000, 0.000000, 0.021188"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.011142,-0.014011,-0.014445, 0.999735"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.440659, 0.553010,-0.440659, 0.553010"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.918566, 0.000000, 0.000000, 0.395267"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.213158, 0.000000,-0.000000, 0.977018"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999723, 0.000000, 0.000000, 0.023541"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.002125,-0.014141,-0.014318, 0.999795"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.436843, 0.556029,-0.436843, 0.556029"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.924110, 0.000000, 0.000000, 0.382125"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.206927, 0.000000,-0.000000, 0.978356"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999676, 0.000000, 0.000000, 0.025461"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = "-0.005171,-0.014245,-0.014214, 0.999784"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.433209, 0.558865,-0.433209, 0.558865"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.929117, 0.000000, 0.000000, 0.369787"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.200984, 0.000000,-0.000000, 0.979594"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = "-0.999637, 0.000000, 0.000000, 0.026951"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = "-0.010789,-0.014324,-0.014134, 0.999739"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.429762, 0.561520,-0.429762, 0.561520"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.933625, 0.000000, 0.000000, 0.358251"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.195333, 0.000000,-0.000000, 0.980737"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = "-0.999608, 0.000000, 0.000000, 0.028009"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = "-0.014766,-0.014381,-0.014077, 0.999688"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.426504, 0.563998,-0.426504, 0.563998"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.937675, 0.000000, 0.000000, 0.347514"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.189976, 0.000000,-0.000000, 0.981789"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = "-0.999590, 0.000000, 0.000000, 0.028644"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = "-0.017133,-0.014414,-0.014043, 0.999651"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.423438, 0.566304,-0.423438, 0.566304"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.941301,-0.000000, 0.000000, 0.337568"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.184912, 0.000000,-0.000000, 0.982755"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = "-0.999584, 0.000000, 0.000000, 0.028854"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.017917,-0.014425,-0.014031, 0.999637"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.420463, 0.568516,-0.420463, 0.568517"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.944668, 0.000000, 0.000000, 0.328029"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.179976, 0.000000,-0.000000, 0.983671"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = "-0.999587, 0.000000, 0.000000, 0.028732"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.017812,-0.014423,-0.014033, 0.999639"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.417476, 0.570714,-0.417476, 0.570714"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.947917, 0.000000, 0.000000, 0.318518"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.175000, 0.000000,-0.000000, 0.984569"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999598, 0.000000, 0.000000, 0.028364"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.017494,-0.014419,-0.014037, 0.999644"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.414479, 0.572893,-0.414479, 0.572894"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.951050, 0.000000, 0.000000, 0.309036"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.169987, 0.000000,-0.000000, 0.985446"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = "-0.999615, 0.000000, 0.000000, 0.027748"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.016962,-0.014411,-0.014045, 0.999654"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.411475, 0.575055,-0.411475, 0.575055"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319258"
+        quaternion = " 0.954070, 0.000000, 0.000000, 0.299583"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.164940, 0.000000,-0.000000, 0.986304"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999639, 0.000000, 0.000000, 0.026883"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.016215,-0.014401,-0.014056, 0.999666"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.408465, 0.577197,-0.408465, 0.577197"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.956978, 0.000000, 0.000000, 0.290159"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.159863, 0.000000,-0.000000, 0.987139"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = "-0.999668, 0.000000, 0.000000, 0.025768"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = "-0.015252,-0.014387,-0.014070, 0.999681"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.405451, 0.579318,-0.405451, 0.579318"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.959776, 0.000000, 0.000000, 0.280767"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.154759, 0.000000,-0.000000, 0.987952"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = "-0.999702, 0.000000, 0.000000, 0.024403"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = "-0.014073,-0.014371,-0.014087, 0.999698"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.402435, 0.581417,-0.402435, 0.581417"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.962465, 0.000000, 0.000000, 0.271407"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.149633, 0.000000,-0.000000, 0.988742"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = "-0.999740, 0.000000, 0.000000, 0.022789"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.012679,-0.014351,-0.014107, 0.999717"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.399422, 0.583491,-0.399422, 0.583491"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.965045, 0.000000, 0.000000, 0.262083"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.144489, 0.000000,-0.000000, 0.989506"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = "-0.999781, 0.000000, 0.000000, 0.020926"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = "-0.011071,-0.014328,-0.014130, 0.999736"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.396413, 0.585540,-0.396413, 0.585540"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.967519, 0.000000, 0.000000, 0.252798"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.139332, 0.000000,-0.000000, 0.990246"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999823, 0.000000, 0.000000, 0.018818"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492178"
+        quaternion = "-0.009252,-0.014303,-0.014156, 0.999755"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.393411, 0.587561,-0.393411, 0.587561"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.969887, 0.000000, 0.000000, 0.243555"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.134169, 0.000000,-0.000000, 0.990959"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = "-0.999864, 0.000000, 0.000000, 0.016469"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = "-0.007225,-0.014274,-0.014185, 0.999771"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.390421, 0.589552,-0.390421, 0.589552"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.972150, 0.000000, 0.000000, 0.234359"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.129005, 0.000000,-0.000000, 0.991644"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = "-0.999904, 0.000000, 0.000000, 0.013885"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = "-0.004994,-0.014242,-0.014217, 0.999785"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.387446, 0.591511,-0.387446, 0.591511"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.974309, 0.000000, 0.000000, 0.225217"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.123848, 0.000000,-0.000000, 0.992301"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = "-0.999939, 0.000000, 0.000000, 0.011068"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = "-0.002564,-0.014208,-0.014251, 0.999794"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.384489, 0.593437,-0.384489, 0.593437"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.976364, 0.000000, 0.000000, 0.216133"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.118703, 0.000000,-0.000000, 0.992930"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.999968,-0.000000,-0.000000,-0.008035"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492178"
+        quaternion = " 0.000056,-0.014170,-0.014288, 0.999798"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.381556, 0.595328,-0.381556, 0.595328"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.978316, 0.000000, 0.000000, 0.207118"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.113581, 0.000000,-0.000000, 0.993529"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999989,-0.000000,-0.000000,-0.004784"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.002861,-0.014130,-0.014328, 0.999793"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.378650, 0.597180,-0.378650, 0.597180"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.980166, 0.000000, 0.000000, 0.198178"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.108488, 0.000000,-0.000000, 0.994098"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999999,-0.000000,-0.000000,-0.001331"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.005841,-0.014087,-0.014370, 0.999780"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.375777, 0.598992,-0.375776, 0.598993"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.981915, 0.000000, 0.000000, 0.189323"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.103434, 0.000000,-0.000000, 0.994636"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999997,-0.000000,-0.000000, 0.002313"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.008984,-0.014042,-0.014414, 0.999757"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.372940, 0.600763,-0.372940, 0.600763"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.983563, 0.000000, 0.000000, 0.180564"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.098428, 0.000000,-0.000000, 0.995144"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999981,-0.000000,-0.000000, 0.006134"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.012280,-0.013995,-0.014461, 0.999722"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.370145, 0.602489,-0.370145, 0.602489"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.985113, 0.000000, 0.000000, 0.171911"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.093479, 0.000000,-0.000000, 0.995621"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999949,-0.000000,-0.000000, 0.010113"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.015716,-0.013945,-0.014509, 0.999674"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.367398, 0.604168,-0.367398, 0.604168"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.986564, 0.000000, 0.000000, 0.163376"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.088597, 0.000000,-0.000000, 0.996068"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.999899,-0.000000,-0.000000, 0.014244"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.019276,-0.013893,-0.014558, 0.999612"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.364703, 0.605799,-0.364702, 0.605799"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.987919, 0.000000, 0.000000, 0.154972"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.083793, 0.000000,-0.000000, 0.996483"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.999829,-0.000000,-0.000000, 0.018499"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.022946,-0.013839,-0.014609, 0.999534"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.362065, 0.607379,-0.362065, 0.607379"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.989179, 0.000000, 0.000000, 0.146712"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.079075, 0.000000,-0.000000, 0.996869"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319260"
+        quaternion = " 0.999739,-0.000000,-0.000000, 0.022862"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492178"
+        quaternion = " 0.026709,-0.013784,-0.014661, 0.999441"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.359489, 0.608907,-0.359489, 0.608907"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.990347, 0.000000, 0.000000, 0.138611"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.074455, 0.000000,-0.000000, 0.997225"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999627,-0.000000,-0.000000, 0.027313"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.030547,-0.013728,-0.014714, 0.999331"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.356981, 0.610381,-0.356981, 0.610381"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.991424, 0.000000, 0.000000, 0.130681"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.069941, 0.000000,-0.000000, 0.997551"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.999493,-0.000000,-0.000000, 0.031830"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.034443,-0.013670,-0.014767, 0.999204"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.354545, 0.611799,-0.354545, 0.611799"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.992414, 0.000000, 0.000000, 0.122938"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.065545, 0.000000,-0.000000, 0.997850"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.999338,-0.000000,-0.000000, 0.036392"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492179"
+        quaternion = " 0.038376,-0.013612,-0.014821, 0.999061"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.352186, 0.613160,-0.352186, 0.613160"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.993320, 0.000000, 0.000000, 0.115396"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.061275, 0.000000,-0.000000, 0.998121"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319259"
+        quaternion = " 0.999160,-0.000000,-0.000000, 0.040975"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.042329,-0.013553,-0.014875, 0.998901"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.349908, 0.614462,-0.349908, 0.614463"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.994143, 0.000000, 0.000000, 0.108068"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.057139, 0.000000,-0.000000, 0.998366"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.998962,-0.000000,-0.000000, 0.045558"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.046280,-0.013495,-0.014928, 0.998726"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.347716, 0.615706,-0.347715, 0.615706"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.994889, 0.000000, 0.000000, 0.100971"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.053147, 0.000000,-0.000000, 0.998587"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.998743,-0.000000,-0.000000, 0.050117"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.050212,-0.013436,-0.014981, 0.998536"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.345612, 0.616889,-0.345612, 0.616889"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.995561, 0.000000, 0.000000, 0.094116"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.049306, 0.000000,-0.000000, 0.998784"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.998507,-0.000000,-0.000000, 0.054631"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492181"
+        quaternion = " 0.054104,-0.013377,-0.015034, 0.998333"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.343600, 0.618012,-0.343600, 0.618012"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.996163, 0.000000, 0.000000, 0.087517"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685212"
+        quaternion = " 0.045624, 0.000000,-0.000000, 0.998959"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.998254,-0.000000,-0.000000, 0.059076"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.057938,-0.013319,-0.015085, 0.998117"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.341683, 0.619074,-0.341683, 0.619074"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.996699, 0.000000, 0.000000, 0.081185"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.042105, 0.000000,-0.000000, 0.999113"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.997986,-0.000000,-0.000000, 0.063432"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.061695,-0.013262,-0.015135, 0.997892"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.339864, 0.620075,-0.339863, 0.620075"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.997174, 0.000000, 0.000000, 0.075132"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.038756, 0.000000,-0.000000, 0.999249"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.997707,-0.000000,-0.000000, 0.067678"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.065358,-0.013207,-0.015183, 0.997659"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.338143, 0.621015,-0.338143, 0.621015"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.997591, 0.000000, 0.000000, 0.069369"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.035581, 0.000000,-0.000000, 0.999367"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.997419,-0.000000,-0.000000, 0.071796"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.068911,-0.013153,-0.015230, 0.997420"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.336523, 0.621894,-0.336523, 0.621894"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.997956, 0.000000, 0.000000, 0.063904"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.032585, 0.000000,-0.000000, 0.999469"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.997125,-0.000000,-0.000000, 0.075769"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.072339,-0.013100,-0.015276, 0.997177"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.335005, 0.622713,-0.335005, 0.622713"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.998273, 0.000000, 0.000000, 0.058745"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.029769, 0.000000,-0.000000, 0.999557"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.996829,-0.000000,-0.000000, 0.079578"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.075626,-0.013050,-0.015319, 0.996933"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.333589, 0.623473,-0.333589, 0.623473"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.998546, 0.000000, 0.000000, 0.053898"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.027135, 0.000000,-0.000000, 0.999632"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.996532,-0.000000,-0.000000, 0.083209"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.078760,-0.013002,-0.015360, 0.996691"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.332275, 0.624174,-0.332275, 0.624174"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.998781, 0.000000, 0.000000, 0.049371"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.024686, 0.000000,-0.000000, 0.999695"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.996239,-0.000000,-0.000000, 0.086650"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.081730,-0.012956,-0.015398, 0.996451"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.331063, 0.624818,-0.331063, 0.624818"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.998980, 0.000000, 0.000000, 0.045164"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.022421, 0.000000,-0.000000, 0.999749"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.995952,-0.000000,-0.000000, 0.089888"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.084525,-0.012912,-0.015435, 0.996218"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.329952, 0.625405,-0.329952, 0.625405"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999147, 0.000000, 0.000000, 0.041283"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.020340, 0.000000,-0.000000, 0.999793"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.995674,-0.000000,-0.000000, 0.092912"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.087136,-0.012872,-0.015468, 0.995993"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.328942, 0.625937,-0.328941, 0.625937"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999288, 0.000000, 0.000000, 0.037728"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.018442, 0.000000,-0.000000, 0.999830"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.995409,-0.000000,-0.000000, 0.095715"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492178"
+        quaternion = " 0.089556,-0.012834,-0.015500, 0.995779"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.328030, 0.626415,-0.328030, 0.626415"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.999405, 0.000000, 0.000000, 0.034501"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.016726, 0.000000,-0.000000, 0.999860"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.995158,-0.000000,-0.000000, 0.098288"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492181"
+        quaternion = " 0.091778,-0.012800,-0.015528, 0.995576"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.327216, 0.626841,-0.327216, 0.626841"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999501, 0.000000, 0.000000, 0.031600"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.015190, 0.000000,-0.000000, 0.999885"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.994925,-0.000000,-0.000000, 0.100624"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.093797,-0.012768,-0.015554, 0.995388"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.326497, 0.627216,-0.326497, 0.627216"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999579, 0.000000, 0.000000, 0.029025"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.013830, 0.000000,-0.000000, 0.999904"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.994710,-0.000000,-0.000000, 0.102721"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492182"
+        quaternion = " 0.095608,-0.012740,-0.015577, 0.995216"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.325872, 0.627541,-0.325872, 0.627541"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999642, 0.000000, 0.000000, 0.026771"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.012645, 0.000000,-0.000000, 0.999920"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.994517,-0.000000,-0.000000, 0.104574"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013555,13.492179"
+        quaternion = " 0.097208,-0.012715,-0.015598, 0.995061"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.325339, 0.627817,-0.325339, 0.627817"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999692, 0.000000, 0.000000, 0.024835"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685211"
+        quaternion = " 0.011630, 0.000000,-0.000000, 0.999932"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.994347,-0.000000,-0.000000, 0.106180"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.098595,-0.012693,-0.015615, 0.994924"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324894, 0.628048,-0.324894, 0.628048"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999731, 0.000000, 0.000000, 0.023212"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.010783, 0.000000,-0.000000, 0.999942"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.994201,-0.000000,-0.000000, 0.107538"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.099769,-0.012675,-0.015630, 0.994807"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324536, 0.628233,-0.324536, 0.628233"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319257"
+        quaternion = " 0.999760, 0.000000, 0.000000, 0.021900"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685211"
+        quaternion = " 0.010098, 0.000000,-0.000000, 0.999949"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319257"
+        quaternion = " 0.994080,-0.000000,-0.000000, 0.108647"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,13.492180"
+        quaternion = " 0.100727,-0.012660,-0.015643, 0.994711"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324262, 0.628374,-0.324262, 0.628374"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.999782, 0.000000, 0.000000, 0.020892"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.009574, 0.000000,-0.000000, 0.999954"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319258"
+        quaternion = " 0.993986,-0.000000,-0.000000, 0.109507"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492179"
+        quaternion = " 0.101470,-0.012648,-0.015652, 0.994635"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.324070, 0.628473,-0.324070, 0.628473"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999796, 0.000000, 0.000000, 0.020179"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 6.685210"
+        quaternion = " 0.009204, 0.000000,-0.000000, 0.999958"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319259"
+        quaternion = " 0.993918,-0.000000,-0.000000, 0.110119"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.101999,-0.012640,-0.015659, 0.994581"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.323957, 0.628532,-0.323956, 0.628532"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 3.319257"
+        quaternion = " 0.999805, 0.000000, 0.000000, 0.019759"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685210"
+        quaternion = " 0.008986, 0.000000,-0.000000, 0.999960"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557,10.319258"
+        quaternion = " 0.993878,-0.000000,-0.000000, 0.110485"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492178"
+        quaternion = " 0.102316,-0.012635,-0.015663, 0.994548"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+    <frame>
+      <joint
+        position = "-7.010465, 0.013556, 0.149025"
+        quaternion = " 0.323919, 0.628551,-0.323919, 0.628551"
+        name = "joint_Bone">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556, 3.319258"
+        quaternion = " 0.999808,-0.000000, 0.000000, 0.019620"
+        name = "joint_Bone.001">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013557, 6.685212"
+        quaternion = " 0.008914, 0.000000, 0.000000, 0.999960"
+        name = "joint_Bone.002">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,10.319257"
+        quaternion = " 0.993864,-0.000000,-0.000000, 0.110607"
+        name = "joint_Bone.003">
+      </joint>
+      <joint
+        position = "-0.010465, 0.013556,13.492180"
+        quaternion = " 0.102421,-0.012633,-0.015664, 0.994538"
+        name = "joint_Bone.004">
+      </joint>
+    </frame>
+  </action>
+</p3dfile>

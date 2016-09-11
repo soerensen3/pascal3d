@@ -13,7 +13,7 @@ input: {name="numJoints", type="int"}
 	void getJointTransform( const in float i, out vec4 quat, out vec3 trans ) {
 		float dx = 1.0 / float( jointTexWidth );
 		trans = texture2D( jointTex, vec2( dx * ( i*2 + 0.5 ), time )).xyz;
-		quat = texture2D( jointTex, vec2( dx * ( i*2 + 1.5 ), time ));
+		quat = normalize(texture2D( jointTex, vec2( dx * ( i*2 + 1.5 ), time )));
 	}
 ```
 
@@ -38,7 +38,7 @@ vec3 transformPosition(vec3 v, vec4 quat, vec3 trans)
 void getTransform( out vec4 quat, out vec3 trans )
 {
   //ivec4 jointID = int( fjointID );
-  float jointWeight3 = 1-jointWeight[ 0 ] - jointWeight[ 1 ] - jointWeight[ 2 ];
+  float jointWeight3 = 1-(jointWeight[ 0 ] + jointWeight[ 1 ] + jointWeight[ 2 ]);
   /*quat = jointQuat[ int( fjointID[ 0 ])] * jointWeight[ 0 ]
        + jointQuat[ int( fjointID[ 1 ])] * jointWeight[ 1 ]
        + jointQuat[ int( fjointID[ 2 ])] * jointWeight[ 2 ]
@@ -47,7 +47,21 @@ void getTransform( out vec4 quat, out vec3 trans )
         + jointPos[ int( fjointID[ 1 ])] * jointWeight[ 1 ]
         + jointPos[ int( fjointID[ 2 ])] * jointWeight[ 2 ]
         + jointPos[ int( fjointID[ 3 ])] * jointWeight3;*/
-  getJointTransform( int( fjointID[ 0 ]), quat, trans );
+  vec4 quat0, quat1, quat2, quat3;
+  vec3 trans0, trans1, trans2, trans3;  
+  getJointTransform( floor( fjointID[ 0 ]), quat0, trans0 );
+  getJointTransform( floor( fjointID[ 1 ]), quat1, trans1 );
+  getJointTransform( floor( fjointID[ 2 ]), quat2, trans2 );
+  getJointTransform( floor( fjointID[ 3 ]), quat3, trans3 );
+  quat= quat0 * jointWeight[ 0 ]
+      + quat1 * jointWeight[ 1 ]
+      + quat2 * jointWeight[ 2 ]
+      + quat3 * jointWeight3;
+  quat= normalize( quat );
+  trans= trans0 * jointWeight[ 0 ]
+       + trans1 * jointWeight[ 1 ]
+       + trans2 * jointWeight[ 2 ]
+       + trans3 * jointWeight3;
 }
 ```
 
@@ -59,9 +73,8 @@ void getTransform( out vec4 quat, out vec3 trans )
   vTangent.xyz = transformNormal( vTangent.xyz, quat );
   vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
   vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
-  vColor.xyz=trans;
-  vjointWeight = jointWeight;
-  vjointID = fjointID;
+  //vjointWeight = jointWeight;
+  //vjointID = fjointID;
 ```
 ```{restrict="fshader,declaration"}
 IN vec4 vjointWeight;
@@ -72,8 +85,5 @@ IN vec4 vjointID;
 
 ```
 ```{restrict="fshader,main"}
-  //vec4 quat;
-  //vec3 trans;
-  //getJointTransform( int( vjointID[ 0 ]), quat, trans );
-  Color.xyz = vec3( 1, 0, 0 );
+
 ```

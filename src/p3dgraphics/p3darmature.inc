@@ -362,8 +362,12 @@ begin
       //for i:= 0 to quatList.Count - 1 do
       //  WriteLn( quatList[ i ].ToString());
       //quatList.Free;}
+      i:= Material.Maps.Count;
+      glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
+      glBindTexture( GL_TEXTURE_2D, Armature.CurrentAction.JointTex.GLTexture ); cle( Self );
+
       decl:= Material.Shader.Uniforms.Names[ 'jointTex' ];
-      decl.AsInt:= Armature.CurrentAction.JointTex.GLTexture;
+      decl.AsInt:= i;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexWidth' ];
       decl.AsInt:= Armature.CurrentAction.JointTex.Width;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexHeight' ];
@@ -442,10 +446,10 @@ begin
   if ( Assigned( JointTex )) then
     JointTex.Free;
   Buffer:= TVec4List.Create;
-  w:= getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
-  h:= getNextPower2( Frames.Count );
-  for i:= 0 to w div 2 - 1 do //TODO: FINISH
-    for j:= 0 to h - 1 do
+  w:= Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count;//getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
+  h:= Frames.Count;//getNextPower2( Frames.Count );
+  for i:= 0 to h - 1 do
+    for j:= 0 to w div 2 - 1 do
       if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
         Buffer.Add([ vec4( 0 ), vec4( 0 )])
       else

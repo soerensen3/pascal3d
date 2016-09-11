@@ -399,24 +399,14 @@ class P3DExporter( bpy.types.Operator ):
         vgrps = {}
         for vgroup in vertex.groups:
             vgrps[ vgroup.group ] = vgroup.weight
-        grpssrt = sorted( vgrps, key=vgrps.get ) #sort them by influence
+        from operator import itemgetter
+        srt = sorted( vgrps.items(), key=itemgetter( 1 ), reverse=True )
 
-        if ( len( vgrps ) > 4 ): # take the four most influential
-            i = 0
-            tmpvgrps = {}
-            for i in range( 0, 4 ):
-                tmpvgrps[ grpssrt[ i ]]=vgrps[ grpssrt[ i ]]
-                i+= 1       
-            vgrps = sorted( tmpvgrps.items())
-        else:
-            vgrps = sorted( vgrps.items())
-        i = 0
         vec = [ 0, 0, 0, 0 ] # make sure the length of the vecs is always 4
         idx = [ 0, 0, 0, 0 ] # fill with zero indices, weight will be zero if idx not used
-        for i in range( 0, len( vgrps )):
-            vec[ i ] = vgrps[ i ][ 1 ]
-            idx[ i ] = vgrps[ i ][ 0 ]
-            i += 1
+        for i in range( 0, min( 4, len( vgrps ))):
+            vec[ i ] = srt[ i ][ 1 ]
+            idx[ i ] = srt[ i ][ 0 ]
         vec = Vector( vec ).normalized()
         #self.report({ 'INFO' }, str( idx ))
         #self.report({ 'INFO' }, str( vec ))
@@ -660,8 +650,80 @@ class P3DExporter( bpy.types.Operator ):
     self.file.pop()
 ##--------------------------------------------------------------------------------
 
-  def get_pose_bone_matrix( self, pose_bone ):
-    bone_matrix = pose_bone.matrix_channel
+  '''
+    def get_pose_bone_matrix( self, arm, pose_bone ):
+      #import mathutils
+      #bone_space = mathutils.Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
+      #mat = arm.convert_space(pose_bone, pose_bone.matrix_basis, 'POSE', 'WORLD') * bone_space
+      #return mat
+      
+      bone_matrix = pose_bone.matrix_channel
+      if ( not ( pose_bone.parent is None )):
+          parent_matrix = pose_bone.parent.matrix_channel
+          bone_matrix = parent_matrix.inverted() * bone_matrix
+      return bone_matrix
+  ##EXPORTING ARMATURE -------------------------------------------------------------
+
+  ##EXPORTING JOINT ----------------------------------------------------------------
+
+    def ExportPoseJoint( self, armature, pose_bone ):
+      if ( self.Verbose ):
+        self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
+
+      el = self.file.push( 'joint' )
+      el.attrib[ 'name' ] = 'joint_' + pose_bone.name 
+      
+      matrix = armature.matrix_local * self.get_pose_bone_matrix( armature, pose_bone )
+      position, quat, scale = matrix.decompose()
+      el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+      el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+
+      self.file.pop()
+  ##--------------------------------------------------------------------------------
+  
+  
+  OR
+  
+  def get_pose_bone_matrix( self, arm, pose_bone ):
+    #import mathutils
+    #bone_space = mathutils.Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
+    #mat = arm.convert_space(pose_bone, pose_bone.matrix_basis, 'POSE', 'WORLD') * bone_space
+    #return mat
+    
+    bone_matrix = pose_bone.matrix_basis
+    if ( not ( pose_bone.parent is None )):
+        parent_matrix = pose_bone.parent.matrix_channel
+        bone_matrix = parent_matrix.inverted() * bone_matrix
+    return bone_matrix
+  ##EXPORTING ARMATURE -------------------------------------------------------------
+
+  ##EXPORTING JOINT ----------------------------------------------------------------
+
+    def ExportPoseJoint( self, armature, pose_bone ):
+      if ( self.Verbose ):
+        self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
+
+      el = self.file.push( 'joint' )
+      el.attrib[ 'name' ] = 'joint_' + pose_bone.name 
+      
+      matrix = armature.matrix_local * self.get_pose_bone_matrix( armature, pose_bone )
+      position, quat, scale = matrix.decompose()
+      el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+      el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+
+      self.file.pop()
+  ##--------------------------------------------------------------------------------  
+  '''
+  
+
+
+  def get_pose_bone_matrix( self, arm, pose_bone ):
+    #import mathutils
+    #bone_space = mathutils.Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
+    #mat = arm.convert_space(pose_bone, pose_bone.matrix_basis, 'POSE', 'WORLD') * bone_space
+    #return mat
+    
+    bone_matrix = pose_bone.matrix_basis
     if ( not ( pose_bone.parent is None )):
         parent_matrix = pose_bone.parent.matrix_channel
         bone_matrix = parent_matrix.inverted() * bone_matrix
@@ -677,7 +739,7 @@ class P3DExporter( bpy.types.Operator ):
     el = self.file.push( 'joint' )
     el.attrib[ 'name' ] = 'joint_' + pose_bone.name 
     
-    matrix = armature.matrix_local * self.get_pose_bone_matrix( pose_bone )
+    matrix = self.get_pose_bone_matrix( armature, pose_bone ) * armature.matrix_local.inverted()
     position, quat, scale = matrix.decompose()
     el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
     el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
