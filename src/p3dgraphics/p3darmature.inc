@@ -450,10 +450,12 @@ begin
   h:= Frames.Count;//getNextPower2( Frames.Count );
   for i:= 0 to h - 1 do
     for j:= 0 to w div 2 - 1 do
-      if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
+      //if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
+      if ( j <> 10 ) then
         Buffer.Add([ vec4( 0 ), vec4( 0 )])
       else
-        Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), Frames[ i ].Rotations[ j ]]);
+        Buffer.Add([ vec4( 0, 0, 0, 1 ), quatRotation( vec3_Axis_PZ, i * 5 )]);
+        //Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), Frames[ i ].Rotations[ j ]]);
   JointTex:= TP3DTexture.CreateFromBuffer( w, h, 4, Buffer.Ptr );
   P3DData.Textures.Add( JointTex );
   Buffer.Free;

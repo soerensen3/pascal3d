@@ -724,11 +724,18 @@ class P3DExporter( bpy.types.Operator ):
     #mat = arm.convert_space(pose_bone, pose_bone.matrix_basis, 'POSE', 'WORLD') * bone_space
     #return mat
     
+    '''bone_matrix = pose_bone.matrix
+    if ( not ( pose_bone.parent is None )):
+        parent_matrix = pose_bone.parent.matrix
+        bone_matrix = parent_matrix.inverted() * bone_matrix
+    bone_inv = pose_bone.bone.matrix_local.inverted()
+    return bone_matrix * bone_inv'''
     bone_matrix = pose_bone.matrix_basis
     if ( not ( pose_bone.parent is None )):
-        parent_matrix = pose_bone.parent.matrix_channel
+        parent_matrix = pose_bone.parent.matrix
         bone_matrix = parent_matrix.inverted() * bone_matrix
     return bone_matrix
+
 ##EXPORTING ARMATURE -------------------------------------------------------------
 
 ##EXPORTING JOINT ----------------------------------------------------------------
@@ -740,8 +747,9 @@ class P3DExporter( bpy.types.Operator ):
     el = self.file.push( 'joint' )
     el.attrib[ 'name' ] = 'joint_' + pose_bone.name 
     
-    matrix = self.get_pose_bone_matrix( armature, pose_bone ) * armature.matrix_local.inverted()
+    matrix = armature.matrix_world.inverted() * self.get_pose_bone_matrix( armature, pose_bone )
     position, quat, scale = matrix.decompose()
+    quat = quat.normalized()
     el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
     el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
 

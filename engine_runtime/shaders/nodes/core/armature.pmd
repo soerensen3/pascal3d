@@ -77,7 +77,7 @@ void getTransform( out vec4 quat, out vec3 trans )
   //vjointID = fjointID;
 ```
 ```{restrict="fshader,declaration"}
-IN vec4 vjointWeight;
+IN vec3 vjointWeight;
 IN vec4 vjointID;
 //uniform vec3 jointPos[ $numJoints$ ];
 //uniform vec4 jointQuat[ $numJoints$ ];
