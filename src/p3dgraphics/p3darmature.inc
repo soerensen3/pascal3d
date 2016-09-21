@@ -48,17 +48,17 @@ type
     public
       procedure UpdateJointTex;
 
+      constructor Create(const AData: TP3DData=nil);
+      destructor Destroy; override;
+
+      procedure LoadFromDOM(ADOMNode: TDOMElement); override;
+      procedure UpdateFrameSample;
+
     published
-     constructor Create(const AData: TP3DData=nil);
-     destructor Destroy; override;
-
-     procedure LoadFromDOM(ADOMNode: TDOMElement); override;
-     procedure UpdateFrameSample;
-
-     property Frames: TP3DActionFrameList read FFrames write FFrames;
-     property FrameSample: TP3DActionFrame read FFrameSample write FFrameSample;
-     property CurrentFrame: Float read FCurrentFrame write FCurrentFrame;
-     property JointTex: TP3DTexture read FJointTex write FJointTex;
+      property Frames: TP3DActionFrameList read FFrames write FFrames;
+      property FrameSample: TP3DActionFrame read FFrameSample write FFrameSample;
+      property CurrentFrame: Float read FCurrentFrame write FCurrentFrame;
+      property JointTex: TP3DTexture read FJointTex write FJointTex;
   end;
 
   TP3DArmatureActionList = specialize gP3DCustomDatablockList < TP3DArmatureAction >;
@@ -294,9 +294,6 @@ var
   ActIdx: Integer;
 begin
   Name:= ADOMNode.GetAttribute( 'name' );
-  Action:= ADOMNode.GetAttribute( 'action' );
-  ActIdx:= Parent.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), Action, TP3DArmatureAction );
-  CurrentAction:= TP3DArmatureAction( Parent.DataBlocks[ ActIdx ]);
   Element:= TDOMElement( ADOMNode.FirstChild );
   while ( Assigned( Element )) do
     begin
@@ -307,6 +304,9 @@ begin
       end;
       Element:= TDOMElement( Element.NextSibling );
     end;
+  Action:= ADOMNode.GetAttribute( 'action' );
+  ActIdx:= Parent.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), Action, TP3DArmatureAction );
+  CurrentAction:= TP3DArmatureAction( Parent.DataBlocks[ ActIdx ]);
 end;
 
 { TP3DMeshModifierArmature }
@@ -369,7 +369,7 @@ begin
       decl:= Material.Shader.Uniforms.Names[ 'jointTex' ];
       decl.AsInt:= i;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexWidth' ];
-      decl.AsInt:= Armature.CurrentAction.JointTex.Width;
+      decl.AsInt:= Armature.CurrentAction.JointTex.Width div 2;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexHeight' ];
       decl.AsInt:= Armature.CurrentAction.JointTex.Height;
       decl:= Material.Shader.Uniforms.Names[ 'time' ];
@@ -434,6 +434,10 @@ var
   Buffer: TVec4List;
   Frame: TP3DActionFrame;
   i, j, w, h: Integer;
+  m, m2, minv: TMat4;
+  q: TQuaternion;
+  t: TVec4;
+  armature: TP3DArmature;
 
   function getNextPower2( AValue: Integer ): Integer;
   begin
@@ -446,17 +450,36 @@ begin
   if ( Assigned( JointTex )) then
     JointTex.Free;
   Buffer:= TVec4List.Create;
-  w:= Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count;//getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
+  w:= ( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );//getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
   h:= Frames.Count;//getNextPower2( Frames.Count );
   for i:= 0 to h - 1 do
     for j:= 0 to w div 2 - 1 do
-      //if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
-      if ( j <> 10 ) then
+      if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
+      //if ( j <> 10 ) then
         Buffer.Add([ vec4( 0 ), vec4( 0 )])
       else
-        Buffer.Add([ vec4( 0, 0, 0, 1 ), quatRotation( vec3_Axis_PZ, i * 5 )]);
-        //Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), Frames[ i ].Rotations[ j ]]);
-  JointTex:= TP3DTexture.CreateFromBuffer( w, h, 4, Buffer.Ptr );
+        begin
+      //  Buffer.Add([ vec4( 0, 0, 0, 1 ), quatRotation( vec3_Axis_PZ, i * 5 )]);
+          armature:= Parent.Armatures[ 0 ];
+{          m:= mat4( mat3( Parent.Armatures[ 0 ].Joints[ j ].Rotation ));
+          m.Row[ 3 ]:= vec4( Parent.Armatures[ 0 ].Joints[ j ].Position , 1 );
+          m2:= mat4( mat3( Frames[ i ].Rotations[ j ]));
+          m2.Row[ 3 ]:= vec4( Frames[ i ].Translations[ j ], 1 );
+          mat4inverse( m, minv );
+          m:= minv*m2*mat4translate( vec4( -Parent.Armatures[ 0 ].Joints[ j ].Position , 1 ));
+          q:= quat( mat3( m ));
+          t:= m.Row[ 3 ];}
+          q:= -Parent.Armatures[ 0 ].Joints[ j ].Rotation * Frames[ i ].Rotations[ j ];
+          t:=
+              //  vec4( Frames[ i ].Translations[ j ]
+              //- ( q * vec4( Parent.Armatures[ 0 ].Joints[ j ].Position, 1 )).xyz
+              vec4(
+                -(q*Parent.Armatures[ 0 ].Joints[ j ].Position) + Frames[ i ].Translations[ j ]
+                , 1 );
+          Buffer.Add([ t, t, q, q ]); //prevent mix of translation and quaternion through pixel bleeding while having smooth transitions in y direction
+          //Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), m * mat4( mat3( Frames[ i ].Rotations[ j ]])));
+        end;
+  JointTex:= TP3DTexture.CreateFromBuffer( w * 2, h, 4, dtFloat, Buffer.Ptr );
   P3DData.Textures.Add( JointTex );
   Buffer.Free;
 end;

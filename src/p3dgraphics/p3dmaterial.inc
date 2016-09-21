@@ -248,7 +248,7 @@ begin
     Map:= _Data.Textures[ n ]
   else
     begin
-      Map:= TP3DTexture.Create( TexName, AData );
+      Map:= TP3DTexture.CreateFromFile( TexName, AData );
       _Data.Textures.Add( Map );
     end;
 end;

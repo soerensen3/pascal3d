@@ -13,7 +13,7 @@ input: {name="numJoints", type="int"}
 	void getJointTransform( const in float i, out vec4 quat, out vec3 trans ) {
 		float dx = 1.0 / float( jointTexWidth );
 		trans = texture2D( jointTex, vec2( dx * ( i*2 + 0.5 ), time )).xyz;
-		quat = normalize(texture2D( jointTex, vec2( dx * ( i*2 + 1.5 ), time )));
+		quat = normalize( texture2D( jointTex, vec2( dx * ( i*2 + 1.5 ), time )));
 	}
 ```
 

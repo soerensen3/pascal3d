@@ -42,6 +42,7 @@ type
       FVisible: Boolean;
       FWindow: PSDL_Window;
       FContext: TSDL_GLContext;
+      FShowBorder: Boolean;
 
       function GetHeight: Integer;
       function GetLeft: Integer;
@@ -56,6 +57,7 @@ type
       procedure SetVisible(AValue: Boolean);
       procedure SetWidth(AValue: Integer);
       procedure ResizeViewport(AWidth, AHeight: Integer);
+      procedure SetShowBorder(AValue: Boolean);
 
     public
       destructor Destroy; override;
@@ -89,6 +91,7 @@ type
       property Window: PSDL_Window read FWindow;
       property Visible: Boolean read FVisible write SetVisible;
       property Context: TSDL_GLContext read FContext;
+      property ShowBorder: Boolean read FShowBorder write SetShowBorder;
   end;
 
   function P3DClientToScreen( Window: TP3DWindow; X, Y: Integer ): TPoint;
@@ -130,6 +133,14 @@ begin
   if fFullScreen=AValue then Exit;
   fFullScreen:=AValue;
   SDL_SetWindowFullscreen( window, Integer( fFullScreen ));
+end;
+
+procedure TP3DWindow.SetShowBorder( AValue: Boolean );
+begin
+  if FShowBorder=AValue then Exit;
+  FShowBorder:=AValue;
+
+  SDL_SetWindowBordered( Window, TSDL_Bool( FShowBorder ));
 end;
 
 function TP3DWindow.GetHeight: Integer;

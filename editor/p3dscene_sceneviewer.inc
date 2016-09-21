@@ -598,26 +598,33 @@ begin
 end;
 
 procedure TP3DScenePanel.DrawArmature(ArmatureObject: TP3DActor);
-  procedure RenderBone( startp: TVec3; Joint: TP3DJoint );
+
+var
+  matrix_joint: TMat4;
+
+  procedure RenderBone( Joint: TP3DJoint );
   var
-    Joint2: TP3DJoint;
-    p: TVec3;
+    p, p2: TVec3;
   begin
-    p:= ( ArmatureObject.Matrix * vec4(( Joint.Position + ArmatureObject.Position ), 1 )).xyz;
-    Canvas3D.RenderLine( startp, p, vec4( 1, 0, 0, 1 ));
-    for Joint2 in Joint.Joints do
-      RenderBone( p, Joint2 );
+    p:= Joint.Position;
+    //p2:= p + vec3( 0, 0, 10 );
+    p2:= p + Joint.Rotation * vec3( 0, 0, 1 );
+    Canvas3D.RenderLine( p, p2, vec4( 1, 0, 0, 1 ), vec4( 0, 1, 0, 1 ));
   end;
 
 var
   Joint: TP3DJoint;
 
 begin
+  matrix_joint:= mat4( 1,0,0,0,
+                       0,0,1,0,
+                       0,-1,0,0,
+                       0,0,0,1 );
   Canvas3D.Lock;
   if (( Assigned( ArmatureObject )) and ( ArmatureObject.Data is TP3DArmature )) then
     begin
       for Joint in TP3DArmature( ArmatureObject.Data ).Joints do
-        RenderBone(( ArmatureObject.Matrix * vec4( 0 )).XYZ, Joint );
+        RenderBone( Joint );
     end;
   Canvas3D.Unlock();
 end;

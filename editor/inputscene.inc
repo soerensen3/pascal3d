@@ -25,7 +25,54 @@ procedure OnKey( Sender: TP3DApplication; Event: TSDL_KeyboardEvent );
 
 var
   i: Integer;
+  Tex: TP3DTexture;
+  FrameBuffer: TP3DFrameBuffer;
 begin
+  if ( Event.keysym.scancode = SDL_SCANCODE_F2 ) then
+    begin
+      FrameBuffer:= TP3DFrameBuffer.Create();
+      //FrameBuffer.Bind( 0 );
+      glBindFramebuffer( GL_FRAMEBUFFER, FrameBuffer.FBO );
+      glGenTextures( 1, @i );
+      glBindTexture(GL_TEXTURE_2D, i);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+      //NULL means reserve texture memory, but texels are undefined
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, P3DGUIManager.ScreenCanvas.Width, P3DGUIManager.ScreenCanvas.Height, 0, GL_BGRA, GL_UNSIGNED_BYTE, nil );
+      Tex:= TP3DTexture.CreateFromGLTexture( i );
+      //Tex:= TP3DTexture.CreateFromEmpty( P3DGUIManager.ScreenCanvas.Width, P3DGUIManager.ScreenCanvas.Height, 3, dtByte );
+      Tex.MipMap:= False;
+      Tex.Filtering:= tfNearest;
+      Tex.FilteringMipMap:= tfNearest;
+
+      FrameBuffer.AttachColor( Tex );
+      Tex.Unbind();
+      try
+        FrameBuffer.CheckFBO;
+        P3DViewports.Push( 0, 0, Tex.Width, Tex.Height );
+        glClearColor( 0.5, 1.0, 1.0, 1.0 );
+        FrameBuffer.Clear();
+        //P3DGUIManager.Render;
+        {glBegin(GL_TRIANGLES);
+          glColor3f(1, 0, 0); glVertex3f(-1,-1, 0);
+          glColor3f(0, 0, 1); glVertex3f( 1,-1, 0);
+          glColor3f(0, 1, 0); glVertex3f( 0, 1, 0);
+        glEnd;}
+        FrameBuffer.Unbind();
+        P3DViewports.Pop;
+      except
+        on E: Exception do
+          SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error rendering to FB' ), PChar( E.Message ), Nil );
+      end;
+      FrameBuffer.Free;
+      P3DData.Textures.Add( Tex );
+      DataView.Update;
+      DataView.Children.ExpandAll();
+    end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F5 ) then
     begin DataView.Update; DataView.Children.ExpandAll(); end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F8 ) then

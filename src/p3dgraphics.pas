@@ -48,6 +48,7 @@ type
 {$INCLUDE p3dcamera.inc}
 {$INCLUDE p3dlight.inc}
 {$INCLUDE p3dtexture.inc}
+{$INCLUDE p3drendertarget.inc}
 {$INCLUDE p3dmaterial.inc}
 {$INCLUDE p3dmesh.inc}
 {$INCLUDE p3darmature.inc}
@@ -55,6 +56,7 @@ type
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dterrain.inc}
 {$INCLUDE p3dtext.inc}
+{$INCLUDE p3dtextbitmap.inc}
 {$INCLUDE p3dsymbols.inc}
 {$INCLUDE p3dcanvas.inc}
 {$INCLUDE p3dselection.inc}
@@ -126,6 +128,7 @@ end;
 {$INCLUDE p3dcamera.inc}
 {$INCLUDE p3dlight.inc}
 {$INCLUDE p3dtexture.inc}
+{$INCLUDE p3drendertarget.inc}
 {$INCLUDE p3dmaterial.inc}
 {$INCLUDE p3dmesh.inc}
 {$INCLUDE p3darmature.inc}
@@ -133,6 +136,7 @@ end;
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dterrain.inc}
 {$INCLUDE p3dtext.inc}
+{$INCLUDE p3dtextbitmap.inc}
 {$INCLUDE p3dsymbols.inc}
 {$INCLUDE p3dcanvas.inc}
 {$INCLUDE p3dselection.inc}

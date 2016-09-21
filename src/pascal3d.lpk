@@ -24,7 +24,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="43">
+    <Files Count="45">
       <Item1>
         <AddToUsesPkgSection Value="False"/>
       </Item1>
@@ -194,6 +194,14 @@
         <Filename Value="p3dutils\p3dsimpletypes.inc"/>
         <Type Value="Include"/>
       </Item43>
+      <Item44>
+        <Filename Value="p3dgraphics\p3dtextbitmap.inc"/>
+        <Type Value="Binary"/>
+      </Item44>
+      <Item45>
+        <Filename Value="p3dgraphics\p3drendertarget.inc"/>
+        <Type Value="Binary"/>
+      </Item45>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>
