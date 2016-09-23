@@ -35,20 +35,20 @@ type
 constructor TP3DFrameBuffer.Create;
 begin
   inherited Create;
-  glGenFramebuffers( 1, @FBO );
+  glGenFramebuffersEXT( 1, @FBO );
   FTexCount:= 0;
 end;
 
 destructor TP3DFrameBuffer.Destroy;
 begin
-  glDeleteFramebuffers( 1, @FFBO );
+  glDeleteFramebuffersEXT( 1, @FFBO );
   inherited Destroy;
 end;
 
 procedure TP3DFrameBuffer.Bind(Index: Integer);
 begin
-  glBindFramebuffer( GL_FRAMEBUFFER, FFBO );
-  glDrawBuffer( GL_COLOR_ATTACHMENT0 + Index );
+  glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, FFBO );
+  //glDrawBuffer( GL_COLOR_ATTACHMENT0_EXT + Index );
 end;
 
 procedure TP3DFrameBuffer.BindAll;
@@ -56,7 +56,7 @@ var
   i: Integer;
   Buffers: array [ 0..255 ] of GLint;
 begin
-  glBindFramebuffer( GL_FRAMEBUFFER, FFBO ); cle( Self, 'Error while binding frame buffer: ' );
+  glBindFramebufferEXT( GL_FRAMEBUFFER, FFBO ); cle( Self, 'Error while binding frame buffer: ' );
   for i:= 0 to TexCount - 1 do
     Buffers[ i ]:= GL_COLOR_ATTACHMENT0 + i;
   glDrawBuffers( TexCount, @Buffers[ 0 ]); cle( Self, 'Error while setting frame buffer buffers: ' );
@@ -69,13 +69,13 @@ end;
 
 procedure TP3DFrameBuffer.Unbind;
 begin
-  glBindFramebuffer( GL_FRAMEBUFFER, 0 ); cle( Self, 'Error unbinding frame buffer: ' );
+  glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ); cle( Self, 'Error unbinding frame buffer: ' );
 end;
 
 procedure TP3DFrameBuffer.AttachColor( Tex: TP3DTexture );
 begin
   Inc( FTexCount );
-  glFramebufferTexture2D( GL_FRAMEBUFFER,                  // 1. fbo target: GL_FRAMEBUFFER
+  glFramebufferTexture2DEXT( GL_FRAMEBUFFER,                  // 1. fbo target: GL_FRAMEBUFFER
                           GL_COLOR_ATTACHMENT0 + TexCount, // 2. attachment point
                           GL_TEXTURE_2D,                   // 3. tex target: GL_TEXTURE_2D
                           Tex.GLTexture,                   // 4. tex ID
@@ -85,7 +85,7 @@ end;
 
 procedure TP3DFrameBuffer.AttachDepth(Tex: TP3DTexture);
 begin
-  glFramebufferTexture2D( GL_FRAMEBUFFER,                // 1. fbo target: GL_FRAMEBUFFER
+  glFramebufferTexture2DEXT( GL_FRAMEBUFFER,                // 1. fbo target: GL_FRAMEBUFFER
                           GL_DEPTH,                      // 2. attachment point
                           GL_TEXTURE_2D,                 // 3. tex target: GL_TEXTURE_2D
                           Tex.GLTexture,                 // 4. tex ID
@@ -95,7 +95,7 @@ end;
 
 procedure TP3DFrameBuffer.AttachStencil(Tex: TP3DTexture);
 begin
-  glFramebufferTexture2D( GL_FRAMEBUFFER,                // 1. fbo target: GL_FRAMEBUFFER
+  glFramebufferTexture2DEXT( GL_FRAMEBUFFER,                // 1. fbo target: GL_FRAMEBUFFER
                           GL_STENCIL,                    // 2. attachment point
                           GL_TEXTURE_2D,                 // 3. tex target: GL_TEXTURE_2D
                           Tex.GLTexture,                 // 4. tex ID
@@ -105,9 +105,9 @@ end;
 
 procedure TP3DFrameBuffer.DetachAll;
 begin
-  glDeleteFramebuffers( 1, @FFBO );
+  glDeleteFramebuffersEXT( 1, @FFBO );
   cle( Self, 'Error while deleting frame buffer: ' );
-  glGenFramebuffers( 1, @FFBO );
+  glGenFramebuffersEXT( 1, @FFBO );
   cle( Self, 'Error while creating frame buffer: ' );
   FTexCount:= 0;
 end;
@@ -116,7 +116,7 @@ procedure TP3DFrameBuffer.CheckFBO;
 var
   error: GlEnum;
 begin
-  error := glCheckFramebufferStatus(GL_FRAMEBUFFER); cle( Self, 'Error while checking frame buffer status: ' );
+  error := glCheckFramebufferStatusEXT(GL_FRAMEBUFFER); cle( Self, 'Error while checking frame buffer status: ' );
   case error of
     GL_FRAMEBUFFER_COMPLETE:
       Exit;

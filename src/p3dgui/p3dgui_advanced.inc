@@ -590,6 +590,8 @@ begin
             end;
         end;
 
+      if ( not Assigned( P3DFontManager.Material.Shader )) then
+        TP3DMaterialBase( P3DFontManager.Material ).BuildShader;
       Shader:= P3DFontManager.Material.Shader;
       Shader.Enable;
 
