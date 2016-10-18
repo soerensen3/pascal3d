@@ -25,7 +25,7 @@ TP3DGCInputFlags = set of TP3DGCInputState;
 //...
 
 TP3DNotifyEvent = procedure ( Sender: TP3DGraphicControl ) of object;
-TP3DGraphicControl = class ( TP3DObject )
+TP3DGraphicControl = class ( TP3DDataBlock )
   private
     FBoundsBR: TVec2;
     FBoundsTL: TVec2;
@@ -92,8 +92,9 @@ TP3DGraphicControl = class ( TP3DObject )
     property HideChildren: Boolean read FHideChildren write FHideChildren;
 
   public
-    constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
-    destructor Destroy; override;
+    constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); virtual;
+    constructor Create(const AData: TP3DData=nil ); override;
+    procedure FastDestroy; override;
 
     procedure BeginDrag();
     procedure BringToFront;
@@ -164,10 +165,10 @@ end;
 
 { TP3DGraphicControl }
 
-constructor TP3DGraphicControl.Create(const AOwner: TP3DObjectList;
+constructor TP3DGraphicControl.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner );
+  inherited Create( AData );
   Controls:= TP3DControlList.Create( Self );
   FCanvas:= TP3DCanvas2D.Create( Self );
   if ( Assigned( AParent )) then
@@ -185,10 +186,15 @@ begin
   Cursor:= curArrow;
 end;
 
-destructor TP3DGraphicControl.Destroy;
+constructor TP3DGraphicControl.Create(const AData: TP3DData);
+begin
+  Create( AData, nil );
+end;
+
+procedure TP3DGraphicControl.FastDestroy;
 begin
   P3DGUIManager.CtrlDeleteNotifier( Self );
-  ParentCtrl.Delete( Self );
+  ParentCtrl.Remove( Self );
   Controls.Free;
   Canvas.Free;
   inherited;

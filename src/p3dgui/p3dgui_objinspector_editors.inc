@@ -13,7 +13,7 @@ type
 
     public
       procedure Update; override;
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
     published
@@ -22,6 +22,8 @@ type
   end;
 
   { TP3DOIEditorTransform }
+
+  { TP3DOIEditorTransform3D }
 
   TP3DOIEditorTransform3D = class ( TP3DOIEditorGroup )
     private
@@ -40,7 +42,7 @@ type
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property PositionEdit: TP3DVectorEdit read FPositionEdit write FPositionEdit;
@@ -61,7 +63,7 @@ type
 
     public
       procedure Update; override;
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
     published
@@ -80,7 +82,7 @@ type
       FEditorTransform: TP3DOIEditorTransform3D;
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -114,7 +116,7 @@ type
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property LightTypeCombo: TP3DComboBox read FLightType write FLightType;
@@ -131,7 +133,7 @@ type
       FEditorLight: TP3DOIEditorDataLight;
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -175,7 +177,7 @@ published
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property HandednessCombo: TP3DComboBox read FCamHandednessCombo write FCamHandednessCombo;
@@ -193,7 +195,7 @@ published
 
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -223,7 +225,7 @@ published
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property PreviewImg: TP3DImage read FPreviewImg write FPreviewImg;
@@ -256,7 +258,7 @@ published
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AOwner: TP3DObjectList=nil;const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property DiffCombo: TP3DColorComboBox read FDiffCombo write FDiffCombo;
@@ -275,13 +277,13 @@ published
       FDiffuseEdit: TP3DEventValueEdit;
       FDisplaceEdit: TP3DEventValueEdit;
       FInfluence: TP3DGraphicControl;
-      FMap: TP3DMaterialMapShader;
+      FMap: TP3DMaterialMap;
       FModeCombo: TP3DComboBox;
       FNormalEdit: TP3DEventValueEdit;
       FSpecularEdit: TP3DEventValueEdit;
       //FTextureEditor: TP3DOIEditorDataTexture;
 
-      procedure SetMap(AValue: TP3DMaterialMapShader);
+      procedure SetMap(AValue: TP3DMaterialMap);
       //property Mapping: TP3DGraphicControl read FMapping write FMapping;
       property Influence: TP3DGraphicControl read FInfluence write FInfluence;
       function GetFloatParam(Sender: TP3DEventValueEdit): Float;
@@ -290,12 +292,12 @@ published
 
     public
       procedure Update; override;
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
 
     published
       //property TextureEditor: TP3DOIEditorDataTexture read FTextureEditor write FTextureEditor;
-      property Map: TP3DMaterialMapShader read FMap write SetMap;
+      property Map: TP3DMaterialMap read FMap write SetMap;
 
       property DiffuseEdit: TP3DEventValueEdit read FDiffuseEdit write FDiffuseEdit;
       property SpecularEdit: TP3DEventValueEdit read FSpecularEdit write FSpecularEdit;
@@ -326,7 +328,7 @@ published
 
     public
       procedure Update; override;
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
 
     published
@@ -346,7 +348,7 @@ published
       procedure SetSelectionChange(AValue: TP3DListViewSelectionChangeEvent);
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
@@ -370,7 +372,7 @@ published
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -395,7 +397,7 @@ published
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -415,11 +417,16 @@ published
 function AddContainer( Parent: TP3DGraphicControl; Title: String ): TP3DGraphicControl;
 var
   Lbl: TP3DLabel;
+  Owner: TP3DData;
 begin
-  Result:= TP3DGraphicControl.Create( nil, Parent );
+  if ( Assigned( Parent )) then
+    Owner:= Parent.Owner
+  else
+    Owner:= P3DData;
+  Result:= TP3DGraphicControl.Create( Owner, Parent );
   Result.Align:= alTop;
   Result.Height:= 20;
-  Lbl:= TP3DLabel.Create( nil, Result );
+  Lbl:= TP3DLabel.Create( Owner, Result );
   Lbl.Align:= alLeft;
   Lbl.Caption:= Title + ' '; //One space for safety distance - looks better!
   Lbl.AutoSize:= True;
@@ -438,17 +445,17 @@ begin
       end;
 end;
 
-constructor TP3DOIEditorObject.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorObject.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Object';
   Height:= 60;
 
-  NameEdit:= TP3DEdit.Create( nil, AddContainer( Self, 'Name ' ));
+  NameEdit:= TP3DEdit.Create( AData, AddContainer( Self, 'Name ' ));
   NameEdit.Align:= alClient;
 
-  TypeLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Type ' ));
+  TypeLbl:= TP3DLabel.Create( AData, AddContainer( Self, 'Type ' ));
   TypeLbl.Height:= 20;
   TypeLbl.Align:= alTop;
 
@@ -474,7 +481,7 @@ begin
             DataCombo.TypeFilter:= TP3DDataBlock;
             NameLbl.Caption:= Data.Name;
             TypeLbl.Caption:= Data.ClassName;
-            FileNameLbl.Caption:= ExtractFileNameOnly( Parent.FileWatch.FileName ) + '/' + Data.DOMPath;
+            FileNameLbl.Caption:= ExtractFileNameOnly( Owner.FileWatch.FileName ) + '/' + Data.DOMPath;
             //FileNameLbl.Caption:= ExtractFileName( Data.FileWatch.FileName );
           end
         else
@@ -491,15 +498,15 @@ begin
         DataCombo.Caption:= Name;
         NameLbl.Caption:= Name;
         TypeLbl.Caption:= ClassName;
-        FileNameLbl.Caption:= Parent.FileWatch.FileName + '/' + DOMPath;
+        FileNameLbl.Caption:= Owner.FileWatch.FileName + '/' + DOMPath;
         //FileNameLbl.Caption:= ExtractFileName( FileWatch.FileName );
       end
 end;
 
-constructor TP3DOIEditorDatablock.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDatablock.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Data';
   Height:= 60;
 
@@ -597,10 +604,10 @@ begin
   Result:= AObj is IP3DTransform;
 end;
 
-constructor TP3DOIEditorTransform3D.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorTransform3D.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   Caption:= 'Transform';
 
   PositionEdit:= TP3DVectorEdit.Create( nil, AddContainer( Self, 'Position ' ));
@@ -638,10 +645,10 @@ end;
 
 { TP3DOIEditorPageActor }
 
-constructor TP3DOIEditorPageObject.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorPageObject.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   EditorObject:= TP3DOIEditorObject.Create( nil, Self );
   EditorObject.Align:= alTop;
 
@@ -745,10 +752,10 @@ begin
   Result:= (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DLight )) or ( AObj is TP3DLight );
 end;
 
-constructor TP3DOIEditorDataLight.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDataLight.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Light';
 
   LightTypeCombo:= TP3DComboBox.Create( nil, AddContainer( Self, 'Light type ' ));
@@ -876,20 +883,20 @@ begin
   Result:= ( AObj is TP3DCamera ) or (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DCamera ));
 end;
 
-constructor TP3DOIEditorDataCamera.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDataCamera.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   Caption:= 'Camera';
 
-  ZoomEdit:= TP3DEventValueEdit.Create( nil, Self );
+  ZoomEdit:= TP3DEventValueEdit.Create( AData, Self );
   ZoomEdit.GetValueEvent:= @GetCamParamF;
   ZoomEdit.SetValueEvent:= @SetCamParamF;
   ZoomEdit.GetValueNameEvent:= @GetEdValueName;
   ZoomEdit.Align:= alTop;
   ZoomEdit.Height:= 20;
 
-  ClippingEdit:= TP3DVectorEdit.Create( nil, AddContainer( Self, 'Clipping' ));
+  ClippingEdit:= TP3DVectorEdit.Create( AData, AddContainer( Self, 'Clipping' ));
   ClippingEdit.GetValueEvent:= @GetCamParamV;
   ClippingEdit.SetValueEvent:= @SetCamParamV;
   ClippingEdit.Align:= alClient;
@@ -897,13 +904,13 @@ begin
   ClippingEdit.Labels[ 1 ]:= 'Far';
   ClippingEdit.EdCount:= 2;
 
-  HandednessCombo:= TP3DComboBox.Create( nil, AddContainer( Self, 'Handedness' ));
+  HandednessCombo:= TP3DComboBox.Create( AData, AddContainer( Self, 'Handedness' ));
   HandednessCombo.Align:= alClient;
   HandednessCombo.Items.Add( 'Left' );
   HandednessCombo.Items.Add( 'Right' );
   HandednessCombo.OnChange:= @ComboChange;
 
-  CamTypeCombo:= TP3DComboBox.Create( nil, AddContainer( Self, 'Camera type' ));
+  CamTypeCombo:= TP3DComboBox.Create( AData, AddContainer( Self, 'Camera type' ));
   CamTypeCombo.Align:= alClient;
   CamTypeCombo.Items.Add( 'Perspective' );
   CamTypeCombo.Items.Add( 'Isometric' );
@@ -976,41 +983,41 @@ begin
   Result:= AObj is TP3DTexture;
 end;
 
-constructor TP3DOIEditorDataTexture.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDataTexture.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Texture';
 
-  PreviewImg:= TP3DImage.Create( nil, Self );
+  PreviewImg:= TP3DImage.Create( AData, Self );
   PreviewImg.Align:= alTop;
   PreviewImg.Width:= 200;
   PreviewImg.Height:= 200;
 
-  FilteringCombo:= TP3DComboBox.Create( nil, AddContainer( Self, 'Filtering ' ));
+  FilteringCombo:= TP3DComboBox.Create( AData, AddContainer( Self, 'Filtering ' ));
   FilteringCombo.Align:= alClient;
   FilteringCombo.Items.Add( 'Nearest' );
   FilteringCombo.Items.Add( 'Linear' );
   FilteringCombo.OnChange:= @ComboChange;
 
-  FilteringMipCombo:= TP3DComboBox.Create( nil, AddContainer( Self, 'Filtering Mipmap ' ));
+  FilteringMipCombo:= TP3DComboBox.Create( AData, AddContainer( Self, 'Filtering Mipmap ' ));
   FilteringMipCombo.Align:= alClient;
   FilteringMipCombo.Items.Add( 'Nearest' );
   FilteringMipCombo.Items.Add( 'Linear' );
   FilteringMipCombo.OnChange:= @ComboChange;
 
-  MipMappingCombo:= TP3DCheckBox.Create( nil, Self );
+  MipMappingCombo:= TP3DCheckBox.Create( AData, Self );
   MipMappingCombo.Caption:= 'Use Mipmap';
   MipMappingCombo.Align:= alTop;
   MipMappingCombo.HAlignment:= haRight;
   MipMappingCombo.OnChange:= @CheckboxChange;
   MipMappingCombo.Height:= 20;
 
-  DimensionsLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Size ' ));
+  DimensionsLbl:= TP3DLabel.Create( AData, AddContainer( Self, 'Size ' ));
   DimensionsLbl.Align:= alClient;
   DimensionsLbl.HAlignment:= haRight;
 
-  FileNameLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Filename ' ));
+  FileNameLbl:= TP3DLabel.Create( AData, AddContainer( Self, 'Filename ' ));
   FileNameLbl.Align:= alClient;
   FileNameLbl.HAlignment:= haRight;
 
@@ -1107,10 +1114,10 @@ begin
   Result:= AObj is TP3DMaterialBase;
 end;
 
-constructor TP3DOIEditorDataMaterialBase.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDataMaterialBase.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Material';
 
   UseVertexColorEdit:= TP3DCheckBox.Create( nil, Self );
@@ -1120,29 +1127,29 @@ begin
   UseVertexColorEdit.OnChange:= @CheckboxChange;
   UseVertexColorEdit.Height:= 20;
 
-  UnlitEdit:= TP3DCheckBox.Create( nil, Self );
+  UnlitEdit:= TP3DCheckBox.Create( AData, Self );
   UnlitEdit.Caption:= 'Unlit';
   UnlitEdit.Align:= alTop;
   UnlitEdit.HAlignment:= haRight;
   UnlitEdit.OnChange:= @CheckboxChange;
   UnlitEdit.Height:= 20;
 
-  DiffCombo:= TP3DColorComboBox.Create( nil, AddContainer( Self, 'Material Diffuse' ));
+  DiffCombo:= TP3DColorComboBox.Create( AData, AddContainer( Self, 'Material Diffuse' ));
   DiffCombo.GetValueEvent:= @GetMatColorParam;
   DiffCombo.SetValueEvent:= @SetMatColorParam;
   DiffCombo.Align:= alClient;
 
-  SpecCombo:= TP3DColorComboBox.Create( nil, AddContainer( Self, 'Material Specular' ));
+  SpecCombo:= TP3DColorComboBox.Create( AData, AddContainer( Self, 'Material Specular' ));
   SpecCombo.GetValueEvent:= @GetMatColorParam;
   SpecCombo.SetValueEvent:= @SetMatColorParam;
   SpecCombo.Align:= alClient;
 
-  AlphaEdit:= TP3DEventValueEdit.Create( nil, AddContainer( Self, 'Alpha' ));
+  AlphaEdit:= TP3DEventValueEdit.Create( AData, AddContainer( Self, 'Alpha' ));
   AlphaEdit.GetValueEvent:= @GetMatFloatParam;
   AlphaEdit.SetValueEvent:= @SetMatFloatParam;
   AlphaEdit.Align:= alClient;
 
-  Spec_HardnessEdit:= TP3DEventValueEdit.Create( nil, AddContainer( Self, 'Specular Hardness' ));
+  Spec_HardnessEdit:= TP3DEventValueEdit.Create( AData, AddContainer( Self, 'Specular Hardness' ));
   Spec_HardnessEdit.GetValueEvent:= @GetMatFloatParam;
   Spec_HardnessEdit.SetValueEvent:= @SetMatFloatParam;
   Spec_HardnessEdit.Align:= alClient;
@@ -1161,7 +1168,7 @@ end;
 
 procedure TP3DOIEditorDataMaterialMaps.SetMaterial(AValue: TP3DMaterialShader);
 var
-  Map: TP3DMaterialMapShader;
+  Map: TP3DMaterialMap;
 begin
   if FMaterial= AValue then Exit;
   FMaterial:= AValue;
@@ -1185,13 +1192,13 @@ begin
     Material:= nil;
 end;
 
-constructor TP3DOIEditorDataMaterialMaps.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDataMaterialMaps.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Material Maps';
 
-  MapsListView:= TP3DListView.Create( nil, Self );
+  MapsListView:= TP3DListView.Create( AData, Self );
   MapsListView.Align:= alTop;
   MapsListView.Height:= 100;
   MapsListView.OnSelectionChange:= @SelectionChange;
@@ -1206,7 +1213,7 @@ end;
 
 { TP3DOIEditorDataMaterialMap }
 
-procedure TP3DOIEditorDataMaterialMap.SetMap(AValue: TP3DMaterialMapShader);
+procedure TP3DOIEditorDataMaterialMap.SetMap(AValue: TP3DMaterialMap);
 begin
   if FMap= AValue then Exit;
   FMap:= AValue;
@@ -1268,9 +1275,9 @@ begin
   //Mapping.Visible:= Obj is TP3DMaterialMapShader;
 //  Influence.Visible:= Obj is TP3DMaterialMapBase;
 
-  if ( Obj is TP3DMaterialMapShader ) then
+  if ( Obj is TP3DMaterialMap ) then
     begin
-      Map:= TP3DMaterialMapShader( Obj );
+      Map:= TP3DMaterialMap( Obj );
       //TextureEditor.Obj:= Map.Map;
       case TP3DMaterialMapBase( Map ).Mode of
         p3dmmAdd: ModeCombo.Caption:= 'add';
@@ -1286,10 +1293,10 @@ begin
     end;
 end;
 
-constructor TP3DOIEditorDataMaterialMap.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDataMaterialMap.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Influence';
   //NoBounds:= True;
 
@@ -1347,7 +1354,7 @@ end;
 
 class function TP3DOIEditorDataMaterialMap.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
-  Result:= AObj is TP3DMaterialMapShader;
+  Result:= AObj is TP3DMaterialMap;
 end;
 
 
@@ -1383,13 +1390,13 @@ begin
     MatListView.Children.Add( Mat.Material.Name, Mat.Material );
 end;
 
-constructor TP3DOIEditorDataMeshMaterial.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorDataMeshMaterial.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Caption:= 'Mesh Materials';
 
-  MatListView:= TP3DListView.Create( nil, Self );
+  MatListView:= TP3DListView.Create( AData, Self );
   MatListView.Align:= alTop;
   MatListView.Height:= 100;
 
@@ -1421,16 +1428,16 @@ begin
     end;
 end;
 
-constructor TP3DOIEditorPageMaterial.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorPageMaterial.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
 
-  EditorMatMesh:= TP3DOIEditorDataMeshMaterial.Create( nil, Self );
+  EditorMatMesh:= TP3DOIEditorDataMeshMaterial.Create( AData, Self );
   EditorMatMesh.Align:= alTop;
   EditorMatMesh.OnSelectionChange:= @SelectionChange;
 
-  EditorMatBase:= TP3DOIEditorDataMaterialBase.Create( nil, Self );
+  EditorMatBase:= TP3DOIEditorDataMaterialBase.Create( AData, Self );
   EditorMatBase.Align:= alTop;
 end;
 
@@ -1467,9 +1474,9 @@ procedure TP3DOIEditorPageMaps.SelectionChange(Sender: TP3DListView;
 begin
   if ( Assigned( NewSelection )) then
     begin
-      MapSelectedEditor.Obj:= TP3DMaterialMapShader( NewSelection.Data );
+      MapSelectedEditor.Obj:= TP3DMaterialMap( NewSelection.Data );
       if ( Assigned( NewSelection.Data )) then
-        TextureEditor.Obj:= TP3DMaterialMapShader( NewSelection.Data ).Map
+        TextureEditor.Obj:= TP3DMaterialMap( NewSelection.Data ).Map
       else
         TextureEditor.Obj:= nil;
     end
@@ -1482,20 +1489,20 @@ begin
   TextureEditor.Visible:= Assigned( TextureEditor.Obj );
 end;
 
-constructor TP3DOIEditorPageMaps.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorPageMaps.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
 
-  MapsEditor:= TP3DOIEditorDataMaterialMaps.Create( nil, Self );
+  MapsEditor:= TP3DOIEditorDataMaterialMaps.Create( AData, Self );
   MapsEditor.Align:= alTop;
   //MapsEditor.Height:= 100;
   MapsEditor.OnSelectionChange:= @SelectionChange;
 
-  TextureEditor:= TP3DOIEditorDataTexture.Create( nil, Self );
+  TextureEditor:= TP3DOIEditorDataTexture.Create( AData, Self );
   TextureEditor.Align:= alTop;
 
-  MapSelectedEditor:= TP3DOIEditorDataMaterialMap.Create( nil, Self );
+  MapSelectedEditor:= TP3DOIEditorDataMaterialMap.Create( AData, Self );
   MapSelectedEditor.Align:= alTop;
   Height:= Controls.PageSize.Y;
   //AutoSize:= True;
@@ -1525,11 +1532,11 @@ end;
 
 { TP3DOIEditorPageLight }
 
-constructor TP3DOIEditorPageLight.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorPageLight.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
-  EditorLight:= TP3DOIEditorDataLight.Create( nil, Self );
+  inherited Create( AData, AParent );
+  EditorLight:= TP3DOIEditorDataLight.Create( AData, Self );
   EditorLight.Align:= alTop;
 end;
 
@@ -1552,11 +1559,11 @@ end;
 
 { TP3DOIEditorPageCamera }
 
-constructor TP3DOIEditorPageCamera.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorPageCamera.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
-  EditorCamera:= TP3DOIEditorDataCamera.Create( nil, Self );
+  inherited Create( AData, AParent );
+  EditorCamera:= TP3DOIEditorDataCamera.Create( AData, Self );
   EditorCamera.Align:= alTop;
 end;
 

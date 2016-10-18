@@ -320,6 +320,7 @@ begin
         if ( Assigned( MainWindow )) then
           MainWindow.Render;
         P3DInput.NextCycle;
+        SDL_Delay( 10 );
       end;
   except
     on E: Exception do

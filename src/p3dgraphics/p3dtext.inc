@@ -207,6 +207,8 @@ begin
   FVertices.Free;
   FTexCoords.Free;
   FIndices.Free;
+  if ( Assigned( FTexture ) and P3DData.IsValid( FTexture )) then
+    FTexture.Free;
   inherited Destroy;
 end;
 
@@ -377,7 +379,7 @@ end;
 destructor TP3DFontManager.Destroy;
 begin
   inherited Destroy;
-  Material.Free;
+  FreeAndNil( FMaterial );
 end;
 
 function TP3DFontManager.Find(FontName: String; Height: Integer): Integer;
@@ -410,7 +412,7 @@ end;
 destructor TP3DFont.Destroy;
 begin
   sdl2_ttf.TTF_CloseFont( Font );
-	inherited Destroy;
+  inherited Destroy;
 end;
 
 procedure TP3DFont.SetFileName(AValue: String);

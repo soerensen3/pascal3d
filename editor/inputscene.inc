@@ -69,7 +69,6 @@ begin
           SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error rendering to FB' ), PChar( E.Message ), Nil );
       end;
       FrameBuffer.Free;
-      P3DData.Textures.Add( Tex );
       DataView.Update;
       DataView.Children.ExpandAll();
     end;

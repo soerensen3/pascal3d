@@ -31,7 +31,7 @@
         FUserData: TObject;
 
       public
-        constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
         property UserData: TObject read FUserData write FUserData;
         property IsSelectable: Boolean read FIsSelectable write FIsSelectable;
@@ -41,7 +41,7 @@
 
     TP3DCustomPopupMenu = class ( TP3DGraphicControl )
       public
-        constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
         class function IsFocusControl: Boolean; override;
 
@@ -64,7 +64,7 @@
           Y: Integer);
 
       public
-        constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
         destructor Destroy; override;
 
         procedure Update;
@@ -80,10 +80,10 @@
 
 { TP3DMenuItem }
 
-constructor TP3DMenuItem.Create(const AOwner: TP3DObjectList;
+constructor TP3DMenuItem.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   HAlignment:= haLeft;
 end;
 
@@ -93,7 +93,7 @@ function TP3DMenuItemList.Add(ACaption: String): Integer;
 var
   Ctrl: TP3DMenuItem;
 begin
-  Ctrl:= TP3DMenuItem.Create( Parent.ParentList, Parent );
+  Ctrl:= TP3DMenuItem.Create( Parent.Owner, Parent );
   Ctrl.Caption:= ACaption;
   Ctrl.Align:= alTop;
   Result:= Add( Ctrl );
@@ -119,10 +119,10 @@ begin
     OnItemClick( TP3DMenuItem( Sender ));
 end;
 
-constructor TP3DPopupMenu.Create(const AOwner: TP3DObjectList;
+constructor TP3DPopupMenu.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   FItems:= TP3DMenuItemList.Create( Self );
   FItems.OnChange:= @ItemsChange;
 end;
@@ -168,10 +168,10 @@ begin
 end;
 
 
-constructor TP3DCustomPopupMenu.Create(const AOwner: TP3DObjectList;
+constructor TP3DCustomPopupMenu.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   Visible:= False;
 end;
 

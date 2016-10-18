@@ -120,7 +120,7 @@ end;
 
 procedure TP3DSceneViewer.PushVPClientRect;
 begin
-  P3DViewports.Push( Round( Canvas.Left + ClientRect.Left ), Round( Canvas.Top + ClientRect.Top ),
+  P3DViewports.Push( Round( Canvas.Left + ClientRect.Left ), Round( P3DViewports[ 0 ].Height - ( Canvas.Top + ClientRect.Top ) - Round( ClientRect.Height )),
                      Round( ClientRect.Width ), Round( ClientRect.Height ));
 end;
 
@@ -155,6 +155,7 @@ begin
           txt:= p3dTextSimple( 'Warning, no camera set!', P3DFontManager[ Font.Name, Font.Size ]);
           Canvas.RenderText( txt, ClientRect.TopLeft );
           Canvas.Unlock();
+          txt.Free;
         end;
     end;
     {

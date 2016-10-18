@@ -81,16 +81,17 @@
       <Unit13>
         <Filename Value="armature_test/initscene.inc"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="169"/>
-        <CursorPos X="4" Y="108"/>
+        <TopLine Value="206"/>
+        <CursorPos X="12" Y="7"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit13>
       <Unit14>
         <Filename Value="armature_test/inputscene.inc"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="52"/>
+        <TopLine Value="56"/>
         <CursorPos X="64" Y="73"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>

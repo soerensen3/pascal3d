@@ -61,7 +61,7 @@ end;
 procedure TP3DViewportStack.ApplyVP(VP: TP3DViewport);
 begin
   if ( Count > 0 ) then
-    glViewport( VP.Left, VPs[ 0 ].Height-VP.Top-VP.Height, VP.Width, VP.Height ); cle( Self );
+    glViewport( VP.Left, {VPs[ 0 ].Height-}VP.Top{-VP.Height}, VP.Width, VP.Height ); cle( Self );
 end;
 
 function TP3DViewportStack.Push(Left, Top, Width, Height: Integer): Integer;

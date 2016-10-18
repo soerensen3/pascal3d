@@ -84,6 +84,8 @@ procedure TP3DGUIManager.SetCursorOverride(AValue: TP3DCursor);
 begin
   if FCUrsorOverride=AValue then Exit;
   FCUrsorOverride:=AValue;
+  if ( Assigned( FCursorOverrideTxt )) then
+    FreeAndNil( FCursorOverrideTxt );
   FCursorOverrideTxt:= p3dTextSimple( Char( FCUrsorOverride ), P3DFontManager[ 'Pascal3D-Cursors', 16 ]);
 end;
 

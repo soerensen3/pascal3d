@@ -153,8 +153,17 @@ begin
 end;
 
 procedure P3DSceneGUIFinish;
+//var
+//  Lib: TP3DData;
 begin
+  //WriteLn( 'P3DData.Objects: ' + P3DData.DataBlocks.DumpObjectList );
+  //for Lib in P3DData.Libraries do
+  //  WriteLn( '<' + ExtractFileNameOnly( Lib.FileWatch.FileName ) + '>.Objects: ' + Lib.DataBlocks.DumpObjectList );
+
   DestroyEditModes;
+  FreeAndNil( DataView );
+  FreeAndNil( AssetView );
+  FreeAndNil( SceneView );
   FreeAndNil( SymbolActor );
   FreeAndNil( SymbolMesh );
   FreeAndNil( SymbolScene );
@@ -169,7 +178,7 @@ end;
 
 
 finalization
-  P3DSceneGUIFinish;
+  //P3DSceneGUIFinish;
 
 end.
 

@@ -27,7 +27,7 @@
       procedure Insert( S: String );
 
     public
-      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Draw(); override;
       procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
@@ -60,7 +60,7 @@
       procedure Resize;
 
     public
-      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+    constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -101,7 +101,7 @@
       procedure Realign; override;
 
     public
-      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -142,7 +142,7 @@
       procedure UpdateNameText(AValue: String);
 
     public
-      constructor Create(const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -230,7 +230,7 @@
       procedure SetEdValue( Sender: TP3DEventValueEdit; AValue: Single );
 
     public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
       procedure Realign; override;
 
@@ -267,7 +267,7 @@
       procedure SetPosition(AValue: Float);
 
     public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -306,7 +306,7 @@
       procedure SetCaption( AValue: String ); override;
 
     public
-      constructor Create( const AOwner: TP3DObjectList = nil; const AParent: TP3DGraphicControl = nil );
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -342,7 +342,7 @@
       procedure SetChecked( AValue: Boolean );
 
     public
-      constructor Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl= nil );
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -461,11 +461,11 @@ begin
   UpdateNameText( AValue );
 end;
 
-constructor TP3DCustomValueEdit.Create(const AOwner: TP3DObjectList;
+constructor TP3DCustomValueEdit.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
-  ValueName:= GetValueName;//Self.Name;
+  inherited Create( AData, AParent );
+  //ValueName:= GetValueName;//Self.Name;
   UpdateValueText( Value );
   UpdateNameText( GetValueName );
   FStep:= 0.1;
@@ -525,7 +525,10 @@ begin
     begin
       if ( gcisMouseBtn1Down in InputState ) then
         begin
-          Value:= Value + Round( P3DInput.Mouse.DX * Transmission / Step ) * Step;
+          if ( P3DInput.Keyboard.Keys[ P3DK_LCTRL ] or P3DInput.Keyboard.Keys[ P3DK_RCTRL ]) then
+            Value:= Value + Round( P3DInput.Mouse.DX * Transmission / Step ) * Step * 10
+          else
+            Value:= Value + Round( P3DInput.Mouse.DX * Transmission / Step ) * Step;
         end
       else
         begin
@@ -571,7 +574,8 @@ procedure TP3DLabel.SetCaption(AValue: String);
 begin
   if FCaption=AValue then Exit;
   FCaption:=AValue;
-  FCaptionTxt.Free;
+  if ( Assigned( FCaptionTxt )) then
+    FCaptionTxt.Free;
   FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
@@ -611,10 +615,10 @@ begin
   Canvas.RenderText( FCaptionTxt, P );
 end;
 
-constructor TP3DLabel.Create(const AOwner: TP3DObjectList;
+constructor TP3DLabel.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Font:= TP3DCanvasFont.Create;
   Font.Color:= vec4( vec3( 0 ), 1 );
   Caption:= Name;
@@ -634,7 +638,8 @@ begin
   if FCaption=AValue then Exit;
 
   FCaption:=AValue;
-  FCaptionTxt.Free;
+  if ( Assigned( FCaptionTxt )) then
+    FCaptionTxt.Free;
   FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
@@ -707,10 +712,10 @@ begin
 end;
 
 
-constructor TP3DGroupBox.Create(const AOwner: TP3DObjectList;
+constructor TP3DGroupBox.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   Font:= TP3DCanvasFont.Create;
   Caption:= Name;
   Color:= vec4( 1 );
@@ -872,10 +877,10 @@ begin
   Sel2:= Sel1;
 end;
 
-constructor TP3DEdit.Create(const AOwner: TP3DObjectList;
+constructor TP3DEdit.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Text:= Name;
   PresetDown.Assign( PresetNormal );
   PresetHover.Assign( PresetNormal );
@@ -1045,10 +1050,10 @@ begin
   Percentage:= ( AValue - Min ) / Max;
 end;
 
-constructor TP3DScrollBar.Create(const AOwner: TP3DObjectList;
+constructor TP3DScrollBar.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   Preset:= TP3DButtonPreset.Create;
   Preset.Color:= accent50; //vec4( 225/255, 230/255, 234/255, 1 );
   Preset.OutlineColor:= accent50; //vec4( vec3( 0.2 ), 0.5 );
@@ -1249,10 +1254,10 @@ begin
     end;
 end;
 
-constructor TP3DVectorEdit.Create(const AOwner: TP3DObjectList;
+constructor TP3DVectorEdit.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   EdCount:= 3;
   FLabels[ 0 ]:= 'X';
   FLabels[ 1 ]:= 'Y';
@@ -1309,17 +1314,20 @@ begin
   inherited SetCaption(AValue);
 end;
 
-constructor TP3DComboBox.Create(const AOwner: TP3DObjectList; const AParent: TP3DGraphicControl);
+constructor TP3DComboBox.Create(const AData: TP3DData;
+  const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
-  FDropDownMenu:= TP3DPopupMenu.Create();
+  inherited Create( AData, AParent );
+  FDropDownMenu:= TP3DPopupMenu.Create( AData, nil );
   FDropDownMenu.OnItemClick:= @DropDownItemClick;
 end;
 
 destructor TP3DComboBox.Destroy;
 begin
-  FreeAndNil( FDropDownMenu );
-  FreeAndNil( FDownSymbol );
+  if ( Assigned( FDropDownMenu ) and ( ParentList.IndexOf( FDropDownMenu ) > 0 )) then
+    FreeAndNil( FDropDownMenu );
+  if ( Assigned( FDownSymbol )) then
+    FreeAndNil( FDownSymbol );
   inherited Destroy;
 end;
 
@@ -1364,10 +1372,10 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DCheckBox.Create(AOwner: TP3DObjectList;
+constructor TP3DCheckBox.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   FSymbolChecked:= p3dTextSimple( P3DSymbolCheck, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
 end;
 

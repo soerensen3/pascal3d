@@ -40,7 +40,10 @@ type
       function AppendAllFromDom( ADOMNode: TDOMElement; AType: TP3DDataBlockType;
         const AParent: TP3DActor = nil ): Integer;
       function AppendFile( AFileName: String; const AParent: TP3DActor = nil ): String;
-      procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
+      function CreateNew( Tp: TP3DDataBlockType; const CreateObject: Boolean = True ): Integer;
+      procedure RemoveFromFields( Block: TP3DDataBlock ); virtual;
+      procedure ClearFields;
+      function IsValid( Obj: TP3DObject ): Boolean;
 
       property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
 
@@ -69,7 +72,37 @@ type
     function FindByFileName( AFileName: String ): Integer;
   end;
 
+  { TDataBlockCacheEntry }
+
+  { TP3DDataBlockCacheEntry }
+
+  TP3DDataBlockCacheEntry = class ( TPersistent )
+    private
+      FBlockType: TP3DDataBlockType;
+      FDatablock: TP3DDataBlock;
+      FName: String;
+      FStackTrace: String;
+
+    published
+      property Name: String read FName write FName;
+      property BlockType: TP3DDataBlockType read FBlockType write FBlockType;
+      property Datablock: TP3DDataBlock read FDatablock write FDatablock;
+      property StackTrace: String read FStackTrace write FStackTrace;
+  end;
+
+  TP3DDatablockCacheEntryList = specialize gP3DCustomObjectList < TP3DDatablockCacheEntry >;
+
+  { TP3DDataBlockCache }
+
+  TP3DDataBlockCache = class ( TP3DDatablockCacheEntryList )
+    public
+      function FindBlock( Block: TP3DDataBlock ): Integer;
+      function Add( Block: TP3DDataBlock ): Integer;
+      destructor Destroy; override;
+  end;
+
   function OpenLibrary( FileName: String ): Integer; //TODO: Move to libraries
+
 
 {$ENDIF}
 
@@ -81,13 +114,13 @@ constructor TP3DData.Create;
 begin
   inherited;
 
-  DataBlocks:= TP3DObjectList.Create;
+  DataBlocks:= TP3DObjectList.Create( Self );
 
   Cameras:= TP3DCameraList.Create;
   Lights:= TP3DLightList.Create;
   Materials:= TP3DMaterialList.Create;
   Meshes:= TP3DMeshList.Create;
-  Objects:= TP3DActorList.Create;
+  Objects:= TP3DActorList.Create( Self );
   Libraries:= TP3DDataList.Create;
   Scenes:= TP3DSceneList.Create;
   Shaders:= TP3DShaderList.Create;
@@ -111,21 +144,33 @@ end;
 
 destructor TP3DData.Destroy;
 begin
-  Cameras.Free;
-  Lights.Free;
-  Materials.Free;
-  Meshes.Free;
-  Objects.Free;
-  Libraries.Clear( True );
-  Libraries.Free;
-  Scenes.Free;
-  Shaders.Free;
-  Textures.Free;
-  Armatures.Free;
-  Actions.Free;
-  FileWatch.Free;
+  {$IFDEF DEBUG_DATABLOCKS}
+  if ( Assigned( FileWatch ) and ( FileWatch.FileName > '' )) then
+    WriteLn( '<' + ExtractFileNameOnly( FileWatch.FileName ) + '>.Destroy' )
+  else
+    WriteLn('<main>.Destroy' );
 
-  DataBlocks.Free;
+  if ( Assigned( FileWatch ) and ( FileWatch.FileName > '' )) then
+    WriteLn( '<' + ExtractFileNameOnly( FileWatch.FileName ) + '>.Objects: ' + DataBlocks.DumpObjectList )
+  else
+    WriteLn('<main>.Objects: ' + DataBlocks.DumpObjectList );
+  {$ENDIF}
+
+  ClearFields;
+  FreeAndNil( FLibraries );
+  FreeAndNil( FCameras );
+  FreeAndNil( FLights );
+  FreeAndNil( FMaterials );
+  FreeAndNil( FMeshes );
+  FreeAndNil( FObjects );
+  FreeAndNil( FScenes );
+  FreeAndNil( FShaders );
+  FreeAndNil( FTextures );
+  FreeAndNil( FArmatures );
+  FreeAndNil( FActions );
+  FreeAndNil( FFileWatch );
+
+  FreeAndNil( FDataBlocks );
 
   inherited Destroy;
 end;
@@ -152,52 +197,31 @@ var
   function LoadData(): Integer;
     function CreateObject: Integer;
     var
-      DB: TP3DDataBlock;
+      tp: TP3DDataBlockType;
     begin
       Result:= -1;
 
       case ADOMNode.NodeName of
         'mesh':
-          begin
-            DB:= TP3DMesh.Create( Self );
-            Meshes.Add( TP3DMesh( DB ));
-          end;
+          tp:= TP3DMesh;
         'material':
-          begin
-            case ADOMNode.GetAttribute( 'type' ) of
-              'shader': DB:= TP3DMaterialShader.Create( Self );
-              else
-                DB:= TP3DMaterialBase.Create( Self );
-            end;
-            Materials.Add( TP3DMaterialShader( DB ));
+          case ADOMNode.GetAttribute( 'type' ) of
+            'shader': tp:= TP3DMaterialShader;
+            else
+              tp:= TP3DMaterialBase;
           end;
         'light', 'lamp':
-          begin
-            DB:= TP3DLight.Create( Self );
-            Lights.Add( TP3DLight( DB ));
-          end;
+          tp:= TP3DLight;
         'camera':
-          begin
-            DB:= TP3DCamera.Create( Self );
-            Cameras.Add( TP3DCamera( DB ));
-          end;
+          tp:= TP3DCamera;
         'scene':
-          begin
-            DB:= TP3DScene.Create( Self );
-            Scenes.Add( TP3DScene( DB ));
-          end;
+          tp:= TP3DScene;
         'armature':
-          begin
-            DB:= TP3DArmature.Create( Self );
-            Armatures.Add( TP3DArmature( DB ));
-          end;
+          tp:= TP3DArmature;
         'action':
-          begin
-            DB:= TP3DArmatureAction.Create( Self );
-            Actions.Add( TP3DArmatureAction( DB ));
-          end;
+          tp:= TP3DArmatureAction;
       end;
-      Result:= DataBlocks.IndexOf( DB );
+      Result:= CreateNew( tp, False );
     end;
 
   var
@@ -212,7 +236,6 @@ var
         TP3DDataBlock( DataBlocks[ Result ]).LoadFromDOM( ADOMNode );
       end;
     {$IFDEF VERBOSE}
-    WriteLn( 'Index of Datablock "', AName, '": ', Result );
     WriteLn( Format( 'Created datablock of type "%s" and name "%s" with index %d', [ ADOMNode.NodeName, AName, Result ]));
     {$ENDIF}
   end;
@@ -236,7 +259,7 @@ begin
       'lamp', 'scene',
       'armature', 'action': Result:= LoadData();
     'texture':
-        Result:= DataBlocks.IndexOf( Textures[ Textures.Add( TP3DTexture.CreateFromDOM( ADOMNode, Self ))])
+        Result:= DataBlocks.IndexOf( TP3DTexture.CreateFromDOM( ADOMNode, Self ))
     else
       P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ADOMNode.NodeName + '". Skipping.' );
   end;
@@ -247,13 +270,13 @@ function TP3DData.AppendFromDom(ADOMNode: TDOMElement;
 var
   Element: TDOMElement;
 begin
+  Element:= TDOMElement( ADOMNode.FirstChild );
   Result:= DataBlocks.FindByName( AName );
   if ( Result > -1 ) then
     if ( not ( DataBlocks[ Result ] is AType )) then
       raise Exception.Create( Format( 'Error while appending from DOM: A class with name %s was already loaded before but is of the wrong type. Expected "%s", Found "%s"', [ AName, AType.ClassName, FindClassForDOM( Element ).ClassName ]))
     else
       exit;
-  Element:= TDOMElement( ADOMNode.FirstChild );
   while ( Assigned( Element )) do
     begin
       if ( Element.GetAttribute( 'name' ) = AName ) then
@@ -311,28 +334,121 @@ begin
   Result:= FName;
 end;
 
-procedure TP3DData.NotifyDeleteOfData(Sender: TP3DDataBlock);
+function TP3DData.CreateNew(Tp: TP3DDataBlockType; const CreateObject: Boolean ): Integer;
+var
+  data: TP3DDataBlock;
+  obj: TP3DActor;
 begin
-  if ( Sender is TP3DCamera ) then
-    Cameras.Remove( TP3DCamera( Sender ))
-  else if ( Sender is TP3DLight ) then
-    Lights.Remove( TP3DLight( Sender ))
-  else if ( Sender is TP3DMaterialShader ) then
-    Materials.Remove( TP3DMaterialShader( Sender ))
-  else if ( Sender is TP3DMesh ) then
-    Meshes.Remove( TP3DMesh( Sender ))
-  else if ( Sender is TP3DActor ) then
-    Objects.Remove( TP3DActor( Sender ))
-  else if ( Sender is TP3DScene ) then
-    Scenes.Remove( TP3DScene( Sender ))
-  else if ( Sender is TP3DShader ) then
-    Shaders.Remove( TP3DShader( Sender ))
-  else if ( Sender is TP3DTexture ) then
-    Textures.Remove( TP3DTexture( Sender ))
-  else if ( Sender is TP3DArmatureAction ) then
-    Actions.Remove( TP3DArmatureAction( Sender ))
-  else if ( Sender is TP3DArmature ) then
-    Armatures.Remove( TP3DArmature( Sender ));
+  data:= Tp.Create( Self );
+
+  if ( CreateObject ) then
+    begin
+      obj:= TP3DActor.Create( Self );
+      obj.data:= data;
+      Result:= Objects.IndexOf( obj );
+    end
+  else
+    Result:= DataBlocks.IndexOf( data );
+end;
+
+procedure TP3DData.RemoveFromFields( Block: TP3DDataBlock );
+begin
+  {$IFDEF DEBUG_DATABLOCKS}
+  if ( Assigned( FileWatch ) and ( FileWatch.FileName > '' )) then
+    WriteLn( '<' + ExtractFileNameOnly( FileWatch.FileName ) + ':TP3DData>.RemoveFromFields( ' + Block.Name + ' )' )
+  else
+    WriteLn('<main:TP3DData>.RemoveFromFields( ' + Block.Name + ' )' );
+  {$ENDIF}
+
+  {DataBlocks.Remove( Block );
+  if ( Block is TP3DCamera and Assigned( Cameras )) then
+    Cameras.Remove( TP3DCamera( Block ))
+  else if ( Block is TP3DLight and Assigned( Lights )) then
+    Lights.Remove( TP3DLight( Block ))
+  else if ( Block is TP3DMaterial and Assigned( Materials )) then
+    Materials.Remove( TP3DMaterial( Block ))
+  else if ( Block is TP3DMesh and Assigned( Meshes )) then
+    Meshes.Remove( TP3DMesh( Block ))
+  else if ( Block is TP3DActor and Assigned( Objects )) then
+    Objects.Remove( TP3DActor( Block ))
+  else if ( Block is TP3DScene and Assigned( Scenes )) then
+    Scenes.Remove( TP3DScene( Block ))
+  else if ( Block is TP3DShader and Assigned( Shaders )) then
+    Shaders.Remove( TP3DShader( Block ))
+  else if ( Block is TP3DTexture and Assigned( Textures )) then
+    Textures.Remove( TP3DTexture( Block ))
+  else if ( Block is TP3DArmatureAction and Assigned( Actions )) then
+    Actions.Remove( TP3DArmatureAction( Block ))
+  else if ( Block is TP3DArmature and Assigned( Armatures )) then
+    Armatures.Remove( TP3DArmature( Block ));}
+end;
+
+procedure TP3DData.ClearFields;
+var
+  User: TP3DDataBlock;
+  Block: TP3DObject;
+  i, j, idx: Integer;
+begin
+  for i:= Libraries.Count - 1 downto 0 do
+    begin
+      Libraries[ i ].Free;
+      Libraries.Delete( i );
+    end;
+
+  for i:= Datablocks.Count - 1 downto 0 do
+    begin
+      Block:= DataBlocks[ i ];
+      {if ( Block is TP3DDataBlock ) then
+        begin
+          for j:= TP3DDataBlock( TP3DDataBlock( Block )).Users.Count - 1 downto 0 do
+            begin
+              User:= TP3DDataBlock( TP3DDataBlock( Block )).Users[ j ];
+              if ( User.Owner <> Self ) then
+                User.RemoveFromFields( TP3DDataBlock( Block ));
+            end;
+          TP3DDataBlock( Block ).FastDestroy; //Destroy the object without checking fields
+        end
+      else }if ( IsValid( Block )) then
+        Block.Free
+      else
+        begin
+          idx:= P3DDataBlockCache.FindBlock( TP3DDataBlock( Block ));
+          if ( idx > -1 ) then
+            WriteLn( 'Orphaned datablock no. ', i, ' with cached name: ', P3DDataBlockCache[ idx ].Name )
+          else
+            WriteLn( 'Orphaned datablock no. ', i, ' with no cached name' );
+        end;
+    end;
+  Datablocks.Clear( False );
+  Cameras.Clear();
+  Lights.Clear();
+  Materials.Clear();
+  Meshes.Clear();
+  Objects.Clear();
+  Scenes.Clear();
+  Shaders.Clear();
+  Textures.Clear();
+  Actions.Clear();
+  Armatures.Clear();
+end;
+
+function TP3DData.IsValid(Obj: TP3DObject): Boolean;
+var
+  Lib: TP3DData;
+begin
+  if ( not Assigned( DataBlocks )) then
+    begin
+      Result:= False;
+      exit;
+    end;
+  Result:= DataBlocks.IndexOf( Obj ) >= 0;
+  if ( not Result ) then
+    for Lib in Libraries do
+      begin
+        Result:= Lib.IsValid( Obj );
+        if ( Result ) then
+          break;
+      end;
 end;
 
 function OpenLibrary( FileName: String ): Integer;
@@ -365,6 +481,74 @@ begin
         break;
       end;
 end;
+
+{ TP3DDataBlockCache }
+
+function TP3DDataBlockCache.FindBlock(Block: TP3DDataBlock): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Self[ i ].Datablock = Block ) then
+      begin
+        Result:= i;
+        Break;
+      end;
+end;
+function DumpCallStack: String;
+var
+  I: Longint;
+  prevbp: Pointer;
+  CallerFrame,
+  CallerAddress,
+  bp: Pointer;
+const
+  MaxDepth = 20;
+begin
+  Result := '';
+  bp := get_frame;
+  // This trick skip SendCallstack item
+  // bp:= get_caller_frame(get_frame);
+  try
+    prevbp := bp - 1;
+    I := 0;
+    while bp > prevbp do begin
+       CallerAddress := get_caller_addr(bp);
+       CallerFrame := get_caller_frame(bp);
+       if (CallerAddress = nil) then
+         Break;
+       Result := Result + BackTraceStrFunc(CallerAddress) + LineEnding;
+       Inc(I);
+       if (I >= MaxDepth) or (CallerFrame = nil) then
+         Break;
+       prevbp := bp;
+       bp := CallerFrame;
+     end;
+   except
+     { prevent endless dump if an exception occured }
+   end;
+end;
+
+function TP3DDataBlockCache.Add(Block: TP3DDataBlock): Integer;
+var
+  entry: TP3DDataBlockCacheEntry;
+begin
+  entry:= TP3DDataBlockCacheEntry.Create;
+  entry.Datablock:= Block;
+  entry.Name:= Block.Name;
+  entry.BlockType:= TP3DDataBlockType( Block.ClassType );
+  //entry.StackTrace:= DumpCallStack;
+
+  inherited Add( entry );
+end;
+
+destructor TP3DDataBlockCache.Destroy;
+begin
+  Clear( True );
+  inherited Destroy;
+end;
+
 
 {$ENDIF}
 

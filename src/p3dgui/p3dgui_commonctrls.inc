@@ -21,6 +21,7 @@ type
 
     public
       constructor Create;
+      destructor Destroy; override;
 
       property Data: Pointer read FData write FData;
 
@@ -68,7 +69,7 @@ type
     function Add( Caption: String; Data: Pointer; const Expanded: Boolean = False; const Symbol: String = '' ): Integer; overload;
     function Find( Caption: String ): Integer;
     function FindByData( Data: Pointer ): Integer;
-    function FindByData(Data: Pointer; Recurse: Boolean): TP3DTreeNode;
+    function FindByData( Data: Pointer; Recurse: Boolean ): TP3DTreeNode;
     procedure ExpandAll( const Recurse: Boolean = True );
   end;
 
@@ -88,7 +89,7 @@ type
       procedure SetScrollBarWidth(AValue: Float);
 
     public
-      constructor Create( const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil );
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       class function IsFocusControl: Boolean; override;
@@ -124,7 +125,7 @@ type
       procedure SetSelection( AValue: TP3DTreeNode ); virtual;
 
     public
-      constructor Create( const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil );
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -151,7 +152,7 @@ type
       procedure SetSelection(AValue: TP3DListItem);
 
     public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       function ItemAtPos(p: TVec2): TP3DListItem;
@@ -206,7 +207,7 @@ type
       procedure SetTreeViewDirectory(AValue: TP3DTreeViewDirectory);
 
     public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update;
       procedure MouseDblClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -246,10 +247,10 @@ begin
   ScrollBarV.Width:= ScrollBarWidth;
 end;
 
-constructor TP3DCustomItemView.Create(const AOwner: TP3DObjectList;
+constructor TP3DCustomItemView.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   SymbolsFontName:= 'Pascal3D-Symbols';
   Font:= TP3DCanvasFont.Create;
   Font.Size:= 16;
@@ -271,8 +272,10 @@ end;
 destructor TP3DCustomItemView.Destroy;
 begin
   Font.Free;
-  ScrollBarV.Free;
-  ScrollBarH.Free;
+  if ( P3DData.IsValid( ScrollBarV )) then
+    ScrollBarV.Free;
+  if ( P3DData.IsValid( ScrollBarH )) then
+    ScrollBarH.Free;
   inherited Destroy;
 end;
 
@@ -324,14 +327,14 @@ begin
   FSelection:=AValue;
 end;
 
-constructor TP3DTreeView.Create(const AOwner: TP3DObjectList;
+constructor TP3DTreeView.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Children:= TP3DTreeNodeList.Create;
 
-  SymbolPlus:= p3dTextSimple( 'H', P3DFontManager[ 'Pascal3D-Symbols', Font.Size ]);
-  SymbolMinus:= p3dTextSimple( 'F', P3DFontManager[ 'Pascal3D-Symbols', Font.Size ]);
+  SymbolPlus:= p3dTextSimple( P3DSymbolPlus, P3DFontManager[ 'Pascal3D-Symbols', Font.Size ]);
+  SymbolMinus:= p3dTextSimple( P3DSymbolMinus, P3DFontManager[ 'Pascal3D-Symbols', Font.Size ]);
 end;
 
 destructor TP3DTreeView.Destroy;
@@ -480,9 +483,6 @@ destructor TP3DTreeNode.Destroy;
 begin
   Children.Clear( True );
   Children.Free;
-  if ( Assigned( Text )) then
-    FreeAndNil( FText );
-  Symbol.Free;
   inherited Destroy;
 end;
 
@@ -705,10 +705,10 @@ begin
   FSelection:= AValue;
 end;
 
-constructor TP3DListView.Create(const AOwner: TP3DObjectList;
+constructor TP3DListView.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   ScrollBarH.Visible:= False;
   Children:= TP3DListItemList.Create;
   Font.Size:= 32;
@@ -827,7 +827,22 @@ end;
 constructor TP3DListItem.Create;
 begin
   inherited;
+  FText:= nil;
+  Symbol:= nil;
   SymbolText:= '';
+end;
+
+destructor TP3DListItem.Destroy;
+begin
+  //WriteLn( '<[' + IntToHex( Integer( Pointer( Self )), 16 ) + '].Caption = '+ Caption + ':TP3DListItem>.Destroy' );
+  if ( Assigned( FText )) then
+    FreeAndNil( FText );
+  if ( Assigned( Symbol )) then
+    begin
+      Symbol.Free;
+      Symbol:= nil;
+    end;
+  inherited Destroy;
 end;
 
 { TP3DListItemList }
@@ -886,10 +901,10 @@ begin
     end;
 end;
 
-constructor TP3DListViewFile.Create(const AOwner: TP3DObjectList;
+constructor TP3DListViewFile.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   FMask:= '*.*';
   Directory:= P3DSearchPaths.BaseDir;
 end;
@@ -971,7 +986,13 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Item in List do
       begin
-        n:= Parent.Add( Item.Name, Item );
+        if ( P3DData.IsValid( Item )) then
+          n:= Parent.Add( Item.Name, Item )
+        else
+          begin
+            Parent.Add( 'Error: Orphaned datablock', nil );
+            break;
+          end;
         if ( Assigned( Item.Data )) then
           begin
             if ( Item.Data is TP3DMesh ) then
@@ -1010,7 +1031,10 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Scene in SceneList do
       begin
-        n:= Parent.Add( Scene.Name, Scene );
+        if ( P3DData.IsValid( Scene )) then
+          n:= Parent.Add( Scene.Name, Scene )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolScene;
         AddList( Scene.Objects, Parent[ n ].Children, True );
       end;
@@ -1023,7 +1047,10 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Cam in List do
       begin
-        n:= Parent.Add( Cam.Name, Cam );
+        if ( P3DData.IsValid( Cam )) then
+          n:= Parent.Add( Cam.Name, Cam )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolCamera;
       end;
   end;
@@ -1053,19 +1080,25 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Light in List do
       begin
-        n:= Parent.Add( Light.Name, Light );
+        if ( P3DData.IsValid( Light )) then
+          n:= Parent.Add( Light.Name, Light )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolLight;
       end;
   end;
 
   procedure AddMaterialList( List: TP3DMaterialList; Parent: TP3DTreeNodeList );
   var
-    Mat: TP3DMaterialShader;
+    Mat: TP3DMaterial;
     n: LongInt;
   begin
     for Mat in List do
       begin
-        n:= Parent.Add( Mat.Name, Mat );
+        if ( P3DData.IsValid( Mat )) then
+          n:= Parent.Add( Mat.Name, Mat )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolMaterial;
       end;
   end;
@@ -1077,7 +1110,10 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Mesh in List do
       begin
-        n:= Parent.Add( Mesh.Name, Mesh );
+        if ( P3DData.IsValid( Mesh )) then
+          n:= Parent.Add( Mesh.Name, Mesh )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolMesh;
       end;
   end;
@@ -1089,7 +1125,10 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Shader in List do
       begin
-        n:= Parent.Add( Shader.Name, Shader );
+        if ( P3DData.IsValid( Shader )) then
+          n:= Parent.Add( Shader.Name, Shader )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolShader;
       end;
   end;
@@ -1101,7 +1140,10 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Tex in List do
       begin
-        n:= Parent.Add( Tex.Name, Tex );
+        if ( P3DData.IsValid( Tex )) then
+          n:= Parent.Add( Tex.Name, Tex )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolTexture;
       end;
   end;
@@ -1113,7 +1155,10 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Armature in List do
       begin
-        n:= Parent.Add( Armature.Name, Armature );
+        if ( P3DData.IsValid( Armature )) then
+          n:= Parent.Add( Armature.Name, Armature )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolArmature;
       end;
   end;
@@ -1125,7 +1170,10 @@ procedure TP3DTreeViewActors.Update;
   begin
     for Action in List do
       begin
-        n:= Parent.Add( Action.Name, Action );
+        if ( P3DData.IsValid( Action )) then
+          n:= Parent.Add( Action.Name, Action )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolArmature;
       end;
   end;
@@ -1134,7 +1182,6 @@ procedure TP3DTreeViewActors.Update;
   var
     Node: TP3DTreeNodeList;
   begin
-
     Node:= Parent[ Parent.Add( 'Cameras', Data.Cameras, False, P3DSymbolCamera )].Children;
     AddCameraList( Data.Cameras, Node );
 

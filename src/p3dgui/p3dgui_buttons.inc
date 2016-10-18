@@ -56,7 +56,7 @@
         procedure RenderButtonText( C: TVec4 );
 
       public
-        constructor Create( const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
         destructor Destroy; override;
 
         procedure Draw; override;
@@ -212,9 +212,10 @@ begin
 end;
 
 
-constructor TP3DButton.Create(const AOwner: TP3DObjectList; const AParent: TP3DGraphicControl);
+constructor TP3DButton.Create(const AData: TP3DData;
+  const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   PresetDown:= TP3DButtonPreset.Create;
   PresetHover:= TP3DButtonPreset.Create;
   PresetNormal:= TP3DButtonPreset.Create;

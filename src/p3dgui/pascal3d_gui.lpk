@@ -18,67 +18,67 @@
       </Item1>
       <Item2>
         <Filename Value="p3dgui_advanced.inc"/>
-        <Type Value="Binary"/>
+        <Type Value="Include"/>
       </Item2>
       <Item3>
         <Filename Value="p3dgui_buttons.inc"/>
         <Type Value="Include"/>
       </Item3>
       <Item4>
-        <Filename Value="p3dgui_commonctrls.inc"/>
+        <Filename Value="p3dgui_colors.inc"/>
         <Type Value="Include"/>
       </Item4>
       <Item5>
-        <Filename Value="p3dgui_controllist.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dgui_commonctrls.inc"/>
+        <Type Value="Include"/>
       </Item5>
       <Item6>
-        <Filename Value="p3dgui_forms.inc"/>
+        <Filename Value="p3dgui_controllist.inc"/>
         <Type Value="Include"/>
       </Item6>
       <Item7>
-        <Filename Value="p3dgui_graphiccontrol.inc"/>
+        <Filename Value="p3dgui_forms.inc"/>
         <Type Value="Include"/>
       </Item7>
       <Item8>
-        <Filename Value="p3dgui_manager.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dgui_graphiccontrol.inc"/>
+        <Type Value="Include"/>
       </Item8>
       <Item9>
-        <Filename Value="p3dgui_menus.inc"/>
+        <Filename Value="p3dgui_manager.inc"/>
         <Type Value="Include"/>
       </Item9>
       <Item10>
-        <Filename Value="p3dgui_objectinspector.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dgui_menus.inc"/>
+        <Type Value="Include"/>
       </Item10>
       <Item11>
-        <Filename Value="p3dgui_objinspector_editors.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dgui_objectinspector.inc"/>
+        <Type Value="Include"/>
       </Item11>
       <Item12>
-        <Filename Value="p3dgui_sceneviewer.inc"/>
+        <Filename Value="p3dgui_objinspector_editors.inc"/>
         <Type Value="Include"/>
       </Item12>
       <Item13>
-        <Filename Value="p3dgui_shadernodes.inc"/>
+        <Filename Value="p3dgui_sceneviewer.inc"/>
         <Type Value="Include"/>
       </Item13>
       <Item14>
-        <Filename Value="p3dgui_shadernodes_controls.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="p3dgui_shadernodes.inc"/>
+        <Type Value="Include"/>
       </Item14>
       <Item15>
-        <Filename Value="p3dgui_stdctrls.inc"/>
+        <Filename Value="p3dgui_shadernodes_controls.inc"/>
         <Type Value="Include"/>
       </Item15>
       <Item16>
-        <Filename Value="pascal3d_gui.pas"/>
-        <UnitName Value="pascal3d_gui"/>
+        <Filename Value="p3dgui_stdctrls.inc"/>
+        <Type Value="Include"/>
       </Item16>
       <Item17>
-        <Filename Value="p3dgui_colors.inc"/>
-        <Type Value="Binary"/>
+        <Filename Value="pascal3d_gui.pas"/>
+        <UnitName Value="pascal3d_gui"/>
       </Item17>
     </Files>
     <RequiredPkgs Count="4">

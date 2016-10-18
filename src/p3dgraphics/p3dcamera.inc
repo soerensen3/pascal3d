@@ -34,8 +34,8 @@ type
       procedure PassToShader( world: TMat4 );
       procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
 
-      constructor Create( const AData: TP3DData = nil );
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil ); override;
+      procedure FastDestroy; override;
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
 
       property Position: TVec3 read FPosition write FPosition;
@@ -146,15 +146,16 @@ begin
   FFOV:= 90;
   FIsoZoom:= 1.0;
   //FHandedness:= coRight;
-  Parent.Cameras.Add( Self );
+  Owner.Cameras.Add( Self );
 end;
 
-constructor TP3DCamera.CreateFromDOM(ADOMNode: TDOMElement;
-  const AData: TP3DData);
+procedure TP3DCamera.FastDestroy;
 begin
-  Create( AData );
-  LoadFromDOM( ADOMNode );
+  Owner.Cameras.Remove( Self );
+
+  inherited FastDestroy;
 end;
+
 
 procedure TP3DCamera.Render(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DActor);

@@ -44,10 +44,10 @@ type
     private
       FCam: TP3DActor;
       FIsDesignTime: Boolean;
+      FInheritedDesignTime: Boolean;
       FLights: TP3DLightList;
       FObjects: TP3DActorList;
       FActiveCam: TP3DActor;
-      FDesignTime: Boolean;
       FOnRenderCallback: TP3DSceneRenderCallback;
       FRootScene: TP3DScene;
 
@@ -61,11 +61,12 @@ type
       property Lights: TP3DLightList read FLights write FLights;
 
     public
-      constructor Create( const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil ); override;
       constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DData = nil );
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
+
+      procedure ClearFields; override;
       procedure UpdateLights;
 
       procedure Clear;
@@ -81,7 +82,7 @@ type
       procedure AppendFile( AFileName: String );
       procedure AppendFromData( AData: TP3DData );
       procedure PassToShader( world: TMat4 ); virtual;
-      procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
+      procedure RemoveFromFields( Block: TP3DDataBlock ); override;
       //function Pick( X,Y: Integer; const ARootScene: TP3DScene=nil ): TP3DActor;
 
       property Objects: TP3DActorList read FObjects;
@@ -161,12 +162,12 @@ begin
   if FCam=AValue then Exit;
 
   if ( Assigned( FCam )) then
-    FCam.Users.Delete( FCam.Users.IndexOf( Self ));
+    FCam.RemoveUser( Self );
 
   FCam:= AValue;
 
   if ( Assigned( FCam )) then
-    FCam.Users.Add( Self );
+    FCam.AddUser( Self );
 end;
 
 procedure TP3DScene.RenderCallback(world: TMat4; AActor: TP3DActor);
@@ -178,18 +179,18 @@ end;
 procedure TP3DScene.OnObjChange(Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction);
 begin
   if ( Action = actAdd ) then
-    Item.Users.Add( Self )
-  else if ( Action in [ actDelete, actClear ]) then
-    Item.Users.Remove( Self );
+    Item.AddUser( Self )
+  else
+    Item.RemoveUser( Self );
 end;
 
 constructor TP3DScene.Create(const AData: TP3DData);
 begin
   inherited Create( AData );
-  FObjects:= TP3DActorList.Create;
+  FObjects:= TP3DActorList.Create( Self );
   FObjects.OnChange:= @OnObjChange;
   Lights:= TP3DLightList.Create;
-  Parent.Scenes.Add( Self );
+  Owner.Scenes.Add( Self );
 end;
 
 constructor TP3DScene.Create(AFileName: String;
@@ -197,14 +198,8 @@ constructor TP3DScene.Create(AFileName: String;
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
-  inherited Create( AData );
+  Create( AData );
   AppendFile( AFileName );
-end;
-
-constructor TP3DScene.CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData );
-begin
-  inherited;
-  LoadFromDOM( ADOMNode );
 end;
 
 procedure TP3DScene.LoadFromDOM(ADOMNode: TDOMElement);
@@ -220,7 +215,7 @@ begin
   while ( Assigned( Element )) do
     begin
       case Element.NodeName of
-        'object': begin Child:= TP3DActor.CreateFromDOM( Element, Parent ); Objects.Add( Child ); end;
+        'object': begin Child:= TP3DActor.CreateFromDOM( Element, Owner ); Objects.Add( Child ); end;
       else
         raise Exception.Create( 'Unknown tag inside scene element: '+ Element.NodeName );
       end;
@@ -245,13 +240,22 @@ begin
   AppendFromDom( ADOMNode );
 end;}
 
-destructor TP3DScene.Destroy;
+procedure TP3DScene.FastDestroy;
 begin
-  Clear;
   Objects.Free;
-  Lights.Clear();
   Lights.Free;
-  inherited Destroy;
+  Owner.Scenes.Remove( Self );
+  inherited FastDestroy;
+end;
+
+procedure TP3DScene.ClearFields;
+begin
+  Cam:= nil;
+  Lights.Clear();
+  Objects.Clear();
+  ActiveCam:= nil;
+  RootScene:= nil;
+  inherited ClearFields;
 end;
 
 procedure TP3DScene.UpdateLights;
@@ -277,8 +281,6 @@ end;
 
 
 procedure TP3DScene.Clear;
-var
-  i: Integer;
 begin
   Objects.Clear( False );
 end;
@@ -295,8 +297,8 @@ begin
         RootScene:= Scene;
         RootScene.UpdateLights;
       end;
-  if ( Scene.FDesignTime or IsDesignTime ) then
-    FDesignTime:= True;
+  if ( Scene.FInheritedDesignTime or IsDesignTime ) then
+    FInheritedDesignTime:= True;
   if ( Assigned( Cam )) then
     begin
       ActiveCam:= Cam;
@@ -391,13 +393,13 @@ begin
     end;
 end;
 
-procedure TP3DScene.NotifyDeleteOfData(Sender: TP3DDataBlock);
+procedure TP3DScene.RemoveFromFields( Block: TP3DDataBlock );
 begin
-  inherited NotifyDeleteOfData( Sender );
-  if ( Sender = Cam ) then
+  if ( Block = Cam ) then
     Cam:= nil;
-  if ( Sender is TP3DActor ) then
-    Objects.Remove( TP3DActor( Sender ));
+  if ( Block is TP3DActor ) then
+    Objects.Remove( TP3DActor( Block ));
+  inherited RemoveFromFields( Block );
 end;
 
 {

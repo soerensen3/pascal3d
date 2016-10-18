@@ -149,8 +149,14 @@ begin
           //alTop: UpdateControlAndBoundary( R.Top, Control.FTop, Control.FWidth, R.Right - R.Left, Control.Height );
           //alBottom: UpdateControlAndBoundary( R.Bottom, Control.FTop, Control.FWidth, R.Right - R.Left, -Control.Height );
         end;
-        Control.Realign;
-        Control.Controls.Realign;
+        if ( P3DData.IsValid( Control )) then
+          begin
+            WriteLn( Control.Name );
+            Control.Realign;
+            Control.Controls.Realign;
+          end
+        else
+          WriteLn( 'Error in child no. ', IndexOf( Control ), ' of parent ' + Parent.Name );
       end;
 
   for Control in Self do

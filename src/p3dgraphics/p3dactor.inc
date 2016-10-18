@@ -69,19 +69,17 @@ type
       procedure UpdateEuler;
 
     public
-      constructor Create( const AData: TP3DData = nil );
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil ); override;
 
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
-      destructor Destroy; override;
+      procedure FastDestroy; override;
       procedure Render( world: TMat4; Scene: TP3DScene ); reintroduce;
       procedure RenderCallbackOnly( world: TMat4; Scene: TP3DScene ); reintroduce;
       function CalcBoundingBox(): TP3DBoundingBox; override;
-      procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
+      procedure RemoveFromFields( Block: TP3DDataBlock ); override;
       function CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): Boolean; reintroduce;
-      procedure Unlink( UnlinkFrom: TP3DDataBlock );
-      procedure MakeLink( LinkTo: TP3DDataBlock );
+      procedure ClearFields; override;
 
       procedure MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
@@ -108,7 +106,11 @@ type
 
   { TP3DActorList }
   TP3DActorList = class( TP3DCustomActorList )
+    private
+      FOwner: TPersistent;
+
     public
+      constructor Create( AOwner: TPersistent );
       procedure Render( world: TMat4; Scene: TP3DScene );
       procedure RenderCallBackOnly( world: TMat4; Scene: TP3DScene );
       procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList);
@@ -116,6 +118,8 @@ type
 
       function CalcBoundingBox(): TP3DBoundingBox;
       function CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): TP3DActor;
+
+      property Owner: TPersistent read FOwner write FOwner;
   end;
 
 {$ENDIF}
@@ -151,12 +155,12 @@ begin
   if FData=AValue then Exit;
 
   if ( Assigned( FData )) then
-    Unlink( FData );
+    FData.RemoveUser( Self );
 
   FData:= AValue;
 
   if ( Assigned( FData )) then
-    MakeLink( FData );
+    FData.AddUser( Self );
 end;
 
 procedure TP3DActor.SetMatrix(AValue: TMat4);
@@ -245,19 +249,13 @@ end;
 constructor TP3DActor.Create(const AData: TP3DData);
 begin
   inherited Create( AData );
-  FChildren:= TP3DActorList.Create;
+  Owner.Objects.Add( Self );
+  FChildren:= TP3DActorList.Create( Self );
   FVisible:= True;
-  Parent.Objects.Add( Self );
   FScale:= vec3( 1 );
   FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
-end;
-
-constructor TP3DActor.CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData );
-begin
-  Create( AData );
-  LoadFromDOM( ADOMNode );
 end;
 
 procedure TP3DActor.LoadFromDOM(ADOMNode: TDOMElement);
@@ -283,8 +281,8 @@ begin
   DataName:= ADOMNode.GetAttribute( 'data' );
   if ( DataName > '' ) then
     begin
-      n:= Parent.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.DocumentElement ), DataName, FindClassForDOM( DataType ));
-      Data:= TP3DDataBlock( Parent.DataBlocks[ n ]);
+      n:= Owner.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.DocumentElement ), DataName, FindClassForDOM( DataType ));
+      Data:= TP3DDataBlock( Owner.DataBlocks[ n ]);
     end
   else
     Data:= nil;
@@ -302,7 +300,7 @@ begin
               Children[ n ].LoadFromDOM( Element )
             else
               begin
-                Child:= TP3DActor.CreateFromDOM( Element, Parent );
+                Child:= TP3DActor.CreateFromDOM( Element, Owner );
                 Children.Add( Child );
               end;
           end;
@@ -313,12 +311,12 @@ begin
     end;
 end;
 
-destructor TP3DActor.Destroy;
+procedure TP3DActor.FastDestroy;
 begin
-  Data:= nil;
   FChildren.Clear;
   FChildren.Free;
-  inherited Destroy;
+  Owner.Objects.Remove( Self );
+  inherited FastDestroy;
 end;
 
 procedure TP3DActor.Render( world: TMat4; Scene: TP3DScene );
@@ -367,50 +365,61 @@ begin
     Result:= P3DBoundingBox( Position, Position, Position );
 end;
 
-procedure TP3DActor.NotifyDeleteOfData(Sender: TP3DDataBlock);
+procedure TP3DActor.RemoveFromFields(Block: TP3DDataBlock);
 begin
-  inherited NotifyDeleteOfData(Sender);
-  if ( Sender = Data ) then
+  if ( Block = Data ) then
     Data:= nil;
+  inherited RemoveFromFields( Block );
 end;
 
-function TP3DActor.CastRay(Orig, Dir: TVec3; out HitPos: TVec3): Boolean;
+function TP3DActor.CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): Boolean;
 begin
   if ( Assigned( Data )) then
     Result:= Data.CastRay( Orig, Dir, Self, HitPos );
 end;
 
-procedure TP3DActor.Unlink(UnlinkFrom: TP3DDataBlock);
+procedure TP3DActor.ClearFields;
 begin
-  UnlinkFrom.Users.Delete( UnlinkFrom.Users.IndexOf( Self ));
+  try
+    Children.Clear();
+    Data:= nil;
+
+  except
+    on E: Exception do
+      with P3DDataBlockCache[ P3DDataBlockCache.FindBlock( Self )] do
+        WriteLn( 'Call Stack for Datablock: ' + Name + LineEnding + StackTrace + ' - ' + E.Message );
+  end;
+  inherited ClearFields;
 end;
 
-procedure TP3DActor.MakeLink(LinkTo: TP3DDataBlock);
-begin
-  LinkTo.Users.Add( Self );
-end;
 
-procedure TP3DActor.MoveAlongGlobalAxis(AAxis: TVec3; AValue: Float);
+procedure TP3DActor.MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
 begin
   Position:= Position + AAxis * AValue;
 end;
 
-procedure TP3DActor.MoveAlongLocalAxis(AAxis: TVec3; AValue: Float);
+procedure TP3DActor.MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
 begin
   Position:= Position + ( vec4( AAxis, 0 ) * Matrix ).xyz * AValue;
 end;
 
-procedure TP3DActor.RotateAroundGlobalAxis(AAxis: TVec3; AValue: Float);
+procedure TP3DActor.RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
 begin
   Quaternion:= Quaternion * quatRotation( AAxis, AValue );
 end;
 
-procedure TP3DActor.RotateAroundLocalAxis(AAxis: TVec3; AValue: Float);
+procedure TP3DActor.RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
 begin
-
+  //TODO: TP3DActor.RotateAroundLocalAxis
 end;
 
 { TP3DActorList }
+
+constructor TP3DActorList.Create(AOwner: TPersistent);
+begin
+  inherited Create();
+  Owner:= AOwner;
+end;
 
 procedure TP3DActorList.Render( world: TMat4; Scene: TP3DScene );
 var

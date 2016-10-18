@@ -29,7 +29,7 @@ TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
     constructor Create( AMesh: TP3DMesh ); override;
     destructor Destroy; override;
 
-    procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); override;
+    procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4 ); override;
     procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
   published
@@ -65,7 +65,7 @@ begin
 end;
 
 procedure TP3DMeshModifierTerrain.PassToShader(Scene: TP3DScene;
-  Material: TP3DMaterialShader; var world: TMat4);
+  Material: TP3DMaterial; var world: TMat4);
 var
   Position: TVec3;
   //Position: TVec3;

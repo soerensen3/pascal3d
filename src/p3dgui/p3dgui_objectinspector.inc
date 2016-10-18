@@ -13,7 +13,7 @@ type
       procedure SetObj(AValue: TInterfacedPersistent); virtual;
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Update; virtual;
@@ -40,7 +40,7 @@ type
       procedure SetObj(AValue: TInterfacedPersistent);
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Update; virtual;
@@ -73,7 +73,7 @@ type
       procedure ScrollBarChange( Sender: TObject );
 
     public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       function AddPage(Page: TP3DOIEditorPage): TP3DOIEditorPage;
@@ -111,10 +111,10 @@ begin
   Visible:= IsCompatible( Obj );
 end;
 
-constructor TP3DOIEditorGroup.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorGroup.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   CanCollapse:= True;
 end;
 
@@ -146,10 +146,10 @@ begin
   Update;
 end;
 
-constructor TP3DOIEditorPage.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIEditorPage.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Groups:= TP3DOIEditorList.Create();
 end;
 
@@ -221,10 +221,10 @@ begin
   UpdateScrollBar;
 end;
 
-constructor TP3DObjectInspector.Create(const AOwner: TP3DObjectList;
+constructor TP3DObjectInspector.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
 
   Toolbar:= TP3DGraphicControl.Create( nil, Self );
   Toolbar.Align:= alTop;

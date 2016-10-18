@@ -1,4 +1,4 @@
-//p3dmodel_datablock.inc
+//p3ddatablock.inc
 
 {$IFDEF INTERFACE}
 type
@@ -26,13 +26,17 @@ type
     private
       FBoundingBox: TP3DBoundingBox;
       FDOMPath: String;
-//      FFileWatch: TP3DFileWatch;
-      FParent: TP3DData;
+      FOwner: TP3DData;
       FUsers: TP3DDataBlockList;
 
+      procedure SetName(NewName: TComponentName); override;
+
     public
-      constructor Create( const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil ); virtual;
+      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); virtual;
+
       destructor Destroy; override;
+      procedure FastDestroy; virtual;
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); virtual;
       procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual;
@@ -40,14 +44,17 @@ type
       procedure LoadFromBinary( FileName: String ); virtual;
       procedure Reload;
       function CalcBoundingBox(): TP3DBoundingBox; virtual;
-      procedure NotifyDeleteOfData( Sender: TP3DDataBlock ); virtual;
+      procedure RemoveFromFields( Block: TP3DDataBlock ); virtual;
       function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; virtual;
+      procedure RemoveUser( User: TP3DDataBlock );
+      procedure AddUser( User: TP3DDataBlock );
+      procedure ClearFields; virtual;
+      procedure ClearUsers;
 
       property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
-      property Parent: TP3DData read FParent write FParent;
+      property Owner: TP3DData read FOwner;
 
     published
-//      property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       property DOMPath: String read FDOMPath write FDOMPath;
       property Users: TP3DDataBlockList read FUsers;
   end;
@@ -63,10 +70,12 @@ type
     type
       TP3DCustomObjectListEnumerator = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
       TP3DCustomListOnChangeEvent = procedure ( Sender: {specialize gP3DCustomDatablockList < TCustomItem >}TPersistent; Item: TCustomItem; Action: TP3DCustomListOnChangeAction ) of object;
+
     private
       FFreeChildrenOnDestroy: Boolean;
       FItems: TList;
       FOnChange: TP3DCustomListOnChangeEvent;
+
       function GetCount: Integer;
       procedure SetCount( AValue: Integer );
       function GetItems( Index: Integer ): TCustomItem;
@@ -96,7 +105,13 @@ type
   end;
 
   TP3DCustomDataBlockList = specialize gP3DCustomDatablockList <TP3DDataBlock>;
-  TP3DDataBlockList = class ( TP3DCustomDataBlockList ) end;
+
+  { TP3DDataBlockList }
+
+  TP3DDataBlockList = class ( TP3DCustomDataBlockList )
+    public
+      function DumpUsers: String;
+  end;
 
   function P3DBoundingBox( vMin, vMax, vCenter: TVec3 ): TP3DBoundingBox;
   function P3DBoundingBoxTransform( Box: TP3DBoundingBox; Matrix: TMat4 ): TP3DBoundingBox;
@@ -223,7 +238,7 @@ destructor gP3DCustomDatablockList.Destroy;
 begin
   Clear( FFreeChildrenOnDestroy );
   FItems.Free;
-  inherited;
+  inherited Destroy;
 end;
 
 function gP3DCustomDatablockList.Add( Item: TCustomItem ): Integer;
@@ -304,13 +319,13 @@ procedure gP3DCustomDatablockList.Clear( const FreeObjects: Boolean );
 var
   i: Integer;
 begin
-  if ( FreeObjects ) then
-    for i:= 0 to Self.Count - 1 do
-      begin
-        if ( Assigned( OnChange )) then
-          OnChange( Self, Items[ i ], actClear );
+  for i:= 0 to Self.Count - 1 do
+    begin
+      if ( Assigned( OnChange )) then
+        OnChange( Self, Items[ i ], actClear );
+      if ( FreeObjects ) then
         Items[ i ].Free;
-      end;
+    end;
 
   FItems.Clear;
 end;
@@ -364,28 +379,55 @@ end;
 
 { TP3DDataBlock }
 
+procedure TP3DDataBlock.SetName(NewName: TComponentName);
+var
+  idx: Integer;
+begin
+  inherited SetName(NewName);
+  idx:= P3DDataBlockCache.FindBlock( Self );
+  if ( idx > -1 ) then
+    P3DDataBlockCache[ idx ].Name:= Name;
+end;
+
 constructor TP3DDataBlock.Create(const AData: TP3DData);
 begin
   if ( AData = nil ) then
-    Parent:= P3DData
+    FOwner:= P3DData
   else
-    Parent:= AData;
-  inherited Create( Parent.DataBlocks );
+    FOwner:= AData;
+  inherited Create( Owner.DataBlocks );
   //FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
   DOMPath:= '';
   BoundingBox:= P3DInvalidBoundingBox;
   FUsers:= TP3DDataBlockList.Create;
+  P3DDataBlockCache.Add( Self );
+end;
+
+constructor TP3DDataBlock.CreateFromDOM(ADOMNode: TDOMElement;
+  const AData: TP3DData);
+begin
+  Create( AData );
+  LoadFromDOM( ADOMNode );
 end;
 
 destructor TP3DDataBlock.Destroy;
-var
-  User: TP3DDataBlock;
 begin
-  for User in Users do
-    User.NotifyDeleteOfData( Self );
+  ClearUsers;
+  Owner.RemoveFromFields( Self );
+  ClearFields;
+
+  FastDestroy;
+end;
+
+procedure TP3DDataBlock.FastDestroy;
+begin
   FUsers.Free;
-  Parent.NotifyDeleteOfData( Self );
-  //FFileWatch.Free;
+  {$IFDEF DEBUG_DATABLOCKS}
+  if ( Assigned( Owner.FileWatch ) and ( Owner.FileWatch.FileName > '' )) then
+    WriteLn( '<' + ExtractFileNameOnly( Owner.FileWatch.FileName ) + '.' + Name + ':' + ClassName + '>.FastDestroy' )
+  else
+    WriteLn( '<main.' + Name + ':' + ClassName + '>.FastDestroy' );
+  {$ENDIF}
   inherited Destroy;
 end;
 
@@ -452,6 +494,64 @@ begin
     LoadFromBinary( FN );
 end;
 
+procedure TP3DDataBlock.RemoveUser( User: TP3DDataBlock );
+var
+  idx: Integer;
+begin
+  {$IFDEF DEBUG_DATABLOCKS}
+  if ( Assigned( Parent.FileWatch ) and ( Parent.FileWatch.FileName > '' )) then
+    WriteLn( '<' + ExtractFileNameOnly( Parent.FileWatch.FileName ) + '.' + Name + ':' + ClassName + '>.RemoveUser( ' + User.Name + ' )' )
+  else
+    WriteLn( '<main.' + Name + ':' + ClassName + '>.RemoveUser( ' + User.Name + ' )' );
+  WriteLn( Name + '.Users before remove: ' + Users.DumpUsers );
+  {$ENDIF}
+  if ( P3DData.IsValid( Self )) then
+    begin
+      Users.Remove( User );
+    end
+  else
+    begin
+      idx:= P3DDataBlockCache.FindBlock( Self );
+      if ( idx > -1 ) then
+        WriteLn( 'Orphaned user with cached name ' + P3DDataBlockCache[ idx ].Name )
+      else
+        WriteLn( 'Orphaned user! ' );
+    end;
+end;
+
+procedure TP3DDataBlock.AddUser( User: TP3DDataBlock );
+begin
+  if ( User = Self ) then
+    raise Exception.Create( 'TP3DDataBlock.AddUser( ' + User.Name + ' ): Users loop detected!' );
+
+  {$IFDEF DEBUG_DATABLOCKS}
+
+  if ( not ( User is TP3DActor )) then
+    begin
+      if ( Assigned( Owner.FileWatch ) and ( Owner.FileWatch.FileName > '' )) then
+        WriteLn( '<' + ExtractFileNameOnly( Owner.FileWatch.FileName ) + '.' + Name + ':' + ClassName + '>.AddUser( ' + User.Name + ' )' )
+      else
+        WriteLn( '<main.' + Name + ':' + ClassName + '>.AddUser( ' + User.Name + ' )' );
+    end;
+  {$ENDIF}
+  Users.Add( User );
+end;
+
+procedure TP3DDataBlock.ClearFields;
+begin
+  //nothing to do in base class
+end;
+
+procedure TP3DDataBlock.ClearUsers;
+var
+  i: Integer;
+begin
+  for i:= Users.Count - 1 downto 0 do
+    if ( P3DData.IsValid( Users[ i ] )) then
+      Users[ i ].RemoveFromFields( Self );
+  Users.Clear;
+end;
+
 procedure TP3DDataBlock.LoadFromBinary(FileName: String);
 begin
 
@@ -462,15 +562,15 @@ var
   Node: TDOMElement;
   Dir: String;
 begin
-  Parent.OpenDOMFile;
-  Node:= Parent.FindDOMToPath( DOMPath );
+  Owner.OpenDOMFile;
+  Node:= Owner.FindDOMToPath( DOMPath );
   Dir:= GetCurrentDir;
-  SetCurrentDir( ExtractFilePath( Parent.FileWatch.FileName ));
+  SetCurrentDir( ExtractFilePath( Owner.FileWatch.FileName ));
   if ( Assigned( Node )) then
     LoadFromDOM( Node )
   else
     WriteLn( 'Warning, cannot reload. Not found in DOM file!' );
-  Parent.CloseDOMFile;
+  Owner.CloseDOMFile;
   SetCurrentDir( Dir );
 end;
 
@@ -482,8 +582,14 @@ begin
   Result:= BoundingBox;
 end;
 
-procedure TP3DDataBlock.NotifyDeleteOfData( Sender: TP3DDataBlock );
+procedure TP3DDataBlock.RemoveFromFields(Block: TP3DDataBlock);
 begin
+  {$IFDEF DEBUG_DATABLOCKS}
+  if ( Assigned( Owner.FileWatch ) and ( Owner.FileWatch.FileName > '' )) then
+    WriteLn(  '<' + ExtractFileNameOnly( Owner.FileWatch.FileName ) + '.' + Name + ':' + ClassName + '>.RemoveFromFields( ' + Block.Name + ' )' )
+  else
+    WriteLn( '<main.' + Name + ':' + ClassName + '>.RemoveFromFields( ' + Block.Name + ' )' );
+  {$ENDIF}
   //Nothing to do
 end;
 
@@ -492,6 +598,7 @@ function TP3DDataBlock.CastRay(Orig, Dir: TVec3; Actor: TP3DActor; out
 begin
   Result:= False;
 end;
+
 
 operator=(A, B: TP3DBoundingBox): Boolean;
 begin

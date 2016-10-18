@@ -12,19 +12,22 @@
      private
        FIndexEnd: Integer;
        FIndexStart: Integer;
-       FMaterial: TP3DMaterialShader;
+       FMaterial: TP3DMaterial;
        FParentMesh: TP3DMesh;
        FPolyEnd: Integer;
        FPolyStart: Integer;
 
-       procedure SetMaterial( AValue: TP3DMaterialShader );
+       procedure SetMaterial( AValue: TP3DMaterial );
+
+     public
+       constructor Create( AParentMesh: TP3DMesh );
 
      published
        property PolyStart: Integer read FPolyStart write FPolyStart;
        property PolyEnd: Integer read FPolyEnd write FPolyEnd;
        property IndexStart: Integer read FIndexStart write FIndexStart;
        property IndexEnd: Integer read FIndexEnd write FIndexEnd;
-       property Material: TP3DMaterialShader read FMaterial write SetMaterial;
+       property Material: TP3DMaterial read FMaterial write SetMaterial;
        property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
     end;
 
@@ -46,13 +49,15 @@
       private
         FMesh: TP3DMesh;
 
-      published
+      public
         constructor Create( AMesh: TP3DMesh ); virtual;
         constructor CreateFromDOM( ADOMNode: TDOMElement; AMesh: TP3DMesh );
 
         procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual; abstract;
 
-        procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); virtual; abstract;
+        procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
+
+      published
         property Mesh: TP3DMesh read FMesh write FMesh;
     end;
 
@@ -110,10 +115,9 @@
         MaterialGroups: TP3DMeshMaterialGroupList;
         WeightGroups: TP3DMeshWeightGroupList;
 
-        constructor Create( const AData: TP3DData = nil );
-        constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
+        constructor Create( const AData: TP3DData = nil ); override;
 
-        destructor Destroy; override;
+        procedure FastDestroy; override;
 
         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
         procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
@@ -127,7 +131,7 @@
         procedure CalcCotangentsFromTangents;
         procedure Calc_Tangents_Cotangents;
         function CalcBoundingBox(): TP3DBoundingBox; override;
-        procedure NotifyDeleteOfData(Sender: TP3DDataBlock); override;
+        procedure RemoveFromFields( Block: TP3DDataBlock ); override;
         //        procedure ClearChildren;
         property Modifiers: TP3DMeshModifierList read FModifiers write FModifiers;
         property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
@@ -220,12 +224,12 @@ var
   MaterialGroup: TP3DMeshMaterialGroup;
 begin
   AName:= DOM.GetAttribute( 'name' );
-  MatIdx:= Parent.AppendFromDom( TDOMElement( DOM.OwnerDocument.FirstChild ), AName, TP3DMaterialShader );
+  MatIdx:= Owner.AppendFromDom( TDOMElement( DOM.OwnerDocument.FirstChild ), AName, TP3DMaterial );
   MatPolyStart:= StrToInt( DOM.GetAttribute( 'start' ));
   MatPolyEnd:= StrToInt( DOM.GetAttribute( 'end' ));
 
-  MaterialGroup:= TP3DMeshMaterialGroup.Create;
-  MaterialGroup.Material:= TP3DMaterialShader( Parent.DataBlocks[ MatIdx ]);
+  MaterialGroup:= TP3DMeshMaterialGroup.Create( Self );
+  MaterialGroup.Material:= TP3DMaterialShader( Owner.DataBlocks[ MatIdx ]);
   MaterialGroup.PolyStart:= MatPolyStart;
   MaterialGroup.PolyEnd:= MatPolyEnd;
   MaterialGroups.Add( MaterialGroup );
@@ -283,17 +287,11 @@ begin
   WeightGroups:= TP3DMeshWeightGroupList.Create();
   Modifiers:= TP3DMeshModifierList.Create;
 
-  Parent.Meshes.Add( Self );
+  Owner.Meshes.Add( Self );
   FileWatch:= TP3DFileWatch.Create( '' );
 end;
 
-constructor TP3DMesh.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData);
-begin
-  Create( AData );
-  LoadFromDOM( ADOMNode );
-end;
-
-destructor TP3DMesh.Destroy;
+procedure TP3DMesh.FastDestroy;
 var
   i: Integer;
 begin
@@ -316,7 +314,9 @@ begin
   WeightGroups.Free;
   FileWatch.Free;
 
-  inherited Destroy;
+  Owner.Meshes.Remove( Self );
+
+  inherited FastDestroy;
 end;
 
 procedure TP3DMesh.LoadFromDOM(ADOMNode: TDOMElement);
@@ -445,7 +445,7 @@ end;
 procedure TP3DMesh.RenderMaterialGroup(world: TMat4; Idx: Integer;
   Scene: TP3DScene);
 var
-  Material: TP3DMaterialShader;
+  Material: TP3DMaterial;
   Modifier: TP3DMeshModifier;
   offset: Integer;
   count, i: Integer;
@@ -845,29 +845,35 @@ begin
   Result:= FBoundingBox;
 end;
 
-procedure TP3DMesh.NotifyDeleteOfData(Sender: TP3DDataBlock);
+procedure TP3DMesh.RemoveFromFields(Block: TP3DDataBlock);
 var
   i: Integer;
 begin
-  inherited NotifyDeleteOfData(Sender);
   for i:= 0 to MaterialGroups.Count - 1 do
-    if ( MaterialGroups[ i ].Material = Sender ) then
+    if ( MaterialGroups[ i ].Material = Block ) then
       MaterialGroups[ i ].Material:= nil;
+  inherited RemoveFromFields( Block );
 end;
 
 { TP3DMeshMaterialGroup }
 
-procedure TP3DMeshMaterialGroup.SetMaterial( AValue: TP3DMaterialShader );
+procedure TP3DMeshMaterialGroup.SetMaterial( AValue: TP3DMaterial );
 begin
   if FMaterial=AValue then Exit;
 
   if ( Assigned( FMaterial )) then
-    FMaterial.Users.Delete( FMaterial.Users.IndexOf( ParentMesh ));
+    Material.RemoveUser( ParentMesh );
 
   FMaterial:= AValue;
 
   if ( Assigned( FMaterial )) then
-    FMaterial.Users.Add( ParentMesh );
+    Material.AddUser( ParentMesh );
+end;
+
+constructor TP3DMeshMaterialGroup.Create(AParentMesh: TP3DMesh);
+begin
+  ParentMesh:= AParentMesh;
+  inherited Create;
 end;
 
 { TP3DMeshModifier }

@@ -20,7 +20,7 @@ type
       procedure CalcHSVFromMousePos( X, Y: Integer );
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Draw; override;
       procedure MouseMove(X, Y: Integer); override;
@@ -44,7 +44,7 @@ type
       procedure CalcValueFromMousePos( Y: Integer );
 
     public
-      constructor Create( const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil );
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       procedure Draw; override;
       procedure MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure MouseMove(X, Y: Integer); override;
@@ -77,7 +77,7 @@ type
       procedure SetEditValue( Sender: TP3DVectorEdit; AValue: TVec4 );
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure UpdateColor;
       procedure Draw; override;
@@ -108,7 +108,7 @@ type
       //FOnChange: TP3DComboBoxChange;
 
     public
-      constructor Create( AOwner: TP3DObjectList; const AParent: TP3DGraphicControl = nil );
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -135,19 +135,21 @@ type
       FAutoSize: Boolean;
       FColor: TVec4;
       FKeepAspect: Boolean;
+      FMaterial: TP3DMaterialBase;
       FTexture: TP3DTexture;
+      procedure SetTexture(AValue: TP3DTexture);
 
     public
-      constructor Create(const AOwner: TP3DObjectList= nil;
-        const AParent: TP3DGraphicControl= nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;      destructor Destroy; override;
       procedure Draw; override;
 
       property Color: TVec4 read FColor write FColor;
 
     published
-      property Texture: TP3DTexture read FTexture write FTexture;
+      property Texture: TP3DTexture read FTexture write SetTexture;
       property AutoSize: Boolean read FAutoSize write FAutoSize;
       property KeepAspect: Boolean read FKeepAspect write FKeepAspect;
+      property Material: TP3DMaterialBase read FMaterial write FMaterial;
   end;
 
 {$ENDIF}
@@ -317,10 +319,10 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DColorWheel.Create(const AOwner: TP3DObjectList;
+constructor TP3DColorWheel.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
   HSV:= vec3( 0, 0, 1 );
 end;
@@ -369,9 +371,10 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DColorValue.Create( const AOwner: TP3DObjectList= nil; const AParent: TP3DGraphicControl= nil );
+constructor TP3DColorValue.Create(const AData: TP3DData;
+  const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
   Value:= 1.0;
 end;
@@ -442,12 +445,12 @@ begin
   Color:= clamp( AValue, 0.0, 1.0 );
 end;
 
-constructor TP3DColorPicker.Create(const AOwner: TP3DObjectList;
+constructor TP3DColorPicker.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 var
   container: TP3DGraphicControl;
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Height:= 200;
   Width:= 150;
   BorderColor:= vec4( 0, 0, 0, 0.2 );
@@ -507,13 +510,13 @@ begin
   ColorPicker.Color:= AValue;
 end;
 
-constructor TP3DColorComboBox.Create(AOwner: TP3DObjectList;
+constructor TP3DColorComboBox.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
 
   BorderColor:= vec4( 0, 0, 0, 0.2 );
-  FColorPicker:= TP3DColorPicker.Create();
+  FColorPicker:= TP3DColorPicker.Create( AData );
   FColorPicker.Visible:= False;
 end;
 
@@ -558,12 +561,32 @@ end;
 
 { TP3DImage }
 
-constructor TP3DImage.Create(const AOwner: TP3DObjectList;
+procedure TP3DImage.SetTexture(AValue: TP3DTexture);
+begin
+  if FTexture=AValue then Exit;
+  FTexture:=AValue;
+  Material.Maps[ 0 ].Map:= AValue;
+end;
+
+constructor TP3DImage.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AOwner, AParent );
+  inherited Create( AData, AParent );
   Color:= vec4( 1 );
   KeepAspect:= True;
+  Material:= TP3DMaterialBase.Create();
+  Material.Unlit:= True;
+  Material.UseVertexColor:= True;
+  with( Material.Maps[ Material.Maps.Add( TP3DMaterialMapBase.Create( Material ))]) do
+    Texture:= nil;
+  Material.BuildShader();
+end;
+
+destructor TP3DImage.Destroy;
+begin
+  if ( Assigned( Material ) and P3DData.IsValid( Material )) then
+    Material.Free;
+  inherited Destroy;
 end;
 
 procedure TP3DImage.Draw;
@@ -590,17 +613,20 @@ begin
             end;
         end;
 
-      if ( not Assigned( P3DFontManager.Material.Shader )) then
-        TP3DMaterialBase( P3DFontManager.Material ).BuildShader;
-      Shader:= P3DFontManager.Material.Shader;
-      Shader.Enable;
+      Material.PassToShader();
+//      if ( not Assigned( P3DFontManager.Material.Shader )) then
+//        TP3DMaterialBase( P3DFontManager.Material ).BuildShader;
+//      Shader:= P3DFontManager.Material.Shader;
+//      Shader.Enable;
+      Shader:= Material.Shader;
 
-      glActiveTexture( GL_TEXTURE0 );
-      glBindTexture( GL_TEXTURE_2D, Texture.GLTexture );
+      //glEnable(GL_TEXTURE_2D);
+      //glActiveTexture( GL_TEXTURE0 );
+      //glBindTexture( GL_TEXTURE_2D, Texture.GLTexture );
 
 
-      if ( Shader.Uniforms.FindByName( 'tex0', Uniform )) then
-        Uniform.AsInt:= 0;
+//      if ( Shader.Uniforms.FindByName( 'tex0', Uniform )) then
+//        Uniform.AsInt:= 0;
 
       if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
         Uniform.AsMat4:= Mat4Identity;
@@ -612,16 +638,20 @@ begin
       glBegin( GL_TRIANGLE_FAN );
       glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
       glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
-      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
+      glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
+//      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
 
       glVertexAttrib2f( P3DAttribPosition, p2.X, p1.Y );
-      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
+//      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
+      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
 
       glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
-      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
+//      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
+      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
 
       glVertexAttrib2f( P3DAttribPosition, p1.X, p2.Y );
-      glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
+      //glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
+      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
       glEnd();
     end;
 end;

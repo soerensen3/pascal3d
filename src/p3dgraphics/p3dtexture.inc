@@ -46,10 +46,11 @@ type
       procedure LoadFromGLTexture( Tex: GLint );
 
     public
+      constructor Create(const AData: TP3DData=nil); override;
       constructor CreateFromFile( AFileName: String; const AData: TP3DData = nil );
       constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DData = nil);
       constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DData = nil );
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
+      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); override;
       constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DData = nil );
       constructor CreateFromGLTexture( Tex: GLint; const AData: TP3DData = nil );
 
@@ -57,7 +58,7 @@ type
       procedure Unbind();
       procedure LoadFromBinary( FileName: String ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
       procedure Reload; reintroduce;
 
     published
@@ -103,10 +104,10 @@ begin
       end;
     dtUByte:
       case ANumChannels of
-        1: Result:= GL_R8UI;
-        2: Result:= GL_RG8UI;
-        3: Result:= GL_RGB8UI;
-        4: Result:= GL_RGBA8UI;
+        1: Result:= GL_R;//GL_R8UI;
+        2: Result:= GL_RG;//GL_RG8UI;
+        3: Result:= GL_RGB;//GL_RGB8UI;
+        4: Result:= GL_RGBA;//GL_RGBA8UI;
       end;
     dtShort:
       case ANumChannels of
@@ -373,7 +374,15 @@ begin
     GL_NEAREST_MIPMAP_NEAREST: begin FMipMap:= True; FFiltering:= tfNearest; FFilteringMipMap:= tfNearest; end;
   end;
   //glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEX ;
+  FMipMap:= True;
   Unbind();
+end;
+
+constructor TP3DTexture.Create(const AData: TP3DData);
+begin
+  inherited Create(AData);
+  FFileWatch:= TP3DFileWatch.Create( '' );
+  Owner.Textures.Add( Self );
 end;
 
 procedure TP3DTexture.LoadFromBinary(FileName: String);
@@ -426,8 +435,9 @@ begin
   FileName:= P3DSearchPaths.Models.FindFileEx( AFileName, GetCurrentDir );
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AFileName ]));
-  inherited Create( AData );
-  FFileWatch:= TP3DFileWatch.Create( FileName );
+  Create( AData );
+  //FFileWatch:= TP3DFileWatch.Create( FileName );
+  FFileWatch.FileName:= FileName;
   LoadFromFile( FileName );
 end;
 
@@ -435,8 +445,8 @@ constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels:
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  inherited Create( AData );
-  FFileWatch:= TP3DFileWatch.Create( '' );
+  Create( AData );
+  //FFileWatch:= TP3DFileWatch.Create( '' );
   LoadFromBuffer( AWidth, AHeight, ANumChannels, ADataType, ABuffer );
 end;
 
@@ -445,25 +455,24 @@ constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface;
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  inherited Create( AData );
-  FFileWatch:= TP3DFileWatch.Create( '' );
+  Create( AData );
+  //FFileWatch:= TP3DFileWatch.Create( '' );
   LoadFromSurface( ASurface );
 end;
 
 constructor TP3DTexture.CreateFromDOM(ADOMNode: TDOMElement;
   const AData: TP3DData);
 begin
-  inherited Create( AData );
-  FFileWatch:= TP3DFileWatch.Create( '' );
-  LoadFromDOM( ADOMNode );
+  inherited CreateFromDOM( ADOMNode, AData );
+  //FFileWatch:= TP3DFileWatch.Create( '' );
 end;
 
 constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DData);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  inherited Create( AData );
-  FFileWatch:= TP3DFileWatch.Create( '' );
+  Create( AData );
+  //FFileWatch:= TP3DFileWatch.Create( '' );
   LoadEmpty( AWidth, AHeight, ANumChannels, ADataType );
 end;
 
@@ -471,8 +480,8 @@ constructor TP3DTexture.CreateFromGLTexture(Tex: GLint; const AData: TP3DData);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  inherited Create( AData );
-  FFileWatch:= TP3DFileWatch.Create( '' );
+  Create( AData );
+  //FFileWatch:= TP3DFileWatch.Create( '' );
   LoadFromGLTexture( Tex );
 end;
 
@@ -487,12 +496,15 @@ begin
   glBindTexture( GL_TEXTURE_2D, 0 );
 end;
 
-destructor TP3DTexture.Destroy;
+procedure TP3DTexture.FastDestroy;
 begin
   if ( Assigned( glDeleteTextures )) then
     glDeleteTextures( 1, @FGLTexture ); cle( Self );
-  inherited Destroy;
   FileWatch.Free;
+
+  Owner.Textures.Remove( Self );
+
+  inherited FastDestroy;
 end;
 
 procedure TP3DTexture.Reload;

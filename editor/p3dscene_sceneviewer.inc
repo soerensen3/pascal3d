@@ -114,7 +114,7 @@
       procedure DrawArmature( ArmatureObject: TP3DActor ); // TEMP
 
     public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -630,10 +630,10 @@ begin
 end;
 
 
-constructor TP3DScenePanel.Create(const AOwner: TP3DObjectList;
+constructor TP3DScenePanel.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
+  inherited Create( AData, AParent );
   Scene:= TestScene;
   OrbitCamera:= True;
   Color:= Primary50; //vec4( 225/255, 230/255, 234/255, 1 );

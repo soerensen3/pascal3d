@@ -109,10 +109,10 @@ type
       procedure Enable;
       procedure Disable;
 
-      constructor Create( const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil ); override;
       constructor CreateFromVertexAndFragmentShaderFile( fnvshader, fnfshader: String; const AData: TP3DData = nil );
       constructor CreateFromVertexAndFragmentShader( AVShader, AFShader: String; const AData: TP3DData = nil );
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       procedure UpdateUniforms();
       procedure BindAttribLocations();
@@ -966,7 +966,7 @@ begin
   ProgramObj:= -1;
   FUniforms:= TP3DShaderDeclList.Create;
   FAttributes:= TP3DShaderDeclList.Create;
-  Parent.Shaders.Add( Self );
+  Owner.Shaders.Add( Self );
 end;
 
 constructor TP3DShader.CreateFromVertexAndFragmentShaderFile(fnvshader,
@@ -977,7 +977,7 @@ begin
   Create( AData );
   VShader:= LoadShaderToText( fnvshader );
   FShader:= LoadShaderToText( fnfshader );
-  CreateFromVertexAndFragmentShader( vshader, fshader, Parent );
+  CreateFromVertexAndFragmentShader( vshader, fshader, Owner );
   FVShaderWatch:= TP3DFileWatch.Create( fnvshader );
   FFShaderWatch:= TP3DFileWatch.Create( fnfshader );
 end;
@@ -1024,14 +1024,15 @@ begin
   LinkProgram;
 end;
 
-destructor TP3DShader.Destroy;
+procedure TP3DShader.FastDestroy;
 begin
   if ( Assigned( FVShaderWatch )) then
     FVShaderWatch.Free;
   if ( Assigned( FFShaderWatch )) then
     FFShaderWatch.Free;
   DeleteProgram( ProgramObj );
-  inherited Destroy;
+  Owner.Shaders.Remove( Self );
+  inherited FastDestroy;
 end;
 
 procedure TP3DShader.UpdateUniforms;

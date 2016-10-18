@@ -234,7 +234,7 @@ var
   i: Integer;
 begin
   if ( FreeObjects ) then
-    for i:= 0 to Self.Count - 1 do
+    for i:= Self.Count - 1 downto 0 do //From last to first in case item is deleted from list in destructor
       Items[ i ].Free;
 
   FItems.Clear;

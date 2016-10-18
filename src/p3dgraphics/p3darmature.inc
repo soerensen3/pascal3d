@@ -44,12 +44,16 @@ type
       FFrames: TP3DActionFrameList;
       FFrameSample: TP3DActionFrame;
       FJointTex: TP3DTexture;
+      OwnsJointTex: Boolean;
+
+      procedure SetJointTex(AValue: TP3DTexture);
 
     public
       procedure UpdateJointTex;
 
-      constructor Create(const AData: TP3DData=nil);
-      destructor Destroy; override;
+      constructor Create(const AData: TP3DData=nil); override;
+      procedure FastDestroy; override;
+      procedure ClearFields; override;
 
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
       procedure UpdateFrameSample;
@@ -58,7 +62,7 @@ type
       property Frames: TP3DActionFrameList read FFrames write FFrames;
       property FrameSample: TP3DActionFrame read FFrameSample write FFrameSample;
       property CurrentFrame: Float read FCurrentFrame write FCurrentFrame;
-      property JointTex: TP3DTexture read FJointTex write FJointTex;
+      property JointTex: TP3DTexture read FJointTex write SetJointTex;
   end;
 
   TP3DArmatureActionList = specialize gP3DCustomDatablockList < TP3DArmatureAction >;
@@ -79,8 +83,10 @@ type
       procedure SetCurrentFrame(AValue: Float);
 
     public
-      constructor Create( const AData: TP3DData= nil );
-      destructor Destroy; override;
+      procedure ClearFields; override;
+
+      constructor Create( const AData: TP3DData= nil ); override;
+      procedure FastDestroy; override;
 
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
@@ -154,7 +160,7 @@ type
       constructor Create( AMesh: TP3DMesh ); override;
       destructor Destroy; override;
 
-      procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4 ); override;
+      procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4 ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
     published
@@ -254,12 +260,27 @@ end;
 
 procedure TP3DArmature.SetCurrentAction(AValue: TP3DArmatureAction);
 begin
+  if ( AValue = FCurrentAction ) then
+    exit;
+
+  if ( Assigned( CurrentAction )) then
+    CurrentAction.RemoveUser( Self );
+
   FCurrentAction:= AValue;
+
+  if ( Assigned( CurrentAction )) then
+    CurrentAction.AddUser( Self );
 end;
 
 procedure TP3DArmature.SetCurrentFrame(AValue: Float);
 begin
   FCurrentFrame:= AValue;
+end;
+
+procedure TP3DArmature.ClearFields;
+begin
+  CurrentAction:= nil;
+  inherited ClearFields;
 end;
 
 constructor TP3DArmature.Create(const AData: TP3DData);
@@ -269,9 +290,10 @@ begin
   FRoot:= TP3DJointList.Create;
   FRotations:= TQuaternionList.Create;
   FTranslations:= TVec3List.Create;
+  Owner.Armatures.Add( Self );
 end;
 
-destructor TP3DArmature.Destroy;
+procedure TP3DArmature.FastDestroy;
 begin
   FRotations.Free;
   FTranslations.Free;
@@ -279,7 +301,9 @@ begin
   FRoot.Free;
   FJoints.Clear( True );
   FJoints.Free;
-  inherited Destroy;
+  Owner.Armatures.Remove( Self );
+
+  inherited FastDestroy;
 end;
 
 procedure TP3DArmature.Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor);
@@ -305,8 +329,8 @@ begin
       Element:= TDOMElement( Element.NextSibling );
     end;
   Action:= ADOMNode.GetAttribute( 'action' );
-  ActIdx:= Parent.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), Action, TP3DArmatureAction );
-  CurrentAction:= TP3DArmatureAction( Parent.DataBlocks[ ActIdx ]);
+  ActIdx:= Owner.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), Action, TP3DArmatureAction );
+  CurrentAction:= TP3DArmatureAction( Owner.DataBlocks[ ActIdx ]);
 end;
 
 { TP3DMeshModifierArmature }
@@ -325,7 +349,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DMeshModifierArmature.PassToShader(Scene: TP3DScene; Material: TP3DMaterialShader; var world: TMat4);
+procedure TP3DMeshModifierArmature.PassToShader(Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4);
 var
   decl: TP3DShaderDecl;
   joint: TP3DJoint;
@@ -384,7 +408,7 @@ var
   i: Integer;
 begin
   data:= ADOMNode.GetAttribute( 'data' );
-  Armature:= TP3DArmature( Mesh.Parent.DataBlocks[ Mesh.Parent.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), data, TP3DArmature )]);
+  Armature:= TP3DArmature( Mesh.Owner.DataBlocks[ Mesh.Owner.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.FirstChild ), data, TP3DArmature )]);
   for i:= 0 to Mesh.MaterialGroups.Count -1 do
     if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
       begin
@@ -429,6 +453,21 @@ end;
 
 { TP3DArmatureAction }
 
+procedure TP3DArmatureAction.SetJointTex(AValue: TP3DTexture);
+begin
+  if FJointTex=AValue then Exit;
+  if ( Assigned( JointTex )) then
+    begin
+      JointTex.RemoveUser( Self );
+      if ( OwnsJointTex ) then
+        JointTex.Free;
+    end;
+  FJointTex:=AValue;
+  OwnsJointTex:= False;
+  if ( Assigned( JointTex )) then
+    JointTex.AddUser( Self );
+end;
+
 procedure TP3DArmatureAction.UpdateJointTex;
 var
   Buffer: TVec4List;
@@ -448,7 +487,12 @@ var
 
 begin
   if ( Assigned( JointTex )) then
-    JointTex.Free;
+    begin
+      if ( OwnsJointTex ) then
+        JointTex.Free
+      else
+        JointTex.RemoveUser( Self );
+    end;
   Buffer:= TVec4List.Create;
   w:= ( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );//getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
   h:= Frames.Count;//getNextPower2( Frames.Count );
@@ -460,7 +504,7 @@ begin
       else
         begin
       //  Buffer.Add([ vec4( 0, 0, 0, 1 ), quatRotation( vec3_Axis_PZ, i * 5 )]);
-          armature:= Parent.Armatures[ 0 ];
+          armature:= Owner.Armatures[ 0 ];
 {          m:= mat4( mat3( Parent.Armatures[ 0 ].Joints[ j ].Rotation ));
           m.Row[ 3 ]:= vec4( Parent.Armatures[ 0 ].Joints[ j ].Position , 1 );
           m2:= mat4( mat3( Frames[ i ].Rotations[ j ]));
@@ -469,18 +513,19 @@ begin
           m:= minv*m2*mat4translate( vec4( -Parent.Armatures[ 0 ].Joints[ j ].Position , 1 ));
           q:= quat( mat3( m ));
           t:= m.Row[ 3 ];}
-          q:= -Parent.Armatures[ 0 ].Joints[ j ].Rotation * Frames[ i ].Rotations[ j ];
+          q:= -Owner.Armatures[ 0 ].Joints[ j ].Rotation * Frames[ i ].Rotations[ j ];
           t:=
               //  vec4( Frames[ i ].Translations[ j ]
               //- ( q * vec4( Parent.Armatures[ 0 ].Joints[ j ].Position, 1 )).xyz
               vec4(
-                -(q*Parent.Armatures[ 0 ].Joints[ j ].Position) + Frames[ i ].Translations[ j ]
+                -(q*Owner.Armatures[ 0 ].Joints[ j ].Position) + Frames[ i ].Translations[ j ]
                 , 1 );
           Buffer.Add([ t, t, q, q ]); //prevent mix of translation and quaternion through pixel bleeding while having smooth transitions in y direction
           //Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), m * mat4( mat3( Frames[ i ].Rotations[ j ]])));
         end;
-  JointTex:= TP3DTexture.CreateFromBuffer( w * 2, h, 4, dtFloat, Buffer.Ptr );
-  P3DData.Textures.Add( JointTex );
+  FJointTex:= TP3DTexture.CreateFromBuffer( w * 2, h, 4, dtFloat, Buffer.Ptr );
+  OwnsJointTex:= True;
+  JointTex.AddUser( Self );
   Buffer.Free;
 end;
 
@@ -489,15 +534,23 @@ begin
   inherited Create( AData );
   Frames:= TP3DActionFrameList.Create;
   FrameSample:= TP3DActionFrame.Create();
+  Owner.Actions.Add( Self );
 end;
 
-destructor TP3DArmatureAction.Destroy;
+procedure TP3DArmatureAction.FastDestroy;
 begin
   FrameSample.Free;
   Frames.Free;
   if ( Assigned( JointTex )) then
     JointTex.Free;
-  inherited Destroy;
+  Owner.Actions.Remove( Self );
+  inherited FastDestroy;
+end;
+
+procedure TP3DArmatureAction.ClearFields;
+begin
+  JointTex:= nil;
+  inherited ClearFields;
 end;
 
 procedure TP3DArmatureAction.LoadFromDOM(ADOMNode: TDOMElement);

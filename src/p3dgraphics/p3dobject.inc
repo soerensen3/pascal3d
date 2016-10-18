@@ -10,9 +10,17 @@
 
     TP3DCustomObjectList = specialize gP3DCustomObjectList < TP3DObject >;
     TP3DObjectList = class( TP3DCustomObjectList )
-      function FindUniqueName( BaseStr: String ): String;
-      function FindByName( AName: String ): Integer;
-      procedure Clear(const FreeObjects: Boolean = True ); override;
+      private
+        FOwner: TPersistent;
+
+      published
+        constructor Create( AOwner: TPersistent );
+        function FindUniqueName( BaseStr: String ): String;
+        function FindByName( AName: String ): Integer;
+        procedure Clear(const FreeObjects: Boolean = True ); override;
+        function DumpObjectList: String;
+
+        property Owner: TPersistent read FOwner write FOwner;
     end;
 
 
@@ -32,7 +40,7 @@
         FParentList: TP3DObjectList;
 
         function GetName: TComponentName;
-        procedure SetName( NewName: TComponentName );
+        procedure SetName( NewName: TComponentName ); virtual;
 
       public
         constructor Create( const AParentList: TP3DObjectList = nil );
@@ -49,6 +57,12 @@
 {$IFDEF IMPLEMENTATION}
 
 { TP3DObjectList }
+
+constructor TP3DObjectList.Create(AOwner: TPersistent);
+begin
+  inherited Create();
+  Owner:= AOwner;
+end;
 
 function TP3DObjectList.FindUniqueName( BaseStr: String ): String;
 var
@@ -82,6 +96,19 @@ begin
     for i:= Count - 1 downto 0 do
       Items[ i ].Free;
   Count:= 0;
+end;
+
+function TP3DObjectList.DumpObjectList: String;
+var
+  i: Integer;
+begin
+  Result:= '';
+
+  for i:= 0 to Count - 1 do
+    if ( i > 0 ) then
+      Result+= ', ' + Items[ i ].Name
+    else
+      Result+= Items[ i ].Name;
 end;
 
 { TP3DObject }
@@ -122,7 +149,7 @@ end;
 
 destructor TP3DObject.Destroy;
 begin
-  ParentList.Delete( ParentList.IndexOf( Self ));
+  ParentList.Remove( Self );
   inherited Destroy;
 end;
 

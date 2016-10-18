@@ -13,8 +13,8 @@
       function GetLightRange: Float;
 
     public
-      constructor Create( const AData: TP3DData = nil );
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DData = nil ); override;
+      procedure FastDestroy; override;
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
@@ -72,14 +72,15 @@ constructor TP3DLight.Create(const AData: TP3DData);
 begin
   inherited Create( AData );
   FLinearAttenuation:= 0.1;
-  Parent.Lights.Add( Self );
+  FColor:= vec3( 0.5 );
+  Owner.Lights.Add( Self );
 end;
 
-constructor TP3DLight.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData
-  );
+procedure TP3DLight.FastDestroy;
 begin
-  Create( AData );
-  LoadFromDOM( ADOMNode );
+  Owner.Lights.Remove( Self );
+
+  inherited FastDestroy;
 end;
 
 procedure TP3DLight.Render(world: TMat4; Scene: TP3DScene;

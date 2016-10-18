@@ -3,6 +3,7 @@ program p3dscene;
 {$mode objfpc}{$H+}
 
 uses
+  //heaptrc,
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
@@ -37,6 +38,7 @@ begin
 end;
 
 begin
+  //SetHeapTraceOutput('heap.trc');
   P3DEventsInit;
   P3DUtilsInit;
   P3DLog.FileName:= 'p3dscene.xml';
@@ -63,7 +65,11 @@ begin
   P3DApplication.Run;
   //DumpSearchPaths;
 
+  P3DSceneGUIFinish;
+  P3DGUIFinish;
   P3DApplication.MainWindow.Free;
+  P3DGraphicssFinish;
+  P3DUtilsFinish;
   P3DEventsFinish;
 end.
 

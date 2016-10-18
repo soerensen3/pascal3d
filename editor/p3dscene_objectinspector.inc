@@ -6,7 +6,7 @@
       FObjectInspector: TP3DObjectInspector;
 
     public
-      constructor Create(const AOwner: TP3DObjectList=nil; const AParent: TP3DGraphicControl=nil);
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
     published
@@ -17,11 +17,11 @@
 {$IFDEF IMPLEMENTATION}
 { TP3DOIPanel }
 
-constructor TP3DOIPanel.Create(const AOwner: TP3DObjectList;
+constructor TP3DOIPanel.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
-  inherited;
-  ObjectInspector:= TP3DObjectInspector.Create( nil, Self );
+  inherited Create( AData, AParent );
+  ObjectInspector:= TP3DObjectInspector.Create( AData, Self );
   Width:= 250;
   ObjectInspector.Align:= alClient;
 end;

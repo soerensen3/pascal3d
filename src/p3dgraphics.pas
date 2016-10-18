@@ -3,6 +3,8 @@ unit p3dgraphics;
 {$mode objfpc}{$H+}
 {$modeswitch nestedprocvars}
 
+{.$DEFINE DEBUG_DATABLOCKS}
+
 interface
 
 uses
@@ -72,6 +74,7 @@ var
   P3DData: TP3DData = nil;
   P3DFontManager: TP3DFontManager = nil;
   P3DCanvasMaterialDefault: TP3DMaterialBase;
+  P3DDataBlockCache: TP3DDataBlockCache;
 
 procedure P3DGraphicsInit;
 procedure P3DGraphicssFinish;
@@ -116,6 +119,20 @@ begin
     end;
 end;
 
+{ TP3DDataBlockList }
+
+function TP3DDataBlockList.DumpUsers: String;
+var
+  i: Integer;
+begin
+  Result:= '';
+
+  for i:= 0 to Count - 1 do
+    if ( i > 0 ) then
+      Result+= ', ' + Items[ i ].Name
+    else
+      Result+= Items[ i ].Name;
+end;
 
 
 {$DEFINE IMPLEMENTATION}
@@ -158,6 +175,8 @@ begin
   glEnable( GL_BLEND ); cle( nil );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); cle( nil );
 
+  if ( not Assigned( P3DDataBlockCache )) then
+    P3DDataBlockCache:= TP3DDataBlockCache.Create;
   if ( not Assigned( P3DViewports )) then
     P3DViewports:= TP3DViewportStack.Create;
   if ( not Assigned( P3DData )) then
@@ -180,7 +199,12 @@ begin
   if ( Assigned( P3DShaderNodeLib )) then
     FreeAndNil( P3DShaderNodeLib );
   if ( Assigned( P3DData )) then
-    FreeAndNil( P3DData );
+    begin
+      P3DData.Free;
+      P3DData:= nil;
+    end;
+  if ( Assigned( P3DDataBlockCache )) then
+    FreeAndNil( P3DDataBlockCache );
   TTF_Quit();
 end;
 
