@@ -37,6 +37,7 @@ type
       FLockID: Integer;
       FLeft: Integer;
       FMaterial: TP3DMaterialBase;
+      FOffScreenCanvas: Boolean;
       FOwner: TPersistent;
       FScreenColor: TVec4;
       FTop: Integer;
@@ -62,6 +63,7 @@ type
       property Font: TP3DCanvasFont read FFont write FFont; //TODO: OnChange event for font will fire redraw of texts in components
       property ScreenColor: TVec4 read FScreenColor write FScreenColor;
       property Material: TP3DMaterialBase read FMaterial;
+      property OffScreenCanvas: Boolean read FOffScreenCanvas write FOffScreenCanvas;
   end;
 
   {$INCLUDE p3dcanvas_2d.inc}

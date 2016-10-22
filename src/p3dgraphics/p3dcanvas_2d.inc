@@ -84,6 +84,7 @@ TP3DCanvas2D = class ( TP3DCanvas )
     FProj: TMat4;
     FScreenAligned: Boolean;
     FScroll: TVec2;
+    FWorld: TMat4;
 
     procedure SetScreenAligned(AValue: Boolean);
     procedure SetScroll(AValue: TVec2);
@@ -125,11 +126,12 @@ TP3DCanvas2D = class ( TP3DCanvas )
 
     function Lock: Integer; override;
 
-    property Proj: TMat4 read FProj;
+    property Proj: TMat4 read FProj write FProj;
     property Scroll: TVec2 read FScroll write SetScroll;
     property ScreenAligned: Boolean read FScreenAligned write SetScreenAligned;
     property Brush: TP3DBrush read FBrush;
     property Pen: TP3DPen read FPen;
+    property World: TMat4 read FWorld write FWorld;
 end;
 
 function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
@@ -403,7 +405,7 @@ procedure TP3DCanvas2D.RenderText(Text: TP3DText; P: TVec2);
 begin
   if ( not PrepareForDrawing ) then exit;
   if ( Assigned( Text )) then
-    Text.Render( P, ScreenColor * Font.Color, Proj );
+    Text.Render( P, ScreenColor * Font.Color, World * Proj );
 end;
 
 procedure TP3DCanvas2D.RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
@@ -541,7 +543,7 @@ begin
       if ( Assigned( Material.Shader )) then
         begin
           if ( Material.Shader.Uniforms.FindByName( 'proj', Uniform )) then
-            Uniform.AsMat4:= proj;
+            Uniform.AsMat4:= world * proj;
           if ( Material.Shader.Uniforms.FindByName( 'view', Uniform )) then
             Uniform.AsMat4:= Mat4Identity;
           if ( Material.Shader.Uniforms.FindByName( 'world', Uniform )) then
@@ -636,6 +638,7 @@ begin
   FPen:= TP3DPen.Create( vec4( 0, 0, 0, 1 ), 1.0, psSolid );
   FPen.OnChange:= @PenChange;
   FBrush:= TP3DBrush.Create( vec4( 1 ));
+  World:= Mat4Identity;
 end;
 
 destructor TP3DCanvas2D.Destroy;

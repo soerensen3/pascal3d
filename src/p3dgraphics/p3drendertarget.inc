@@ -101,7 +101,7 @@ end;
 
 procedure TP3DFrameBuffer.Clear;
 begin
-  glClear( GL_COLOR_BUFFER_BIT or GL_DEPTH_BITS ); cle( Self, 'Error while clearing frame buffer: ' );
+  glClear( GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT ); cle( Self, 'Error while clearing frame buffer: ' );
 end;
 
 procedure TP3DFrameBuffer.Unbind;

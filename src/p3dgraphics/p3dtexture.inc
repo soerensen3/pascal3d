@@ -60,6 +60,8 @@ type
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
       procedure FastDestroy; override;
       procedure Reload; reintroduce;
+      procedure SaveToFile;
+      procedure SaveToFile( FileName: String );
 
     published
       property Width: Integer read FWidth;
@@ -267,7 +269,6 @@ begin
   FWidth:= ASurface^.w;
   FHeight:= ASurface^.h;
 
-  SDL_FreeSurface( ASurface );
   if ( FGLTexture > 0 ) then
     glDeleteTextures( 1, @FGLTexture ); cle( Self );
   FGLTexture:= Tex;
@@ -407,6 +408,7 @@ begin
   WriteLn( 'Texture loaded: ' + ExtractFileName( FileName ));
   {$ENDIF}
   LoadFromSurface( FSurface );
+  SDL_FreeSurface( FSurface );
 end;
 
 procedure TP3DTexture.LoadFromDOM(ADOMNode: TDOMElement);
@@ -437,7 +439,7 @@ begin
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AFileName ]));
   Create( AData );
   //FFileWatch:= TP3DFileWatch.Create( FileName );
-  FFileWatch.FileName:= FileName;
+  //FFileWatch.FileName:= FileName;
   LoadFromFile( FileName );
 end;
 
@@ -515,6 +517,25 @@ begin
   LoadFromFile( FileWatch.FileName );
   if ( Assigned( glDeleteTextures )) then
     glDeleteTextures( 1, @tex ); cle( Self );
+end;
+
+procedure TP3DTexture.SaveToFile;
+begin
+  SaveToFile( FileWatch.FileName );
+end;
+
+procedure TP3DTexture.SaveToFile(FileName: String);
+var
+  Pixels: PInteger;
+  surface: PSDL_Surface;
+begin
+  Bind();
+  GetMem( Pixels, Width * Height * 4 );
+  glGetTexImage( GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels );
+  surface:= SDL_CreateRGBSurfaceFrom( Pixels, Width, Height, 32, Width * 4, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+  IMG_SavePNG( surface, PChar( FileName ));
+  SDL_FreeSurface( surface );
+  Freemem( Pixels, Width * Height * 4 );
 end;
 
 {$ENDIF}

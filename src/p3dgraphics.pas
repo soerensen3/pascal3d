@@ -22,6 +22,7 @@ uses
 
   DOM,
   XMLRead,
+  XMLWrite,
 
   sdl2,
   sdl2_image,
@@ -73,6 +74,7 @@ var
   P3DShaderNodeLib: TP3DShaderNodeLibrary = nil;
   P3DData: TP3DData = nil;
   P3DFontManager: TP3DFontManager = nil;
+  P3DFontManagerBmp: TP3DFontManagerBmp = nil;
   P3DCanvasMaterialDefault: TP3DMaterialBase;
   P3DDataBlockCache: TP3DDataBlockCache;
 
@@ -188,10 +190,14 @@ begin
     raise Exception.Create( 'Cannot initialize sdl2_text!' );
   if ( not Assigned( P3DFontManager )) then
     P3DFontManager:= TP3DFontManager.Create;
+  if ( not Assigned( P3DFontManagerBmp )) then
+    P3DFontManagerBmp:= TP3DFontManagerBmp.Create;
 end;
 
 procedure P3DGraphicssFinish;
 begin
+  if ( Assigned( P3DFontManagerBmp )) then
+    FreeAndNil( P3DFontManagerBmp );
   if ( Assigned( P3DFontManager )) then
     FreeAndNil( P3DFontManager );
   if ( Assigned( P3DViewports )) then
