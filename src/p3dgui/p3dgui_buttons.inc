@@ -49,7 +49,7 @@
         FPresetHover: TP3DButtonPreset;
         FPresetNormal: TP3DButtonPreset;
         FState: Integer;
-        FCaptionTxt: TP3DText;
+        FCaptionTxt: TP3DTextBmp;
 
         procedure SetCaption( AValue: String ); virtual;
         procedure RenderButton( C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4 );//APreset: TP3DButtonPreset );
@@ -127,9 +127,9 @@ begin
   if ( Assigned( FCaptionTxt )) then
     FCaptionTxt.Free;
   if ( AValue > '' ) then
-    FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ])
+    FCaptionTxt:= TP3DTextBmp.CreateSimple( AValue, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size )
   else
-    FCaptionTxt:= p3dTextSimple( ' ', P3DFontManager[ Font.Name, Font.Size ])
+    FCaptionTxt:= TP3DTextBmp.CreateSimple( ' ', P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 end;
 
 procedure TP3DButton.RenderButton(C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4);
@@ -153,7 +153,7 @@ begin
   if ( Caption > '' ) then
     begin
       if ( not Assigned( FCaptionTxt )) then
-        FCaptionTxt:= p3dTextSimple( Caption, P3DFontManager[ Font.Name, Font.Size ]);
+        FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ 'Pascal3D-Cursors' ], 16 );
 
       case HAlignment of
         haLeft: P.x:= 0;

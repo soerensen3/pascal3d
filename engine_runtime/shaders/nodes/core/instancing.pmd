@@ -1,0 +1,20 @@
+---
+node: instance_init
+---
+
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+#extension GL_ARB_draw_instanced : require
+```
+
+---
+node: instance_array_texture_translate
+---
+
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform sampler2D instance_texture_translate;
+uniform int instance_texture_translate_w;
+```
+
+```{restrict="vshader,main"}
+mWorld[ 3 ].xyz = _world[ 3 ].xyz + texture2D( instance_texture_translate, vec2( float( gl_InstanceID ) / float( instance_texture_translate_w ), 0.5 )).xyz;
+```

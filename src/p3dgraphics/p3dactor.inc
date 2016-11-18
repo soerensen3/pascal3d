@@ -42,10 +42,12 @@ type
     private
       FChildren: TP3DActorList;
       FData: TP3DDataBlock;
+      FMatrixFinal: TMat4;
       FPosition: TVec3;
       FQuaternion: TQuaternion;
       FRotation: TVec3;
       FScale: TVec3;
+      FScene: TP3DScene;
       FVisible: Boolean;
       FMatrix: TMat4;
       FRotationOrder: TRotationOrder;
@@ -57,13 +59,14 @@ type
       function GetRotation: TVec3;
       function GetRotationOrder: TRotationOrder;
       function GetScale: TVec3;
-      procedure SetData(AValue: TP3DDataBlock);
-      procedure SetMatrix(AValue: TMat4);
-      procedure SetPosition(AValue: TVec3);
-      procedure SetQuaternion(AValue: TQuaternion);
-      procedure SetRotation(AValue: TVec3);
-      procedure SetRotationOrder(AValue: TRotationOrder);
-      procedure SetScale(AValue: TVec3);
+      procedure SetData( AValue: TP3DDataBlock );
+      procedure SetMatrix( AValue: TMat4 );
+      procedure SetPosition( AValue: TVec3 );
+      procedure SetQuaternion( AValue: TQuaternion );
+      procedure SetRotation( AValue: TVec3 );
+      procedure SetRotationOrder( AValue: TRotationOrder );
+      procedure SetScale( AValue: TVec3 );
+      procedure SetScene( AValue: TP3DScene );
       //property BoundingBox;
       procedure UpdateMatrix;
       procedure UpdateEuler;
@@ -71,15 +74,15 @@ type
     public
       constructor Create( const AData: TP3DData = nil ); override;
 
-      procedure LoadFromDOM(ADOMNode: TDOMElement); override;
+      procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
 
-      procedure FastDestroy; override;
+      procedure FastDestroy(); override;
       procedure Render( world: TMat4; Scene: TP3DScene ); reintroduce;
       procedure RenderCallbackOnly( world: TMat4; Scene: TP3DScene ); reintroduce;
-      function CalcBoundingBox(): TP3DBoundingBox; override;
+      function  CalcBoundingBox(): TP3DBoundingBox; override;
       procedure RemoveFromFields( Block: TP3DDataBlock ); override;
-      function CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): Boolean; reintroduce;
-      procedure ClearFields; override;
+      function  CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): Boolean; reintroduce;
+      procedure ClearFields(); override;
 
       procedure MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
@@ -91,6 +94,7 @@ type
       property Rotation: TVec3 read FRotation write SetRotation;
       property Scale: TVec3 read FScale write SetScale;
       property Matrix: TMat4 read FMatrix write SetMatrix;
+      property MatrixFinal: TMat4 read FMatrixFinal;
       property Quaternion: TQuaternion read FQuaternion write SetQuaternion;
       property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
 
@@ -98,6 +102,7 @@ type
       property Children: TP3DActorList read FChildren;
       property Visible: Boolean read FVisible write FVisible;
       property Data: TP3DDataBlock read FData write SetData;
+      property Scene: TP3DScene read FScene write SetScene;
   end;
 
   TP3DCustomActorList = specialize gP3DCustomDatablockList < TP3DActor >;
@@ -246,7 +251,19 @@ begin
   UpdateMatrix;
 end;
 
-constructor TP3DActor.Create(const AData: TP3DData);
+procedure TP3DActor.SetScene( AValue: TP3DScene );
+begin
+  if ( FScene = AValue ) then
+    Exit;
+
+  if ( Assigned( Scene )) then
+    Scene.Objects.Remove( Self );
+  FScene:= AValue;
+  if ( Assigned( Scene )) then
+    Scene.Objects.Remove( Self );
+end;
+
+constructor TP3DActor.Create( const AData: TP3DData );
 begin
   inherited Create( AData );
   Owner.Objects.Add( Self );
@@ -258,7 +275,7 @@ begin
   UpdateMatrix;
 end;
 
-procedure TP3DActor.LoadFromDOM(ADOMNode: TDOMElement);
+procedure TP3DActor.LoadFromDOM( ADOMNode: TDOMElement );
 var
   Element: TDOMElement;
   DataType: DOMString;
@@ -452,7 +469,8 @@ begin
   for Actor in Self do
     begin
       mat:= world * Actor.Matrix;
-      ARenderList.Add( Actor, mat, ARootScene );
+      Actor.FMatrixFinal:= mat;
+      ARenderList.Add( Actor.Data, mat, ARootScene );
       if ( Actor.Data is TP3DScene ) then
         TP3DScene( Actor.Data ).Objects.MakeRenderList( ARootScene, mat, ARenderList );
       Actor.Children.MakeRenderList( ARootScene, mat, ARenderList );

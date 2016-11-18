@@ -10,6 +10,7 @@
 
      TP3DMaterialMap = class ( TInterfacedPersistent )
        private
+         FHasTransparency: Boolean;
          FMap: TP3DTexture;
          FParentMaterial: TP3DMaterial;
          FTexChannel: Integer;
@@ -25,9 +26,11 @@
          property TexChannel: Integer read FTexChannel write FTexChannel;
          property Map: TP3DTexture read FMap write SetMap;
          property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
+         property HasTransparency: Boolean read FHasTransparency;
      end;
 
      TP3DMaterialBase = class;
+     TP3DMaterialModifierType = class of TP3DMaterialModifier;
 
      TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
 
@@ -75,6 +78,7 @@
          FShader: TP3DShader;
          ShaderOwned: Boolean;
 
+         function GetHasTransparency: Boolean; virtual;
          procedure SetShader( AValue: TP3DShader );
 
        public
@@ -89,6 +93,7 @@
        published
          property Maps: TP3DMaterialMapList read FMaps write FMaps;
          property Shader: TP3DShader read FShader write SetShader;
+         property HasTransparency: Boolean read GetHasTransparency;
      end;
 
      { TP3DMaterialShader }
@@ -112,6 +117,7 @@
        public
          procedure SortByIndex;
          function Add( Item: TP3DMaterialModifier ): Integer; override;
+         function Find( ModType: TP3DMaterialModifierType ): Integer;
      end;
 
      { TP3DMaterialModifierTexTransform }
@@ -171,22 +177,47 @@
        procedure PassToShader( Material: TP3DMaterialBase ); override;
      end;
 
+     { TP3DMaterialModifierArray }
+
+     TP3DMaterialModifierArray = class ( TP3DMaterialModifier )
+       private
+         FTransforms: TVec3List;
+         FTexture: TP3DTexture;
+
+       public
+         constructor Create;
+         destructor Destroy; override;
+
+         class function GetIndex: Integer; override;
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+         procedure PassToShader( Material: TP3DMaterialBase ); override;
+         procedure PushTexture;
+
+         property Transforms: TVec3List read FTransforms write FTransforms;
+     end;
+
+
      { TP3DMaterialBase }
 
      TP3DMaterialBase = class ( TP3DMaterial )
        private
          FAlpha: Single;
          FDiff: TVec3;
+         FInstancing: Boolean;
          FModifiers: TP3DMaterialModifierList;
          FSpec: TVec3;
          FSpec_Hardness: Single;
          FUnlit: Boolean;
          FUseVertexColor: Boolean;
+         FHasTransparency: Boolean;
 
          procedure SetAlpha(AValue: Single);
+         procedure SetInstancing(AValue: Boolean);
          procedure SetSpec_Hardness(AValue: Single);
          procedure SetUnlit( AValue: Boolean );
          procedure AddPasses(ShaderTree: TP3DShaderNodeTree); virtual;
+         function GetHasTransparency: Boolean; override;
+         procedure UpdateHasTransparency;
 
        public
          constructor Create(const AData: TP3DData=nil); override;
@@ -206,6 +237,7 @@
          property UseVertexColor: Boolean read FUseVertexColor write FUseVertexColor;
          property Unlit: Boolean read FUnlit write SetUnlit;
          property Modifiers: TP3DMaterialModifierList read FModifiers write FModifiers;
+         property Instancing: Boolean read FInstancing write SetInstancing;
      end;
 
      TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
@@ -229,7 +261,7 @@ begin
     Map.AddUser( ParentMaterial );
 end;
 
-constructor TP3DMaterialMap.Create(AParentMaterial: TP3DMaterial);
+constructor TP3DMaterialMap.Create( AParentMaterial: TP3DMaterial );
 begin
   inherited Create;
   FParentMaterial:= AParentMaterial;
@@ -237,8 +269,7 @@ begin
 end;
 
 constructor TP3DMaterialMap.CreateFromDOM(
-  AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement;
-  const AData: TP3DData);
+  AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DData );
 var
   TexName: DOMString;
   _Data: TP3DData;
@@ -246,12 +277,15 @@ var
 begin
   Create( AParentMaterial );
   TexName:= ADOMNode.GetAttribute( 'file' );
+
   if ( not FileExists( TexName )) then
     raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );
+
   if ( not Assigned( AData )) then
     _Data:= P3DData
   else
     _Data:= AData;
+
   n:= _Data.Textures.FindByFileName( TexName );
   if ( n >= 0 ) then
     Map:= _Data.Textures[ n ]
@@ -281,6 +315,7 @@ begin
   if FAlphaFactor= AValue then Exit;
   FAlphaFactor:= AValue;
   TP3DMaterialBase( ParentMaterial ).BuildShader();
+  FHasTransparency:= AlphaFactor > 0;
 end;
 
 procedure TP3DMaterialMapBase.SetDisplaceFactor(AValue: Single);
@@ -369,6 +404,7 @@ begin
   DisplaceFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'displace' ), 0.0 );
   AlphaFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'alpha' ), 0.0 );
   TexChannel:= StrToIntDef( ADOMNode.GetAttribute( 'layer' ), 0 );
+
   case ADOMNode.GetAttribute( 'mode' ) of
     'add': Mode:= p3dmmAdd;
     'multiply': Mode:= p3dmmMultiply;
@@ -376,6 +412,7 @@ begin
     else
       Mode:= p3dmmMix;
   end;
+
   TransSect:= ADOMNode.GetElementsByTagName( 'transform' );
   if ( TransSect.Count > 0 ) then
     LoadTransformFromDOM( TDOMElement( TransSect.Item[ 0 ]));
@@ -400,10 +437,39 @@ begin
     Modifier.AddPass( ShaderTree, Self );
 end;
 
+function TP3DMaterialBase.GetHasTransparency: Boolean;
+begin
+  UpdateHasTransparency;
+  Result:= FHasTransparency;
+end;
+
+procedure TP3DMaterialBase.UpdateHasTransparency;
+var
+  Map: TP3DMaterialMap;
+begin
+  FHasTransparency:= FAlpha < 1;
+
+  if ( not FHasTransparency ) then
+    for Map in Maps do
+      if ( Map.HasTransparency ) then
+        begin
+          FHasTransparency:= True;
+          break;
+        end;
+end;
+
 procedure TP3DMaterialBase.SetAlpha(AValue: Single);
 begin
   if FAlpha= AValue then Exit;
   FAlpha:= clamp( AValue, 0, 1 );
+  UpdateHasTransparency;
+end;
+
+procedure TP3DMaterialBase.SetInstancing(AValue: Boolean);
+begin
+  if FInstancing=AValue then Exit;
+  FInstancing:=AValue;
+  BuildShader();
 end;
 
 procedure TP3DMaterialBase.SetSpec_Hardness(AValue: Single);
@@ -435,17 +501,44 @@ end;
 
 procedure TP3DMaterialBase.BuildShader;
 var
-  ShaderTree: TP3DShaderNodeTree;
+  ShaderTree, Passes: TP3DShaderNodeTree;
   Compiled: TP3DShaderCompiled;
+
+  procedure CompileBuffers;
+  var
+    i, j, n: Integer;
+    Buffer: TP3DShaderBuffer;
+  begin
+    Compiled:= TP3DShaderCompiled.Create;
+    with( ShaderTree.AddCopyEx( 'GLSLShader' )) do
+      for i:= 0 to Outputs.Count - 1 do
+        begin
+          Buffer:= TP3DShaderBuffer.Create;
+          Buffer.Name:= Outputs[ i ].Name;
+          for j:= 0 to Inputs.Count -1 do
+            begin
+              Buffer.Defines.Add( Inputs[ j ].Name );
+              TP3DShaderNodeSocketShader( Inputs[ j ] ).Value:= Passes.GetShaderOutputFromNodes( Buffer );
+              if ( Buffer.Defines.Find( Self.Name, n )) then
+                Buffer.Defines.Delete( n );
+            end;
+          Compiled.Buffers.Add( Buffer );
+        end;
+  end;
 
 begin
   ShaderTree:= TP3DShaderNodeTree.Create;
   Compiled:= nil;
 
   try
-    AddPasses( ShaderTree );
+    Passes:= TP3DShaderNodeTree.Create;
+    AddPasses( Passes );
+
+    CompileBuffers;
 
     Compiled:= ShaderTree.Compile;
+
+    Passes.Free;
 
     Shader:= TP3DShader.CreateFromVertexAndFragmentShader( Compiled.FindBuffer( 'vshader' ).Code, Compiled.FindBuffer( 'fshader' ).Code, Owner );
     ShaderOwned:= True;
@@ -513,6 +606,8 @@ begin
 
   if ( ADOMNode.GetAttribute( 'unlit' ) = 'yes' ) then
     FUnlit:= True;
+
+  Instancing:= True;
 
   Maps.Clear( True );
   tex:= TDOMElement( ADOMNode.FirstChild );
@@ -632,7 +727,7 @@ end;
 
 class function TP3DMaterialModifierInit.GetIndex: Integer;
 begin
-  Result:= 0;
+  Result:= 10;
 end;
 
 procedure TP3DMaterialModifierInit.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
@@ -763,6 +858,10 @@ end;
 
 procedure TP3DMaterialModifierWorldTransform.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
 begin
+  if ( Material.Instancing ) then
+    ShaderTree.AddCopy( 'Pass_WorldTransformInitInstance' )
+  else
+    ShaderTree.AddCopy( 'Pass_WorldTransformInit' );
   ShaderTree.AddCopy( 'Pass_WorldTransform' );
 end;
 
@@ -830,6 +929,58 @@ begin
 
 end;
 
+{ TP3DMaterialModifierArray }
+
+constructor TP3DMaterialModifierArray.Create;
+begin
+  inherited;
+  FTransforms:= TVec3List.Create;
+  FTexture:= TP3DTexture.CreateFromEmpty( 1, 1, 3, dtFloat );
+  FTexture.MipMap:= False;
+end;
+
+destructor TP3DMaterialModifierArray.Destroy;
+begin
+  Transforms.Free;
+  if ( P3DData.IsValid( FTexture )) then
+    FreeAndNil( FTexture );
+  inherited Destroy;
+end;
+
+class function TP3DMaterialModifierArray.GetIndex: Integer;
+begin
+  Result:= 5;
+end;
+
+procedure TP3DMaterialModifierArray.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+begin
+  ShaderTree.AddCopy( 'instance_init' );
+  ShaderTree.AddCopy( 'instance_array_texture_translate' );
+end;
+
+procedure TP3DMaterialModifierArray.PassToShader(Material: TP3DMaterialBase);
+var
+  decl: TP3DShaderDecl;
+begin
+  Material.Shader.Uniforms.FindByName( 'instance_texture_translate_w', decl );
+  if ( Assigned( decl )) then
+    decl.AsInt:= FTexture.Width;
+  Material.Shader.Uniforms.FindByName( 'instance_texture_translate', decl );
+  if ( Assigned( decl )) then
+    begin
+      FTexture.Bind( Material.Maps.Count );
+      decl.AsInt:= Material.Maps.Count;
+    end;
+end;
+
+procedure TP3DMaterialModifierArray.PushTexture;
+begin
+  if ( P3DData.IsValid( FTexture )) then
+    FreeAndNil( FTexture );
+  FTexture:= TP3DTexture.CreateFromBuffer( Transforms.Count, 1, 3, dtFloat, Transforms.Ptr );
+  FTexture.MipMap:= False;
+end;
+
 
 { TP3DMaterialModifierList }
 
@@ -878,8 +1029,22 @@ end;
 
 function TP3DMaterialModifierList.Add(Item: TP3DMaterialModifier): Integer;
 begin
-  Result:= inherited Add(Item);
+  inherited Add(Item);
   SortByIndex;
+  Result:= IndexOf( Item );
+end;
+
+function TP3DMaterialModifierList.Find(ModType: TP3DMaterialModifierType): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ] is ModType ) then
+      begin
+        Result:= i;
+        break;
+      end;
 end;
 
 { TP3DMaterial }
@@ -897,6 +1062,11 @@ begin
   ShaderOwned:= False;
   if ( Assigned( Shader )) then
     Shader.AddUser( Self );
+end;
+
+function TP3DMaterial.GetHasTransparency: Boolean;
+begin
+  Result:= False;
 end;
 
 procedure TP3DMaterial.ClearFields;

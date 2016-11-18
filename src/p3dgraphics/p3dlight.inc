@@ -39,7 +39,7 @@
   TP3DLightList = class ( TP3DCustomLightList )
     procedure Delete( Index: Integer ); override;
 
-    procedure PassToActiveShader( MaxLights: Integer; Scene: TP3DScene; matWorld, matView: TMat4; Params: TP3DLightInformationSet );
+    procedure PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
   end;
 
 {$ENDIF}
@@ -137,9 +137,7 @@ begin
 end;
 
 
-procedure TP3DLightList.PassToActiveShader(MaxLights: Integer;
-  Scene: TP3DScene; matWorld, matView: TMat4;
-  Params: TP3DLightInformationSet);
+procedure TP3DLightList.PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
 var
   numLights: Integer;
   i, j: Integer;
@@ -185,7 +183,7 @@ begin
             if ( obj is TP3DActor ) then
               with ( obj as TP3DActor ) do
                 begin
-                  pos:= matView * {matWorld * }vec4( Position, 1 );
+                  pos:= matView * vec4( Position, 1 );
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
                   pos:= vec4( normalize( mat3( matView ) * {mat3( matWorld ) * }Matrix.Row[ 2 ].XYZ ), 0 );
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );

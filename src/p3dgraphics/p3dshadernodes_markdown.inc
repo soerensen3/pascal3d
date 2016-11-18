@@ -22,6 +22,7 @@ const
   SkippingChars: set of Char = [ ' ', #8  ];
   WordDelims = [#0..' ',',','.',';','/','\',':','''','"','`','='] + Brackets;
   ChunkInpDelim = '$';
+  StartCommentDelim = '#';
 
 {$MACRO ON}
 {$DEFINE Ch:= GlobalFile[ GlobalCursor ]}
@@ -142,7 +143,7 @@ begin
 end;
 
 
-function CreateSocketFromType( Node: TP3DShaderNode; Direction: TP3DNodeSocketDirection; SocketType: String; Name: String ): TP3DShaderNodeSocket;
+function CreateSocketFromType( Node: TP3DShaderNode; Direction: TP3DNodeSocketDirection; SocketType: String; Name: String; const SingleOnly: Boolean = False ): TP3DShaderNodeSocket;
 begin
   case SocketType of
     'vec4': Result:= TP3DShaderNodeSocketVector.Create( Node, Direction );
@@ -154,6 +155,7 @@ begin
     Result:= TP3DShaderNodeSocket.Create( GlobalActiveNode, Direction );
   end;
   Result.Name:= Name;
+  Result.FSingleOnly:= SingleOnly;
   case Direction of
     nsdInput: Node.Inputs.Add( Result );
     nsdOutput: Node.Outputs.Add( Result );
@@ -239,6 +241,21 @@ begin
   Inc( GlobalCursor, Length( '---' ));
 end;
 
+procedure ParseComment;
+begin
+  GlobalCursor:= PosEx( LineEnding, GlobalFile, GlobalCursor );
+end;
+
+function StrToBool( const S: string ): Boolean;
+begin
+  if ( S = 'yes' ) then
+    Result:= True
+  else if ( S = 'no' ) then
+    Result:= False
+  else
+    Raise EConvertError.CreateFmt( '"%s" is not a valid markdown boolean. It has to be either yes or no!', [ S ] );
+end;
+
 procedure ParseChunk;
 var
   TopFragments: TP3DShaderNodeFragmentList = nil;
@@ -249,6 +266,7 @@ var
     ChunkName: String = '';
     ChunkType: String = '';
     ChunkRestrict: String = '';
+    ChunkSingle: Boolean = False;
 
     procedure Callback( Name, Value: String; ValueStart: Integer );
     begin
@@ -259,6 +277,8 @@ var
           ChunkType:= Value;
         'restrict':
           ChunkRestrict:= Value;
+        'single':
+          ChunkSingle:= StrToBool( Value );
         else
           Error( 'Unknown node attribute' );
       end;
@@ -301,7 +321,7 @@ var
               if ( idx >= 0 ) then
                 GlobalActiveOutput:= TP3DShaderNodeSocket( GlobalActiveNode.Outputs[ idx ])
               else
-                GlobalActiveOutput:= CreateSocketFromType( GlobalActiveNode, nsdOutput, ChunkType, ChunkName );
+                GlobalActiveOutput:= CreateSocketFromType( GlobalActiveNode, nsdOutput, ChunkType, ChunkName, ChunkSingle );
             end;
 
         TopFragments:= GlobalActiveOutput.Fragments;
@@ -332,6 +352,12 @@ var
     begin
       chunk:= TP3DShaderNodeFragmentInline.Create;
       TopFragments.Add( chunk );
+
+      if ( Copy( S, Length( S ) - Length( LineEnding ) - 1, Length( LineEnding )) = LineEnding ) then
+        Delete( S, Length( S ) - Length( LineEnding ) - 1, Length( LineEnding ));
+      //Delete one trailing line-ending if present
+      //otherwise it the chunk terminator has to be in the same line
+
       chunk.Text:= S;
     end;
 
@@ -403,8 +429,10 @@ begin
         ParseNode
       else if ( CompWordAtCursor( '```' )) then
         ParseChunk
+      else if ( CompWordAtCursor( '#' )) then
+        ParseComment
       else
-        Error( 'Syntax Error! Only --- or ``` allowed outside of chunks and nodes' );
+        Error( 'Syntax Error! Only ---, ``` or # allowed outside of chunks and nodes' );
     end;
 end;
 

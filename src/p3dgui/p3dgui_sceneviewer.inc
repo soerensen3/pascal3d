@@ -8,6 +8,8 @@ type
   { TP3DSceneViewer }
 
   TP3DSceneViewer = class ( TP3DGroupBox )
+  private
+    FRenderList: TP3DRenderList;
     protected
       FAfterRender: TNotifyEvent;
       FBeforeRender: TNotifyEvent;
@@ -24,7 +26,7 @@ type
       procedure PushVPClientRect; virtual;
 
     public
-      procedure Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
+      procedure Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
       procedure MouseMove(X, Y: Integer); override;
       procedure MouseWheel(delta: Integer); override;
       procedure KeyboardAction; override;
@@ -36,6 +38,7 @@ type
       property OrbitCenter: TVec3 read FOrbitCenter write FOrbitCenter;
       property BeforeRender: TNotifyEvent read FBeforeRender write FBeforeRender;
       property AfterRender: TNotifyEvent read FAfterRender write FAfterRender;
+      property RenderList: TP3DRenderList read FRenderList write FRenderList;
   end;
 
 //  procedure InitTriangle;
@@ -103,8 +106,8 @@ end;
 
 procedure TP3DSceneViewer.UpdateCamPos;
 begin
-  FCam.UpdateMatrices( FCamObject );
   FCamObject.Position:= FCamObject.Matrix.Row[ 2 ].xyz * OrbitDistance + OrbitCenter;
+  FCam.UpdateMatrices( FCamObject );
 end;
 
 procedure TP3DSceneViewer.ResetOrbit;
@@ -124,11 +127,11 @@ begin
                      Round( ClientRect.Width ), Round( ClientRect.Height ));
 end;
 
-procedure TP3DSceneViewer.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
+procedure TP3DSceneViewer.Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
 var
-  txt: TP3DText;
+  txt: TP3DTextBmp;
 begin
-  inherited Render(BaseColor, ScrollAcc, ClipRect);
+  inherited Paint(BaseColor, ScrollAcc, ClipRect);
   //Canvas.Lock;
   PushVPClientRect;
 
@@ -137,14 +140,20 @@ begin
       if ( Assigned( BeforeRender )) then
         BeforeRender( Self );
       glEnable( GL_DEPTH_TEST );
+      if ( Assigned( FRenderList )) then
+        FreeAndNil( FRenderList );
+      Scene.MakeRenderList( nil, Mat4Identity, FRenderList );
+      RenderList.Optimize;
       if ( OrbitCamera ) then
         begin
           UpdateCamPos;
           FCam.Aspect:= ClientRect.Width / ClientRect.Height;
-          Scene.RenderFromCamera( FCamObject );
+          //Scene.RenderFromCamera( FCamObject );
+          RenderList.Render( FCamObject );
         end
       else
-        Scene.Render;
+//        Scene.Render;
+        RenderList.Render( Scene.Cam );
       if ( Assigned( AfterRender )) then
         AfterRender( Self );
       glDisable( GL_DEPTH_TEST );
@@ -152,7 +161,7 @@ begin
       if ( not Assigned( Scene.Cam ) and ( not OrbitCamera )) then
         begin
           Canvas.Lock;
-          txt:= p3dTextSimple( 'Warning, no camera set!', P3DFontManager[ Font.Name, Font.Size ]);
+          txt:= TP3DTextBmp.CreateSimple( 'Warning, no camera set!', P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
           Canvas.RenderText( txt, ClientRect.TopLeft );
           Canvas.Unlock();
           txt.Free;
@@ -173,7 +182,7 @@ begin
   inherited MouseMove(X, Y);
   if ( OrbitCamera and ( gcisMouseOver in InputState )) then
     begin
-      if ( gcisMouseBtn2Down in InputState ) then
+      if (( gcisMouseBtn2Down in InputState ) or (( gcisMouseBtn1Down in InputState ) and P3DInput.Keyboard.Keys[ P3DK_LALT ])) then
         if ( P3DInput.Keyboard.Keys[ P3DK_LSHIFT ] or P3DInput.Keyboard.Keys[ P3DK_LCTRL ]) then
           begin
             m:= FCam.View;

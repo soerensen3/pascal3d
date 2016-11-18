@@ -28,7 +28,7 @@ var
   Tex: TP3DTexture;
   FrameBuffer: TP3DFrameBuffer;
 begin
-  {if ( Event.keysym.scancode = SDL_SCANCODE_F2 ) then
+  if ( Event.keysym.scancode = SDL_SCANCODE_F2 ) then
     begin
       FrameBuffer:= TP3DFrameBuffer.Create();
       //FrameBuffer.Bind( 0 );
@@ -71,7 +71,7 @@ begin
       FrameBuffer.Free;
       DataView.Update;
       DataView.Children.ExpandAll();
-    end;}
+    end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F5 ) then
     begin DataView.Update; DataView.Children.ExpandAll(); end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F8 ) then

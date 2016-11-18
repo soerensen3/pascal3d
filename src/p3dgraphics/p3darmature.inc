@@ -160,7 +160,7 @@ type
       constructor Create( AMesh: TP3DMesh ); override;
       destructor Destroy; override;
 
-      procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4 ); override;
+      procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
     published
@@ -349,7 +349,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DMeshModifierArmature.PassToShader(Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4);
+procedure TP3DMeshModifierArmature.PassToShader( Material: TP3DMaterial; var world: TMat4 );
 var
   decl: TP3DShaderDecl;
   joint: TP3DJoint;

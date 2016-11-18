@@ -53,6 +53,7 @@ type
     private
       FCategory: TP3DSearchPathCategory;
       FSearchPaths: TP3DSearchPaths;
+      function GetFullPath( Index: Integer ): String;
 
     protected
       property SearchPaths: TP3DSearchPaths read FSearchPaths write FSearchPaths;
@@ -62,6 +63,8 @@ type
 
       function FindFile( FName: String ): String;
       function FindFileEx( FName: String; PrefferedPath: String ): String;
+
+      property FullPath[ Index: Integer ]: String read GetFullPath;
 
     published
       property Category: TP3DSearchPathCategory read FCategory write FCategory;
@@ -577,6 +580,17 @@ begin
 end;
 
 { TP3DSearchPathCategory }
+
+function TP3DSearchPathContainer.GetFullPath( Index: Integer ): String;
+begin
+  Result:= '';
+  if ( InRange( Index, 0, Count - 1 )) then
+    begin
+      Result:= AppendPathDelim( Self[ Index ]);
+      if ( not FilenameIsAbsolute( Result )) then
+        Result:= AppendPathDelim( SearchPaths.BaseDir + Result );
+    end;
+end;
 
 constructor TP3DSearchPathContainer.Create(ASearchPaths: TP3DSearchPaths);
 begin

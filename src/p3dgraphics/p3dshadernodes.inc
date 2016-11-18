@@ -23,7 +23,7 @@ type
   end;
 
   { TP3DShaderNodeFragment }
-  // Base Type for all Nodes
+  // Base Type for all Fragments
   TP3DShaderNodeFragment = class
     private
       FVarType: String;
@@ -190,7 +190,7 @@ type
       function AddCopyEx( Name: String ): TP3DShaderNode; inline;
 
       function Compile: TP3DShaderCompiled;
-      function CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
+      //function CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
   end;
   {$INCLUDE p3dshadernodes_markdown.inc}
   {$INCLUDE p3dshadernodes_core.inc}
@@ -222,36 +222,64 @@ end;
 function TP3DShaderNodeTree.Compile: TP3DShaderCompiled;
 var
   Defines: TStringList;
+  Buffer: TP3DShaderBuffer;
+  Node: TP3DNode;
+  Socket: TP3DNodeSocket;
 begin
   Result:= TP3DShaderCompiled.Create;
-  Defines:= TStringList.Create;
+  for Node in Nodes do
+    if ( Node is TP3DShaderNode ) then
+      for Socket in Node.Outputs do
+        if ( Socket.SocketType = 'shader' ) then
+          begin
+            Buffer:= TP3DShaderBuffer.Create;
+            Buffer.Name:= Socket.Name;
+            Buffer.Code:= TP3DShaderNodeSocket( Socket ).GetOutput( Buffer );
+            Buffer.RegisterSocket( TP3DShaderNodeSocket( Socket ));
+            Result.Buffers.Add( Buffer );
+            P3DLog.LogInfoXML( Self, 'Built shader from chunks <br/><pre><code>' + Buffer.Code + '</code></pre>' );
+          end;
+  {Defines:= TStringList.Create;
   Defines.Text:= 'vshader';
   Result.Buffers[ Result.Buffers.Add( CompileToBuffer( Defines ))].Name:= 'vshader';
   Defines.Text:= 'fshader';
   Result.Buffers[ Result.Buffers.Add( CompileToBuffer( Defines ))].Name:= 'fshader';
-  Defines.Free;
+  Defines.Free;}
 end;
-
+{
 function TP3DShaderNodeTree.CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
 var
-  s: String;
+  s, declaration, extensions: String;
 begin
   Result:= TP3DShaderBuffer.Create;
 
-  Result.Defines.Text:= Definitions.Text;
+  for Socket in Node.Outputs do
+    if ( Socket.SocketType = 'shader' ) then
+      begin
+        F.Text:= TP3DShaderNodeSocket( Socket ).GetOutput( Result );
+        Result.RegisterSocket( TP3DShaderNodeSocket( Socket ));
+        F.SaveToFile( '/tmp/' + Socket.Name + '.glsl' );
+      end;
+  {Result.Defines.Text:= Definitions.Text;
   Result.Defines.Add( 'main' );
   s:= GetShaderOutputFromNodes( Result );
 
 
   Result.Defines.Text:= Definitions.Text;
+  Result.Defines.Add( 'extensions' );
+  extensions:= Result.Declarations.GetStringOutput( Result );
+
+  Result.Defines.Text:= Definitions.Text;
   Result.Defines.Add( 'declaration' );
+  declaration:= Result.Declarations.GetStringOutput( Result );
 
   Result.Code:= '#version ' + P3DGLSLVersion + LineEnding
-                + Result.Declarations.GetStringOutput( Result )
+                + extensions + LineEnding + declaration
                 + 'void main(){' + LineEnding
-                + s + '}';
+                + s + '}';}
   P3DLog.LogInfo( Self, 'Built shader from chunks &gt;'  + LineEnding + Result.Code + LineEnding + '&lt; End of Shader' );
 end;
+}
 
 function TP3DShaderNodeTree.AddCopy(Item: TP3DShaderNode): Integer;
 var
@@ -287,21 +315,20 @@ end;
 
 { TP3DShaderNodeSocketList }
 
-function TP3DShaderNodeSocketList.GetStringOutput( Buffer: TP3DShaderBuffer): String;
+function TP3DShaderNodeSocketList.GetStringOutput( Buffer: TP3DShaderBuffer ): String;
 var
   Socket: TP3DShaderNodeSocket;
-	noduplicate: Boolean;
-	S: String;
+  noduplicate: Boolean;
+  S: String;
 begin
   Result:= '';
-  noduplicate:= Buffer.Defines.IndexOf( 'declaration' ) > -1;
+  noduplicate:= ( Buffer.Defines.IndexOf( 'declaration' ) > -1 ) or ( Buffer.Defines.IndexOf( 'extensions' ) > -1 );
   for Socket in Self do
     begin
       S:= Socket.GetOutput( Buffer );
-      if ( noduplicate ) then
-        if ( Pos( S, Result ) = 0 ) then
-          Result+= S;
-		end;
+      if (( noduplicate ) and ( Pos( S, Result ) = 0 )) then
+        Result+= S;
+    end;
 end;
 
 function TP3DShaderNodeSocketList.FindSocketByName(Name: String): Integer;
@@ -426,12 +453,15 @@ end;
 function TP3DShaderNodeFragmentInput.GetStringOutput(ANode: TP3DShaderNode;
   Buffer: TP3DShaderBuffer): String;
 var
-  S: Integer;
+  S, n: Integer;
 begin
+  Buffer.Defines.Add( Self.InputName );
   S:= ANode.Inputs.FindSocketByName( InputName );
   if ( S > -1 ) then
     if ( ANode.Inputs[ S ] is TP3DShaderNodeSocket ) then
       Result:= TP3DShaderNodeSocket( ANode.Inputs[ S ]).GetOutput( Buffer );
+  if ( Buffer.Defines.Find( Self.InputName, n )) then
+    Buffer.Defines.Delete( n );
 end;
 
 function TP3DShaderNodeFragmentInput.MakeCopy(ANode: TP3DShaderNode
@@ -468,10 +498,11 @@ end;
 
 function TP3DShaderNodeSocket.GetOutput( Buffer: TP3DShaderBuffer ): String;
 var
-  i: Integer;
+  i, n: Integer;
   s: String;
 begin
   Result:= '';
+  Buffer.Defines.Add( Self.Name );
   if ( Assigned( Connected )) then
     begin
       if ( Connected is TP3DShaderNodeSocket ) then
@@ -489,6 +520,8 @@ begin
       for i:= 0 to Fragments.Count - 1 do
         Result+= Fragments[ i ].GetStringOutput( TP3DShaderNode( Node ), Buffer );
     end;
+  if ( Buffer.Defines.Find( Self.Name, n )) then
+    Buffer.Defines.Delete( n );
 end;
 
 function TP3DShaderNodeSocket.MakeCopy(ANode: TP3DNode): TP3DShaderNodeSocket;
@@ -508,11 +541,12 @@ begin
   Result:= 'shader'
 end;
 
-function TP3DShaderNodeSocketShader.GetStringOutput(Buffer: TP3DShaderBuffer
-  ): String;
+function TP3DShaderNodeSocketShader.GetOutput(Buffer: TP3DShaderBuffer): String;
 begin
-  inherited;
-  Result:= GetOutput( Buffer );
+  if (( Direction = nsdOutput ) or Assigned( Connected )) then
+    Result:= inherited GetOutput( Buffer )
+  else
+    Result:= Value;
 end;
 
 

@@ -4,10 +4,11 @@
 
 unit pascal3d;
 
+{$warn 5023 off : no warning about unused units}
 interface
 
 uses
-  p3devents, p3dgraphics, LazarusPackageIntf;
+  p3devents, p3dgraphics, p3dutils, LazarusPackageIntf;
 
 implementation
 

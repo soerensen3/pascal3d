@@ -50,7 +50,7 @@
     private
       FAutoSize: Boolean;
       FCaption: String;
-      FCaptionTxt: TP3DText;
+      FCaptionTxt: TP3DTextBmp;
       FFont: TP3DCanvasFont;
       FHAlignment: THorizontalAlignment;
       FVAlignment: TVerticalAlignment;
@@ -60,7 +60,7 @@
       procedure Resize;
 
     public
-    constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -81,12 +81,12 @@
       FBorderColor: TVec4;
       FCanCollapse: Boolean;
       FCaption: String;
-      FCaptionTxt: TP3DText;
+      FCaptionTxt: TP3DTextBmp;
       FCollapsed: Boolean;
       FColor: TVec4;
       FFont: TP3DCanvasFont;
       FStoredHeight: Float;
-      FCollapseSymbolTxt: TP3DText;
+      FCollapseSymbolTxt: TP3DTextBmp;
       FCollapseSymbol: Char;
 
       procedure SetAutoSize(AValue: Boolean);
@@ -98,7 +98,7 @@
 
     protected
       procedure SetHeight(const Value: Float); override;
-      procedure Realign; override;
+      procedure Realign( var ClientArea: TP3DRect ); override;
 
     public
       constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
@@ -126,8 +126,8 @@
       FTransmission: Single;
       FTyping: Boolean;
       FCursorMoved: Boolean;
-      FValueNameText: TP3DText;
-      FValueText: TP3DText;
+      FValueNameText: TP3DTextBmp;
+      FValueText: TP3DTextBmp;
       FValueCached: Single;
 
     protected
@@ -232,7 +232,7 @@
     public
       constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
-      procedure Realign; override;
+      procedure Realign( var ClientArea: TP3DRect ); override;
 
       procedure Update;
 
@@ -271,7 +271,6 @@
       destructor Destroy; override;
 
       procedure Draw; override;
-      procedure Realign; override;
       procedure SetAlign(const Value: TP3DControlAlign); override;
 
       procedure MouseMove(X, Y: Integer); override;
@@ -295,7 +294,7 @@
 
   TP3DComboBox = class ( TP3DButton )
     private
-      FDownSymbol: TP3DText;
+      FDownSymbol: TP3DTextBmp;
       FDropDownMenu: TP3DPopupMenu;
       FOnChange: TP3DComboBoxChange;
 
@@ -337,7 +336,7 @@
     private
       FChecked: Boolean;
       FOnChange: TP3DNotifyEvent;
-      FSymbolChecked: TP3DText;
+      FSymbolChecked: TP3DTextBmp;
 
       procedure SetChecked( AValue: Boolean );
 
@@ -433,7 +432,7 @@ procedure TP3DCustomValueEdit.UpdateValueText( AValue: Single );
 begin
   if ( Assigned( FValueText )) then
     FValueText.Free;
-  FValueText:= p3dTextSimple( FormatFloat( '0.0' + DupeString( '#', Precision ), AValue ), P3DFontManager[ Font.Name, Font.Size ]);
+  FValueText:= TP3DTextBmp.CreateSimple( FormatFloat( '0.0' + DupeString( '#', Precision ), AValue ), P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
   FValueCached:= AValue;
 end;
 
@@ -441,7 +440,7 @@ procedure TP3DCustomValueEdit.UpdateNameText( AValue: String );
 begin
   if ( Assigned( FValueNameText )) then
     FValueNameText.Free;
-  FValueNameText:= p3dTextSimple( AValue + ':', P3DFontManager[ Font.Name, Font.Size ]);
+  FValueNameText:= TP3DTextBmp.CreateSimple( AValue + ':', P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size )
 end;
 
 function TP3DCustomValueEdit.GetValue: Single;
@@ -576,7 +575,7 @@ begin
   FCaption:=AValue;
   if ( Assigned( FCaptionTxt )) then
     FCaptionTxt.Free;
-  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
+  FCaptionTxt:= TP3DTextBmp.CreateSimple( AValue, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size )
 end;
 
 procedure TP3DLabel.SetAutoSize(AValue: Boolean);
@@ -640,7 +639,7 @@ begin
   FCaption:=AValue;
   if ( Assigned( FCaptionTxt )) then
     FCaptionTxt.Free;
-  FCaptionTxt:= p3dTextSimple( AValue, P3DFontManager[ Font.Name, Font.Size ]);
+  FCaptionTxt:= TP3DTextBmp.CreateSimple( AValue, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 end;
 
 procedure TP3DGroupBox.SetCollapsed(AValue: Boolean);
@@ -659,7 +658,7 @@ procedure TP3DGroupBox.UpdateAutoSize;
     for Control in Controls do
       if ( Control.Visible ) then
         Result:= max( vec2( Control.Left + Control.Width, Control.Top + Control.Height ), Result );
-    Result:= Result + vec2( BoundsTL.X + BoundsBR.X, BoundsTL.Y + BoundsBR.Y );
+    Result:= Result + vec2( MarginTL.X + MarginBR.X, MarginTL.Y + MarginBR.Y );
   end;
 
 var
@@ -704,11 +703,11 @@ begin
     FStoredHeight:= Height;
 end;
 
-procedure TP3DGroupBox.Realign;
+procedure TP3DGroupBox.Realign(var ClientArea: TP3DRect);
 begin
   if ( not ( CanCollapse and Collapsed )) then
     UpdateAutoSize;
-  inherited Realign;
+  inherited Realign( ClientArea );
 end;
 
 
@@ -720,7 +719,7 @@ begin
   Caption:= Name;
   Color:= vec4( 1 );
   BorderColor:= Primary200; //vec4( 0, 0, 0, 0.1 );
-  SetBounds( 15, 25, 15, 15 );
+  SetMargin( 15, 25, 15, 15 );
   FCollapseSymbol:= P3DSymbolTriangleDown;
 end;
 
@@ -823,7 +822,7 @@ procedure TP3DEdit.SetCaption(AValue: String);
 begin
   if FCaption=AValue then Exit;
   inherited;
-  FCaptionTxt.BuildIndex();
+//  FCaptionTxt.BuildIndex();
 end;
 
 procedure TP3DEdit.SetSel1( AValue: Integer );
@@ -892,8 +891,8 @@ var
   Preset: TP3DButtonPreset;
   tp: TVec2; //Text Position
   s: TVec2; //Cursor Position
-  soff: TPoint; //Offset to the beginning of the selection
-  swidth: TPoint; //Length of the selection
+  soff: TVec4; //Offset to the beginning of the selection
+  swidth: TVec4; //Length of the selection
 begin
   if ( gcisMouseBtn1Down in InputState ) then
     Preset:= PresetDown
@@ -912,13 +911,12 @@ begin
   Canvas.Font.Name:= Font.Name;
   tp:= ( vec2( 0, Height ) - vec2( 0, FCaptionTxt.Height )) / 2;
   Canvas.RenderText( FCaptionTxt, tp );
-  if ( Focused ) then
+  if (( Focused ) and ( Assigned( FCaptionTxt ))) then
     begin
-      if ( Assigned( FCaptionTxt )) then
-      if ( Sel1 > 0 ) then
+      {if ( Sel1 > 0 ) then
         soff:= FCaptionTxt.WidthFromTo( 1, Sel1 + 1 )
       else
-        soff:= Point( 0, 0 );
+        soff:= vec4( 0 );
 
       if ( Sel1 <> Sel2 ) then
         begin
@@ -931,7 +929,18 @@ begin
         end;
 
       swidth:= p3dTextSize( 'W', FCaptionTxt.Font );
-      Canvas.RenderRect( tp + vec2( soff.X, 0 ), tp + vec2( soff.X + 2, soff.Y ), Preset.FontColor );
+      Canvas.RenderRect( tp + vec2( soff.X, 0 ), tp + vec2( soff.X + 2, soff.Y ), Preset.FontColor );}
+      if ( Sel1 <> Sel2 ) then
+        begin
+          swidth:= FCaptionTxt.WidthFromTo( Min( Sel1, Sel2 ), Max( Sel1, Sel2 ));
+
+          //s:= tp;
+          //if ( Sel1 > Sel2 ) then
+          //  s.x:= s.x - swidth.x;
+          Canvas.RenderRect( vec2( swidth[ 0 ], swidth[ 1 ]), vec2( swidth[ 0 ], swidth[ 1 ]) + vec2( swidth[ 2 ], swidth[ 3 ]), vec4( accent900.xyz, 0.5 ), vec4( accent400.xyz, 0.5), vec4( accent600.xyz, 0.5 ), vec4( accent900.xyz, 0.5 ));
+        end;
+      swidth:= FCaptionTxt.WidthFromTo( 0, Sel1 );
+      Canvas.RenderRect( tp + vec2( swidth[ 2 ] - 1, swidth[ 1 ]), tp + vec2( swidth[ 2 ] + 1, swidth[ 3 ]), Preset.FontColor );
     end;
 
   if ( Assigned( FOnDraw )) then
@@ -1094,11 +1103,6 @@ begin
         Canvas.RenderRoundRect( vec2( sb, tp + sb ), vec2( Width - sb, tp + off - sb ), Width / 6, 4, Preset.FontColor );
       end;
   end;
-end;
-
-procedure TP3DScrollBar.Realign;
-begin
-  inherited;
 end;
 
 procedure TP3DScrollBar.SetAlign(const Value: TP3DControlAlign);
@@ -1274,9 +1278,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DVectorEdit.Realign;
+procedure TP3DVectorEdit.Realign(var ClientArea: TP3DRect);
 begin
-  inherited Realign;
+  inherited Realign( ClientArea );
   Update;
 end;
 
@@ -1376,7 +1380,7 @@ constructor TP3DCheckBox.Create(const AData: TP3DData;
   const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
-  FSymbolChecked:= p3dTextSimple( P3DSymbolCheck, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
+  FSymbolChecked:= TP3DTextBmp.CreateSimple( P3DSymbolCheck, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols'], Canvas.Font.Size );
 end;
 
 destructor TP3DCheckBox.Destroy;
@@ -1418,7 +1422,7 @@ begin
   if ( Caption > '' ) then
     begin
       if ( not Assigned( FCaptionTxt )) then
-        FCaptionTxt:= p3dTextSimple( Caption, P3DFontManager[ Font.Name, Font.Size ]);
+        FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 
       case HAlignment of
         haLeft: P.x:= OffSet;
@@ -1508,7 +1512,7 @@ procedure TP3DComboBoxDataBlock.Update;
 var
   i: Integer;
 begin
-  Canvas.Font.Size:= 12;
+  Canvas.Font.Size:= 16;
   with ( Items[ Items.Add( 'Clear' )]) do
     begin
       PresetNormal.FontColor:= vec4( 1.0, 0.5, 0.5, 1 );

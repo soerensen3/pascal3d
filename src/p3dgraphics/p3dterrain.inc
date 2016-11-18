@@ -29,7 +29,7 @@ TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
     constructor Create( AMesh: TP3DMesh ); override;
     destructor Destroy; override;
 
-    procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4 ); override;
+    procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
     procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
   published
@@ -64,17 +64,16 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DMeshModifierTerrain.PassToShader(Scene: TP3DScene;
-  Material: TP3DMaterial; var world: TMat4);
+procedure TP3DMeshModifierTerrain.PassToShader( Material: TP3DMaterial; var world: TMat4);
 var
   Position: TVec3;
   //Position: TVec3;
 begin
-  Position:= vec3( round( Scene.ActiveCam.Position.X / GridSize ), round( Scene.ActiveCam.Position.Y / GridSize ), 0 );
+  {Position:= vec3( round( Scene.ActiveCam.Position.X / GridSize ), round( Scene.ActiveCam.Position.Y / GridSize ), 0 );
   world.Row[ 3 ]:= vec4( Position * GridSize, 1 );
   glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvX' ),  Position.x{ * UVMultiplier });
   glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), -Position.y{ * UVMultiplier });
-  glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvMultiplier' ), UVMultiplier );
+  glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvMultiplier' ), UVMultiplier );}
 end;
 
 procedure TP3DMeshModifierTerrain.LoadFromDOM(ADOMNode: TDOMElement);

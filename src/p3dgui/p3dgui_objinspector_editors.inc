@@ -320,11 +320,11 @@ published
   TP3DOIEditorDataMaterialMaps = class ( TP3DOIEditorGroup )
     private
       FMapsListView: TP3DListView;
-      FMaterial: TP3DMaterialShader;
+      FMaterial: TP3DMaterial;
       FOnSelectionChange: TP3DListViewSelectionChangeEvent;
 
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
-      procedure SetMaterial(AValue: TP3DMaterialShader);
+      procedure SetMaterial(AValue: TP3DMaterial);
 
     public
       procedure Update; override;
@@ -333,7 +333,7 @@ published
 
     published
       property MapsListView: TP3DListView read FMapsListView write FMapsListView;
-      property Material: TP3DMaterialShader read FMaterial write SetMaterial;
+      property Material: TP3DMaterial read FMaterial write SetMaterial;
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read FOnSelectionChange write FOnSelectionChange;
   end;
 
@@ -365,10 +365,10 @@ published
     private
       FMapsEditor: TP3DOIEditorDataMaterialMaps;
       FMapSelectedEditor: TP3DOIEditorDataMaterialMap;
-      FMaterial: TP3DMaterialShader;
+      FMaterial: TP3DMaterial;
       FTextureEditor: TP3DOIEditorDataTexture;
 
-      procedure SetMaterial(AValue: TP3DMaterialShader);
+      procedure SetMaterial(AValue: TP3DMaterial);
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
@@ -383,7 +383,7 @@ published
       property MapsEditor: TP3DOIEditorDataMaterialMaps read FMapsEditor write FMapsEditor;
       property MapSelectedEditor: TP3DOIEditorDataMaterialMap read FMapSelectedEditor write FMapSelectedEditor;
       property TextureEditor: TP3DOIEditorDataTexture read FTextureEditor write FTextureEditor;
-      property Material: TP3DMaterialShader read FMaterial write SetMaterial;
+      property Material: TP3DMaterial read FMaterial write SetMaterial;
   end;
 
   { TP3DOIEditorPageMaterial }
@@ -1166,7 +1166,7 @@ begin
     OnSelectionChange( Sender, NewSelection );
 end;
 
-procedure TP3DOIEditorDataMaterialMaps.SetMaterial(AValue: TP3DMaterialShader);
+procedure TP3DOIEditorDataMaterialMaps.SetMaterial(AValue: TP3DMaterial);
 var
   Map: TP3DMaterialMap;
 begin
@@ -1186,8 +1186,8 @@ end;
 procedure TP3DOIEditorDataMaterialMaps.Update;
 begin
   inherited;
-  if ( Obj is TP3DMaterialShader ) then
-    Material:= TP3DMaterialShader( Obj )
+  if ( Obj is TP3DMaterial ) then
+    Material:= TP3DMaterial( Obj )
   else
     Material:= nil;
 end;
@@ -1208,7 +1208,7 @@ end;
 
 class function TP3DOIEditorDataMaterialMaps.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
-  Result:= AObj is TP3DMaterialShader;
+  Result:= AObj is TP3DMaterial;
 end;
 
 { TP3DOIEditorDataMaterialMap }
@@ -1462,11 +1462,11 @@ end;
 
 { TP3DOIEditorPageMaps }
 
-procedure TP3DOIEditorPageMaps.SetMaterial(AValue: TP3DMaterialShader);
+procedure TP3DOIEditorPageMaps.SetMaterial(AValue: TP3DMaterial);
 begin
-  if FMaterial= AValue then Exit;
   FMaterial:= AValue;
   MapsEditor.Material:= AValue;
+  MapsEditor.Visible:= Assigned( AValue );
 end;
 
 procedure TP3DOIEditorPageMaps.SelectionChange(Sender: TP3DListView;
@@ -1504,7 +1504,7 @@ begin
 
   MapSelectedEditor:= TP3DOIEditorDataMaterialMap.Create( AData, Self );
   MapSelectedEditor.Align:= alTop;
-  Height:= Controls.PageSize.Y;
+  //Height:= Controls.PageSize.Y;
   //AutoSize:= True;
 end;
 
@@ -1513,15 +1513,15 @@ begin
   inherited Update;
   TextureEditor.Obj:= Obj;
   MapSelectedEditor.Obj:= Obj;
-  if ( Obj is TP3DMaterialShader ) then
-    Material:= TP3DMaterialShader( Obj )
+  if ( Obj is TP3DMaterial ) then
+    Material:= TP3DMaterial( Obj )
   else
     Material:= nil;
 end;
 
 class function TP3DOIEditorPageMaps.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
-  Result:= TP3DOIEditorDataMeshMaterial.IsCompatible( AObj ) or ( AObj is TP3DMaterialShader ) or ( TP3DOIEditorDataTexture.IsCompatible( AObj ));
+  Result:= TP3DOIEditorDataMeshMaterial.IsCompatible( AObj ) or ( AObj is TP3DMaterial ) or ( TP3DOIEditorDataTexture.IsCompatible( AObj ));
 end;
 
 function TP3DOIEditorPageMaps.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;

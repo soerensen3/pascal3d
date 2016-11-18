@@ -1,6 +1,7 @@
 ---
 node: lib_maps
 ---
+
 ```{name="CODE", type="shader", restrict="declaration,vshader"}
 #if (__VERSION__ > 120)
 # define IN in
@@ -22,7 +23,6 @@ node: lib_maps
 ```
 
 ```{restrict="declaration"}
-uniform mat4 world;
 uniform mat4 view;
 uniform mat3 matnormal;
 uniform mat4 proj;
@@ -59,6 +59,12 @@ vec4 color_mix( vec4 v1, vec4 v2 ){
 
 vec3 color_overlay(vec3 base, vec3 blend) {
   return mix(1.0 - 2.0 * (1.0 - base) * (1.0 - blend), 2.0 * base * blend, step(base, vec3(0.5)));
+}
+
+vec3 color_overlay_light(vec3 base, vec3 blend) {
+  return base * blend;
+  //not worth the effort
+  //mix(1.0 - (2.0 - base) * (1.0 - blend), base * blend, step(base, vec3(1)));
 }
 
 ```
@@ -160,6 +166,14 @@ vec4 Normal = vec4( 0, 0, 1, 0 );
 vec4 Color = vec4( 1 );
 vec4 Specular = mat_specular;
 ```
+
+---
+node: Pass_WorldTransformInit
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform mat4 world;
+```
+
 ---
 node: Pass_WorldTransform
 ---
@@ -169,6 +183,53 @@ vPosition = world * vPosition;
 vNormal = world * vec4( vNormal.xyz, 0 );
 vTangent = world * vec4( vTangent.xyz, 0 );
 vCotangent = world * vec4( vCotangent.xyz, 0 );
+```
+
+---
+node: Pass_WorldTransformInitInstance
+---
+
+```{name="CODE", type="shader", restrict="vshader,extensions"}
+#extension GL_ARB_draw_instanced : require
+```
+---
+node: Pass_WorldTransformInstanceTexture
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform sampler2D world_instance;
+uniform int world_instance_w;
+uniform int world_instance_h;
+mat4 world;
+    //Credit goes to three.js skinning_pars_vertex.glsl
+		mat4 getTexMatrix( float i ) {
+			float j = i * 4.0;
+			float x = mod( j, float( world_instance_w ));
+			float y = floor( j / float( world_instance_w ));
+
+			float dx = 1.0 / float( world_instance_w );
+			float dy = 1.0 / float( world_instance_h );
+
+			y = dy * ( y + 0.5 );
+
+			vec4 v1 = texture2D( world_instance, vec2( dx * ( x + 0.5 ), y ));
+			vec4 v2 = texture2D( world_instance, vec2( dx * ( x + 1.5 ), y ));
+			vec4 v3 = texture2D( world_instance, vec2( dx * ( x + 2.5 ), y ));
+			vec4 v4 = texture2D( world_instance, vec2( dx * ( x + 3.5 ), y ));
+
+			return mat4( v1, v2, v3, v4 );
+		}
+```
+
+```{restrict="vshader,main"}
+world = getTexMatrix( gl_InstanceID );
+```
+
+---
+node: Pass_WorldTransformInstanceTexture
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform int instanceCount;
+uniform 
 ```
 
 ---
@@ -293,7 +354,7 @@ gl_Position = proj * vPosition;
 ```
 
 ```{restrict="fshader,main"}
-FragColor = vec4( color_overlay( shadow.rgb, Color.rgb * vColor.rgb ) + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
+FragColor = vec4( color_overlay_light( shadow.rgb, Color.rgb * vColor.rgb ) + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
 #if (__VERSION__ < 130)
 gl_FragColor = FragColor;
 #endif

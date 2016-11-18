@@ -90,7 +90,8 @@ void util_directionalLight( in int i,
     nDotVP = clamp( dot( N, -normalize( transformToTangentSpace( LightSource[ i ].direction.xyz ))), 0.0, 1.0 ) -0.5;
     nDotHV = clamp( dot( N, normalize( LightSource[ i ].halfvector.xyz )), 0.0, 1.0 );
     pf = pow( nDotHV, shininess );
-    diffuse = clamp( diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * nDotVP, -0.5, 0.5 );
+    //diffuse = clamp( diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * nDotVP, -0.5, 0.5 );
+    diffuse = diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * nDotVP;
     specular = clamp( specular + vec4( LightSource[ i ].color.rgb, 1 ) * pf, 0.0, 1.0 );*/
 
 
@@ -98,7 +99,7 @@ void util_directionalLight( in int i,
 
     float cosineTerm = saturate( dot( N, LightSource[ i ].direction.xyz ));
 
-    diffuse += ( LightSource[ i ].color.rgb *0.5) * cosineTerm;
+    diffuse += ( LightSource[ i ].color.rgb *0.5 ) * cosineTerm;
 
     // specular
 
@@ -112,7 +113,7 @@ void util_directionalLight( in int i,
 node: Lighting
 ---
 ```{name="CODE", type="shader", restrict="fshader,main"}
-  vec3 shadow = vec3( 0.5 );
+  vec3 shadow = vec3( 0 );
   vec3 spec = vec3( 0 );
   viewDir = normalize( -vPosition.xyz );
   for ( int i=0; i < numLightSource; i++ ) {
@@ -120,14 +121,14 @@ node: Lighting
       util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec );
     if ( LightSource[ i ].type == p3dltSun )
       util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
-  shadow-= 0.5;
   }
+  spec = vec3( 0 );
 ```
 
 ---
 node: Unlit
 ---
 ```{name="CODE", type="shader", restrict="fshader,main"}
-  vec3 shadow = vec3( 0.5 );
+  vec3 shadow = vec3( 1 );
   vec3 spec = vec3( 0 );
 ```

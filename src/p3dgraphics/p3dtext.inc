@@ -43,13 +43,11 @@ type
 
   TP3DFont = class
     private
-      FFileName: String;
+      FFileWatch: TP3DFileWatch;
       FFontManager: TP3DFontManager;
       FFontName: String;
       FSize: Integer;
       FFont: sdl2_ttf.PTTF_Font;
-
-      procedure SetFileName(AValue: String);
 
     public
       constructor Create( AFileName: String; ASize: Integer );
@@ -58,10 +56,10 @@ type
       property Font: sdl2_ttf.PTTF_Font read FFont write FFont;
 
     published
-      property FileName: String read FFileName write SetFileName;
       property FontName: String read FFontName;
       property Size: Integer read FSize write FSize;
       property FontManager: TP3DFontManager read FFontManager write FFontManager;
+      property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
   end;
 
   TP3DCustomFontList = specialize gP3DCustomObjectList < TP3DFont >;
@@ -399,28 +397,26 @@ end;
 { TP3DFont }
 
 constructor TP3DFont.Create(AFileName: String; ASize: Integer);
+var
+  FileName: String;
 begin
   inherited Create;
   Size:= ASize;
-  FileName:= AFileName;
-  AFileName:= P3DSearchPaths.Fonts.FindFile( AFileName );
+  FileName:= P3DSearchPaths.Fonts.FindFile( AFileName );
   if ( AFileName = '' ) then
-    raise Exception.Create( 'p3dtext.TP3DFont: Failed to load font "' + FileName + '"! Not found!' );
-  Font:= TTF_OpenFont( PChar( AFileName ), Size );
+    raise Exception.Create( 'p3dtext.TP3DFont: Failed to load font "' + AFileName + '"! Not found!' );
+  FFileWatch:= TP3DFileWatch.Create( FileName );
+  FFontName:= ExtractFileNameOnly( FileName );
+  Font:= TTF_OpenFont( PChar( FileName ), Size );
 end;
 
 destructor TP3DFont.Destroy;
 begin
+  FileWatch.Free;
   sdl2_ttf.TTF_CloseFont( Font );
   inherited Destroy;
 end;
 
-procedure TP3DFont.SetFileName(AValue: String);
-begin
-  if FFileName=AValue then Exit;
-  FFileName:=AValue;
-  FFontName:= ExtractFileNameOnly( AValue );
-end;
 
 {$ENDIF}
 

@@ -31,7 +31,12 @@
        property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
     end;
 
-    TP3DMeshMaterialGroupList = specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >;
+    { TP3DMeshMaterialGroupList }
+
+    TP3DMeshMaterialGroupList = class( specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >)
+      public
+        function Find( Material: TP3DMaterial ): Integer;
+    end;
 
     TP3DFace = record
      loop_start: Integer;
@@ -55,7 +60,7 @@
 
         procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual; abstract;
 
-        procedure PassToShader( Scene: TP3DScene; Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
+        procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
 
       published
         property Mesh: TP3DMesh read FMesh write FMesh;
@@ -90,11 +95,11 @@
 
     TP3DMesh = class( TP3DDataBlock )
       private
-        FArmature: TP3DArmature;
+        //FArmature: TP3DArmature;
         FFileWatch: TP3DFileWatch;
         FModifiers: TP3DMeshModifierList;
 
-        procedure LoadMaterialFromDOM(DOM: TDOMElement);
+        procedure LoadMaterialFromDOM( DOM: TDOMElement );
         procedure LoadModifierFromDOM( DOM: TDOMElement );
         function LoadWeightGroupsFromDOM( DOM: TDOMElement ): Boolean;
 
@@ -121,8 +126,13 @@
 
         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
         procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
+        procedure RenderInstanced( world: TMat4List; Scene: TP3DScene; RenderObject: TP3DActor );
         procedure RenderSimple;
         procedure RenderMaterialGroup( world: TMat4; Idx: Integer; Scene: TP3DScene );
+        procedure RenderMaterialGroupInstanced( world: TMat4List; Idx: Integer; Scene: TP3DScene );
+        procedure RenderMaterialGroupInstanced( world: TP3DTexture; Idx: Integer; Scene: TP3DScene ); //not implemented
+        procedure RenderMaterialGroupInstanced( world: TMat4List; Idx: Integer );
+        procedure RenderMaterialGroupInstanced(world: TP3DTexture; numInstance: Integer; Idx: Integer);
         procedure RenderEdges( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor );
         function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; override;
         procedure UnpackBuffers;
@@ -422,6 +432,11 @@ begin
     RenderMaterialGroup( world, i, Scene );
 end;
 
+procedure TP3DMesh.RenderInstanced( world: TMat4List; Scene: TP3DScene; RenderObject: TP3DActor );
+begin
+
+end;
+
 procedure TP3DMesh.RenderSimple;
 var
   i: Integer;
@@ -448,7 +463,7 @@ var
   Material: TP3DMaterial;
   Modifier: TP3DMeshModifier;
   offset: Integer;
-  count, i: Integer;
+  count, i, inst: Integer;
   decl: TP3DShaderDecl;
 
 begin
@@ -460,8 +475,10 @@ begin
     exit;
   Material.PassToShader();
   for Modifier in Modifiers do
-    Modifier.PassToShader( Scene, Material, world );
-  Scene.PassToShader( world );
+    Modifier.PassToShader( Material, world );
+  Scene.PassToShader;
+  if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
+    decl.AsMat4:= world;
 
   if ( Positions.Count > 0 ) then
     Positions.SetAttribArray( P3DAttribPosition );
@@ -485,15 +502,108 @@ begin
   offset:= MaterialGroups[ Idx ].IndexStart;
   count:= ( MaterialGroups[ Idx ].IndexEnd - MaterialGroups[ Idx ].IndexStart ) + 1;
   //P3DLog.LogInfo( Self, Material.Shader.DumpUniforms );
+
   glDrawElements( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint ))); cle( Self );
+end;
+
+procedure TP3DMesh.RenderMaterialGroupInstanced(world: TMat4List; Idx: Integer; Scene: TP3DScene);
+var
+  size: Integer;
+  Tex: TP3DTexture;
+begin
+  //Credit goes to threejs: Skeleton.js
+  size:= Max( 4, ceil( log2( sqrt( world.Count * 4 )))); // 4 pixels needed for 1 matrix
+
+  Tex:= TP3DTexture.CreateFromBuffer( size, size, 4, dtFloat, world.Ptr );
+
+  RenderMaterialGroupInstanced( Tex, Idx, Scene );
+
+  Tex.Free;
+end;
+
+procedure TP3DMesh.RenderMaterialGroupInstanced(world: TP3DTexture; Idx: Integer; Scene: TP3DScene);
+begin
+
+end;
+
+procedure TP3DMesh.RenderMaterialGroupInstanced(world: TMat4List; Idx: Integer);
+var
+  size: Integer;
+  Tex: TP3DTexture;
+begin
+  //Credit goes to threejs: Skeleton.js
+  size:= Max( 4, ceil( log2( sqrt( world.Count * 4 )))); // 4 pixels needed for 1 matrix
+
+  Tex:= TP3DTexture.CreateFromBuffer( size, size, 4, dtFloat, world.Ptr );
+  Tex.MipMap:= False;
+  Tex.Filtering:= tfNearest;
+  Tex.FilteringMipMap:= tfNearest;
+
+  RenderMaterialGroupInstanced( Tex, world.Count, Idx );
+
+  Tex.Free;
+end;
+
+procedure TP3DMesh.RenderMaterialGroupInstanced(world: TP3DTexture; numInstance: Integer; Idx: Integer);
+var
+  decl: TP3DShaderDecl;
+  Modifier: TP3DMeshModifier;
+  i: Integer;
+  offset, count: LongInt;
+begin
+  //for Modifier in Modifiers do
+  //  Modifier.PassToShader( MaterialGroups[ Idx ].Material, world );
+
+  world.Bind( MaterialGroups[ idx ].Material.Maps.Count );
+
+  P3DShaderActive.Uniforms.FindByName( 'world_instance_w', decl );
+  if ( Assigned( decl )) then
+    decl.AsInt:= world.Width;
+  P3DShaderActive.Uniforms.FindByName( 'world_instance_h', decl );
+  if ( Assigned( decl )) then
+    decl.AsInt:= world.Height;
+  P3DShaderActive.Uniforms.FindByName( 'world_instance', decl );
+  if ( Assigned( decl )) then
+    decl.AsInt:= MaterialGroups[ idx ].Material.Maps.Count;
+
+  if ( Positions.Count > 0 ) then
+    Positions.SetAttribArray( P3DAttribPosition );
+  if ( Normals.Count > 0 ) then
+    Normals.SetAttribArray( P3DAttribNormal );
+  if ( Cotangents.Count > 0 ) then
+    Cotangents.SetAttribArray( P3DAttribCotangent );
+  if ( Tangents.Count > 0 ) then
+    Tangents.SetAttribArray( P3DAttribTangent );
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+
+  decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
+  if ( Assigned( decl )) and ( VertexGroupsf.Count > 0 ) then
+    VertexGroupsf.SetAttribArray( decl.Addr );
+  decl:= P3DShaderActive.Attributes.Names[ 'jointWeight' ];
+  if ( Assigned( decl )) and ( VertexWeights.Count > 0 ) then
+    VertexWeights.SetAttribArray( decl.Addr );
+
+  Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
+
+  offset:= MaterialGroups[ Idx ].IndexStart;
+  count:= ( MaterialGroups[ Idx ].IndexEnd - MaterialGroups[ Idx ].IndexStart ) + 1;
+  //P3DLog.LogInfo( Self, Material.Shader.DumpUniforms );
+
+  glDrawElementsInstanced( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint )), numInstance ); cle( Self );
 end;
 
 procedure TP3DMesh.RenderEdges(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DActor);
 var
   i: Integer;
+  decl: TP3DShaderDecl;
 begin
-  Scene.PassToShader( world );
+  Scene.PassToShader;
+
+  if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
+    decl.AsMat4:= world;
+
   if ( Positions.Count > 0 ) then
     Positions.SetAttribArray( P3DAttribPosition );
   if ( Normals.Count > 0 ) then

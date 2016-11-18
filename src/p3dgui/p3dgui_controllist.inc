@@ -28,7 +28,7 @@ TP3DControlList = class( TP3DCustomControlList )
     destructor Destroy; override;
 
     property Parent: TP3DGraphicControl read FParent;
-    property PageSize: TVec2 read FPageSize;
+    //property PageSize: TVec2 read FPageSize;
 end;
 
 {$ENDIF}
@@ -99,7 +99,7 @@ var
 begin
   if ( Parent <> nil ) then
     begin
-      Parent.Realign;
+      Parent.UpdateExtents;
       R:= Parent.ClientRect;
       R.Left:= 0;
       R.Top:= 0; //Left/Top start already at the Client Rect
@@ -111,9 +111,9 @@ begin
     exit;
   FPageSize:= vec2( 0 );
   for Control in Self do
-    if ( Control.Visible ) then
+    if ( P3DData.IsValid( Control ) and ( Control.Visible ) and ( Control.Align <> alClient )) then
       begin
-        case Control.Align of //TODO: Fix Bug that Controls positioned at the ClientRect should have a zero position value not the R.TopLeft
+{        case Control.Align of //TODO: Fix Bug that Controls positioned at the ClientRect should have a zero position value not the R.TopLeft
           alClient: continue;
           alLeft:
             begin
@@ -148,28 +148,19 @@ begin
           //alRight: UpdateControlAndBoundary( R.FRight, Control.FLeft, Control.FHeight, R.Bottom - R.Top, -Control.Width );
           //alTop: UpdateControlAndBoundary( R.Top, Control.FTop, Control.FWidth, R.Right - R.Left, Control.Height );
           //alBottom: UpdateControlAndBoundary( R.Bottom, Control.FTop, Control.FWidth, R.Right - R.Left, -Control.Height );
-        end;
-        if ( P3DData.IsValid( Control )) then
-          begin
-            WriteLn( Control.Name );
-            Control.Realign;
-            Control.Controls.Realign;
-          end
-        else
-          WriteLn( 'Error in child no. ', IndexOf( Control ), ' of parent ' + Parent.Name );
+        end;}
+        //WriteLn( Control.Name );
+        Control.Realign( R );
+        Control.Controls.Realign;
       end;
 
   for Control in Self do
     if (( Control.Visible ) and ( Control.Align = alClient )) then
       begin
-        Control.FLeft:= R.Left;
-        Control.FTop:= R.Top;
-        Control.FWidth:= R.Right - R.Left;
-        Control.FHeight:= R.Bottom - R.Top;
-        Control.Realign;
+        WriteLn( Control.Name );
+        Control.Realign( R );
         Control.Controls.Realign;
-        //FPageSize:= max( FPageSize, vec2( Control.Left + Control.Width, Control.Top + Control.Height ));
-      end;
+      end
 end;
 
 procedure TP3DControlList.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
@@ -182,7 +173,7 @@ procedure TP3DControlList.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: T
     else
       R:= P3DRect( 0, 0, P3DGUIManager.ScreenCanvas.Width, P3DGUIManager.ScreenCanvas.Height );
     //if ( R.RectCollision( P3DRect( Item.Left + Scroll.x, Item.Top + Scroll.y, Item.Width, Item.Height ))) then
-      Item.Render( BaseColor, Scroll, ClipRect );
+      Item.Paint( BaseColor, Scroll, ClipRect );
   end;
 
 var
@@ -275,8 +266,6 @@ begin
 end;
 
 //Calls the keyboard and mouse input for all the controls in the list.
-//The cursor position (?) is ignored for now and should be handled by the
-//Control itself.
 function TP3DControlList.Input: TP3DGraphicControl;
 var
   Control: TP3DGraphicControl;

@@ -388,7 +388,7 @@ begin
   black:= vec4( 0, 0, 0, 1 );
   white:= vec4( 1 );
   Canvas.RenderRect( ClientRect.TopLeft, ClientRect.BottomRight, white, white, black, black );
-  c:= vec2( BoundsTL.x + ClientRect.Width / 2, BoundsTL.y + ( 1 - Value ) * ClientRect.Height );
+  c:= vec2( MarginTL.x + ClientRect.Width / 2, MarginTL.y + ( 1 - Value ) * ClientRect.Height );
   Canvas.RenderCircle( c, 5, 16, vec4( vec3( Value ), 1 ));
   Canvas.RenderLineCircle( c, 5, 16, BorderColor );
 end;
@@ -460,8 +460,8 @@ begin
 
   ColorValue:= TP3DColorValue.Create( nil, container );
   ColorValue.Align:= alRight;
-  ColorValue.BoundsTL:= vec2( 15, 15 );
-  ColorValue.BoundsBR:= vec2( 15, 15 );
+  ColorValue.MarginTL:= vec2( 15, 15 );
+  ColorValue.MarginBR:= vec2( 15, 15 );
   ColorValue.OnChange:= @ColorChange;
 
   ColorWheel:= TP3DColorWheel.Create( nil, container );

@@ -8,10 +8,13 @@ type
 
   TP3DShaderNodeSocketShader = class ( TP3DShaderNodeSocket )
     private
+      FValue: String;
       class function GetSocketType: String; static; override;
 
     public
-      function GetStringOutput( Buffer: TP3DShaderBuffer ): String;
+      function GetOutput( Buffer: TP3DShaderBuffer ): String; override;
+
+      property Value: String read FValue write FValue;
   end;
 
   { TP3DShaderNodeSocketInt }

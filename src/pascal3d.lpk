@@ -8,7 +8,7 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value=".;p3devents;p3dutils;p3dgraphictools;p3dgraphics"/>
+        <IncludeFiles Value=".;p3devents;p3dutils;p3dgraphictools;p3dgraphics;p3dgui"/>
         <OtherUnitFiles Value="scene;input;."/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
@@ -24,7 +24,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="45">
+    <Files Count="46">
       <Item1>
         <AddToUsesPkgSection Value="False"/>
       </Item1>
@@ -47,7 +47,6 @@
       </Item6>
       <Item7>
         <Filename Value="p3dutils.pas"/>
-        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="p3dutils"/>
       </Item7>
       <Item8>
@@ -119,89 +118,93 @@
         <Type Value="Include"/>
       </Item24>
       <Item25>
-        <Filename Value="p3dgraphics\p3dlight.inc"/>
+        <Filename Value="p3dgraphics\p3dgrids.inc"/>
         <Type Value="Include"/>
       </Item25>
       <Item26>
-        <Filename Value="p3dgraphics\p3dmaterial.inc"/>
+        <Filename Value="p3dgraphics\p3dlight.inc"/>
         <Type Value="Include"/>
       </Item26>
       <Item27>
-        <Filename Value="p3dgraphics\p3dmesh.inc"/>
+        <Filename Value="p3dgraphics\p3dmaterial.inc"/>
         <Type Value="Include"/>
       </Item27>
       <Item28>
-        <Filename Value="p3dgraphics\p3dobject.inc"/>
+        <Filename Value="p3dgraphics\p3dmesh.inc"/>
         <Type Value="Include"/>
       </Item28>
       <Item29>
-        <Filename Value="p3dgraphics\p3drendertarget.inc"/>
+        <Filename Value="p3dgraphics\p3dobject.inc"/>
         <Type Value="Include"/>
       </Item29>
       <Item30>
-        <Filename Value="p3dgraphics\p3dresource.inc"/>
+        <Filename Value="p3dgraphics\p3drendertarget.inc"/>
         <Type Value="Include"/>
       </Item30>
       <Item31>
-        <Filename Value="p3dgraphics\p3dscene.inc"/>
+        <Filename Value="p3dgraphics\p3dresource.inc"/>
         <Type Value="Include"/>
       </Item31>
       <Item32>
-        <Filename Value="p3dgraphics\p3dselection.inc"/>
+        <Filename Value="p3dgraphics\p3dscene.inc"/>
         <Type Value="Include"/>
       </Item32>
       <Item33>
-        <Filename Value="p3dgraphics\p3dshadernodes.inc"/>
+        <Filename Value="p3dgraphics\p3dselection.inc"/>
         <Type Value="Include"/>
       </Item33>
       <Item34>
-        <Filename Value="p3dgraphics\p3dshadernodes_core.inc"/>
+        <Filename Value="p3dgraphics\p3dshadernodes.inc"/>
         <Type Value="Include"/>
       </Item34>
       <Item35>
-        <Filename Value="p3dgraphics\p3dshadernodes_markdown.inc"/>
+        <Filename Value="p3dgraphics\p3dshadernodes_core.inc"/>
         <Type Value="Include"/>
       </Item35>
       <Item36>
-        <Filename Value="p3dgraphics\p3dshaders.inc"/>
+        <Filename Value="p3dgraphics\p3dshadernodes_markdown.inc"/>
         <Type Value="Include"/>
       </Item36>
       <Item37>
-        <Filename Value="p3dgraphics\p3dsymbols.inc"/>
+        <Filename Value="p3dgraphics\p3dshaders.inc"/>
         <Type Value="Include"/>
       </Item37>
       <Item38>
-        <Filename Value="p3dgraphics\p3dterrain.inc"/>
+        <Filename Value="p3dgraphics\p3dsymbols.inc"/>
         <Type Value="Include"/>
       </Item38>
       <Item39>
-        <Filename Value="p3dgraphics\p3dtext.inc"/>
+        <Filename Value="p3dgraphics\p3dterrain.inc"/>
         <Type Value="Include"/>
       </Item39>
       <Item40>
-        <Filename Value="p3dgraphics\p3dtextbitmap.inc"/>
+        <Filename Value="p3dgraphics\p3dtext.inc"/>
         <Type Value="Include"/>
       </Item40>
       <Item41>
-        <Filename Value="p3dgraphics\p3dtexture.inc"/>
+        <Filename Value="p3dgraphics\p3dtextbitmap.inc"/>
         <Type Value="Include"/>
       </Item41>
       <Item42>
-        <Filename Value="p3dgraphics\p3dviewport.inc"/>
+        <Filename Value="p3dgraphics\p3dtexture.inc"/>
         <Type Value="Include"/>
       </Item42>
       <Item43>
-        <Filename Value="p3dutils\p3dfileutil.inc"/>
+        <Filename Value="p3dgraphics\p3dviewport.inc"/>
         <Type Value="Include"/>
       </Item43>
       <Item44>
-        <Filename Value="p3dutils\p3dgenerics.inc"/>
+        <Filename Value="p3dutils\p3dfileutil.inc"/>
         <Type Value="Include"/>
       </Item44>
       <Item45>
-        <Filename Value="p3dutils\p3dsimpletypes.inc"/>
+        <Filename Value="p3dutils\p3dgenerics.inc"/>
         <Type Value="Include"/>
       </Item45>
+      <Item46>
+        <Filename Value="p3dutils\p3dsimpletypes.inc"/>
+        <Type Value="Include"/>
+      </Item46>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>

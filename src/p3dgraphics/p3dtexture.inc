@@ -54,6 +54,8 @@ type
       constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DData = nil );
       constructor CreateFromGLTexture( Tex: GLint; const AData: TP3DData = nil );
 
+      procedure LoadMipMapFromSurface( level: Integer; ASurface: PSDL_Surface );
+
       procedure Bind( const Location: Integer = 0 );
       procedure Unbind();
       procedure LoadFromBinary( FileName: String ); override;
@@ -485,6 +487,28 @@ begin
   Create( AData );
   //FFileWatch:= TP3DFileWatch.Create( '' );
   LoadFromGLTexture( Tex );
+end;
+
+procedure TP3DTexture.LoadMipMapFromSurface(level: Integer;
+  ASurface: PSDL_Surface);
+var
+  Mode: GLenum;
+  InternalMode: GLenum;
+begin
+  case ( ASurface^.format^.BytesPerPixel ) of
+    1: Mode:= GL_R;
+    2: Mode:= GL_RG;
+    3: Mode:= GL_RGB;
+    4: Mode:= GL_RGBA;
+    else
+      Mode:= GL_RGBA;
+  end;
+
+  Bind();
+
+  InternalMode:= P3DChooseFormatBySDLPixelFormat( ASurface^.format );
+
+  glTexImage2D( GL_TEXTURE_2D, level, InternalMode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
 end;
 
 procedure TP3DTexture.Bind(const Location: Integer);

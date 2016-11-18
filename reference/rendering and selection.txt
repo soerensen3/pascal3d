@@ -1,0 +1,27 @@
+rendering
+1. gathering objects
+  1.1. Meshes with final positions
+    split up to materials and merge together same references to meshes for instancing
+    for transparent materials this should be done in batches for small parts and bigger parts should stand for themselves
+  1.2. Lights with final positions
+2. sorting of objects
+  2.1. in opaque materials order doesn't really matter for visuals so sort by material
+  2.2. in transparent materials order should be from far to near
+  2.3. make sections from this where each section is a draw call or has at least the same settings
+3. draw pass
+  --- (for each section) ---
+  (needs to be done for each shader without uniform buffer objects)
+  3.1 pass settings to shader I
+    3.1.1. material
+    3.1.2. camera (view and projection)
+    3.1.3. lighting
+  --- (for each object in section) ---
+  3.2 pass settings to shader II
+    3.2.1. world transforms (for instanced rendering use a texture)
+  3.3. draw the object
+  ------------------------------------
+
+
+queries (like actor picking)
+1. gather objects
+  1.1. All actors with final positions 

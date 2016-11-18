@@ -171,8 +171,6 @@ begin
 
   for i:= 0 to TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Width * TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Height - 1 do
     TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridData[ i ]:= Random( TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Count );
-
-  TestScene.AppendFile( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/sun.p3d' );
 end;
 
 procedure P3DSceneGUIInit;

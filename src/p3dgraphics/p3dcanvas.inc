@@ -156,7 +156,7 @@ end;
 constructor TP3DCanvasFont.Create;
 begin
   inherited;
-  Size:= 12;
+  Size:= 18;
   Color:= vec4( 0, 0, 0, 1 );
   Name:= 'RobotoCondensed-Light';
 end;

@@ -866,8 +866,6 @@ procedure TP3DScenePanel.AfterDraw(Sender: TObject);
 var
   Obj: TP3DRenderObject;
 begin
-  //TODO: FIX THIS!
-  {
   for Obj in FRenderList do
     if ( Obj.Actor.Data is TP3DLight ) then
       begin
@@ -896,7 +894,7 @@ begin
                          * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy
                          + vec2( ClientRect.Width, ClientRect.Height ) / 2,
                          SymbolActor );}
-      end;}
+      end;
 
   {glScissor( P3DInput.Mouse.X - 50, P3DViewports[ 0 ].Height - P3DInput.Mouse.Y - 50, 100, 100 );
   glEnable( GL_SCISSOR_TEST );

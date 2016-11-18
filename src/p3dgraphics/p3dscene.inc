@@ -3,9 +3,9 @@
 {$IFDEF INTERFACE}
 type
 
-  { TP3DRenderObject }
+  { TP3DRenderQueryObject }
 
-  TP3DRenderObject = object
+  TP3DRenderQueryObject = class
     private
       FActor: TP3DActor;
       FMatrix: TMat4;
@@ -13,26 +13,48 @@ type
 
     public
       property Actor: TP3DActor read FActor write FActor;
-      property Scene: TP3DScene read FScene write FScene;
       property Matrix: TMat4 read FMatrix write FMatrix;
+      property Scene: TP3DScene read FScene write FScene;
   end;
 
-  TP3DCustomRenderList = specialize gP3DCustomList < TP3DRenderObject >;
+  { TP3DRenderObject }
 
-  { TP3DRenderList }
-
-  TP3DRenderList = class ( TP3DCustomRenderList )
+  TP3DRenderObject = class
     private
-      FLights: TP3DLightList;
+      FData: TP3DDataBlock;
+      FMaterial: TP3DMaterial;
+      FMatrices: TMat4List;
 
     public
       constructor Create;
       destructor Destroy; override;
 
-      function Add( AActor: TP3DActor; world: TMat4; AScene: TP3DScene ): Integer;
+      property Data: TP3DDataBlock read FData write FData;
+      property Matrices: TMat4List read FMatrices write FMatrices;
+      property Material: TP3DMaterial read FMaterial write FMaterial;
+  end;
+
+  TP3DCustomRenderList = specialize gP3DCustomObjectList < TP3DRenderObject >;
+
+  { TP3DRenderList }
+
+  TP3DRenderListScoreFunc = function ( Item: TP3DRenderObject ): Integer;
+
+  TP3DRenderList = class ( TP3DCustomRenderList )
+    private
+      FLights: TP3DLightList;
+      FTransparencyStart: Integer;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      function Add( AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene ): Integer;
       function PickFromCamera( X, Y: Integer; Camera: TP3DActor ): TP3DActor;
-      function Find( AActor: TP3DActor ): Integer;
-      procedure Render;
+      function Find( AData: TP3DDataBlock; Material: TP3DMaterial ): Integer;
+      procedure Render( Camera: TP3DActor );
+      procedure Sort( Func: TP3DRenderListScoreFunc; lo, hi: Integer );
+      procedure Optimize;
 
       property Lights: TP3DLightList read FLights write FLights;
   end;
@@ -51,9 +73,9 @@ type
       FOnRenderCallback: TP3DSceneRenderCallback;
       FRootScene: TP3DScene;
 
-      procedure SetCam(AValue: TP3DActor);
+      procedure SetCam( AValue: TP3DActor );
       procedure RenderCallback( world: TMat4; AActor: TP3DActor ); virtual;
-      procedure OnObjChange(Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction);
+      procedure OnObjChange( Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction );
 
     protected
       property ActiveCam: TP3DActor read FActiveCam write FActiveCam;
@@ -75,13 +97,12 @@ type
 
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor); override;
       procedure Render(const ARootScene: TP3DScene=nil); reintroduce;
-      procedure MakeRenderList(ARootScene: TP3DScene; world: TMat4;
-        var ARenderList: TP3DRenderList);
+      procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList );
       procedure RenderFromCamera( ACam: TP3DActor );
       procedure RenderFromCamera( ACam: TP3DActor; world: TMat4 );
       procedure AppendFile( AFileName: String );
       procedure AppendFromData( AData: TP3DData );
-      procedure PassToShader( world: TMat4 ); virtual;
+      procedure PassToShader; virtual;
       procedure RemoveFromFields( Block: TP3DDataBlock ); override;
       //function Pick( X,Y: Integer; const ARootScene: TP3DScene=nil ): TP3DActor;
 
@@ -96,6 +117,11 @@ type
 
 {$IFDEF IMPLEMENTATION}
 
+function P3DRenderListScoreTransp( Item: TP3DRenderObject ): Integer;
+begin
+  Result:= Integer( Item.Material.HasTransparency );
+end;
+
 { TP3DRenderList }
 
 constructor TP3DRenderList.Create;
@@ -106,20 +132,53 @@ end;
 
 destructor TP3DRenderList.Destroy;
 begin
+  Clear( True );
   FreeAndNil( FLights );
   inherited Destroy;
 end;
 
-function TP3DRenderList.Add(AActor: TP3DActor; world: TMat4; AScene: TP3DScene): Integer;
+function TP3DRenderList.Add( AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene): Integer;
+  function MakeRenderObject( AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial ): Integer;
+  var
+    Obj: TP3DRenderObject;
+  begin
+    Result:= Find( AData, AMaterial );
+    if ( Result > -1 ) then
+      Self[ Result ].Matrices.Add( world )
+    else
+      begin
+        Obj:= TP3DRenderObject.Create;
+        Obj.Data:= AData;
+        Obj.Matrices.Add( world );
+        Obj.Material:= AMaterial;
+        Result:= inherited Add( Obj );
+      end;
+  end;
+
 var
-  Obj: TP3DRenderObject;
+  i, j: Integer;
+  mat: TP3DMaterial;
+
 begin
-  Obj.Actor:= AActor;
-  Obj.Matrix:= world;
-  Obj.Scene:= AScene;
-  if ( AActor.Data is TP3DLight ) then
-    Lights.Add( AActor.Data as TP3DLight );
-  Result:= inherited Add( Obj );
+  if ( Assigned( AData )) then
+    begin
+      if ( AData is TP3DScene ) then
+        TP3DScene( AData ).MakeRenderList( AScene, world, Self )
+      else if ( AData is TP3DMesh ) then
+        for i:= 0 to TP3DMesh( AData ).MaterialGroups.Count - 1 do
+          begin
+            mat:= TP3DMesh( AData ).MaterialGroups[ i ].Material;
+            Result:= MakeRenderObject( AData, world, mat );
+          end
+      else if ( AData is TP3DTileGrid ) then
+        with ( TP3DTileGrid( AData )) do
+          for i:= 0 to Width * Height - 1 do
+            Add( Meshes[ GridData[ i ]], world * mat4translate( vec4( vec2( i mod Width, i div Width ) * GridWorldUnit, 0, 1 )), AScene )
+      else if ( AData is TP3DLight ) then
+        Lights.Add( AData as TP3DLight );
+    end
+  else
+    Result:= -1;
 end;
 
 function TP3DRenderList.PickFromCamera(X, Y: Integer; Camera: TP3DActor ): TP3DActor;
@@ -137,22 +196,148 @@ begin
   glDisable( GL_SCISSOR_TEST );}
 end;
 
-function TP3DRenderList.Find(AActor: TP3DActor): Integer;
+function TP3DRenderList.Find(AData: TP3DDataBlock; Material: TP3DMaterial): Integer;
 var
   i: Integer;
 begin
   Result:= -1;
   for i:= 0 to Count - 1 do
-    if ( Self[ i ].Actor = AActor ) then
+    if (( Self[ i ].Data = AData ) and ( Self[ i ].Material = Material )) then
       begin
         Result:= i;
         break;
       end;
 end;
 
-procedure TP3DRenderList.Render;
+procedure TP3DRenderList.Render( Camera: TP3DActor );
+
+  function Mat4ListToTexture( m: TMat4List ): TP3DTexture;
+    function nextPowerOfTwo( Value: Integer ): Integer;
+    begin
+      Dec( Value );
+      value:= value or value shr 1;
+      value:= value or value shr 2;
+      value:= value or value shr 4;
+      value:= value or value shr 8;
+      value:= value or value shr 16;
+      Inc( Value );
+      Result:= Value;
+    end;
+
+  var
+    size, i, oldc: Integer;
+    m2: TMat4List;
+  begin
+    size:= Max( 4, nextPowerOfTwo( m.Count * 4 )); //Max( 4, ceil( sqrt( power( 2, ceil( log2( m.Count * 4 ))))));
+
+    oldc:= m.Count;
+    m.Count:= ( size * size ) div 4;
+    //m2:= TMat4List.Create;
+    //m.AssignTo( m2 );
+    //for i:= m2.Count to ( size*size ) div 4 do
+    //  m2.Add( mat4( 0 ));
+    Result:= TP3DTexture.CreateFromBuffer( size, size, 4, dtFloat, m.Ptr );
+    m.Count:= oldc;
+    Result.MipMap:= False;
+    Result.Filtering:= tfNearest;
+    Result.FilteringMipMap:= tfNearest;
+    //m2.Free;
+  end;
+
+var
+  cam: TP3DCamera;
+  mat: TP3DMaterial;
+  i: Integer;
+  idx: LongInt;
+  Tex: TP3DTexture;
 begin
-  //Lights.PassToActiveShader( );
+  if ( not ( Camera.Data is TP3DCamera )) then
+    exit;
+  cam:= TP3DCamera( Camera.Data );
+  mat:= nil;
+
+  glDepthMask( True );
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Data is TP3DMesh ) then
+      begin
+        if ( i = FTransparencyStart ) then
+          glDepthMask( False );
+        if ( mat <> Items[ i ].Material ) then
+          begin
+            mat:= Items[ i ].Material;
+            mat.PassToShader();
+            cam.PassToShader();
+            Lights.PassToActiveShader( cam.View, [ liLightParams, liPosition ]);
+          end;
+        with( TP3DMesh( Items[ i ].Data )) do
+          begin
+            idx:= MaterialGroups.Find( mat );
+
+            Tex:= Mat4ListToTexture( Items[ i ].Matrices );
+            mat.PassToShader(); //Needs to be done for now because creating a texture will overwrite the first texture used
+            if ( idx > -1 ) then
+              RenderMaterialGroupInstanced( Tex, Items[ i ].Matrices.Count, idx );
+            Tex.Free;
+          end;
+      end;
+  glDepthMask( True );
+end;
+
+procedure TP3DRenderList.Sort(Func: TP3DRenderListScoreFunc; lo, hi: Integer);
+  procedure swap( a, b: Integer );
+  var
+    Element: TP3DRenderObject;
+  begin
+    Element:= Self[ a ];
+    FItems[ a ]:= Self[ b ];
+    FItems[ b ]:= Element;
+  end;
+
+  function partition( lo, hi: Integer ): Integer;
+  var
+    pivot, i, j: Integer;
+  begin
+    pivot:= Func( Self[ hi ]);
+    i:= lo;        // place for swapping
+    for j := lo to hi - 1 do
+      if ( Func( Self[ j ]) <= pivot ) then
+        begin
+          swap( i, j );
+          Inc( i );
+        end;
+    swap( i, hi );
+    Result:= i;
+  end;
+
+  procedure quicksort( lo, hi: Integer );
+  var
+    p: Integer;
+  begin
+    if lo < hi then
+      begin
+        p:= partition( lo, hi );
+        quicksort( lo, p - 1 );
+        quicksort( p + 1, hi );
+      end;
+  end;
+
+begin
+  quicksort( lo, hi );
+end;
+
+procedure TP3DRenderList.Optimize;
+var
+  i: Integer;
+begin
+  Sort( @P3DRenderListScoreTransp, 0, Count - 1 );
+
+  FTransparencyStart:= 0;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Material.HasTransparency ) then
+      begin
+        FTransparencyStart:= i;
+        break;
+      end;
 end;
 
 { TP3DScene }
@@ -176,15 +361,21 @@ begin
     OnRenderCallback( world, AActor );
 end;
 
-procedure TP3DScene.OnObjChange(Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction);
+procedure TP3DScene.OnObjChange( Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction );
 begin
   if ( Action = actAdd ) then
-    Item.AddUser( Self )
+    begin
+      Item.AddUser( Self );
+      Item.FScene:= Self;
+    end
   else
-    Item.RemoveUser( Self );
+    begin
+      Item.RemoveUser( Self );
+      Item.FScene:= nil;
+    end;
 end;
 
-constructor TP3DScene.Create(const AData: TP3DData);
+constructor TP3DScene.Create( const AData: TP3DData );
 begin
   inherited Create( AData );
   FObjects:= TP3DActorList.Create( Self );
@@ -193,8 +384,8 @@ begin
   Owner.Scenes.Add( Self );
 end;
 
-constructor TP3DScene.Create(AFileName: String;
-  const AWatchFileForChanges: Boolean; const AData: TP3DData);
+constructor TP3DScene.Create( AFileName: String;
+  const AWatchFileForChanges: Boolean; const AData: TP3DData );
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
@@ -366,17 +557,13 @@ begin
     end;
 end;
 
-procedure TP3DScene.PassToShader(world: TMat4);
+procedure TP3DScene.PassToShader;
 var
   LightList: TP3DLightList;
   decl: TP3DShaderDecl;
 begin
   if ( Assigned( ActiveCam )) then
     begin
-      //LightList:= TP3DLightList.Create;
-      {for Obj in Objects do
-        if ( Obj.Data is TP3DLight ) then
-          LightList.Add( TP3DLight( Obj.Data ));}
       if ( Assigned( RootScene )) then
         LightList:= RootScene.Lights
       else
@@ -385,11 +572,9 @@ begin
       if ( ActiveCam.Data is TP3DCamera ) then
         begin
           //TP3DCamera( ActiveCam.Data ).UpdateMatrices( ActiveCam );
-          TP3DCamera( ActiveCam.Data ).PassToShader( world );
-          LightList.PassToActiveShader( 0, Self, world, TP3DCamera( ActiveCam.Data ).View, [ liPosition, liLightParams ]);
+          TP3DCamera( ActiveCam.Data ).PassToShader;
+          LightList.PassToActiveShader( TP3DCamera( ActiveCam.Data ).View, [ liPosition, liLightParams ]);
         end;
-      if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
-        decl.AsMat4:= world;
     end;
 end;
 
@@ -423,4 +608,5 @@ begin
     end;
 end;
 }
+
 {$ENDIF}

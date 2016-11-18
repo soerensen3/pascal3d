@@ -13,10 +13,14 @@ TP3DGUIManager = class
     FFocusedControl: TP3DGraphicControl;
     FScrollSpeed: Single;
     FShowCursor: Boolean;
-    FCursorOverrideTxt: TP3DText;
+    FCursorOverrideTxt: TP3DTextBmp;
     FCursorOverride: TP3DCursor;
     FWindow: TP3DWindow;
-    FCursorTxt: TP3DText;
+    FCursorTxt: TP3DTextBmp;
+    {$IFDEF DEBUG_GUI}
+    DebugText: TP3DTextBmp;
+    DebugTextPos: TVec2;
+    {$ENDIF}
 
     function GetMouseX: Integer;
     function GetMouseY: Integer;
@@ -86,7 +90,7 @@ begin
   FCUrsorOverride:=AValue;
   if ( Assigned( FCursorOverrideTxt )) then
     FreeAndNil( FCursorOverrideTxt );
-  FCursorOverrideTxt:= p3dTextSimple( Char( FCUrsorOverride ), P3DFontManager[ 'Pascal3D-Cursors', 16 ]);
+  FCursorOverrideTxt:= TP3DTextBmp.CreateSimple( Char( FCursorOverride ), P3DFontManagerBmp.Fonts[ 'Pascal3D-Cursors' ], 16 );
 end;
 
 function TP3DGUIManager.GetMouseX: Integer;
@@ -105,7 +109,7 @@ begin
   if ( Assigned( FCursorTxt )) then
     FreeAndNil( FCursorTxt );
   if ( ShowCursor ) then
-    FCursorTxt:= p3dTextSimple( Char( FCursor ), P3DFontManager[ 'Pascal3D-Cursors', 16 ]);
+    FCursorTxt:= TP3DTextBmp.CreateSimple( Char( FCursor ), P3DFontManagerBmp.Fonts[ 'Pascal3D-Cursors' ], 16 );
 end;
 
 procedure TP3DGUIManager.SetFocusedControl(AValue: TP3DGraphicControl);
@@ -122,13 +126,24 @@ end;
 
 procedure TP3DGUIManager.Render;
 var
-  DrawCursor: TP3DText;
+  DrawCursor: TP3DTextBmp;
 begin
   glDisable( GL_DEPTH_TEST );
   if (( ScreenCanvas.Width <> P3DViewports[ 0 ].Width ) or
       ( ScreenCanvas.Height <> P3DViewports[ 0 ].Height )) then
     UpdateExtents;
   Controls.Render( vec4( 1 ), vec2( 0 ), P3DRect( ScreenCanvas.Left, ScreenCanvas.Top, ScreenCanvas.Width, ScreenCanvas.Height ));
+
+  {$IFDEF DEBUG_GUI}
+  if ( Assigned( DebugText )) then
+    begin
+      P3DGUIManager.ScreenCanvas.Lock;
+      P3DGUIManager.ScreenCanvas.RenderRect( DebugTextPos, DebugTextPos + vec2( DebugText.Width, DebugText.Height ), vec4( 1, 1, 1, 0.5 ));
+      ScreenCanvas.RenderText( DebugText, DebugTextPos );
+      P3DGUIManager.ScreenCanvas.Unlock();
+    end;
+
+  {$ENDIF}
 
   if ( ShowCursor ) then
     begin
@@ -144,6 +159,7 @@ begin
         exit;
       ScreenCanvas.Lock;
       ScreenCanvas.Font.Color:= vec4( 1 );
+
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX-1, MouseY-1 ));
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX-1, MouseY+1 ));
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX+1, MouseY-1 ));
@@ -151,6 +167,7 @@ begin
       ScreenCanvas.Font.Color:= vec4( 0 );
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX, MouseY ));
       ScreenCanvas.Unlock();
+
     end;
 end;
 

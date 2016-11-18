@@ -10,7 +10,7 @@ interface
 uses
   Classes,
   SysUtils,
-  FileUtil,
+  LazFileUtils,
   strutils,
   Math,
 
@@ -58,6 +58,7 @@ type
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dterrain.inc}
+{$INCLUDE p3dgrids.inc}
 {$INCLUDE p3dtext.inc}
 {$INCLUDE p3dtextbitmap.inc}
 {$INCLUDE p3dsymbols.inc}
@@ -121,6 +122,36 @@ begin
     end;
 end;
 
+{ TP3DMeshMaterialGroupList }
+
+function TP3DMeshMaterialGroupList.Find( Material: TP3DMaterial ): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Material = Material ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+{ TP3DRenderObject }
+
+constructor TP3DRenderObject.Create;
+begin
+  inherited Create;
+  Matrices:= TMat4List.Create;
+end;
+
+destructor TP3DRenderObject.Destroy;
+begin
+  Matrices.Free;
+  inherited Destroy;
+end;
+
+
 { TP3DDataBlockList }
 
 function TP3DDataBlockList.DumpUsers: String;
@@ -154,6 +185,7 @@ end;
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dterrain.inc}
+{$INCLUDE p3dgrids.inc}
 {$INCLUDE p3dtext.inc}
 {$INCLUDE p3dtextbitmap.inc}
 {$INCLUDE p3dsymbols.inc}

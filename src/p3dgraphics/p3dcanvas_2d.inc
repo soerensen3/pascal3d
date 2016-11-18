@@ -116,12 +116,16 @@ TP3DCanvas2D = class ( TP3DCanvas )
     procedure RenderQuad( p1, p2, p3, p4: TVec2; Color: TVec4 );
     procedure RenderText( Text: TP3DText; P: TVec2 );
     procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
+    procedure RenderText( Text: TP3DTextBmp; P: TVec2 );
+    procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DTextBmp );
     procedure RenderLetter( Text: TP3DText; Idx: Integer; P: TVec2 );
     procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TVec4 );
     procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TVec4);
     procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TVec4 );
     function GetValidText( Text: String; var CacheObj: TP3DText ): TP3DText; inline;
     function GetValidText( Text: String; var CacheObj: TP3DText; AFont: TP3DFont ): TP3DText;
+    function GetValidText( Text: String; var CacheObj: TP3DTextBmp; AFont: TP3DFont ): TP3DTextBmp;
+    function GetValidText( Text: String; var CacheObj: TP3DTextBmp ): TP3DTextBmp; inline;
     procedure PassToShader;
 
     function Lock: Integer; override;
@@ -316,7 +320,7 @@ begin
   glBegin( GL_TRIANGLE_FAN );
   glVertexAttrib2f( P3DAttribPosition, c.x, c.y );//start with center
   glVertexAttrib2f( P3DAttribPosition, p.x + c.x, p.y + c.y );//add first point
-  num_segments_draw:= round( int(( ea - sa ) * deg2rad / theta ));
+  num_segments_draw:= round( System.int(( ea - sa ) * deg2rad / theta ));
 
   for i:= 0 to num_segments_draw do
     begin
@@ -409,6 +413,23 @@ begin
 end;
 
 procedure TP3DCanvas2D.RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
+begin
+  if ( Text = '' ) then
+    exit;
+
+  GetValidText( Text, CacheObj );
+  RenderText( CacheObj, P );
+end;
+
+procedure TP3DCanvas2D.RenderText(Text: TP3DTextBmp; P: TVec2);
+begin
+  if ( not PrepareForDrawing ) then exit;
+  if ( Assigned( Text )) then
+    Text.Render( P, ScreenColor * Font.Color, World * Proj );
+end;
+
+procedure TP3DCanvas2D.RenderText(Text: String; P: TVec2;
+  var CacheObj: TP3DTextBmp);
 begin
   if ( Text = '' ) then
     exit;
@@ -531,6 +552,25 @@ begin
       CacheObj:= p3dTextSimple( Text, AFont );
     end;
   Result:= CacheObj;
+end;
+
+function TP3DCanvas2D.GetValidText(Text: String; var CacheObj: TP3DTextBmp;
+  AFont: TP3DFont): TP3DTextBmp;
+begin
+  if ( Text = '' ) then
+    Text:= ' ';
+
+  if (( not Assigned( CacheObj )) or ( CacheObj.Text <> Text )) then
+    begin
+      FreeAndNil( CacheObj );
+      CacheObj:= TP3DTextBmp.CreateSimple( Text, P3DFontManagerBmp.FontsByP3DFont[ AFont ], AFont.Size );
+    end;
+  Result:= CacheObj;
+end;
+
+function TP3DCanvas2D.GetValidText(Text: String; var CacheObj: TP3DTextBmp ): TP3DTextBmp;
+begin
+  Result:= GetValidText( Text, CacheObj, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
 procedure TP3DCanvas2D.PassToShader;

@@ -20,6 +20,7 @@ type
 
     procedure WriteFile;
     procedure AddChild( ADOM: TDOMElement );
+    function LogInfoXML( Sender: TObject; Message: String ): TDOMElement;
     function LogInfo( Sender: TObject; Message: String ): TDOMElement;
     function LogException( Sender: TObject; Message: String ): TDOMElement;
     function LogException( Sender: TObject; Message: Exception ): TDOMElement;
@@ -38,22 +39,32 @@ const
   '  <xsl:template match="/">' + LineEnding +
   '  <html>' + LineEnding +
   '  <head>' + LineEnding +
+  '    <link rel="stylesheet" href="tomorrow.css" />' + LineEnding +
+  '    <script src="highlight.pack.js"/>' + LineEnding +
+  '    <script>hljs.initHighlightingOnLoad();</script>' + LineEnding +
   '     <style>' + LineEnding +
+  '      table{' +  LineEnding +
+  '        border-collapse: separate;' +  LineEnding +
+  '        border-spacing: 0px 5px;' +  LineEnding +
+  '        width: 100%;' +  LineEnding +
+  '      }' + LineEnding +
   '      h1{' + LineEnding +
-  '      font-family: Roboto Sans, Arial;' + LineEnding +
-  '      font-size: 32px;' + LineEnding +
+  '        font-family: Open Sans, Arial;' + LineEnding +
+  '        font-size: 32px;' + LineEnding +
+  '        border-bottom: 4px solid black;' + LineEnding +
+  '        box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.1);' + LineEnding +
   '      }' + LineEnding +
   '      td,th{' + LineEnding +
-  '      font-family: Roboto Sans, Arial;' + LineEnding +
-  '      white-space: pre-wrap;' + LineEnding +
-  '      text-align:left;' + LineEnding +
-  '      vertical-align: top;' + LineEnding +
+  '        font-family: Open Sans, Arial;' + LineEnding +
+  '        white-space: pre-wrap;' + LineEnding +
+  '        text-align:left;' + LineEnding +
+  '        vertical-align: top;' + LineEnding +
   '      }' + LineEnding +
   '      .info{' + LineEnding +
-  '      background-color: rgb(255, 255, 230);' + LineEnding +
+  '        background-color: aliceblue;' + LineEnding +
   '      }' + LineEnding +
   '      .exception{' + LineEnding +
-  '      background-color: rgb(255, 194, 153);' + LineEnding +
+  '        background-color: rgb( 255, 87, 51 );' + LineEnding +
   '      }' + LineEnding +
   '     </style>' + LineEnding +
   '  </head>' + LineEnding +
@@ -127,6 +138,27 @@ begin
     end;
   Level.AppendChild( ADOM );
   WriteFile;
+end;
+
+function TP3DLogger.LogInfoXML(Sender: TObject; Message: String): TDOMElement;
+var
+  Node: TDOMElement;
+  NodeText: TDOMText;
+  S: TStringStream;
+begin
+  Node:= LogFile.CreateElement( 'td' );
+  Node.AttribStrings[ 'Time' ]:= IntToStr( SDL_GetTicks );
+  if ( Assigned( Sender )) then
+    begin
+      Node.AttribStrings[ 'Unit' ]:= Sender.UnitName;
+      Node.AttribStrings[ 'Sender' ]:= Sender.ClassName;
+    end;
+  //Message:= StringReplace( Message, LineEnding, '<br />', [ rfReplaceAll ]);
+  S:= TStringStream.Create( Message );
+  ReadXMLFragment( Node, S );
+  S.Free;
+  AddChild( Node );
+  Result:= Node;
 end;
 
 function TP3DLogger.LogInfo(Sender: TObject; Message: String): TDOMElement;

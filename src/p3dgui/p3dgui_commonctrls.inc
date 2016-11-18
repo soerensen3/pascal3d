@@ -12,9 +12,9 @@ type
       FCaption: String;
       FData: Pointer;
       FSymbolText: String;
-      FText: TP3DText;
+      FText: TP3DTextBmp;
       FRenderPos: TVec2;
-      Symbol: TP3DText;
+      Symbol: TP3DTextBmp;
 
       procedure SetCaption(AValue: String);
       procedure SetSymbolText(AValue: String);
@@ -27,7 +27,7 @@ type
 
     published
       property Caption: String read FCaption write SetCaption;
-      property Text: TP3DText read FText write FText;
+      property Text: TP3DTextBmp read FText write FText;
       property SymbolText: String read FSymbolText write SetSymbolText;
   end;
 
@@ -119,8 +119,8 @@ type
       FOnSelectionChange: TP3DTreeViewSelectionChangeEvent;
       FSelection: TP3DTreeNode;
 
-      SymbolMinus: TP3DText;
-      SymbolPlus: TP3DText;
+      SymbolMinus: TP3DTextBmp;
+      SymbolPlus: TP3DTextBmp;
 
       procedure SetSelection( AValue: TP3DTreeNode ); virtual;
 
@@ -253,7 +253,7 @@ begin
   inherited Create( AData, AParent );
   SymbolsFontName:= 'Pascal3D-Symbols';
   Font:= TP3DCanvasFont.Create;
-  Font.Size:= 16;
+  Font.Size:= 20;
   Preset:= TP3DButtonPreset.Create;
   Preset.Color:= Primary50;//vec4( vec3( 0.93 ), 1 );
   //Preset.OutlineColor:= Accent900;//vec4( 225/255, 230/255, 234/255, 1 );
@@ -333,8 +333,9 @@ begin
   inherited Create( AData, AParent );
   Children:= TP3DTreeNodeList.Create;
 
-  SymbolPlus:= p3dTextSimple( P3DSymbolPlus, P3DFontManager[ 'Pascal3D-Symbols', Font.Size ]);
-  SymbolMinus:= p3dTextSimple( P3DSymbolMinus, P3DFontManager[ 'Pascal3D-Symbols', Font.Size ]);
+
+  SymbolPlus:= TP3DTextBmp.CreateSimple( P3DSymbolPlus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );
+  SymbolMinus:= TP3DTextBmp.CreateSimple( P3DSymbolMinus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );
 end;
 
 destructor TP3DTreeView.Destroy;

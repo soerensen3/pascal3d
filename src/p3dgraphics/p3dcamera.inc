@@ -31,7 +31,7 @@ type
 
     public
       procedure UpdateMatrices(CamObject: TP3DActor);
-      procedure PassToShader( world: TMat4 );
+      procedure PassToShader;
       procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
 
       constructor Create( const AData: TP3DData = nil ); override;
@@ -102,7 +102,7 @@ begin
   InView:= CamObject.Matrix;
 end;
 
-procedure TP3DCamera.PassToShader(world: TMat4);
+procedure TP3DCamera.PassToShader;
 var
   mnorm: TMat4;
   matview: TMat4;
@@ -112,9 +112,9 @@ begin
       matview:= View;
       glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'view'), 1, False, @matview ); cle( Self );
       glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'proj'), 1, False, @Proj ); cle( Self );
-      mat4inverse( View * world, mnorm );
-      mnorm:= mat4transpose( mnorm );
-      glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'mnormal'), 1, False, @mnorm ); cle( Self ); // contains left, up, forward vectors
+      //mat4inverse( View * world, mnorm );
+      //mnorm:= mat4transpose( mnorm );
+      //glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'mnormal'), 1, False, @mnorm ); cle( Self ); // contains left, up, forward vectors
       glUniform3fv( P3DShaderActive.Uniforms.AddrByName( 'campos'), 1, @Position ); cle( Self );
     end;
 end;

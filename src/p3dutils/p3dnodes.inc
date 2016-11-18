@@ -19,6 +19,7 @@ type
       FNode: TP3DNode;
       FOnConnect: TNotifyEvent;
       FUserData: Pointer;
+      FSingleOnly: Boolean;
       class function GetSocketType: String; static; virtual;
       procedure SetConnected(AValue: TP3DNodeSocket); virtual;
       procedure SetNode(AValue: TP3DNode);
@@ -40,6 +41,7 @@ type
       property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
       property UserData: Pointer read FUserData write FUserData;
       property Direction: TP3DNodeSocketDirection read FDirection;
+      property SingleOnly: Boolean read FSingleOnly write FSingleOnly;
   end;
 
   TP3DCustomNodeSocketList = specialize gP3DCustomObjectList < TP3DNodeSocket >;
@@ -190,35 +192,37 @@ end;
 procedure TP3DNode.ConnectToNodeSocket( ANode: TP3DNode; SrcSocket, DestSocket: String );
 var
   Socket1n, Socket2n: Integer;
-  Socket1, Socket2: TP3DNodeSocket;
+  SocketInp, SocketOutp: TP3DNodeSocket;
 begin
   Socket1n:= Inputs.FindSocketByName( SrcSocket );
+  SocketInp:= nil;
+  SocketOutp:= nil;
 
   if ( Socket1n < 0 ) then
     Socket1n:= Outputs.FindSocketByName( SrcSocket )
   else
-    Socket1:= Inputs[ Socket1n ];
+    SocketInp:= Inputs[ Socket1n ];
 
   if ( Socket1n < 0 ) then
     raise Exception.Create( 'Cannot connect to socket: Source socket "' + SrcSocket + '" not found!' )
   else
-    Socket1:= Outputs[ Socket1n ];
+    SocketOutp:= Outputs[ Socket1n ];
 
-  if ( Socket1.Direction = nsdInput ) then
+  if ( Assigned( SocketInp )) then
     begin
       Socket2n:= ANode.Outputs.FindSocketByName( DestSocket );
-      Socket2:= ANode.Outputs[ Socket1n ];
+      SocketOutp:= ANode.Outputs[ Socket1n ];
     end
   else
     begin
       Socket2n:= ANode.Inputs.FindSocketByName( DestSocket );
-      Socket2:= ANode.Inputs[ Socket1n ];
+      SocketInp:= ANode.Inputs[ Socket1n ];
     end;
 
   if ( Socket2n < 0 ) then
     raise Exception.Create( 'Cannot connect to socket: Destination socket "' + DestSocket + '" not found!' );
 
-  Socket1.Connected:= Socket2;
+  SocketInp.Connected:= SocketOutp;
 end;
 
 { TP3DNodeSocket }
