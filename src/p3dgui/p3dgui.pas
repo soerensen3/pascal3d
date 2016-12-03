@@ -6,6 +6,7 @@
 // #                                #
 // # P3D Interface                  #
 // ##################################
+{$mode objfpc}
 
 {.$DEFINE DEBUG_GUI}
 

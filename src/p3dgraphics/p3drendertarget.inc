@@ -4,18 +4,18 @@ type
   { TP3DRenderBuffer }
 
   TP3DRenderBuffer = class ( TPersistent )
-  private
-    FHeight: Integer;
-    FRBO: GLint;
-    FWidth: Integer;
-  public
-    constructor Create(AWidth, AHeight: Integer);
-    destructor Destroy; override;
+    private
+      FHeight: Integer;
+      FRBO: GLint;
+      FWidth: Integer;
+    public
+      constructor Create(AWidth, AHeight: Integer);
+      destructor Destroy; override;
 
-  published
-    property RBO: GLint read FRBO;
-    property Width: Integer read FWidth;
-    property Height: Integer read FHeight;
+    published
+      property RBO: GLint read FRBO;
+      property Width: Integer read FWidth;
+      property Height: Integer read FHeight;
   end;
 
   { TP3DFrameBuffer }

@@ -72,7 +72,7 @@ end;
 
 procedure TP3DControlList.MoveTo(Index: Integer; Controls: TP3DControlList);
 begin
-  Controls.Add( GetItems( Index ));
+  Controls.Add( GetItem( Index ));
   inherited Delete( Index );
 end;
 
@@ -157,7 +157,7 @@ begin
   for Control in Self do
     if (( Control.Visible ) and ( Control.Align = alClient )) then
       begin
-        WriteLn( Control.Name );
+        //WriteLn( Control.Name );
         Control.Realign( R );
         Control.Controls.Realign;
       end

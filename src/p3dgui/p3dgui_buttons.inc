@@ -51,6 +51,7 @@
         FState: Integer;
         FCaptionTxt: TP3DTextBmp;
 
+        function GetCaption: String; virtual;
         procedure SetCaption( AValue: String ); virtual;
         procedure RenderButton( C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4 );//APreset: TP3DButtonPreset );
         procedure RenderButtonText( C: TVec4 );
@@ -68,7 +69,7 @@
         property PresetDown: TP3DButtonPreset read FPresetDown write FPresetDown;
         property PresetHover: TP3DButtonPreset read FPresetHover write FPresetHover;
         property Font: TP3DCanvasFont read FFont write FFont;
-        property Caption: String read FCaption write SetCaption;
+        property Caption: String read GetCaption write SetCaption;
         property HAlignment: THorizontalAlignment read FHAlignment write FHAlignment;
         property VAlignment: TVerticalAlignment read FVAlignment write FVAlignment;
         property TextWidth: Single read GetTextWidth;
@@ -112,6 +113,11 @@ end;
 function TP3DButton.GetTextHeight: Single;
 begin
   Result:= FCaptionTxt.Height;
+end;
+
+function TP3DButton.GetCaption: String;
+begin
+  Result:= FCaption;
 end;
 
 function TP3DButton.GetTextWidth: Single;

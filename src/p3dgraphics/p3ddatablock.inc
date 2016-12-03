@@ -80,6 +80,7 @@ type
       procedure SetCount( AValue: Integer );
       function GetItems( Index: Integer ): TCustomItem;
       function MoveNext( var Index: Integer ): TCustomItem;
+      procedure SetItems( Index: Integer ; AValue: TCustomItem);
 
     public
       constructor Create;
@@ -96,7 +97,7 @@ type
       function FindByName( AName: String ): Integer;
       function FindByFileName( AFileName: String ): Integer;
 
-      property Items[ Index: Integer ]: TCustomItem read GetItems; default;
+      property Items[ Index: Integer ]: TCustomItem read GetItems write SetItems; default;
 
     published
       property Count: Integer read GetCount write SetCount;
@@ -113,6 +114,32 @@ type
       function DumpUsers: String;
   end;
 
+  { TP3DPropertyAccessDataBlock }
+
+  TP3DPropertyAccessDataBlock = class( specialize gP3DPropertyAccess < TP3DDataBlock >)
+    protected
+      function GetAsString: String; override;
+      procedure SetAsString( AValue: String ); override;
+  end;
+
+  { TP3DPropertyAccessDataBlockList }
+
+  TP3DPropertyAccessDataBlockList = class( specialize gP3DPropertyAccess < TP3DDataBlockList >)
+    private
+      function GetCount: Integer;
+      function GetValues( idx: Integer ): TP3DDataBlock;
+      procedure SetCount(AValue: Integer);
+      procedure SetValues( idx: Integer ; AValue: TP3DDataBlock);
+
+    public
+      property Values[ idx: Integer ]: TP3DDataBlock read GetValues write SetValues;
+
+    published
+      function GetAsString: String; override;
+      procedure SetAsString( AValue: String ); override;
+      property Count: Integer read GetCount write SetCount;
+  end;
+
   function P3DBoundingBox( vMin, vMax, vCenter: TVec3 ): TP3DBoundingBox;
   function P3DBoundingBoxTransform( Box: TP3DBoundingBox; Matrix: TMat4 ): TP3DBoundingBox;
 
@@ -120,6 +147,51 @@ type
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+{ TP3DPropertyAccessDataBlockList }
+
+function TP3DPropertyAccessDataBlockList.GetCount: Integer;
+begin
+  Result:= Value.Count;
+end;
+
+function TP3DPropertyAccessDataBlockList.GetValues( idx: Integer ): TP3DDataBlock;
+begin
+  Result:= Value[ idx ];
+end;
+
+procedure TP3DPropertyAccessDataBlockList.SetCount(AValue: Integer);
+begin
+  Value.Count:= AValue;
+end;
+
+procedure TP3DPropertyAccessDataBlockList.SetValues( idx: Integer ; AValue: TP3DDataBlock);
+begin
+  Value[ idx ]:= AValue;
+end;
+
+function TP3DPropertyAccessDataBlockList.GetAsString: String;
+begin
+
+end;
+
+procedure TP3DPropertyAccessDataBlockList.SetAsString(AValue: String);
+begin
+
+end;
+
+{ TP3DPropertyAccessDataBlock }
+
+function TP3DPropertyAccessDataBlock.GetAsString: String;
+begin
+  Result:= Value.Owner.Name + '.' + Value.Name;
+end;
+
+procedure TP3DPropertyAccessDataBlock.SetAsString(AValue: String);
+begin
+
+end;
+
 
 function FindDOMForClass( AClass: TP3DDataBlockType ): String;
 begin
@@ -342,6 +414,23 @@ begin
     Result:= Items[ Index ]
   else
     Result:= nil;
+end;
+
+procedure gP3DCustomDatablockList.SetItems( Index: Integer ; AValue: TCustomItem);
+var
+  Item: TCustomItem;
+begin
+  Item:= Items[ Index ];
+  if ( Item = AValue ) then
+    exit;
+
+  if ( Assigned( OnChange )) then
+    OnChange( Self, Item, actDelete );
+
+  FItems[ Index ]:= AValue;
+
+  if ( Assigned( OnChange )) then
+    OnChange( Self, AValue, actAdd );
 end;
 
 function P3DBoundingBox(vMin, vMax, vCenter: TVec3): TP3DBoundingBox;

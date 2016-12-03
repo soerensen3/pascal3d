@@ -214,6 +214,7 @@ begin
       for Socket in Node.Outputs do
         if ( Socket.SocketType = 'shader' ) then
           begin
+            //WriteLn( 'Processing ', Node.Name, '.', Socket.Name, ' defines=', Buffer.Defines.CommaText );
             Result+= TP3DShaderNodeSocket( Socket ).GetOutput( Buffer );
             Buffer.RegisterSocket( TP3DShaderNodeSocket( Socket ));
           end;
@@ -237,7 +238,7 @@ begin
             Buffer.Code:= TP3DShaderNodeSocket( Socket ).GetOutput( Buffer );
             Buffer.RegisterSocket( TP3DShaderNodeSocket( Socket ));
             Result.Buffers.Add( Buffer );
-            P3DLog.LogInfoXML( Self, 'Built shader from chunks <br/><pre><code>' + Buffer.Code + '</code></pre>' );
+            P3DLog.LogInfoXML( Self, '<details><summary>Built ' + Buffer.Name + ' from chunks <br/></summary><pre><code class="glsl">' + P3DTextToHTML( Buffer.Code ) + '</code></pre></details>' );
           end;
   {Defines:= TStringList.Create;
   Defines.Text:= 'vshader';
@@ -388,6 +389,7 @@ var
   Frag: TP3DShaderNodeFragment;
 begin
   Result:= '';
+  //WriteLn( 'IFDEF ', Caption, ' defines=', Buffer.Defines.CommaText, ' defined?=', Buffer.Defines.IndexOf( Caption ) > -1 );
   if ( Buffer.Defines.IndexOf( Caption ) > -1 ) then
     for Frag in Fragments do
       Result+= Frag.GetStringOutput( ANode, Buffer )
@@ -455,13 +457,13 @@ function TP3DShaderNodeFragmentInput.GetStringOutput(ANode: TP3DShaderNode;
 var
   S, n: Integer;
 begin
-  Buffer.Defines.Add( Self.InputName );
+  //Buffer.Defines.Add( Self.InputName );
   S:= ANode.Inputs.FindSocketByName( InputName );
   if ( S > -1 ) then
     if ( ANode.Inputs[ S ] is TP3DShaderNodeSocket ) then
       Result:= TP3DShaderNodeSocket( ANode.Inputs[ S ]).GetOutput( Buffer );
-  if ( Buffer.Defines.Find( Self.InputName, n )) then
-    Buffer.Defines.Delete( n );
+  //if ( Buffer.Defines.Find( Self.InputName, n )) then
+  //  Buffer.Defines.Delete( n );
 end;
 
 function TP3DShaderNodeFragmentInput.MakeCopy(ANode: TP3DShaderNode
@@ -502,7 +504,7 @@ var
   s: String;
 begin
   Result:= '';
-  Buffer.Defines.Add( Self.Name );
+  //Buffer.Defines.Add( Self.Name );
   if ( Assigned( Connected )) then
     begin
       if ( Connected is TP3DShaderNodeSocket ) then
@@ -520,8 +522,8 @@ begin
       for i:= 0 to Fragments.Count - 1 do
         Result+= Fragments[ i ].GetStringOutput( TP3DShaderNode( Node ), Buffer );
     end;
-  if ( Buffer.Defines.Find( Self.Name, n )) then
-    Buffer.Defines.Delete( n );
+  //if ( Buffer.Defines.Find( Self.Name, n )) then
+  //  Buffer.Defines.Delete( n );
 end;
 
 function TP3DShaderNodeSocket.MakeCopy(ANode: TP3DNode): TP3DShaderNodeSocket;

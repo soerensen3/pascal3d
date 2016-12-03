@@ -22,13 +22,13 @@ type
 
       procedure RenderLine( p1, p2: TVec3; Color: TVec4 );
       procedure RenderLine(p1, p2: TVec3; Color1, Color2: TVec4);
-      {procedure RenderLines( points: array of TVec2; Color: TVec4 );
-      procedure RenderLines( points: TVec2List; Color: TVec4 );
-      procedure RenderLineRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );
-      procedure RenderLineRect( p1, p2: TVec2; Color: TVec4 );
-      procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );
-      procedure RenderRect( p1, p2: TVec2; Color: TVec4 );
-      procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
+      procedure RenderLines( points: array of TVec3; Color: TVec4 );
+      procedure RenderLines( points: TVec3List; Color: TVec4 );
+      procedure RenderLineRect( p1, p2: TVec3; c1, c2, c3, c4: TVec4 );
+      procedure RenderLineRect( p1, p2: TVec3; Color: TVec4 );
+      procedure RenderRect(p1, p2: TVec3; c1, c2, c3, c4: TVec4);
+      procedure RenderRect(p1, p2: TVec3; Color: TVec4);
+      {procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
       procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer;
         Color: TVec4);
       procedure RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
@@ -131,6 +131,70 @@ begin
   glVertexAttrib3f( P3DAttribPosition, p1.X, p1.Y, p2.Z );
   glVertexAttrib4f( P3DAttribColor, Color2.R, Color2.G, Color2.B, Color2.A );
   glVertexAttrib3f( P3DAttribPosition, p2.X, p2.Y, p2.Z );
+  glEnd(); cle( Self );
+end;
+
+procedure TP3DCanvas3D.RenderLines(points: array of TVec3; Color: TVec4);
+var
+  i: Integer;
+begin
+  if ( not PrepareForDrawing ) then exit;
+
+  glBegin( GL_LINE_STRIP );
+  glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
+  for i:= low( points ) to high( points ) do
+    glVertexAttrib3f( P3DAttribPosition, points[ i ].X, points[ i ].Y, points[ i ].Z );
+  glEnd(); cle( Self );
+end;
+
+procedure TP3DCanvas3D.RenderLines(points: TVec3List; Color: TVec4);
+var
+  i: Integer;
+begin
+  if ( not PrepareForDrawing ) then exit;
+
+  glBegin( GL_LINE_STRIP );
+  glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
+  for i:= 0 to points.Count - 1 do
+    glVertexAttrib3f( P3DAttribPosition, points[ i ].X, points[ i ].Y, points[ i ].Z );
+  glEnd(); cle( Self );
+end;
+
+procedure TP3DCanvas3D.RenderLineRect(p1, p2: TVec3; c1, c2, c3, c4: TVec4);
+begin
+
+end;
+
+procedure TP3DCanvas3D.RenderLineRect(p1, p2: TVec3; Color: TVec4);
+begin
+  RenderLines([ p1, vec3( p2.x, p1.y, p1.z ), p2, vec3( p1.x, p2.y, p2.z ), p1 ], Color );
+end;
+
+procedure TP3DCanvas3D.RenderRect(p1, p2: TVec3; c1, c2, c3, c4: TVec4);
+begin
+  if ( not PrepareForDrawing ) then exit;
+
+  glBegin( GL_TRIANGLE_FAN );
+  glVertexAttrib4f( P3DAttribColor, c1.R, c1.G, c1.B, c1.A );
+  glVertexAttrib3f( P3DAttribPosition, p1.X, p1.Y, p1.Z );
+  glVertexAttrib4f( P3DAttribColor, c2.R, c2.G, c2.B, c2.A );
+  glVertexAttrib3f( P3DAttribPosition, p2.X, p1.Y, p1.Z );
+  glVertexAttrib4f( P3DAttribColor, c3.R, c3.G, c3.B, c3.A );
+  glVertexAttrib3f( P3DAttribPosition, p2.X, p2.Y, p2.Z );
+  glVertexAttrib4f( P3DAttribColor, c4.R, c4.G, c4.B, c4.A );
+  glVertexAttrib3f( P3DAttribPosition, p1.X, p2.Y, p2.Z );
+  glEnd(); cle( Self );
+end;
+
+procedure TP3DCanvas3D.RenderRect( p1, p2: TVec3; Color: TVec4 );
+begin
+  if ( not PrepareForDrawing ) then exit;
+  glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
+  glBegin( GL_TRIANGLE_FAN );
+  glVertexAttrib3f( P3DAttribPosition, p1.X, p1.Y, p1.Z );
+  glVertexAttrib3f( P3DAttribPosition, p2.X, p1.Y, p1.Z );
+  glVertexAttrib3f( P3DAttribPosition, p2.X, p2.Y, p2.Z );
+  glVertexAttrib3f( P3DAttribPosition, p1.X, p2.Y, p2.Z );
   glEnd(); cle( Self );
 end;
 

@@ -115,6 +115,8 @@
         TexCoords: array of TP3DVec2BufferGL;
         Edges: TP3DIntBufferGL;
 
+        InstanceBuffer: TP3DIntBufferGL;
+
         Indices: TP3DIntBufferGL;
         VBArray: TP3DVertexBufferArray;
         MaterialGroups: TP3DMeshMaterialGroupList;
@@ -132,7 +134,8 @@
         procedure RenderMaterialGroupInstanced( world: TMat4List; Idx: Integer; Scene: TP3DScene );
         procedure RenderMaterialGroupInstanced( world: TP3DTexture; Idx: Integer; Scene: TP3DScene ); //not implemented
         procedure RenderMaterialGroupInstanced( world: TMat4List; Idx: Integer );
-        procedure RenderMaterialGroupInstanced(world: TP3DTexture; numInstance: Integer; Idx: Integer);
+        procedure RenderMaterialGroupInstanced( world: TP3DTexture; numInstance: Integer; Idx: Integer );
+        procedure RenderMaterialGroupInstanced( numInstance: Integer; MatIdx: Integer );
         procedure RenderEdges( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor );
         function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; override;
         procedure UnpackBuffers;
@@ -297,6 +300,10 @@ begin
   WeightGroups:= TP3DMeshWeightGroupList.Create();
   Modifiers:= TP3DMeshModifierList.Create;
 
+  InstanceBuffer:= TP3DIntBufferGL.Create( True );
+  InstanceBuffer.Add([ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]);
+  InstanceBuffer.PushData;
+
   Owner.Meshes.Add( Self );
   FileWatch:= TP3DFileWatch.Create( '' );
 end;
@@ -323,6 +330,7 @@ begin
   MaterialGroups.Free;
   WeightGroups.Free;
   FileWatch.Free;
+  InstanceBuffer.Free;
 
   Owner.Meshes.Remove( Self );
 
@@ -589,6 +597,38 @@ begin
   offset:= MaterialGroups[ Idx ].IndexStart;
   count:= ( MaterialGroups[ Idx ].IndexEnd - MaterialGroups[ Idx ].IndexStart ) + 1;
   //P3DLog.LogInfo( Self, Material.Shader.DumpUniforms );
+
+  glDrawElementsInstanced( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint )), numInstance ); cle( Self );
+end;
+
+procedure TP3DMesh.RenderMaterialGroupInstanced(numInstance: Integer; MatIdx: Integer);
+var
+  i: Integer;
+  decl: TP3DShaderDecl;
+  offset, count: Integer;
+begin
+  if ( Positions.Count > 0 ) then
+    Positions.SetAttribArray( P3DAttribPosition );
+  if ( Normals.Count > 0 ) then
+    Normals.SetAttribArray( P3DAttribNormal );
+  if ( Cotangents.Count > 0 ) then
+    Cotangents.SetAttribArray( P3DAttribCotangent );
+  if ( Tangents.Count > 0 ) then
+    Tangents.SetAttribArray( P3DAttribTangent );
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+
+  decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
+  if ( Assigned( decl )) and ( VertexGroupsf.Count > 0 ) then
+    VertexGroupsf.SetAttribArray( decl.Addr );
+  decl:= P3DShaderActive.Attributes.Names[ 'jointWeight' ];
+  if ( Assigned( decl )) and ( VertexWeights.Count > 0 ) then
+    VertexWeights.SetAttribArray( decl.Addr );
+
+  Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
+
+  offset:= MaterialGroups[ MatIdx ].IndexStart;
+  count:= ( MaterialGroups[ MatIdx ].IndexEnd - MaterialGroups[ MatIdx ].IndexStart ) + 1;
 
   glDrawElementsInstanced( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint )), numInstance ); cle( Self );
 end;
@@ -1013,6 +1053,21 @@ begin
   Mesh:= AMesh;
 end;
 
+
+{ TP3DMeshMaterialGroupList }
+
+function TP3DMeshMaterialGroupList.Find( Material: TP3DMaterial ): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Material = Material ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
 
 
 {$ENDIF}

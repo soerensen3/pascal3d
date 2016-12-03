@@ -24,7 +24,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="46">
+    <Files Count="47">
       <Item1>
         <AddToUsesPkgSection Value="False"/>
       </Item1>
@@ -205,6 +205,10 @@
         <Filename Value="p3dutils\p3dsimpletypes.inc"/>
         <Type Value="Include"/>
       </Item46>
+      <Item47>
+        <Filename Value="p3dutils\p3dpropaccess.inc"/>
+        <Type Value="Include"/>
+      </Item47>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>

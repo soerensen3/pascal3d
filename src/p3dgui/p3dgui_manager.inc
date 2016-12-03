@@ -68,6 +68,7 @@ begin
   ScrollSpeed:= -50;
   Controls:= TP3DControlList.Create( nil );
   ScreenCanvas:= TP3DCanvas2D.Create( nil );
+  ScreenCanvas.Font.Size:= 32;
   Cursor:= curArrow;
   CursorOverride:= curArrow;
   if ( Assigned( P3DApplication ) and Assigned( P3DApplication.MainWindow )) then
@@ -113,10 +114,16 @@ begin
 end;
 
 procedure TP3DGUIManager.SetFocusedControl(AValue: TP3DGraphicControl);
+var
+  OldCtrl: TP3DGraphicControl;
 begin
   if FFocusedControl=AValue then Exit;
 
-  FFocusedControl:=AValue;
+  OldCtrl:= FFocusedControl; //Delayed event handler prevents deadlock
+  FFocusedControl:= AValue;
+
+  If ( Assigned( OldCtrl )) then
+    OldCtrl.SetFocused( False );
 end;
 
 procedure TP3DGUIManager.Input;
@@ -167,7 +174,6 @@ begin
       ScreenCanvas.Font.Color:= vec4( 0 );
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX, MouseY ));
       ScreenCanvas.Unlock();
-
     end;
 end;
 

@@ -31,8 +31,10 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FMarginTL: TVec2;
     FHideChildren: Boolean;
 
+    function GetLeftTop: TVec2;
     procedure SetMarginBR(AValue: TVec2);
     procedure SetMarginTL(AValue: TVec2);
+    procedure SetLeftTop(AValue: TVec2);
 
   protected
     FAlign: TP3DControlAlign;
@@ -78,12 +80,12 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure SetAlign( const Value: TP3DControlAlign ); virtual;
     procedure SetHeight( const Value: Float ); virtual;
     procedure SetInputState(AValue: TP3DGCInputFlags); virtual;
-    procedure SetLeft( const Value: Float ); virtual;
-    procedure SetParent(const Value: TP3DGraphicControl);
+    procedure SetLeft( Value: Float ); virtual;
+    procedure SetParent( Value: TP3DGraphicControl);
     procedure SetScroll(AValue: TVec2);
-    procedure SetTop( const Value: Float ); virtual;
-    procedure SetVisible( const Value: Boolean ); virtual;
-    procedure SetWidth( const Value: Float ); virtual;
+    procedure SetTop( Value: Float ); virtual;
+    procedure SetVisible( Value: Boolean ); virtual;
+    procedure SetWidth( Value: Float ); virtual;
 
     function MouseRay( X, Y: Integer ): Boolean; virtual; //Check if a ray at the given Pixel is inside of the control (usually the client rect).
                                                           //Can be overridden for to change this behaviour
@@ -133,6 +135,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property InputState: TP3DGCInputFlags read FInputState write SetInputState;
     property ParentCtrl: TP3DControlList read FOwnerCtrlBuf write FOwnerCtrlBuf;
     property Scroll: TVec2 read GetScroll write SetScroll;
+    property LeftTop: TVec2 read GetLeftTop write SetLeftTop;
 
   published
     property Align: TP3DControlAlign read FAlign write SetAlign;
@@ -191,6 +194,17 @@ begin
   Width:= 50;
   Height:= 50;
   Cursor:= curArrow;
+
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Left' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Top' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Left' ));
+
+  Properties.Add( TP3DPropertyAccessVec2.CreateGetSet( 'LeftTop', @GetLeftTop, @SetLeftTop ));
+  Properties.Add( TP3DPropertyAccessVec2.CreateGetSet( 'Scroll', @GetScroll, @SetScroll ));
+  //TODO: Add rest of graphiccontrol properties
+
 end;
 
 constructor TP3DGraphicControl.Create(const AData: TP3DData);
@@ -221,12 +235,23 @@ begin
   Controls.Realign;
 end;
 
+function TP3DGraphicControl.GetLeftTop: TVec2;
+begin
+  Result:= vec2( Left, Top );
+end;
+
 procedure TP3DGraphicControl.SetMarginTL(AValue: TVec2);
 begin
   if FMarginTL=AValue then Exit;
   FMarginTL:=AValue;
   UpdateExtents;
   Controls.Realign;
+end;
+
+procedure TP3DGraphicControl.SetLeftTop(AValue: TVec2);
+begin
+  FLeft:= AValue.x;
+  Top:= AValue.y;
 end;
 
 procedure TP3DGraphicControl.SetMargin( left, top, right, bottom: Float );
@@ -578,7 +603,7 @@ begin
   ParentCtrl.FPageSize:= max( ParentCtrl.FPageSize, vec2( Left + Width, Top + Height ));
 end;
 
-procedure TP3DGraphicControl.SetLeft(const Value: Float);
+procedure TP3DGraphicControl.SetLeft( Value: Float );
 begin
   if ( Align = alNone ) then
     begin
@@ -588,7 +613,7 @@ begin
     end;
 end;
 
-procedure TP3DGraphicControl.SetParent( const Value: TP3DGraphicControl );
+procedure TP3DGraphicControl.SetParent( Value: TP3DGraphicControl );
 begin
   if ( Value = Parent ) then
     exit;
@@ -601,7 +626,7 @@ begin
 end;
 
 
-procedure TP3DGraphicControl.SetTop(const Value: Float);
+procedure TP3DGraphicControl.SetTop( Value: Float );
 begin
   if ( Align = alNone ) then
     begin
@@ -611,7 +636,7 @@ begin
     end;
 end;
 
-procedure TP3DGraphicControl.SetVisible( const Value: Boolean );
+procedure TP3DGraphicControl.SetVisible( Value: Boolean );
 begin
   if ( FVisible <> Value ) then
     begin
@@ -621,7 +646,7 @@ begin
     end;
 end;
 
-procedure TP3DGraphicControl.SetWidth(const Value: Float);
+procedure TP3DGraphicControl.SetWidth( Value: Float );
 var
   Val: Float;
 begin

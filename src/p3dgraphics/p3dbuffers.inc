@@ -35,52 +35,77 @@
 
     {$MACRO ON}
 
-      {$DEFINE USE_ATTRIB}
+    {$DEFINE USE_ATTRIB}
 
-      {$DEFINE GLTYPE:= GL_INT}
-      {$DEFINE GLNUMCOMPONENTS:= 1}
-      {$DEFINE TItemList:= TIntList}
-      {$DEFINE TP3DBufferObjectGL:= TP3DIntBufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$DEFINE GLTYPE:= GL_INT}
+    {$DEFINE GLNUMCOMPONENTS:= 1}
+    {$DEFINE TItemList:= TIntList}
+    {$DEFINE TP3DBufferObjectGL:= TP3DIntBufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$DEFINE GLTYPE:= GL_FLOAT}
-      {$DEFINE TItemList:= TFloatList}
-      {$DEFINE TP3DBufferObjectGL:= TP3DFloatBufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$DEFINE GLTYPE:= GL_FLOAT}
+    {$DEFINE TItemList:= TFloatList}
+    {$DEFINE TP3DBufferObjectGL:= TP3DFloatBufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$DEFINE GLNUMCOMPONENTS:= 2}
-      {$DEFINE TItemList:= TVec2List}
-      {$DEFINE TP3DBufferObjectGL:= TP3DVec2BufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$DEFINE GLNUMCOMPONENTS:= 2}
+    {$DEFINE TItemList:= TVec2List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DVec2BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {.$DEFINE GLTYPE:= GL_INT}
-      {.$DEFINE TItemList:= TIVec2List}
-      {.$DEFINE TP3DBufferObjectGL:= TP3DIVec2BufferGL}
-      {.$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$DEFINE GLNUMCOMPONENTS:= 3}
+    {$DEFINE TItemList:= TVec3List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DVec3BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$DEFINE GLNUMCOMPONENTS:= 3}
-      {$DEFINE TItemList:= TVec3List}
-      {$DEFINE TP3DBufferObjectGL:= TP3DVec3BufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$DEFINE GLNUMCOMPONENTS:= 4}
+    {$DEFINE TItemList:= TVec4List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DVec4BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$DEFINE GLNUMCOMPONENTS:= 4}
-      {$DEFINE TItemList:= TVec4List}
-      {$DEFINE TP3DBufferObjectGL:= TP3DVec4BufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$DEFINE GLNUMCOMPONENTS:= 2}
+    {$DEFINE GLTYPE:= GL_INT}
+    {$DEFINE TItemList:= TIVec2List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DIVec2BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$UNDEF USE_ATTRIB}
+    {$DEFINE GLNUMCOMPONENTS:= 3}
+    {$DEFINE TItemList:= TIVec3List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DIVec3BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$DEFINE TItemList:= TMat2List}
-      {$DEFINE TP3DBufferObjectGL:= TP3DMat2BufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$DEFINE GLNUMCOMPONENTS:= 4}
+    {$DEFINE TItemList:= TIVec4List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DIVec4BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$DEFINE TItemList:= TMat3List}
-      {$DEFINE TP3DBufferObjectGL:= TP3DMat3BufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
-      {$DEFINE TItemList:= TMat4List}
-      {$DEFINE TP3DBufferObjectGL:= TP3DMat4BufferGL}
-      {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+    {$UNDEF USE_ATTRIB}
+
+    {$DEFINE GLTYPE:= GL_FLOAT}
+    {$DEFINE TItemList:= TMat2List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DMat2BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+
+    {$DEFINE TItemList:= TMat3List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DMat3BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+
+    {$DEFINE TItemList:= TMat4List}
+    {$DEFINE TP3DBufferObjectGL:= TP3DMat4BufferGL}
+    {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+
+    TP3DIntBufferGLList = specialize gP3DCustomObjectList < TP3DIntBufferGL >;
+    TP3DFloatBufferGLList = specialize gP3DCustomObjectList < TP3DFloatBufferGL >;
+    TP3DVec2BufferGLList = specialize gP3DCustomObjectList < TP3DVec2BufferGL >;
+    TP3DVec3BufferGLList = specialize gP3DCustomObjectList < TP3DVec3BufferGL >;
+    TP3DVec4BufferGLList = specialize gP3DCustomObjectList < TP3DVec4BufferGL >;
+    TP3DIVec2BufferGLList = specialize gP3DCustomObjectList < TP3DIVec2BufferGL >;
+    TP3DIVec3BufferGLList = specialize gP3DCustomObjectList < TP3DIVec3BufferGL >;
+    TP3DIVec4BufferGLList = specialize gP3DCustomObjectList < TP3DIVec4BufferGL >;
+    TP3DMat2BufferGLList = specialize gP3DCustomObjectList < TP3DMat2BufferGL >;
+    TP3DMat3BufferGLList = specialize gP3DCustomObjectList < TP3DMat3BufferGL >;
+    TP3DMat4BufferGLList = specialize gP3DCustomObjectList < TP3DMat4BufferGL >;
 
 {$ENDIF}
 
@@ -137,8 +162,25 @@ end;
   {$DEFINE TP3DBufferObjectGL:= TP3DVec4BufferGL}
   {$INCLUDE p3dbuffers_bufferobjectgl.inc}
 
+  {$DEFINE GLNUMCOMPONENTS:= 2}
+  {$DEFINE GLTYPE:= GL_INT}
+  {$DEFINE TItemList:= TIVec2List}
+  {$DEFINE TP3DBufferObjectGL:= TP3DIVec2BufferGL}
+  {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+
+  {$DEFINE GLNUMCOMPONENTS:= 3}
+  {$DEFINE TItemList:= TIVec3List}
+  {$DEFINE TP3DBufferObjectGL:= TP3DIVec3BufferGL}
+  {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+
+  {$DEFINE GLNUMCOMPONENTS:= 4}
+  {$DEFINE TItemList:= TIVec4List}
+  {$DEFINE TP3DBufferObjectGL:= TP3DIVec4BufferGL}
+  {$INCLUDE p3dbuffers_bufferobjectgl.inc}
+
   {$UNDEF USE_ATTRIB}
 
+  {$DEFINE GLTYPE:= GL_FLOAT}
   {$DEFINE TItemList:= TMat2List}
   {$DEFINE TP3DBufferObjectGL:= TP3DMat2BufferGL}
   {$INCLUDE p3dbuffers_bufferobjectgl.inc}

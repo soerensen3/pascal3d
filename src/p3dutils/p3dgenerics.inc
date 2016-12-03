@@ -11,6 +11,7 @@
       procedure Reset;
       property Current: TCustomItem read GetCurrent;
     end;
+
     generic IP3DEnumerableClass < TCustomItem: TObject >  = interface
       ['{A8D955A0-E3A9-4BF5-8CDF-8A21AB3E2A06}']
       function GetEnumerator: specialize IP3DEnumeratorClass < TCustomItem >;
@@ -51,8 +52,9 @@
         FOnChange: TNotifyEvent;
         function GetCount: Integer;
         procedure SetCount( AValue: Integer );
-        function GetItems( Index: Integer ): TCustomItem;
+        function GetItem( Index: Integer ): TCustomItem;
         function MoveNext( var Index: Integer ): TCustomItem;
+        procedure SetItem( Index: Integer ; AValue: TCustomItem);
 
       public
         constructor Create;
@@ -67,7 +69,7 @@
         //IP3DEnumerator.GetEnumerator = GetEnumerator;
         procedure Insert( Index: Integer; Item: TCustomItem );
 
-        property Items[ Index: Integer ]: TCustomItem read GetItems; default;
+        property Items[ Index: Integer ]: TCustomItem read GetItem write SetItem; default;
         property OnChange: TNotifyEvent read FOnChange write FOnChange;
 
       published
@@ -172,7 +174,7 @@ begin
   FItems.Count:= AValue;
 end;
 
-function gP3DCustomObjectList.GetItems( Index: Integer ): TCustomItem;
+function gP3DCustomObjectList.GetItem(Index: Integer): TCustomItem;
 begin
   if (( Index < Count ) and ( Index > -1 )) then
     Result:= TCustomItem( FItems[ Index ])
@@ -254,6 +256,12 @@ begin
     Result:= Items[ Index ]
   else
     Result:= nil;
+end;
+
+procedure gP3DCustomObjectList.SetItem( Index: Integer ; AValue: TCustomItem);
+begin
+  if (( Index < Count ) and ( Index > -1 )) then
+    FItems[ Index ]:= AValue;
 end;
 
 

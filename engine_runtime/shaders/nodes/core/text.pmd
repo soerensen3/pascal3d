@@ -19,20 +19,20 @@ float samp(in vec2 uv, float w) {
 ```
 
 ```{restrict="fshader,main"}
-float width = fwidth(Color.a);
-Color.a = contour( Color.a, text_smoothing ); 
-//smoothstep(0.5 + text_bias - text_smoothing, 0.5 + text_bias + text_smoothing, Color.a) * text_basealpha;
+  float width = fwidth(Color.a);
+  Color.a = contour( Color.a, text_smoothing ); 
+  //smoothstep(0.5 + text_bias - text_smoothing, 0.5 + text_bias + text_smoothing, Color.a) * text_basealpha;
 
-float dscale = 0.354; // half of 1/sqrt2; you can play with this
-vec2 duv = dscale * (dFdx(vTexCoord0.st) + dFdy(vTexCoord0.st));
-vec4 box = vec4(vTexCoord0.st-duv, vTexCoord0.st+duv);
+  float dscale = 0.354; // half of 1/sqrt2; you can play with this
+  vec2 duv = dscale * (dFdx(vTexCoord0.st) + dFdy(vTexCoord0.st));
+  vec4 box = vec4(vTexCoord0.st-duv, vTexCoord0.st+duv);
 
-float asum = samp( box.xy, width )
-           + samp( box.zw, width )
-           + samp( box.xw, width )
-           + samp( box.zy, width );
+  float asum = samp( box.xy, width )
+             + samp( box.zw, width )
+             + samp( box.xw, width )
+             + samp( box.zy, width );
 
-// weighted average, with 4 extra points having 0.5 weight each,
-// so 1 + 0.5*4 = 3 is the divisor
-Color.a = (Color.a + 0.5 * asum) / 3.0;
+  // weighted average, with 4 extra points having 0.5 weight each,
+  // so 1 + 0.5*4 = 3 is the divisor
+  Color.a = (Color.a + 0.5 * asum) / 3.0;
 ```

@@ -58,7 +58,17 @@ implementation
 procedure CreateSceneTree;
 var
   ListView: TP3DListView;
-  i, j, n, GridId, o: Integer;
+  i, j, GridId, o: Integer;
+
+  procedure AddLib( FName: String );
+  var
+    n, k: Integer;
+  begin
+    n:= OpenLibrary( FName );
+    for k:= 0 to P3DData.Libraries[ n ].Scenes.Count - 1 do
+      TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ k ]);
+  end;
+
 begin
   //P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
   TestScene:= TP3DScene.Create();
@@ -144,35 +154,31 @@ begin
 
 
 
+  TestScene.AppendFile( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/sun.p3d' );
+
   GridId:= P3DData.CreateNew( TP3DTileGrid, True );
   TestScene.Objects.Add( P3DData.Objects[ GridId ]);
-  OIPanel.ObjectInspector.Obj:= P3DData.Objects[ GridId ];
 
   TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridWorldUnit:= 2;
-  //TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( nil );
+  AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3d' );
 
-  n:= OpenLibrary( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/box.p3d' );
-  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ 0 ]);
-  {with ( TP3DMaterialModifierArray( TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]).Modifiers[ TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]).Modifiers.Add( TP3DMaterialModifierArray.Create )])) do
-    begin
-      Transforms.Add([ vec3( 0.1 ), vec3( 0.3 ), vec3( 0.7 ), vec3( 1 )]);
-      PushTexture;
-    end;
-  TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]).BuildShader();}
+  {TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( nil );
 
-  n:= OpenLibrary( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/wall.p3d' );
-  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ 0 ]);
 
-  n:= OpenLibrary( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/wall_corner.p3d' );
-  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ 0 ]);
+  AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/box.p3d' );
+
+  AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/wall.p3d' );
+
+  AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/wall_corner.p3d' );}
 
   //n:= OpenLibrary( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/conveyour.p3d' );
   //TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ 0 ]);
 
-  for i:= 0 to TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Width * TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Height - 1 do
-    TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridData[ i ]:= Random( TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Count );
-
-  TestScene.AppendFile( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/sun.p3d' );
+  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).UpdateArrays;
+  //for i:= 0 to TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Width * TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Height - 1 do
+  //  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridData[ i ]:= Random( TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Count );
+  OIPanel.ObjectInspector.Obj:= P3DData.Objects[ GridId ];
+  SceneView.Selection:= P3DData.Objects[ GridId ];
 end;
 
 procedure P3DSceneGUIInit;
@@ -182,6 +188,8 @@ begin
   CreateEditModes;
   P3DGUIManager.Controls.Realign;
   P3DGUIManager.UpdateExtents;
+  P3DGUIManager.ShowCursor:= True;
+  SDL_ShowCursor( 0 );
 end;
 
 procedure P3DSceneGUIFinish;

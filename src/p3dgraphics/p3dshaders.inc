@@ -617,6 +617,8 @@ var
   line: Integer;
   i: Integer;
   msg: String;
+  left_str, right_str: String;
+  vendor: String;
 begin
   glGetShaderiv( glShader, GL_INFO_LOG_LENGTH, @blen ); cle( nil );
   if ( blen > 1 ) then
@@ -626,18 +628,38 @@ begin
       glGetShaderInfoLog( glShader, blen , slen, InfoLog ); cle( nil );
 
       E:= TStringList.Create;
-      E.Text:= PChar( InfoLog );
+      E.Text:= Trim( PChar( InfoLog ));
       Dispose( InfoLog );
 
       C:= TStringList.Create;
       C.Text:= Shader;
 
+      vendor:= glGetString( GL_VENDOR );
+      case vendor of
+        'ATI Technologies': //UNKNOWN IF WORKING
+          begin
+            left_str:= 'ERROR: 0:';
+            right_str:= ': error';
+          end;
+        'NVIDIA Corporation': //UNKNOWN IF WORKING
+          begin
+            left_str:= '(';
+            right_str:= ') : error';
+          end;
+        'INTEL', 'Intel Open Source Technology Center':
+          begin
+            left_str:= ':';
+            right_str:= '(';
+          end;
+      end;
+
       for i:= E.Count - 1 downto 0 do
         begin
-          line:= StrToIntDef( ExtractText( E[ i ], '(', ') : error' ), -1 );
+          line:= StrToIntDef( ExtractText( E[ i ], left_str, right_str ), -1 );
           if ( line > -1 ) then
             begin
-              msg:= '(' + IntToStr( line ) + ') >>> "' + C[ line - 1 ] + '"';
+              msg:= '<pre><div class="hljs hljs-line-numbers" style="float: left;">' + IntToStr( line ) +
+                '</div><code class="glsl">' + C[ line - 1 ] + '</code></pre>';
               E.Insert( i + 1, msg );
             end;
         end;
@@ -673,7 +695,7 @@ begin
         GL_FRAGMENT_SHADER: typeN:= 'Fragment Shader';
         GL_GEOMETRY_SHADER: typeN:= 'Geometry Shader';
       end;
-      P3DLog.LogException( nil, Format( 'Compilation failed (%s): "%s"', [ typeN, ShaderCheckForErrors( shader, Source )]));
+      P3DLog.LogException( nil, Format( 'Compilation failed (%s): '+LineEnding+'%s', [ typeN, Trim( ShaderCheckForErrors( shader, Source ))]));
       glDeleteShader( shader ); cle( nil );
     end
   else
@@ -847,6 +869,7 @@ var
   len, size, typ: Integer;
   pname: PChar;
   str: array[ 0..255 ] of Char;
+  msg: String;
 
   function GLAttrTypeToStr( Attr: GLenum ): String;
   begin
@@ -878,6 +901,7 @@ begin
   Attributes.Clear( True );
   Uniforms.Clear( True );
 
+  msg:= '';
   glGetError();
   glGetProgramiv( ProgramObj, GL_ACTIVE_ATTRIBUTES, @cnt ); cle( Self, 'ProgramObj = ' + IntToStr( ProgramObj ));
   for i:= 0 to cnt - 1 do
@@ -894,6 +918,7 @@ begin
         {$IFDEF VERBOSE}
         WriteLn( 'attribute ', GLAttrTypeToStr( VarType ), ' ', Name, ' @', Addr );
         {$ENDIF}
+        msg+= LineEnding + '<span>attribute</span>' + GLAttrTypeToStr( VarType ) + ' ' + Name + ' @' + IntToStr( Addr );
       end;
 
   glGetProgramiv( ProgramObj, GL_ACTIVE_UNIFORMS, @cnt );
@@ -912,7 +937,9 @@ begin
         {$IFDEF VERBOSE}
         WriteLn( 'uniform ', GLAttrTypeToStr( VarType ), ' ', Name, ' @', Addr );
         {$ENDIF}
+        msg+=  LineEnding + '<span>uniform</span>' + GLAttrTypeToStr( VarType ) + ' ' + Name + ' @' + IntToStr( Addr );
       end;
+  P3DLog.LogInfoXML( Self, 'Shader successfully linked <p class="messageheader">' + Trim( msg ) + '</p>' );
 end;
 
 procedure TP3DShader.LinkProgram;

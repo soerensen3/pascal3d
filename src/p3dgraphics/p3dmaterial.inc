@@ -508,22 +508,38 @@ var
   var
     i, j, n: Integer;
     Buffer: TP3DShaderBuffer;
+    extensions: String;
   begin
     Compiled:= TP3DShaderCompiled.Create;
     with( ShaderTree.AddCopyEx( 'GLSLShader' )) do
       for i:= 0 to Outputs.Count - 1 do
         begin
           Buffer:= TP3DShaderBuffer.Create;
+          Buffer.Defines.Add( Outputs[ i ].Name );
           Buffer.Name:= Outputs[ i ].Name;
+          TP3DShaderNodeSocketInt( Inputs[ Inputs.FindSocketByName( 'version' )]).Value:= StrToInt( P3DGLSLVersion );
           for j:= 0 to Inputs.Count -1 do
-            begin
-              Buffer.Defines.Add( Inputs[ j ].Name );
-              TP3DShaderNodeSocketShader( Inputs[ j ] ).Value:= Passes.GetShaderOutputFromNodes( Buffer );
-              if ( Buffer.Defines.Find( Self.Name, n )) then
-                Buffer.Defines.Delete( n );
-            end;
+            if ( Inputs[ j ] is TP3DShaderNodeSocketShader ) then
+              begin
+                Buffer.Defines.Add( Inputs[ j ].Name );
+
+                TP3DShaderNodeSocketShader( Inputs[ j ]).Value:= Passes.GetShaderOutputFromNodes( Buffer );
+                if ( Buffer.Defines.Find( Inputs[ j ].Name, n )) then
+                  Buffer.Defines.Delete( n );
+              end;
+          if ( Buffer.Defines.Find( Outputs[ i ].Name, n )) then
+            Buffer.Defines.Delete( n );
+          Buffer.Code:= TP3DShaderNodeSocket( Outputs[ i ]).GetOutput( Buffer );
+          extensions:= '';
+          for n:= 0 to Passes.Nodes.Count - 1 do
+            extensions += Passes.Nodes[ n ].Name + LineEnding;
+          P3DLog.LogInfoXML( Self, '<details><summary>Built ' + Buffer.Name +
+            ' from chunks <br/></summary> <details><summary>Loaded extensions</summary><div class="whitebox">' +
+            extensions + '</div></details><pre><code class="glsl">' + P3DTextToHTML( Buffer.Code ) +
+            '</code></pre></details>' );
           Compiled.Buffers.Add( Buffer );
         end;
+    WriteLn( Compiled.Buffers.Count, ' buffers created' );
   end;
 
 begin
@@ -536,7 +552,7 @@ begin
 
     CompileBuffers;
 
-    Compiled:= ShaderTree.Compile;
+    //Compiled:= ShaderTree.Compile;
 
     Passes.Free;
 
@@ -700,9 +716,9 @@ begin
       if ( Maps[ i ] is TP3DMaterialMapBase ) then
         with ( Maps[ i ] as TP3DMaterialMapBase ) do
           if ( TransformDynamic ) then
-            ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_TransformDynamic' ), 'TexCoordIndex', i )
+            ChangeSocketValueInt( ShaderTree.AddCopyEx( '50_map_texcoord_transform_dynamic' ), 'TexCoordIndex', i )
           else
-            ChangeSocketValueMat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_TransformFixed' ), 'TexCoordIndex', i ),
+            ChangeSocketValueMat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '50_map_texcoord_transform_fixed' ), 'TexCoordIndex', i ),
               'Transform', Transform );
 end;
 
@@ -745,8 +761,8 @@ var
   i: Integer;
   TexCoordsAdded: set of Byte;
 begin
-  ShaderTree.AddCopy( 'lib_maps' );
-  ShaderTree.AddCopy( 'Pass_Init' );
+  ShaderTree.AddCopy( '10_map_lib' );
+  ShaderTree.AddCopy( '10_map_pass_init' );
 
   TexCoordsAdded:= [];
   with ( Material ) do
@@ -754,10 +770,10 @@ begin
       begin
         if ( not ( Maps[ i ].TexChannel in TexCoordsAdded )) then
           begin
-            ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'TC_Init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
+            ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '10_map_texcoord_init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
             TexCoordsAdded:= TexCoordsAdded + [ Maps[ i ].TexChannel ];
           end;
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Map_Init' ), 'MapIndex', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '10_map_init' ), 'MapIndex', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
       end;
 end;
 
@@ -822,24 +838,24 @@ begin
   with ( Material ) do
     for i:= 0 to Maps.Count - 1 do
       begin
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_ReadF' ), 'Index', i ), 'TexCoordIndex', i );
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_ReadV' ), 'Index', i ), 'TexCoordIndex', i );
+        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_read_frag' ), 'Index', i ), 'TexCoordIndex', i );
+        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_read_vert' ), 'Index', i ), 'TexCoordIndex', i );
         if (( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor <> 0 ) or ( TP3DMaterialMapBase( Maps[ i ]).AlphaFactor <> 0 )) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
                          'Alpha', TP3DMaterialMapBase( Maps[ i ]).AlphaFactor ),
-                         ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+                         ShaderTree.AddCopyEx( '100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
         if ( TP3DMaterialMapBase( Maps[ i ]).NormalFactor <> 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
-          ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
+          ShaderTree.AddCopyEx( '100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
         if ( TP3DMaterialMapBase( Maps[ i ]).SpecularFactor <> 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
-          ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
+          ShaderTree.AddCopyEx( '100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
         if ( TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor <> 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( 'Pass_Displace' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor ),
-          ShaderTree.AddCopyEx( 'Pass_Combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_displace' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor ),
+          ShaderTree.AddCopyEx( '100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
       end;
 
-  ShaderTree.AddCopy( 'Pass_Mix' );
+  ShaderTree.AddCopy( '100_map_pass_mix' );
 end;
 
 
@@ -859,10 +875,14 @@ end;
 procedure TP3DMaterialModifierWorldTransform.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
 begin
   if ( Material.Instancing ) then
-    ShaderTree.AddCopy( 'Pass_WorldTransformInitInstance' )
-  else
-    ShaderTree.AddCopy( 'Pass_WorldTransformInit' );
-  ShaderTree.AddCopy( 'Pass_WorldTransform' );
+    begin
+      ShaderTree.AddCopy( '30_map_pass_world_transform_init_instanced' );
+      ShaderTree.AddCopy( '40_map_pass_world_transform_init_instanced_attrib' );
+      ShaderTree.AddCopy( '50_map_pass_world_transform_init_instanced_grid' );
+    end;
+  //else
+  //  ShaderTree.AddCopy( '30_map_pass_world_transform_init' );
+  ShaderTree.AddCopy( '30_map_pass_world_transform' );
 end;
 
 procedure TP3DMaterialModifierWorldTransform.PassToShader(Material: TP3DMaterialBase);
@@ -880,7 +900,7 @@ end;
 
 procedure TP3DMaterialModifierTransform.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
 begin
-  ShaderTree.AddCopy( 'Pass_Transform' );
+  ShaderTree.AddCopy( '5000_map_pass_view_transform' );
 end;
 
 procedure TP3DMaterialModifierTransform.PassToShader(Material: TP3DMaterialBase);
@@ -897,7 +917,7 @@ end;
 
 procedure TP3DMaterialModifierCombine.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
 begin
-  ShaderTree.AddCopy( 'Pass_Final' );
+  ShaderTree.AddCopy( '10000_map_pass_final' );
 end;
 
 procedure TP3DMaterialModifierCombine.PassToShader(Material: TP3DMaterialBase);
@@ -916,12 +936,12 @@ procedure TP3DMaterialModifierLightning.AddPass(ShaderTree: TP3DShaderNodeTree; 
 begin
   if ( not Material.Unlit ) then
     begin
-      ShaderTree.AddCopy( 'lib_common' );
-      ShaderTree.AddCopy( 'lib_lighting' );
-      ShaderTree.AddCopy( 'Lighting' );
+      ShaderTree.AddCopy( '1000_common_lib' );
+      ShaderTree.AddCopy( '1000_light_lib' );
+      ShaderTree.AddCopy( '1000_light_pass_calc_lighting' );
     end
   else
-    ShaderTree.AddCopy( 'Unlit' );
+    ShaderTree.AddCopy( '1000_light_pass_unlit' );
 end;
 
 procedure TP3DMaterialModifierLightning.PassToShader(Material: TP3DMaterialBase);
@@ -1082,6 +1102,7 @@ begin
   Owner.Materials.Add( Self );
 
   Maps:= TP3DMaterialMapList.Create;
+  Properties.Add( TP3DPropertyAccessDataBlockList.CreateField( 'Maps', @FMaps ));
 end;
 
 procedure TP3DMaterial.FastDestroy;

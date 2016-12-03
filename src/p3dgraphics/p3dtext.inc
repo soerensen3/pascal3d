@@ -35,6 +35,8 @@ const
   P3DSymbolCheck                 = '\';
   P3DSymbolTerrain               = ']';
   P3DSymbolArmature              = '^';
+  P3DSymbolClear                 = '_';
+  P3DSymbolGrid                  = '`';
 
 type
   TP3DFontManager = class;

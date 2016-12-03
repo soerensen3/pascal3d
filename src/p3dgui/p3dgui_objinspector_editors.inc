@@ -21,8 +21,6 @@ type
       property TypeLbl: TP3DLabel read FTypeLbl write FTypeLbl;
   end;
 
-  { TP3DOIEditorTransform }
-
   { TP3DOIEditorTransform3D }
 
   TP3DOIEditorTransform3D = class ( TP3DOIEditorGroup )
@@ -94,6 +92,32 @@ type
       property EditorTransform: TP3DOIEditorTransform3D read FEditorTransform write FEditorTransform;
       property EditorData: TP3DOIEditorDatablock read FEditorData write FEditorData;
   end;
+
+  { TP3DOIEditorPageGrid }
+
+  TP3DOIEditorPageGrid = class ( TP3DOIEditorPage )
+    private
+      FGridHeightEd: TP3DPropertyEditorInt;
+      FGridWidthEd: TP3DPropertyEditorInt;
+      FGridWorldUnitEd: TP3DPropertyEditorFloat;
+      FMeshList: TP3DPropertyEditorDataBlockList;
+
+    public
+      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
+      procedure OnMeshSelect( Sender: TP3DListView; var NewSelection: TP3DListItem );
+
+    published
+      property MeshList: TP3DPropertyEditorDataBlockList read FMeshList write FMeshList;
+      property GridWidthEd: TP3DPropertyEditorInt read FGridWidthEd write FGridWidthEd;
+      property GridHeightEd: TP3DPropertyEditorInt read FGridHeightEd write FGridHeightEd;
+      property GridWorldUnitEd: TP3DPropertyEditorFloat read FGridWorldUnitEd write FGridWorldUnitEd;
+  end;
+
 
   { TP3DOIEditorDataLight }
 
@@ -319,7 +343,7 @@ published
 
   TP3DOIEditorDataMaterialMaps = class ( TP3DOIEditorGroup )
     private
-      FMapsListView: TP3DListView;
+      FMapsListView: TP3DPropertyEditorDataBlockList;
       FMaterial: TP3DMaterial;
       FOnSelectionChange: TP3DListViewSelectionChangeEvent;
 
@@ -332,7 +356,7 @@ published
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
 
     published
-      property MapsListView: TP3DListView read FMapsListView write FMapsListView;
+      property MapsListView: TP3DPropertyEditorDataBlockList read FMapsListView write FMapsListView;
       property Material: TP3DMaterial read FMaterial write SetMaterial;
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read FOnSelectionChange write FOnSelectionChange;
   end;
@@ -410,6 +434,9 @@ published
       property EditorPageMaps: TP3DOIEditorPageMaps read FEditorPageMaps write FEditorPageMaps;
   end;
 
+var
+  TileGridSelIndex: Integer = 0;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -479,7 +506,10 @@ begin
           begin
             DataCombo.Caption:= Data.Name;
             DataCombo.TypeFilter:= TP3DDataBlock;
-            NameLbl.Caption:= Data.Name;
+            if ( Data.Owner = Owner ) then
+              NameLbl.Caption:= Data.Name
+            else
+              NameLbl.Caption:= Data.Owner.Name + '.' + Data.Name;
             TypeLbl.Caption:= Data.ClassName;
             FileNameLbl.Caption:= ExtractFileNameOnly( Owner.FileWatch.FileName ) + '/' + Data.DOMPath;
             //FileNameLbl.Caption:= ExtractFileName( Data.FileWatch.FileName );
@@ -677,6 +707,63 @@ begin
   Result:= inherited CreateButton(AParent, AMouseClick);
   Result.Caption:= P3DSymbolActor;
 end;
+
+{ TP3DOIEditorPageGrid }
+
+constructor TP3DOIEditorPageGrid.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  MeshList:= TP3DPropertyEditorDataBlockList.Create( nil, Self );
+  MeshList.Align:= alTop;
+  MeshList.Height:= 100;
+  MeshList.OnSelectionChange:= @OnMeshSelect;
+  GridWidthEd:= TP3DPropertyEditorInt.Create( nil, AddContainer( Self, 'Width ' ));
+  GridWidthEd.Align:= alClient;
+  GridHeightEd:= TP3DPropertyEditorInt.Create( nil, AddContainer( Self, 'Height ' ));
+  GridHeightEd.Align:= alClient;
+  GridWorldUnitEd:= TP3DPropertyEditorFloat.Create( nil, AddContainer( Self, 'GridWorldUnit ' ));
+  GridWorldUnitEd.Align:= alClient;
+end;
+
+procedure TP3DOIEditorPageGrid.Update;
+var
+  Grid: TP3DTileGrid;
+begin
+  inherited Update;
+  if ( Obj is TP3DTileGrid ) then
+    Grid:= TP3DTileGrid( Obj )
+  else if ( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DTileGrid ) then
+    Grid:= TP3DTileGrid( TP3DActor( Obj ).Data )
+  else
+    begin
+      MeshList.Prop:= nil;
+      GridWidthEd.Prop:= nil;
+      GridHeightEd.Prop:= nil;
+      GridWorldUnitEd.Prop:= nil;
+      exit;
+    end;
+  MeshList.Prop:= TP3DPropertyAccessDataBlockList( Grid.Properties.GetPropByName( 'Meshes' ));
+  GridWidthEd.Prop:= Grid.Properties.GetPropByName( 'Width' );
+  GridHeightEd.Prop:= Grid.Properties.GetPropByName( 'Height' );
+  GridWorldUnitEd.Prop:= Grid.Properties.GetPropByName( 'GridWorldUnit' );
+end;
+
+class function TP3DOIEditorPageGrid.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= ( AObj is TP3DTileGrid ) or (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DTileGrid ));
+end;
+
+function TP3DOIEditorPageGrid.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
+begin
+  Result:= inherited CreateButton(AParent, AMouseClick);
+  Result.Caption:= P3DSymbolGrid;
+end;
+
+procedure TP3DOIEditorPageGrid.OnMeshSelect(Sender: TP3DListView; var NewSelection: TP3DListItem);
+begin
+  TileGridSelIndex:= MeshList.Children.IndexOf( NewSelection );
+end;
+
 
 { TP3DOIEditorDataLight }
 
@@ -1173,14 +1260,15 @@ begin
   if FMaterial= AValue then Exit;
   FMaterial:= AValue;
 
-  MapsListView.Children.Clear( True );
+  {MapsListView.Children.Clear( True );
 
   if ( Assigned( Material )) then
     for Map in Material.Maps do
       if ( Assigned( Map.Map )) then
         MapsListView.Children.Add( Map.Map.Name, Map )
       else
-        MapsListView.Children.Add( '<Not defined>', nil );
+        MapsListView.Children.Add( '<Not defined>', nil );}
+  MapsListView.Prop:= TP3DPropertyAccessDataBlockList( Material.Properties.GetPropByName( 'Maps' ));
 end;
 
 procedure TP3DOIEditorDataMaterialMaps.Update;
@@ -1198,7 +1286,7 @@ begin
   inherited Create( AData, AParent );
   Caption:= 'Material Maps';
 
-  MapsListView:= TP3DListView.Create( AData, Self );
+  MapsListView:= TP3DPropertyEditorDataBlockList.Create( AData, Self );
   MapsListView.Align:= alTop;
   MapsListView.Height:= 100;
   MapsListView.OnSelectionChange:= @SelectionChange;

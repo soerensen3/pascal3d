@@ -82,6 +82,7 @@ var
 procedure P3DGraphicsInit;
 procedure P3DGraphicssFinish;
 function P3DCheckLastError( Sender: TObject; const AddMsg: String = '' ): Boolean; inline;
+procedure P3DDumpGraphicsInfo;
 
 implementation
 
@@ -122,51 +123,6 @@ begin
     end;
 end;
 
-{ TP3DMeshMaterialGroupList }
-
-function TP3DMeshMaterialGroupList.Find( Material: TP3DMaterial ): Integer;
-var
-  i: Integer;
-begin
-  Result:= -1;
-  for i:= 0 to Count - 1 do
-    if ( Items[ i ].Material = Material ) then
-      begin
-        Result:= i;
-        break;
-      end;
-end;
-
-{ TP3DRenderObject }
-
-constructor TP3DRenderObject.Create;
-begin
-  inherited Create;
-  Matrices:= TMat4List.Create;
-end;
-
-destructor TP3DRenderObject.Destroy;
-begin
-  Matrices.Free;
-  inherited Destroy;
-end;
-
-
-{ TP3DDataBlockList }
-
-function TP3DDataBlockList.DumpUsers: String;
-var
-  i: Integer;
-begin
-  Result:= '';
-
-  for i:= 0 to Count - 1 do
-    if ( i > 0 ) then
-      Result+= ', ' + Items[ i ].Name
-    else
-      Result+= Items[ i ].Name;
-end;
-
 
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dbuffers.inc}
@@ -194,6 +150,18 @@ end;
 
 {$INCLUDE p3dresource.inc}
 {$UNDEF IMPLEMENTATION}
+
+procedure P3DDumpGraphicsInfo;
+var
+  debuginfo: String;
+begin
+  debuginfo:= '<span>GPU vendor</span>' + glGetString( GL_VENDOR );
+  debuginfo+= '<br /><span>Renderer</span>' + glGetString( GL_RENDERER );
+  debuginfo+= '<br /><span>GL version</span>' + glGetString( GL_VERSION );
+  debuginfo+= '<br /><span>GLSL version</span>' + glGetString( GL_SHADING_LANGUAGE_VERSION );
+  debuginfo+= '<br /><details><summary>Extensions</summary><div class="whitebox">' + glGetString( GL_EXTENSIONS ) + '</div></details>';
+  P3DLog.LogInfoXML( nil, 'Initialized OpenGL <p class="messageheader">' + debuginfo + '</p>');
+end;
 
 procedure P3DGraphicsInit;
 begin

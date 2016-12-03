@@ -83,7 +83,12 @@ type
       property UserData: Pointer read FUserData write FUserData;
   end;
 
-  TP3DNodeList = specialize gP3DCustomObjectList < TP3DNode >;
+  { TP3DNodeList }
+
+  TP3DNodeList = class( specialize gP3DCustomObjectList < TP3DNode >)
+    public
+      function Find( Name: String ): Integer;
+  end;
 
   { TP3DNodeTree }
 

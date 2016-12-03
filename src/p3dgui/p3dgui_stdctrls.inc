@@ -121,6 +121,7 @@
 
   TP3DCustomValueEdit = class ( TP3DEdit )
     private
+      FFixedDigits: Integer;
       FPrecision: Integer;
       FStep: Single;
       FTransmission: Single;
@@ -158,6 +159,7 @@
       property Step: Single read FStep write FStep;
       property Transmission: Single read FTransmission write FTransmission;
       property Precision: Integer read FPrecision write FPrecision;
+      property FixedDigits: Integer read FFixedDigits write FFixedDigits;
   end;
 
   { TP3DEventValueEdit }
@@ -219,13 +221,13 @@
       function GetEd( Index: Integer ): TP3DEventValueEdit;
       function GetEdValueName( Sender: TP3DEventValueEdit ): String;
       function GetLabel( Index: Integer ): String;
-      function GetValue: TVec4;
+      function GetValue: TVec4; virtual;
       procedure SetEd( Index: Integer ; AValue: TP3DEventValueEdit );
       procedure SetEdCount(AValue: Integer);
       procedure SetLabel( Index: Integer ; AValue: String);
       procedure SetStep(AValue: Single);
       procedure SetTransmission(AValue: Single);
-      procedure SetValue(AValue: TVec4);
+      procedure SetValue(AValue: TVec4); virtual;
       function GetEdValue( Sender: TP3DEventValueEdit ): Single;
       procedure SetEdValue( Sender: TP3DEventValueEdit; AValue: Single );
 
@@ -420,7 +422,7 @@ procedure TP3DCustomValueEdit.SetTyping(AValue: Boolean);
 begin
   if FTyping=AValue then Exit;
   FTyping:=AValue;
-  Text:= FormatFloat( '0.0' + DupeString( '#', Precision ), Value );
+  Text:= FormatFloat( '0.' + DupeString( '0', FixedDigits ) + DupeString( '#', Precision - FixedDigits ), Value );
 end;
 
 function TP3DCustomValueEdit.GetValueName: String;
@@ -432,7 +434,7 @@ procedure TP3DCustomValueEdit.UpdateValueText( AValue: Single );
 begin
   if ( Assigned( FValueText )) then
     FValueText.Free;
-  FValueText:= TP3DTextBmp.CreateSimple( FormatFloat( '0.0' + DupeString( '#', Precision ), AValue ), P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
+  FValueText:= TP3DTextBmp.CreateSimple( FormatFloat( '0.' + DupeString( '0', FixedDigits ) + DupeString( '#', Precision - FixedDigits ), AValue ), P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
   FValueCached:= AValue;
 end;
 
@@ -469,7 +471,8 @@ begin
   UpdateNameText( GetValueName );
   FStep:= 0.1;
   FTransmission:= 0.1;
-  FPrecision:= 2;
+  FPrecision:= 3;
+  FFixedDigits:= 1;
 end;
 
 destructor TP3DCustomValueEdit.Destroy;
@@ -1347,7 +1350,7 @@ begin
     P:= vec2( 0 );
   Canvas.Font.Name:= 'Pascal3D-Symbols';
   Canvas.RenderText( P3DSymbolTriangleDown, P, FDownSymbol );
-  Canvas.Font.Name:= 'RobotoCondensed-Light';
+  Canvas.Font.Name:= 'OpenSans-Semibold';//'RobotoCondensed-Light';
 end;
 
 procedure TP3DComboBox.DropDown;

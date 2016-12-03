@@ -1,5 +1,5 @@
 ---
-node: lib_lighting
+node: 1000_light_lib
 ---
 ```{name="CODE", type="shader", restrict="fshader,declaration"}
 vec3 transformToTangentSpace( vec3 v ){
@@ -110,7 +110,7 @@ void util_directionalLight( in int i,
 ```
 
 ---
-node: Lighting
+node: 1000_light_pass_calc_lighting
 ---
 ```{name="CODE", type="shader", restrict="fshader,main"}
   vec3 shadow = vec3( 0 );
@@ -126,7 +126,7 @@ node: Lighting
 ```
 
 ---
-node: Unlit
+node: 1000_light_pass_unlit
 ---
 ```{name="CODE", type="shader", restrict="fshader,main"}
   vec3 shadow = vec3( 1 );

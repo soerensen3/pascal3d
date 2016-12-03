@@ -13,6 +13,7 @@ type
     FLogFile: TXMLDocument;
 
     procedure SetFileName( AValue: String );
+    function CreateMessageHeader( Sender: TObject ): TDOMElement;
 
   public
     constructor Create;
@@ -31,17 +32,13 @@ type
   end;
 
 const
-  P3DLogStylesheet =
-  '<xsl:stylesheet id="stylesheet"' + LineEnding +
-  '                version="1.0"' + LineEnding +
-  '                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">' + LineEnding +
-  '  <xsl:template match="xsl:stylesheet"/>' + LineEnding +
-  '  <xsl:template match="/">' + LineEnding +
-  '  <html>' + LineEnding +
+  P3DLogOutput =
+  '<html>' + LineEnding +
   '  <head>' + LineEnding +
   '    <link rel="stylesheet" href="tomorrow.css" />' + LineEnding +
-  '    <script src="highlight.pack.js"/>' + LineEnding +
-  '    <script>hljs.initHighlightingOnLoad();</script>' + LineEnding +
+  '    <script src="highlight.pack.js"></script>' + LineEnding +
+  '    <script src="highlightjs-line-numbers.min.js"></script>' + LineEnding +
+  '    <script>hljs.initHighlightingOnLoad();hljs.initLineNumbersOnLoad();</script>' + LineEnding +
   '     <style>' + LineEnding +
   '      table{' +  LineEnding +
   '        border-collapse: separate;' +  LineEnding +
@@ -51,7 +48,8 @@ const
   '      h1{' + LineEnding +
   '        font-family: Open Sans, Arial;' + LineEnding +
   '        font-size: 32px;' + LineEnding +
-  '        border-bottom: 4px solid black;' + LineEnding +
+  '        border-bottom: 4px solid sienna;' + LineEnding +
+  '        background-color: linen;' + LineEnding +
   '        box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.1);' + LineEnding +
   '      }' + LineEnding +
   '      td,th{' + LineEnding +
@@ -60,34 +58,93 @@ const
   '        text-align:left;' + LineEnding +
   '        vertical-align: top;' + LineEnding +
   '      }' + LineEnding +
+  '      .hljs{' + LineEnding +
+  '        border-bottom: 2px solid darkkhaki;' + LineEnding +
+  '      }' + LineEnding +
+  '      .messageheader{' + LineEnding +
+  '        background-color: khaki;' + LineEnding +
+  '        border-bottom: 2px solid darkkhaki;' + LineEnding +
+  '      }' + LineEnding +
+  '      .messageheader span{' + LineEnding +
+  '        padding-right: 10px;' + LineEnding +
+  '        padding-left: 10px;' + LineEnding +
+  '        font-weight: bold;' + LineEnding +
+  '        color: sienna;' + LineEnding +
+  '      }' + LineEnding +
+  '      .whitebox{' + LineEnding +
+  '        border-bottom: 2px solid darkkhaki;' + LineEnding +
+  '        background-color: white;' + LineEnding +
+  '        padding: 5px;' + LineEnding +
+  '      }' + LineEnding +
   '      .info{' + LineEnding +
   '        background-color: aliceblue;' + LineEnding +
   '      }' + LineEnding +
+  '      .info td{' + LineEnding +
+  '        border-bottom: 5px solid slateblue;' + LineEnding +
+  '      }' + LineEnding +
   '      .exception{' + LineEnding +
-  '        background-color: rgb( 255, 87, 51 );' + LineEnding +
+  '        background-color: salmon;' + LineEnding +
+  '      }' + LineEnding +
+  '      .exception td{' + LineEnding +
+  '        border-bottom: 5px solid crimson;' + LineEnding +
   '      }' + LineEnding +
   '     </style>' + LineEnding +
   '  </head>' + LineEnding +
   '  <body>' + LineEnding +
-  '  <h1>Logfile</h1>' + LineEnding +
-  '  <table>' + LineEnding +
-  '  <tr><th>Time</th><th>Message</th></tr>' + LineEnding +
-  '  <xsl:apply-templates />' + LineEnding +
-  '  </table>' + LineEnding +
+  '    <h1></h1>' + LineEnding +
+  '    <table>' + LineEnding +
+  '      <tr><th>Time</th><th>Message</th></tr>' + LineEnding +
+  '    </table>' + LineEnding +
   '  </body>' + LineEnding +
-  '  </html>' + LineEnding +
-  '  </xsl:template>' + LineEnding +
-  '  <xsl:template match="info">' + LineEnding +
-  '    <tr class="info"><td><xsl:value-of select="@Time"/></td><td><xsl:value-of select="."/></td></tr>' + LineEnding +
-  '  </xsl:template>' + LineEnding +
-  '  <xsl:template match="exception">' + LineEnding +
-  '    <tr class="exception"><td><xsl:value-of select="@Time"/></td><td><xsl:value-of select="."/></td></tr>' + LineEnding +
-  '  </xsl:template>' + LineEnding +
-  '</xsl:stylesheet>';
+  '</html>';
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+procedure WriteHTML( Element: TDOMNode; const AFileName: String );
+var
+  F: TextFile;
+
+  procedure WriteNode( Element: TDOMNode );
+  var
+    i: Integer;
+  begin
+    if ( not Assigned( Element )) then
+      exit;
+    if ( Element.NodeName = '#text' ) then
+      Write( F, Element.TextContent )
+    else
+      begin
+        Write( F, '<' + Element.NodeName );
+        if ( Assigned( Element.Attributes )) then
+          for i:= 0 to Element.Attributes.Length - 1 do
+            Write( F, Format( ' %s="%s"', [ Element.Attributes[ i ].NodeName, Element.Attributes[ i ].NodeValue ]));
+
+        if ( Element.ChildNodes.Count > 0 ) then
+          begin
+            Write( F, '>' );
+            for i:= 0 to Element.ChildNodes.Count - 1 do
+              WriteNode( Element.ChildNodes[ i ]);
+            Write( F, '</' + Element.NodeName + '>' );
+          end
+        else
+          case ( Element.NodeName ) of
+            'br', 'img', 'link': Write( F, '>' );
+          else
+            Write( F, '></', Element.NodeName, '>' );
+          end;
+      end;
+  end;
+
+begin
+  Assign( F, AFileName );
+  Rewrite( F );
+  Write( F, '<!DOCTYPE html>' );
+  if ( Assigned( Element )) then
+    WriteNode( Element );
+  CloseFile( F );
+end;
 
 { TP3DLogger }
 
@@ -102,19 +159,38 @@ begin
   WriteFile();
 end;
 
+function TP3DLogger.CreateMessageHeader( Sender: TObject ): TDOMElement;
+var
+  Txt: string;
+  N: TComponentName;
+  S: TStringStream;
+begin
+  Result:= LogFile.CreateElement( 'p' );
+  Result.AttribStrings[ 'class' ]:= 'messageheader';
+
+  if ( Sender is TP3DObject ) then
+    N:= TP3DObject( Sender ).Name + ': '
+  else
+    N:= '';
+
+  Txt:= '<span>Unit</span> ' + Sender.UnitName + ' <span>Object</span> ' + N + Sender.ClassName;
+  S:= TStringStream.Create( Txt );
+  ReadXMLFragment( Result, S );
+  S.Free;
+end;
+
 constructor TP3DLogger.Create;
 var
-  Instr: TDOMProcessingInstruction;
   F: TStringStream;
 begin
   FLogFile:= TXMLDocument.Create;
-  Instr:= FLogFile.CreateProcessingInstruction( 'xml-stylesheet', 'type="text/xml" href="#stylesheet"' );
-  LogFile.AppendChild( Instr );
-  Level:= FLogFile.CreateElement( 'p3dlog');
-  F:= TStringStream.Create( P3DLogStylesheet );
-  XMLRead.ReadXMLFragment( Level, F );
+  F:= TStringStream.Create( P3DLogOutput );
+  XMLRead.ReadXMLFile( FLogFile, F );
   F.Free;
-  LogFile.AppendChild( Level );
+  Level:= TDOMElement( FLogFile.DocumentElement.FindNode( 'body' ).FindNode( 'h1'));
+  Level.AppendChild( LogFile.CreateTextNode( 'Logfile for ' + ExtractFileName( ParamStr( 0 ))));
+
+  Level:= TDOMElement( FLogFile.DocumentElement.FindNode( 'body' ).FindNode( 'table'));
 end;
 
 destructor TP3DLogger.Destroy;
@@ -126,7 +202,7 @@ end;
 procedure TP3DLogger.WriteFile;
 begin
   if ( FileName <> '' ) then
-    XMLWrite.WriteXMLFile( LogFile, FileName );
+    WriteHTML( LogFile.DocumentElement, FileName ); //XMLWrite.WriteXMLFile( LogFile, FileName );
 end;
 
 procedure TP3DLogger.AddChild(ADOM: TDOMElement);
@@ -142,58 +218,75 @@ end;
 
 function TP3DLogger.LogInfoXML(Sender: TObject; Message: String): TDOMElement;
 var
-  Node: TDOMElement;
+  Node, cell: TDOMElement;
   NodeText: TDOMText;
   S: TStringStream;
 begin
-  Node:= LogFile.CreateElement( 'td' );
-  Node.AttribStrings[ 'Time' ]:= IntToStr( SDL_GetTicks );
+  Node:= LogFile.CreateElement( 'tr' );
+  Node.SetAttribute( 'class', 'info' );
+  cell:= LogFile.CreateElement( 'td' );
+  NodeText:= LogFile.CreateTextNode( IntToStr( SDL_GetTicks ));
+  cell.AppendChild( NodeText );
+  Node.AppendChild( cell );
+
+  cell:= LogFile.CreateElement( 'td' );
+
   if ( Assigned( Sender )) then
-    begin
-      Node.AttribStrings[ 'Unit' ]:= Sender.UnitName;
-      Node.AttribStrings[ 'Sender' ]:= Sender.ClassName;
-    end;
-  //Message:= StringReplace( Message, LineEnding, '<br />', [ rfReplaceAll ]);
+     cell.AppendChild( CreateMessageHeader( Sender ));
+
   S:= TStringStream.Create( Message );
-  ReadXMLFragment( Node, S );
+  ReadXMLFragment( cell, S );
   S.Free;
+  Node.AppendChild( cell );
   AddChild( Node );
   Result:= Node;
 end;
 
 function TP3DLogger.LogInfo(Sender: TObject; Message: String): TDOMElement;
 var
-  Node: TDOMElement;
+  Node, cell, header: TDOMElement;
   NodeText: TDOMText;
+  N: TComponentName;
 begin
-  Node:= LogFile.CreateElement( 'info' );
-  Node.AttribStrings[ 'Time' ]:= IntToStr( SDL_GetTicks );
+  Node:= LogFile.CreateElement( 'tr' );
+  Node.SetAttribute( 'class', 'info' );
+  cell:= LogFile.CreateElement( 'td' );
+  NodeText:= LogFile.CreateTextNode( IntToStr( SDL_GetTicks ));
+  cell.AppendChild( NodeText );
+  Node.AppendChild( cell );
+
+  cell:= LogFile.CreateElement( 'td' );
+
   if ( Assigned( Sender )) then
-    begin
-      Node.AttribStrings[ 'Unit' ]:= Sender.UnitName;
-      Node.AttribStrings[ 'Sender' ]:= Sender.ClassName;
-    end;
-  //Message:= StringReplace( Message, LineEnding, '<br />', [ rfReplaceAll ]);
+     cell.AppendChild( CreateMessageHeader( Sender ));
+
   NodeText:= LogFile.CreateTextNode( Message );
-  Node.AppendChild( NodeText );
+  cell.AppendChild( NodeText );
+  Node.AppendChild( cell );
   AddChild( Node );
   Result:= Node;
 end;
 
 function TP3DLogger.LogException(Sender: TObject; Message: String): TDOMElement;
 var
-  Node: TDOMElement;
+  Node, cell: TDOMElement;
   NodeText: TDOMText;
 begin
-  Node:= LogFile.CreateElement( 'exception' );
-  Node.AttribStrings[ 'Time' ]:= IntToStr( SDL_GetTicks );
+  Node:= LogFile.CreateElement( 'tr' );
+  Node.SetAttribute( 'class', 'exception' );
+  cell:= LogFile.CreateElement( 'td' );
+  NodeText:= LogFile.CreateTextNode( IntToStr( SDL_GetTicks ));
+  cell.AppendChild( NodeText );
+  Node.AppendChild( cell );
+
+  cell:= LogFile.CreateElement( 'td' );
+
   if ( Assigned( Sender )) then
-    begin
-      Node.AttribStrings[ 'Unit' ]:= Sender.UnitName;
-      Node.AttribStrings[ 'Sender' ]:= Sender.ClassName;
-    end;
+     cell.AppendChild( CreateMessageHeader( Sender ));
+
   NodeText:= LogFile.CreateTextNode( Message {StringReplace( Message, LineEnding, '<br />', [ rfReplaceAll ])});
-  Node.AppendChild( NodeText );
+  cell.AppendChild( NodeText );
+  Node.AppendChild( cell );
   AddChild( Node );
   Result:= Node;
 end;

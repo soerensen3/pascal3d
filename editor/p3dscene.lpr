@@ -41,7 +41,7 @@ begin
   //SetHeapTraceOutput('heap.trc');
   P3DEventsInit;
   P3DUtilsInit;
-  P3DLog.FileName:= 'p3dscene.xml';
+  P3DLog.FileName:= 'p3dscene.html';
   P3DGraphicsInit;
   P3DApplication.MainWindow:= TP3DWindow.Create;
   //P3DApplication.OnInit:= @Init;

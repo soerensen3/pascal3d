@@ -191,6 +191,8 @@ var
     case Name of
       'node':
         begin
+          if ( GlobalLibrary.Nodes.Find( Value ) > -1 ) then
+            Error( 'A node with the name ' + Value + ' already exists!' );
           GlobalActiveNode:= TP3DShaderNode.Create;
           GlobalActiveNode.Name:= Value;
           GlobalActiveOutput:= nil;

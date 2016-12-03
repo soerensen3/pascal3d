@@ -1,5 +1,5 @@
 ---
-node:lib_common
+node: 1000_common_lib
 ---
 
 ```{name="CODE", type="shader", restrict="declaration"}

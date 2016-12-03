@@ -12,6 +12,6 @@ node: pass_terrainshift
 input: {name="MapIndex", type="int"}
 ---
 ```{name="CODE", type="shader", restrict="vshader,main"}
-vTexCoord$MapIndex$.s = ( vTexCoord$MapIndex$.x/uvMultiplier+float(uvX))*uvMultiplier;
-vTexCoord$MapIndex$.t = ( vTexCoord$MapIndex$.y/uvMultiplier+float(uvY))*uvMultiplier;
+  vTexCoord$MapIndex$.s = ( vTexCoord$MapIndex$.x/uvMultiplier+float(uvX))*uvMultiplier;
+  vTexCoord$MapIndex$.t = ( vTexCoord$MapIndex$.y/uvMultiplier+float(uvY))*uvMultiplier;
 ```

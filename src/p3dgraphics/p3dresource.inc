@@ -23,6 +23,7 @@ type
       FScenes: TP3DSceneList;
       FShaders: TP3DShaderList;
       FTextures: TP3DTextureList;
+      function GetName: String;
 
     public
       constructor Create;
@@ -62,6 +63,7 @@ type
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       property DOMFile: TXMLDocument read FDOMFile write FDOMFile;
       property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
+      property Name: String read GetName;
   end;
 
   TP3DCustomDataList = specialize gP3DCustomObjectList < TP3DData >;
@@ -109,6 +111,11 @@ type
 {$IFDEF IMPLEMENTATION}
 
 { TP3DData }
+
+function TP3DData.GetName: String;
+begin
+  Result:= ExtractFileName( FileWatch.FileName );
+end;
 
 constructor TP3DData.Create;
 begin
@@ -547,6 +554,21 @@ destructor TP3DDataBlockCache.Destroy;
 begin
   Clear( True );
   inherited Destroy;
+end;
+
+{ TP3DDataBlockList }
+
+function TP3DDataBlockList.DumpUsers: String;
+var
+  i: Integer;
+begin
+  Result:= '';
+
+  for i:= 0 to Count - 1 do
+    if ( i > 0 ) then
+      Result+= ', ' + Items[ i ].Name
+    else
+      Result+= Items[ i ].Name;
 end;
 
 

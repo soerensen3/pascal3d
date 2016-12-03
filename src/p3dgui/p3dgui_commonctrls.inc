@@ -158,6 +158,7 @@ type
       function ItemAtPos(p: TVec2): TP3DListItem;
 
       procedure Draw; override;
+      function DrawListItem( p: TVec2; Node: TP3DListItem ): TVec2; virtual;
       procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
 
     published
@@ -772,7 +773,7 @@ procedure TP3DListView.Draw;
 
 var
   Child: TP3DListItem;
-  p: TVec2;
+  p, p2: TVec2;
   MaxX: Float;
 
 begin
@@ -781,7 +782,11 @@ begin
   p:= vec2( ClientRect.Left + 5, ClientRect.Top + 5 );
   MaxX:= 0.0;
   for Child in Children do
-    p:= DrawList( p, Child, MaxX );
+    begin
+      p2:= DrawListItem( p, Child );
+      p.y:= p2.y;
+      MaxX:= max( MaxX, p2.x );
+    end;
 
   if ( MaxX > 0 ) then
     ScrollBarH.PageSize:= ( ClientRect.Width - ScrollBarWidth - 10 ) / ( MaxX )
@@ -796,6 +801,30 @@ begin
   if ( ScrollBarV.PageSize = 1 ) then
     Canvas.Scroll.Y:= 0;
   ScrollBarV.Max:= p.Y * ( 1 - ScrollBarV.PageSize );
+end;
+
+function TP3DListView.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;
+begin
+  Node.FRenderPos:= p;
+  if ( not Assigned( Node.Text )) then
+    Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
+  Canvas.Font.Color:= Accent900;
+  if ( Node = Selection ) then
+    begin
+      Canvas.Font.Color:= Accent50;
+      Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
+        Accent900, Accent400, Accent600, Accent900 );
+        //Preset.OutlineColor, vec4( Preset.OutlineColor.xyz, 0 ), vec4( Preset.OutlineColor.xyz, 0 ), Preset.OutlineColor );
+    end;
+  if ( ShowSymbols ) then
+    begin
+      if ( not Assigned( Node.Symbol )) then
+        Canvas.GetValidText( Node.SymbolText, Node.Symbol, P3DFontManager[ SymbolsFontName, Font.Size ]);
+      Canvas.RenderText( Node.Symbol, p );
+    end;
+  Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * Ord( ShowSymbols ));
+  Result.x:= p.x + Font.Size * Ord( ShowSymbols ) + Node.Text.Width;
+  Result.y:= p.y + Node.Text.Height;
 end;
 
 procedure TP3DListView.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -1014,6 +1043,8 @@ procedure TP3DTreeViewActors.Update;
               Parent[ n ].SymbolText:= P3DSymbolTexture
             else if ( Item.Data is TP3DArmature ) then
               Parent[ n ].SymbolText:= P3DSymbolArmature
+            else if ( Item.Data is TP3DTileGrid ) then
+              Parent[ n ].SymbolText:= P3DSymbolGrid
             //else if ( Item.Data is TP3DData ) then
             //  Parent[ n ].SymbolText:= TP3DSymbolLibrary
             else;

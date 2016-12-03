@@ -158,7 +158,7 @@ begin
   inherited;
   Size:= 18;
   Color:= vec4( 0, 0, 0, 1 );
-  Name:= 'RobotoCondensed-Light';
+  Name:= 'OpenSans-Regular';//'RobotoCondensed-Light';
 end;
 
 

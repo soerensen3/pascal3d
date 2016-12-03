@@ -6,7 +6,7 @@ input: {name="declaration", type="shader"}
 input: {name="main", type="shader"}
 ---
 ```{name="vshader", type="shader"}
-#version $version$;
+#version $version$
 $extensions$
 $declaration$
 void main(){
@@ -15,7 +15,7 @@ $main$
 ```
 
 ```{name="fshader", type="shader"}
-#version $version$;
+#version $version$
 $extensions$
 $declaration$
 void main(){

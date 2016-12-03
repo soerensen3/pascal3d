@@ -255,6 +255,8 @@ begin
 
   SDL_GL_SetSwapInterval( 0 );
 
+  P3DDumpGraphicsInfo;
+
   UpdateViewport;
 end;
 

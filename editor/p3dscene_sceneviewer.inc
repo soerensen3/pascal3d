@@ -1,6 +1,6 @@
 {$IFDEF INTERFACE}
 
-  TEditMode = ( emDefault, emGrab, emRotate, emScale );
+  TEditMode = ( emDefault, emGrab, emRotate, emScale, emTileGrid );
   TAxisMode = ( amScreen, amGlobal, amLocal );
   TAxisLock = ( alNone, alX, alY, alZ, alXY, alXZ, alYZ );
 
@@ -91,6 +91,32 @@
       procedure CheckInput; override;
   end;
 
+  { TP3DSceneEditModeTileGrid }
+
+  TP3DSceneEditModeTileGrid = class ( TP3DSceneEditModeDefault )
+    private
+      FBrushGridPos: TIVec2;
+      FBrushIndex: Integer;
+      FBrushPos: TVec3;
+      FCanPaint: Boolean;
+      FGrid: TP3DTileGrid;
+
+      function GetBrushIndex: Integer;
+      procedure SetBrushPos(AValue: TVec3);
+
+    public
+      procedure AfterRender; override;
+      function StatusText: String; override;
+      procedure CheckInput; override;
+      procedure Paint;
+
+      property Grid: TP3DTileGrid read FGrid write FGrid;
+      property BrushPos: TVec3 read FBrushPos write SetBrushPos;
+      property BrushGridPos: TIVec2 read FBrushGridPos;
+      property CanPaint: Boolean read FCanPaint;
+      property BrushIndex: Integer read GetBrushIndex;
+  end;
+
   { TP3DScenePanel }
 
   TP3DScenePanel = class( TP3DSceneViewer )
@@ -149,6 +175,7 @@ var
   EditModeGrab: TP3DSceneEditModeGrab;
   EditModeScale: TP3DSceneEditModeScale;
   EditModeRotate: TP3DSceneEditModeRotate;
+  EditModeTileGrid: TP3DSceneEditModeTileGrid;
 
 {$ENDIF}
 
@@ -164,6 +191,8 @@ begin
     EditModeScale:= TP3DSceneEditModeScale.Create( SceneView );
   if ( not Assigned( EditModeRotate )) then
     EditModeRotate:= TP3DSceneEditModeRotate.Create( SceneView );
+  if ( not Assigned( EditModeTileGrid )) then
+    EditModeTileGrid:= TP3DSceneEditModeTileGrid.Create( SceneView );
 end;
 
 procedure DestroyEditModes;
@@ -172,6 +201,7 @@ begin
   FreeAndNil( EditModeGrab );
   FreeAndNil( EditModeScale );
   FreeAndNil( EditModeRotate );
+  FreeAndNil( EditModeTileGrid );
 end;
 
 procedure CreateEditorScenes;
@@ -188,9 +218,99 @@ begin
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneLamp:= P3DData.Libraries[ n ].Scenes[ 0 ];
   EditorSceneLampMaterial:= TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]);
+end;
 
+{ TP3DSceneEditModeTileGrid }
 
+procedure TP3DSceneEditModeTileGrid.SetBrushPos(AValue: TVec3);
+var
+  p: TVec2;
+begin
+  if FBrushPos=AValue then Exit;
+  FBrushPos:=AValue;
+  p:= ( BrushPos.xy - ScenePanel.Selection.Position.xy ) / Grid.GridWorldUnit;
+  FBrushGridPos:= ivec2( round( p.x ), round( p.y ));
+  FCanPaint:= ( InRange( BrushGridPos.X, 0, Grid.Width - 1 ) and InRange( BrushGridPos.Y, 0, Grid.Height - 1 ));
+end;
 
+function TP3DSceneEditModeTileGrid.GetBrushIndex: Integer;
+begin
+  Result:= p3dgui.TileGridSelIndex;
+end;
+
+procedure TP3DSceneEditModeTileGrid.AfterRender;
+var
+  h_sz, brpos: TVec3;
+  col: TVec4;
+begin
+  if ( not Assigned( ScenePanel.Selection )) then
+    exit;
+
+  glDisable( GL_DEPTH_TEST );
+  ScenePanel.Cam.PassToShader;
+  //ScenePanel.Canvas3D.Material;
+  ScenePanel.Canvas3D.View:= ScenePanel.Cam.View;
+  ScenePanel.Canvas3D.Proj:= ScenePanel.Cam.Proj;
+  ScenePanel.Canvas3D.Lock;
+
+    h_sz:= vec3( 0.5, 0.5, 0 ) * Grid.GridWorldUnit;
+    brpos:= vec3( BrushGridPos.xy, 0 ) * Grid.GridWorldUnit;
+    if ( InRange( BrushGridPos.X, 0, Grid.Width - 1 ) and InRange( BrushGridPos.Y, 0, Grid.Height - 1 )) then
+      col:= vec4( Accent500.xyz, 0.7 )
+    else
+      col:= vec4( Red500.xyz, 0.7 );
+    ScenePanel.Canvas3D.RenderLineRect( brpos - h_sz, brpos + h_sz, vec4( col.xyz, 1 ));
+    ScenePanel.Canvas3D.RenderRect( brpos - h_sz, brpos + h_sz, col );
+    ScenePanel.Canvas3D.RenderLineRect( ScenePanel.Selection.Position - h_sz,
+                                        ScenePanel.Selection.Position - h_sz +
+                                          vec3( Grid.Width, Grid.Height, 0 ) * Grid.GridWorldUnit,
+                                          Accent300 );
+    ScenePanel.Canvas3D.RenderRect( ScenePanel.Selection.Position - h_sz,
+                                    ScenePanel.Selection.Position - h_sz +
+                                          vec3( Grid.Width, Grid.Height, 0 ) * Grid.GridWorldUnit,
+                                          vec4( Accent300.xyz, 0.3 ));
+  ScenePanel.Canvas3D.Unlock();
+  glEnable( GL_DEPTH_TEST );
+end;
+
+function TP3DSceneEditModeTileGrid.StatusText: String;
+begin
+  Result:= 'Grid Paint Mode'; //inherited StatusText;
+end;
+
+procedure TP3DSceneEditModeTileGrid.CheckInput;
+var
+  ray_dir, ray_pos: TVec3;
+  t: Float;
+begin
+  inherited CheckInput;
+
+  if ( not Assigned( ScenePanel.Selection )) then
+    exit;
+
+  ray_pos:= unproject( vec2( P3DInput.Mouse.X - ScenePanel.Canvas3D.Left, P3DInput.Mouse.Y - ScenePanel.Canvas3D.Top ),
+                       ScenePanel.Cam.View, ScenePanel.Cam.Proj, ScenePanel.Canvas3D.Width, ScenePanel.Canvas3D.Height, ray_dir );
+  if ( ray_dir.Z <> 0 ) then
+    t:= - ( ray_pos.z + ScenePanel.Selection.Position.z ) / ray_dir.z
+  else
+    t:= 0;
+  BrushPos:= ray_pos + ray_dir * t;
+
+  if (( gcisMouseBtn1Down in ScenePanel.InputState ) and ( InRange( BrushGridPos.X, 0, Grid.Width - 1 )) and ( InRange( BrushGridPos.Y, 0, Grid.Height - 1 ))) then
+    Paint;
+
+  if ( P3DInput.Keyboard.DKeys[ P3DK_F2 ] = ksPressed ) then
+    Grid.UpdateArrays;
+end;
+
+procedure TP3DSceneEditModeTileGrid.Paint;
+begin
+  if ( CanPaint ) then
+    begin
+      if ( InRange( BrushIndex, 0, Grid.Meshes.Count - 1 )) then
+        Grid.IndexAt[ BrushGridPos.X, BrushGridPos.Y ]:= BrushIndex;
+      FCanPaint:= False;
+    end;
 end;
 
 { TP3DSceneEditModeScale }
@@ -351,8 +471,6 @@ begin
 end;
 
 procedure TP3DSceneEditModeDefault.CheckInput;
-var
-  x, y, z: LongInt;
 begin
   if ( ScenePanel.EditMode in [ emGrab, emRotate, emScale ]) then
     begin
@@ -571,12 +689,18 @@ begin
         emGrab: FEditor:= EditModeGrab;
         emRotate: FEditor:= EditModeRotate;
         emScale: FEditor:= EditModeScale;
+        emTileGrid:
+          begin
+            FEditor:= EditModeTileGrid;
+            if ( Selection is TP3DActor ) and ( Selection.Data is TP3DTileGrid ) then
+              EditModeTileGrid.Grid:= TP3DTileGrid( Selection.Data );
+          end;
       end;
 
       //TODO: Repair
       //n:= FRenderList.Find( Selection );
       //if ( n >= 0 ) then
-      //  Editor.TransMat:= FRenderList[ n ].Matrix;
+      Editor.TransMat:= Selection.MatrixFinal; //FRenderList[ n ].Matrix;
       Editor.MousePosInitial:= vec2( -1 );
       Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
 
@@ -594,7 +718,7 @@ begin
   else
     DataView.Selection:= nil;
 
-  if ( Assigned( Selection )) then
+  if ( Assigned( Editor ) and Assigned( Selection )) then
     Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
 end;
 
@@ -695,6 +819,12 @@ begin
     Editor.CancelTransform;
   if ( P3DInput.Keyboard.DKeysLayout[ P3DK_RETURN ] = ksPressed ) then
     EditMode:= emDefault;
+  if ( P3DInput.Keyboard.DKeysLayout[ P3DK_TAB ] = ksPressed ) then
+    begin
+      if ( Selection is TP3DActor ) and ( TP3DActor( Selection ).Data is TP3DTileGrid ) then
+        EditMode:= emTileGrid;
+
+    end;
 
   Editor.CheckInput;
 end;
@@ -705,7 +835,7 @@ begin
     Editor.MousePosInitial:= vec2( x, y );
   Editor.MouseDelta:= ( vec2( X, Y ) - Editor.MousePosInitial ) * 0.05;
   Editor.MousePos:= vec2( X, Y );
-  if ( EditMode = emDefault ) then
+  if ( EditMode in [ emDefault, emTileGrid ]) then
     inherited MouseMove( X, Y );
 {  if (( Assigned( Selection )) and ( EditMode <> emDefault )) then
     begin
@@ -750,6 +880,7 @@ begin
           begin
             {c:= ( FCam.Proj * FCam.View * vec4( Selection.Position, 1 )).xy;
             c:= c * vec2( ClientRect.Width, ClientRect.Height );
+
             //Angle:= arctan(( Y - Canvas.Height / 2 ) / ( X - Canvas.Width / 2 )) / deg2rad;
             if ( AxisLock in [ alX, alYZ ]) then
               Selection.RotateAroundGlobalAxis( AxisX, Angle );
@@ -832,6 +963,7 @@ function TP3DScenePanel.GetSelectionCenter: TVec3;
 var
   n: Integer;
 begin
+  Result:= vec3( 0 );
   {n:= RenderList.Find( Selection );
   if ( n >= 0 ) then
     Result:= RenderList[ n ].Matrix.Row[ 3 ].xyz

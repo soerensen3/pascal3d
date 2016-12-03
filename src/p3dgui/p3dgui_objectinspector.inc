@@ -92,6 +92,7 @@ type
       property Scrollbar: TP3DScrollBar read FScrollbar write FScrollbar;
   end;
 
+  {$INCLUDE p3dgui_propertyeditor.inc}
   {$INCLUDE p3dgui_objinspector_editors.inc}
 {$ENDIF}
 
@@ -252,6 +253,7 @@ begin
   AddPage( TP3DOIEditorPageCamera.Create( nil, Container ));
   with ( AddPage( TP3DOIEditorPageMaterial.Create( nil, Self )) as TP3DOIEditorPageMaterial ) do
     EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( nil, Container )));
+  AddPage( TP3DOIEditorPageGrid.Create( nil, Container ));
 end;
 
 destructor TP3DObjectInspector.Destroy;
@@ -336,5 +338,6 @@ begin
 end;
 
 
+{$INCLUDE p3dgui_propertyeditor.inc}
 {$INCLUDE p3dgui_objinspector_editors.inc}
 {$ENDIF}

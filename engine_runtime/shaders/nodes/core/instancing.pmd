@@ -16,5 +16,5 @@ uniform int instance_texture_translate_w;
 ```
 
 ```{restrict="vshader,main"}
-mWorld[ 3 ].xyz = _world[ 3 ].xyz + texture2D( instance_texture_translate, vec2( float( gl_InstanceID ) / float( instance_texture_translate_w ), 0.5 )).xyz;
+  mWorld[ 3 ].xyz = _world[ 3 ].xyz + texture2D( instance_texture_translate, vec2( float( gl_InstanceID ) / float( instance_texture_translate_w ), 0.5 )).xyz;
 ```

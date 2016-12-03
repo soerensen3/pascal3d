@@ -108,6 +108,7 @@ type
   TP3DCustomActorList = specialize gP3DCustomDatablockList < TP3DActor >;
 
   TP3DRenderList = class;
+  TP3DRenderListModifier = class;
 
   { TP3DActorList }
   TP3DActorList = class( TP3DCustomActorList )
@@ -118,7 +119,7 @@ type
       constructor Create( AOwner: TPersistent );
       procedure Render( world: TMat4; Scene: TP3DScene );
       procedure RenderCallBackOnly( world: TMat4; Scene: TP3DScene );
-      procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList);
+      procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; AModifiers: array of TP3DRenderListModifier );
       function OutputDebugInfo: String;
 
       function CalcBoundingBox(): TP3DBoundingBox;
@@ -273,6 +274,11 @@ begin
   FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
+  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ));
+  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ));
 end;
 
 procedure TP3DActor.LoadFromDOM( ADOMNode: TDOMElement );
@@ -458,8 +464,7 @@ begin
         TP3DActor( Items[ i ]).RenderCallbackOnly( world, Scene );
 end;
 
-procedure TP3DActorList.MakeRenderList(ARootScene: TP3DScene; world: TMat4;
-  var ARenderList: TP3DRenderList);
+procedure TP3DActorList.MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; AModifiers: array of TP3DRenderListModifier );
 var
   Actor: TP3DActor;
   mat: TMat4;
@@ -470,10 +475,8 @@ begin
     begin
       mat:= world * Actor.Matrix;
       Actor.FMatrixFinal:= mat;
-      ARenderList.Add( Actor.Data, mat, ARootScene );
-      if ( Actor.Data is TP3DScene ) then
-        TP3DScene( Actor.Data ).Objects.MakeRenderList( ARootScene, mat, ARenderList );
-      Actor.Children.MakeRenderList( ARootScene, mat, ARenderList );
+      ARenderList.Add( Actor.Data, mat, ARootScene, AModifiers );
+      Actor.Children.MakeRenderList( ARootScene, mat, ARenderList, AModifiers );
     end;
 end;
 

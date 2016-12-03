@@ -855,7 +855,7 @@ begin
   inherited Create;
   DefaultTexWidth:= 2048;
   DefaultTexHeight:= 2048;
-  DefaultTextSize:= 96 * 2;
+  DefaultTextSize:= 72 * 2;
   DefaultTextMargin:= 48;
   Material:= TP3DMaterialBase.Create();
   Material.FUnlit:= True;
