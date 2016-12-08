@@ -1,0 +1,174 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "RobotScene">
+    <object
+      data = "mesh_Arm_R"
+      name = "Arm_L"
+      type = "mesh">
+      <transform
+        quaternion = "-0.707107, 0.000000, 0.707107, 0.000000"
+        scale = " 0.073185, 0.073185, 1.000000"
+        position = "-0.504632, 0.000000, 2.913510">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Arm_R"
+      name = "Arm_R"
+      type = "mesh">
+      <transform
+        quaternion = " 0.000000, 0.707107, 0.000000, 0.707107"
+        scale = " 0.073185, 0.073185, 1.000000"
+        position = " 0.504632, 0.000000, 2.913510">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube"
+      name = "robot"
+      type = "mesh">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.400000, 0.400000, 0.400000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ShadowScene">
+    <object
+      data = "mesh_RobotShadow"
+      name = "RobotShadow"
+      type = "mesh">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.178575">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    cotangents = "1312"
+    binary = "robot.mesh_Arm_R.p3dmesh"
+    loops = "1312"
+    tangents = "1312"
+    name = "mesh_Arm_R"
+    texlayers = "1"
+    normals = "339"
+    vertices = "339"
+    faces = "328"
+    texcoords = "1312">
+    <material
+      end = "327"
+      name = "material_ArmMaterial"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    cotangents = "2360"
+    binary = "robot.mesh_Cube.p3dmesh"
+    loops = "2360"
+    tangents = "2360"
+    name = "mesh_Cube"
+    texlayers = "1"
+    normals = "610"
+    vertices = "610"
+    faces = "590"
+    texcoords = "2360">
+    <material
+      end = "589"
+      name = "material_BodyMaterial"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    cotangents = "4"
+    binary = "robot.mesh_RobotShadow.p3dmesh"
+    loops = "4"
+    tangents = "4"
+    name = "mesh_RobotShadow"
+    texlayers = "1"
+    normals = "4"
+    vertices = "4"
+    faces = "1"
+    texcoords = "4">
+    <material
+      end = "0"
+      name = "material_Material_Shadow.001"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    cotangents = "1312"
+    binary = "robot.mesh_Arm_R.p3dmesh"
+    loops = "1312"
+    tangents = "1312"
+    name = "mesh_Arm_R"
+    texlayers = "1"
+    normals = "339"
+    vertices = "339"
+    faces = "328"
+    texcoords = "1312">
+    <material
+      end = "327"
+      name = "material_ArmMaterial"
+      start = "0">
+    </material>
+  </mesh>
+  <material
+    diffuse = "0.800000, 0.800000, 0.800000"
+    name = "material_ArmMaterial"
+    specular = "50.000000, 1.000000, 1.000000, 1.000000">
+    <map
+      mode = "mix"
+      normal = "1.0"
+      name = "Texture"
+      data = "tex_Texture">
+    </map>
+  </material>
+  <material
+    diffuse = "0.800000, 0.800000, 0.800000"
+    name = "material_BodyMaterial"
+    specular = "13.000000, 1.000000, 1.000000, 1.000000">
+    <map
+      mode = "mix"
+      diffuse = "1.0"
+      name = "Tex.001"
+      data = "tex_Tex.001">
+    </map>
+    <map
+      mode = "mix"
+      normal = "1.0"
+      name = "Normal"
+      data = "tex_Normal">
+    </map>
+  </material>
+  <material
+    unlit = "yes"
+    diffuse = "0.800000, 0.800000, 0.800000"
+    name = "material_Material_Shadow.001"
+    specular = "50.000000, 0.000000, 0.000000, 0.000000">
+    <map
+      mode = "mix"
+      alpha = "1.0"
+      diffuse = "1.0"
+      name = "Texture.003"
+      data = "tex_Texture.003">
+    </map>
+  </material>
+  <texture
+    file = "robot_normal.png"
+    name = "tex_Texture">
+  </texture>
+  <texture
+    file = "floor_ambient.png"
+    name = "tex_Texture.003">
+  </texture>
+  <texture
+    file = "RobotBodyAO.png"
+    name = "tex_Tex.001">
+  </texture>
+  <texture
+    file = "RobotBodyNormal.png"
+    name = "tex_Normal">
+  </texture>
+</p3dfile>

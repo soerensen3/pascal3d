@@ -1,0 +1,1326 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      data = "mesh_Wall.001"
+      type = "mesh"
+      name = "Cube.023">
+      <transform
+        position = " 8.000000, 7.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 1.000000,-0.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall.001"
+      type = "mesh"
+      name = "Cube.022">
+      <transform
+        position = " 8.000000,-9.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall.001"
+      type = "mesh"
+      name = "Cube.021">
+      <transform
+        position = "-8.000000,-9.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.019">
+      <transform
+        position = "-0.000000,-9.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.018">
+      <transform
+        position = "-4.000000,-9.000000, 1.970000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.017">
+      <transform
+        position = " 4.000000,-9.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.016">
+      <transform
+        position = " 4.000000, 7.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.015">
+      <transform
+        position = "-4.000000, 7.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.013">
+      <transform
+        position = " 8.000000,-1.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.012">
+      <transform
+        position = " 8.000000, 3.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.011">
+      <transform
+        position = " 8.000000,-5.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.010">
+      <transform
+        position = "-8.000000,-5.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.009">
+      <transform
+        position = "-8.000000, 3.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "lamp_Sun"
+      type = "lamp"
+      name = "Sun">
+      <transform
+        position = " 3.872003, 8.499723,29.354620"
+        quaternion = " 0.325690, 0.329225, 0.363422, 0.808369"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.007"
+      type = "mesh"
+      name = "Cube.007">
+      <transform
+        position = " 1.000000,-4.000000, 3.000000"
+        quaternion = " 0.000000, 0.000000, 0.121634, 0.992575"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.006"
+      type = "mesh"
+      name = "Cube.006">
+      <transform
+        position = " 4.000000, 4.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.005"
+      type = "mesh"
+      name = "Cube.005">
+      <transform
+        position = "-2.000000, 0.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.004"
+      type = "mesh"
+      name = "Cube.004">
+      <transform
+        position = " 4.000000,-4.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.003"
+      type = "mesh"
+      name = "Cube.003">
+      <transform
+        position = " 2.000000,-4.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.002"
+      type = "mesh"
+      name = "Cube.002">
+      <transform
+        position = " 0.000000,-4.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.001"
+      type = "mesh"
+      name = "Cube.001">
+      <transform
+        position = "-2.000000,-4.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube"
+      type = "mesh"
+      name = "Cube">
+      <transform
+        position = "-2.000000, 4.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall"
+      type = "mesh"
+      name = "Cube.008">
+      <transform
+        position = "-8.000000,-1.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Wall.001"
+      type = "mesh"
+      name = "Cube.020">
+      <transform
+        position = "-8.000000, 7.000000, 2.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+        scale = " 0.250000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Cube.008"
+      type = "mesh"
+      name = "Cube.014">
+      <transform
+        position = "13.000000, 0.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 8.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ShadowScene">
+    <object
+      data = "mesh_Plane"
+      type = "mesh"
+      name = "Shadow">
+      <transform
+        position = "13.000000, 0.000000, 0.083800"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.530309,10.277802, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.004"
+      type = "mesh"
+      name = "Shadow.003">
+      <transform
+        position = " 1.000000,-4.000000, 0.083800"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = "10.299674, 2.574919, 2.574919">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.003"
+      type = "mesh"
+      name = "Shadow.002">
+      <transform
+        position = "-2.000000, 0.000000, 0.083800"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.574919, 2.574919, 2.574919">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.002"
+      type = "mesh"
+      name = "Shadow.000">
+      <transform
+        position = " 4.000000, 4.000000, 0.083800"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.574919, 2.574919, 2.574919">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.001"
+      type = "mesh"
+      name = "Shadow.001">
+      <transform
+        position = "-2.000000, 4.000000, 0.083800"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.574919, 2.574919, 2.574919">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.016">
+      <transform
+        position = "-8.000000,-1.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.017">
+      <transform
+        position = "-8.000000, 3.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.018">
+      <transform
+        position = "-8.000000,-5.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.019">
+      <transform
+        position = " 8.000000,-5.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.020">
+      <transform
+        position = " 8.000000, 3.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.021">
+      <transform
+        position = " 8.000000,-1.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.023">
+      <transform
+        position = "-4.000000, 7.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.024">
+      <transform
+        position = " 4.000000, 7.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.025">
+      <transform
+        position = " 4.000000,-9.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.026">
+      <transform
+        position = "-4.000000,-9.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.006"
+      type = "mesh"
+      name = "Shadow.027">
+      <transform
+        position = "-0.000000,-9.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.007"
+      type = "mesh"
+      name = "Shadow.028">
+      <transform
+        position = "-8.000000, 7.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.007"
+      type = "mesh"
+      name = "Shadow.029">
+      <transform
+        position = "-8.000000,-9.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.007"
+      type = "mesh"
+      name = "Shadow.030">
+      <transform
+        position = " 8.000000,-9.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+    <object
+      data = "mesh_Shadow.007"
+      type = "mesh"
+      name = "Shadow.031">
+      <transform
+        position = " 8.000000, 7.000000, 0.092241"
+        quaternion = " 0.000000, 0.000000, 1.000000,-0.000000"
+        scale = " 2.000000, 2.000000, 2.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube.004"
+    binary = "level.mesh_Cube.004.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube"
+    binary = "level.mesh_Cube.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "160"
+    loops = "160"
+    texlayers = "1"
+    name = "mesh_Wall.001"
+    binary = "level.mesh_Wall.001.p3dmesh"
+    faces = "42"
+    tangents = "160"
+    normals = "160"
+    vertices = "160"
+    cotangents = "160">
+    <material
+      end = "41"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Plane"
+    binary = "level.mesh_Plane.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material.005">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.004"
+    binary = "level.mesh_Shadow.004.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "8"
+    loops = "8"
+    texlayers = "1"
+    name = "mesh_Shadow.007"
+    binary = "level.mesh_Shadow.007.p3dmesh"
+    faces = "2"
+    tangents = "8"
+    normals = "6"
+    vertices = "6"
+    cotangents = "8">
+    <material
+      end = "1"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "160"
+    loops = "160"
+    texlayers = "1"
+    name = "mesh_Wall.001"
+    binary = "level.mesh_Wall.001.p3dmesh"
+    faces = "42"
+    tangents = "160"
+    normals = "160"
+    vertices = "160"
+    cotangents = "160">
+    <material
+      end = "41"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube.003"
+    binary = "level.mesh_Cube.003.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube.007"
+    binary = "level.mesh_Cube.007.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.003"
+    binary = "level.mesh_Shadow.003.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "8"
+    loops = "8"
+    texlayers = "1"
+    name = "mesh_Shadow.007"
+    binary = "level.mesh_Shadow.007.p3dmesh"
+    faces = "2"
+    tangents = "8"
+    normals = "6"
+    vertices = "6"
+    cotangents = "8">
+    <material
+      end = "1"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "160"
+    loops = "160"
+    texlayers = "1"
+    name = "mesh_Wall.001"
+    binary = "level.mesh_Wall.001.p3dmesh"
+    faces = "42"
+    tangents = "160"
+    normals = "160"
+    vertices = "160"
+    cotangents = "160">
+    <material
+      end = "41"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube.002"
+    binary = "level.mesh_Cube.002.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube.006"
+    binary = "level.mesh_Cube.006.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "1410"
+    loops = "1410"
+    texlayers = "2"
+    name = "mesh_Cube.008"
+    binary = "level.mesh_Cube.008.p3dmesh"
+    faces = "470"
+    tangents = "1410"
+    normals = "264"
+    vertices = "264"
+    cotangents = "1410">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      end = "469"
+      start = "0"
+      name = "material_Material.006">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.001"
+    binary = "level.mesh_Shadow.001.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "8"
+    loops = "8"
+    texlayers = "1"
+    name = "mesh_Shadow.007"
+    binary = "level.mesh_Shadow.007.p3dmesh"
+    faces = "2"
+    tangents = "8"
+    normals = "6"
+    vertices = "6"
+    cotangents = "8">
+    <material
+      end = "1"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "160"
+    loops = "160"
+    texlayers = "1"
+    name = "mesh_Wall.001"
+    binary = "level.mesh_Wall.001.p3dmesh"
+    faces = "42"
+    tangents = "160"
+    normals = "160"
+    vertices = "160"
+    cotangents = "160">
+    <material
+      end = "41"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube.001"
+    binary = "level.mesh_Cube.001.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "216"
+    loops = "216"
+    texlayers = "1"
+    name = "mesh_Cube.005"
+    binary = "level.mesh_Cube.005.p3dmesh"
+    faces = "54"
+    tangents = "216"
+    normals = "56"
+    vertices = "56"
+    cotangents = "216">
+    <material
+      end = "53"
+      start = "0"
+      name = "material_Material">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "96"
+    loops = "96"
+    texlayers = "1"
+    name = "mesh_Wall"
+    binary = "level.mesh_Wall.p3dmesh"
+    faces = "26"
+    tangents = "96"
+    normals = "96"
+    vertices = "96"
+    cotangents = "96">
+    <material
+      end = "25"
+      start = "0"
+      name = "material_Material.Wall">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.002"
+    binary = "level.mesh_Shadow.002.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "4"
+    loops = "4"
+    texlayers = "1"
+    name = "mesh_Shadow.006"
+    binary = "level.mesh_Shadow.006.p3dmesh"
+    faces = "1"
+    tangents = "4"
+    normals = "4"
+    vertices = "4"
+    cotangents = "4">
+    <material
+      end = "0"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <mesh
+    texcoords = "8"
+    loops = "8"
+    texlayers = "1"
+    name = "mesh_Shadow.007"
+    binary = "level.mesh_Shadow.007.p3dmesh"
+    faces = "2"
+    tangents = "8"
+    normals = "6"
+    vertices = "6"
+    cotangents = "8">
+    <material
+      end = "1"
+      start = "0"
+      name = "material_Material Shadow">
+    </material>
+  </mesh>
+  <lamp
+    color = "1.000000, 1.000000, 1.000000"
+    energy = "1.0"
+    type = "sun"
+    name = "lamp_Sun">
+  </lamp>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material.Wall">
+    <map
+      mode = "mix"
+      data = "tex_Tex.001"
+      diffuse = "1.0"
+      name = "Tex.001">
+    </map>
+  </material>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material">
+    <map
+      mode = "mix"
+      data = "tex_Tex"
+      normal = "1.0"
+      name = "Tex">
+    </map>
+    <map
+      mode = "mix"
+      data = "tex_Texture"
+      specular_intensity = "1.0"
+      name = "Texture">
+    </map>
+    <map
+      mode = "mix"
+      data = "tex_Texture.001"
+      diffuse = "1.0"
+      name = "Texture.001">
+    </map>
+  </material>
+  <material
+    diffuse = "0.000000, 0.000000, 0.000000"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    unlit = "yes"
+    name = "material_Material Shadow">
+    <map
+      alpha = "1.0"
+      mode = "mix"
+      data = "tex_Texture.004"
+      name = "Texture.004">
+    </map>
+  </material>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material.005">
+    <map
+      layer = "0"
+      diffuse = "1.0"
+      specular = "1.0"
+      name = "Texture.011"
+      alpha = "1.0"
+      mode = "mix"
+      data = "tex_Texture.011">
+    </map>
+  </material>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    specular = "339.000000, 0.056391, 0.056391, 0.056391"
+    name = "material_Material.006">
+    <map
+      layer = "0"
+      mode = "mix"
+      data = "tex_Texture.002"
+      diffuse = "1.0"
+      name = "Texture.002">
+    </map>
+    <map
+      mode = "mix"
+      data = "tex_Texture.012"
+      normal = "1.0"
+      name = "Texture.012">
+    </map>
+  </material>
+  <texture
+    file = "box_displ.png"
+    name = "tex_Texture">
+  </texture>
+  <texture
+    file = "TexturesCom_ConcreteNew0049_1_seamless_S.png"
+    name = "tex_Tex.001">
+  </texture>
+  <texture
+    file = "floor_ambient.png"
+    name = "tex_Texture.004">
+  </texture>
+  <texture
+    file = "box_normal.png"
+    name = "tex_Tex">
+  </texture>
+  <texture
+    file = "conveyour_color.png"
+    name = "tex_Texture.002">
+  </texture>
+  <texture
+    file = "box_color.png"
+    name = "tex_Texture.001">
+  </texture>
+  <texture
+    file = "conveyour_n.png"
+    name = "tex_Texture.012">
+  </texture>
+  <texture
+    file = "floor_ambientocclusion.png"
+    name = "tex_Texture.011">
+  </texture>
+</p3dfile>

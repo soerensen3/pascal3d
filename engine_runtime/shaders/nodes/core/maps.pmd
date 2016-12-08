@@ -253,7 +253,7 @@ node: 50_map_pass_world_transform_init_instanced_grid
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
 uniform int instanceGridWidth = 1;
 uniform float instanceGridWorldSize = 1.0;
-IN int instanceID;
+IN float instanceID;
 ```
 
 ```{restrict="vshader,main"}
@@ -369,6 +369,15 @@ node: 5000_map_pass_view_transform
 
 ```{name="CODE", type="shader", restrict="vshader,main"}
   vPosition = view * ( vPosition + Displace * vNormal );
+```
+
+---
+node: 9990_map_pass_clip_transparency
+input: {name="AlphaTreshhold", type="float"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+  Color.a = step( $AlphaTreshhold$, Color.a );
 ```
 
 ---

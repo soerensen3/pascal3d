@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      name = "Cube.014"
+      type = "mesh"
+      data = "mesh_Cube.008">
+      <transform
+        position = " 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 8.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ShadowScene">
+    <object
+      name = "Shadow"
+      type = "mesh"
+      data = "mesh_Plane">
+      <transform
+        position = " 0.000000, 0.000000, 0.083800"
+        scale = " 2.530309,10.277802, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    tangents = "1410"
+    name = "mesh_Cube.008"
+    vertices = "264"
+    cotangents = "1410"
+    faces = "470"
+    texcoords = "1410"
+    texlayers = "2"
+    normals = "264"
+    binary = "conveyour.mesh_Cube.008.p3dmesh"
+    loops = "1410">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      name = "material_Material.006"
+      end = "469"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "4"
+    name = "mesh_Plane"
+    vertices = "4"
+    cotangents = "4"
+    faces = "1"
+    texcoords = "4"
+    texlayers = "1"
+    normals = "4"
+    binary = "conveyour.mesh_Plane.p3dmesh"
+    loops = "4">
+    <material
+      name = "material_Material.005"
+      end = "0"
+      start = "0">
+    </material>
+  </mesh>
+  <material
+    diffuse = "0.018915, 0.018915, 0.018915"
+    name = "material_Material.006"
+    specular = "83.000000, 0.056391, 0.056391, 0.056391">
+    <map
+      diffuse = "1.0"
+      name = "Texture.002"
+      mode = "lighten"
+      data = "tex_Texture.002"
+      layer = "0">
+    </map>
+    <map
+      mode = "mix"
+      name = "Texture.012"
+      normal = "1.0"
+      data = "tex_Texture.012">
+    </map>
+  </material>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    name = "material_Material.005"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000">
+    <map
+      diffuse = "1.0"
+      name = "Texture.011"
+      specular = "1.0"
+      mode = "mix"
+      alpha = "1.0"
+      data = "tex_Texture.011"
+      layer = "0">
+    </map>
+  </material>
+  <texture
+    name = "tex_Texture.002"
+    file = "conveyour_color.png">
+  </texture>
+  <texture
+    name = "tex_Texture.012"
+    file = "conveyour_n.png">
+  </texture>
+  <texture
+    name = "tex_Texture.011"
+    file = "floor_ambientocclusion.png">
+  </texture>
+</p3dfile>

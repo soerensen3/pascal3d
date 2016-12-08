@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      name = "Sun"
+      data = "lamp_Sun"
+      type = "lamp">
+      <transform
+        quaternion = " 0.281859,-0.124493, 0.153447, 0.938888"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000,10.555390">
+      </transform>
+    </object>
+    <object
+      name = "Lamp"
+      data = "lamp_Lamp"
+      type = "lamp">
+      <transform
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 4.076245, 1.005454, 5.903862">
+      </transform>
+    </object>
+  </scene>
+  <lamp
+    name = "lamp_Sun"
+    energy = "1.0"
+    color = "1.000000, 0.906858, 0.879469"
+    type = "sun">
+  </lamp>
+  <lamp
+    name = "lamp_Lamp"
+    energy = "1.0"
+    color = "1.000000, 1.000000, 1.000000"
+    type = "point">
+  </lamp>
+</p3dfile>

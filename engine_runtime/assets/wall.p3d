@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "S_Wall_WE">
+    <object
+      name = "Wall_Shadow_WE"
+      type = "mesh"
+      data = "mesh_Shadow">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.707000, 0.70700">
+      </transform>
+    </object>
+    <object
+      name = "Wall_WE"
+      type = "mesh"
+      data = "mesh_Wall">
+      <transform
+        position = " 0.000000, 0.000000, 1.000000"
+        scale = " 0.125000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.707000, 0.70700">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "S_Wall_NS">
+    <object
+      name = "Wall_Shadow_NS"
+      type = "mesh"
+      data = "mesh_Shadow">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      name = "Wall_NS"
+      type = "mesh"
+      data = "mesh_Wall">
+      <transform
+        position = " 0.000000, 0.000000, 1.000000"
+        scale = " 0.125000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    tangents = "4"
+    name = "mesh_Shadow"
+    vertices = "4"
+    cotangents = "4"
+    faces = "1"
+    texcoords = "4"
+    texlayers = "1"
+    normals = "4"
+    binary = "wall.mesh_Shadow.p3dmesh"
+    loops = "4">
+    <material
+      name = "material_Material.001"
+      end = "0"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    tangents = "24"
+    name = "mesh_Wall"
+    vertices = "24"
+    cotangents = "24"
+    faces = "6"
+    texcoords = "24"
+    texlayers = "1"
+    normals = "24"
+    binary = "wall.mesh_Wall.p3dmesh"
+    loops = "24">
+    <material
+      name = "material_Material"
+      end = "5"
+      start = "0">
+    </material>
+  </mesh>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    name = "material_Material.001"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000">
+    <map
+      mode = "mix"
+      name = "Texture"
+      alpha = "1.0"
+      data = "tex_Texture">
+    </map>
+  </material>
+  <material
+    diffuse = "0.640000, 0.640000, 0.640000"
+    name = "material_Material"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000">
+    <map
+      diffuse = "1.0"
+      name = "Tex"
+      mode = "mix"
+      data = "tex_Tex">
+    </map>
+  </material>
+  <texture
+    name = "tex_Texture"
+    file = "floor_ambient.png">
+  </texture>
+  <texture
+    name = "tex_Tex"
+    file = "TexturesCom_ConcreteNew0049_1_seamless_S.png">
+  </texture>
+</p3dfile>
