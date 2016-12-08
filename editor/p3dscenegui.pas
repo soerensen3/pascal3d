@@ -66,7 +66,7 @@ var
   begin
     n:= OpenLibrary( FName );
     for k:= 0 to P3DData.Libraries[ n ].Scenes.Count - 1 do
-      TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ k ]);
+      TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Scenes.Add( P3DData.Libraries[ n ].Scenes[ k ]);
   end;
 
 begin
@@ -154,13 +154,13 @@ begin
 
 
 
-  TestScene.AppendFile( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/sun.p3d' );
+  TestScene.AppendFile( '../../engine_runtime/assets/sun.p3d' );
 
   GridId:= P3DData.CreateNew( TP3DTileGrid, True );
   TestScene.Objects.Add( P3DData.Objects[ GridId ]);
 
   TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridWorldUnit:= 2;
-  AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3d' );
+  AddLib( '../../engine_runtime/assets/tiles_rock.p3d' );
 
   {TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( nil );
 

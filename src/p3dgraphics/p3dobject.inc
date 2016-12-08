@@ -34,11 +34,10 @@
       property Name: TComponentName read GetName write SetName;
     end;
 
-    TP3DObject = class( TInterfacedPersistent, IP3DObject )
+    TP3DObject = class( TP3DInterfacedPersistent, IP3DObject )
       private
         FName: TComponentName;
         FParentList: TP3DObjectList;
-        FProperties: TP3DPropertyAccessList;
 
         function GetName: TComponentName;
         procedure SetName( NewName: TComponentName ); virtual;
@@ -51,7 +50,6 @@
 
       published
         property Name: TComponentName read FName write SetName stored False;
-        property Properties: TP3DPropertyAccessList read FProperties write FProperties;
     end;
 
 {$ENDIF}
@@ -148,14 +146,11 @@ begin
   FName:= ParentList.FindUniqueName( BaseName );
   ParentList.Add( Self );
 
-  Properties:= TP3DPropertyAccessList.Create;
   Properties.Add( TP3DPropertyAccessString.CreateFieldSet( 'Name', @FName, @SetName ));
 end;
 
 destructor TP3DObject.Destroy;
 begin
-  Properties.Clear( True );
-  Properties.Free;
   ParentList.Remove( Self );
   inherited Destroy;
 end;

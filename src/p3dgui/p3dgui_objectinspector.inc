@@ -159,6 +159,7 @@ destructor TP3DOIEditorPage.Destroy;
 begin
   Groups.Clear( True );
   Groups.Free;
+  Button.Free;
   inherited Destroy;
 end;
 

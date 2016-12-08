@@ -60,13 +60,17 @@ type
   TP3DRenderList = class ( TP3DCustomRenderList )
     private
       FLights: TP3DLightList;
+      FModifierStack: TP3DRenderListModifierList;
       FTransparencyStart: Integer;
+
+    protected
+      property ModifierStack: TP3DRenderListModifierList read FModifierStack write FModifierStack;
 
     public
       constructor Create;
       destructor Destroy; override;
 
-      function Add( AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene; AModifiers: array of TP3DRenderListModifier ): Integer;
+      function Add( AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene ): Integer;
       function PickFromCamera( X, Y: Integer; Camera: TP3DActor ): TP3DActor;
       function Find( AData: TP3DDataBlock; Material: TP3DMaterial ): Integer;
       procedure Render( Camera: TP3DActor );
@@ -115,7 +119,6 @@ type
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor); override;
       procedure Render(const ARootScene: TP3DScene=nil); reintroduce;
       procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList );
-      procedure MakeRenderList(ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; AModifiers: array of TP3DRenderListModifier);
       procedure RenderFromCamera( ACam: TP3DActor );
       procedure RenderFromCamera( ACam: TP3DActor; world: TMat4 );
       procedure AppendFile( AFileName: String );
@@ -146,17 +149,20 @@ constructor TP3DRenderList.Create;
 begin
   inherited Create;
   Lights:= TP3DLightList.Create;
+  ModifierStack:= TP3DRenderListModifierList.Create;
 end;
 
 destructor TP3DRenderList.Destroy;
 begin
   Clear( True );
+  Lights.Clear( False );
   FreeAndNil( FLights );
+  FreeAndNil( FModifierStack );
   inherited Destroy;
 end;
 
-function TP3DRenderList.Add(AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene; AModifiers: array of TP3DRenderListModifier): Integer;
-  function MakeRenderObject( AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial; AModifiers: array of TP3DRenderListModifier ): Integer;
+function TP3DRenderList.Add(AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene ): Integer;
+  function MakeRenderObject( AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial ): Integer;
   var
     Obj: TP3DRenderObject;
     q: TQuaternion;
@@ -172,6 +178,11 @@ function TP3DRenderList.Add(AData: TP3DDataBlock; world: TMat4; AScene: TP3DScen
         Obj:= TP3DRenderObject.Create;
         Obj.Data:= AData;
 
+        {if ( Assigned( Obj.Data )) then
+          WriteLn( 'Creating RenderObject with data ' + Obj.Data.Name )
+        else
+          WriteLn( 'Creating RenderObject without data.' );}
+
         mat4decompose( AMatrix, loc, rot, scale );
         q:= quat( rot );
         Obj.Rotations.Add( q );
@@ -179,15 +190,13 @@ function TP3DRenderList.Add(AData: TP3DDataBlock; world: TMat4; AScene: TP3DScen
         Obj.Scalings.Add( scale );
         Obj.Material:= AMaterial;
         Obj.InstanceCount:= 1;
-        SetLength( Obj.Modifiers, high( AModifiers ) + 1 );
-        for i:= 0 to high( AModifiers ) do
-          begin
-            Obj.Modifiers[ i ]:= AModifiers[ i ];
-            if ( Assigned( AModifiers[ i ])) then
+        SetLength( Obj.Modifiers, ModifierStack.Count );
+        for i:= 0 to ModifierStack.Count - 1 do
+          if ( Assigned( ModifierStack[ i ])) then
+            begin
+              Obj.Modifiers[ i ]:= ModifierStack[ i ];
               Obj.Modifiers[ i ].AddObject( Obj )
-            else
-              WriteLn( 'Test' );
-          end;
+            end;
         Result:= inherited Add( Obj );
       end;
   end;
@@ -200,24 +209,27 @@ begin
   if ( Assigned( AData )) then
     begin
       if ( AData is TP3DScene ) then
-        TP3DScene( AData ).MakeRenderList( AScene, world, Self, AModifiers )
+        TP3DScene( AData ).MakeRenderList( AScene, world, Self )
       else if ( AData is TP3DMesh ) then
         for i:= 0 to TP3DMesh( AData ).MaterialGroups.Count - 1 do
           begin
             mat:= TP3DMesh( AData ).MaterialGroups[ i ].Material;
-            Result:= MakeRenderObject( AData, world, mat, AModifiers );
+            Result:= MakeRenderObject( AData, world, mat );
           end
       else if ( AData is TP3DTileGrid ) then
         with ( TP3DTileGrid( AData )) do
-          for i:= 0 to Meshes.Count - 1 do
+          for i:= 0 to Scenes.Count - 1 do
             begin
               //Mods:= AModifiers;
               //SetLength( Mods, Length( Mods ) + 1 );
               //Mods[ high( Mods )]:= Modifiers[ i ];
-              if ( Assigned( Meshes[ i ])) then
+              if ( Assigned( Scenes[ i ]) and Assigned( Modifiers[ i ])) then
                 begin
                   Modifier:= Modifiers[ i ];
-                  Add( Meshes[ i ], world, AScene, [ Modifier ]);
+
+                  ModifierStack.Add( Modifier );
+                  Scenes[ i ].MakeRenderList( AScene.RootScene, world, Self );
+                  ModifierStack.Remove( Modifier );
                 end;
             end
       else if ( AData is TP3DLight ) then
@@ -584,17 +596,12 @@ end;
 
 procedure TP3DScene.MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList );
 begin
-  MakeRenderList( ARootScene, Mat4Identity, ARenderList, []);
-end;
-
-procedure TP3DScene.MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; AModifiers: array of TP3DRenderListModifier );
-begin
   if ( not Assigned( ARenderList )) then
     ARenderList:= TP3DRenderList.Create;
   if ( not Assigned( ARootScene )) then
     ARootScene:= Self;
 
-  Objects.MakeRenderList( ARootScene, world, ARenderList, AModifiers );
+  Objects.MakeRenderList( ARootScene, world, ARenderList );
 end;
 
 procedure TP3DScene.RenderFromCamera( ACam: TP3DActor );
@@ -692,6 +699,8 @@ begin
   FPositions:= TP3DVec3BufferGL.Create( True );
   FRotations:= TP3DVec4BufferGL.Create( True );
   FScalings:= TP3DVec3BufferGL.Create( True );
+  Material:= nil;
+  Data:= nil;
   InstanceCount:= 0;
 end;
 
@@ -700,7 +709,12 @@ begin
   FPositions.Free;
   FRotations.Free;
   FScalings.Free;
-  inherited Destroy;
+  SetLength( Modifiers, 0 );
+  {if ( Assigned( Data )) then
+    WriteLn( 'Destroying RenderObject with data ' + Data.Name )
+  else
+    WriteLn( 'Destroying RenderObject without data.' );
+  inherited Destroy;}
 end;
 
 

@@ -10,7 +10,6 @@
     TP3DButtonPreset = class
       private
         FColor: TVec4;
-        FColorBright: TVec4;
         FFontColor: TVec4;
         FOutlineColor: TVec4;
 
@@ -243,6 +242,9 @@ end;
 
 destructor TP3DButton.Destroy;
 begin
+  FPresetDown.Free;
+  FPresetHover.Free;
+  FPresetNormal.Free;
   FCaptionTxt.Free;
   Font.Free;
   inherited Destroy;

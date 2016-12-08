@@ -378,8 +378,9 @@ end;
 
 destructor TP3DFontManager.Destroy;
 begin
-  inherited Destroy;
   FreeAndNil( FMaterial );
+  Clear( True );
+  inherited Destroy;
 end;
 
 function TP3DFontManager.Find(FontName: String; Height: Integer): Integer;

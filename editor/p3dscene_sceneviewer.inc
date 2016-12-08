@@ -307,7 +307,7 @@ procedure TP3DSceneEditModeTileGrid.Paint;
 begin
   if ( CanPaint ) then
     begin
-      if ( InRange( BrushIndex, 0, Grid.Meshes.Count - 1 )) then
+      if ( InRange( BrushIndex, 0, Grid.Scenes.Count - 1 )) then
         Grid.IndexAt[ BrushGridPos.X, BrushGridPos.Y ]:= BrushIndex;
       FCanPaint:= False;
     end;
@@ -803,8 +803,8 @@ procedure TP3DScenePanel.KeyboardAction;
 begin
   inherited KeyboardAction;
 
-  RenderList.Clear;
-  Scene.MakeRenderList( Nil, Mat4Identity, FRenderList );
+//  RenderList.Clear;
+//  Scene.MakeRenderList( Nil, Mat4Identity, FRenderList );
 
 
   Editor.UpdateAxis;

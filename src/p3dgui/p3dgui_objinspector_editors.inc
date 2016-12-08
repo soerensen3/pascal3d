@@ -265,9 +265,11 @@ published
   TP3DOIEditorDataMaterialBase = class ( TP3DOIEditorGroup )
     private
       FAlphaEdit: TP3DEventValueEdit;
+      FAlphaTreshHoldEdit: TP3DPropertyEditorFloat;
       FDiffCombo: TP3DColorComboBox;
       FSpecCombo: TP3DColorComboBox;
       FSpec_HardnessEdit: TP3DEventValueEdit;
+      FTranspModeCombo: TP3DPropertyEditorEnum;
       FUnlitEdit: TP3DCheckBox;
       FUseVertexColorEdit: TP3DCheckBox;
 
@@ -291,6 +293,8 @@ published
       property AlphaEdit: TP3DEventValueEdit read FAlphaEdit write FAlphaEdit;
       property UseVertexColorEdit: TP3DCheckBox read FUseVertexColorEdit write FUseVertexColorEdit;
       property UnlitEdit: TP3DCheckBox read FUnlitEdit write FUnlitEdit;
+      property TranspModeCombo: TP3DPropertyEditorEnum read FTranspModeCombo write FTranspModeCombo;
+      property AlphaTreshHoldEdit: TP3DPropertyEditorFloat read FAlphaTreshHoldEdit write FAlphaTreshHoldEdit;
   end;
 
   { TP3DOIEditorDataMaterialMap }
@@ -341,9 +345,11 @@ published
 
   { TP3DOIEditorDataMaterialMaps }
 
+  TP3DPropertyEditorMaterialMapList = specialize gP3DPropertyEditorList < TP3DMaterialMapList, TP3DMaterialMap >;
+
   TP3DOIEditorDataMaterialMaps = class ( TP3DOIEditorGroup )
     private
-      FMapsListView: TP3DPropertyEditorDataBlockList;
+      FMapsListView: TP3DPropertyEditorMaterialMapList;
       FMaterial: TP3DMaterial;
       FOnSelectionChange: TP3DListViewSelectionChangeEvent;
 
@@ -356,16 +362,18 @@ published
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
 
     published
-      property MapsListView: TP3DPropertyEditorDataBlockList read FMapsListView write FMapsListView;
+      property MapsListView: TP3DPropertyEditorMaterialMapList read FMapsListView write FMapsListView;
       property Material: TP3DMaterial read FMaterial write SetMaterial;
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read FOnSelectionChange write FOnSelectionChange;
   end;
 
   { TP3DOIEditorDataMeshMaterial }
 
+  TP3DPropertyEditorMaterialList = specialize gP3DPropertyEditorList < TP3DMaterialList, TP3DMaterial >;
+
   TP3DOIEditorDataMeshMaterial = class ( TP3DOIEditorGroup )
     private
-      FMatListView: TP3DListView;
+      FMatListView: {TP3DPropertyEditorMaterialList}TP3DListView;
       FMesh: TP3DMesh;
 
       function GetSelectionChange: TP3DListViewSelectionChangeEvent;
@@ -378,7 +386,7 @@ published
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
 
     published
-      property MatListView: TP3DListView read FMatListView write FMatListView;
+      property MatListView: {TP3DPropertyEditorMaterialList}TP3DListView read FMatListView write FMatListView;
       property Mesh: TP3DMesh read FMesh write FMesh;
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read GetSelectionChange write SetSelectionChange;
   end;
@@ -742,7 +750,7 @@ begin
       GridWorldUnitEd.Prop:= nil;
       exit;
     end;
-  MeshList.Prop:= TP3DPropertyAccessDataBlockList( Grid.Properties.GetPropByName( 'Meshes' ));
+  MeshList.Prop:= TP3DPropertyAccessDataBlockList( Grid.Properties.GetPropByName( 'Scenes' ));
   GridWidthEd.Prop:= Grid.Properties.GetPropByName( 'Width' );
   GridHeightEd.Prop:= Grid.Properties.GetPropByName( 'Height' );
   GridWorldUnitEd.Prop:= Grid.Properties.GetPropByName( 'GridWorldUnit' );
@@ -1193,6 +1201,8 @@ begin
     begin
       UseVertexColorEdit.FChecked:= UseVertexColor;
       UnlitEdit.FChecked:= Unlit;
+      TranspModeCombo.Prop:= Properties.GetPropByName( 'TransparencyMode' );
+      AlphaTreshHoldEdit.Prop:= Properties.GetPropByName( 'AlphaThreshhold' );
     end;
 end;
 
@@ -1241,6 +1251,14 @@ begin
   Spec_HardnessEdit.SetValueEvent:= @SetMatFloatParam;
   Spec_HardnessEdit.Align:= alClient;
 
+  TranspModeCombo:= TP3DPropertyEditorEnum.Create( AData, AddContainer( Self, 'Transparency Mode' ));
+  TranspModeCombo.Align:= alClient;
+
+  AlphaTreshHoldEdit:= TP3DPropertyEditorFloat.Create( AData, Self );
+  AlphaTreshHoldEdit.Height:= 20;
+  AlphaTreshHoldEdit.Align:= alTop;
+
+
   AutoSize:= True;
 end;
 
@@ -1268,7 +1286,10 @@ begin
         MapsListView.Children.Add( Map.Map.Name, Map )
       else
         MapsListView.Children.Add( '<Not defined>', nil );}
-  MapsListView.Prop:= TP3DPropertyAccessDataBlockList( Material.Properties.GetPropByName( 'Maps' ));
+  if ( Assigned( Material )) then
+    MapsListView.Prop:= TP3DPropertyAccessMaterialMapList( Material.Properties.GetPropByName( 'Maps' ))
+  else
+    MapsListView.Prop:= nil;
 end;
 
 procedure TP3DOIEditorDataMaterialMaps.Update;
@@ -1286,7 +1307,7 @@ begin
   inherited Create( AData, AParent );
   Caption:= 'Material Maps';
 
-  MapsListView:= TP3DPropertyEditorDataBlockList.Create( AData, Self );
+  MapsListView:= TP3DPropertyEditorMaterialMapList.Create( AData, Self );
   MapsListView.Align:= alTop;
   MapsListView.Height:= 100;
   MapsListView.OnSelectionChange:= @SelectionChange;
@@ -1484,7 +1505,7 @@ begin
   inherited Create( AData, AParent );
   Caption:= 'Mesh Materials';
 
-  MatListView:= TP3DListView.Create( AData, Self );
+  MatListView:= TP3DPropertyEditorMaterialList.Create( AData, Self );
   MatListView.Align:= alTop;
   MatListView.Height:= 100;
 

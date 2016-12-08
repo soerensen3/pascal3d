@@ -36,24 +36,13 @@ type
 
     public
       constructor Create( AName: String );
+      function GetNames: TStringList; virtual; //can be used for enums
 
     published
       property Name: String read FName write FName;
       property Category: String read FCategory write FCategory;
       property AsString: String read GetAsString write SetAsString;
   end;
-
-  {
-  TP3DPropertyAccessArray = class abstract ( TP3DPropertyAccess )
-    protected
-
-
-    public
-      constructor Create( AName: String );
-
-    published
-      property Count: Integer read
-  end;}
 
   { TP3DPropertyAccessList }
 
@@ -89,6 +78,25 @@ type
       property Getter: TGetter read FGetter write FGetter;
       property Setter: TSetter read FSetter write FSetter;
       property Field: pItem read FField write FField;
+  end;
+
+
+  { gP3DListPropertyAccess }
+
+  generic gP3DListPropertyAccess < TListProp, TListData > = class( specialize gP3DPropertyAccess < TListProp >)
+    private
+      function GetCount: Integer;
+      function GetValues( idx: Integer ): TListData;
+      procedure SetCount( AValue: Integer );
+      procedure SetValues( idx: Integer ; AValue: TListData );
+
+    public
+      property Values[ idx: Integer ]: TListData read GetValues write SetValues;
+
+    published
+      function GetAsString: String; override;
+      procedure SetAsString( AValue: String ); override;
+      property Count: Integer read GetCount write SetCount;
   end;
 
   TCardinalSet = set of 0..SizeOf(Cardinal) * 8 - 1;
@@ -127,6 +135,8 @@ type
 
     public
       property PropInfo: PPropInfo read FPropInfo;
+
+      function GetNames: TStringList; override;
 
     published
       function GetAsString: String; override;
@@ -184,6 +194,19 @@ type
   TP3DPropertyAccessQuat   = class( specialize gP3DPropertyAccess < TQuaternion >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+  end;
+
+  { TP3DInterfacedPersistent }
+
+  TP3DInterfacedPersistent = class ( TInterfacedPersistent )
+    private
+      FProperties: TP3DPropertyAccessList;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      property Properties: TP3DPropertyAccessList read FProperties write FProperties;
   end;
 
 {$ENDIF}
@@ -268,6 +291,11 @@ constructor TP3DPropertyAccess.Create(AName: String);
 begin
   inherited Create;
   FName:= AName;
+end;
+
+function TP3DPropertyAccess.GetNames: TStringList;
+begin
+  Result:= nil;
 end;
 
 { TP3DPropertyAccessRTTI }
@@ -445,6 +473,20 @@ begin
   SetVariantProp( Owner, FPropInfo, AValue );
 end;
 
+function TP3DPropertyAccessRTTI.GetNames: TStringList;
+var
+  i: Integer;
+begin
+  if ( FPropInfo^.PropType^.Kind in [ tkEnumeration, tkBool ]) then
+    begin
+      Result:= TStringList.Create;
+      for i:= 0 to GetEnumNameCount( FPropInfo^.PropType ) - 1 do
+        Result.Add( GetEnumName( FPropInfo^.PropType, i ));
+    end
+  else
+    Result:= nil;
+end;
+
 function TP3DPropertyAccessRTTI.GetAsString: String;
 begin
   if ( Assigned( FPropInfo )) then
@@ -592,6 +634,38 @@ var
 begin
   Val.FromString( AValue );
   Value:= Val;
+end;
+
+{ gP3DListPropertyAccess }
+
+function gP3DListPropertyAccess.GetCount: Integer;
+begin
+  Result:= Value.Count;
+end;
+
+function gP3DListPropertyAccess.GetValues(idx: Integer): TListData;
+begin
+  Result:= Value[ idx ];
+end;
+
+procedure gP3DListPropertyAccess.SetCount(AValue: Integer);
+begin
+  Value.Count:= AValue;
+end;
+
+procedure gP3DListPropertyAccess.SetValues(idx: Integer; AValue: TListData);
+begin
+  Value[ idx ]:= AValue;
+end;
+
+function gP3DListPropertyAccess.GetAsString: String;
+begin
+
+end;
+
+procedure gP3DListPropertyAccess.SetAsString(AValue: String);
+begin
+
 end;
 
 

@@ -96,17 +96,35 @@ type
       property Prop: TP3DPropertyAccess read FProp write SetProp;
   end;
 
-  { TP3DPropertyEditorDataBlockList }
+  { TP3DPropertyEditorEnum }
 
-  TP3DPropertyEditorDataBlockList = class ( TP3DListView )
+  TP3DPropertyEditorEnum = class ( TP3DComboBox )
     protected
-      FProp: TP3DPropertyAccessDataBlockList;
+      FProp: TP3DPropertyAccess;
+      procedure SetProp( AValue: TP3DPropertyAccess );
+      procedure SetCaption(AValue: String); override;
+
+    public
+      constructor Create( const AData: TP3DData=nil; const AParent: TP3DGraphicControl=nil ); override;
+
+    published
+      property Prop: TP3DPropertyAccess read FProp write SetProp;
+  end;
+
+
+  { gP3DPropertyEditorList }
+
+  generic gP3DPropertyEditorList < TList, TListData > = class ( TP3DListView )
+    protected
+      type TListProp =  specialize gP3DListPropertyAccess < TList, TListData >;
+    protected
+      FProp: TListProp;
       FDeleteSymbol: TP3DTextBmp;
       FClearSymbol: TP3DTextBmp;
       FPlusSymbol: TP3DTextBmp;
       FDrawInsertion: Single;
 
-      procedure SetProp( AValue: TP3DPropertyAccessDataBlockList );
+      procedure SetProp( AValue: TListProp );
       procedure Update;
 
     public
@@ -117,9 +135,10 @@ type
 
       constructor Create(const AData: TP3DData=nil; const AParent: TP3DGraphicControl=nil); override;
 
-    published
-      property Prop: TP3DPropertyAccessDataBlockList read FProp write SetProp;
+      property Prop: TListProp read FProp write SetProp;
   end;
+
+  TP3DPropertyEditorDataBlockList = specialize gP3DPropertyEditorList < TP3DDataBlockList, TP3DDataBlock >;
 
 {$ENDIF}
 
@@ -278,14 +297,14 @@ end;
 
 { TP3DPropertyEditorDataBlockList }
 
-constructor TP3DPropertyEditorDataBlockList.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
+constructor gP3DPropertyEditorList.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
   Font.Size:= 20;
   ScrollBarH.Visible:= True;
 end;
 
-procedure TP3DPropertyEditorDataBlockList.SetProp( AValue: TP3DPropertyAccessDataBlockList );
+procedure gP3DPropertyEditorList.SetProp(AValue: TListProp);
 begin
   if ( AValue = Prop ) then
     exit;
@@ -293,10 +312,10 @@ begin
   Update;
 end;
 
-procedure TP3DPropertyEditorDataBlockList.Update;
+procedure gP3DPropertyEditorList.Update;
 var
   i: Integer;
-  Item: TP3DDataBlock;
+  Item: TListData;
 begin
   Children.Clear();
   if ( Assigned( Prop )) then
@@ -304,14 +323,14 @@ begin
       begin
         Item:= Prop.Values[ i ];
         if ( Assigned( Item )) then
-          Children.Add( Item.Owner.Name + '.' + Item.Name, Item )
+          Children.Add( {Item.Owner.Name + '.' + } Item.Name, Item )
         else
           Children.Add( '<empty>', nil );
       end;
 end;
 
-procedure TP3DPropertyEditorDataBlockList.MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer );
-  function GetIndex( AValue: Single ): Integer;
+procedure gP3DPropertyEditorList.MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer );
+  {function GetIndex( AValue: Single ): Integer;
   var
     i: Integer;
   begin
@@ -322,7 +341,7 @@ procedure TP3DPropertyEditorDataBlockList.MouseDown( mb1, mb2, mb3: Boolean; X, 
         if (( i < Children.Count ) and ( AValue <= Children[ i ].FRenderPos.Y )) then
           break;
       end;
-  end;
+  end;}
 
 begin
   {if ( FDrawInsertion > -1 ) then
@@ -354,7 +373,7 @@ begin
     inherited MouseDown(mb1, mb2, mb3, X, Y);
 end;
 
-function TP3DPropertyEditorDataBlockList.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;
+function gP3DPropertyEditorList.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;
 begin
   Result:= inherited DrawListItem( p, Node );
   if ( Node = Selection ) then
@@ -368,7 +387,7 @@ begin
     end;
 end;
 
-procedure TP3DPropertyEditorDataBlockList.Draw;
+procedure gP3DPropertyEditorList.Draw;
 begin
   inherited Draw;
   if ( FDrawInsertion > -1 ) then
@@ -382,7 +401,7 @@ begin
     end;
 end;
 
-procedure TP3DPropertyEditorDataBlockList.MouseMove(X, Y: Integer);
+procedure gP3DPropertyEditorList.MouseMove(X, Y: Integer);
 var
   itm: TP3DListItem;
 begin
@@ -397,6 +416,49 @@ begin
         FDrawInsertion:= itm.FRenderPos.y + itm.Text.Height;
     end;
 end;
+
+{ TP3DPropertyEditorEnum }
+
+procedure TP3DPropertyEditorEnum.SetProp(AValue: TP3DPropertyAccess);
+var
+  Names: TStringList;
+  i: Integer;
+begin
+  if ( AValue = Prop ) then
+    exit;
+
+  Items.Clear( True );
+
+  FProp:= AValue;
+
+  if ( Assigned( Prop ))  then
+    begin
+      Names:= Prop.GetNames;
+      inherited SetCaption( Prop.AsString );
+      if ( Assigned( Names )) then
+        begin
+          for i:= 0 to Names.Count - 1 do
+            Items.Add( Names[ i ]);
+          Names.Free;
+        end;
+    end
+  else
+    inherited SetCaption( '<empty>' );
+end;
+
+procedure TP3DPropertyEditorEnum.SetCaption(AValue: String);
+begin
+  inherited SetCaption(AValue);
+  if ( Assigned( Prop )) then
+    Prop.AsString:= AValue;
+end;
+
+constructor TP3DPropertyEditorEnum.Create(const AData: TP3DData;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+end;
+
 
 
 

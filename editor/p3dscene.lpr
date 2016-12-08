@@ -3,7 +3,7 @@ program p3dscene;
 {$mode objfpc}{$H+}
 
 uses
-  //heaptrc,
+  heaptrc,
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
@@ -38,7 +38,8 @@ begin
 end;
 
 begin
-  //SetHeapTraceOutput('heap.trc');
+  DeleteFile( 'heap.trc' );
+  SetHeapTraceOutput( 'heap.trc' );
   P3DEventsInit;
   P3DUtilsInit;
   P3DLog.FileName:= 'p3dscene.html';

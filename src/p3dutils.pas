@@ -38,6 +38,20 @@ function P3DTextToHTML(Txt: string): string; //Modified some Code of CodeHelp.pa
 
 implementation
 
+{ TP3DInterfacedPersistent }
+
+constructor TP3DInterfacedPersistent.Create;
+begin
+  inherited Create;
+  Properties:= TP3DPropertyAccessList.Create;
+end;
+
+destructor TP3DInterfacedPersistent.Destroy;
+begin
+  Properties.Clear( True );
+  Properties.Free;
+  inherited Destroy;
+end;
 
 { TP3DNodeList }
 

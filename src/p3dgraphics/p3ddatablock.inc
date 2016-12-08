@@ -124,7 +124,8 @@ type
 
   { TP3DPropertyAccessDataBlockList }
 
-  TP3DPropertyAccessDataBlockList = class( specialize gP3DPropertyAccess < TP3DDataBlockList >)
+  TP3DPropertyAccessDataBlockList = specialize gP3DListPropertyAccess < TP3DDataBlockList, TP3DDataBlock >;
+  {TP3DPropertyAccessDataBlockList = class( specialize gP3DPropertyAccess < TP3DDataBlockList >)
     private
       function GetCount: Integer;
       function GetValues( idx: Integer ): TP3DDataBlock;
@@ -138,7 +139,7 @@ type
       function GetAsString: String; override;
       procedure SetAsString( AValue: String ); override;
       property Count: Integer read GetCount write SetCount;
-  end;
+  end;}
 
   function P3DBoundingBox( vMin, vMax, vCenter: TVec3 ): TP3DBoundingBox;
   function P3DBoundingBoxTransform( Box: TP3DBoundingBox; Matrix: TMat4 ): TP3DBoundingBox;
@@ -149,7 +150,7 @@ type
 {$IFDEF IMPLEMENTATION}
 
 { TP3DPropertyAccessDataBlockList }
-
+{
 function TP3DPropertyAccessDataBlockList.GetCount: Integer;
 begin
   Result:= Value.Count;
@@ -179,7 +180,7 @@ procedure TP3DPropertyAccessDataBlockList.SetAsString(AValue: String);
 begin
 
 end;
-
+}
 { TP3DPropertyAccessDataBlock }
 
 function TP3DPropertyAccessDataBlock.GetAsString: String;

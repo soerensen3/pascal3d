@@ -143,6 +143,7 @@ end;
 destructor TP3DNodeTree.Destroy;
 begin
   Nodes.Clear( True );
+  FreeAndNil( FNodes );
   inherited Destroy;
 end;
 
@@ -189,7 +190,9 @@ end;
 
 destructor TP3DNode.Destroy;
 begin
+  Inputs.Clear( True );
   Inputs.Free;
+  Outputs.Clear( True );
   Outputs.Free;
   inherited Destroy;
 end;

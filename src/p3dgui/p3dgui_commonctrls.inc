@@ -273,6 +273,7 @@ end;
 destructor TP3DCustomItemView.Destroy;
 begin
   Font.Free;
+  Preset.Free;
   if ( P3DData.IsValid( ScrollBarV )) then
     ScrollBarV.Free;
   if ( P3DData.IsValid( ScrollBarH )) then
@@ -333,7 +334,6 @@ constructor TP3DTreeView.Create(const AData: TP3DData;
 begin
   inherited Create( AData, AParent );
   Children:= TP3DTreeNodeList.Create;
-
 
   SymbolPlus:= TP3DTextBmp.CreateSimple( P3DSymbolPlus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );
   SymbolMinus:= TP3DTextBmp.CreateSimple( P3DSymbolMinus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );

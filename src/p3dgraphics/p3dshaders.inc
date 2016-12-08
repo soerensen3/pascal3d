@@ -1059,6 +1059,10 @@ begin
     FFShaderWatch.Free;
   DeleteProgram( ProgramObj );
   Owner.Shaders.Remove( Self );
+  FAttributes.Clear( True );
+  FAttributes.Free;
+  FUniforms.Clear( True );
+  FUniforms.Free;
   inherited FastDestroy;
 end;
 

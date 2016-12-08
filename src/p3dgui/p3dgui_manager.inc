@@ -122,7 +122,7 @@ begin
   OldCtrl:= FFocusedControl; //Delayed event handler prevents deadlock
   FFocusedControl:= AValue;
 
-  If ( Assigned( OldCtrl )) then
+  If ( Assigned( OldCtrl ) and P3DData.IsValid( OldCtrl )) then
     OldCtrl.SetFocused( False );
 end;
 

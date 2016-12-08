@@ -62,7 +62,7 @@ type
       constructor Create( ASearchPaths: TP3DSearchPaths );
 
       function FindFile( FName: String ): String;
-      function FindFileEx( FName: String; PrefferedPath: String ): String;
+      function FindFileEx( FName: String; PreferedPath: String ): String;
 
       property FullPath[ Index: Integer ]: String read GetFullPath;
 
@@ -603,7 +603,7 @@ begin
   Result:= FindFileEx( FName, '' );
 end;
 
-function TP3DSearchPathContainer.FindFileEx( FName: String; PrefferedPath: String ): String;
+function TP3DSearchPathContainer.FindFileEx( FName: String; PreferedPath: String ): String;
 var
   i: Integer;
   BasePath, FileName: String;
@@ -614,9 +614,9 @@ begin
       Result:= FName;
       exit;
     end;
-  if ( PrefferedPath > '' ) then
+  if ( PreferedPath > '' ) then
     begin
-      FileName:= CleanAndExpandDirectory( AppendPathDelim( PrefferedPath )) + FName;
+      FileName:= CleanAndExpandDirectory( AppendPathDelim( PreferedPath )) + FName;
       if ( FileExists( FileName )) then
         begin
           Result:= FileName;

@@ -358,7 +358,8 @@ var
       if ( Copy( S, Length( S ) - Length( LineEnding ) - 1, Length( LineEnding )) = LineEnding ) then
         Delete( S, Length( S ) - Length( LineEnding ) - 1, Length( LineEnding ));
       //Delete one trailing line-ending if present
-      //otherwise it the chunk terminator has to be in the same line
+      //so the chunk terminator does not have to be in the same line
+      //which is unintuive
 
       chunk.Text:= S;
     end;
@@ -431,7 +432,7 @@ begin
         ParseNode
       else if ( CompWordAtCursor( '```' )) then
         ParseChunk
-      else if ( CompWordAtCursor( '#' )) then
+      else if ( CompWordAtCursor( StartCommentDelim )) then
         ParseComment
       else
         Error( 'Syntax Error! Only ---, ``` or # allowed outside of chunks and nodes' );

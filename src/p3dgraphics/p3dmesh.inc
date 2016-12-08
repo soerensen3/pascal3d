@@ -115,8 +115,6 @@
         TexCoords: array of TP3DVec2BufferGL;
         Edges: TP3DIntBufferGL;
 
-        InstanceBuffer: TP3DIntBufferGL;
-
         Indices: TP3DIntBufferGL;
         VBArray: TP3DVertexBufferArray;
         MaterialGroups: TP3DMeshMaterialGroupList;
@@ -300,10 +298,6 @@ begin
   WeightGroups:= TP3DMeshWeightGroupList.Create();
   Modifiers:= TP3DMeshModifierList.Create;
 
-  InstanceBuffer:= TP3DIntBufferGL.Create( True );
-  InstanceBuffer.Add([ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]);
-  InstanceBuffer.PushData;
-
   Owner.Meshes.Add( Self );
   FileWatch:= TP3DFileWatch.Create( '' );
 end;
@@ -327,10 +321,10 @@ begin
     TexCoords[ i ].Free;
 
   VBArray.Free;
+  MaterialGroups.Clear( True );
   MaterialGroups.Free;
   WeightGroups.Free;
   FileWatch.Free;
-  InstanceBuffer.Free;
 
   Owner.Meshes.Remove( Self );
 
@@ -753,7 +747,6 @@ var
 begin
   ClearVBO;
   _Positions:= TP3DVec3BufferGL.Create( True );
-  _Normals:= TP3DVec3BufferGL.Create( True );
   _Normals:= TP3DVec3BufferGL.Create( True );
   _Edges:= TP3DIntBufferGL.Create( True );
   _Weights:= TP3DVec3BufferGL.Create( True );

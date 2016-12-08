@@ -1,9 +1,21 @@
 {$IFDEF INTERFACE}
 type
+
+  { TP3DFontLetter }
+
   TP3DFontLetter = class
-    uv1, uv2: TVec2;
-    Texture: TP3DTexture;
-    Letter: WideChar; //UNICODE
+  private
+    Fuv1, Fuv2: TVec2;
+    FTexture: TP3DTexture;
+    FLetter: WideChar; //UNICODE
+
+  public
+    destructor Destroy; override;
+
+    property Letter: WideChar read FLetter write FLetter;
+    property Texture: TP3DTexture read FTexture write FTexture;
+    property uv1: TVec2 read Fuv1 write Fuv1;
+    property uv2: TVec2 read Fuv2 write Fuv2;
   end;
 
   TCustomFontLetterList = specialize gP3DCustomObjectList < TP3DFontLetter >;
@@ -211,6 +223,8 @@ begin
   Vertices.Free;
   Indices.Free;
   LetterPosAndSize.Free;
+  TexCoords.Free;
+
   inherited;
 end;
 
@@ -520,12 +534,14 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height,
     x, y: Integer;
     px: TIVec2;
   begin
-    Result:= SDL_CreateRGBSurface( 0, Width, Height, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+    Result:= SDL_CreateRGBSurface( SDL_SWSURFACE, Width, Height, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
 
+    SDL_LockSurface( Result );
+    SDL_LockSurface( ASurface );
     for y:= 0 to Result^.h - 1 do
       for x:= 0 to Result^.w - 1 do
         begin
-    	  px:= GetPixelOrig( ASurface, x, y );
+    	    px:= GetPixelOrig( ASurface, x, y );
           px[ 0 ]:= Min( INF[ 0 ], px[ 0 ]);
           px[ 1 ]:= Min( INF[ 1 ], px[ 1 ]);
     	  SetPixel( Result, x, y, px );
@@ -572,6 +588,8 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height,
       	    SetPixel( Result, x, y, px );
       	  end;
       end;
+    SDL_UnlockSurface( Result );
+    SDL_UnlockSurface( ASurface );
   end;
 
   function CombineAndDownscale( dist1, dist2: PSDL_Surface; Downscale: Integer ): PSDL_Surface;
@@ -607,7 +625,11 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height,
     idist1, idist2, y, x: Integer;
     dist, sy, sx: Integer;
   begin
-    Result:= SDL_CreateRGBSurface( 0, Width div Downscale, Height div Downscale, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+    Result:= SDL_CreateRGBSurface( SDL_SWSURFACE, Width div Downscale, Height div Downscale, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+
+    SDL_LockSurface( Result );
+    SDL_LockSurface( dist1 );
+    SDL_LockSurface( dist2 );
 
     for y:= 0 to Result^.h - 1 do
       for x:= 0 to Result^.w - 1 do
@@ -628,6 +650,9 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height,
     		// Clamp and scale it, just for display purposes.
           SetPixel( Result, x, y, dist );
         end;
+    SDL_UnlockSurface( Result );
+    SDL_UnlockSurface( dist1 );
+    SDL_UnlockSurface( dist2 );
   end;
 
 var
@@ -635,13 +660,12 @@ var
   FN: String;
 begin
   Create;
-
   FN:= P3DSearchPaths.Fonts.FindFile( Font.FontName + '.p3d' );
   if (( FN > '' ) and ( FileAge( Font.FileWatch.FileName ) < FileAge( FN ))) then
-      LoadFromFile( FN )
+    LoadFromFile( FN )
   else
     begin
-      Surface:= SDL_CreateRGBSurface( 0, Width, Height, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+      Surface:= SDL_CreateRGBSurface( SDL_SWSURFACE, Width, Height, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
       DrawText( Surface, Font );
 
       dist1:= CalculateSignedDistanceField( Surface, 0 );
@@ -671,6 +695,7 @@ end;
 
 destructor TP3DFontBmp.Destroy;
 begin
+  Letters.Clear( True );
   Letters.Free;
   inherited Destroy;
 end;
@@ -679,17 +704,10 @@ constructor TP3DFontBmp.CreateFromDOM(XML: TDOMElement);
 begin
   Create;
 
-  try
-    LoadFromDOM( XML );
-  finally
-    XML.Free;
-  end;
+  LoadFromDOM( XML );
 end;
 
 constructor TP3DFontBmp.CreateFromFile(FName: String);
-var
-  dir: String;
-  xml: TXMLDocument;
 begin
   Create();
   LoadFromFile( FName );
@@ -745,7 +763,7 @@ begin
         if ( not ( xml.DocumentElement.TagName = 'font' )) then
           raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" is not a font file!', [ FName ]));
 
-        CreateFromDOM( xml.DocumentElement );
+        LoadFromDOM( xml.DocumentElement );
       finally
         SetCurrentDir( dir );
         xml.Free;

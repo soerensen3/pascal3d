@@ -359,6 +359,7 @@ end;
 destructor TP3DShaderBuffer.Destroy;
 begin
   Defines.Free;
+  //Declarations.Clear( True );
   FDeclarations.Free;
   inherited Destroy;
 end;
@@ -379,6 +380,7 @@ end;
 
 destructor TP3DShaderNodeFragmentIfDef.Destroy;
 begin
+  Fragments.Clear( True );
   Fragments.Free;
   inherited Destroy;
 end;
@@ -434,6 +436,7 @@ begin
   Files:= P3DListFolderFiles( Path + Ext, True, True );
   for line in Files do
     LoadLibrary( line );
+  Files.Free;
 end;
 
 function TP3DShaderNodeLibrary.FindNode(ANode: String): TP3DShaderNode;
@@ -492,7 +495,10 @@ end;
 destructor TP3DShaderNodeSocket.Destroy;
 begin
   if ( not FIsCopy ) then
-    FFragments.Free
+    begin
+      Fragments.Clear( True );
+      FFragments.Free
+    end
   else
     FFragments:= nil;
   inherited Destroy;
@@ -533,6 +539,7 @@ begin
   Result:= TP3DShaderNodeSocketClass( ClassType ).Create( ANode, Direction );
   Result.Name:= Name;
   Result.Fragments.Free;
+  Result.FIsCopy:= True;
   Result.Fragments:= Fragments;
 end;
 
@@ -563,6 +570,7 @@ end;
 
 destructor TP3DShaderCompiled.Destroy;
 begin
+  FBuffers.Clear( True );
   FBuffers.Free;
   inherited Destroy;
 end;

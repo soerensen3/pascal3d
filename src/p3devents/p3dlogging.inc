@@ -7,28 +7,28 @@ type
   { TP3DLogger }
 
   TP3DLogger = class
-  private
-    FFileName: String;
-    FLevel: TDOMElement;
-    FLogFile: TXMLDocument;
+    private
+      FFileName: String;
+      FLevel: TDOMElement;
+      FLogFile: TXMLDocument;
 
-    procedure SetFileName( AValue: String );
-    function CreateMessageHeader( Sender: TObject ): TDOMElement;
+      procedure SetFileName( AValue: String );
+      function CreateMessageHeader( Sender: TObject ): TDOMElement;
 
-  public
-    constructor Create;
-    destructor Destroy; override;
+    public
+      constructor Create;
+      destructor Destroy; override;
 
-    procedure WriteFile;
-    procedure AddChild( ADOM: TDOMElement );
-    function LogInfoXML( Sender: TObject; Message: String ): TDOMElement;
-    function LogInfo( Sender: TObject; Message: String ): TDOMElement;
-    function LogException( Sender: TObject; Message: String ): TDOMElement;
-    function LogException( Sender: TObject; Message: Exception ): TDOMElement;
+      procedure WriteFile;
+      procedure AddChild( ADOM: TDOMElement );
+      function LogInfoXML( Sender: TObject; Message: String ): TDOMElement;
+      function LogInfo( Sender: TObject; Message: String ): TDOMElement;
+      function LogException( Sender: TObject; Message: String ): TDOMElement;
+      function LogException( Sender: TObject; Message: Exception ): TDOMElement;
 
-    property LogFile: TXMLDocument read FLogFile write FLogFile;
-    property FileName: String read FFileName write SetFileName;
-    property Level: TDOMElement read FLevel write FLevel;
+      property LogFile: TXMLDocument read FLogFile write FLogFile;
+      property FileName: String read FFileName write SetFileName;
+      property Level: TDOMElement read FLevel write FLevel;
   end;
 
 const
@@ -183,7 +183,7 @@ constructor TP3DLogger.Create;
 var
   F: TStringStream;
 begin
-  FLogFile:= TXMLDocument.Create;
+  //FLogFile:= TXMLDocument.Create;
   F:= TStringStream.Create( P3DLogOutput );
   XMLRead.ReadXMLFile( FLogFile, F );
   F.Free;
@@ -195,6 +195,7 @@ end;
 
 destructor TP3DLogger.Destroy;
 begin
+  FLevel:= nil;
   FLogFile.Free;
   inherited Destroy;
 end;

@@ -8,13 +8,14 @@
 
      { TP3DMaterialMap }
 
-     TP3DMaterialMap = class ( TInterfacedPersistent )
+     TP3DMaterialMap = class ( TP3DInterfacedPersistent )
        private
          FHasTransparency: Boolean;
          FMap: TP3DTexture;
          FParentMaterial: TP3DMaterial;
          FTexChannel: Integer;
 
+         function GetName: String;
          procedure SetMap( AValue: TP3DTexture );
 
        public
@@ -27,12 +28,14 @@
          property Map: TP3DTexture read FMap write SetMap;
          property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
          property HasTransparency: Boolean read FHasTransparency;
+         property Name: String read GetName;
      end;
 
      TP3DMaterialBase = class;
      TP3DMaterialModifierType = class of TP3DMaterialModifier;
 
      TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
+     TP3DMapTransparencyMode = ( p3dmtMultiply, p3dmtStep, p3dmtNone );
 
      { TP3DMaterialMapBase }
 
@@ -71,6 +74,8 @@
      end;
 
      TP3DMaterialMapList = specialize gP3DCustomObjectList < TP3DMaterialMap >;
+     TP3DPropertyAccessMaterialMapList = specialize gP3DListPropertyAccess < TP3DMaterialMapList, TP3DMaterialMap >;
+
 
      TP3DMaterial = class ( TP3DDataBlock )
        private
@@ -202,18 +207,22 @@
      TP3DMaterialBase = class ( TP3DMaterial )
        private
          FAlpha: Single;
+         FAlphaThreshhold: Single;
          FDiff: TVec3;
          FInstancing: Boolean;
          FModifiers: TP3DMaterialModifierList;
          FSpec: TVec3;
          FSpec_Hardness: Single;
+         FTransparencyMode: TP3DMapTransparencyMode;
          FUnlit: Boolean;
          FUseVertexColor: Boolean;
          FHasTransparency: Boolean;
 
          procedure SetAlpha(AValue: Single);
+         procedure SetAlphaThreshhold(AValue: Single);
          procedure SetInstancing(AValue: Boolean);
          procedure SetSpec_Hardness(AValue: Single);
+         procedure SetTransparencyMode(AValue: TP3DMapTransparencyMode);
          procedure SetUnlit( AValue: Boolean );
          procedure AddPasses(ShaderTree: TP3DShaderNodeTree); virtual;
          function GetHasTransparency: Boolean; override;
@@ -238,6 +247,8 @@
          property Unlit: Boolean read FUnlit write SetUnlit;
          property Modifiers: TP3DMaterialModifierList read FModifiers write FModifiers;
          property Instancing: Boolean read FInstancing write SetInstancing;
+         property TransparencyMode: TP3DMapTransparencyMode read FTransparencyMode write SetTransparencyMode;
+         property AlphaThreshhold: Single read FAlphaThreshhold write SetAlphaThreshhold;
      end;
 
      TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
@@ -259,6 +270,14 @@ begin
 
   if ( Assigned( FMap )) then
     Map.AddUser( ParentMaterial );
+end;
+
+function TP3DMaterialMap.GetName: String;
+begin
+  if ( Assigned( Map )) then
+    Result:= Map.Name
+  else
+    Result:= '<empty>';
 end;
 
 constructor TP3DMaterialMap.Create( AParentMaterial: TP3DMaterial );
@@ -315,7 +334,6 @@ begin
   if FAlphaFactor= AValue then Exit;
   FAlphaFactor:= AValue;
   TP3DMaterialBase( ParentMaterial ).BuildShader();
-  FHasTransparency:= AlphaFactor > 0;
 end;
 
 procedure TP3DMaterialMapBase.SetDisplaceFactor(AValue: Single);
@@ -355,6 +373,10 @@ begin
   FMode:= p3dmmMix;
   FTransform:= Mat4Identity;
   TexChannel:= 0;
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DiffuseFactor' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'SpecularFactor' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DisplaceFactor' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaFactor' ));
 end;
 
 procedure TP3DMaterialMapBase.LoadTransformFromDOM( DOM: TDOMElement );
@@ -449,7 +471,7 @@ var
 begin
   FHasTransparency:= FAlpha < 1;
 
-  if ( not FHasTransparency ) then
+  if (( not FHasTransparency ) and ( TransparencyMode = p3dmtMultiply )) then
     for Map in Maps do
       if ( Map.HasTransparency ) then
         begin
@@ -465,6 +487,13 @@ begin
   UpdateHasTransparency;
 end;
 
+procedure TP3DMaterialBase.SetAlphaThreshhold(AValue: Single);
+begin
+  if FAlphaThreshhold= AValue then Exit;
+  FAlphaThreshhold:= AValue;
+  BuildShader();
+end;
+
 procedure TP3DMaterialBase.SetInstancing(AValue: Boolean);
 begin
   if FInstancing=AValue then Exit;
@@ -478,11 +507,23 @@ begin
   FSpec_Hardness:= clamp( AValue, 0, 511 );
 end;
 
+procedure TP3DMaterialBase.SetTransparencyMode(AValue: TP3DMapTransparencyMode);
+begin
+  if FTransparencyMode= AValue then Exit;
+  FTransparencyMode:= AValue;
+
+  UpdateHasTransparency;
+  BuildShader();
+end;
+
 constructor TP3DMaterialBase.Create(const AData: TP3DData);
 begin
   inherited Create( AData );
   Alpha:= 1.0;
   Diff:= vec3( 1 );
+  FTransparencyMode:= p3dmtMultiply;
+  FAlphaThreshhold:= 0.9;
+
   Modifiers:= TP3DMaterialModifierList.Create;
   Modifiers.Add( TP3DMaterialModifierInit.Create );
   Modifiers.Add( TP3DMaterialModifierWorldTransform.Create );
@@ -491,10 +532,14 @@ begin
   Modifiers.Add( TP3DMaterialModifierLightning.Create );
   Modifiers.Add( TP3DMaterialModifierTransform.Create );
   Modifiers.Add( TP3DMaterialModifierCombine.Create );
+
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaThreshhold' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TransparencyMode' ));
 end;
 
 procedure TP3DMaterialBase.FastDestroy;
 begin
+  Modifiers.Clear( True );
   Modifiers.Free;
   inherited FastDestroy;
 end;
@@ -622,6 +667,8 @@ begin
 
   if ( ADOMNode.GetAttribute( 'unlit' ) = 'yes' ) then
     FUnlit:= True;
+
+  FTransparencyMode:= p3dmtStep;
 
   Instancing:= True;
 
@@ -916,7 +963,22 @@ begin
 end;
 
 procedure TP3DMaterialModifierCombine.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+  function ChangeSocketValueFloat( Node: TP3DShaderNode; Name: String; Value: Single ): TP3DShaderNode;
+  var
+    Socket: Integer;
+  begin
+    Socket:= Node.Inputs.FindSocketByName( Name );
+    if ( Socket < 0 ) then
+      raise Exception.Create( 'Cannot build shader: Socket "' + Name + '" not found!' );
+    TP3DShaderNodeSocketFloat( Node.Inputs[ Socket ]).Value:= Value;
+    Result:= Node;
+  end;
+
 begin
+  if ( Material.TransparencyMode = p3dmtStep ) then
+    ChangeSocketValueFloat( ShaderTree.AddCopyEx( '9990_map_pass_clip_transparency' ), 'AlphaTreshhold', Material.AlphaThreshhold )
+  else if ( Material.TransparencyMode = p3dmtNone ) then
+    ChangeSocketValueFloat( ShaderTree.AddCopyEx( '9990_map_pass_clip_transparency' ), 'AlphaTreshhold', 0 );
   ShaderTree.AddCopy( '10000_map_pass_final' );
 end;
 

@@ -123,6 +123,15 @@ begin
     end;
 end;
 
+{ TP3DFontLetter }
+
+destructor TP3DFontLetter.Destroy;
+begin
+  if ( Assigned( Texture ) and P3DData.IsValid( Texture )) then
+    FreeAndNil( FTexture );
+  inherited Destroy;
+end;
+
 
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dbuffers.inc}

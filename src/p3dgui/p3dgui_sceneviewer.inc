@@ -8,8 +8,8 @@ type
   { TP3DSceneViewer }
 
   TP3DSceneViewer = class ( TP3DGroupBox )
-  private
-    FRenderList: TP3DRenderList;
+    private
+      FRenderList: TP3DRenderList;
     protected
       FAfterRender: TNotifyEvent;
       FBeforeRender: TNotifyEvent;
@@ -30,6 +30,7 @@ type
       procedure MouseMove(X, Y: Integer); override;
       procedure MouseWheel(delta: Integer); override;
       procedure KeyboardAction; override;
+      destructor Destroy; override;
 
       property Scene: TP3DScene read FScene write FScene;
       property OrbitCamera: Boolean read FOrbitCamera write SetOrbitCamera;
@@ -226,6 +227,13 @@ begin
       if ( KeyEvent( P3DK_5 ) or KeyEvent( P3DK_KP_5 )) then
         FCam.IsIsometric:= not FCam.IsIsometric;
     end;
+end;
+
+destructor TP3DSceneViewer.Destroy;
+begin
+  if ( Assigned( RenderList )) then
+    RenderList.Free;
+  inherited Destroy;
 end;
 
 {
