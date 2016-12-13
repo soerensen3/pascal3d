@@ -1,0 +1,974 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "ground_normal">
+    <object
+      type = "mesh"
+      data = "mesh_ground_low"
+      name = "obj_ground_low">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_E">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.002"
+      name = "obj_rock_E">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.010"
+      name = "obj_ground_E">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_N">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.002"
+      name = "obj_rock_N">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 1.000000, 0.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.009"
+      name = "obj_ground_N">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_NE">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.003"
+      name = "obj_rock_NE">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 1.000000, 0.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.007"
+      name = "obj_ground_NE">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_NE-inv">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.004"
+      name = "obj_rock_SE-inv.001">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.014"
+      name = "obj_ground_NE.001">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_NW">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.003"
+      name = "obj_rock_NW">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.008"
+      name = "obj_ground_NW">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_NW-inv">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.004"
+      name = "obj_rock_SE-inv.002">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.013"
+      name = "obj_ground_NW.001">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_S">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.002"
+      name = "obj_rock_S">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.003"
+      name = "obj_ground_S">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_SE">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.003"
+      name = "obj_rock_SE">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.006"
+      name = "obj_ground_SE">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_SE-inv">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.004"
+      name = "obj_rock_SE-inv">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.012"
+      name = "obj_ground_SE.001">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_SW">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.003"
+      name = "obj_rock_SW">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.004"
+      name = "obj_ground_SW">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_SW-inv">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.004"
+      name = "obj_rock_SW-inv">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 1.000000, 0.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.005"
+      name = "obj_ground_SW-inv">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_wall_W">
+    <object
+      type = "mesh"
+      data = "mesh_ground_wall.002"
+      name = "obj_rock_W">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      type = "mesh"
+      data = "mesh_ground_low.011"
+      name = "obj_ground_W">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <scene
+    name = "ground_ĥigh">
+    <object
+      type = "mesh"
+      data = "mesh_ground_low"
+      name = "obj_ground_high">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        position = " 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.010.p3dmesh"
+    texcoords = "256"
+    normals = "90"
+    texlayers = "1"
+    cotangents = "256"
+    loops = "256"
+    tangents = "256"
+    faces = "64"
+    vertices = "90"
+    name = "mesh_ground_low.010">
+    <material
+      start = "0"
+      end = "63"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.009.p3dmesh"
+    texcoords = "256"
+    normals = "90"
+    texlayers = "1"
+    cotangents = "256"
+    loops = "256"
+    tangents = "256"
+    faces = "64"
+    vertices = "90"
+    name = "mesh_ground_low.009">
+    <material
+      start = "0"
+      end = "63"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.003.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.003">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.014.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.014">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground.012">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.004.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.004">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.013.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.013">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground.011">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.003.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.003">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.012.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.012">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground.010">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.002.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.002">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.005.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.005">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.002.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.002">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.007.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.007">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.004.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.004">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.004.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.004">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.008.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.008">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.004.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.004">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.011.p3dmesh"
+    texcoords = "256"
+    normals = "90"
+    texlayers = "1"
+    cotangents = "256"
+    loops = "256"
+    tangents = "256"
+    faces = "64"
+    vertices = "90"
+    name = "mesh_ground_low.011">
+    <material
+      start = "0"
+      end = "63"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.p3dmesh"
+    texcoords = "256"
+    normals = "81"
+    texlayers = "1"
+    cotangents = "256"
+    loops = "256"
+    tangents = "256"
+    faces = "64"
+    vertices = "81"
+    name = "mesh_ground_low">
+    <material
+      start = "0"
+      end = "63"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.006.p3dmesh"
+    texcoords = "258"
+    normals = "89"
+    texlayers = "1"
+    cotangents = "258"
+    loops = "258"
+    tangents = "258"
+    faces = "65"
+    vertices = "89"
+    name = "mesh_ground_low.006">
+    <material
+      start = "0"
+      end = "64"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.003.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.003">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.004.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.004">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.002.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.002">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.p3dmesh"
+    texcoords = "256"
+    normals = "81"
+    texlayers = "1"
+    cotangents = "256"
+    loops = "256"
+    tangents = "256"
+    faces = "64"
+    vertices = "81"
+    name = "mesh_ground_low">
+    <material
+      start = "0"
+      end = "63"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.002.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.002">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_wall.003.p3dmesh"
+    texcoords = "3072"
+    normals = "825"
+    texlayers = "1"
+    cotangents = "3072"
+    loops = "3072"
+    tangents = "3072"
+    faces = "768"
+    vertices = "825"
+    name = "mesh_ground_wall.003">
+    <weightgroup
+      name = "Group">
+    </weightgroup>
+    <material
+      start = "0"
+      end = "767"
+      name = "material_rock">
+    </material>
+  </mesh>
+  <mesh
+    binary = "tiles_rock_base.mesh_ground_low.003.p3dmesh"
+    texcoords = "256"
+    normals = "90"
+    texlayers = "1"
+    cotangents = "256"
+    loops = "256"
+    tangents = "256"
+    faces = "64"
+    vertices = "90"
+    name = "mesh_ground_low.003">
+    <material
+      start = "0"
+      end = "63"
+      name = "material_ground">
+    </material>
+  </mesh>
+  <material
+    diffuse = "0.315570, 0.405591, 0.238430"
+    specular = "5.000000, 0.020000, 0.017241, 0.011507"
+    name = "material_ground">
+    <map
+      diffuse = "1.0"
+      layer = "0"
+      mode = "multiply"
+      data = "tex_Texture"
+      name = "Texture">
+    </map>
+    <map
+      mode = "mix"
+      layer = "0"
+      normal = "0.5"
+      data = "tex_Texture.001"
+      name = "Texture.001">
+    </map>
+    <map
+      layer = "0"
+      mode = "multiply"
+      specular_intensity = "1.0"
+      data = "tex_Texture.002"
+      name = "Texture.002">
+    </map>
+  </material>
+  <material
+    diffuse = "0.191596, 0.191596, 0.191596"
+    specular = "20.000000, 0.209459, 0.111245, 0.099035"
+    name = "material_rock">
+    <map
+      diffuse = "1.0"
+      layer = "0"
+      mode = "multiply"
+      data = "tex_Texture.006"
+      name = "Texture.006">
+    </map>
+    <map
+      mode = "mix"
+      layer = "0"
+      normal = "1.0"
+      data = "tex_Texture.007"
+      name = "Texture.007">
+    </map>
+    <map
+      layer = "0"
+      specular_intensity = "1.0"
+      specular = "1.0"
+      name = "Texture.008"
+      data = "tex_Texture.008"
+      mode = "multiply">
+    </map>
+  </material>
+  <material
+    diffuse = "0.315570, 0.405591, 0.238430"
+    specular = "5.000000, 0.020000, 0.017241, 0.011507"
+    name = "material_ground.012">
+    <map
+      diffuse = "1.0"
+      layer = "0"
+      mode = "multiply"
+      data = "tex_Texture.044"
+      name = "Texture.044">
+    </map>
+    <map
+      mode = "mix"
+      layer = "0"
+      normal = "0.5"
+      data = "tex_Texture.045"
+      name = "Texture.045">
+    </map>
+    <map
+      layer = "0"
+      mode = "multiply"
+      specular_intensity = "1.0"
+      data = "tex_Texture.046"
+      name = "Texture.046">
+    </map>
+  </material>
+  <material
+    diffuse = "0.315570, 0.405591, 0.238430"
+    specular = "5.000000, 0.020000, 0.017241, 0.011507"
+    name = "material_ground.011">
+    <map
+      diffuse = "1.0"
+      layer = "0"
+      mode = "multiply"
+      data = "tex_Texture.041"
+      name = "Texture.041">
+    </map>
+    <map
+      mode = "mix"
+      layer = "0"
+      normal = "0.5"
+      data = "tex_Texture.042"
+      name = "Texture.042">
+    </map>
+    <map
+      layer = "0"
+      mode = "multiply"
+      specular_intensity = "1.0"
+      data = "tex_Texture.043"
+      name = "Texture.043">
+    </map>
+  </material>
+  <material
+    diffuse = "0.315570, 0.405591, 0.238430"
+    specular = "5.000000, 0.020000, 0.017241, 0.011507"
+    name = "material_ground.010">
+    <map
+      diffuse = "1.0"
+      layer = "0"
+      mode = "multiply"
+      data = "tex_Texture.038"
+      name = "Texture.038">
+    </map>
+    <map
+      mode = "mix"
+      layer = "0"
+      normal = "0.5"
+      data = "tex_Texture.039"
+      name = "Texture.039">
+    </map>
+    <map
+      layer = "0"
+      mode = "multiply"
+      specular_intensity = "1.0"
+      data = "tex_Texture.040"
+      name = "Texture.040">
+    </map>
+  </material>
+  <texture
+    file = "ground_displacement.png"
+    name = "tex_Texture.002">
+  </texture>
+  <texture
+    file = "rock2_disp.png"
+    name = "tex_Texture.008">
+  </texture>
+  <texture
+    file = "Grass_Texture_Diff.png"
+    name = "tex_Texture.044">
+  </texture>
+  <texture
+    file = "ground_baked_normal.png"
+    name = "tex_Texture.039">
+  </texture>
+  <texture
+    file = "ground_baked_normal.png"
+    name = "tex_Texture.001">
+  </texture>
+  <texture
+    file = "rock2_norm.png"
+    name = "tex_Texture.007">
+  </texture>
+  <texture
+    file = "ground_baked_normal.png"
+    name = "tex_Texture.045">
+  </texture>
+  <texture
+    file = "ground_displacement.png"
+    name = "tex_Texture.040">
+  </texture>
+  <texture
+    file = "Grass_Texture_Diff.png"
+    name = "tex_Texture">
+  </texture>
+  <texture
+    file = "rock2_diff.png"
+    name = "tex_Texture.006">
+  </texture>
+  <texture
+    file = "ground_displacement.png"
+    name = "tex_Texture.046">
+  </texture>
+  <texture
+    file = "Grass_Texture_Diff.png"
+    name = "tex_Texture.041">
+  </texture>
+  <texture
+    file = "ground_baked_normal.png"
+    name = "tex_Texture.042">
+  </texture>
+  <texture
+    file = "ground_displacement.png"
+    name = "tex_Texture.043">
+  </texture>
+  <texture
+    file = "Grass_Texture_Diff.png"
+    name = "tex_Texture.038">
+  </texture>
+</p3dfile>

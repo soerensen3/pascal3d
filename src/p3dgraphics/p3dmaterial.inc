@@ -333,6 +333,7 @@ procedure TP3DMaterialMapBase.SetAlphaFactor(AValue: Single);
 begin
   if FAlphaFactor= AValue then Exit;
   FAlphaFactor:= AValue;
+  FHasTransparency:= AlphaFactor > 0;
   TP3DMaterialBase( ParentMaterial ).BuildShader();
 end;
 

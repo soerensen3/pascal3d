@@ -323,6 +323,7 @@ begin
   VBArray.Free;
   MaterialGroups.Clear( True );
   MaterialGroups.Free;
+  WeightGroups.Clear( True );
   WeightGroups.Free;
   FileWatch.Free;
 
@@ -393,8 +394,6 @@ begin
         cnt:= StrToIntDef( ADOMNode.GetAttribute( 'faces' ), 0 );
         if ( cnt > 0 ) then
           LoadFaceFromStream( @Faces, F, cnt, Edges.Count );
-
-
         F.Free;
         FileWatch.FileName:= ext;
       except on E: Exception do
@@ -552,6 +551,7 @@ var
   Modifier: TP3DMeshModifier;
   i: Integer;
   offset, count: LongInt;
+  mat: TMat4;
 begin
   //for Modifier in Modifiers do
   //  Modifier.PassToShader( MaterialGroups[ Idx ].Material, world );
@@ -579,12 +579,16 @@ begin
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
 
+  mat:= Mat4Identity;
+  {for Modifier in Modifiers do
+    Modifier.PassToShader( MaterialGroups[ Idx ].Material, mat );
+
   decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
   if ( Assigned( decl )) and ( VertexGroupsf.Count > 0 ) then
     VertexGroupsf.SetAttribArray( decl.Addr );
   decl:= P3DShaderActive.Attributes.Names[ 'jointWeight' ];
   if ( Assigned( decl )) and ( VertexWeights.Count > 0 ) then
-    VertexWeights.SetAttribArray( decl.Addr );
+    VertexWeights.SetAttribArray( decl.Addr );}
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
@@ -599,7 +603,9 @@ procedure TP3DMesh.RenderMaterialGroupInstanced(numInstance: Integer; MatIdx: In
 var
   i: Integer;
   decl: TP3DShaderDecl;
+  Modifier: TP3DMeshModifier;
   offset, count: Integer;
+  mat: TMat4;
 begin
   if ( Positions.Count > 0 ) then
     Positions.SetAttribArray( P3DAttribPosition );
@@ -611,13 +617,18 @@ begin
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+//  VBArray.Bind;
 
-  decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
+  {decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
   if ( Assigned( decl )) and ( VertexGroupsf.Count > 0 ) then
     VertexGroupsf.SetAttribArray( decl.Addr );
   decl:= P3DShaderActive.Attributes.Names[ 'jointWeight' ];
   if ( Assigned( decl )) and ( VertexWeights.Count > 0 ) then
     VertexWeights.SetAttribArray( decl.Addr );
+
+  mat:= Mat4Identity; //only a workaround
+  for Modifier in Modifiers do
+    Modifier.PassToShader( MaterialGroups[ MatIdx ].Material, mat );}
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
@@ -625,6 +636,18 @@ begin
   count:= ( MaterialGroups[ MatIdx ].IndexEnd - MaterialGroups[ MatIdx ].IndexStart ) + 1;
 
   glDrawElementsInstanced( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint )), numInstance ); cle( Self );
+  //VBArray.Unbind;
+
+  if ( Positions.Count > 0 ) then
+    Positions.UnsetAttribArray();
+  if ( Normals.Count > 0 ) then
+    Normals.UnsetAttribArray();
+  if ( Cotangents.Count > 0 ) then
+    Cotangents.UnsetAttribArray();
+  if ( Tangents.Count > 0 ) then
+    Tangents.UnsetAttribArray();
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].UnsetAttribArray();
 end;
 
 procedure TP3DMesh.RenderEdges(world: TMat4; Scene: TP3DScene;

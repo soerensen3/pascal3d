@@ -5,16 +5,17 @@ input: {name="numJoints", type="int"}
 ```{name="CODE", type="shader", restrict="declaration"}
 //uniform vec3 jointPos[ $numJoints$ ];
 //uniform vec4 jointQuat[ $numJoints$ ];
-	uniform sampler2D jointTex;
-	uniform int jointTexWidth;
-	uniform int jointTexHeight;
-	uniform float time;
+uniform sampler2D jointTex;
+uniform int jointTexWidth;
+uniform int jointTexHeight;
+uniform float time;
 
-	void getJointTransform( const in float i, out vec4 quat, out vec3 trans ) {
-		float dx = 1.0 / float( jointTexWidth );
-		trans = texture2D( jointTex, vec2( dx * ( i*2 + 0.5 ), time )).xyz;
-		quat = normalize( texture2D( jointTex, vec2( dx * ( i*2 + 1.5 ), time )));
-	}
+void getJointTransform( const in float i, out vec4 quat, out vec3 trans ) {
+  float tw = max( 1.0, float( jointTexWidth )); 
+  float dx = 1.0 / tw;
+  trans = texture2D( jointTex, vec2( dx * ( i*2.0 + 0.5 ), time )).xyz;
+  quat = normalize( texture2D( jointTex, vec2( dx * ( i*2.0 + 1.5 ), time )));
+}
 ```
 
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
@@ -50,7 +51,7 @@ void getTransform( out vec4 quat, out vec3 trans )
   vec4 quat0, quat1, quat2, quat3;
   vec3 trans0, trans1, trans2, trans3;  
   getJointTransform( floor( fjointID[ 0 ]), quat0, trans0 );
-  getJointTransform( floor( fjointID[ 1 ]), quat1, trans1 );
+/*  getJointTransform( floor( fjointID[ 1 ]), quat1, trans1 );
   getJointTransform( floor( fjointID[ 2 ]), quat2, trans2 );
   getJointTransform( floor( fjointID[ 3 ]), quat3, trans3 );
   quat= quat0 * jointWeight[ 0 ]
@@ -61,18 +62,19 @@ void getTransform( out vec4 quat, out vec3 trans )
   trans= trans0 * jointWeight[ 0 ]
        + trans1 * jointWeight[ 1 ]
        + trans2 * jointWeight[ 2 ]
-       + trans3 * jointWeight3;
+       + trans3 * jointWeight3;*/
 }
 ```
 
 ```{name="CODE", type="shader", restrict="vshader,main"}
+
   vec4 quat;
   vec3 trans;
   getTransform( quat, trans );
-  vNormal.xyz = transformNormal( vNormal.xyz, quat );
+/*  vNormal.xyz = transformNormal( vNormal.xyz, quat );
   vTangent.xyz = transformNormal( vTangent.xyz, quat );
   vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
-  vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
+  vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );*/
   //vjointWeight = jointWeight;
   //vjointID = fjointID;
 ```

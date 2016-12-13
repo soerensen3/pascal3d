@@ -32,6 +32,8 @@ begin
   FAssetView:= TP3DListViewFile.Create( nil, Self );
   FDirectoryView.Directory:= P3DSearchPaths.BaseDir;
   FDirectoryView.ShowSymbols:= True;
+  FDirectoryView.ShowFiles:= True;
+  FDirectoryView.Mask:= '*.p3d';
   FDirectoryView.Align:= alLeft;
   FDirectoryView.Width:= 200;
   FAssetView.ShowSymbols:= True;
@@ -40,6 +42,7 @@ begin
   FAssetView.Align:= alClient;
   FAssetView.AllowDrag:= True;
   FAssetView.Mask:= '*.p3d';
+  FAssetView.AllowOpenP3D:= True;
 end;
 
 destructor TP3DSAssetPanel.Destroy;

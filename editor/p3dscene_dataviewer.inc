@@ -40,6 +40,7 @@ begin
   LibraryPopup.Items[ LibraryPopup.Items.Add( 'Add' )].Enabled:= False;
   LibraryPopup.Items.Add( '  Light' );
   LibraryPopup.Items.Add( '  Camera' );
+  LibraryPopup.Items.Add( '  TileGrid' );
   OnMouseClick:= @DataMouseClick;
 end;
 
@@ -123,6 +124,7 @@ begin
                 end;
           '  Light': AddToParentScene( DataView.Selection.Data, TP3DLight );
           '  Camera': AddToParentScene( DataView.Selection.Data, TP3DCamera );
+          '  TileGrid': AddToParentScene( DataView.Selection.Data, TP3DTileGrid );
         end;
         LibraryPopup.Hide;
       end;

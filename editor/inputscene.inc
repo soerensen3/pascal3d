@@ -76,7 +76,7 @@ begin
     begin DataView.Update; DataView.Children.ExpandAll(); end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F8 ) then
     begin
-      P3DShaderNodeLib.Nodes.Clear();
+      P3DShaderNodeLib.Nodes.Clear( True );
       P3DShaderNodeLib.LoadLibraryPath( P3DSearchPaths.BaseDir + 'shaders/nodes/core/', '*.pmd' );;
       UpdateMaterials( P3DData );
       for i:= 0 to P3DData.Libraries.Count - 1 do

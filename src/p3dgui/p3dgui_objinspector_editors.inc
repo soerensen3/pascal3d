@@ -100,7 +100,7 @@ type
       FGridHeightEd: TP3DPropertyEditorInt;
       FGridWidthEd: TP3DPropertyEditorInt;
       FGridWorldUnitEd: TP3DPropertyEditorFloat;
-      FMeshList: TP3DPropertyEditorDataBlockList;
+      //FMeshList: TP3DPropertyEditorDataBlockList;
 
     public
       constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
@@ -112,7 +112,7 @@ type
       procedure OnMeshSelect( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     published
-      property MeshList: TP3DPropertyEditorDataBlockList read FMeshList write FMeshList;
+      //property MeshList: TP3DPropertyEditorDataBlockList read FMeshList write FMeshList;
       property GridWidthEd: TP3DPropertyEditorInt read FGridWidthEd write FGridWidthEd;
       property GridHeightEd: TP3DPropertyEditorInt read FGridHeightEd write FGridHeightEd;
       property GridWorldUnitEd: TP3DPropertyEditorFloat read FGridWorldUnitEd write FGridWorldUnitEd;
@@ -721,10 +721,10 @@ end;
 constructor TP3DOIEditorPageGrid.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
-  MeshList:= TP3DPropertyEditorDataBlockList.Create( nil, Self );
+  {MeshList:= TP3DPropertyEditorDataBlockList.Create( nil, Self );
   MeshList.Align:= alTop;
   MeshList.Height:= 100;
-  MeshList.OnSelectionChange:= @OnMeshSelect;
+  MeshList.OnSelectionChange:= @OnMeshSelect;}
   GridWidthEd:= TP3DPropertyEditorInt.Create( nil, AddContainer( Self, 'Width ' ));
   GridWidthEd.Align:= alClient;
   GridHeightEd:= TP3DPropertyEditorInt.Create( nil, AddContainer( Self, 'Height ' ));
@@ -744,13 +744,13 @@ begin
     Grid:= TP3DTileGrid( TP3DActor( Obj ).Data )
   else
     begin
-      MeshList.Prop:= nil;
+      //MeshList.Prop:= nil;
       GridWidthEd.Prop:= nil;
       GridHeightEd.Prop:= nil;
       GridWorldUnitEd.Prop:= nil;
       exit;
     end;
-  MeshList.Prop:= TP3DPropertyAccessDataBlockList( Grid.Properties.GetPropByName( 'Scenes' ));
+  //MeshList.Prop:= TP3DPropertyAccessDataBlockList( Grid.Properties.GetPropByName( 'Scenes' ));
   GridWidthEd.Prop:= Grid.Properties.GetPropByName( 'Width' );
   GridHeightEd.Prop:= Grid.Properties.GetPropByName( 'Height' );
   GridWorldUnitEd.Prop:= Grid.Properties.GetPropByName( 'GridWorldUnit' );
@@ -769,7 +769,7 @@ end;
 
 procedure TP3DOIEditorPageGrid.OnMeshSelect(Sender: TP3DListView; var NewSelection: TP3DListItem);
 begin
-  TileGridSelIndex:= MeshList.Children.IndexOf( NewSelection );
+  //TileGridSelIndex:= MeshList.Children.IndexOf( NewSelection );
 end;
 
 

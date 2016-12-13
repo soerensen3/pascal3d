@@ -124,12 +124,6 @@ type
       property IsCopy: Boolean read FIsCopy;
   end;
 
-  { TP3DShaderNodeDynamic }
-
-  TP3DShaderNodeDynamic = class ( TP3DShaderNode )
-    procedure SocketChanged( ASocket: TP3DShaderNodeSocket );
-  end;
-
   { TP3DShaderNodeLibrary }
 
   TP3DShaderNodeLibrary = class( TP3DNodeTree )
@@ -305,15 +299,6 @@ begin
   Result:= TP3DShaderNode( Nodes[ AddCopy( Name )]);
 end;
 
-
-{ TP3DShaderNodeDynamic }
-
-procedure TP3DShaderNodeDynamic.SocketChanged(ASocket: TP3DShaderNodeSocket);
-begin
-  //i:= Inputs.IndexOf( ASocket );
-  //if ( Inputs.Sockets.
-end;
-
 { TP3DShaderNodeSocketList }
 
 function TP3DShaderNodeSocketList.GetStringOutput( Buffer: TP3DShaderBuffer ): String;
@@ -481,8 +466,8 @@ end;
 procedure TP3DShaderNodeSocket.SetConnected(AValue: TP3DNodeSocket);
 begin
   inherited SetConnected(AValue);
-  if ( Node is TP3DShaderNodeDynamic ) then
-    TP3DShaderNodeDynamic( Node ).SocketChanged( Self );
+  {if ( Node is TP3DShaderNodeDynamic ) then
+    TP3DShaderNodeDynamic( Node ).SocketChanged( Self );}
 end;
 
 constructor TP3DShaderNodeSocket.Create(ANode: TP3DNode;

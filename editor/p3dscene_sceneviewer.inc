@@ -96,12 +96,11 @@
   TP3DSceneEditModeTileGrid = class ( TP3DSceneEditModeDefault )
     private
       FBrushGridPos: TIVec2;
-      FBrushIndex: Integer;
       FBrushPos: TVec3;
       FCanPaint: Boolean;
       FGrid: TP3DTileGrid;
 
-      function GetBrushIndex: Integer;
+      function GetBrushScene: TP3DGridScene;
       procedure SetBrushPos(AValue: TVec3);
 
     public
@@ -114,7 +113,7 @@
       property BrushPos: TVec3 read FBrushPos write SetBrushPos;
       property BrushGridPos: TIVec2 read FBrushGridPos;
       property CanPaint: Boolean read FCanPaint;
-      property BrushIndex: Integer read GetBrushIndex;
+      property BrushScene: TP3DGridScene read GetBrushScene;
   end;
 
   { TP3DScenePanel }
@@ -233,9 +232,26 @@ begin
   FCanPaint:= ( InRange( BrushGridPos.X, 0, Grid.Width - 1 ) and InRange( BrushGridPos.Y, 0, Grid.Height - 1 ));
 end;
 
-function TP3DSceneEditModeTileGrid.GetBrushIndex: Integer;
+function TP3DSceneEditModeTileGrid.GetBrushScene: TP3DGridScene;
+var
+  n, m: Integer;
 begin
-  Result:= p3dgui.TileGridSelIndex;
+  Result:= nil;
+  if ( FileExistsUTF8( AssetView.AssetView.Directory ) and
+     ( Assigned( AssetView.AssetView.Selection )) and
+     ( lowercase( ExtractFileExt( AssetView.AssetView.Directory )) = '.p3d' )) then
+    begin
+      n:= OpenLibrary( AssetView.AssetView.Directory );
+      if ( n > -1 ) then
+        begin
+          m:= P3DData.Libraries[ n ].Scenes.FindByName( AssetView.AssetView.Selection.Caption );
+          if ( n > -1 ) then
+            begin
+              m:= Grid.AddScene( P3DData.Libraries[ n ].Scenes[ m ]);
+              Result:= Grid.Scenes[ m ];
+            end;
+        end;
+    end;
 end;
 
 procedure TP3DSceneEditModeTileGrid.AfterRender;
@@ -304,11 +320,14 @@ begin
 end;
 
 procedure TP3DSceneEditModeTileGrid.Paint;
+var
+  Scene: TP3DGridScene;
 begin
   if ( CanPaint ) then
     begin
-      if ( InRange( BrushIndex, 0, Grid.Scenes.Count - 1 )) then
-        Grid.IndexAt[ BrushGridPos.X, BrushGridPos.Y ]:= BrushIndex;
+      Scene:= BrushScene;
+      if ( Assigned( Scene )) then
+        Grid.SceneAt[ BrushGridPos.X, BrushGridPos.Y ]:= Scene;
       FCanPaint:= False;
     end;
 end;

@@ -46,10 +46,12 @@
     = class ( TInterfacedPersistent{, specialize IP3DEnumerableClass < TCustomItem >} )
       type
         TP3DCustomObjectListEnumeratorClass = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
+        TItemListOnSetEvent = function ( Sender: TPersistent; ItemIndex: Integer; AValue: TCustomItem ): Boolean of object;
 
       private
         FItems: TList;
         FOnChange: TNotifyEvent;
+        FOnSet: TItemListOnSetEvent;
         function GetCount: Integer;
         procedure SetCount( AValue: Integer );
         function GetItem( Index: Integer ): TCustomItem;
@@ -71,6 +73,7 @@
 
         property Items[ Index: Integer ]: TCustomItem read GetItem write SetItem; default;
         property OnChange: TNotifyEvent read FOnChange write FOnChange;
+        property OnSet: TItemListOnSetEvent read FOnSet write FOnSet;
 
       published
         property Count: Integer read GetCount write SetCount;
@@ -260,6 +263,8 @@ end;
 
 procedure gP3DCustomObjectList.SetItem( Index: Integer ; AValue: TCustomItem);
 begin
+  if ( Assigned( FOnSet ) and ( not OnSet( Self, Index, AValue ))) then
+    exit;
   if (( Index < Count ) and ( Index > -1 )) then
     FItems[ Index ]:= AValue;
 end;

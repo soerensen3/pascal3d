@@ -378,6 +378,8 @@ input: {name="AlphaTreshhold", type="float"}
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
   Color.a = step( $AlphaTreshhold$, Color.a );
+  if ( Color.a == 0.0 ) 
+    discard;
 ```
 
 ---

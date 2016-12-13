@@ -154,7 +154,6 @@ type
   TP3DMeshModifierArmature = class ( TP3DMeshModifier )
     private
       FArmature: TP3DArmature;
-      FGridSize: Single;
 
     public
       constructor Create( AMesh: TP3DMesh ); override;
@@ -164,7 +163,6 @@ type
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
     published
-      property GridSize: Single read FGridSize write FGridSize;
       property Armature: TP3DArmature read FArmature write FArmature;
   end;
 
@@ -391,14 +389,20 @@ begin
       glBindTexture( GL_TEXTURE_2D, Armature.CurrentAction.JointTex.GLTexture ); cle( Self );
 
       decl:= Material.Shader.Uniforms.Names[ 'jointTex' ];
-      decl.AsInt:= i;
+      if ( Assigned( decl )) then
+        decl.AsInt:= i;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexWidth' ];
-      decl.AsInt:= Armature.CurrentAction.JointTex.Width div 2;
+      if ( Assigned( decl )) then
+        decl.AsInt:= Armature.CurrentAction.JointTex.Width div 2;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexHeight' ];
-      decl.AsInt:= Armature.CurrentAction.JointTex.Height;
-      decl:= Material.Shader.Uniforms.Names[ 'time' ];
+      if ( Assigned( decl )) then
+        decl.AsInt:= Armature.CurrentAction.JointTex.Height;
+
       Armature.CurrentAction.CurrentFrame:= SDL_GetTicks() / 100;
-      decl.AsFloat:= Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count;
+
+      decl:= Material.Shader.Uniforms.Names[ 'time' ];
+      if ( Assigned( decl )) then
+        decl.AsFloat:= Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count;
     end;
 end;
 
@@ -540,6 +544,7 @@ end;
 procedure TP3DArmatureAction.FastDestroy;
 begin
   FrameSample.Free;
+  Frames.Clear( True );
   Frames.Free;
   if ( Assigned( JointTex )) then
     JointTex.Free;

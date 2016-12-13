@@ -123,6 +123,35 @@ begin
     end;
 end;
 
+{ TP3DGridSceneList }
+
+function TP3DGridSceneList.FindByScene(AScene: TP3DScene): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count -1 do
+    if ( Items[ i ].Scene = AScene ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+function TP3DGridSceneList.FindBySceneName(AName: String): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count -1 do
+    if ( Items[ i ].Scene.Name = AName ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+
 { TP3DFontLetter }
 
 destructor TP3DFontLetter.Destroy;

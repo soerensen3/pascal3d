@@ -1,22 +1,50 @@
 
 {$IFDEF INTERFACE}
 
+
+TP3DTileGrid = class;
+TP3DRenderListModifierGrid = class;
+
+{ TP3DGridScene }
+
+TP3DGridScene = class ( TP3DInterfacedPersistent )
+  private
+    FIndex: Integer;
+    FInstances: TP3DFloatBufferGL;
+    FModifier: TP3DRenderListModifierGrid;
+    FScene: TP3DScene;
+    FTileGrid: TP3DTileGrid;
+
+  public
+    constructor Create( ATileGrid: TP3DTileGrid );
+    destructor Destroy; override;
+
+  published
+    property TileGrid: TP3DTileGrid read FTileGrid;
+    property Scene: TP3DScene read FScene write FScene;
+    property Instances: TP3DFloatBufferGL read FInstances;
+    property Modifier: TP3DRenderListModifierGrid read FModifier;
+end;
+
+{ TP3DGridSceneList }
+
+TP3DGridSceneList = class ( specialize gP3DCustomObjectList < TP3DGridScene >)
+  function FindByScene( AScene: TP3DScene ): Integer;
+  function FindBySceneName( AName: String ): Integer;
+end;
+
 { TP3DTileGrid }
 
 TP3DTileGrid = class ( TP3DDatablock )
   private
     FGridWorldUnit: Single;
     FHeight: Integer;
-    FInstances: TP3DFloatBufferGLList;
-    FScenes: TP3DSceneList;
-    FModifiers: TP3DRenderListModifierList;
+    FScenes: TP3DGridSceneList;
     FWidth: Integer;
-    FGridData: TByteList;
-    function GetIndexAt( x, y: Integer ): Byte;
-    function GetSceneAt( x, y: Integer ): TP3DScene;
+    FGridData: TP3DGridSceneList;
+    function GetSceneAt( x, y: Integer ): TP3DGridScene;
     procedure SetHeight( AValue: Integer );
-    procedure SetIndexAt( x, y: Integer; AValue: Byte );
-    procedure SetSceneAt( x, y: Integer; AValue: TP3DScene );
+    procedure SetSceneAt( x, y: Integer; AValue: TP3DGridScene );
     procedure SetWidth( AValue: Integer );
 
   protected
@@ -29,56 +57,64 @@ TP3DTileGrid = class ( TP3DDatablock )
     constructor Create( const AData: TP3DData=nil ); override;
     destructor Destroy; override;
 
-    procedure PassToShader( i, baseInstanceCount: Integer );
+    procedure PassToShader(Scene: TP3DGridScene; baseInstanceCount: Integer);
 
-    property SceneAt[ x, y: Integer ]: TP3DScene read GetSceneAt write SetSceneAt;
-    property IndexAt[ x, y: Integer ]: Byte read GetIndexAt write SetIndexAt;
-    procedure OnGridDataSet( Sender: TPersistent; ItemIndex: Integer; AValue: Byte );
+    property SceneAt[ x, y: Integer ]: TP3DGridScene read GetSceneAt write SetSceneAt;
+    function OnGridDataSet( Sender: TPersistent; ItemIndex: Integer; AValue: TP3DGridScene ): Boolean;
+    function AddScene( AScene: TP3DScene ): Integer;
 
   published
     property Width: Integer read FWidth write SetWidth;
     property Height: Integer read FHeight write SetHeight;
-    property Scenes: TP3DSceneList read FScenes write FScenes;
+    property Scenes: TP3DGridSceneList read FScenes write FScenes;
     property GridWorldUnit: Single read FGridWorldUnit write FGridWorldUnit;
-    property GridData: TByteList read FGridData write FGridData;
-    property Instances: TP3DFloatBufferGLList read FInstances write FInstances; //Needs to be float because INT is not allowed as an attribute
-    property Modifiers: TP3DRenderListModifierList read FModifiers write FModifiers;
+    property GridData: TP3DGridSceneList read FGridData write FGridData;
 end;
 
 { TP3DRenderListModiferGrid }
 
-TP3DRenderListModiferGrid = class ( TP3DRenderListModifier )
+{ TP3DRenderListModifierGrid }
+
+TP3DRenderListModifierGrid = class ( TP3DRenderListModifier )
   private
-    FGrid: TP3DTileGrid;
-    FGridIndex: Integer;
+    FScene: TP3DGridScene;
+
   public
-    constructor Create( AGrid: TP3DTileGrid; AGridIndex: Integer );
+    constructor Create( AGridScene: TP3DGridScene );
 
     procedure PassToShader( Obj: TP3DRenderObject ); override;
     procedure AddObject( var Obj: TP3DRenderObject ); override;
 
-    property Grid: TP3DTileGrid read FGrid write FGrid;
-    property GridIndex: Integer read FGridIndex write FGridIndex;
+    property Scene: TP3DGridScene read FScene write FScene;
 end;
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
-{ TP3DTileGrid }
+{ TP3DGridScene }
 
-function TP3DTileGrid.GetIndexAt( x, y: Integer ): Byte;
+constructor TP3DGridScene.Create(ATileGrid: TP3DTileGrid );
 begin
-  Result:= GridData[ x + y * Width ];
+  inherited Create;
+  FTileGrid:= ATileGrid;
+  FModifier:= TP3DRenderListModifierGrid.Create( Self );
+  FInstances:= TP3DFloatBufferGL.Create( True );
 end;
 
-function TP3DTileGrid.GetSceneAt(x, y: Integer): TP3DScene;
-var
-  Idx: Byte;
+destructor TP3DGridScene.Destroy;
 begin
-  Idx:= GridData[ x + y * Width ];
-  if ( InRange( Idx, 0, Scenes.Count - 1 )) then
-    Result:= Scenes[ Idx ];
+  Modifier.Free;
+  Instances.Free;
+  inherited Destroy;
+end;
+
+
+{ TP3DTileGrid }
+
+function TP3DTileGrid.GetSceneAt(x, y: Integer): TP3DGridScene;
+begin
+  Result:= GridData[ x + y * Width ];
 end;
 
 procedure TP3DTileGrid.SetHeight( AValue: Integer );
@@ -89,14 +125,9 @@ begin
   UpdateSize;
 end;
 
-procedure TP3DTileGrid.SetIndexAt( x, y: Integer; AValue: Byte );
+procedure TP3DTileGrid.SetSceneAt(x, y: Integer; AValue: TP3DGridScene);
 begin
   GridData[ x + y * Width ]:= AValue;
-end;
-
-procedure TP3DTileGrid.SetSceneAt( x, y: Integer; AValue: TP3DScene );
-begin
-  GridData[ x + y * Width ]:= Scenes.IndexOf( AValue );
 end;
 
 procedure TP3DTileGrid.SetWidth( AValue: Integer );
@@ -119,60 +150,35 @@ var
   i: Integer;
 begin
   for i:= 0 to GridData.Count - 1 do
-    GridData[ i ]:= 0;
+    GridData[ i ]:= nil;
 end;
 
 procedure TP3DTileGrid.UpdateArrays;
 var
   i: Integer;
-  j: Byte;
-  Modifier: TP3DRenderListModiferGrid;
+  Scene: TP3DGridScene;
 begin
-  Instances.Count:= Scenes.Count;
   for i:= 0 to Scenes.Count - 1 do
-    begin
-      if ( Assigned( Scenes[ i ])) then
-        begin
-          if ( not Assigned( Instances[ i ])) then
-            Instances.Items[ i ]:= TP3DFloatBufferGL.Create( True )
-          else
-            Instances[ i ].Clear;
-        end
-      else if ( Assigned( Instances[ i ])) then
-        begin
-          Instances[ i ].Free;
-          Instances[ i ]:= nil;
-        end;
-    end;
+    Scenes[ i ].Instances.Clear;
 
   for i:= 0 to Width * Height - 1 do
     begin
-      j:= GridData[ i ];
-      if ( Assigned( Scenes[ j ])) then
-        Instances[ j ].Add( i );
+      Scene:= GridData[ i ];
+      if ( Assigned( Scene )) then
+        Scene.Instances.Add( i );
     end;
 
-  Modifiers.Clear( True );
-  for i:= 0 to Instances.Count - 1 do
-    if ( Assigned( Instances[ i ])) then
-      begin
-        Instances[ i ].PushData;
-        Modifier:= TP3DRenderListModiferGrid.Create( Self, i );
-        Modifiers.Add( Modifier );
-      end
-    else
-      Modifiers.Add( nil );
+  for i:= 0 to Scenes.Count - 1 do
+    Scenes[ i ].Instances.PushData;
 end;
 
 constructor TP3DTileGrid.Create( const AData: TP3DData );
 begin
   inherited Create( AData );
-  Scenes:= TP3DSceneList.Create;
-  GridData:= TByteList.Create;
+  Scenes:= TP3DGridSceneList.Create;
+  GridData:= TP3DGridSceneList.Create;
   GridData.OnSet:= @OnGridDataSet;
   GridWorldUnit:= 1;
-  Instances:= TP3DFloatBufferGLList.Create;
-  Modifiers:= TP3DRenderListModifierList.Create;
   FWidth:= 32;
   Height:= 32;
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width' ));
@@ -183,21 +189,17 @@ end;
 
 destructor TP3DTileGrid.Destroy;
 begin
-  FModifiers.Clear( True );
-  FreeAndNil( FModifiers );
-  FInstances.Clear( True );
-  FreeAndNil( FInstances );
   FreeAndNil( FScenes );
   FreeAndNil( FGridData );
   inherited Destroy;
 end;
 
-procedure TP3DTileGrid.PassToShader(i, baseInstanceCount: Integer);
+procedure TP3DTileGrid.PassToShader( Scene: TP3DGridScene; baseInstanceCount: Integer);
 var
   decl: TP3DShaderDecl;
   instanceID: GLint;
 begin
-  if ( Assigned( Scenes[ i ]) and Assigned( Instances[ i ])) then
+  if ( Assigned( Scene.Scene )) then
     begin
       instanceID:= P3DShaderActive.Attributes.AddrByName( 'instanceID' );
 
@@ -215,7 +217,7 @@ begin
 
       glVertexAttribDivisorARB( P3DShaderActive.Attributes.AddrByName( 'instanceID' ), baseInstanceCount ); cle( Self );
 
-      Instances[ i ].SetAttribArray( instanceID );
+      Scene.Instances.SetAttribArray( instanceID );
     end;
   {for i:= 0 to Meshes.Count - 1 do
     for j:= 0 to Width * Height - 1 do
@@ -226,45 +228,61 @@ begin
         end;}
 end;
 
-procedure TP3DTileGrid.OnGridDataSet(Sender: TPersistent; ItemIndex: Integer; AValue: Byte);
+function TP3DTileGrid.OnGridDataSet(Sender: TPersistent; ItemIndex: Integer; AValue: TP3DGridScene): Boolean;
 var
-  OldValue: Byte;
+  OldValue: TP3DGridScene;
 begin
+  Result:= False;
+
   OldValue:= GridData[ ItemIndex ];
   if ( OldValue = AValue ) then
     exit;
-  if ( InRange( OldValue, 0, Instances.Count - 1 )) then
-    if ( Assigned( Instances[ OldValue ])) then
-      begin
-        Instances[ OldValue ].Remove( ItemIndex );
-        Instances[ OldValue ].PushData;
-      end;
-  if ( InRange( AValue, 0, Instances.Count - 1 )) then
-    if ( Assigned( Instances[ AValue ])) then
-      begin
-        Instances[ AValue ].Add( ItemIndex );
-        Instances[ AValue ].PushData;
-      end;
+
+  if ( Assigned( OldValue )) then
+    begin
+      OldValue.Instances.Remove( ItemIndex );
+      OldValue.Instances.PushData;
+    end;
+
+  if ( Assigned( AValue )) then
+    begin
+      AValue.Instances.Add( ItemIndex );
+      AValue.Instances.PushData;
+    end;
+
+  Result:= True;
 end;
 
-{ TP3DMaterialModifierGrid }
+function TP3DTileGrid.AddScene(AScene: TP3DScene): Integer;
+var
+  Scene: TP3DGridScene;
+begin
+  Result:= Scenes.FindByScene( AScene );
+  if ( Result < 0 ) then
+    begin
+      Scene:= TP3DGridScene.Create( Self );
+      Scene.Scene:= AScene;
+      Result:= Scenes.Add( Scene );
+    end;
+end;
 
-constructor TP3DRenderListModiferGrid.Create(AGrid: TP3DTileGrid; AGridIndex: Integer);
+{ TP3DRenderListModifierGrid }
+
+constructor TP3DRenderListModifierGrid.Create(AGridScene: TP3DGridScene);
 begin
   inherited Create;
-  Grid:= AGrid;
-  GridIndex:= AGridIndex;
+  Scene:= AGridScene;
 end;
 
-procedure TP3DRenderListModiferGrid.PassToShader(Obj: TP3DRenderObject);
+procedure TP3DRenderListModifierGrid.PassToShader(Obj: TP3DRenderObject);
 begin
-  if ( Assigned( Grid )) then
-    Grid.PassToShader( GridIndex, Obj.Positions.Count );
+  if ( Assigned( Scene.TileGrid )) then
+    Scene.TileGrid.PassToShader( Scene, Obj.Positions.Count );
 end;
 
-procedure TP3DRenderListModiferGrid.AddObject(var Obj: TP3DRenderObject);
+procedure TP3DRenderListModifierGrid.AddObject(var Obj: TP3DRenderObject);
 begin
-  Obj.InstanceCount:= Obj.InstanceCount * Grid.Instances[ GridIndex ].Count;
+  Obj.InstanceCount:= Obj.InstanceCount * Scene.Instances.Count;
 end;
 
 

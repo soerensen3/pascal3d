@@ -223,12 +223,12 @@ begin
               //Mods:= AModifiers;
               //SetLength( Mods, Length( Mods ) + 1 );
               //Mods[ high( Mods )]:= Modifiers[ i ];
-              if ( Assigned( Scenes[ i ]) and Assigned( Modifiers[ i ])) then
+              if ( Assigned( Scenes[ i ].Scene) and Assigned( Scenes[ i ].Modifier )) then
                 begin
-                  Modifier:= Modifiers[ i ];
+                  Modifier:= Scenes[ i ].Modifier;
 
                   ModifierStack.Add( Modifier );
-                  Scenes[ i ].MakeRenderList( AScene.RootScene, world, Self );
+                  Scenes[ i ].Scene.MakeRenderList( AScene.RootScene, world, Self );
                   ModifierStack.Remove( Modifier );
                 end;
             end

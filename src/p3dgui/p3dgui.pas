@@ -16,7 +16,7 @@ interface
   uses
     Classes,
     SysUtils,
-    Contnrs,
+    Contnrs, DOM,
     math,
     clipbrd,
     strutils,
@@ -67,7 +67,7 @@ procedure P3DGUIFinish;
 implementation
 
 uses
-  Types;
+  Types, XMLRead;
 
 var
   LastMouseOverCtrl: TP3DGraphicControl;

@@ -39,6 +39,7 @@ type
 
   TP3DListItemList = class ( TP3DCustomListItemList )
     function Add( Caption: String; Data: Pointer ): Integer; overload;
+    function Add( Caption: String; Data: Pointer; SymbolText: String ): Integer; overload;
   end;
 
   { TP3DTreeNode }
@@ -112,6 +113,7 @@ type
 
   { TP3DTreeView }
 
+  TP3DListViewStyle = ( vsList, vsIcon );
   TP3DTreeViewSelectionChangeEvent = procedure ( var NewSelection: TP3DTreeNode ) of object;
   TP3DTreeView = class( TP3DCustomItemView )
     private
@@ -149,6 +151,7 @@ type
       FChildren: TP3DListItemList;
       FOnSelectionChange: TP3DListViewSelectionChangeEvent;
       FSelection: TP3DListItem;
+      FViewStyle: TP3DListViewStyle;
       procedure SetSelection(AValue: TP3DListItem);
 
     public
@@ -165,6 +168,7 @@ type
       property Children: TP3DListItemList read FChildren write FChildren;
       property Selection: TP3DListItem read FSelection write SetSelection;
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read FOnSelectionChange write fOnSelectionChange;
+      property ViewStyle: TP3DListViewStyle read FViewStyle write FViewStyle;
   end;
 
   TP3DListViewFile = class;
@@ -175,21 +179,26 @@ type
     private
       FDirectory: String;
       FListViewFile: TP3DListViewFile;
+      FMask: String;
       FShowFiles: Boolean;
 
       procedure SetDirectory(AValue: String);
       procedure SetListViewFile(AValue: TP3DListViewFile);
+      procedure SetMask(AValue: String);
       procedure SetShowFiles(AValue: Boolean);
       procedure SetSelection(AValue: TP3DTreeNode); override;
 
     public
+      constructor Create(const AData: TP3DData= nil; const AParent: TP3DGraphicControl= nil); override;
+
       procedure Update;
-      function GetItemFileName( Item: TP3DTreeNode; const Relative: Boolean = False ): String;
+      function GetItemFileName( Item: TP3DTreeNode; const Relative: Boolean = False ): AnsiString;
       function FindItemByFileName( FileName: String; Relative: Boolean ): TP3DTreeNode;
 
     published
       property Directory: String read FDirectory write SetDirectory;
       property ShowFiles: Boolean read FShowFiles write SetShowFiles;
+      property Mask: String read FMask write SetMask;
       property ListViewFile: TP3DListViewFile read FListViewFile write SetListViewFile;
   end;
 
@@ -197,6 +206,7 @@ type
 
   TP3DListViewFile = class ( TP3DListView )
     private
+      FAllowOpenP3D: Boolean;
       FDirectory: String;
       FMask: String;
       FShowFolderUp: Boolean;
@@ -218,6 +228,7 @@ type
       property TreeViewDirectory: TP3DTreeViewDirectory read FTreeViewDirectory write SetTreeViewDirectory;
       property ShowFolderUp: Boolean read FShowFolderUp write SetShowFolderUp;
       property Mask: String read FMask write SetMask;
+      property AllowOpenP3D: Boolean read FAllowOpenP3D write FAllowOpenP3D;
   end;
 
   { TP3DTreeViewActors }
@@ -516,6 +527,13 @@ begin
     end;
 end;
 
+procedure TP3DTreeViewDirectory.SetMask(AValue: String);
+begin
+  if FMask=AValue then Exit;
+  FMask:=AValue;
+  Update;
+end;
+
 procedure TP3DTreeViewDirectory.SetShowFiles(AValue: Boolean);
 begin
   if FShowFiles=AValue then Exit;
@@ -531,9 +549,17 @@ begin
   if ( Assigned( ListViewFile )) then
     begin
       Dir:= GetItemFileName( Selection, False );
-      if ( DirectoryExistsUTF8( Dir )) then
+      if ( FileExistsUTF8( Dir )) then
         ListViewFile.Directory:= Dir;
     end;
+end;
+
+constructor TP3DTreeViewDirectory.Create(const AData: TP3DData;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create( AData, AParent );
+  FMask:= '*.*';
+  Directory:= P3DSearchPaths.BaseDir;
 end;
 
 
@@ -543,6 +569,7 @@ procedure TP3DTreeViewDirectory.Update;
     i: Integer;
     Node: TP3DTreeNode;
     Files: TStringList;
+    Ext: String;
   begin
     Files:= P3DListFolderDirectories( dir, False, True );
     for i:= 0 to Files.Count - 1 do
@@ -552,13 +579,13 @@ procedure TP3DTreeViewDirectory.Update;
         else
           Node:= Children[ Children.Add( Files[ i ], nil )];
         Node.Parent:= BaseNode;
-        Node.SymbolText:= 'P';
+        Node.SymbolText:= P3DSymbolFolder;
         ListFolderFiles( AppendPathDelim( dir ) + Node.Caption + DirectorySeparator, Node );
       end;
     Files.Free;
     if ( ShowFiles ) then
       begin
-        Files:= P3DListFolderFiles( AppendPathDelim( dir ) + '*', False, True );
+        Files:= P3DListFolderFiles( AppendPathDelim( dir ) + Mask, False, True );
         //Result.Append( Files.Text );
         for i:= 0 to Files.Count - 1 do
           begin
@@ -566,7 +593,15 @@ procedure TP3DTreeViewDirectory.Update;
               Node:= BaseNode.Children[ BaseNode.Children.Add( Files[ i ], nil )]
             else
               Node:= Children[ Children.Add( Files[ i ], nil )];
-            Node.SymbolText:= 'Q';
+            Ext:= lowercase( ExtractFileExt( Files[ i ]));
+            case Ext of
+              '.p3d': Node.SymbolText:= P3DSymbolLibrary;
+              '.p3dmesh': Node.SymbolText:= P3DSymbolMesh;
+              '.bmp', '.jpg', '.jpeg', '.png': Node.SymbolText:= P3DSymbolTexture;
+              '.frag', '.vert', '.glsl', '.pmd': Node.SymbolText:= P3DSymbolShader;
+              '.ttf': Node.SymbolText:= P3DSymbolFont;
+              else Node.SymbolText:= P3DSymbolFile;
+            end;
             Node.Parent:= BaseNode;
           end;
         Files.Free;
@@ -579,7 +614,7 @@ begin
 end;
 
 function TP3DTreeViewDirectory.GetItemFileName(Item: TP3DTreeNode;
-  const Relative: Boolean): String;
+  const Relative: Boolean): AnsiString;
 var
   ThisItem: TP3DTreeNode;
 begin
@@ -591,8 +626,8 @@ begin
       ThisItem:= ThisItem.Parent;
     end;
   if ( not Relative ) then
-    Result:= AppendPathDelim( Directory ) + Result;
-  ChompPathDelim( Result );
+    Result:= ExpandFileNameUTF8( Directory ) + Result;
+  RemoveTrailingChars( Result, [ DirectorySeparator ]);
 end;
 
 function TP3DTreeViewDirectory.FindItemByFileName(FileName: String;
@@ -887,12 +922,31 @@ begin
   Result:= inherited Add( Node )
 end;
 
+function TP3DListItemList.Add( Caption: String; Data: Pointer; SymbolText: String ): Integer;
+var
+  Node: TP3DListItem;
+begin
+  Node:= TP3DListItem.Create;
+  Node.Caption:= Caption;
+  Node.Data:= Data;
+  Node.SymbolText:= SymbolText;
+  Result:= inherited Add( Node )
+end;
+
 { TP3DListViewFile }
 
 procedure TP3DListViewFile.SetDirectory(AValue: String);
 begin
   if FDirectory=AValue then Exit;
-  FDirectory:=AValue;
+
+  if ( not DirectoryExistsUTF8( AValue )) then
+    begin
+    if ( not ( AllowOpenP3D and FileExistsUTF8( AValue )
+         and ( lowercase( ExtractFileExt( AValue )) = '.p3d' ))) then
+      exit;
+    end;
+    //AValue:= CleanAndExpandDirectory( AValue );
+  FDirectory:= CleanAndExpandFilename( AValue );
   if ( Assigned( TreeViewDirectory )) then
     TreeViewDirectory.FSelection:= TreeViewDirectory.FindItemByFileName( Directory, False );
   Update;
@@ -940,6 +994,27 @@ begin
 end;
 
 procedure TP3DListViewFile.Update;
+  procedure ListP3DFile( FN: String );
+  var
+    XML: TXMLDocument;
+    list: TDOMNodeList;
+    i: Integer;
+    name: String;
+  begin
+    ReadXMLFile( XML, FN );
+    try
+      list:= XML.GetElementsByTagName( 'scene' );
+      for i:= 0 to list.Count - 1 do
+        begin
+          name:= TDOMElement( list[ i ]).AttribStrings[ 'name' ];
+          if ( name > '' ) then
+            Children.Add( name, nil, P3DSymbolScene );
+        end;
+    finally
+      XML.Free;
+    end;
+  end;
+
   procedure ListFolderFiles( dir: String );
   var
     i: Integer;
@@ -982,7 +1057,12 @@ procedure TP3DListViewFile.Update;
 begin
   Children.Clear( True );
   Selection:= nil;
-  ListFolderFiles( Directory );
+  if ( DirectoryExistsUTF8( Directory )) then // is path a directory
+    ListFolderFiles( Directory )
+  else if ( lowercase( ExtractFileExt( Directory )) = '.p3d' ) then
+    ListP3DFile( Directory )
+  else
+    Children.Add( 'Error: invalid directory', nil );
 end;
 
 procedure TP3DListViewFile.MouseDblClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -993,8 +1073,7 @@ begin
   if ( Assigned( Selection )) then
     begin
       Dir:= AppendPathDelim( Directory ) + Selection.Caption;
-      if ( DirectoryExistsUTF8( Dir )) then
-        Directory:= CleanAndExpandDirectory( Dir );
+      Directory:= Dir;
     end;
 end;
 

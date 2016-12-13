@@ -242,7 +242,20 @@ class P3DExporter( bpy.types.Operator ):
   ##--------------------------------------------------------------------------------
 
   ##EXPORTING SCENE ----------------------------------------------------------------
-
+    def ExportSceneScreenshot( self, scene ):
+        self.report({ 'INFO' }, 'Exporting thumb for scene ' + scene.name )
+        scene.render.resolution_x = 128
+        scene.render.resolution_y = 128
+        scene.render.resolution_percentage = 100
+        #render
+        bpy.context.window.screen.scene = scene
+        bpy.ops.render.opengl()
+        #save image
+        img_name = os.path.splitext( self.file.fname )[ 0 ] + '.thumb.' + scene.name + '.png' #filename without extension as base
+        bpy.data.images['Render Result'].save_render( img_name )
+        #bpy.ops.image.open( filepath = file_dir+img_name )
+        #bpy.data.images[img_name].pack()
+        
     def ExportScene( self, scene ):
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Exporting scene ' + scene.name )
@@ -252,8 +265,9 @@ class P3DExporter( bpy.types.Operator ):
             if ( not ( scene.camera is None )):
               el.attrib[ 'camera' ] = scene.camera.name
         self.report({ 'INFO' }, ', '.join( self.supported_types ))
+        self.ExportSceneScreenshot( scene )
         for obj in scene.objects:
-            if obj.type in self.supported_types:
+            if obj.type in self.supported_types and obj.is_visible( scene ):
                 self.ExportObject( obj )
         self.file.pop()
 
