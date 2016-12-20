@@ -293,7 +293,7 @@ begin
 end;
 
 function TP3DLogger.LogException(Sender: TObject; Message: Exception ): TDOMElement;
-begin
+begin //TODO: Sender might be invalid - in this case this would cause another exception
   Result:= LogException( Sender, Message );//StringReplace( Message.Message, LineEnding, '<br />', [ rfReplaceAll ]));
 end;
 

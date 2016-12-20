@@ -240,8 +240,8 @@ begin
   SDL_SetWindowData( FWindow, 'p3dwindow', Self );
 
   // Choose GL-Version
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ); //}3 );
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 ); //}3 );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, {2 ); //}4 );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, {1 ); //}5 );
   SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY );
   // Create a Context
   FContext:= SDL_GL_CreateContext( Window );
@@ -266,7 +266,7 @@ begin                                             //incomplete
 
   // Fenster korrekt erstellt?
   if ( window = nil ) then
-    raise Exception.Create('SDL-Fenster konnte nicht erstellt werden: ' + SDL_GetError);
+    raise Exception.Create('Could not create an SDL Window: ' + SDL_GetError);
 
   SDL_SetWindowData( fWindow, 'p3dwindow', Self );
 

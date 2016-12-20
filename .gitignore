@@ -26,6 +26,8 @@ lib/
 !*.bmp
 !*.ttf
 !*.xml
+!*.blend
+!*.js
 !reference
 !pascal3d
 !gtksourceview

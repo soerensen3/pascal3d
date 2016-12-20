@@ -406,7 +406,7 @@ begin
   inherited Create;
   Size:= ASize;
   FileName:= P3DSearchPaths.Fonts.FindFile( AFileName );
-  if ( AFileName = '' ) then
+  if ( FileName = '' ) then
     raise Exception.Create( 'p3dtext.TP3DFont: Failed to load font "' + AFileName + '"! Not found!' );
   FFileWatch:= TP3DFileWatch.Create( FileName );
   FFontName:= ExtractFileNameOnly( FileName );

@@ -504,7 +504,8 @@ begin
   count:= ( MaterialGroups[ Idx ].IndexEnd - MaterialGroups[ Idx ].IndexStart ) + 1;
   //P3DLog.LogInfo( Self, Material.Shader.DumpUniforms );
 
-  glDrawElements( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint ))); cle( Self );
+  //glDrawElements( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint ))); cle( Self );
+  glDrawElementsInstanced( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint )), 1 ); cle( Self );
 end;
 
 procedure TP3DMesh.RenderMaterialGroupInstanced(world: TMat4List; Idx: Integer; Scene: TP3DScene);
@@ -619,7 +620,7 @@ begin
     TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
 //  VBArray.Bind;
 
-  {decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
+  decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
   if ( Assigned( decl )) and ( VertexGroupsf.Count > 0 ) then
     VertexGroupsf.SetAttribArray( decl.Addr );
   decl:= P3DShaderActive.Attributes.Names[ 'jointWeight' ];
@@ -628,13 +629,14 @@ begin
 
   mat:= Mat4Identity; //only a workaround
   for Modifier in Modifiers do
-    Modifier.PassToShader( MaterialGroups[ MatIdx ].Material, mat );}
+    Modifier.PassToShader( MaterialGroups[ MatIdx ].Material, mat );
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
   offset:= MaterialGroups[ MatIdx ].IndexStart;
   count:= ( MaterialGroups[ MatIdx ].IndexEnd - MaterialGroups[ MatIdx ].IndexStart ) + 1;
 
+  //WriteLn( P3DShaderActive.DumpAttributes );
   glDrawElementsInstanced( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint )), numInstance ); cle( Self );
   //VBArray.Unbind;
 
@@ -810,8 +812,8 @@ begin
       MaterialGroups[ i ].FIndexStart:= Faces[ MaterialGroups[ i ].PolyStart ].loop_start;
       MaterialGroups[ i ].FIndexEnd:= Faces[ MaterialGroups[ i ].PolyEnd ].loop_start
                                     + Faces[ MaterialGroups[ i ].PolyEnd ].loop_count - 1;
-//      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].FIndexStart, ' (loopstart) ',
-//               MaterialGroups[ i ].FIndexEnd, ' (loopend) ');
+      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].FIndexStart, ' (loopstart) ',
+               MaterialGroups[ i ].FIndexEnd, ' (loopend) ');
     end;
 //  Write( 'Edges: [' );
 //  for i:= 0 to _Edges.Count - 1 do

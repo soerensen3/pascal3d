@@ -348,6 +348,10 @@ begin
 end;
 
 procedure TP3DMeshModifierArmature.PassToShader( Material: TP3DMaterial; var world: TMat4 );
+  function RealMod (x, y : extended) : extended;
+  begin
+     Result := x - y * Trunc(x/y);
+  end;
 var
   decl: TP3DShaderDecl;
   joint: TP3DJoint;
@@ -399,10 +403,9 @@ begin
         decl.AsInt:= Armature.CurrentAction.JointTex.Height;
 
       Armature.CurrentAction.CurrentFrame:= SDL_GetTicks() / 100;
-
       decl:= Material.Shader.Uniforms.Names[ 'time' ];
       if ( Assigned( decl )) then
-        decl.AsFloat:= Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count;
+        decl.AsFloat:= frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count );
     end;
 end;
 
@@ -498,13 +501,13 @@ begin
         JointTex.RemoveUser( Self );
     end;
   Buffer:= TVec4List.Create;
-  w:= ( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );//getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
-  h:= Frames.Count;//getNextPower2( Frames.Count );
+  w:= {( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );//}getNextPower2( Frames[ 0 ].Translations.Count + Frames[ 0 ].Rotations.Count );
+  h:= Frames.Count;//}getNextPower2( Frames.Count );
   for i:= 0 to h - 1 do
     for j:= 0 to w div 2 - 1 do
       if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
       //if ( j <> 10 ) then
-        Buffer.Add([ vec4( 0 ), vec4( 0 )])
+        Buffer.Add([ vec4( 0 ), vec4( 0 ), vec4( 0 ), vec4( 0 )])
       else
         begin
       //  Buffer.Add([ vec4( 0, 0, 0, 1 ), quatRotation( vec3_Axis_PZ, i * 5 )]);
@@ -522,7 +525,7 @@ begin
               //  vec4( Frames[ i ].Translations[ j ]
               //- ( q * vec4( Parent.Armatures[ 0 ].Joints[ j ].Position, 1 )).xyz
               vec4(
-                -(q*Owner.Armatures[ 0 ].Joints[ j ].Position) + Frames[ i ].Translations[ j ]
+                ( q * ( -Owner.Armatures[ 0 ].Joints[ j ].Position )) + Frames[ i ].Translations[ j ]
                 , 1 );
           Buffer.Add([ t, t, q, q ]); //prevent mix of translation and quaternion through pixel bleeding while having smooth transitions in y direction
           //Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), m * mat4( mat3( Frames[ i ].Rotations[ j ]])));

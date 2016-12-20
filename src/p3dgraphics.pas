@@ -76,8 +76,9 @@ var
   P3DData: TP3DData = nil;
   P3DFontManager: TP3DFontManager = nil;
   P3DFontManagerBmp: TP3DFontManagerBmp = nil;
-  P3DCanvasMaterialDefault: TP3DMaterialBase;
-  P3DDataBlockCache: TP3DDataBlockCache;
+  P3DCanvasMaterialDefault: TP3DMaterialBase = nil;
+  P3DDataBlockCache: TP3DDataBlockCache = nil;
+  P3DAttributes: TP3DAttributeList = nil;
 
 procedure P3DGraphicsInit;
 procedure P3DGraphicssFinish;
@@ -121,6 +122,16 @@ begin
     finally
       AssertErrorProc := S;
     end;
+end;
+
+{ TP3DAttributeList }
+
+procedure TP3DAttributeList.DisableAllAttributes;
+var
+  i: Integer;
+begin
+  for i:= Count - 1 downto 0 do
+    Items[ i ].UnsetAttribArray();
 end;
 
 { TP3DGridSceneList }
@@ -215,6 +226,8 @@ begin
   glEnable( GL_BLEND ); cle( nil );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); cle( nil );
 
+  if ( not Assigned( P3DAttributes )) then
+    P3DAttributes:= TP3DAttributeList.Create;
   if ( not Assigned( P3DDataBlockCache )) then
     P3DDataBlockCache:= TP3DDataBlockCache.Create;
   if ( not Assigned( P3DViewports )) then
@@ -249,6 +262,8 @@ begin
     end;
   if ( Assigned( P3DDataBlockCache )) then
     FreeAndNil( P3DDataBlockCache );
+  if ( Assigned( P3DAttributes )) then
+    FreeAndNil( P3DAttributes );
   TTF_Quit();
 end;
 

@@ -4,7 +4,7 @@
 {$IFDEF INTERFACE}
 
   type
-    generic IP3DEnumeratorClass < TCustomItem: TObject >  = interface
+    generic IP3DEnumeratorClass < TCustomItem >  = interface
       ['{B873CDC1-491F-4F62-A1F8-CED1C13426C4}']
       function GetCurrent: TCustomItem;
       function MoveNext: Boolean;
@@ -12,13 +12,13 @@
       property Current: TCustomItem read GetCurrent;
     end;
 
-    generic IP3DEnumerableClass < TCustomItem: TObject >  = interface
+    generic IP3DEnumerableClass < TCustomItem >  = interface
       ['{A8D955A0-E3A9-4BF5-8CDF-8A21AB3E2A06}']
       function GetEnumerator: specialize IP3DEnumeratorClass < TCustomItem >;
     end;
 
      { gP3DCustomListEnumeratorClass }
-    generic gP3DCustomListEnumeratorClass < TCustomItem: TObject >
+    generic gP3DCustomListEnumeratorClass < TCustomItem >
        = class ( TInterfacedPersistent, specialize IP3DEnumeratorClass < TCustomItem >)
       private type
         TMoveNext = function ( var Index: Integer ): TCustomItem of object;
@@ -42,7 +42,7 @@
 
     { gP3DCustomObjectList }
 
-    generic gP3DCustomObjectList <TCustomItem: TObject>
+    generic gP3DCustomObjectList <TCustomItem>
     = class ( TInterfacedPersistent{, specialize IP3DEnumerableClass < TCustomItem >} )
       type
         TP3DCustomObjectListEnumeratorClass = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
@@ -135,6 +135,7 @@
         procedure SetCount( AValue: Integer );
         procedure SetGrowth( const Value: Integer );
         procedure SetItem( Index: Integer; const Value: TCustomItem );
+        procedure Remove( Item: TCustomItem ); virtual;
         procedure Grow;
         procedure Shrink;
         function MoveNext( var Index: Integer; var Value: TCustomItem ): Boolean;
@@ -146,6 +147,7 @@
         constructor Create;
         destructor Destroy; override;
 
+        function Find( Item: TCustomItem ): Integer;
         function Add( Item: TCustomItem ): Integer; overload;
         function AddArray(Items: array of TCustomItem): Integer; overload;
         procedure Delete( Index: Integer ); overload;
@@ -319,7 +321,7 @@ begin
     Add( Items[ I ]);
 end;
 
-procedure gP3DCustomList.AssignTo( Dest: gP3DCustomList );
+procedure gP3DCustomList.AssignTo(Dest: TItemList);
 begin
   Dest.Count:= Count;
   Move( FItems^, Dest.FItems^, SizeOf( TCustomItem ) * Count );
@@ -361,6 +363,19 @@ destructor gP3DCustomList.Destroy;
 begin
   FreeMem( FItems);
   inherited;
+end;
+
+function gP3DCustomList.Find(Item: TCustomItem): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( FItems^[ i ] = Item ) then
+      begin
+        Result:= i;
+        break;
+      end;
 end;
 
 function gP3DCustomList.GetItem( Index: Integer ): TCustomItem;
@@ -408,6 +423,15 @@ end;
 procedure gP3DCustomList.SetItem( Index: Integer; const Value: TCustomItem );
 begin
   FItems^[ Index ]:= Value;
+end;
+
+procedure gP3DCustomList.Remove(Item: TCustomItem);
+var
+  Idx: Integer;
+begin
+  Idx:= Find( Item );
+  if ( Idx > -1 ) then
+    Delete( Idx );
 end;
 
 procedure gP3DCustomList.Shrink;

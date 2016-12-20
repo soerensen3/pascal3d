@@ -771,11 +771,13 @@ begin
                        0,-1,0,0,
                        0,0,0,1 );
   Canvas3D.Lock;
+  glDisable( GL_DEPTH_TEST );
   if (( Assigned( ArmatureObject )) and ( ArmatureObject.Data is TP3DArmature )) then
     begin
       for Joint in TP3DArmature( ArmatureObject.Data ).Joints do
         RenderBone( Joint );
     end;
+  glEnable( GL_DEPTH_TEST );
   Canvas3D.Unlock();
 end;
 
@@ -1015,21 +1017,26 @@ end;
 
 procedure TP3DScenePanel.AfterDraw(Sender: TObject);
 var
-  Obj: TP3DRenderObject;
+  Obj: TP3DActor;
+  AScene: TP3DScene;
 begin
   //TODO: FIX THIS!
-  {
-  for Obj in FRenderList do
-    if ( Obj.Actor.Data is TP3DLight ) then
+
+  if ( Assigned( DataView.Selection )) and ( TInterfacedPersistent( DataView.Selection.Data ) is TP3DActor ) then
+    AScene:= TP3DActor( DataView.Selection.Data ).Scene
+  else
+    AScene:= Scene;
+  for Obj in AScene.Objects do
+{    if ( Obj.Data is TP3DLight ) then
       begin
         if ( Assigned( EditorSceneLampMaterial )) then
-          if ( Selection = Obj.Actor ) then
+          if ( Selection = Obj ) then
             EditorSceneLampMaterial.Diff:= Accent500.XYZ
           else
-            EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Actor.Data ).Color;
+            EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Data ).Color;
 
-        if ( TP3DLight( Obj.Actor.Data ).LightType in [ p3dltSun, p3dltSpot ]) then
-          EditorSceneArrow.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )) * mat4( mat3( Obj.Actor.Quaternion )));
+        if ( TP3DLight( Obj.Data ).LightType in [ p3dltSun, p3dltSpot ]) then
+          EditorSceneArrow.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )) * mat4( mat3( Obj.Quaternion )));
         EditorSceneLamp.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )));
       {Canvas.RenderText( TP3DSymbolActor,
                          vec2( ClientRect.Width, ClientRect.Height ) / 2
@@ -1037,17 +1044,18 @@ begin
                          + vec2( ClientRect.Width, ClientRect.Height ) / 2,
                          SymbolActor );}
       end
-    else if ( Obj.Actor.Data is TP3DArmature ) then
+    else }if ( Obj.Data is TP3DArmature ) then
       begin
         FCanvas3D.Proj:= Cam.Proj;
         FCanvas3D.View:= Cam.View;
-        DrawArmature( Obj.Actor );
+        Canvas3D.Pen.Width:= 5;
+        DrawArmature( Obj );
       {Canvas.RenderText( TP3DSymbolActor,
                          vec2( ClientRect.Width, ClientRect.Height ) / 2
                          * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy
                          + vec2( ClientRect.Width, ClientRect.Height ) / 2,
                          SymbolActor );}
-      end;}
+      end;
 
   {glScissor( P3DInput.Mouse.X - 50, P3DViewports[ 0 ].Height - P3DInput.Mouse.Y - 50, 100, 100 );
   glEnable( GL_SCISSOR_TEST );

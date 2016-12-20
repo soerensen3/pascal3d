@@ -332,31 +332,48 @@ begin
           begin
             idx:= MaterialGroups.Find( mat );
 
+            if ( Items[ i ].Material.Shader.Uniforms.FindByName( 'instanceGridWidth', decl )) then
+              decl.AsInt:= 1;
+
+            if ( Items[ i ].Material.Shader.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
+              decl.AsFloat:= 1.0;
+
             for j:= 0 to high( Items[ i ].Modifiers ) do
               Items[ i ].Modifiers[ j ].PassToShader( Items[ i ]);
 
             if ( Items[ i ].Material.Shader.Uniforms.FindByName( 'world', decl )) then
               decl.AsMat4:= Mat4Identity;
 
+            if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instanceID', decl )) then
+              begin
+                Items[ i ].Material.Shader.DumpAttributes;
+                glVertexAttrib1f( decl.Addr, 0.0 );
+                glDisableVertexAttribArray( decl.Addr ); //Disable by default
+                Items[ i ].Material.Shader.DumpAttributes;
+              end;
+
             if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instance_position', decl )) then
               begin
                 Items[ i ].Positions.PushData();
+                Items[ i ].Positions.Divisor:= Items[ i ].InstanceCount div Items[ i ].Positions.Count;
                 Items[ i ].Positions.SetAttribArray( decl.Addr );
-                glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Positions.Count ); cle( Self );
+                //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Positions.Count ); cle( Self );
               end;
 
             if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instance_rotation', decl )) then
               begin
                 Items[ i ].Rotations.PushData();
+                Items[ i ].Rotations.Divisor:= Items[ i ].InstanceCount div Items[ i ].Rotations.Count;
                 Items[ i ].Rotations.SetAttribArray( decl.Addr );
-                glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Rotations.Count ); cle( Self );
+                //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Rotations.Count ); cle( Self );
               end;
 
             if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instance_scaling', decl )) then
               begin
                 Items[ i ].Scalings.PushData();
+                Items[ i ].Scalings.Divisor:= Items[ i ].InstanceCount div Items[ i ].Scalings.Count;
                 Items[ i ].Scalings.SetAttribArray( decl.Addr );
-                glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Scalings.Count ); cle( Self );
+                //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Scalings.Count ); cle( Self );
               end;
             if ( idx > -1 ) then
               RenderMaterialGroupInstanced( Items[ i ].InstanceCount, idx );

@@ -186,9 +186,9 @@ constructor TP3DTextBmp.Create;
 begin
   inherited;
   Vertices:= TP3DVec2BufferGL.Create( True );
-  Vertices.SetAttribArray( 0 );
+  Vertices.SetAttribArray( P3DAttribPosition );
   TexCoords:= TP3DVec2BufferGL.Create( True );
-  TexCoords.SetAttribArray( 4 );
+  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
   Indices:= TP3DIntBufferGL.Create( True );
   LetterPosAndSize:= TVec4List.Create;
 end;
@@ -270,13 +270,7 @@ begin
 
   begin
     Font.ApplyShader;
-
-    if ( not Assigned( P3DFontManagerBmp.Material.Shader )) then
-      exit;
-
     Shader:= P3DFontManagerBmp.Material.Shader;
-
-
     mt:= mat4translate( vec4( p, 0, 1 ));
     m:= proj * mt;
     if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
@@ -300,14 +294,6 @@ begin
   P3DFontManagerBmp.TextModifier.TextSmoothing:= 1.0/128.0;
 
   begin
-    Font.ApplyShader;
-
-    if ( not Assigned( P3DFontManagerBmp.Material.Shader )) then
-      exit;
-
-    Shader:= P3DFontManagerBmp.Material.Shader;
-
-
     mt:= mat4translate( vec4( p, 0, 1 ));
     m:= proj * mt;
     if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
@@ -828,7 +814,7 @@ procedure TP3DMaterialModifierText.PassToShader(Material: TP3DMaterialBase);
 var
   decl: TP3DShaderDecl;
 begin
-  decl:= Material.Shader.Uniforms.Names[ 'text_smoothing' ];
+  {decl:= Material.Shader.Uniforms.Names[ 'text_smoothing' ];
   if ( Assigned( decl )) then
     decl.AsFloat:= TextSmoothing;
   decl:= Material.Shader.Uniforms.Names[ 'text_basealpha' ];
@@ -836,7 +822,8 @@ begin
     decl.AsFloat:= TextAlpha;
   decl:= Material.Shader.Uniforms.Names[ 'text_bias' ];
   if ( Assigned( decl )) then
-    decl.AsFloat:= TextBias;
+    decl.AsFloat:= TextBias;}
+
 end;
 
 { TP3DFontManagerBmp }

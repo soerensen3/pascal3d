@@ -19,6 +19,21 @@
 
   type
 
+    { TP3DBufferObjectGL }
+    IP3DAttribute = interface
+      ['{29888C08-513D-4EFA-B916-6C50DDF240B8}']
+
+      procedure UnsetAttribArray();
+      procedure SetAttribArray( idx: Integer );
+      procedure Free;
+    end;
+
+    { TP3DAttributeList }
+
+    TP3DAttributeList = class ( specialize gP3DCustomObjectList < IP3DAttribute > )
+      procedure DisableAllAttributes;
+    end;
+
     { TP3DVertexBufferArray }
 
     TP3DVertexBufferArray = class ( TPersistent )

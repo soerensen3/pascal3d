@@ -117,6 +117,7 @@ type
       procedure UpdateUniforms();
       procedure BindAttribLocations();
       function DumpUniforms: String;
+      function DumpAttributes: String;
       procedure Reload; reintroduce;
 
     published
@@ -976,6 +977,7 @@ end;
 
 procedure TP3DShader.Enable;
 begin
+  P3DAttributes.DisableAllAttributes;
   glUseProgram( ProgramObj );
   P3DShaderActive:= Self;
 //  UpdateUniforms();
@@ -1098,6 +1100,24 @@ begin
   Result:= 'Uniforms of Shader ' + Name;
   for i:= 0 to Uniforms.Count - 1 do
     Result+= LineEnding + Format( '%s (@%d) = %s', [ Uniforms[ i ].Name, Uniforms[ i ].Addr, Uniforms[ i ].AsString ]);
+end;
+
+function TP3DShader.DumpAttributes: String;
+var
+  Attrib, i: Integer;
+  s: String;
+begin
+  Result:= 'Attributes of Shader ' + Name;
+  for i:= 0 to Attributes.Count - 1 do
+    begin
+      glGetVertexAttribiv( Attributes[ i ].Addr, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, @Attrib );
+      if ( Attrib > 0 ) then
+        s:= ' /' + IntToStr( Attrib )
+      else
+        s:= '';
+      glGetVertexAttribiv( Attributes[ i ].Addr, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, @Attrib );
+      Result+= LineEnding + Format( '%s (@%d%s) = %d', [ Attributes[ i ].Name, Attributes[ i ].Addr, s, Attrib ]);
+    end;
 end;
 
 procedure TP3DShader.Reload;

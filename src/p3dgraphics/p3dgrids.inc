@@ -196,13 +196,10 @@ end;
 
 procedure TP3DTileGrid.PassToShader( Scene: TP3DGridScene; baseInstanceCount: Integer);
 var
-  decl: TP3DShaderDecl;
-  instanceID: GLint;
+  decl, instanceID: TP3DShaderDecl;
 begin
   if ( Assigned( Scene.Scene )) then
     begin
-      instanceID:= P3DShaderActive.Attributes.AddrByName( 'instanceID' );
-
       decl:= P3DShaderActive.Uniforms.Names[ 'instanceGridWidth' ];
       if ( Assigned( decl )) then
         decl.AsInt:= Width;
@@ -215,9 +212,11 @@ begin
       if ( Assigned( decl )) then
         decl.AsFloat:= baseInstanceCount;
 
-      glVertexAttribDivisorARB( P3DShaderActive.Attributes.AddrByName( 'instanceID' ), baseInstanceCount ); cle( Self );
-
-      Scene.Instances.SetAttribArray( instanceID );
+      if ( P3DShaderActive.Attributes.FindByName( 'instanceID', instanceID )) then
+        begin
+          Scene.Instances.Divisor:= baseInstanceCount;
+          Scene.Instances.SetAttribArray( instanceID.Addr );
+        end;
     end;
   {for i:= 0 to Meshes.Count - 1 do
     for j:= 0 to Width * Height - 1 do
