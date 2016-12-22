@@ -520,13 +520,17 @@ begin
           m:= minv*m2*mat4translate( vec4( -Parent.Armatures[ 0 ].Joints[ j ].Position , 1 ));
           q:= quat( mat3( m ));
           t:= m.Row[ 3 ];}
-          q:= -Owner.Armatures[ 0 ].Joints[ j ].Rotation * Frames[ i ].Rotations[ j ];
+          q:= ( -Owner.Armatures[ 0 ].Joints[ j ].Rotation * Frames[ i ].Rotations[ j ]);
+
           t:=
               //  vec4( Frames[ i ].Translations[ j ]
               //- ( q * vec4( Parent.Armatures[ 0 ].Joints[ j ].Position, 1 )).xyz
               vec4(
                 ( q * ( -Owner.Armatures[ 0 ].Joints[ j ].Position )) + Frames[ i ].Translations[ j ]
                 , 1 );
+          {m:=  mat4translate( Owner.Armatures[ 0 ].Joints[ j ].Position )
+             * mat4( mat3(  )
+             * mat4translate( -Owner.Armatures[ 0 ].Joints[ j ].Position );}
           Buffer.Add([ t, t, q, q ]); //prevent mix of translation and quaternion through pixel bleeding while having smooth transitions in y direction
           //Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), m * mat4( mat3( Frames[ i ].Rotations[ j ]])));
         end;

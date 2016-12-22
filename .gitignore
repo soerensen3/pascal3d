@@ -28,6 +28,7 @@ lib/
 !*.xml
 !*.blend
 !*.js
+!*.sh
 !reference
 !pascal3d
 !gtksourceview

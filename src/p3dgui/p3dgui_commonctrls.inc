@@ -33,8 +33,6 @@ type
 
   TP3DCustomListItemList = specialize gP3DCustomObjectList < TP3DListItem >;
 
-  { TP3DTreeNodeList }
-
   { TP3DListItemList }
 
   TP3DListItemList = class ( TP3DCustomListItemList )
@@ -1003,6 +1001,11 @@ procedure TP3DListViewFile.Update;
   begin
     ReadXMLFile( XML, FN );
     try
+      if ( ShowFolderUp and
+        ( not ( Assigned( TreeViewDirectory )
+        and ( TreeViewDirectory.Directory = Directory )))) then
+        Children[ Children.Add( '<-' + ExtractFileName( FN ), nil )].SymbolText:= P3DSymbolLibrary;
+
       list:= XML.GetElementsByTagName( 'scene' );
       for i:= 0 to list.Count - 1 do
         begin

@@ -240,8 +240,8 @@ begin
   SDL_SetWindowData( FWindow, 'p3dwindow', Self );
 
   // Choose GL-Version
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, {2 ); //}4 );
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, {1 ); //}5 );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 ); //}4 );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 ); //}5 );
   SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY );
   // Create a Context
   FContext:= SDL_GL_CreateContext( Window );

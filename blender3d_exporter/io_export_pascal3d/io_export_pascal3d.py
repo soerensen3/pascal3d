@@ -417,10 +417,11 @@ class P3DExporter( bpy.types.Operator ):
                 if ( lenManh ):
                   	vec /= lenManh #scale vector by 1/manhattan distance
 
+                self.report({ 'INFO' }, 'vertexweights: [{:2f},{:2f},{:2f},{:2f}]'.format( *vec )+ ' indices: [{:d},{:d},{:d},{:d}]'.format( *idx ))
                 file.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
                 totno += 1
 
-                bin += struct.pack( '4i', *idx )
+                bin += struct.pack( '4i', *idx ) #write indices separately from weights
                 totno_idx += 1
                 #file.writeintvec( idx )
             file.file.write( bin )
@@ -654,15 +655,20 @@ class P3DExporter( bpy.types.Operator ):
         el.attrib[ 'name' ] = 'joint_' + bone.name
 
         bone_matrix = bone.matrix_local
-        #if ( bone.parent ):
-        #    bone_matrix = bone.parent.matrix_local.inverted() * bone_matrix
-        #bone_matrix *= arm.matrix_world.inverted()
+        if ( bone.parent ):
+            bone_matrix = bone.parent.matrix_local.inverted() * bone_matrix
+        bone_matrix *= arm.matrix_world.inverted()
         #self.BoneMatrix *= BlenderObject.matrix_world
-
+        #if bone.parent is None:
+        #  position = bone.head_local
+        #else:
+        #  position = bone.head_local - bone.parent.head_local
+        
         bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         bone_matrix *= bone_space
-        position, quat, scale = bone_matrix.decompose() #bone.head_local
+        position, quat, scale = bone_matrix.decompose() 
         position = bone.head_local
+        quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
         el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
         #quat = ( bone_matrix ).to_quaternion()
         el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
@@ -681,6 +687,14 @@ class P3DExporter( bpy.types.Operator ):
         #bone_space = mathutils.Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         #mat = arm.convert_space(pose_bone, pose_bone.matrix_basis, 'POSE', 'WORLD') * bone_space
         #return mat
+        #armature_bone = pose_bone.bone
+        #if pose_bone.parent is None:
+        #  pose_bone_matrix = arm.matrix_world * armature_bone.matrix_local
+        #else:
+        #  parent_bone = armature_bone.parent
+        #  parent_matrix = arm.matrix_world * parent_bone.matrix_local
+        #  pose_bone_matrix = arm.matrix_world * armature_bone.matrix_local
+        #  pose_bone_matrix = parent_matrix.inverted() * pose_bone_matrix
 
         pose_bone_matrix = pose_bone.matrix
         #if ( pose_bone.parent ):
