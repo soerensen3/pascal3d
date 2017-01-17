@@ -24,7 +24,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="47">
+    <Files Count="50">
       <Item1>
         <AddToUsesPkgSection Value="False"/>
       </Item1>
@@ -114,11 +114,11 @@
         <Type Value="Include"/>
       </Item23>
       <Item24>
-        <Filename Value="p3dgraphics\p3ddatablock.inc"/>
+        <Filename Value="p3dgraphics\p3dgrids.inc"/>
         <Type Value="Include"/>
       </Item24>
       <Item25>
-        <Filename Value="p3dgraphics\p3dgrids.inc"/>
+        <Filename Value="p3dgraphics\p3ddatablock.inc"/>
         <Type Value="Include"/>
       </Item25>
       <Item26>
@@ -202,13 +202,25 @@
         <Type Value="Include"/>
       </Item45>
       <Item46>
-        <Filename Value="p3dutils\p3dsimpletypes.inc"/>
+        <Filename Value="p3dutils\p3dpropaccess.inc"/>
         <Type Value="Include"/>
       </Item46>
       <Item47>
-        <Filename Value="p3dutils\p3dpropaccess.inc"/>
+        <Filename Value="p3dutils\p3dsimpletypes.inc"/>
         <Type Value="Include"/>
       </Item47>
+      <Item48>
+        <Filename Value="p3dutils\p3dxmlutils.inc"/>
+        <Type Value="Include"/>
+      </Item48>
+      <Item49>
+        <Filename Value="p3dgraphics\p3dclassfactory.inc"/>
+        <Type Value="Include"/>
+      </Item49>
+      <Item50>
+        <Filename Value="p3dgraphics_lib.inc"/>
+        <Type Value="Include"/>
+      </Item50>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>

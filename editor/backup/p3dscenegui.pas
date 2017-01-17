@@ -18,11 +18,14 @@ uses
   p3dgui;
 
 type
+  TP3DDataViewerMode = ( dvmData, dvmLibrary, dvmScene );
+
   {$DEFINE INTERFACE}
     {$INCLUDE p3dscene_sceneviewer.inc}
     {$INCLUDE p3dscene_dataviewer.inc}
     {$INCLUDE p3dscene_assetviewer.inc}
     {$INCLUDE p3dscene_objectinspector.inc}
+    {$INCLUDE p3dscene_main.inc}
   {$UNDEF INTERFACE}
 
 
@@ -30,10 +33,11 @@ type
   procedure P3DSceneGUIFinish;
 
 var
+  SceneMain: TP3DSceneMain;
   AssetView: TP3DSAssetPanel;
   DataView: TP3DDataPanel;
   SceneView: TP3DScenePanel;
-  TestScene: TP3DScene;
+  MainWindow: TP3DGraphicControl;
   OIPanel: TP3DOIPanel;
 
   MeshArrows: TP3DActor;
@@ -48,6 +52,7 @@ var
 implementation
 
 {$DEFINE IMPLEMENTATION}
+  {$INCLUDE p3dscene_main.inc}
   {$INCLUDE p3dscene_sceneviewer.inc}
   {$INCLUDE p3dscene_dataviewer.inc}
   {$INCLUDE p3dscene_assetviewer.inc}
@@ -59,28 +64,40 @@ procedure CreateSceneTree;
 var
   ListView: TP3DListView;
   i, j, GridId, o: Integer;
+  Lib: TP3DLibrary;
+  fn: String;
 
   procedure AddLib( FName: String );
   var
     n, k: Integer;
   begin
-    n:= OpenLibrary( FName );
+    n:= P3DData.OpenLibrary( FName );
     for k:= 0 to P3DData.Libraries[ n ].Scenes.Count - 1 do
-      TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ k ]);
+      TP3DTileGrid( P3DData.Objects[ GridId ].Data ).AddScene( P3DData.Libraries[ n ].Scenes[ k ]);
   end;
 
 begin
   //P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
-  TestScene:= TP3DScene.Create();
+  MainWindow:= TP3DGraphicControl.Create();
+  MainWindow.Align:= alClient;
+
+  SceneMain:= TP3DSceneMain.Create();
+  SceneMain.ActiveLibrary:= SceneMain.NewLibrary();
+  DataView:= TP3DDataPanel.Create();
+  DataView.Parent:= MainWindow;
+  DataView.Align:= alLeft;
   AssetView:= TP3DSAssetPanel.Create();
+  AssetView.Parent:= MainWindow;
   AssetView.Align:= alBottom;
   SceneView:= TP3DScenePanel.Create();
+  SceneView.Parent:= MainWindow;
   SceneView.Align:= alClient;
-  DataView:= TP3DDataPanel.Create();
-  DataView.Align:= alLeft;
+  DataView.BringToFront;
+  //DataView.ActorList:= TestScene.Objects;
 
-  SceneView.Scene:= TestScene;
+  SceneMain.ActiveScene:= SceneMain.NewScene();
   OIPanel:= TP3DOIPanel.Create();
+  OIPanel.Parent:= MainWindow;
   OIPanel.Align:= alRight;
   OIPanel.ObjectInspector.Obj:= OIPanel;
 
@@ -154,28 +171,31 @@ begin
 
 
 
-  TestScene.AppendFile( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/sun.p3d' );
+  {TestScene.AppendFile( '../../engine_runtime/assets/sun.p3d' );
 
   GridId:= P3DData.CreateNew( TP3DTileGrid, True );
   TestScene.Objects.Add( P3DData.Objects[ GridId ]);
 
   TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridWorldUnit:= 2;
-  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( nil );
+  //AddLib( '../../engine_runtime/assets/tiles_rock.p3d' );}
+
+  {TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( nil );
+
 
   AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/box.p3d' );
 
   AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/wall.p3d' );
 
-  AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/wall_corner.p3d' );
+  AddLib( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/wall_corner.p3d' );}
 
   //n:= OpenLibrary( '/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/conveyour.p3d' );
   //TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Add( P3DData.Libraries[ n ].Scenes[ 0 ]);
-
-  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).UpdateArrays;
+  //TP3DTileGrid( P3DData.Objects[ GridId ].Data ).UpdateArrays;
   //for i:= 0 to TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Width * TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Height - 1 do
-  //  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridData[ i ]:= Random( TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Meshes.Count );
-  OIPanel.ObjectInspector.Obj:= P3DData.Objects[ GridId ];
-  SceneView.Selection:= P3DData.Objects[ GridId ];
+  //  TP3DTileGrid( P3DData.Objects[ GridId ].Data ).GridData[ i ]:= TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Scenes[ Random( TP3DTileGrid( P3DData.Objects[ GridId ].Data ).Scenes.Count )];
+
+  //OIPanel.ObjectInspector.Obj:= P3DData.Objects[ GridId ];
+  //SceneView.Selection:= P3DData.Objects[ GridId ];
 end;
 
 procedure P3DSceneGUIInit;
@@ -201,7 +221,9 @@ begin
   FreeAndNil( DataView );
   FreeAndNil( AssetView );
   FreeAndNil( SceneView );
-  FreeAndNil( SymbolActor );
+  FreeAndNil( DataView );
+  FreeAndNil( OIPanel );
+  FreeAndNil( MainWindow );
   FreeAndNil( SymbolMesh );
   FreeAndNil( SymbolScene );
   FreeAndNil( SymbolFont );

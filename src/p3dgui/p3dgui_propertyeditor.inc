@@ -37,7 +37,7 @@ type
       property SetValueEvent;
 
     public
-      constructor Create(const AData: TP3DData=nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property Prop: TP3DPropertyAccess read FProp write SetProp;
@@ -90,7 +90,7 @@ type
       function GetValueName: String; override;
 
     public
-      constructor Create( const AData: TP3DData=nil; const AParent: TP3DGraphicControl=nil ); override;
+      constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
 
     published
       property Prop: TP3DPropertyAccess read FProp write SetProp;
@@ -105,7 +105,7 @@ type
       procedure SetCaption(AValue: String); override;
 
     public
-      constructor Create( const AData: TP3DData=nil; const AParent: TP3DGraphicControl=nil ); override;
+      constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
 
     published
       property Prop: TP3DPropertyAccess read FProp write SetProp;
@@ -133,7 +133,7 @@ type
       procedure Draw; override;
       procedure MouseMove(X, Y: Integer); override;
 
-      constructor Create(const AData: TP3DData=nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
 
       property Prop: TListProp read FProp write SetProp;
   end;
@@ -174,7 +174,7 @@ begin
   end;
 end;
 
-constructor gP3DPropertyEditorVector.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
+constructor gP3DPropertyEditorVector.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
   EdCount:= Length( TVecType.FCoord );
@@ -258,7 +258,7 @@ begin
     Result:= Prop.Name;
 end;
 
-constructor TP3DPropertyEditorInt.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
+constructor TP3DPropertyEditorInt.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Precision:= 0;
@@ -297,7 +297,7 @@ end;
 
 { TP3DPropertyEditorDataBlockList }
 
-constructor gP3DPropertyEditorList.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
+constructor gP3DPropertyEditorList.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
   Font.Size:= 20;
@@ -453,8 +453,7 @@ begin
     Prop.AsString:= AValue;
 end;
 
-constructor TP3DPropertyEditorEnum.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DPropertyEditorEnum.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
 end;

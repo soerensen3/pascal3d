@@ -2,6 +2,9 @@
 
 procedure Render( Sender: TP3DWindow );
 begin
+  SceneMain.CheckLastChange;
+  if ( SceneMain.NeedsUpdate ) then
+    SceneMain.Update;
   //glCullFace( GL_FRONT );
   //glEnable( GL_CULL_FACE );
   glClearColor( Primary100.R, Primary100.G, Primary100.B, 1 );

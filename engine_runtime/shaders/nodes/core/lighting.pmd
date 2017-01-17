@@ -99,7 +99,7 @@ void util_directionalLight( in int i,
 
     float cosineTerm = saturate( dot( N, LightSource[ i ].direction.xyz ));
 
-    diffuse += ( LightSource[ i ].color.rgb *0.5 ) * cosineTerm;
+    diffuse += ( LightSource[ i ].color.rgb ) * cosineTerm;
 
     // specular
 
@@ -122,7 +122,6 @@ node: 1000_light_pass_calc_lighting
     if ( LightSource[ i ].type == p3dltSun )
       util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   }
-  spec = vec3( 0 );
 ```
 
 ---

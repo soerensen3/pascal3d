@@ -31,7 +31,7 @@
         FUserData: TObject;
 
       public
-        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+        constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
         property UserData: TObject read FUserData write FUserData;
         property IsSelectable: Boolean read FIsSelectable write FIsSelectable;
@@ -41,7 +41,7 @@
 
     TP3DCustomPopupMenu = class ( TP3DGraphicControl )
       public
-        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+        constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
         class function IsFocusControl: Boolean; override;
 
@@ -64,7 +64,7 @@
           Y: Integer);
 
       public
-        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+        constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
         destructor Destroy; override;
 
         procedure Update;
@@ -80,7 +80,7 @@
 
 { TP3DMenuItem }
 
-constructor TP3DMenuItem.Create(const AData: TP3DData;
+constructor TP3DMenuItem.Create(const AData: TP3DLibrary;
   const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
@@ -119,8 +119,7 @@ begin
     OnItemClick( TP3DMenuItem( Sender ));
 end;
 
-constructor TP3DPopupMenu.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DPopupMenu.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   FItems:= TP3DMenuItemList.Create( Self );
@@ -168,8 +167,7 @@ begin
 end;
 
 
-constructor TP3DCustomPopupMenu.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DCustomPopupMenu.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Visible:= False;

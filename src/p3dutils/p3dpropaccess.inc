@@ -26,8 +26,12 @@ type
 
   { TP3DPropertyAccess }
 
+  TP3DPropertyAccessStoreMode = ( smDoNotStore, smAttribute, smNode, smExternalBinary );
+
   TP3DPropertyAccess = class abstract ( TPersistent )
     protected
+      FContext: TInterfacedPersistent;
+      FStoreMode: TP3DPropertyAccessStoreMode;
       FCategory: String;
       FName: String;
 
@@ -35,21 +39,32 @@ type
       procedure SetAsString(AValue: String); virtual; abstract;
 
     public
-      constructor Create( AName: String );
+      constructor Create( AName: String; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
       function GetNames: TStringList; virtual; //can be used for enums
+      function SaveToDOM( AParentNode: TDOMElement ): Boolean; virtual;
+      procedure LoadFromDOM( AParentNode: TDOMElement ); virtual;
 
     published
       property Name: String read FName write FName;
       property Category: String read FCategory write FCategory;
       property AsString: String read GetAsString write SetAsString;
+      property StoreMode: TP3DPropertyAccessStoreMode read FStoreMode write FStoreMode;
+      property Context: TInterfacedPersistent read FContext write FContext;
   end;
 
   { TP3DPropertyAccessList }
 
   TP3DPropertyAccessList = class ( specialize gP3DCustomObjectList < TP3DPropertyAccess >)
+    private
+      FContext: TInterfacedPersistent;
+
     published
+      function Add(Item: TCustomItem): Integer; override;
       function FindByName( AName: String ): Integer;
       function GetPropByName( AName: String ): TP3DPropertyAccess;
+
+      constructor Create( AContext: TInterfacedPersistent );
+      property Context: TInterfacedPersistent read FContext write FContext;
   end;
 
   { gP3DPropertyAccess }
@@ -64,16 +79,19 @@ type
       FField: pItem;
       FGetter: TGetter;
       FSetter: TSetter;
-      function GetValue: TItem;
-      procedure SetValue( AValue: TItem );
+
+      function GetDefaultValue: TItem; virtual; abstract;
+      function GetValue: TItem; virtual;
+      procedure SetValue( AValue: TItem ); virtual;
 
     public
-      constructor CreateGetSet( AName:String; AGetter: TGetter; ASetter: TSetter );
-      constructor CreateGetField( AName:String; AGetter: TGetter; AField: pItem );
-      constructor CreateFieldSet( AName:String; AField: pItem; ASetter: TSetter );
-      constructor CreateField( AName:String; AField: pItem );
+      constructor CreateGetSet( AName:String; AGetter: TGetter; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
+      constructor CreateGetField( AName:String; AGetter: TGetter; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
+      constructor CreateFieldSet( AName:String; AField: pItem; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
+      constructor CreateField( AName:String; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
 
       property Value: TItem read GetValue write SetValue;
+      property DefaultValue: TItem read GetDefaultValue;
 
       property Getter: TGetter read FGetter write FGetter;
       property Setter: TSetter read FSetter write FSetter;
@@ -92,6 +110,8 @@ type
 
     public
       property Values[ idx: Integer ]: TListData read GetValues write SetValues;
+
+      function SaveToDOM( AParentNode: TDOMElement ): Boolean; override;
 
     published
       function GetAsString: String; override;
@@ -142,7 +162,7 @@ type
       function GetAsString: String; override;
       procedure SetAsString(AValue: String); override;
 
-      constructor Create( AOwner: TObject; AName: String);
+      constructor Create( AOwner: TObject; AName: String; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
       property TypeName: String read FTypeName;
       property Owner: TObject read FOwner write FOwner;
   end;
@@ -152,6 +172,7 @@ type
   TP3DPropertyAccessInt    = class( specialize gP3DPropertyAccess < Integer >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    function GetDefaultValue: Integer; override;
   end;
 
   { TP3DPropertyAccessFloat }
@@ -159,6 +180,7 @@ type
   TP3DPropertyAccessFloat  = class( specialize gP3DPropertyAccess < Float >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    function GetDefaultValue: Float; override;
   end;
 
   { TP3DPropertyAccessString }
@@ -166,6 +188,7 @@ type
   TP3DPropertyAccessString = class( specialize gP3DPropertyAccess < String >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    function GetDefaultValue: String; override;
   end;
 
   { TP3DPropertyAccessVec2 }
@@ -173,6 +196,7 @@ type
   TP3DPropertyAccessVec2   = class( specialize gP3DPropertyAccess < TVec2 >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    function GetDefaultValue: TVec2; override;
   end;
 
   { TP3DPropertyAccessVec3 }
@@ -180,6 +204,7 @@ type
   TP3DPropertyAccessVec3   = class( specialize gP3DPropertyAccess < TVec3 >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    function GetDefaultValue: TVec3; override;
   end;
 
   { TP3DPropertyAccessVec4 }
@@ -187,6 +212,7 @@ type
   TP3DPropertyAccessVec4   = class( specialize gP3DPropertyAccess < TVec4 >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    function GetDefaultValue: TVec4; override;
   end;
 
   { TP3DPropertyAccessQuat }
@@ -194,7 +220,22 @@ type
   TP3DPropertyAccessQuat   = class( specialize gP3DPropertyAccess < TQuaternion >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    function GetDefaultValue: TQuaternion; override;
   end;
+
+  { TP3DPropertyAccessFileWatch }
+
+  TP3DPropertyAccessFileWatch = class( specialize gP3DPropertyAccess < TP3DFileWatch >)
+    private
+      FAbsolutePaths: Boolean;
+
+    published
+      function GetAsString: String; override;
+      procedure SetAsString(AValue: String); override;
+      property AbsolutePaths: Boolean read FAbsolutePaths write FAbsolutePaths;
+      function GetDefaultValue: TP3DFileWatch; override;
+  end;
+
 
   { TP3DInterfacedPersistent }
 
@@ -205,6 +246,11 @@ type
     public
       constructor Create;
       destructor Destroy; override;
+
+      function SaveToDOM( AParent: TDOMElement ): TDOMElement; virtual;
+      procedure LoadFromDOMNew( ADOMNode: TDOMElement ); virtual;
+
+      class function DOMNodeName: String; virtual; abstract;
 
       property Properties: TP3DPropertyAccessList read FProperties write FProperties;
   end;
@@ -220,7 +266,9 @@ begin
   if ( Assigned( Getter )) then
     Result:= Getter()
   else if ( Assigned( Field )) then
-    Result:= Field^;
+    Result:= Field^
+  else
+    Result:= DefaultValue;
 end;
 
 procedure gP3DPropertyAccess.SetValue(AValue: TItem);
@@ -231,35 +279,40 @@ begin
     Field^:= AValue;
 end;
 
-constructor gP3DPropertyAccess.CreateGetSet( AName: String; AGetter: TGetter; ASetter: TSetter);
+constructor gP3DPropertyAccess.CreateGetSet(AName: String; AGetter: TGetter; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode);
 begin
-  inherited Create( AName );
+  inherited Create( AName, AStoreMode );
   Getter:= AGetter;
   Setter:= ASetter;
 end;
 
-constructor gP3DPropertyAccess.CreateGetField( AName: String; AGetter: TGetter; AField: pItem);
+constructor gP3DPropertyAccess.CreateGetField(AName: String; AGetter: TGetter; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode);
 begin
-  inherited Create( AName );
+  inherited Create( AName, AStoreMode );
   Getter:= AGetter;
   Field:= AField;
 end;
 
-constructor gP3DPropertyAccess.CreateFieldSet( AName: String; AField: pItem; ASetter: TSetter);
+constructor gP3DPropertyAccess.CreateFieldSet(AName: String; AField: pItem; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode);
 begin
-  inherited Create( AName );
+  inherited Create( AName, AStoreMode );
   Field:= AField;
   Setter:= ASetter;
 end;
 
-constructor gP3DPropertyAccess.CreateField( AName: String; AField: pItem);
+constructor gP3DPropertyAccess.CreateField(AName: String; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode);
 begin
-  inherited Create( AName );
+  inherited Create( AName, AStoreMode );
   Field:= AField;
 end;
 
 { TP3DPropertyAccessList }
 
+function TP3DPropertyAccessList.Add(Item: TCustomItem): Integer;
+begin
+  Result:= inherited Add( Item );
+  Item.Context:= Context;
+end;
 
 function TP3DPropertyAccessList.FindByName(AName: String): Integer;
 var
@@ -285,17 +338,42 @@ begin
     Result:= nil;
 end;
 
+constructor TP3DPropertyAccessList.Create(AContext: TInterfacedPersistent);
+begin
+  inherited Create;
+  FContext:= AContext;
+end;
+
 { TP3DPropertyAccess }
 
-constructor TP3DPropertyAccess.Create(AName: String);
+constructor TP3DPropertyAccess.Create(AName: String; const AStoreMode: TP3DPropertyAccessStoreMode);
 begin
   inherited Create;
   FName:= AName;
+  StoreMode:= AStoreMode;
 end;
 
 function TP3DPropertyAccess.GetNames: TStringList;
 begin
   Result:= nil;
+end;
+
+function TP3DPropertyAccess.SaveToDOM(AParentNode: TDOMElement): Boolean;
+begin
+  Result:= False;
+  if ( Assigned( AParentNode )) then
+    case StoreMode of
+      smAttribute: AParentNode.AttribStrings[ Name ]:= AsString;
+      else
+        exit;
+    end;
+  Result:= True;
+end;
+
+procedure TP3DPropertyAccess.LoadFromDOM( AParentNode: TDOMElement );
+begin
+  if ( Assigned( AParentNode )) then
+    AsString:= AParentNode.AttribStrings[ Name ];
 end;
 
 { TP3DPropertyAccessRTTI }
@@ -531,11 +609,13 @@ begin
     end;
 end;
 
-constructor TP3DPropertyAccessRTTI.Create(AOwner: TObject; AName: String);
+constructor TP3DPropertyAccessRTTI.Create(AOwner: TObject; AName: String; const AStoreMode: TP3DPropertyAccessStoreMode);
 begin
-  inherited Create( AName );
+  inherited Create( AName, AStoreMode );
   Owner:= AOwner;
   FPropInfo:= GetPropInfo( Owner, Name );
+  if ( not Assigned( FPropInfo )) then
+    raise Exception.Create( 'Cannot create access: The specified property was not found: ' + AName );
   FTypeName:= PropInfo^.PropType^.Name;
 end;
 
@@ -552,6 +632,11 @@ begin
   Value:= AValue;
 end;
 
+function TP3DPropertyAccessString.GetDefaultValue: String;
+begin
+  Result:= '';
+end;
+
 { TP3DPropertyAccessFloat }
 
 function TP3DPropertyAccessFloat.GetAsString: String;
@@ -564,6 +649,11 @@ begin
   Value:= StrToFloat( AValue );
 end;
 
+function TP3DPropertyAccessFloat.GetDefaultValue: Float;
+begin
+  Result:= 0.0;
+end;
+
 { TP3DPropertyAccessInt }
 
 function TP3DPropertyAccessInt.GetAsString: String;
@@ -574,6 +664,11 @@ end;
 procedure TP3DPropertyAccessInt.SetAsString(AValue: String);
 begin
   Value:= StrToInt( AValue );
+end;
+
+function TP3DPropertyAccessInt.GetDefaultValue: Integer;
+begin
+  Result:= 0;
 end;
 
 { TP3DPropertyAccessVec2 }
@@ -591,6 +686,11 @@ begin
   Value:= Val;
 end;
 
+function TP3DPropertyAccessVec2.GetDefaultValue: TVec2;
+begin
+  Result:= vec2( 0 );
+end;
+
 { TP3DPropertyAccessVec3 }
 
 function TP3DPropertyAccessVec3.GetAsString: String;
@@ -604,6 +704,11 @@ var
 begin
   Val.FromString( AValue );
   Value:= Val;
+end;
+
+function TP3DPropertyAccessVec3.GetDefaultValue: TVec3;
+begin
+  Result:= vec3( 0 );
 end;
 
 { TP3DPropertyAccessVec4 }
@@ -621,6 +726,11 @@ begin
   Value:= Val;
 end;
 
+function TP3DPropertyAccessVec4.GetDefaultValue: TVec4;
+begin
+  Result:= vec4( 0 );
+end;
+
 { TP3DPropertyAccessQuat }
 
 function TP3DPropertyAccessQuat.GetAsString: String;
@@ -636,21 +746,33 @@ begin
   Value:= Val;
 end;
 
+function TP3DPropertyAccessQuat.GetDefaultValue: TQuaternion;
+begin
+  Result:= quat( 0, 0, 0, 1 );
+end;
+
 { gP3DListPropertyAccess }
 
 function gP3DListPropertyAccess.GetCount: Integer;
 begin
-  Result:= Value.Count;
+  if ( Assigned( Value )) then
+    Result:= Value.Count
+  else
+    Result:= 0;
 end;
 
 function gP3DListPropertyAccess.GetValues(idx: Integer): TListData;
 begin
-  Result:= Value[ idx ];
+  if ( Assigned( Value )) then
+    Result:= Value[ idx ]
+  else
+    Result:= nil;
 end;
 
 procedure gP3DListPropertyAccess.SetCount(AValue: Integer);
 begin
-  Value.Count:= AValue;
+  if ( Assigned( Value )) then
+    Value.Count:= AValue;
 end;
 
 procedure gP3DListPropertyAccess.SetValues(idx: Integer; AValue: TListData);
@@ -658,9 +780,39 @@ begin
   Value[ idx ]:= AValue;
 end;
 
-function gP3DListPropertyAccess.GetAsString: String;
+function gP3DListPropertyAccess.SaveToDOM(AParentNode: TDOMElement): Boolean;
+var
+  Node: TDOMElement;
+  i: Integer;
+  Val: TListData;
 begin
+  Result:= inherited SaveToDOM( AParentNode );
+  case StoreMode of
+    smNode:
+      begin
+        Node:= AParentNode.OwnerDocument.CreateElement( Name );
+        AParentNode.AppendChild( Node );
+        //Val:= Value;
 
+        for i:= 0 to Count - 1 do
+          begin
+            Val:= Values[ i ];
+            if ( Assigned( Val )) then
+              Val.SaveToDOM( Node )
+            else
+              AParentNode.AppendChild( AParentNode.OwnerDocument.CreateElement( 'empty' ));
+          end;
+      end;
+  end;
+end;
+
+function gP3DListPropertyAccess.GetAsString: String;
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Result+= ', ' + Values[ i ].ToString;
+  Result:= '[' + Copy( Result, 2, Length( Result ) - 2 ) + ']';
 end;
 
 procedure gP3DListPropertyAccess.SetAsString(AValue: String);

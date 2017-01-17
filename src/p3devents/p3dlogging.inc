@@ -168,7 +168,9 @@ begin
   Result:= LogFile.CreateElement( 'p' );
   Result.AttribStrings[ 'class' ]:= 'messageheader';
 
-  if ( Sender is TP3DObject ) then
+  if ( Sender is TP3DDataBlock ) then
+    N:= TP3DDataBlock( Sender ).Owner.Name + '.' + TP3DObject( Sender ).Name + ': '
+  else if ( Sender is TP3DObject ) then
     N:= TP3DObject( Sender ).Name + ': '
   else
     N:= '';

@@ -185,8 +185,6 @@ class P3DExporter( bpy.types.Operator ):
         self.supported_types = []
         if self.ExportMeshes:
             self.supported_types.append( 'MESH' )
-        if self.ExportArmatures:
-            self.supported_types.append( 'ARMATURE' )
         if self.ExportLamps:
             self.supported_types.append( 'LAMP' )
         if self.ExportCameras:
@@ -196,6 +194,9 @@ class P3DExporter( bpy.types.Operator ):
 
         for scene in bpy.data.scenes:
             self.ExportScene( scene )
+
+        if self.ExportArmatures:
+            self.supported_types.append( 'ARMATURE' ) #add armatures later as we do not care about the armature objects but only the datablock
 
         for data in self.file.meshes: # will cause duplicates for now because objects instead of meshes are
                                       # put into self.file.meshes. This is necessary because of the modifiers
@@ -267,7 +268,7 @@ class P3DExporter( bpy.types.Operator ):
         self.report({ 'INFO' }, ', '.join( self.supported_types ))
         self.ExportSceneScreenshot( scene )
         for obj in scene.objects:
-            if obj.type in self.supported_types and obj.is_visible( scene ):
+            if obj.parent is None and obj.type in self.supported_types and obj.is_visible( scene ):
                 self.ExportObject( obj )
         self.file.pop()
 
@@ -291,10 +292,10 @@ class P3DExporter( bpy.types.Operator ):
                 self.file.lamps.add( obj.data )
             elif ( type == 'camera' ):
                 self.file.cameras.add( obj.data )
-            elif ( type == 'armature' ):
-                self.file.armatures.add( obj ) #use object instead of data
-
         self.ExportTransform( obj )
+        for child in obj.children:
+            if child.type in self.supported_types: #and child.is_visible( scene ):
+                self.ExportObject( child )     
 
         self.file.pop()
 
@@ -502,7 +503,8 @@ class P3DExporter( bpy.types.Operator ):
             if ( not ( armature is None )):
                 el = self.file.push( 'modifier' )
                 el.attrib[ 'name' ] = 'armature'
-                el.attrib[ 'data' ] = 'armature_' + armature.name
+                el.attrib[ 'data' ] = 'armature_' + armature.data.name
+                self.file.armatures.add( armature ) #use object instead of data
                 self.file.pop()
 
         self.file.pop()
@@ -664,9 +666,9 @@ class P3DExporter( bpy.types.Operator ):
         #else:
         #  position = bone.head_local - bone.parent.head_local
         
-        bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
-        bone_matrix *= bone_space
-        position, quat, scale = bone_matrix.decompose() 
+        #bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
+        #bone_matrix *= bone_space
+        #position, quat, scale = bone_matrix.decompose() 
         position = bone.head_local
         quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
         el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
@@ -687,16 +689,16 @@ class P3DExporter( bpy.types.Operator ):
         #bone_space = mathutils.Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         #mat = arm.convert_space(pose_bone, pose_bone.matrix_basis, 'POSE', 'WORLD') * bone_space
         #return mat
-        #armature_bone = pose_bone.bone
-        #if pose_bone.parent is None:
-        #  pose_bone_matrix = arm.matrix_world * armature_bone.matrix_local
-        #else:
-        #  parent_bone = armature_bone.parent
-        #  parent_matrix = arm.matrix_world * parent_bone.matrix_local
-        #  pose_bone_matrix = arm.matrix_world * armature_bone.matrix_local
-        #  pose_bone_matrix = parent_matrix.inverted() * pose_bone_matrix
+        armature_bone = pose_bone.bone
+        if pose_bone.parent is None:
+          pose_bone_matrix = arm.matrix_world * armature_bone.matrix_local
+        else:
+          parent_bone = armature_bone.parent
+          parent_matrix = arm.matrix_world * parent_bone.matrix_local
+          pose_bone_matrix = arm.matrix_world * armature_bone.matrix_local
+          pose_bone_matrix = parent_matrix.inverted() * pose_bone_matrix
 
-        pose_bone_matrix = pose_bone.matrix
+        #pose_bone_matrix = pose_bone.matrix
         #if ( pose_bone.parent ):
         #    parent_matrix = pose_bone.parent.matrix
         #    pose_bone_matrix = parent_matrix.inverted() * pose_bone_matrix
@@ -705,6 +707,40 @@ class P3DExporter( bpy.types.Operator ):
   ##EXPORTING ARMATURE -------------------------------------------------------------
 
   ##EXPORTING JOINT ----------------------------------------------------------------
+  
+    def get_pose_matrix_in_other_space( self, mat, pose_bone ):
+        """ Returns the transform matrix relative to pose_bone's current
+            transform space.  In other words, presuming that mat is in
+            armature space, slapping the returned matrix onto pose_bone
+            should give it the armature-space transforms of mat.
+            TODO: try to handle cases with axis-scaled parents better.
+        """
+        rest = pose_bone.bone.matrix_local.copy()
+        rest_inv = rest.inverted()
+        if pose_bone.parent:
+            par_mat = pose_bone.parent.matrix.copy()
+            par_inv = par_mat.inverted()
+            par_rest = pose_bone.parent.bone.matrix_local.copy()
+        else:
+            par_mat = Matrix()
+            par_inv = Matrix()
+            par_rest = Matrix()
+
+        # Get matrix in bone's current transform space
+        smat = rest_inv * (par_rest * (par_inv * mat))
+
+        # Compensate for non-local location
+        #if not pose_bone.bone.use_local_location:
+        #    loc = smat.to_translation() * (par_rest.inverted() * rest).to_quaternion()
+        #    smat.translation = loc
+
+        return smat
+
+
+    def get_local_pose_matrix( self, pose_bone ):
+        """ Returns the local transform matrix of the given pose bone.
+        """
+        return self.get_pose_matrix_in_other_space( pose_bone.matrix, pose_bone )
 
     def ExportPoseJoint( self, armature, pose_bone ):
         #if ( self.Verbose ):
@@ -714,11 +750,12 @@ class P3DExporter( bpy.types.Operator ):
         el.attrib[ 'name' ] = 'joint_' + pose_bone.name
 
         bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
-        matrix = self.get_pose_bone_matrix( armature, pose_bone ) * bone_space
-        position, quat, scale = matrix.decompose()
-        #position = pose_bone.head
-        #quat = pose_bone.matrix.to_quaternion()
-        quat = quat.normalized()
+        #matrix = self.get_pose_bone_matrix( armature, pose_bone ) * bone_space
+        #position, quat, scale = matrix.decompose()
+        matrix = self.get_local_pose_matrix( pose_bone )
+        position = pose_bone.head
+        quat = matrix.to_quaternion()
+        #quat = pose_bone.rotation_quaternion #quat.normalized()
         el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
         el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
 
@@ -740,7 +777,7 @@ class P3DExporter( bpy.types.Operator ):
             idx += 1
 
         if ( not ( armature.animation_data is None ) and not ( armature.animation_data.action is None )):
-            self.file.actions.add((armature.animation_data.action, armature ))
+            self.file.actions.add(( armature.animation_data.action, armature ))
             el.attrib[ 'action' ] = 'action_' + armature.data.name + armature.animation_data.action.name
 
         self.file.pop()
@@ -754,7 +791,7 @@ class P3DExporter( bpy.types.Operator ):
             self.report({ 'INFO' }, 'Exporting data ' + action[ 0 ].name )
 
         el = self.file.push( 'action' )
-        el.attrib[ 'name' ] = 'action_' + action[ 1 ].name + action[ 0 ].name
+        el.attrib[ 'name' ] = 'action_' + action[ 1 ].data.name + action[ 0 ].name #armature.data.name + action.name
         scene = bpy.context.scene
         idx = 0
         for frame in range( scene.frame_end + 1 ):

@@ -43,6 +43,7 @@ type
       FChildren: TP3DActorList;
       FData: TP3DDataBlock;
       FMatrixFinal: TMat4;
+      FParent: TP3DDataBlock;
       FPosition: TVec3;
       FQuaternion: TQuaternion;
       FRotation: TVec3;
@@ -70,11 +71,14 @@ type
       //property BoundingBox;
       procedure UpdateMatrix;
       procedure UpdateEuler;
+      function GetDOMPath: String; override;
+      procedure OnObjChange( Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction );
 
     public
-      constructor Create( const AData: TP3DData = nil ); override;
+      constructor Create( const AData: TP3DLibrary = nil ); override;
 
       procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
+      function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
 
       procedure FastDestroy(); override;
       procedure Render( world: TMat4; Scene: TP3DScene ); reintroduce;
@@ -88,6 +92,7 @@ type
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
+      class function DOMNodeName: String; override;
 
       property Position: TVec3 read FPosition write SetPosition;
       property Direction: TVec3 read GetDirection;
@@ -96,15 +101,17 @@ type
       property Matrix: TMat4 read FMatrix write SetMatrix;
       property MatrixFinal: TMat4 read FMatrixFinal;
       property Quaternion: TQuaternion read FQuaternion write SetQuaternion;
-      property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
 
     published
       property Children: TP3DActorList read FChildren;
       property Visible: Boolean read FVisible write FVisible;
       property Data: TP3DDataBlock read FData write SetData;
       property Scene: TP3DScene read FScene write SetScene;
+      property Parent: TP3DDataBlock read FParent;
+      property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
   end;
 
+  TP3DPropertyAccessActor = specialize gP3DPropertyAccessDataBlock < TP3DActor >;
   TP3DCustomActorList = specialize gP3DCustomDatablockList < TP3DActor >;
 
   TP3DRenderList = class;
@@ -156,10 +163,28 @@ begin
   FRotation:= QuatToEuler( Quaternion, deg2rad * Rotation, RotationOrder ) / deg2rad;
 end;
 
-procedure TP3DActor.SetData(AValue: TP3DDataBlock);
+function TP3DActor.GetDOMPath: String;
+begin
+  if ( Assigned( Parent )) then
+    Result:= Parent.GetDOMPath + '/' + Name
+  else
+    Result:= '/' + Name
+end;
+
+procedure TP3DActor.OnObjChange(Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction);
+begin
+  if ( Action = actAdd ) then
+    Item.FParent:= Self
+  else
+    Item.FParent:= nil;
+end;
+
+procedure TP3DActor.SetData( AValue: TP3DDataBlock );
 begin
   if FData=AValue then Exit;
 
+  if ( AValue is TP3DActor ) then
+    raise Exception.Create( 'TP3DActor.SetData: Error: Data can''t be an actor.' );
   if ( Assigned( FData )) then
     FData.RemoveUser( Self );
 
@@ -264,28 +289,31 @@ begin
     Scene.Objects.Remove( Self );
 end;
 
-constructor TP3DActor.Create( const AData: TP3DData );
+constructor TP3DActor.Create(const AData: TP3DLibrary);
 begin
   inherited Create( AData );
   Owner.Objects.Add( Self );
   FChildren:= TP3DActorList.Create( Self );
+  Children.OnChange:= @OnObjChange;
   FVisible:= True;
   FScale:= vec3( 1 );
   FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
-  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ));
   Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ));
-  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale ));
+  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute ));
   Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ));
+  Properties.Add( TP3DPropertyAccessDataBlock.CreateFieldSet( 'Data', @Data, @SetData, smAttribute ));
 end;
 
 procedure TP3DActor.LoadFromDOM( ADOMNode: TDOMElement );
 var
   Element: TDOMElement;
-  DataType: DOMString;
-  DataName, filename: DOMString;
+  DataName: DOMString;
   Child: TP3DActor;
   n: Integer;
 
@@ -300,11 +328,10 @@ var
 
 begin
   inherited LoadFromDOM( ADOMNode );
-  DataType:= ADOMNode.GetAttribute( 'type' );
   DataName:= ADOMNode.GetAttribute( 'data' );
   if ( DataName > '' ) then
     begin
-      n:= Owner.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.DocumentElement ), DataName, FindClassForDOM( DataType ));
+      n:= Owner.AppendFromPath( DataName );
       Data:= TP3DDataBlock( Owner.DataBlocks[ n ]);
     end
   else
@@ -332,6 +359,18 @@ begin
       end;
       Element:= TDOMElement( Element.NextSibling );
     end;
+end;
+
+
+function TP3DActor.SaveToDOM(AParent: TDOMElement): TDOMElement;
+begin
+  Result:= inherited SaveToDOM( AParent );
+  Children.SaveToDOM( Result );
+  {if ( Assigned( Data )) then
+    begin
+      //Result.AttribStrings[ 'data' ]:= Data.DOMPath;
+      //Data.SaveToDOM( Result.OwnerDocument.DocumentElement );
+    end;}
 end;
 
 procedure TP3DActor.FastDestroy;
@@ -434,6 +473,11 @@ end;
 procedure TP3DActor.RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
 begin
   //TODO: TP3DActor.RotateAroundLocalAxis
+end;
+
+class function TP3DActor.DOMNodeName: String;
+begin
+  Result:= 'object';
 end;
 
 { TP3DActorList }

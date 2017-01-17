@@ -9,7 +9,6 @@ TP3DRenderListModifierGrid = class;
 
 TP3DGridScene = class ( TP3DInterfacedPersistent )
   private
-    FIndex: Integer;
     FInstances: TP3DFloatBufferGL;
     FModifier: TP3DRenderListModifierGrid;
     FScene: TP3DScene;
@@ -18,6 +17,9 @@ TP3DGridScene = class ( TP3DInterfacedPersistent )
   public
     constructor Create( ATileGrid: TP3DTileGrid );
     destructor Destroy; override;
+
+    function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
+    class function DOMNodeName: String; override;
 
   published
     property TileGrid: TP3DTileGrid read FTileGrid;
@@ -42,6 +44,7 @@ TP3DTileGrid = class ( TP3DDatablock )
     FScenes: TP3DGridSceneList;
     FWidth: Integer;
     FGridData: TP3DGridSceneList;
+    FIsUpdating: Boolean;
     function GetSceneAt( x, y: Integer ): TP3DGridScene;
     procedure SetHeight( AValue: Integer );
     procedure SetSceneAt( x, y: Integer; AValue: TP3DGridScene );
@@ -50,12 +53,18 @@ TP3DTileGrid = class ( TP3DDatablock )
   protected
     procedure UpdateSize;
     procedure Inititalize;
+    procedure UpdateGridData;
+    procedure BeginUpdate;
+    procedure EndUpdate;
 
   public
     procedure UpdateArrays;
+    class function DOMNodeName: String; override;
 
-    constructor Create( const AData: TP3DData=nil ); override;
+    constructor Create( const AData: TP3DLibrary=nil ); override;
     destructor Destroy; override;
+    function SaveToDOM(AParent: TDOMElement): TDOMElement; override;
+    procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
     procedure PassToShader(Scene: TP3DGridScene; baseInstanceCount: Integer);
 
@@ -70,8 +79,6 @@ TP3DTileGrid = class ( TP3DDatablock )
     property GridWorldUnit: Single read FGridWorldUnit write FGridWorldUnit;
     property GridData: TP3DGridSceneList read FGridData write FGridData;
 end;
-
-{ TP3DRenderListModiferGrid }
 
 { TP3DRenderListModifierGrid }
 
@@ -100,6 +107,8 @@ begin
   FTileGrid:= ATileGrid;
   FModifier:= TP3DRenderListModifierGrid.Create( Self );
   FInstances:= TP3DFloatBufferGL.Create( True );
+  Properties.Context:= ATileGrid;
+  Properties.Add( TP3DPropertyAccessScene.CreateField( 'Scene', @FScene, smAttribute ));
 end;
 
 destructor TP3DGridScene.Destroy;
@@ -107,6 +116,17 @@ begin
   Modifier.Free;
   Instances.Free;
   inherited Destroy;
+end;
+
+function TP3DGridScene.SaveToDOM(AParent: TDOMElement): TDOMElement;
+begin
+  Result:=inherited SaveToDOM(AParent);
+
+end;
+
+class function TP3DGridScene.DOMNodeName: String;
+begin
+  Result:= 'gridscene';
 end;
 
 
@@ -153,6 +173,28 @@ begin
     GridData[ i ]:= nil;
 end;
 
+procedure TP3DTileGrid.UpdateGridData;
+var
+  i, j: Integer;
+begin
+  Inititalize;
+  BeginUpdate;
+  for i:= 0 to Scenes.Count - 1 do
+    for j:= 0 to Scenes[ i ].Instances.Count - 1 do
+      GridData[ floor( Scenes[ i ].Instances[ j ])]:= Scenes[ i ];
+  EndUpdate;
+end;
+
+procedure TP3DTileGrid.BeginUpdate;
+begin
+  FIsUpdating:= True;
+end;
+
+procedure TP3DTileGrid.EndUpdate;
+begin
+  FIsUpdating:= False;
+end;
+
 procedure TP3DTileGrid.UpdateArrays;
 var
   i: Integer;
@@ -172,7 +214,12 @@ begin
     Scenes[ i ].Instances.PushData;
 end;
 
-constructor TP3DTileGrid.Create( const AData: TP3DData );
+class function TP3DTileGrid.DOMNodeName: String;
+begin
+  Result:= 'tilegrid';
+end;
+
+constructor TP3DTileGrid.Create(const AData: TP3DLibrary);
 begin
   inherited Create( AData );
   Scenes:= TP3DGridSceneList.Create;
@@ -181,10 +228,10 @@ begin
   GridWorldUnit:= 1;
   FWidth:= 32;
   Height:= 32;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'GridWorldUnit' ));
-  Properties.Add( TP3DPropertyAccessDataBlockList.CreateField( 'Scenes', @FScenes ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'GridWorldUnit', smAttribute ));
+  //Properties.Add( TP3DPropertyAccessSceneList.CreateField( 'Scenes', @FScenes, smNode ));
 end;
 
 destructor TP3DTileGrid.Destroy;
@@ -192,6 +239,92 @@ begin
   FreeAndNil( FScenes );
   FreeAndNil( FGridData );
   inherited Destroy;
+end;
+
+function TP3DTileGrid.SaveToDOM(AParent: TDOMElement): TDOMElement;
+var
+  Prop: TDOMElement;
+  i: Integer;
+  fn: String;
+  S: TFileStream;
+begin
+  Result:= inherited SaveToDOM(AParent);
+
+  Prop:= AParent.OwnerDocument.CreateElement( 'property' );
+  Prop.SetAttribute( 'Name', 'Scenes' );
+  Result.AppendChild( Prop );
+
+  if ( Scenes.Count > 0 ) then
+    begin
+      fn:= ExtractFileNameOnly( Owner.Name ) + '.' + Name + '.p3dmesh';
+      S:= TFileStream.Create( fn, fmCreate );
+      for i:= 0 to Scenes.Count - 1 do
+        if ( Assigned( Scenes[ i ]) and ( Scenes[ i ].Instances.Count > 0 )) then
+          begin
+            Scenes[ i ].SaveToDOM( Prop ).AttribStrings[ 'Instances' ]:= fn + ':' + IntToStr( S.Position );
+            Scenes[ i ].Instances.SaveToStream( S );
+          end;
+      S.Free;
+    end;
+end;
+
+procedure TP3DTileGrid.LoadFromDOMNew(ADOMNode: TDOMElement);
+
+var
+  S: TFileStream;
+
+  function SetupStream( ADOMNode: TDOMElement; AName: String ): Boolean;
+  var
+    P: Integer;
+    SPos, FN: String;
+  begin
+    Result:= False;
+    SPos:= ADOMNode.AttribStrings[ AName ];
+    if ( SPos = '' ) then
+      exit;
+    FN:= Copy2SymbDel( SPos, ':' );
+    P:= StrToInt( SPos );
+    if ( Assigned( S )) then
+      if ( CompareFilenames( S.FileName, FN ) <> 0 ) then
+        S.Free;
+    if ( not Assigned( S )) then
+      S:= TFileStream.Create( FN, fmOpenRead );
+    S.Position:= P;
+    Result:= True;
+  end;
+
+var
+  PropLst: TDOMNodeList;
+  gridscene: TDOMElement;
+  n, i: Integer;
+  AName: DOMString;
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+  PropLst:= ADOMNode.GetElementsByTagName( 'property' );
+
+  Scenes.Clear( True );
+  for i:= 0 to PropLst.Count - 1 do
+    if ( TDOMElement( PropLst[ i ]).GetAttribute( 'Name' ) =  'Scenes' ) then
+      begin
+        S:= nil;
+        gridscene:= TDOMElement( PropLst[ i ].FirstChild );
+        while Assigned( gridscene ) do
+         begin
+           AName:= TDOMElement( gridscene ).NodeName;
+           if ( AName = 'gridscene' ) and ( SetupStream( gridscene, 'Instances' )) then
+              begin
+                n:= Scenes.Add( TP3DGridScene.Create( Self ));
+                Scenes[ n ].LoadFromDOMNew( gridscene );
+                Scenes[ n ].Instances.LoadFromStream( S );
+                Scenes[ n ].Instances.PushData();
+              end
+           else if ( AName = 'empty' ) then
+             AddScene( nil );
+           gridscene:= TDOMElement( gridscene.NextSibling );
+         end;
+      S.Free;
+    end;
+  UpdateGridData;
 end;
 
 procedure TP3DTileGrid.PassToShader( Scene: TP3DGridScene; baseInstanceCount: Integer);
@@ -231,6 +364,11 @@ function TP3DTileGrid.OnGridDataSet(Sender: TPersistent; ItemIndex: Integer; AVa
 var
   OldValue: TP3DGridScene;
 begin
+  if ( FIsUpdating ) then
+    begin
+      Result:= True;
+      exit;
+    end;
   Result:= False;
 
   OldValue:= GridData[ ItemIndex ];

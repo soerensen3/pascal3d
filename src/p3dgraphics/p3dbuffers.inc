@@ -151,6 +151,19 @@ begin
   glBindVertexArray( 0 ); cle( Self );
 end;
 
+
+{ TP3DAttributeList }
+
+procedure TP3DAttributeList.DisableAllAttributes;
+var
+  i: Integer;
+begin
+  for i:= Count - 1 downto 0 do
+    Items[ i ].UnsetAttribArray();
+end;
+
+
+
   {$DEFINE USE_ATTRIB}
 
   {$DEFINE GLNUMCOMPONENTS:= 1}

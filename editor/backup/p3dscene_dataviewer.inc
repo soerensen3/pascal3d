@@ -3,20 +3,35 @@ type
 
   { TP3DDataPanel }
 
-  TP3DDataPanel = class( TP3DTreeViewActors )
+  TP3DDataPanel = class( TP3DGraphicControl )
     private
+      FDataButton: TP3DGroupButton;
+      FLibraryButton: TP3DGroupButton;
       FLibraryPopup: TP3DPopupMenu;
+      FSceneButton: TP3DGroupButton;
+      FToolBar: TP3DGraphicControl;
+      FViewer: TP3DTreeViewActors;
+
+      procedure UpdateActiveScene;
+      procedure UpdateButtons;
+      function UpdateViewMode(AViewMode: TP3DDataViewerMode): Boolean;
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
+      procedure ButtonMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
       procedure DataMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
       procedure PopupMouseClick( Sender: TP3DMenuItem );
       procedure SelectionChange( var NewSelection: TP3DTreeNode );
 
     published
       property LibraryPopup: TP3DPopupMenu read FLibraryPopup write FLibraryPopup;
+      property ToolBar: TP3DGraphicControl read FToolBar write FToolBar;
+      property DataButton: TP3DGroupButton read FDataButton write FDataButton;
+      property LibraryButton: TP3DGroupButton read FLibraryButton write FLibraryButton;
+      property SceneButton: TP3DGroupButton read FSceneButton write FSceneButton;
+      property Viewer: TP3DTreeViewActors read FViewer write FViewer;
   end;
 {$ENDIF}
 
@@ -24,38 +39,159 @@ type
 
 { TP3DDataPanel }
 
-constructor TP3DDataPanel.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+{
+procedure TP3DDataPanel.SetViewMode(AValue: TP3DDataViewerMode);
+begin
+  if ( FViewMode = AValue ) then Exit;
+
+  if ( UpdateViewMode( AValue )) then
+    FViewMode:= AValue;
+
+  UpdateButtons;
+end;
+}
+procedure TP3DDataPanel.UpdateActiveScene;
+begin
+  SceneView.Scene:= SceneMain.ActiveScene;
+  if ( Assigned( SceneMain.ActiveScene )) then
+    SceneMain.ActiveLibrary:= SceneMain.ActiveScene.Owner;
+  if (( SceneMain.ViewMode in [ dvmLibrary, dvmScene ]) and Assigned( SceneView )) then
+    SceneView.ToolBar.UpdateButtonsFast;
+end;
+{
+procedure TP3DDataPanel.SetActiveScene(AValue: TP3DScene);
+begin
+  if FActiveScene=AValue then Exit;
+  FActiveScene:=AValue;
+  if ( Assigned( SceneMain.ActiveScene )) then
+    SceneMain.ActiveLibrary:= SceneMain.ActiveScene.Owner;
+  UpdateActiveScene;
+end;
+
+procedure TP3DDataPanel.SetActiveLibrary(AValue: TP3DLibrary);
+begin
+  if FActiveLibrary=AValue then Exit;
+  FActiveLibrary:=AValue;
+
+  if (( SceneMain.ViewMode = dvmData ) and Assigned( SceneView )) then
+    SceneView.ToolBar.UpdateButtonsFast;
+end;
+}
+procedure TP3DDataPanel.UpdateButtons;
+begin
+  case SceneMain.ViewMode of
+    dvmData: DataButton.Down:= True;
+    dvmLibrary: LibraryButton.Down:= True;
+    dvmScene: SceneButton.Down:= True;
+  end;
+end;
+
+function TP3DDataPanel.UpdateViewMode( AViewMode: TP3DDataViewerMode ): Boolean;
+begin
+  Result:= False;
+  case AViewMode of
+    dvmData:
+      begin
+        Viewer.Obj:= P3DData;
+        Result:= True;
+      end;
+    dvmLibrary:
+      if ( Assigned( SceneMain.ActiveScene )) then
+        begin
+          Viewer.Obj:= SceneMain.ActiveScene.Owner;
+          Result:= True;
+        end;
+    dvmScene:
+      if ( Assigned( SceneMain.ActiveScene )) then
+        begin
+          Viewer.Obj:= SceneMain.ActiveScene;
+          Result:= True;
+        end;
+  end;
+end;
+
+constructor TP3DDataPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+  procedure CreatePopup;
+  begin
+    LibraryPopup:= TP3DPopupMenu.Create( AData );
+    LibraryPopup.OnItemClick:= @PopupMouseClick;
+    LibraryPopup.Items[ LibraryPopup.Items.Add( 'Action' )].Enabled:= False;
+    LibraryPopup.Items.Add( '  Reload' );
+    LibraryPopup.Items.Add( '  Remove' );
+    LibraryPopup.Items[ LibraryPopup.Items.Add( 'Add' )].Enabled:= False;
+    LibraryPopup.Items.Add( '  Light' );
+    LibraryPopup.Items.Add( '  Camera' );
+    LibraryPopup.Items.Add( '  TileGrid' );
+  end;
+
+  function CreateButton( Symbol: String ): TP3DGroupButton;
+  begin
+    Result:= TP3DGroupButton.Create( AData, ToolBar );
+    Result.Align:= alLeft;
+    Result.HAlignment:= haCenter;
+    Result.VAlignment:= vaCenter;
+    Result.Font.Name:= P3DSymbolFontName;
+    Result.Group:= 'DataViewer';
+    Result.Font.Size:= 24;
+    Result.Caption:= Symbol;
+    Result.Width:= 32;
+    Result.Height:= 32;
+    Result.OnMouseClick:= @ButtonMouseClick;
+  end;
+
 begin
   inherited Create( AData, AParent );
-  ShowSymbols:= True;
+  Viewer:= TP3DTreeViewActors.Create( Owner, Self );
+  Viewer.Align:= alClient;
+  Viewer.ShowSymbols:= True;
   Width:= 200;
-  Update;
-  OnSelectionChange:= @SelectionChange;
-  LibraryPopup:= TP3DPopupMenu.Create( AData );
-  LibraryPopup.OnItemClick:= @PopupMouseClick;
-  LibraryPopup.Items[ LibraryPopup.Items.Add( 'Action' )].Enabled:= False;
-  LibraryPopup.Items.Add( '  Reload' );
-  LibraryPopup.Items.Add( '  Remove' );
-  LibraryPopup.Items[ LibraryPopup.Items.Add( 'Add' )].Enabled:= False;
-  LibraryPopup.Items.Add( '  Light' );
-  LibraryPopup.Items.Add( '  Camera' );
+  Viewer.OnSelectionChange:= @SelectionChange;
+  CreatePopup;
+
+  ToolBar:= TP3DGraphicControl.Create( Owner, Self );
+  ToolBar.Height:= 32;
+  ToolBar.Align:= alTop;
+  DataButton:= CreateButton( P3DSymbolOptions );
+  LibraryButton:= CreateButton( P3DSymbolLibrary );
+  LibraryButton.Left:= DataButton.Width;
+  SceneButton:= CreateButton( P3DSymbolScene );
+  SceneButton.Left:= DataButton.Width + LibraryButton.Width;
   OnMouseClick:= @DataMouseClick;
+  UpdateViewMode( SceneMain.ViewMode );
+  UpdateButtons;
 end;
 
 destructor TP3DDataPanel.Destroy;
 begin
+  if (( Assigned( ToolBar )) and ( P3DData.IsValid( ToolBar ))) then
+    ToolBar.Free;
+  if (( Assigned( Viewer )) and ( P3DData.IsValid( Viewer ))) then
+    Viewer.Free;
   if (( Assigned( LibraryPopup )) and ( P3DData.IsValid( LibraryPopup ))) then
     LibraryPopup.Free;
+  if (( Assigned( LibraryButton )) and ( P3DData.IsValid( LibraryButton ))) then
+    LibraryButton.Free;
+  if (( Assigned( SceneButton )) and ( P3DData.IsValid( SceneButton ))) then
+    SceneButton.Free;
   inherited Destroy;
+end;
+
+procedure TP3DDataPanel.ButtonMouseClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  if ( Sender = DataButton ) then
+    SceneMain.ViewMode:= dvmData
+  else if ( Sender = LibraryButton ) then
+    SceneMain.ViewMode:= dvmLibrary
+  else if ( Sender = SceneButton ) then
+    SceneMain.ViewMode:= dvmScene;
 end;
 
 procedure TP3DDataPanel.DataMouseClick(Sender: TP3DGraphicControl; mb1, mb2,
   mb3: Boolean; X, Y: Integer);
 begin
   if ( mb3 ) then
-    if ( Assigned( DataView.Selection )) then
-      if ( TPersistent( DataView.Selection.Data ) is TP3DData or TPersistent( DataView.Selection.Data ) is TP3DDataBlock ) then
+    if ( Assigned( DataView.Viewer.Selection )) then
+      if ( TPersistent( DataView.Viewer.Selection.Data ) is TP3DLibrary or TPersistent( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
         LibraryPopup.PopUp( X, Y );
 end;
 
@@ -82,10 +218,10 @@ procedure TP3DDataPanel.PopupMouseClick(Sender: TP3DMenuItem);
     scene: TP3DScene;
     Obj: TP3DActor;
   begin
-    if ( TObject( DataView.Selection.Data ) is TP3DDataBlock ) then
-      Obj:= TP3DDataBlock( DataView.Selection.Data ).Owner.Objects[ TP3DDataBlock( DataView.Selection.Data ).Owner.CreateNew( TP )]
-    else if ( TObject( DataView.Selection.Data ) is TP3DData ) then
-      Obj:= TP3DData( DataView.Selection.Data ).Objects[ TP3DData( DataView.Selection.Data ).CreateNew( TP )];
+    if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
+      Obj:= TP3DDataBlock( DataView.Viewer.Selection.Data ).Owner.Objects[ TP3DDataBlock( DataView.Viewer.Selection.Data ).Owner.CreateNew( TP )]
+    else if ( TObject( DataView.Viewer.Selection.Data ) is TP3DLibrary ) then
+      Obj:= TP3DData( DataView.Viewer.Selection.Data ).Objects[ TP3DData( DataView.Viewer.Selection.Data ).CreateNew( TP )];
 
     if ( TObject( Data ) is TP3DDataBlock ) then
       begin
@@ -101,28 +237,29 @@ begin
     with ( TP3DButton( Sender )) do
       begin
         case Caption of
-          '  Reload': if ( TObject( DataView.Selection.Data ) is TP3DDataBlock ) then
-            TP3DDataBlock( DataView.Selection.Data ).Reload;
+          '  Reload': if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
+            TP3DDataBlock( DataView.Viewer.Selection.Data ).Reload;
           '  Remove':
-              if ( TObject( DataView.Selection.Data ) is TP3DData ) then
+              if ( TObject( DataView.Viewer.Selection.Data ) is TP3DLibrary ) then
                 begin
-                  P3DData.Libraries.Remove( TP3DData( DataView.Selection.Data ));
-                  TP3DData( DataView.Selection.Data ).Free;
-                  if ( Selection.Data = DataView.Selection.Data ) then
-                    Selection:= nil;
-                  DataView.Update;
-                  DataView.Children.ExpandAll();
+                  P3DData.Libraries.Remove( TP3DLibrary( DataView.Viewer.Selection.Data ));
+                  TP3DLibrary( DataView.Viewer.Selection.Data ).Free;
+                  if ( Viewer.Selection.Data = DataView.Viewer.Selection.Data ) then
+                    Viewer.Selection:= nil;
+                  DataView.Viewer.Update;
+                  DataView.Viewer.Children.ExpandAll();
                 end
-              else if ( TObject( DataView.Selection.Data ) is TP3DDataBlock ) then
+              else if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
                 begin
-                  TP3DDataBlock( DataView.Selection.Data ).Free;
-                  if ( Selection.Data = DataView.Selection.Data ) then
-                    Selection:= nil;
-                  DataView.Update;
-                  DataView.Children.ExpandAll();
+                  TP3DDataBlock( DataView.Viewer.Selection.Data ).Free;
+                  if ( Viewer.Selection.Data = DataView.Viewer.Selection.Data ) then
+                    Viewer.Selection:= nil;
+                  DataView.Viewer.Update;
+                  DataView.Viewer.Children.ExpandAll();
                 end;
-          '  Light': AddToParentScene( DataView.Selection.Data, TP3DLight );
-          '  Camera': AddToParentScene( DataView.Selection.Data, TP3DCamera );
+          '  Light': AddToParentScene( DataView.Viewer.Selection.Data, TP3DLight );
+          '  Camera': AddToParentScene( DataView.Viewer.Selection.Data, TP3DCamera );
+          '  TileGrid': AddToParentScene( DataView.Viewer.Selection.Data, TP3DTileGrid );
         end;
         LibraryPopup.Hide;
       end;
@@ -130,13 +267,26 @@ end;
 
 procedure TP3DDataPanel.SelectionChange(var NewSelection: TP3DTreeNode);
 begin
-  if (( Assigned( NewSelection ) and ( TPersistent( NewSelection.Data ) is TInterfacedPersistent ))) then
+  if (( Assigned( NewSelection ) and ( TObject( NewSelection.Data ) is TPersistent ))) then
     begin
       OIPanel.ObjectInspector.Obj:= TInterfacedPersistent( NewSelection.Data );
-      if ( TInterfacedPersistent( NewSelection.Data ) is TP3DActor ) then
-        SceneView.FSelection:= TP3DActor( NewSelection.Data )
+      if ( TInterfacedPersistent( NewSelection.Data ) is TP3DDataBlock ) then
+        SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).Owner;
+
+      if ( TPersistent( NewSelection.Data ) is TP3DActor ) then
+        begin
+          SceneView.FSelection:= TP3DActor( NewSelection.Data );
+          SceneMain.ActiveScene:= TP3DActor( NewSelection.Data ).Scene;
+        end
+      else if ( TPersistent( NewSelection.Data ) is TP3DLibrary ) then
+        begin
+          SceneView.FSelection:= nil;
+          SceneMain.ActiveLibrary:= TP3DLibrary( NewSelection.Data );
+        end
       else
-        SceneView.FSelection:= nil;
+        begin
+          SceneView.FSelection:= nil;
+        end;
     end
   else
     begin

@@ -9,8 +9,8 @@ type
 
   TP3DSceneViewer = class ( TP3DGroupBox )
     private
+      FRenderFlags: TP3DRenderListFlags;
       FRenderList: TP3DRenderList;
-    protected
       FAfterRender: TNotifyEvent;
       FBeforeRender: TNotifyEvent;
       FOrbitCamera: Boolean;
@@ -23,14 +23,15 @@ type
       procedure SetOrbitCamera(AValue: Boolean);
       procedure UpdateCamPos;
       procedure ResetOrbit;
-      procedure PushVPClientRect; virtual;
 
     public
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
       procedure Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
       procedure MouseMove(X, Y: Integer); override;
       procedure MouseWheel(delta: Integer); override;
       procedure KeyboardAction; override;
       destructor Destroy; override;
+      procedure PushVPClientRect; virtual;
 
       property Scene: TP3DScene read FScene write FScene;
       property OrbitCamera: Boolean read FOrbitCamera write SetOrbitCamera;
@@ -40,6 +41,9 @@ type
       property BeforeRender: TNotifyEvent read FBeforeRender write FBeforeRender;
       property AfterRender: TNotifyEvent read FAfterRender write FAfterRender;
       property RenderList: TP3DRenderList read FRenderList write FRenderList;
+      property Cam: TP3DCamera read FCam write FCam;
+      property CamObject: TP3DActor read FCamObject write FCamObject;
+      property RenderFlags: TP3DRenderListFlags read FRenderFlags write FRenderFlags;
   end;
 
 //  procedure InitTriangle;
@@ -122,6 +126,12 @@ begin
     end;
 end;
 
+constructor TP3DSceneViewer.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  RenderFlags:= P3DRenderListFlagsDefault;
+end;
+
 procedure TP3DSceneViewer.PushVPClientRect;
 begin
   P3DViewports.Push( Round( Canvas.Left + ClientRect.Left ), Round( P3DViewports[ 0 ].Height - ( Canvas.Top + ClientRect.Top ) - Round( ClientRect.Height )),
@@ -138,23 +148,23 @@ begin
 
   if ( Assigned( Scene ) and ( ClientRect.Width * ClientRect.Height > 0 )) then
     begin
-      if ( Assigned( BeforeRender )) then
-        BeforeRender( Self );
-      glEnable( GL_DEPTH_TEST );
       if ( Assigned( FRenderList )) then
         FreeAndNil( FRenderList );
       Scene.MakeRenderList( nil, Mat4Identity, FRenderList );
       RenderList.Optimize;
+      if ( Assigned( BeforeRender )) then
+        BeforeRender( Self );
+      glEnable( GL_DEPTH_TEST );
       if ( OrbitCamera ) then
         begin
           UpdateCamPos;
           FCam.Aspect:= ClientRect.Width / ClientRect.Height;
           //Scene.RenderFromCamera( FCamObject );
-          RenderList.Render( FCamObject );
+          RenderList.Render( FCamObject, RenderFlags );
         end
       else
 //        Scene.Render;
-        RenderList.Render( Scene.Cam );
+        RenderList.Render( Scene.Cam, RenderFlags );
       if ( Assigned( AfterRender )) then
         AfterRender( Self );
       glDisable( GL_DEPTH_TEST );

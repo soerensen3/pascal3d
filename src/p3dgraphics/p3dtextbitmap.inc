@@ -834,6 +834,7 @@ var
   n: Integer;
 begin
   n:= Find( FontName );
+
   if ( n > -1 ) then
     Result:= Items[ n ]
   else

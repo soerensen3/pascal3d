@@ -20,6 +20,7 @@ uses
 {$DEFINE INTERFACE}
 {$INCLUDE p3dgenerics.inc}
 {$INCLUDE p3dfileutil.inc}
+{$INCLUDE p3dxmlutils.inc}
 {$INCLUDE p3dnodes.inc}
 {$INCLUDE p3dsimpletypes.inc}
 {$INCLUDE p3dpropaccess.inc}
@@ -38,12 +39,34 @@ function P3DTextToHTML(Txt: string): string; //Modified some Code of CodeHelp.pa
 
 implementation
 
+{ TP3DPropertyAccessFileWatch }
+
+function TP3DPropertyAccessFileWatch.GetAsString: String;
+begin
+  if ( Assigned( Value )) then
+    if ( AbsolutePaths ) then
+      Result:= Value.FileName
+    else
+      Result:= ExtractRelativepath( AppendPathDelim( GetCurrentDir()), Value.FileName );
+end;
+
+procedure TP3DPropertyAccessFileWatch.SetAsString(AValue: String);
+begin
+  if ( Assigned( Value )) then
+    Value.FileName:= AValue;
+end;
+
+function TP3DPropertyAccessFileWatch.GetDefaultValue: TP3DFileWatch;
+begin
+  Result:= nil;
+end;
+
 { TP3DInterfacedPersistent }
 
 constructor TP3DInterfacedPersistent.Create;
 begin
   inherited Create;
-  Properties:= TP3DPropertyAccessList.Create;
+  Properties:= TP3DPropertyAccessList.Create( Self );
 end;
 
 destructor TP3DInterfacedPersistent.Destroy;
@@ -52,6 +75,30 @@ begin
   Properties.Free;
   inherited Destroy;
 end;
+
+function TP3DInterfacedPersistent.SaveToDOM( AParent: TDOMElement ): TDOMElement;
+var
+  i: Integer;
+begin
+  Result:= AParent.OwnerDocument.CreateElement( DOMNodeName );
+  AParent.AppendChild( Result );
+
+  for i:= 0 to Properties.Count - 1 do
+    Properties[ i ].SaveToDOM( Result );
+end;
+
+procedure TP3DInterfacedPersistent.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  i, propI: Integer;
+begin
+  for i:= 0 to ADOMNode.Attributes.Length - 1 do
+    begin
+      propI:= Properties.FindByName( ADOMNode.Attributes[ i ].NodeName );
+      if ( propI > -1 ) then
+        Properties[ propI ].AsString:= ADOMNode.Attributes[ i ].NodeValue;
+    end;
+end;
+
 
 { TP3DNodeList }
 
@@ -71,6 +118,7 @@ end;
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dgenerics.inc}
 {$INCLUDE p3dfileutil.inc}
+{$INCLUDE p3dxmlutils.inc}
 {$INCLUDE p3dnodes.inc}
 {$INCLUDE p3dsimpletypes.inc}
 {$INCLUDE p3dpropaccess.inc}

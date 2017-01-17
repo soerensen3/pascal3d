@@ -88,7 +88,7 @@ type
       procedure SetScrollBarWidth(AValue: Float);
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       class function IsFocusControl: Boolean; override;
@@ -125,7 +125,7 @@ type
       procedure SetSelection( AValue: TP3DTreeNode ); virtual;
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -153,10 +153,10 @@ type
       procedure SetSelection(AValue: TP3DListItem);
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create( const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil ); override;
       destructor Destroy; override;
 
-      function ItemAtPos(p: TVec2): TP3DListItem;
+      function ItemAtPos( p: TVec2 ): TP3DListItem;
 
       procedure Draw; override;
       function DrawListItem( p: TVec2; Node: TP3DListItem ): TVec2; virtual;
@@ -187,7 +187,7 @@ type
       procedure SetSelection(AValue: TP3DTreeNode); override;
 
     public
-      constructor Create(const AData: TP3DData= nil; const AParent: TP3DGraphicControl= nil); override;
+      constructor Create(const AData: TP3DLibrary= nil; const AParent: TP3DGraphicControl= nil); override;
 
       procedure Update;
       function GetItemFileName( Item: TP3DTreeNode; const Relative: Boolean = False ): AnsiString;
@@ -216,7 +216,7 @@ type
       procedure SetTreeViewDirectory(AValue: TP3DTreeViewDirectory);
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update;
       procedure MouseDblClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -233,15 +233,16 @@ type
 
   TP3DTreeViewActors = class ( TP3DTreeView )
     private
-      FActorList: TP3DActorList;
+      FObj: TPersistent;
       FShowDesignerPackages: Boolean;
-      procedure SetActorList(AValue: TP3DActorList);
+
+      procedure SetObj(AValue: TPersistent);
 
     public
       procedure Update;
 
     published
-      property ActorList: TP3DActorList read FActorList write SetActorList;
+      property Obj: TPersistent read FObj write SetObj;
       property ShowDesignerPackages: Boolean read FShowDesignerPackages write FShowDesignerPackages;
   end;
 
@@ -257,8 +258,7 @@ begin
   ScrollBarV.Width:= ScrollBarWidth;
 end;
 
-constructor TP3DCustomItemView.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DCustomItemView.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   SymbolsFontName:= 'Pascal3D-Symbols';
@@ -338,8 +338,7 @@ begin
   FSelection:=AValue;
 end;
 
-constructor TP3DTreeView.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DTreeView.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Children:= TP3DTreeNodeList.Create;
@@ -552,8 +551,7 @@ begin
     end;
 end;
 
-constructor TP3DTreeViewDirectory.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DTreeViewDirectory.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   FMask:= '*.*';
@@ -740,8 +738,7 @@ begin
   FSelection:= AValue;
 end;
 
-constructor TP3DListView.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DListView.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   ScrollBarH.Visible:= False;
@@ -983,8 +980,7 @@ begin
     end;
 end;
 
-constructor TP3DListViewFile.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DListViewFile.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   FMask:= '*.*';
@@ -1082,10 +1078,10 @@ end;
 
 { TP3DTreeViewActors }
 
-procedure TP3DTreeViewActors.SetActorList(AValue: TP3DActorList);
+procedure TP3DTreeViewActors.SetObj(AValue: TPersistent);
 begin
-  if FActorList=AValue then Exit;
-  FActorList:=AValue;
+  if FObj=AValue then Exit;
+  FObj:=AValue;
   Update;
 end;
 
@@ -1169,11 +1165,11 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddDataList( Data: TP3DData; Parent: TP3DTreeNodeList ); forward;
+  procedure AddDataList( Data: TP3DLibrary; Parent: TP3DTreeNodeList ); forward;
 
-  procedure AddLibraryList( List: TP3DDataList; Parent: TP3DTreeNodeList );
+  procedure AddLibraryList( List: TP3DLibraryList; Parent: TP3DTreeNodeList );
   var
-    Lib: TP3DData;
+    Lib: TP3DLibrary;
     n: LongInt;
   begin
     for Lib in List do
@@ -1292,17 +1288,17 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddDataList( Data: TP3DData; Parent: TP3DTreeNodeList );
+  procedure AddDataList( Data: TP3DLibrary; Parent: TP3DTreeNodeList );
   var
     Node: TP3DTreeNodeList;
   begin
     Node:= Parent[ Parent.Add( 'Cameras', Data.Cameras, False, P3DSymbolCamera )].Children;
     AddCameraList( Data.Cameras, Node );
 
-    if ( Data.FileWatch.FileName = '' ) then
+    if ( Data = P3DData ) then
       begin
-        Node:= Parent[ Parent.Add( 'Libraries', Data.Libraries, False, P3DSymbolLibrary )].Children;
-        AddLibraryList( Data.Libraries, Node );
+        Node:= Parent[ Parent.Add( 'Libraries', P3DData.Libraries, False, P3DSymbolLibrary )].Children;
+        AddLibraryList( P3DData.Libraries, Node );
       end;
 
     Node:= Parent[ Parent.Add( 'Lights', Data.Lights, False, P3DSymbolLight )].Children;
@@ -1333,12 +1329,32 @@ procedure TP3DTreeViewActors.Update;
     AddActionList( Data.Actions, Node );
   end;
 
+var
+  SelectionData: Pointer;
+
 begin
+  if ( Assigned( Selection )) then
+    begin
+      SelectionData:= Selection.Data;
+      Selection:= nil;
+    end
+  else
+    SelectionData:= nil;
   Children.Clear( True );
-  if ( Assigned( ActorList )) then
-    AddList( ActorList, Children )
+  if ( Assigned( Obj )) then
+    begin
+      if ( Obj is TP3DLibrary ) then
+        AddDataList( TP3DLibrary( Obj ), Children )
+      else if ( Obj is TP3DScene ) then
+        AddList( TP3DScene( Obj ).Objects, Children )
+      else if ( Obj is TP3DActor ) then
+        AddList( TP3DActor( Obj ).Children, Children );
+    end
   else
     AddDataList( P3DData, Children );
+
+  if ( Assigned( SelectionData )) then
+    Selection:= Children.FindByData( SelectionData, True );
 end;
 
 {$ENDIF}

@@ -18,11 +18,14 @@ uses
   p3dgui;
 
 type
+  TP3DDataViewerMode = ( dvmData, dvmLibrary, dvmScene );
+
   {$DEFINE INTERFACE}
     {$INCLUDE p3dscene_sceneviewer.inc}
     {$INCLUDE p3dscene_dataviewer.inc}
     {$INCLUDE p3dscene_assetviewer.inc}
     {$INCLUDE p3dscene_objectinspector.inc}
+    {$INCLUDE p3dscene_main.inc}
   {$UNDEF INTERFACE}
 
 
@@ -30,10 +33,11 @@ type
   procedure P3DSceneGUIFinish;
 
 var
+  SceneMain: TP3DSceneMain;
   AssetView: TP3DSAssetPanel;
   DataView: TP3DDataPanel;
   SceneView: TP3DScenePanel;
-  TestScene: TP3DScene;
+  MainWindow: TP3DGraphicControl;
   OIPanel: TP3DOIPanel;
 
   MeshArrows: TP3DActor;
@@ -48,6 +52,7 @@ var
 implementation
 
 {$DEFINE IMPLEMENTATION}
+  {$INCLUDE p3dscene_main.inc}
   {$INCLUDE p3dscene_sceneviewer.inc}
   {$INCLUDE p3dscene_dataviewer.inc}
   {$INCLUDE p3dscene_assetviewer.inc}
@@ -59,28 +64,40 @@ procedure CreateSceneTree;
 var
   ListView: TP3DListView;
   i, j, GridId, o: Integer;
+  Lib: TP3DLibrary;
+  fn: String;
 
   procedure AddLib( FName: String );
   var
     n, k: Integer;
   begin
-    n:= OpenLibrary( FName );
+    n:= P3DData.OpenLibrary( FName );
     for k:= 0 to P3DData.Libraries[ n ].Scenes.Count - 1 do
       TP3DTileGrid( P3DData.Objects[ GridId ].Data ).AddScene( P3DData.Libraries[ n ].Scenes[ k ]);
   end;
 
 begin
   //P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
-  TestScene:= TP3DScene.Create();
+  MainWindow:= TP3DGraphicControl.Create();
+  MainWindow.Align:= alClient;
+
+  SceneMain:= TP3DSceneMain.Create();
+  DataView:= TP3DDataPanel.Create();
+  DataView.Parent:= MainWindow;
+  DataView.Align:= alLeft;
   AssetView:= TP3DSAssetPanel.Create();
+  AssetView.Parent:= MainWindow;
   AssetView.Align:= alBottom;
   SceneView:= TP3DScenePanel.Create();
+  SceneView.Parent:= MainWindow;
   SceneView.Align:= alClient;
-  DataView:= TP3DDataPanel.Create();
-  DataView.Align:= alLeft;
+  DataView.BringToFront;
+  //DataView.ActorList:= TestScene.Objects;
 
-  SceneView.Scene:= TestScene;
+  SceneMain.ActiveLibrary:= SceneMain.NewLibrary();
+  SceneMain.ActiveScene:= SceneMain.NewScene();
   OIPanel:= TP3DOIPanel.Create();
+  OIPanel.Parent:= MainWindow;
   OIPanel.Align:= alRight;
   OIPanel.ObjectInspector.Obj:= OIPanel;
 
@@ -204,7 +221,9 @@ begin
   FreeAndNil( DataView );
   FreeAndNil( AssetView );
   FreeAndNil( SceneView );
-  FreeAndNil( SymbolActor );
+  FreeAndNil( DataView );
+  FreeAndNil( OIPanel );
+  FreeAndNil( MainWindow );
   FreeAndNil( SymbolMesh );
   FreeAndNil( SymbolScene );
   FreeAndNil( SymbolFont );

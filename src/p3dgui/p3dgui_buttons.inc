@@ -56,11 +56,12 @@
         procedure RenderButtonText( C: TVec4 );
 
       public
-        constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+        constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
         destructor Destroy; override;
 
         procedure Draw; override;
         procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+        procedure ResizeToText( Margin: Integer );
 
         class function IsFocusControl: Boolean; override;
 
@@ -158,7 +159,7 @@ begin
   if ( Caption > '' ) then
     begin
       if ( not Assigned( FCaptionTxt )) then
-        FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ 'Pascal3D-Cursors' ], 16 );
+        FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 
       case HAlignment of
         haLeft: P.x:= 0;
@@ -211,14 +212,22 @@ begin
     Focused:= True;
 end;
 
+procedure TP3DButton.ResizeToText(Margin: Integer);
+begin
+  if ( not Assigned( FCaptionTxt )) then
+    FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
+
+  Width:= Margin * 2 + FCaptionTxt.Width;
+  Height:= Margin * 2 + FCaptionTxt.Height;
+end;
+
 class function TP3DButton.IsFocusControl: Boolean;
 begin
   Result:= True;
 end;
 
 
-constructor TP3DButton.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DButton.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   PresetDown:= TP3DButtonPreset.Create;

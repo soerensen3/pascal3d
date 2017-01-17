@@ -44,22 +44,26 @@ type
       procedure LoadFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer );
       procedure LoadEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType );
       procedure LoadFromGLTexture( Tex: GLint );
+      procedure LoadFromTextureFile( FileName: String );
+      procedure FileNameChanged( Sender: TP3DFileWatch; ANewFileName: String );
 
     public
-      constructor Create(const AData: TP3DData=nil); override;
-      constructor CreateFromFile( AFileName: String; const AData: TP3DData = nil );
-      constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DData = nil);
-      constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DData = nil );
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); override;
-      constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DData = nil );
-      constructor CreateFromGLTexture( Tex: GLint; const AData: TP3DData = nil );
+      constructor Create(const AData: TP3DLibrary=nil); override;
+      constructor CreateFromFile( AFileName: String; const AData: TP3DLibrary = nil );
+      constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary = nil);
+      constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DLibrary = nil );
+      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DLibrary = nil ); override;
+      constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary = nil );
+      constructor CreateFromGLTexture( Tex: GLint; const AData: TP3DLibrary = nil );
 
       procedure LoadMipMapFromSurface( level: Integer; ASurface: PSDL_Surface );
 
+      class function DOMNodeName: String; override;
       procedure Bind( const Location: Integer = 0 );
       procedure Unbind();
       procedure LoadFromBinary( FileName: String ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
+      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
       procedure FastDestroy; override;
       procedure Reload; reintroduce;
       procedure SaveToFile;
@@ -77,6 +81,7 @@ type
       property NumChannels: Integer read FNumChannels;
   end;
 
+  TP3DPropertyAccessTexture = specialize gP3DPropertyAccessDataBlock < TP3DTexture >;
   TP3DTextureList = specialize gP3DCustomDatablockList < TP3DTexture >;
 {$ENDIF}
 
@@ -381,14 +386,45 @@ begin
   Unbind();
 end;
 
-constructor TP3DTexture.Create(const AData: TP3DData);
+procedure TP3DTexture.LoadFromTextureFile(FileName: String);
+var
+  FSurface: PSDL_Surface;
+begin
+  FSurface:= IMG_Load( PChar( FileName ));
+  if ( FSurface = nil ) then
+    raise Exception.Create( Format( 'The specified file "%s" could not be loaded!', [ ExtractFileName( FileName )]));
+
+  {$IFDEF VERBOSE}
+  WriteLn( 'Texture loaded: ' + ExtractFileName( FileName ));
+  {$ENDIF}
+  LoadFromSurface( FSurface );
+  SDL_FreeSurface( FSurface );
+end;
+
+procedure TP3DTexture.FileNameChanged(Sender: TP3DFileWatch; ANewFileName: String);
+begin
+  LoadFromTextureFile( ANewFileName );
+end;
+
+constructor TP3DTexture.Create(const AData: TP3DLibrary);
 begin
   inherited Create(AData);
   FFileWatch:= TP3DFileWatch.Create( '' );
+  FileWatch.OnFileNameChange:= @FileNameChanged;
   Owner.Textures.Add( Self );
+
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'GLTexture' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Filtering', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FilteringMipMap', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'MipMap', smAttribute ));
+  Properties.Add( TP3DPropertyAccessFileWatch.CreateField( 'File', @FFileWatch, smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DataType' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'NumChannels' ));
 end;
 
-procedure TP3DTexture.LoadFromBinary(FileName: String);
+procedure TP3DTexture.LoadFromBinary(FileName: String );
 var
   FSurface: PSDL_Surface;
 begin
@@ -401,16 +437,9 @@ begin
     end;
 
   inherited LoadFromBinary( FileName );
-  FSurface:= IMG_Load( PChar( FileName ));
   FileWatch.FileName:= FileName;
-  if ( FSurface = nil ) then
-    raise Exception.Create( Format( 'The specified file "%s" could not be loaded!', [ ExtractFileName( FileName )]));
 
-  {$IFDEF VERBOSE}
-  WriteLn( 'Texture loaded: ' + ExtractFileName( FileName ));
-  {$ENDIF}
-  LoadFromSurface( FSurface );
-  SDL_FreeSurface( FSurface );
+  LoadFromTextureFile( FileName );
 end;
 
 procedure TP3DTexture.LoadFromDOM(ADOMNode: TDOMElement);
@@ -432,7 +461,12 @@ begin
   UpdateFiltering;
 end;
 
-constructor TP3DTexture.CreateFromFile(AFileName: String; const AData: TP3DData);
+procedure TP3DTexture.LoadFromDOMNew(ADOMNode: TDOMElement);
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+end;
+
+constructor TP3DTexture.CreateFromFile(AFileName: String; const AData: TP3DLibrary);
 var
   FileName: String;
 begin
@@ -445,7 +479,7 @@ begin
   LoadFromFile( FileName );
 end;
 
-constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DData);
+constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
@@ -454,8 +488,7 @@ begin
   LoadFromBuffer( AWidth, AHeight, ANumChannels, ADataType, ABuffer );
 end;
 
-constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface;
-  const AData: TP3DData);
+constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface; const AData: TP3DLibrary);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
@@ -464,14 +497,13 @@ begin
   LoadFromSurface( ASurface );
 end;
 
-constructor TP3DTexture.CreateFromDOM(ADOMNode: TDOMElement;
-  const AData: TP3DData);
+constructor TP3DTexture.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);
 begin
   inherited CreateFromDOM( ADOMNode, AData );
   //FFileWatch:= TP3DFileWatch.Create( '' );
 end;
 
-constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DData);
+constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
@@ -480,7 +512,7 @@ begin
   LoadEmpty( AWidth, AHeight, ANumChannels, ADataType );
 end;
 
-constructor TP3DTexture.CreateFromGLTexture(Tex: GLint; const AData: TP3DData);
+constructor TP3DTexture.CreateFromGLTexture(Tex: GLint; const AData: TP3DLibrary);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
@@ -509,6 +541,11 @@ begin
   InternalMode:= P3DChooseFormatBySDLPixelFormat( ASurface^.format );
 
   glTexImage2D( GL_TEXTURE_2D, level, InternalMode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
+end;
+
+class function TP3DTexture.DOMNodeName: String;
+begin
+  Result:= 'texture';
 end;
 
 procedure TP3DTexture.Bind(const Location: Integer);

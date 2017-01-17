@@ -7,7 +7,7 @@
       FDirectoryView: TP3DTreeViewDirectory;
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       destructor Destroy; override;
 
@@ -23,8 +23,7 @@
 
 { TP3DSAssetPanel }
 
-constructor TP3DSAssetPanel.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DSAssetPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Height:= 200;

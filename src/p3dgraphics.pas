@@ -32,7 +32,7 @@ uses
 
 //forward
 type
-  TP3DData = class;
+  TP3DLibrary = class;
   TP3DScene = class;
   TP3DActor = class;
 
@@ -40,33 +40,7 @@ type
 {$IfDef CHECKFORERRORS}{$Assertions ON}{$EndIf}
 
 {$DEFINE INTERFACE}
-{$INCLUDE p3dcolors.inc}
-
-{$INCLUDE p3dbuffers.inc}
-{$INCLUDE p3dviewport.inc}
-{$INCLUDE p3dobject.inc}
-{$INCLUDE p3ddatablock.inc}
-{$INCLUDE p3dshaders.inc}
-{$INCLUDE p3dshadernodes.inc}
-{$INCLUDE p3dcamera.inc}
-{$INCLUDE p3dlight.inc}
-{$INCLUDE p3dtexture.inc}
-{$INCLUDE p3drendertarget.inc}
-{$INCLUDE p3dmaterial.inc}
-{$INCLUDE p3dmesh.inc}
-{$INCLUDE p3darmature.inc}
-{$INCLUDE p3dactor.inc}
-{$INCLUDE p3dscene.inc}
-{$INCLUDE p3dterrain.inc}
-{$INCLUDE p3dgrids.inc}
-{$INCLUDE p3dtext.inc}
-{$INCLUDE p3dtextbitmap.inc}
-{$INCLUDE p3dsymbols.inc}
-{$INCLUDE p3dcanvas.inc}
-{$INCLUDE p3dselection.inc}
-
-
-{$INCLUDE p3dresource.inc}
+  {$INCLUDE p3dgraphics_lib.inc}
 {$UNDEF INTERFACE}
 
 var
@@ -124,15 +98,7 @@ begin
     end;
 end;
 
-{ TP3DAttributeList }
 
-procedure TP3DAttributeList.DisableAllAttributes;
-var
-  i: Integer;
-begin
-  for i:= Count - 1 downto 0 do
-    Items[ i ].UnsetAttribArray();
-end;
 
 { TP3DGridSceneList }
 
@@ -174,30 +140,7 @@ end;
 
 
 {$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dbuffers.inc}
-{$INCLUDE p3dviewport.inc}
-{$INCLUDE p3dobject.inc}
-{$INCLUDE p3ddatablock.inc}
-{$INCLUDE p3dshaders.inc}
-{$INCLUDE p3dshadernodes.inc}
-{$INCLUDE p3dcamera.inc}
-{$INCLUDE p3dlight.inc}
-{$INCLUDE p3dtexture.inc}
-{$INCLUDE p3drendertarget.inc}
-{$INCLUDE p3dmaterial.inc}
-{$INCLUDE p3dmesh.inc}
-{$INCLUDE p3darmature.inc}
-{$INCLUDE p3dactor.inc}
-{$INCLUDE p3dscene.inc}
-{$INCLUDE p3dterrain.inc}
-{$INCLUDE p3dgrids.inc}
-{$INCLUDE p3dtext.inc}
-{$INCLUDE p3dtextbitmap.inc}
-{$INCLUDE p3dsymbols.inc}
-{$INCLUDE p3dcanvas.inc}
-{$INCLUDE p3dselection.inc}
-
-{$INCLUDE p3dresource.inc}
+  {$INCLUDE p3dgraphics_lib.inc}
 {$UNDEF IMPLEMENTATION}
 
 procedure P3DDumpGraphicsInfo;
@@ -243,6 +186,9 @@ begin
     P3DFontManager:= TP3DFontManager.Create;
   if ( not Assigned( P3DFontManagerBmp )) then
     P3DFontManagerBmp:= TP3DFontManagerBmp.Create;
+  {$DEFINE INITIALIZATION}
+    {$INCLUDE p3dgraphics_lib.inc}
+  {$UNDEF INITIALIZATION}
 end;
 
 procedure P3DGraphicssFinish;
@@ -265,6 +211,9 @@ begin
   if ( Assigned( P3DAttributes )) then
     FreeAndNil( P3DAttributes );
   TTF_Quit();
+  {$DEFINE FINALIZATION}
+    {$INCLUDE p3dgraphics_lib.inc}
+  {$UNDEF FINALIZATION}
 end;
 
 finalization

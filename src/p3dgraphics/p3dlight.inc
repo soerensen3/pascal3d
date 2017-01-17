@@ -13,8 +13,9 @@
       function GetLightRange: Float;
 
     public
-      constructor Create( const AData: TP3DData = nil ); override;
+      constructor Create( const AData: TP3DLibrary = nil ); override;
       procedure FastDestroy; override;
+      class function DOMNodeName: String; override;
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
@@ -68,12 +69,17 @@ begin
     Result:= 0;
 end;
 
-constructor TP3DLight.Create(const AData: TP3DData);
+constructor TP3DLight.Create(const AData: TP3DLibrary);
 begin
   inherited Create( AData );
   FLinearAttenuation:= 0.1;
-  FColor:= vec3( 0.5 );
+  FColor:= vec3( 1 );
   Owner.Lights.Add( Self );
+  Properties.Add( TP3DPropertyAccessVec3.CreateField( 'Color', @Color, smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Energy', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'LinearAttenuation', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'QuadraticAttenuation', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'LightType', smAttribute ));
 end;
 
 procedure TP3DLight.FastDestroy;
@@ -81,6 +87,11 @@ begin
   Owner.Lights.Remove( Self );
 
   inherited FastDestroy;
+end;
+
+class function TP3DLight.DOMNodeName: String;
+begin
+  Result:= 'light';
 end;
 
 procedure TP3DLight.Render(world: TMat4; Scene: TP3DScene;
@@ -99,8 +110,7 @@ procedure TP3DLight.LoadFromDOM( ADOMNode: TDOMElement );
 var
   AttrS: DOMString;
 begin
-  Name:= ADOMNode.GetAttribute( 'name' );
-
+  inherited LoadFromDOM( ADOMNode );
   case ADOMNode.GetAttribute( 'type' ) of
     'sun':
       LightType:= p3dltSun;

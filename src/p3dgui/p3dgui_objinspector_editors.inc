@@ -13,7 +13,7 @@ type
 
     public
       procedure Update; override;
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
     published
@@ -40,7 +40,7 @@ type
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property PositionEdit: TP3DVectorEdit read FPositionEdit write FPositionEdit;
@@ -61,7 +61,7 @@ type
 
     public
       procedure Update; override;
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
     published
@@ -80,7 +80,7 @@ type
       FEditorTransform: TP3DOIEditorTransform3D;
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -103,7 +103,7 @@ type
       //FMeshList: TP3DPropertyEditorDataBlockList;
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -140,7 +140,7 @@ type
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property LightTypeCombo: TP3DComboBox read FLightType write FLightType;
@@ -157,7 +157,7 @@ type
       FEditorLight: TP3DOIEditorDataLight;
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -201,7 +201,7 @@ published
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property HandednessCombo: TP3DComboBox read FCamHandednessCombo write FCamHandednessCombo;
@@ -219,7 +219,7 @@ published
 
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -249,7 +249,7 @@ published
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property PreviewImg: TP3DImage read FPreviewImg write FPreviewImg;
@@ -284,7 +284,7 @@ published
 
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
       property DiffCombo: TP3DColorComboBox read FDiffCombo write FDiffCombo;
@@ -320,7 +320,7 @@ published
 
     public
       procedure Update; override;
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
 
     published
@@ -358,7 +358,7 @@ published
 
     public
       procedure Update; override;
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
 
     published
@@ -380,7 +380,7 @@ published
       procedure SetSelectionChange(AValue: TP3DListViewSelectionChangeEvent);
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
       class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
@@ -404,7 +404,7 @@ published
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -429,7 +429,7 @@ published
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Update; override;
 
@@ -452,7 +452,7 @@ var
 function AddContainer( Parent: TP3DGraphicControl; Title: String ): TP3DGraphicControl;
 var
   Lbl: TP3DLabel;
-  Owner: TP3DData;
+  Owner: TP3DLibrary;
 begin
   if ( Assigned( Parent )) then
     Owner:= Parent.Owner
@@ -480,8 +480,7 @@ begin
       end;
 end;
 
-constructor TP3DOIEditorObject.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorObject.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Object';
@@ -541,8 +540,7 @@ begin
       end
 end;
 
-constructor TP3DOIEditorDatablock.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDatablock.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Data';
@@ -642,8 +640,7 @@ begin
   Result:= AObj is IP3DTransform;
 end;
 
-constructor TP3DOIEditorTransform3D.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorTransform3D.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Transform';
@@ -683,8 +680,7 @@ end;
 
 { TP3DOIEditorPageActor }
 
-constructor TP3DOIEditorPageObject.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageObject.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   EditorObject:= TP3DOIEditorObject.Create( nil, Self );
@@ -718,7 +714,7 @@ end;
 
 { TP3DOIEditorPageGrid }
 
-constructor TP3DOIEditorPageGrid.Create(const AData: TP3DData; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageGrid.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
   {MeshList:= TP3DPropertyEditorDataBlockList.Create( nil, Self );
@@ -847,8 +843,7 @@ begin
   Result:= (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DLight )) or ( AObj is TP3DLight );
 end;
 
-constructor TP3DOIEditorDataLight.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataLight.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Light';
@@ -978,8 +973,7 @@ begin
   Result:= ( AObj is TP3DCamera ) or (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DCamera ));
 end;
 
-constructor TP3DOIEditorDataCamera.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataCamera.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Camera';
@@ -1078,8 +1072,7 @@ begin
   Result:= AObj is TP3DTexture;
 end;
 
-constructor TP3DOIEditorDataTexture.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataTexture.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Texture';
@@ -1211,8 +1204,7 @@ begin
   Result:= AObj is TP3DMaterialBase;
 end;
 
-constructor TP3DOIEditorDataMaterialBase.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMaterialBase.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Material';
@@ -1301,8 +1293,7 @@ begin
     Material:= nil;
 end;
 
-constructor TP3DOIEditorDataMaterialMaps.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMaterialMaps.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Material Maps';
@@ -1402,8 +1393,7 @@ begin
     end;
 end;
 
-constructor TP3DOIEditorDataMaterialMap.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMaterialMap.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Influence';
@@ -1499,8 +1489,7 @@ begin
     MatListView.Children.Add( Mat.Material.Name, Mat.Material );
 end;
 
-constructor TP3DOIEditorDataMeshMaterial.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMeshMaterial.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Caption:= 'Mesh Materials';
@@ -1537,8 +1526,7 @@ begin
     end;
 end;
 
-constructor TP3DOIEditorPageMaterial.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageMaterial.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
 
@@ -1598,8 +1586,7 @@ begin
   TextureEditor.Visible:= Assigned( TextureEditor.Obj );
 end;
 
-constructor TP3DOIEditorPageMaps.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageMaps.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
 
@@ -1641,8 +1628,7 @@ end;
 
 { TP3DOIEditorPageLight }
 
-constructor TP3DOIEditorPageLight.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageLight.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   EditorLight:= TP3DOIEditorDataLight.Create( AData, Self );
@@ -1668,8 +1654,7 @@ end;
 
 { TP3DOIEditorPageCamera }
 
-constructor TP3DOIEditorPageCamera.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageCamera.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   EditorCamera:= TP3DOIEditorDataCamera.Create( AData, Self );

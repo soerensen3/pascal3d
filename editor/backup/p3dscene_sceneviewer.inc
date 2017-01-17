@@ -96,12 +96,11 @@
   TP3DSceneEditModeTileGrid = class ( TP3DSceneEditModeDefault )
     private
       FBrushGridPos: TIVec2;
-      FBrushIndex: Integer;
       FBrushPos: TVec3;
       FCanPaint: Boolean;
       FGrid: TP3DTileGrid;
 
-      function GetBrushIndex: Integer;
+      function GetBrushScene: TP3DGridScene;
       procedure SetBrushPos(AValue: TVec3);
 
     public
@@ -114,33 +113,58 @@
       property BrushPos: TVec3 read FBrushPos write SetBrushPos;
       property BrushGridPos: TIVec2 read FBrushGridPos;
       property CanPaint: Boolean read FCanPaint;
-      property BrushIndex: Integer read GetBrushIndex;
+      property BrushScene: TP3DGridScene read GetBrushScene;
+  end;
+
+  { TP3DScenePanelToolbar }
+
+  TP3DScenePanelToolbar = class ( TP3DGraphicControl )
+    private
+      FNewButton: TP3DGroupButton;
+      procedure ButtonMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
+
+    public
+      procedure ClearButtons;
+      procedure UpdateButtons( AViewMode: TP3DDataViewerMode );
+      procedure UpdateButtonsFast;
+      property NewButton: TP3DGroupButton read FNewButton write FNewButton;
   end;
 
   { TP3DScenePanel }
 
-  TP3DScenePanel = class( TP3DSceneViewer )
+  TP3DScenePanel = class( TP3DGraphicControl )
     private
       FEditMode: TEditMode;
       FEditor: TP3DSceneEditModeDefault;
+      FEditorLight: TP3DLight;
+      FEditorLightObj: TP3DActor;
       FSelection: TP3DActor;
       FSelectionMaterial: TP3DMaterialBase;
       FPickMaterial: TP3DMaterialBase;
       FInfoText: TP3DText;
       FRenderList: TP3DRenderList;
       FCanvas3D: TP3DCanvas3D;
+      FShowEditorLight: Boolean;
+      FToolbar: TP3DScenePanelToolbar;
+      FViewer: TP3DSceneViewer;
 
+      function GetCam: TP3DCamera;
+      function GetCamObject: TP3DActor;
+      function GetScene: TP3DScene;
       procedure Push3DMode;
 
       function GetEditor: TP3DSceneEditModeDefault;
       procedure SceneDragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean );
+      procedure SetCam(AValue: TP3DCamera);
+      procedure SetCamObject(AValue: TP3DActor);
       procedure SetEditMode(AValue: TEditMode);
+      procedure SetScene(AValue: TP3DScene);
       procedure SetSelection(AValue: TP3DActor);
       procedure RenderCallback( world: TMat4; AActor: TP3DActor );
       procedure DrawArmature( ArmatureObject: TP3DActor ); // TEMP
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -160,9 +184,15 @@
       property Editor: TP3DSceneEditModeDefault read GetEditor;
       property Selection: TP3DActor read FSelection write SetSelection;
       property RenderList: TP3DRenderList read FRenderList write FRenderList;
-      property Cam: TP3DCamera read FCam write FCam;
-      property CamObject: TP3DActor read FCamObject write FCamObject;
+      property Viewer: TP3DSceneViewer read FViewer write FViewer;
+      property ToolBar: TP3DScenePanelToolbar read FToolbar write FToolBar;
+      property Cam: TP3DCamera read GetCam write SetCam;
+      property CamObject: TP3DActor read GetCamObject write SetCamObject;
+      property Scene: TP3DScene read GetScene write SetScene;
       property Canvas3D: TP3DCanvas3D read FCanvas3D write FCanvas3D;
+      property ShowEditorLight: Boolean read FShowEditorLight write FShowEditorLight;
+      property EditorLight: TP3DLight read FEditorLight write FEditorLight;
+      property EditorLightObj: TP3DActor read FEditorLightObj write FEditorLightObj;
   end;
 
 
@@ -208,16 +238,126 @@ procedure CreateEditorScenes;
 var
   n: Integer;
 begin
-  n:= OpenLibrary( 'armature_test/media/EditorArrow.p3d' );
+  n:= P3DData.OpenLibrary( 'armature_test/media/EditorArrow.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
-  n:= OpenLibrary( 'armature_test/media/EditorArrows.p3d' );
+  n:= P3DData.OpenLibrary( 'armature_test/media/EditorArrows.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrows:= P3DData.Libraries[ n ].Scenes[ 0 ];
-  n:= OpenLibrary( 'armature_test/media/EditorLamp.p3d' );
+  n:= P3DData.OpenLibrary( 'armature_test/media/EditorLamp.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneLamp:= P3DData.Libraries[ n ].Scenes[ 0 ];
-  EditorSceneLampMaterial:= TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]);
+  EditorSceneLampMaterial:= TP3DMaterialBase.Create();//TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]); //Error
+end;
+
+{ TP3DScenePanelToolbar }
+
+procedure TP3DScenePanelToolbar.ClearButtons;
+begin
+  Controls.Clear( True );
+end;
+
+procedure TP3DScenePanelToolbar.UpdateButtons(AViewMode: TP3DDataViewerMode);
+  function CreateButton( Text: String; const Symbol: Boolean = False ): TP3DGroupButton;
+  begin
+    Result:= TP3DGroupButton.Create( Owner, Self );
+    Result.HAlignment:= haCenter;
+    Result.VAlignment:= vaCenter;
+    Result.Group:= 'DataViewer';
+    Result.Font.Size:= 16;
+    if ( Symbol ) then
+      Result.Font.Name:= P3DSymbolFontName;
+    Result.Caption:= Text;
+    Result.Align:= alLeft;
+    Result.OnMouseClick:= @ButtonMouseClick;
+    Result.ResizeToText( 5 );
+  end;
+
+  procedure AddButtonsLibraries( ALibraries: TP3DLibraryList );
+  var
+    i: Integer;
+    Btn: TP3DGroupButton;
+  begin
+    if ( Assigned( ALibraries )) then
+      for i:= 0 to ALibraries.Count - 1 do
+        if ( not ALibraries[ i ].IsDesignerPackage ) then
+          begin
+            Btn:= CreateButton( ALibraries[ i ].Name );
+            if ( ALibraries[ i ] = SceneMain.ActiveLibrary ) then
+              Btn.Down:= True;
+            Btn.PointerTag:= ALibraries[ i ];
+          end;
+  end;
+
+
+  procedure AddButtonsScenes( AScenes: TP3DSceneList );
+  var
+    i: Integer;
+    Btn: TP3DGroupButton;
+  begin
+    for i:= 0 to AScenes.Count - 1 do
+      begin
+        Btn:= CreateButton( AScenes[ i ].Owner.Name + ': ' + AScenes[ i ].Name );
+        if ( AScenes[ i ] = SceneMain.ActiveScene ) then
+          Btn.Down:= True;
+        Btn.PointerTag:= AScenes[ i ];
+      end;
+  end;
+
+begin
+  ClearButtons;
+  case ( AViewMode ) of
+    dvmData:
+      AddButtonsLibraries( P3DData.Libraries );
+    dvmLibrary, dvmScene:
+      if ( Assigned( SceneMain.ActiveLibrary )) then
+        AddButtonsScenes( SceneMain.ActiveLibrary.Scenes );
+  end;
+  NewButton:= CreateButton( P3DSymbolPlus, True );
+  NewButton.PointerTag:= nil;
+end;
+
+procedure TP3DScenePanelToolbar.UpdateButtonsFast;
+var
+  i: Integer;
+begin
+  for i:= 0 to Controls.Count - 1 do
+    case ( SceneMain.ViewMode ) of
+      dvmData:
+        if ( TPersistent( Controls[ i ].PointerTag ) = SceneMain.ActiveLibrary ) then
+          begin
+            TP3DGroupButton( Controls[ i ]).Down:= True;
+            break;
+          end;
+      dvmLibrary, dvmScene:
+        if ( TPersistent( Controls[ i ].PointerTag ) = SceneMain.ActiveScene ) then
+          begin
+            TP3DGroupButton( Controls[ i ]).Down:= True;
+            break;
+          end;
+    end;
+end;
+
+procedure TP3DScenePanelToolbar.ButtonMouseClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  if ( Sender = NewButton ) then
+    begin
+      case SceneMain.ViewMode of
+        dvmData:
+          begin
+            SceneMain.ActiveLibrary:= SceneMain.NewLibrary();
+            SceneMain.ActiveScene:= SceneMain.NewScene();
+          end;
+        dvmLibrary, dvmScene:
+          SceneMain.ActiveScene:= SceneMain.NewScene();
+      end;
+    end
+  else if ( Sender is TP3DGroupButton ) then
+    with ( Sender as TP3DGroupButton ) do
+      if ( TPersistent( PointerTag ) is TP3DScene ) then
+        SceneView.Scene:= TP3DScene( PointerTag )
+      else if ( TPersistent( PointerTag ) is TP3DLibrary ) then
+        SceneMain.ActiveLibrary:= TP3DLibrary( PointerTag );
 end;
 
 { TP3DSceneEditModeTileGrid }
@@ -233,9 +373,26 @@ begin
   FCanPaint:= ( InRange( BrushGridPos.X, 0, Grid.Width - 1 ) and InRange( BrushGridPos.Y, 0, Grid.Height - 1 ));
 end;
 
-function TP3DSceneEditModeTileGrid.GetBrushIndex: Integer;
+function TP3DSceneEditModeTileGrid.GetBrushScene: TP3DGridScene;
+var
+  n, m: Integer;
 begin
-  Result:= p3dgui.TileGridSelIndex;
+  Result:= nil;
+  if ( FileExistsUTF8( AssetView.AssetView.Directory ) and
+     ( Assigned( AssetView.AssetView.Selection )) and
+     ( lowercase( ExtractFileExt( AssetView.AssetView.Directory )) = '.p3d' )) then
+    begin
+      n:= P3DData.OpenLibrary( AssetView.AssetView.Directory );
+      if ( n > -1 ) then
+        begin
+          m:= P3DData.Libraries[ n ].Scenes.FindByName( AssetView.AssetView.Selection.Caption );
+          if ( n > -1 ) then
+            begin
+              m:= Grid.AddScene( P3DData.Libraries[ n ].Scenes[ m ]);
+              Result:= Grid.Scenes[ m ];
+            end;
+        end;
+    end;
 end;
 
 procedure TP3DSceneEditModeTileGrid.AfterRender;
@@ -243,6 +400,9 @@ var
   h_sz, brpos: TVec3;
   col: TVec4;
 begin
+  if ( not Assigned( ScenePanel.Selection )) then
+    exit;
+
   glDisable( GL_DEPTH_TEST );
   ScenePanel.Cam.PassToShader;
   //ScenePanel.Canvas3D.Material;
@@ -301,11 +461,19 @@ begin
 end;
 
 procedure TP3DSceneEditModeTileGrid.Paint;
+var
+  Scene: TP3DGridScene;
 begin
   if ( CanPaint ) then
     begin
-      if ( InRange( BrushIndex, 0, Grid.Meshes.Count - 1 )) then
-        Grid.IndexAt[ BrushGridPos.X, BrushGridPos.Y ]:= BrushIndex;
+      if ( P3DInput.Keyboard.Keys[ P3DK_LSHIFT ]) then
+        Grid.SceneAt[ BrushGridPos.X, BrushGridPos.Y ]:= nil
+      else
+        begin
+          Scene:= BrushScene;
+          if ( Assigned( Scene )) then
+            Grid.SceneAt[ BrushGridPos.X, BrushGridPos.Y ]:= Scene;
+        end;
       FCanPaint:= False;
     end;
 end;
@@ -517,7 +685,7 @@ begin
       if ( ScenePanel.Selection.Data is TP3DMesh ) then
         begin
           glLineWidth( 2 );
-          TP3DMesh( ScenePanel.Selection.Data ).RenderEdges( world, TestScene, ScenePanel.Selection );
+          TP3DMesh( ScenePanel.Selection.Data ).RenderEdges( world, SceneMain.ActiveScene, ScenePanel.Selection );
           glLineWidth( 1 );
         end;
       ScenePanel.Canvas.Material.PassToShader();
@@ -555,9 +723,9 @@ begin
   case AxisMode of
     amScreen:
       begin
-        AxisX:= ScenePanel.Cam.InView.Row[ 0 ].xyz;
-        AxisY:= ScenePanel.Cam.InView.Row[ 2 ].xyz;
-        AxisZ:= ScenePanel.Cam.InView.Row[ 1 ].xyz;
+        AxisX:= ScenePanel.Cam.InvView.Row[ 0 ].xyz;
+        AxisY:= ScenePanel.Cam.InvView.Row[ 2 ].xyz;
+        AxisZ:= ScenePanel.Cam.InvView.Row[ 1 ].xyz;
       end;
     amGlobal:
       begin
@@ -636,29 +804,56 @@ end;
 
 procedure TP3DScenePanel.SceneDragDrop(Sender, Source: TP3DGraphicControl; X,
   Y: Integer; var Accept: Boolean);
+var
+  Sc: TP3DScene;
 begin
   if ( Source is TP3DListViewFile ) then
     with ( TP3DListViewFile( Source )) do
-    begin
-      if ( Assigned( Selection )) then
-        if ( P3DMatchFileName( Selection.Caption, '*.p3d' )) then
-          begin
-            try
-              TestScene.AppendFile( AppendPathDelim( Directory ) + Selection.Caption );
-            except
-              on E: Exception do
-                SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + Selection.Caption ), PChar( E.Message ), Nil );
+      begin
+        if ( Assigned( Selection )) then
+          if ( P3DMatchFileName( Selection.Caption, '*.p3d' )) then
+            begin
+              try
+                Sc:= SceneMain.ActiveScene;
+                if ( Assigned( Sc )) then
+                  Sc.AppendFile( AppendPathDelim( Directory ) + Selection.Caption );
+              except
+                on E: Exception do
+                  SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + Selection.Caption ), PChar( E.Message ), Nil );
+              end;
             end;
-            DataView.Update;
-            DataView.Children.ExpandAll();
-          end;
-    end;
+      end;
   Accept:= False;
+end;
+
+procedure TP3DScenePanel.SetCam(AValue: TP3DCamera);
+begin
+  Viewer.Cam:= AValue;
+end;
+
+procedure TP3DScenePanel.SetCamObject(AValue: TP3DActor);
+begin
+  Viewer.CamObject:= AValue;
 end;
 
 procedure TP3DScenePanel.Push3DMode;
 begin
-  PushVPClientRect;
+  Viewer.PushVPClientRect;
+end;
+
+function TP3DScenePanel.GetScene: TP3DScene;
+begin
+  Result:= Viewer.Scene;
+end;
+
+function TP3DScenePanel.GetCam: TP3DCamera;
+begin
+  Result:= Viewer.Cam;
+end;
+
+function TP3DScenePanel.GetCamObject: TP3DActor;
+begin
+  Result:= Viewer.CamObject;
 end;
 
 function TP3DScenePanel.GetEditor: TP3DSceneEditModeDefault;
@@ -705,15 +900,24 @@ begin
     end;
 end;
 
+procedure TP3DScenePanel.SetScene(AValue: TP3DScene);
+begin
+  if ( not Assigned( AValue )) then
+    exit;
+  Viewer.Scene:= AValue;
+  if ( Assigned( Viewer.Scene )) then
+    Viewer.Scene.OnRenderCallback:= @RenderCallback;
+end;
+
 procedure TP3DScenePanel.SetSelection( AValue: TP3DActor );
 begin
   if ( FSelection = AValue ) then Exit;
   FSelection:= AValue;
 
   if ( Assigned( Selection )) then
-    DataView.Selection:= DataView.Children.FindByData( Pointer( Selection ), True )
+    DataView.Viewer.Selection:= DataView.Viewer.Children.FindByData( Pointer( Selection ), True )
   else
-    DataView.Selection:= nil;
+    DataView.Viewer.Selection:= nil;
 
   if ( Assigned( Editor ) and Assigned( Selection )) then
     Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
@@ -749,32 +953,46 @@ begin
                        0,-1,0,0,
                        0,0,0,1 );
   Canvas3D.Lock;
+  glDisable( GL_DEPTH_TEST );
   if (( Assigned( ArmatureObject )) and ( ArmatureObject.Data is TP3DArmature )) then
     begin
       for Joint in TP3DArmature( ArmatureObject.Data ).Joints do
         RenderBone( Joint );
     end;
+  glEnable( GL_DEPTH_TEST );
   Canvas3D.Unlock();
 end;
 
 
-constructor TP3DScenePanel.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DScenePanel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
-  Scene:= TestScene;
-  OrbitCamera:= True;
-  Color:= Primary50; //vec4( 225/255, 230/255, 234/255, 1 );
-  OnDragDrop:= @SceneDragDrop;
+  ToolBar:= TP3DScenePanelToolbar.Create( AData, Self );
+  ToolBar.Align:= alTop;
+  ToolBar.Height:= 24;
+  Viewer:= TP3DSceneViewer.Create( AData, Self );
+  Viewer.Align:= alClient;
+  Viewer.OrbitCamera:= True;
+  Viewer.Color:= Primary50; //vec4( 225/255, 230/255, 234/255, 1 );
+  Viewer.OnDragDrop:= @SceneDragDrop;
   SelectionMaterial:= TP3DMaterialBase.Create();
+  SelectionMaterial.Name:= 'SelectionMaterial';
+  SelectionMaterial.Diff:= vec3( 0.8, 1, 1 );
   SelectionMaterial.Unlit:= True;
+  SelectionMaterial.Instancing:= True;
   FPickMaterial:= TP3DMaterialBase.Create();
   FPickMaterial.Unlit:= True;
-  AfterRender:= @AfterDraw;
-  BeforeRender:= @BeforeDraw;
-  Scene.OnRenderCallback:= @RenderCallback;
+  Viewer.AfterRender:= @AfterDraw;
+  Viewer.BeforeRender:= @BeforeDraw;
   FRenderList:= TP3DRenderList.Create;
   FEditor:= EditModeDefault;
+  EditorLight:= TP3DLight.Create( AData );
+  EditorLight.LightType:= p3dltSun;
+  EditorLightObj:= TP3DActor.Create( AData );
+  EditorLightObj.Data:= EditorLight;
+  EditorLightObj.Quaternion:= quat( 0.571, 0.169, 0.272, 0.756 );
+
+  ShowEditorLight:= True;
 
   Canvas3D:= TP3DCanvas3D.Create( nil );
   UpdateCanvas3D;
@@ -784,10 +1002,13 @@ destructor TP3DScenePanel.Destroy;
 begin
   FCanvas3D.Free;
 
+  Viewer.Free;
+  ToolBar.Free;
   SelectionMaterial.Free;
-  SceneView.Free;
   FreeAndNil( FInfoText );
   FRenderList.Free;
+  EditorLightObj.Free;
+  EditorLight.Free;
   inherited Destroy;
 end;
 
@@ -800,8 +1021,8 @@ procedure TP3DScenePanel.KeyboardAction;
 begin
   inherited KeyboardAction;
 
-  RenderList.Clear;
-  Scene.MakeRenderList( Nil, Mat4Identity, FRenderList );
+//  RenderList.Clear;
+//  Scene.MakeRenderList( Nil, Mat4Identity, FRenderList );
 
 
   Editor.UpdateAxis;
@@ -924,10 +1145,10 @@ var
   decl: TP3DShaderDecl;
 begin
   //TODO: FIX THIS
-  PushVPClientRect;
+  Viewer.PushVPClientRect;
   P3DSelectStart( P3DRect( X + Canvas.Left, Y + Canvas.Top, 1, 1 ));
-  FCam.PassToShader;
-  FCam.UpdateMatrices( FCamObject );
+  Cam.PassToShader;
+  Cam.UpdateMatrices( CamObject );
   glEnable( GL_DEPTH_TEST );
   {EditorSceneLamp.MakeRenderList( Nil, Mat4Identity, LRenderList );
   for Obj in FRenderList do
@@ -989,25 +1210,37 @@ end;
 procedure TP3DScenePanel.BeforeDraw(Sender: TObject);
 begin
   Editor.BeforeRender;
+  Viewer.RenderFlags:= [];
+  SelectionMaterial.PassToShader();
+  if ( Assigned( Viewer.RenderList ) and ( Viewer.RenderList.Lights.Count = 0 )) then
+    Viewer.RenderList.Lights.Add( EditorLight );
 end;
 
 procedure TP3DScenePanel.AfterDraw(Sender: TObject);
 var
-  Obj: TP3DRenderObject;
+  Obj: TP3DActor;
+  AData: TP3DLibrary;
 begin
   //TODO: FIX THIS!
-  {
-  for Obj in FRenderList do
-    if ( Obj.Actor.Data is TP3DLight ) then
+
+  if ( Assigned( DataView.Viewer.Selection )) and ( TInterfacedPersistent( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
+    AData:= TP3DDataBlock( DataView.Viewer.Selection.Data ).Owner
+  else
+    AData:= P3DData;
+
+  if ( not Assigned( AData )) then
+    AData:= P3DData;
+  for Obj in AData.Objects do
+{    if ( Obj.Data is TP3DLight ) then
       begin
         if ( Assigned( EditorSceneLampMaterial )) then
-          if ( Selection = Obj.Actor ) then
+          if ( Selection = Obj ) then
             EditorSceneLampMaterial.Diff:= Accent500.XYZ
           else
-            EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Actor.Data ).Color;
+            EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Data ).Color;
 
-        if ( TP3DLight( Obj.Actor.Data ).LightType in [ p3dltSun, p3dltSpot ]) then
-          EditorSceneArrow.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )) * mat4( mat3( Obj.Actor.Quaternion )));
+        if ( TP3DLight( Obj.Data ).LightType in [ p3dltSun, p3dltSpot ]) then
+          EditorSceneArrow.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )) * mat4( mat3( Obj.Quaternion )));
         EditorSceneLamp.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )));
       {Canvas.RenderText( TP3DSymbolActor,
                          vec2( ClientRect.Width, ClientRect.Height ) / 2
@@ -1015,17 +1248,18 @@ begin
                          + vec2( ClientRect.Width, ClientRect.Height ) / 2,
                          SymbolActor );}
       end
-    else if ( Obj.Actor.Data is TP3DArmature ) then
+    else }if ( Obj.Data is TP3DArmature ) then
       begin
         FCanvas3D.Proj:= Cam.Proj;
         FCanvas3D.View:= Cam.View;
-        DrawArmature( Obj.Actor );
+        Canvas3D.Pen.Width:= 5;
+        DrawArmature( Obj );
       {Canvas.RenderText( TP3DSymbolActor,
                          vec2( ClientRect.Width, ClientRect.Height ) / 2
                          * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy
                          + vec2( ClientRect.Width, ClientRect.Height ) / 2,
                          SymbolActor );}
-      end;}
+      end;
 
   {glScissor( P3DInput.Mouse.X - 50, P3DViewports[ 0 ].Height - P3DInput.Mouse.Y - 50, 100, 100 );
   glEnable( GL_SCISSOR_TEST );
@@ -1034,7 +1268,7 @@ begin
   Editor.AfterRender;
 
   Canvas.Lock;
-  Canvas.RenderText( Editor.StatusText, vec2( 0, Height - Font.Size ), FInfoText );
+  Canvas.RenderText( Editor.StatusText, vec2( 0, Height - Viewer.Font.Size ), FInfoText );
 
   {Canvas.Font.Name:= 'Pascal3D-Symbols';
   Canvas.Font.Size:= 32;}

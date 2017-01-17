@@ -14,7 +14,7 @@ begin
 end;
 
 procedure OnKey( Sender: TP3DApplication; Event: TSDL_KeyboardEvent );
-  procedure UpdateMaterials( Data: TP3DData );
+  procedure UpdateMaterials( Data: TP3DLibrary );
   var
     i: Integer;
   begin
@@ -28,8 +28,34 @@ var
   Tex: TP3DTexture;
   FrameBuffer: TP3DFrameBuffer;
 begin
-  {if ( Event.keysym.scancode = SDL_SCANCODE_F2 ) then
+  if ( Event.keysym.scancode = SDL_SCANCODE_F2 ) then
     begin
+      SetCurrentDir( P3DSearchPaths.BaseDir );
+      {with ( P3DData ) do
+        begin
+          CreateDOMFile;
+          SaveToDOM();
+          SaveDOMFile( 'P3DData.p3d' );
+          CloseDOMFile;
+        end;
+
+      for i:= 0 to P3DData.Libraries.Count - 1 do
+        begin
+          P3DData.Libraries[ i ].CreateDOMFile;
+          P3DData.Libraries[ i ].SaveToDOM();
+          P3DData.Libraries[ i ].SaveDOMFile( P3DData.Libraries[ i ].Name );
+          P3DData.Libraries[ i ].CloseDOMFile;
+        end;}
+      if ( Assigned( SceneMain.ActiveLibrary )) then
+        with ( SceneMain.ActiveLibrary ) do
+          begin
+            CreateDOMFile;
+            SaveToDOM();
+            SaveDOMFile();
+            CloseDOMFile;
+          end;
+    end;
+  {  begin
       FrameBuffer:= TP3DFrameBuffer.Create();
       //FrameBuffer.Bind( 0 );
       glBindFramebuffer( GL_FRAMEBUFFER, FrameBuffer.FBO );
@@ -73,7 +99,7 @@ begin
       DataView.Children.ExpandAll();
     end;}
   if ( Event.keysym.scancode = SDL_SCANCODE_F5 ) then
-    begin DataView.Update; DataView.Children.ExpandAll(); end;
+    begin DataView.Viewer.Update; DataView.Viewer.Children.ExpandAll(); end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F8 ) then
     begin
       P3DShaderNodeLib.Nodes.Clear( True );

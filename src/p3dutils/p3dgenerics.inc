@@ -57,6 +57,7 @@
         function GetItem( Index: Integer ): TCustomItem;
         function MoveNext( var Index: Integer ): TCustomItem;
         procedure SetItem( Index: Integer ; AValue: TCustomItem);
+        procedure DoChange; virtual;
 
       public
         constructor Create;
@@ -205,30 +206,26 @@ begin
   if ( Result = -1 ) then
     begin
       Result:= FItems.Add( Item );
-      if ( Assigned( OnChange )) then
-        OnChange( Self );
+      DoChange;
     end;
 end;
 
 procedure gP3DCustomObjectList.Insert( Index: Integer; Item: TCustomItem );
 begin
   FItems.Insert( Index, Item );
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
+  DoChange;
 end;
 
 procedure gP3DCustomObjectList.Delete( Index: Integer );
 begin
   FItems.Delete( Index );
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
+  DoChange;
 end;
 
 procedure gP3DCustomObjectList.Remove(Item: TCustomItem);
 begin
   FItems.Remove( Item );
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
+  DoChange;
 end;
 
 function gP3DCustomObjectList.IndexOf( Item: TCustomItem ): Integer;
@@ -245,8 +242,7 @@ begin
       Items[ i ].Free;
 
   FItems.Clear;
-  if ( Assigned( OnChange )) then
-    OnChange( Self );
+  DoChange;
 end;
 
 function gP3DCustomObjectList.GetEnumerator: TP3DCustomObjectListEnumeratorClass;
@@ -269,6 +265,12 @@ begin
     exit;
   if (( Index < Count ) and ( Index > -1 )) then
     FItems[ Index ]:= AValue;
+end;
+
+procedure gP3DCustomObjectList.DoChange;
+begin
+  if ( Assigned( OnChange )) then
+    OnChange( Self );
 end;
 
 

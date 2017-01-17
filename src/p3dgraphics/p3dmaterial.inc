@@ -19,9 +19,12 @@
          procedure SetMap( AValue: TP3DTexture );
 
        public
-         constructor Create( AParentMaterial: TP3DMaterial );
-         constructor CreateFromDOM( AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+         constructor Create( AParentMaterial: TP3DMaterial ); virtual;
+         constructor CreateFromDOM( AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DLibrary = nil );
+//         function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
          destructor Destroy; override;
+
+         class function DOMNodeName: String; override;
 
        published
          property TexChannel: Integer read FTexChannel write FTexChannel;
@@ -30,6 +33,8 @@
          property HasTransparency: Boolean read FHasTransparency;
          property Name: String read GetName;
      end;
+
+     TP3DMaterialMapClass = class of TP3DMaterialMap;
 
      TP3DMaterialBase = class;
      TP3DMaterialModifierType = class of TP3DMaterialModifier;
@@ -58,8 +63,8 @@
          procedure SetSpecularFactor(AValue: Single);
 
        public
-         constructor Create( AParentMaterial: TP3DMaterial );
-         constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DData = nil );
+         constructor Create( AParentMaterial: TP3DMaterial ); override;
+         constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary = nil );
 
          property Transform: TMat4 read FTransform write FTransform;
          property TransformDynamic: Boolean read FTransformDynamic write FTransformDynamic;
@@ -73,7 +78,23 @@
          property Mode: TP3DMapMode read FMode write SetMode;
      end;
 
-     TP3DMaterialMapList = specialize gP3DCustomObjectList < TP3DMaterialMap >;
+     { TP3DMaterialMapList }
+
+     TP3DMaterialMapList = class( specialize gP3DCustomObjectList < TP3DMaterialMap >)
+       private
+         FMapClass: TP3DMaterialMapClass;
+         FParentMaterial: TP3DMaterial;
+
+       public
+         constructor Create( AParentMaterial: TP3DMaterial );
+         procedure SaveToDOM( AParent: TDOMElement );
+         procedure LoadFromDOM( ADOMNode: TDOMElement );
+
+         property MapClass: TP3DMaterialMapClass read FMapClass write FMapClass;
+         property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
+         //needs map class
+     end;
+
      TP3DPropertyAccessMaterialMapList = specialize gP3DListPropertyAccess < TP3DMaterialMapList, TP3DMaterialMap >;
 
 
@@ -89,8 +110,11 @@
        public
          procedure ClearFields; override;
 
-         constructor Create( const AData: TP3DData = nil ); override;
+         constructor Create( const AData: TP3DLibrary = nil ); override;
          procedure FastDestroy; override;
+         class function DOMNodeName: String; override;
+         function SaveToDOM(AParent: TDOMElement): TDOMElement; override;
+         procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
          procedure PassToShader(); virtual;
          procedure RemoveFromFields( Block: TP3DDataBlock ); override;
@@ -101,11 +125,14 @@
          property HasTransparency: Boolean read GetHasTransparency;
      end;
 
+     TP3DPropertyAccessMaterial = specialize gP3DPropertyAccessDataBlock < TP3DMaterial >;
+
      { TP3DMaterialShader }
 
      TP3DMaterialShader = class ( TP3DMaterial )
        public
          procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
+         class function DOMNodeName: String; override;
      end;
 
      { TP3DMaterialModifier }
@@ -229,13 +256,15 @@
          procedure UpdateHasTransparency;
 
        public
-         constructor Create(const AData: TP3DData=nil); override;
+         constructor Create(const AData: TP3DLibrary=nil); override;
          procedure FastDestroy; override;
 
          procedure BuildShader(); virtual;
          procedure PassToShader(); override;
 
          procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
+         procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
+         class function DOMNodeName: String; override;
 
          property Diff: TVec3 read FDiff write FDiff;
          property Spec: TVec3 read FSpec write FSpec;
@@ -252,6 +281,9 @@
      end;
 
      TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
+
+  var
+    P3DMaterialActive: TP3DMaterial = nil;
 
 {$ENDIF}
 
@@ -284,14 +316,18 @@ constructor TP3DMaterialMap.Create( AParentMaterial: TP3DMaterial );
 begin
   inherited Create;
   FParentMaterial:= AParentMaterial;
+
   FTexChannel:= 0;
+  Properties.Context:= AParentMaterial;
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TexChannel', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name' ));
+  Properties.Add( TP3DPropertyAccessTexture.CreateFieldSet( 'Map', @FMap, @SetMap, smAttribute ));
 end;
 
-constructor TP3DMaterialMap.CreateFromDOM(
-  AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DData );
+constructor TP3DMaterialMap.CreateFromDOM(AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DLibrary);
 var
   TexName: DOMString;
-  _Data: TP3DData;
+  _Data: TP3DLibrary;
   n: LongInt;
 begin
   Create( AParentMaterial );
@@ -314,10 +350,27 @@ begin
     end;
 end;
 
+{
+function TP3DMaterialMap.SaveToDOM(AParent: TDOMElement): TDOMElement;
+var
+  i: Integer;
+begin
+  Result:= AParent.OwnerDocument.CreateElement( 'map' );
+  AParent.AppendChild( Result );
+  for i:= 0 to Properties.Count - 1 do
+    Result.SetAttribute( Properties[ i ].Name, Properties[ i ].AsString );
+end;
+}
+
 destructor TP3DMaterialMap.Destroy;
 begin
   Map:= nil;
   inherited Destroy;
+end;
+
+class function TP3DMaterialMap.DOMNodeName: String;
+begin
+  Result:= 'map';
 end;
 
 { TP3DMaterialMapBase }
@@ -374,10 +427,13 @@ begin
   FMode:= p3dmmMix;
   FTransform:= Mat4Identity;
   TexChannel:= 0;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DiffuseFactor' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'SpecularFactor' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DisplaceFactor' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaFactor' ));
+  Properties.Context:= AParentMaterial;
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DiffuseFactor', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'SpecularFactor', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DisplaceFactor', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaFactor', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Mode', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TexChannel', smAttribute ));
 end;
 
 procedure TP3DMaterialMapBase.LoadTransformFromDOM( DOM: TDOMElement );
@@ -392,12 +448,11 @@ begin
   Transform:= mat4translate( vec4( Position, 1 )){ * mat4( mat3( Quaternion ))} * mat4scale( vec4( Scale, 1 ));
 end;
 
-constructor TP3DMaterialMapBase.CreateFromDOM(AParentMaterial: TP3DMaterialBase;
-  ADOMNode: TDOMElement; const AData: TP3DData);
+constructor TP3DMaterialMapBase.CreateFromDOM(AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary);
 var
   TexName, FullTexName, DataName: DOMString;
   n: LongInt;
-  _Data: TP3DData;
+  _Data: TP3DLibrary;
   TransSect: TDOMNodeList;
 begin
   Create( AParentMaterial );
@@ -415,7 +470,7 @@ begin
   DataName:= ADOMNode.GetAttribute( 'data' );
   if ( DataName > '' ) then
     begin
-      n:= AParentMaterial.Owner.AppendFromDom( TDOMElement( ADOMNode.OwnerDocument.DocumentElement ), DataName, TP3DTexture );
+      n:= AParentMaterial.Owner.AppendFromPath( DataName, TP3DTexture );
       Map:= TP3DTexture( AParentMaterial.Owner.DataBlocks[ n ]);
     end
   else
@@ -517,9 +572,12 @@ begin
   BuildShader();
 end;
 
-constructor TP3DMaterialBase.Create(const AData: TP3DData);
+constructor TP3DMaterialBase.Create(const AData: TP3DLibrary);
 begin
   inherited Create( AData );
+
+  Maps.MapClass:= TP3DMaterialMapBase;
+
   Alpha:= 1.0;
   Diff:= vec3( 1 );
   FTransparencyMode:= p3dmtMultiply;
@@ -534,8 +592,15 @@ begin
   Modifiers.Add( TP3DMaterialModifierTransform.Create );
   Modifiers.Add( TP3DMaterialModifierCombine.Create );
 
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaThreshhold' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TransparencyMode' ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateField( 'Diff', @FDiff, smAttribute ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateField( 'Spec', @FSpec, smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Unlit', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Alpha', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaThreshhold', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TransparencyMode', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Spec_Hardness', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Instancing', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'UseVertexColor', smAttribute ));
 end;
 
 procedure TP3DMaterialBase.FastDestroy;
@@ -619,6 +684,7 @@ begin
     BuildShader();
   if ( Assigned( Shader )) then
     begin
+      P3DMaterialActive:= Self;
       Shader.Enable;
       if ( not UseVertexColor ) then
         begin
@@ -688,6 +754,17 @@ begin
   BuildShader;
 end;
 
+procedure TP3DMaterialBase.LoadFromDOMNew(ADOMNode: TDOMElement);
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+  BuildShader();
+end;
+
+class function TP3DMaterialBase.DOMNodeName: String;
+begin
+  Result:= 'materialbase';
+end;
+
 procedure TP3DMaterialShader.LoadFromDOM(ADOMNode: TDOMElement);
 var
   tex: TDOMElement;
@@ -722,6 +799,11 @@ begin
       end;
     tex:= TDOMElement( tex.NextSibling );
   end;
+end;
+
+class function TP3DMaterialShader.DOMNodeName: String;
+begin
+  Result:= 'materialshader';
 end;
 
 
@@ -1159,12 +1241,13 @@ begin
   inherited ClearFields;
 end;
 
-constructor TP3DMaterial.Create(const AData: TP3DData);
+constructor TP3DMaterial.Create(const AData: TP3DLibrary);
 begin
   inherited Create(AData);
   Owner.Materials.Add( Self );
 
-  Maps:= TP3DMaterialMapList.Create;
+  Maps:= TP3DMaterialMapList.Create( Self );
+  Maps.MapClass:= TP3DMaterialMap;
   Properties.Add( TP3DPropertyAccessDataBlockList.CreateField( 'Maps', @FMaps ));
 end;
 
@@ -1175,6 +1258,23 @@ begin
   Owner.Materials.Remove( Self );
 
   inherited FastDestroy;
+end;
+
+class function TP3DMaterial.DOMNodeName: String;
+begin
+  Result:= 'material';
+end;
+
+function TP3DMaterial.SaveToDOM(AParent: TDOMElement): TDOMElement;
+begin
+  Result:= inherited SaveToDOM( AParent );
+  Maps.SaveToDOM( Result );
+end;
+
+procedure TP3DMaterial.LoadFromDOMNew(ADOMNode: TDOMElement);
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+  Maps.LoadFromDOM( ADOMNode );
 end;
 
 procedure TP3DMaterial.PassToShader;
@@ -1209,6 +1309,50 @@ begin
 end;
 
 
+{ TP3DMaterialMapList }
+
+constructor TP3DMaterialMapList.Create(AParentMaterial: TP3DMaterial);
+begin
+  inherited Create;
+  ParentMaterial:= AParentMaterial;
+end;
+
+procedure TP3DMaterialMapList.SaveToDOM( AParent: TDOMElement );
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].SaveToDOM( AParent );
+end;
+
+procedure TP3DMaterialMapList.LoadFromDOM(ADOMNode: TDOMElement);
+var
+  i: Integer;
+  lst: TDOMNodeList;
+  Item: TP3DMaterialMap;
+begin
+  Clear();
+  if ( Assigned( MapClass )) then
+    begin
+      lst:= ADOMNode.GetElementsByTagName( MapClass.DOMNodeName );
+      try
+        for i:= 0 to lst.Count - 1 do
+          begin
+            Item:= MapClass.Create( ParentMaterial );
+            Item.LoadFromDOMNew( TDOMElement( lst[ i ]));
+            Add( Item );
+          end;
+
+      finally
+        lst.Free;
+      end;
+    end;
+end;
 
 
 {$ENDIF}
+
+{$IFDEF FINALIZATION}
+  P3DMaterialActive:= nil;
+{$ENDIF}
+

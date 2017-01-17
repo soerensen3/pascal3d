@@ -20,7 +20,7 @@ type
       procedure CalcHSVFromMousePos( X, Y: Integer );
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Draw; override;
       procedure MouseMove(X, Y: Integer); override;
@@ -44,7 +44,7 @@ type
       procedure CalcValueFromMousePos( Y: Integer );
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       procedure Draw; override;
       procedure MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure MouseMove(X, Y: Integer); override;
@@ -77,7 +77,7 @@ type
       procedure SetEditValue( Sender: TP3DVectorEdit; AValue: TVec4 );
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure UpdateColor;
       procedure Draw; override;
@@ -108,7 +108,7 @@ type
       //FOnChange: TP3DComboBoxChange;
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -140,7 +140,7 @@ type
       procedure SetTexture(AValue: TP3DTexture);
 
     public
-      constructor Create(const AData: TP3DData = nil; const AParent: TP3DGraphicControl=nil); override;      destructor Destroy; override;
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;      destructor Destroy; override;
       procedure Draw; override;
 
       property Color: TVec4 read FColor write FColor;
@@ -319,8 +319,7 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DColorWheel.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DColorWheel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
@@ -371,8 +370,7 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DColorValue.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DColorValue.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
@@ -445,8 +443,7 @@ begin
   Color:= clamp( AValue, 0.0, 1.0 );
 end;
 
-constructor TP3DColorPicker.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DColorPicker.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 var
   container: TP3DGraphicControl;
 begin
@@ -510,8 +507,7 @@ begin
   ColorPicker.Color:= AValue;
 end;
 
-constructor TP3DColorComboBox.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DColorComboBox.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
 
@@ -568,8 +564,7 @@ begin
   Material.Maps[ 0 ].Map:= AValue;
 end;
 
-constructor TP3DImage.Create(const AData: TP3DData;
-  const AParent: TP3DGraphicControl);
+constructor TP3DImage.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
   Color:= vec4( 1 );
@@ -597,7 +592,7 @@ var
   n: Integer;
   scale: Single;
 begin
-  if ( Assigned( Texture )) then
+  if ( Assigned( Texture ) and ( Texture.Width * Texture.Height > 0 )) then
     begin
       c:= vec2( Width, Height ) / 2;
       scale:= min( Width / Texture.Width, Height / Texture.Height ) / 2;
@@ -637,21 +632,21 @@ begin
 
       glBegin( GL_TRIANGLE_FAN );
       glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
-      glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
       glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
+      glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
 //      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
 
+      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
       glVertexAttrib2f( P3DAttribPosition, p2.X, p1.Y );
 //      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
-      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
 
+      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
       glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
 //      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
-      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
 
+      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
       glVertexAttrib2f( P3DAttribPosition, p1.X, p2.Y );
       //glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
-      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
       glEnd();
     end;
 end;

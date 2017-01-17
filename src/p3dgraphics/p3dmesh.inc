@@ -8,7 +8,7 @@
 
     { TP3DMeshMaterialGroup }
 
-    TP3DMeshMaterialGroup = class ( TPersistent )
+    TP3DMeshMaterialGroup = class ( TP3DInterfacedPersistent )
      private
        FIndexEnd: Integer;
        FIndexStart: Integer;
@@ -21,6 +21,8 @@
 
      public
        constructor Create( AParentMesh: TP3DMesh );
+       constructor CreateFromDOM( ADOMNode: TDOMElement; AParentMesh: TP3DMesh );
+       class function DOMNodeName: String; override;
 
      published
        property PolyStart: Integer read FPolyStart write FPolyStart;
@@ -34,23 +36,26 @@
     { TP3DMeshMaterialGroupList }
 
     TP3DMeshMaterialGroupList = class( specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >)
+      private
+        FParentMesh: TP3DMesh;
+
       public
+        constructor Create( AParentMesh: TP3DMesh );
+
         function Find( Material: TP3DMaterial ): Integer;
+        procedure SaveToDOM( AParent: TDOMElement );
+        procedure LoadFromDOM( ADOMNode: TDOMElement );
+
+        property ParentMesh: TP3DMesh read FParentMesh;
     end;
 
-    TP3DFace = record
-     loop_start: Integer;
-     loop_count: Integer;
-     mat: TP3DMaterialShader;
-    end;
-
-
-    PP3DFaceArray = ^TP3DFaceArray;
-    TP3DFaceArray = array of TP3DFace;
+    // List of Mesh faces, where ...
+    // X = start loop index, Y = loop count
+    TP3DFaceList = TIVec2List;
 
     { TP3DMeshModifier }
 
-    TP3DMeshModifier = class( TInterfacedPersistent )
+    TP3DMeshModifier = class( TP3DInterfacedPersistent )
       private
         FMesh: TP3DMesh;
 
@@ -59,6 +64,8 @@
         constructor CreateFromDOM( ADOMNode: TDOMElement; AMesh: TP3DMesh );
 
         procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual; abstract;
+        class function DOMNodeName: String; override;
+        function GetType: String;
 
         procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
 
@@ -66,11 +73,28 @@
         property Mesh: TP3DMesh read FMesh write FMesh;
     end;
 
-    TP3DMeshModifierList = specialize gP3DCustomObjectList < TP3DMeshModifier >;
+    { TP3DMeshModifierList }
 
-    { TP3DMeshGroup }
+    TP3DMeshModifierList = class( specialize gP3DCustomObjectList < TP3DMeshModifier >)
+      private
+        FParentMesh: TP3DMesh;
 
-    TP3DMeshWeightGroup = class( TPersistent )
+      public
+        constructor Create( AParentMesh: TP3DMesh );
+
+        procedure SaveToDOM( AParent: TDOMElement );
+        procedure LoadFromDOM( ADOMNode: TDOMElement );
+
+        property ParentMesh: TP3DMesh read FParentMesh;
+    end;
+
+    TP3DMeshModifierClass = class of TP3DMeshModifier;
+
+    TP3DMeshModifierClassFactory = specialize gP3DClassFactory < TP3DMeshModifierClass >;
+
+    { TP3DMeshWeightGroup }
+
+    TP3DMeshWeightGroup = class( TP3DInterfacedPersistent )
       private
         FMesh: TP3DMesh;
         FName: String;
@@ -79,15 +103,27 @@
 
       public
         //property Weight[ VIndex: Integer ]: Float read GetWeight;
+        constructor Create( AMesh: TP3DMesh );
+        constructor CreateFromDOM( ADOMNode: TDOMElement );
+        class function DOMNodeName: String; override;
 
       published
-        constructor Create( AMesh: TP3DMesh );
-
         property Name: String read FName write FName;
         property Mesh: TP3DMesh read FMesh write FMesh;
     end;
 
-    TP3DMeshWeightGroupList = specialize gP3DCustomObjectList < TP3DMeshWeightGroup >;
+    { TP3DMeshWeightGroupList }
+
+    TP3DMeshWeightGroupList = class( specialize gP3DCustomObjectList < TP3DMeshWeightGroup >)
+    private
+      FParentMesh: TP3DMesh;
+    public
+      constructor Create( AParentMesh: TP3DMesh );
+      procedure SaveToDOM( AParent: TDOMElement );
+      procedure LoadFromDOM( ADOMNode: TDOMElement );
+
+      property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
+    end;
 
     TP3DArmature = class;
 
@@ -111,7 +147,7 @@
         Normals: TP3DVec3BufferGL;
         Tangents: TP3DVec3BufferGL;
         Cotangents: TP3DVec3BufferGL;
-        Faces: TP3DFaceArray;
+        Faces: TP3DFaceList;
         TexCoords: array of TP3DVec2BufferGL;
         Edges: TP3DIntBufferGL;
 
@@ -120,11 +156,14 @@
         MaterialGroups: TP3DMeshMaterialGroupList;
         WeightGroups: TP3DMeshWeightGroupList;
 
-        constructor Create( const AData: TP3DData = nil ); override;
+        constructor Create( const AData: TP3DLibrary = nil ); override;
 
         procedure FastDestroy; override;
 
         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
+        procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
+        function SaveToDOM(AParent: TDOMElement): TDOMElement; override;
+        class function DOMNodeName: String; override;
         procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
         procedure RenderInstanced( world: TMat4List; Scene: TP3DScene; RenderObject: TP3DActor );
         procedure RenderSimple;
@@ -148,37 +187,46 @@
         property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
 //        property Armature: TP3DArmature read FArmature write SetArmature;
       end;
-
+      TP3DPropertyAccessMesh = specialize gP3DPropertyAccessDataBlock < TP3DMesh >;
       TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
+var
+  P3DMeshModifierClassFactory: TP3DMeshModifierClassFactory;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
 { TP3DMesh }
-procedure LoadFaceFromStream( Faces: PP3DFaceArray; S: TStream; ACount, LoopCount: Integer );
+procedure LoadFaceFromStream( Faces: TP3DFaceList; S: TStream; ACount, LoopCount: Integer );
 var
-  ints: array of Integer;
+  ints: TIntList;
   base, i: Integer;
 begin
   if ( ACount = 0 ) then
     exit;
-  base:= Length( Faces^ );
-  SetLength( Faces^, base + ACount );
-  SetLength( ints, base + ACount );
-  S.Read( ints[ 0 ], SizeOf( Integer ) * ACount );
+  base:= Faces.Count;
+  Faces.Count:= base + ACount;
+  ints:= TIntList.Create;
+  ints.Count:= ACount;
+  ints.LoadFromStream( S, ACount );
 
-  Faces^[ 0 ].loop_start:= 0;
+  Faces[ 0 ]:= ivec2( 0 );
 
+  //Write( 'ints = ', ints[ 0 ]);
   if ( ACount > 1 ) then
     for i:= 1 to ACount - 1 do
       begin
-        Faces^[ i ].loop_start:= ints[ i ];
-        Faces^[ i - 1 ].loop_count:= ints[ i ]- Faces^[ i - 1 ].loop_start;
+        //Write( ', ', ints[ i ]);
+        Faces[ i ]:= ivec2( ints[ i ], 0 );
+        Faces[ i - 1 ]:= ivec2( Faces[ i - 1 ].X, ints[ i ] - ints[ i - 1 ]);
       end;
-  Faces^[ ACount - 1 ].loop_count:= LoopCount - Faces^[ ACount - 1 ].loop_start;
+//  WriteLn();
+  Faces[ ACount - 1 ]:= ivec2( Faces[ ACount - 1 ].X, LoopCount - Faces[ ACount - 1 ].X );
+  ints.Free;
+//  for i:= 0 to ACount - 1 do
+//    WriteLn( 'Face ', i, ': ', Faces[ i ].X, '-', Faces[ i ].Y );
 end;
 
-procedure LoadVec3FromStream( Vectors: TVec4List; S: TStream; ACount: Integer );
+procedure LoadVec4FromStream( Vectors: TVec4List; S: TStream; ACount: Integer );
 var
   i: Integer;
   vert: TVec4;
@@ -235,7 +283,7 @@ var
   MaterialGroup: TP3DMeshMaterialGroup;
 begin
   AName:= DOM.GetAttribute( 'name' );
-  MatIdx:= Owner.AppendFromDom( TDOMElement( DOM.OwnerDocument.FirstChild ), AName, TP3DMaterial );
+  MatIdx:= Owner.AppendFromPath( AName, TP3DMaterial );
   MatPolyStart:= StrToInt( DOM.GetAttribute( 'start' ));
   MatPolyEnd:= StrToInt( DOM.GetAttribute( 'end' ));
 
@@ -279,7 +327,7 @@ begin
   Result:= L.Count > 0;
 end;
 
-constructor TP3DMesh.Create(const AData: TP3DData);
+constructor TP3DMesh.Create(const AData: TP3DLibrary);
 begin
   inherited;
 
@@ -293,10 +341,11 @@ begin
   VertexWeights:= TP3DVec3BufferGL.Create( True );
   VertexGroupsf:= TP3DVec4BufferGL.Create( True );
   VBArray:= TP3DVertexBufferArray.Create;
+  Faces:= TP3DFaceList.Create;
 
-  MaterialGroups:= TP3DMeshMaterialGroupList.Create;
-  WeightGroups:= TP3DMeshWeightGroupList.Create();
-  Modifiers:= TP3DMeshModifierList.Create;
+  MaterialGroups:= TP3DMeshMaterialGroupList.Create( Self );
+  WeightGroups:= TP3DMeshWeightGroupList.Create( Self );
+  Modifiers:= TP3DMeshModifierList.Create( Self );
 
   Owner.Meshes.Add( Self );
   FileWatch:= TP3DFileWatch.Create( '' );
@@ -317,6 +366,7 @@ begin
   VertexGroups.Free;
   VertexGroupsf.Free;
   VertexWeights.Free;
+  Faces.Free;
   for i:= 0 to High( TexCoords ) do
     TexCoords[ i ].Free;
 
@@ -339,7 +389,8 @@ var
   cnt, numTex, i: Integer;
   F: TFileStream;
 begin
-  Name:= ADOMNode.GetAttribute( 'name' );
+  inherited LoadFromDOM( ADOMNode );
+  //Name:= ADOMNode.GetAttribute( 'name' );
 
   if ( ADOMNode.hasAttribute( 'binary' )) then
     begin
@@ -393,7 +444,7 @@ begin
 
         cnt:= StrToIntDef( ADOMNode.GetAttribute( 'faces' ), 0 );
         if ( cnt > 0 ) then
-          LoadFaceFromStream( @Faces, F, cnt, Edges.Count );
+          LoadFaceFromStream( Faces, F, cnt, Edges.Count );
         F.Free;
         FileWatch.FileName:= ext;
       except on E: Exception do
@@ -422,6 +473,167 @@ begin
   //CalcCotangentsFromTangents;
   //Calc_Tangent_Binormal;
   UnpackBuffers;
+end;
+
+procedure TP3DMesh.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  FN, SPos: String;
+  S: TFileStream;
+  i: Integer;
+  vec: TVec4;
+
+  function SetupStream( AName: String ): Boolean;
+  var
+    P: Integer;
+  begin
+    Result:= False;
+    SPos:= ADOMNode.AttribStrings[ AName ];
+    if ( SPos = '' ) then
+      exit;
+    FN:= Copy2SymbDel( SPos, ':' );
+    P:= StrToInt( SPos );
+    if ( Assigned( S )) then
+      if ( CompareFilenames( S.FileName, FN ) <> 0 ) then
+        S.Free;
+    if ( not Assigned( S )) then
+      S:= TFileStream.Create( FN, fmOpenRead );
+    S.Position:= P;
+    Result:= True;
+  end;
+
+begin
+  S:= nil;
+  inherited LoadFromDOMNew(ADOMNode);
+  MaterialGroups.LoadFromDOM( ADOMNode );
+  WeightGroups.LoadFromDOM( ADOMNode );
+  Modifiers.LoadFromDOM( ADOMNode );
+
+  ClearVBO;
+
+  if ( SetupStream( 'Positions' )) then
+    Positions.LoadFromStream( S );
+
+  if ( SetupStream( 'Normals' )) then
+    Normals.LoadFromStream( S );
+
+  if ( SetupStream( 'Tangents' )) then
+    Tangents.LoadFromStream( S );
+
+  if ( SetupStream( 'Cotangents' )) then
+    Cotangents.LoadFromStream( S );
+
+  if ( SetupStream( 'Faces' )) then
+    Faces.LoadFromStream( S );
+
+  i:= 0;
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].Free;
+
+  while ( SetupStream( 'TexCoords' + IntToStr( i ))) do
+    begin
+      SetLength( TexCoords, i + 1 );
+      TexCoords[ i ]:= TP3DVec2BufferGL.Create( True );
+      TexCoords[ i ].LoadFromStream( S );
+      Inc( i );
+    end;
+
+  if ( SetupStream( 'Indices' )) then
+    Indices.LoadFromStream( S );
+
+  if ( SetupStream( 'Edges' )) then
+    Edges.LoadFromStream( S );
+
+  if ( SetupStream( 'VertexGroups' )) then
+    VertexGroups.LoadFromStream( S );
+
+  if ( SetupStream( 'VertexWeights' )) then
+    VertexWeights.LoadFromStream( S );
+
+  VertexGroupsf.Count:= VertexGroups.Count;
+  for i:= 0 to VertexGroups.Count div 4 - 1 do
+    begin
+      vec:= vec4( VertexGroups[ i * 4 ], VertexGroups[ i * 4 + 1 ], VertexGroups[ i * 4 + 2 ], VertexGroups[ i * 4 + 3 ]);
+      VertexGroupsf[ i ]:= vec;
+    end;
+
+  CreateVBO;
+  BoundingBox:= CalcBoundingBox();
+
+  S.Free;
+end;
+
+function TP3DMesh.SaveToDOM(AParent: TDOMElement): TDOMElement;
+var
+  fn, comment: String;
+  S: TFileStream;
+  i: Integer;
+begin
+  Result:= inherited SaveToDOM( AParent );
+
+  comment:= 'summary for mesh ' + Name + LineEnding;
+  comment+= '  Positions: ' + IntToStr( Positions.Count ) + LineEnding;
+  comment+= '  Normals: ' + IntToStr( Normals.Count ) + LineEnding;
+  comment+= '  Tangents: ' + IntToStr( Tangents.Count ) + LineEnding;
+  comment+= '  Cotangents: ' + IntToStr( Cotangents.Count ) + LineEnding;
+  comment+= '  Faces: ' + IntToStr( Faces.Count ) + LineEnding;
+
+  for i:= 0 to high( TexCoords ) do
+    comment+= '  TexCoords' + IntToStr( i ) + ': ' + IntToStr( TexCoords[ i ].Count ) + LineEnding;
+
+  comment+= '  Edges: ' + IntToStr( Edges.Count ) + LineEnding;
+  comment+= '  Indices: ' + IntToStr( Indices.Count ) + LineEnding;
+
+  comment+= '  VertexGroups: ' + IntToStr( VertexGroups.Count ) + LineEnding;
+  comment+= '  VertexWeights: ' + IntToStr( VertexWeights.Count ) + LineEnding;
+
+  Result.AppendChild( Result.OwnerDocument.CreateComment( comment ));
+
+  fn:= ExtractFileNameOnly( Owner.Name ) + '.' + Name + '.p3dmesh';
+  S:= TFileStream.Create( fn, fmCreate );
+
+  Result.AttribStrings[ 'Positions' ]:= fn + ':' + IntToStr( S.Position );
+  Positions.SaveToStream( S );
+
+  Result.AttribStrings[ 'Normals' ]:= fn + ':' + IntToStr( S.Position );
+  Normals.SaveToStream( S );
+
+  Result.AttribStrings[ 'Tangents' ]:= fn + ':' + IntToStr( S.Position );
+  Tangents.SaveToStream( S );
+
+  Result.AttribStrings[ 'Cotangents' ]:= fn + ':' + IntToStr( S.Position );
+  Cotangents.SaveToStream( S );
+
+  Result.AttribStrings[ 'Faces' ]:= fn + ':' + IntToStr( S.Position );
+  Faces.SaveToStream( S );
+
+  for i:= 0 to high( TexCoords ) do
+    begin
+      Result.AttribStrings[ 'TexCoords' + IntToStr( i )]:= fn + ':' + IntToStr( S.Position );
+      TexCoords[ i ].SaveToStream( S );
+    end;
+
+  Result.AttribStrings[ 'Edges' ]:= fn + ':' + IntToStr( S.Position );
+  Edges.SaveToStream( S );
+
+  Result.AttribStrings[ 'Indices' ]:= fn + ':' + IntToStr( S.Position );
+  Indices.SaveToStream( S );
+
+  Result.AttribStrings[ 'VertexGroups' ]:= fn + ':' + IntToStr( S.Position );
+  VertexGroups.SaveToStream( S );
+
+  Result.AttribStrings[ 'VertexWeights' ]:= fn + ':' + IntToStr( S.Position );
+  VertexWeights.SaveToStream( S );
+
+  S.Free;
+
+  MaterialGroups.SaveToDOM( Result );
+  WeightGroups.SaveToDOM( Result );
+  Modifiers.SaveToDOM( Result );
+end;
+
+class function TP3DMesh.DOMNodeName: String;
+begin
+  Result:= 'mesh';
 end;
 
 procedure TP3DMesh.Render(world: TMat4; Scene: TP3DScene;
@@ -629,12 +841,20 @@ begin
 
   mat:= Mat4Identity; //only a workaround
   for Modifier in Modifiers do
-    Modifier.PassToShader( MaterialGroups[ MatIdx ].Material, mat );
+    Modifier.PassToShader( P3DMaterialActive, mat );
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
-  offset:= MaterialGroups[ MatIdx ].IndexStart;
-  count:= ( MaterialGroups[ MatIdx ].IndexEnd - MaterialGroups[ MatIdx ].IndexStart ) + 1;
+  if ( MatIdx < 0 ) then
+    begin
+      offset:= 0;
+      count:= Indices.Count;
+    end
+  else
+    begin
+      offset:= MaterialGroups[ MatIdx ].IndexStart;
+      count:= ( MaterialGroups[ MatIdx ].IndexEnd - MaterialGroups[ MatIdx ].IndexStart ) + 1;
+    end;
 
   //WriteLn( P3DShaderActive.DumpAttributes );
   glDrawElementsInstanced( GL_TRIANGLES, count, GL_UNSIGNED_INT, Pointer( offset * SizeOf( GLint )), numInstance ); cle( Self );
@@ -778,14 +998,13 @@ begin
   _WeightGroups:= TP3DIntBufferGL.Create( True );
   VertexGroupsf.Clear;
 
-
-  for i:= 0 to high( Faces ) do
+  for i:= 0 to Faces.Count - 1 do
     begin
       Idx:= Indices.Count;
       vbase:= _Positions.Count;
-      for j:= 0 to Faces[ i ].loop_count - 1 do
+      for j:= 0 to Faces[ i ].Y - 1 do
         begin
-          vidx:= Edges[ Faces[ i ].loop_start + j ];
+          vidx:= Edges[ Faces[ i ].X + j ];
           _Positions.Add( Positions[ vidx ]);
           _Normals.Add( Normals[ vidx ]);
           _Weights.Add( VertexWeights[ vidx ]);
@@ -793,7 +1012,7 @@ begin
                               VertexGroups[ vidx * 4 + 2 ], VertexGroups[ vidx * 4 + 3 ]]);
           VertexGroupsf.Add(vec4( VertexGroups[ vidx * 4 ], VertexGroups[ vidx * 4 + 1 ], VertexGroups[ vidx * 4 + 2 ], VertexGroups[ vidx * 4 + 3 ]));
         end;
-      for j:= 1 to Faces[ i ].loop_count - 1 do
+      for j:= 1 to Faces[ i ].Y - 1 do
         begin
           _Edges.Add([ vbase + j -1, vbase + j ]);
           if ( j > 1 ) then
@@ -801,17 +1020,18 @@ begin
                           vbase + j - 1,
                           vbase + j ]);
         end;
-      _Edges.Add([ vbase + Faces[ i ].loop_count - 1, vbase ]);
-      Faces[ i ].loop_start:= Idx;
-      Faces[ i ].loop_count:= Indices.Count - Idx;
+      _Edges.Add([ vbase + Faces[ i ].Y - 1, vbase ]);
+      Faces[ i ]:= ivec2( Idx, Indices.Count - Idx );
       //WriteLn( 'FACE: ', i, ' (idx) ', Faces[ i ].loop_start, ' (loopstart) ',
       //         Faces[ i ].loop_count, ' (loopcount) ');
     end;
   for i:= 0 to MaterialGroups.Count - 1 do
     begin
-      MaterialGroups[ i ].FIndexStart:= Faces[ MaterialGroups[ i ].PolyStart ].loop_start;
-      MaterialGroups[ i ].FIndexEnd:= Faces[ MaterialGroups[ i ].PolyEnd ].loop_start
-                                    + Faces[ MaterialGroups[ i ].PolyEnd ].loop_count - 1;
+      MaterialGroups[ i ].FIndexStart:= Faces[ MaterialGroups[ i ].PolyStart ].X;
+      MaterialGroups[ i ].FIndexEnd:= Faces[ MaterialGroups[ i ].PolyEnd ].X
+                                    + Faces[ MaterialGroups[ i ].PolyEnd ].Y - 1;
+      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].PolyStart, ' (polystart) ',
+               MaterialGroups[ i ].PolyEnd, ' (polyend) Faces[ polystart ] = ' + Faces[ MaterialGroups[ i ].PolyStart ].ToString() + ' Faces[ polyend ] = ' + Faces[ MaterialGroups[ i ].PolyEnd ].ToString());
       WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].FIndexStart, ' (loopstart) ',
                MaterialGroups[ i ].FIndexEnd, ' (loopend) ');
     end;
@@ -1042,6 +1262,24 @@ constructor TP3DMeshMaterialGroup.Create(AParentMesh: TP3DMesh);
 begin
   ParentMesh:= AParentMesh;
   inherited Create;
+
+  Properties.Context:= AParentMesh;
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyStart' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyEnd' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexStart', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexEnd', smAttribute ));
+  Properties.Add( TP3DPropertyAccessMaterial.CreateFieldSet( 'Material', @FMaterial, @SetMaterial, smAttribute ));
+end;
+
+constructor TP3DMeshMaterialGroup.CreateFromDOM(ADOMNode: TDOMElement; AParentMesh: TP3DMesh);
+begin
+  Create( AParentMesh );
+  LoadFromDOMNew( ADOMNode );
+end;
+
+class function TP3DMeshMaterialGroup.DOMNodeName: String;
+begin
+  Result:= 'materialgroup';
 end;
 
 { TP3DMeshModifier }
@@ -1050,12 +1288,25 @@ constructor TP3DMeshModifier.Create(AMesh: TP3DMesh);
 begin
   inherited Create;
   Mesh:= AMesh;
+  Properties.Context:= Mesh;
+  Properties.Add( TP3DPropertyAccessMesh.CreateField( 'Mesh', @FMesh, smAttribute ));
+  Properties.Add( TP3DPropertyAccessString.CreateGetSet( 'Type', @GetType, nil, smAttribute ));
 end;
 
 constructor TP3DMeshModifier.CreateFromDOM(ADOMNode: TDOMElement; AMesh: TP3DMesh);
 begin
   Create( AMesh );
   LoadFromDOM( ADOMNode );
+end;
+
+class function TP3DMeshModifier.DOMNodeName: String;
+begin
+  Result:= 'modifier';
+end;
+
+function TP3DMeshModifier.GetType: String;
+begin
+  Result:= ClassName;
 end;
 
 { TP3DMeshWeightGroup }
@@ -1065,14 +1316,32 @@ begin
   Result:= 0.0;//Mesh.;
 end;
 
+constructor TP3DMeshWeightGroup.CreateFromDOM(ADOMNode: TDOMElement);
+begin
+  inherited Create;
+  LoadFromDOMNew( ADOMNode );
+end;
+
+class function TP3DMeshWeightGroup.DOMNodeName: String;
+begin
+  Result:= 'weightgroup';
+end;
+
 constructor TP3DMeshWeightGroup.Create(AMesh: TP3DMesh);
 begin
   inherited Create;
   Mesh:= AMesh;
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smAttribute ));
 end;
 
 
 { TP3DMeshMaterialGroupList }
+
+constructor TP3DMeshMaterialGroupList.Create(AParentMesh: TP3DMesh);
+begin
+  inherited Create;
+  FParentMesh:= AParentMesh;
+end;
 
 function TP3DMeshMaterialGroupList.Find( Material: TP3DMaterial ): Integer;
 var
@@ -1087,5 +1356,130 @@ begin
       end;
 end;
 
+procedure TP3DMeshMaterialGroupList.SaveToDOM(AParent: TDOMElement);
+var
+  Node: TDOMElement;
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    begin
+      Items[ i ].SaveToDOM( AParent );
+      {Node:= AParent.OwnerDocument.CreateElement( 'material' );
+      AParent.AppendChild( Node );
+      Node.AttribStrings[ 'start' ]:= IntToStr( Items[ i ].PolyStart );
+      Node.AttribStrings[ 'end' ]:= IntToStr( Items[ i ].PolyEnd );
+      if ( Assigned( Items[ i ].Material  )) then
+        begin
+          Items[ i ].Material.SaveToDOM( AParent.OwnerDocument.DocumentElement );
+//          Node.AttribStrings[ 'data' ]:= Items[ i ].Material.DOMPath;
+        end;}
+    end;
+end;
 
+procedure TP3DMeshMaterialGroupList.LoadFromDOM(ADOMNode: TDOMElement);
+var
+  i: Integer;
+  lst: TDOMNodeList;
+begin
+  Clear();
+  lst:= ADOMNode.GetElementsByTagName( TP3DMeshMaterialGroup.DOMNodeName );
+  try
+    Count:= lst.Count;
+    for i:= 0 to lst.Count - 1 do
+      Items[ i ]:= TP3DMeshMaterialGroup.CreateFromDOM( TDOMElement( lst[ i ]), ParentMesh );
+
+  finally
+    lst.Free;
+  end;
+end;
+
+{ TP3DMeshModifierList }
+
+procedure TP3DMeshModifierList.SaveToDOM(AParent: TDOMElement);
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].SaveToDOM( AParent );
+end;
+
+procedure TP3DMeshModifierList.LoadFromDOM(ADOMNode: TDOMElement);
+var
+  i: Integer;
+  lst: TDOMNodeList;
+  ClName: DOMString;
+  Tp: TP3DMeshModifierClass;
+begin
+  Clear();
+  lst:= ADOMNode.GetElementsByTagName( TP3DMeshModifier.DOMNodeName );
+  try
+    Count:= lst.Count;
+    for i:= 0 to lst.Count - 1 do
+      begin
+        ClName:= TDOMElement( lst[ i ]).GetAttribute( 'Type' );
+        Tp:= P3DMeshModifierClassFactory.FindByName( ClName );
+        if ( Assigned( Tp )) then
+          begin
+            Items[ i ]:= Tp.Create( ParentMesh );
+            Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
+          end
+        else
+          raise Exception.Create( 'Cannot load mesh modifier from DOM: The specified modifier class was not found ' + ClName );
+      end;
+
+  finally
+    lst.Free;
+  end;
+end;
+
+constructor TP3DMeshModifierList.Create(AParentMesh: TP3DMesh);
+begin
+  inherited Create;
+  FParentMesh:= AParentMesh;
+end;
+
+{ TP3DMeshWeightGroupList }
+
+constructor TP3DMeshWeightGroupList.Create(AParentMesh: TP3DMesh);
+begin
+  inherited Create;
+  ParentMesh:= AParentMesh;
+end;
+
+procedure TP3DMeshWeightGroupList.SaveToDOM(AParent: TDOMElement);
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].SaveToDOM( AParent );
+end;
+
+procedure TP3DMeshWeightGroupList.LoadFromDOM(ADOMNode: TDOMElement);
+var
+  i: Integer;
+  lst: TDOMNodeList;
+begin
+  Clear();
+  lst:= ADOMNode.GetElementsByTagName( TP3DMeshWeightGroup.DOMNodeName );
+  try
+    Count:= lst.Count;
+    for i:= 0 to lst.Count - 1 do
+      begin
+        Items[ i ]:= TP3DMeshWeightGroup.Create( ParentMesh );
+        Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
+      end;
+
+  finally
+    lst.Free;
+  end;
+end;
+
+{$ENDIF}
+
+{$IFDEF INITIALIZATION}
+  P3DMeshModifierClassFactory:= TP3DMeshModifierClassFactory.Create;
+{$ENDIF}
+
+{$IFDEF FINALIZATION}
+  FreeAndNil( P3DMeshModifierClassFactory );
 {$ENDIF}

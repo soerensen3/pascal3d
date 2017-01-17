@@ -1,3 +1,4 @@
+{$IFDEF INTERFACE}
 const
   Black: TVec4 =                        ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 1.0 ));
   White: TVec4 =                        ( FCoord: ( $ff / 255, $ff / 255, $ff / 255, 1.0 ));
@@ -275,7 +276,5 @@ const
   BlueGrey700: TVec4 =                  ( FCoord: ( $45 / 255, $5a / 255, $64 / 255, 1.0 ));
   BlueGrey800: TVec4 =                  ( FCoord: ( $37 / 255, $47 / 255, $4f / 255, 1.0 ));
   BlueGrey900: TVec4 =                  ( FCoord: ( $26 / 255, $32 / 255, $38 / 255, 1.0 ));
-
-
-
+{$ENDIF}
 

@@ -11,16 +11,21 @@
     TP3DCustomObjectList = specialize gP3DCustomObjectList < TP3DObject >;
     TP3DObjectList = class( TP3DCustomObjectList )
       private
+        FLastUpdate: Integer;
         FOwner: TPersistent;
 
-      published
+        procedure DoChange; override;
+
+      public
         constructor Create( AOwner: TPersistent );
         function FindUniqueName( BaseStr: String ): String;
         function FindByName( AName: String ): Integer;
         procedure Clear(const FreeObjects: Boolean = True ); override;
         function DumpObjectList: String;
 
+      published
         property Owner: TPersistent read FOwner write FOwner;
+        property LastUpdate: Integer read FLastUpdate;
     end;
 
 
@@ -57,6 +62,12 @@
 {$IFDEF IMPLEMENTATION}
 
 { TP3DObjectList }
+
+procedure TP3DObjectList.DoChange;
+begin
+  inherited DoChange;
+  FLastUpdate:= SDL_GetTicks;
+end;
 
 constructor TP3DObjectList.Create(AOwner: TPersistent);
 begin
@@ -146,7 +157,7 @@ begin
   FName:= ParentList.FindUniqueName( BaseName );
   ParentList.Add( Self );
 
-  Properties.Add( TP3DPropertyAccessString.CreateFieldSet( 'Name', @FName, @SetName ));
+  Properties.Add( TP3DPropertyAccessString.CreateFieldSet( 'Name', @FName, @SetName, smAttribute ));
 end;
 
 destructor TP3DObject.Destroy;

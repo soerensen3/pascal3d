@@ -25,15 +25,15 @@ type
   TP3DDataBlock = class ( TP3DObject )
     private
       FBoundingBox: TP3DBoundingBox;
-      FDOMPath: String;
-      FOwner: TP3DData;
+      FOwner: TP3DLibrary;
       FUsers: TP3DDataBlockList;
 
+      function GetDOMPath: String; virtual;
       procedure SetName(NewName: TComponentName); override;
 
     public
-      constructor Create( const AData: TP3DData = nil ); virtual;
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DData = nil ); virtual;
+      constructor Create( const AData: TP3DLibrary = nil ); virtual;
+      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DLibrary = nil ); virtual;
 
       destructor Destroy; override;
       procedure FastDestroy; virtual;
@@ -50,12 +50,13 @@ type
       procedure AddUser( User: TP3DDataBlock );
       procedure ClearFields; virtual;
       procedure ClearUsers;
+      class function DOMNodeName: String; override;
 
       property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
-      property Owner: TP3DData read FOwner;
+      property Owner: TP3DLibrary read FOwner;
 
     published
-      property DOMPath: String read FDOMPath write FDOMPath;
+      property DOMPath: String read GetDOMPath;
       property Users: TP3DDataBlockList read FUsers;
   end;
 
@@ -74,6 +75,7 @@ type
     private
       FFreeChildrenOnDestroy: Boolean;
       FItems: TList;
+      FLastUpdate: Integer;
       FOnChange: TP3DCustomListOnChangeEvent;
 
       function GetCount: Integer;
@@ -81,6 +83,7 @@ type
       function GetItems( Index: Integer ): TCustomItem;
       function MoveNext( var Index: Integer ): TCustomItem;
       procedure SetItems( Index: Integer ; AValue: TCustomItem);
+      procedure DoUpdate;
 
     public
       constructor Create;
@@ -96,6 +99,8 @@ type
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
       function FindByFileName( AFileName: String ): Integer;
+      procedure SaveToDOM(AParent: TDOMElement);
+      //TODO: Implement load from DOM
 
       property Items[ Index: Integer ]: TCustomItem read GetItems write SetItems; default;
 
@@ -103,6 +108,7 @@ type
       property Count: Integer read GetCount write SetCount;
       property OnChange: TP3DCustomListOnChangeEvent read FOnChange write FOnChange;
       property FreeChildrenOnDestroy: Boolean read FFreeChildrenOnDestroy write FFreeChildrenOnDestroy;
+      property LastUpdate: Integer read FLastUpdate;
   end;
 
   TP3DCustomDataBlockList = specialize gP3DCustomDatablockList <TP3DDataBlock>;
@@ -114,13 +120,22 @@ type
       function DumpUsers: String;
   end;
 
-  { TP3DPropertyAccessDataBlock }
+  { gP3DPropertyAccessDataBlock }
 
-  TP3DPropertyAccessDataBlock = class( specialize gP3DPropertyAccess < TP3DDataBlock >)
+  generic gP3DPropertyAccessDataBlock < TItem: TP3DDataBlock > = class( specialize gP3DPropertyAccess < TItem >)
     protected
       function GetAsString: String; override;
       procedure SetAsString( AValue: String ); override;
+      function CheckSameContext: Boolean;
+      function GetDefaultValue: TItem; override;
+
+    public
+      function SaveToDOM( AParentNode: TDOMElement ): Boolean; override;
+      procedure LoadFromDOM(AParentNode: TDOMElement); override;
+
   end;
+
+  TP3DPropertyAccessDataBlock = specialize gP3DPropertyAccessDataBlock < TP3DDataBlock >;
 
   { TP3DPropertyAccessDataBlockList }
 
@@ -183,26 +198,98 @@ end;
 }
 { TP3DPropertyAccessDataBlock }
 
-function TP3DPropertyAccessDataBlock.GetAsString: String;
+function gP3DPropertyAccessDataBlock.GetAsString: String;
 begin
-  Result:= Value.Owner.Name + '.' + Value.Name;
+  if ( not Assigned( Value )) then
+    begin
+      Result:= '';
+      exit;
+    end;
+  Result:= Value.DOMPath; //Value.Owner.Name + '.' + Value.Name;
+  if ( Result = '' ) then
+    begin
+      WriteLn( 'Error: DOMPath is empty for Value ' + Value.Owner.Name + '.' + Value.Name );
+      exit;
+    end;
+  if ( Result[ 1 ] <> '/' ) then
+    Result:= '/' + Result;
+  if ( not (( Context is TP3DDataBlock ) and ( TP3DDataBlock( Context ).Owner = Value.Owner ))) then
+    Result:= Value.Owner.FileWatch.FileName + '$' + Result;
 end;
 
-procedure TP3DPropertyAccessDataBlock.SetAsString(AValue: String);
+procedure gP3DPropertyAccessDataBlock.SetAsString(AValue: String);
+var
+  n: Integer;
+  Owner: TP3DLibrary;
+  Path: TP3DXMLPath;
+  FN: String;
 begin
+  if (( Context is TP3DDataBlock ) and ( AValue > '' )) then
+    begin
+      Owner:= TP3DDataBlock( Context ).Owner.GetOwnerFromPath( AValue, True );
+      if ( not Assigned( Owner )) then
+        raise Exception.Create( 'Could not find resource: ' + AValue );
+      Path:= P3DXMLExtractRelativePath( AValue, FN );
+      n:= Owner.AppendFromPath( Path{, TItem} );
+      Value:= TItem( Owner.DataBlocks[ n ]);
+      Write( TP3DDataBlock( Context ).Name, ' > ', Name );
+      if ( Assigned( Value )) then
+        WriteLn( ' = ', Owner.Name, '.', Value.Name )
+      else
+        WriteLn();
+    end;
+end;
 
+function gP3DPropertyAccessDataBlock.CheckSameContext: Boolean;
+begin
+  Result:= Assigned( Value ) and ( Context is TP3DDataBlock ) and ( TP3DDataBlock( Context ).Owner = Value.Owner );
+end;
+
+function gP3DPropertyAccessDataBlock.GetDefaultValue: TItem;
+begin
+  Result:= nil;
+end;
+
+function gP3DPropertyAccessDataBlock.SaveToDOM( AParentNode: TDOMElement ): Boolean;
+var
+  root: TDOMElement;
+  Path: String;
+begin
+  Result:= inherited SaveToDOM( AParentNode );
+  if ( Result and CheckSameContext ) then
+    begin
+      root:= AParentNode.OwnerDocument.DocumentElement;
+      Path:= Value.DOMPath;
+      if ( Path = '' ) then
+        begin
+          WriteLn( 'Error: empty DOMPath for ' + Value.Owner.Name + '.' + Value.Name );
+          exit;
+        end;
+      if ( not Assigned( P3DXMLFindPath( root, Path ))) then
+        if ( Assigned( Value )) then
+          Value.SaveToDOM( root );
+    end;
+end;
+
+procedure gP3DPropertyAccessDataBlock.LoadFromDOM(AParentNode: TDOMElement);
+begin
+  inherited LoadFromDOM(AParentNode);
 end;
 
 
 function FindDOMForClass( AClass: TP3DDataBlockType ): String;
 begin
   case AClass.ClassName of
-    'TP3DMaterialShader', 'TP3DMaterialBase': Result:= 'material';
+    'TP3DMaterial', 'TP3DMaterialShader', 'TP3DMaterialBase': Result:= 'material';
     'TP3DMesh': Result:= 'mesh';
     'TP3DLight': Result:= 'lamp';
     'TP3DCamera': Result:= 'camera';
     'TP3DActor': Result:= 'object';
     'TP3DScene': Result:= 'scene';
+    'TP3DTexture': Result:= 'texture';
+    'TP3DArmature': Result:= 'armature';
+    'TP3DArmatureAction': Result:= 'action';
+    'TP3DTileGrid': Result:= 'tilegrid';
   end;
 end;
 
@@ -229,6 +316,9 @@ begin
         Result:= TP3DMaterialShader
       else
         Result:= TP3DMaterialBase;
+    'materialshader': Result:= TP3DMaterialShader;
+    'materialbase': Result:= TP3DMaterialBase;
+    'tilegrid': Result:= TP3DTileGrid;
     'mesh': Result:= TP3DMesh;
     'light', 'lamp': Result:= TP3DLight;
     'camera': Result:= TP3DCamera;
@@ -236,7 +326,7 @@ begin
     'scene': Result:= TP3DScene;
     'armature': Result:= TP3DArmature;
     'texture': Result:= TP3DTexture;
-    'action': Result:= TP3DArmatureAction;
+    'action','armatureaction': Result:= TP3DArmatureAction;
   end;
 end;
 
@@ -246,6 +336,7 @@ begin
   S2:= Copy( S, Length( S1 ) + Length( Delim ) + 1, Length( S ));
 end;
 
+{
 function FindDOMByIdentifier( Identifier: String; RootNode: TDOMElement ): TDOMElement;
 var
   Node: TDOMNode;
@@ -279,7 +370,7 @@ begin
     Result:= FindDOMByIdentifier( RestStr, TDOMElement( Node ))
   else
     Result:= TDOMElement( Node );
-end;
+end;}
 
 
 { gP3DCustomDatablockList }
@@ -303,7 +394,7 @@ end;
 
 constructor gP3DCustomDatablockList.Create;
 begin
-  inherited;
+  inherited Create;
   FItems:= TList.Create;
 end;
 
@@ -322,6 +413,7 @@ begin
       Result:= FItems.Add( Item );
       if ( Assigned( OnChange )) then
         OnChange( Self, Item, actAdd );
+      DoUpdate;
     end;
 end;
 
@@ -330,6 +422,7 @@ begin
   FItems.Insert( Index, Item );
   if ( Assigned( OnChange )) then
     OnChange( Self, Item, actAdd );
+  DoUpdate;
 end;
 
 function gP3DCustomDatablockList.FindUniqueName(BaseStr: String): String;
@@ -369,11 +462,25 @@ begin
       end;}
 end;
 
+procedure gP3DCustomDatablockList.SaveToDOM( AParent: TDOMElement );
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].SaveToDOM( AParent );
+end;
+
+procedure gP3DCustomDatablockList.DoUpdate;
+begin
+  FLastUpdate:= SDL_GetTicks;
+end;
+
 procedure gP3DCustomDatablockList.Delete( Index: Integer );
 begin
   if ( Assigned( OnChange )) then
     OnChange( Self, Items[ Index ], actDelete );
   FItems.Delete( Index );
+  DoUpdate;
 end;
 
 procedure gP3DCustomDatablockList.Remove(Item: TCustomItem);
@@ -381,6 +488,7 @@ begin
   if ( Assigned( OnChange )) then
     OnChange( Self, Item, actDelete );
   FItems.Remove( Item );
+  DoUpdate;
 end;
 
 function gP3DCustomDatablockList.IndexOf( Item: TCustomItem ): Integer;
@@ -399,8 +507,8 @@ begin
       if ( FreeObjects ) then
         Items[ i ].Free;
     end;
-
   FItems.Clear;
+  DoUpdate;
 end;
 
 function gP3DCustomDatablockList.GetEnumerator(): TP3DCustomObjectListEnumerator;
@@ -432,6 +540,7 @@ begin
 
   if ( Assigned( OnChange )) then
     OnChange( Self, AValue, actAdd );
+  DoUpdate;
 end;
 
 function P3DBoundingBox(vMin, vMax, vCenter: TVec3): TP3DBoundingBox;
@@ -479,7 +588,12 @@ begin
     P3DDataBlockCache[ idx ].Name:= Name;
 end;
 
-constructor TP3DDataBlock.Create(const AData: TP3DData);
+function TP3DDataBlock.GetDOMPath: String;
+begin
+  Result:= '/' + Name;
+end;
+
+constructor TP3DDataBlock.Create(const AData: TP3DLibrary);
 begin
   if ( AData = nil ) then
     FOwner:= P3DData
@@ -487,17 +601,23 @@ begin
     FOwner:= AData;
   inherited Create( Owner.DataBlocks );
   //FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
-  DOMPath:= '';
+  //DOMPath:= '';
   BoundingBox:= P3DInvalidBoundingBox;
   FUsers:= TP3DDataBlockList.Create;
   P3DDataBlockCache.Add( Self );
 end;
 
-constructor TP3DDataBlock.CreateFromDOM(ADOMNode: TDOMElement;
-  const AData: TP3DData);
+constructor TP3DDataBlock.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);
+var
+  versionNd: TDOMElement;
 begin
   Create( AData );
-  LoadFromDOM( ADOMNode );
+
+  versionNd:= TDOMElement( ADOMNode.OwnerDocument.DocumentElement );
+  if (( Assigned( versionNd )) and ( versionNd.GetAttribute( 'version' ) >= '0.1' )) then
+    LoadFromDOMNew( ADOMNode )
+  else
+    LoadFromDOM( ADOMNode );
 end;
 
 destructor TP3DDataBlock.Destroy;
@@ -548,9 +668,10 @@ var
 begin
   //filename:= ADOMNode.OwnerDocument.DocumentElement.GetAttribute( 'filename' );
   Name:= ADOMNode.GetAttribute( 'name' );
-  {FileWatch.FileName:= filename + '?' + }DOMPath:= GetFullPath() + Name;
+  {FileWatch.FileName:= filename + '?' + }//DOMPath:= GetFullPath() + Name;
 //  WriteLn( FileWatch.FileName );
 end;
+
 
 procedure TP3DDataBlock.LoadFromFile(FileName: String);
 var
@@ -571,7 +692,7 @@ begin
         xml.DocumentElement.SetAttribute( 'filename', FName );
         SetCurrentDir( ExtractFilePath( FName ));
 
-        Root:= FindDOMByIdentifier( XMLPath, xml.DocumentElement );
+        Root:= P3DXMLFindPath( xml.DocumentElement, XMLPath );
         if ( not Assigned( Root )) then
           raise Exception.Create( Format( 'Cannot load datablock from file! The specified node "%s" was not found in the file "%s"!', [ XMLPath, FName ]));
         LoadFromDOM( Root );
@@ -640,6 +761,11 @@ begin
     if ( P3DData.IsValid( Users[ i ] )) then
       Users[ i ].RemoveFromFields( Self );
   Users.Clear;
+end;
+
+class function TP3DDataBlock.DOMNodeName: String;
+begin
+  Result:= 'datablock';
 end;
 
 procedure TP3DDataBlock.LoadFromBinary(FileName: String);

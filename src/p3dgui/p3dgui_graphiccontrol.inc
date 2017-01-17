@@ -30,6 +30,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FMarginBR: TVec2;
     FMarginTL: TVec2;
     FHideChildren: Boolean;
+    FPointerTag: Pointer;
 
     function GetLeftTop: TVec2;
     procedure SetMarginBR(AValue: TVec2);
@@ -100,8 +101,8 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property HideChildren: Boolean read FHideChildren write FHideChildren; //Do not children's render procedure
 
   public
-    constructor Create( const AData: TP3DData = nil; const AParent: TP3DGraphicControl = nil ); virtual;
-    constructor Create( const AData: TP3DData = nil ); override;
+    constructor Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl); virtual;
+    constructor Create( const AData: TP3DLibrary = nil ); override;
     procedure FastDestroy; override;
 
     procedure BeginDrag(); //Start drag and drop with control as drag source
@@ -136,6 +137,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property ParentCtrl: TP3DControlList read FOwnerCtrlBuf write FOwnerCtrlBuf;
     property Scroll: TVec2 read GetScroll write SetScroll;
     property LeftTop: TVec2 read GetLeftTop write SetLeftTop;
+    property PointerTag: Pointer read FPointerTag write FPointerTag;
 
   published
     property Align: TP3DControlAlign read FAlign write SetAlign;
@@ -175,7 +177,7 @@ end;
 
 { TP3DGraphicControl }
 
-constructor TP3DGraphicControl.Create(const AData: TP3DData;
+constructor TP3DGraphicControl.Create(const AData: TP3DLibrary;
   const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData );
@@ -207,7 +209,7 @@ begin
 
 end;
 
-constructor TP3DGraphicControl.Create(const AData: TP3DData);
+constructor TP3DGraphicControl.Create(const AData: TP3DLibrary);
 begin
   Create( AData, nil );
 end;
@@ -298,9 +300,12 @@ begin
   if (( X >= 0 ) and ( Y >= 0 ) and ( X <= Canvas.Width ) and ( Y <= Canvas.Height )) then
     if ( Assigned( FOnMouseClick )) then
       FOnMouseClick( Self, mb1, mb2, mb3, X, Y );
+  if ( not Assigned( Self )) then
+    exit;
   if ( FLastClick >= SDL_GetTicks ) then
     MouseDblClick( mb1, mb2, mb3, X, Y );
-  FLastClick:= SDL_GetTicks + 500;
+  if ( Assigned( Self )) then
+    FLastClick:= SDL_GetTicks + 500;
 end;
 
 procedure TP3DGraphicControl.MouseDblClick( mb1, mb2, mb3: Boolean; X,

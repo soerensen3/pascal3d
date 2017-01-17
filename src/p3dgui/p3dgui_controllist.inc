@@ -113,43 +113,6 @@ begin
   for Control in Self do
     if ( P3DData.IsValid( Control ) and ( Control.Visible ) and ( Control.Align <> alClient )) then
       begin
-{        case Control.Align of //TODO: Fix Bug that Controls positioned at the ClientRect should have a zero position value not the R.TopLeft
-          alClient: continue;
-          alLeft:
-            begin
-              Control.FLeft:= R.Left;
-              Control.FHeight:= R.Height;
-              R.Left:= R.Left + Control.Width;
-              R.Width:= R.Width - Control.Width;
-            end;
-          alRight:
-            begin
-              Control.FLeft:= R.Left + R.Width - Control.Width;
-              Control.FTop:= R.Top;
-              Control.FHeight:= R.Height;
-              R.Right:= R.Right - Control.Width;
-            end;
-          alTop:
-            begin
-              Control.FTop:= R.Top;
-              Control.FLeft:= R.Left;
-              Control.FWidth:= R.Width;
-              R.Top:= R.Top + Control.Height;
-              R.Height:= R.Height - Control.Height;
-            end;
-          alBottom:
-            begin
-              Control.FLeft:= R.Left;
-              Control.FWidth:= R.Width;
-              Control.FTop:= R.Bottom - Control.Height;
-              R.Height:= R.Height - Control.Height;
-            end;
-          //UpdateControlAndBoundary( R.Left, Control.FLeft, Control.FHeight, R.Bottom - R.Top, Control.Width );
-          //alRight: UpdateControlAndBoundary( R.FRight, Control.FLeft, Control.FHeight, R.Bottom - R.Top, -Control.Width );
-          //alTop: UpdateControlAndBoundary( R.Top, Control.FTop, Control.FWidth, R.Right - R.Left, Control.Height );
-          //alBottom: UpdateControlAndBoundary( R.Bottom, Control.FTop, Control.FWidth, R.Right - R.Left, -Control.Height );
-        end;}
-        //WriteLn( Control.Name );
         Control.Realign( R );
         Control.Controls.Realign;
       end;
@@ -157,7 +120,6 @@ begin
   for Control in Self do
     if (( Control.Visible ) and ( Control.Align = alClient )) then
       begin
-        //WriteLn( Control.Name );
         Control.Realign( R );
         Control.Controls.Realign;
       end
@@ -308,19 +270,19 @@ begin
         if ( Buttons[ i ]) then //pushed
           begin
             LastMouseDownCtrl[ i ]:= LastMouseOverCtrl;
-            if ( Assigned( LastMouseDownCtrl[ i ])) then
+            if ( Assigned( LastMouseDownCtrl[ i ]) and P3DData.IsValid( LastMouseDownCtrl[ i ])) then
               LastMouseDownCtrl[ i ].InputState:= LastMouseDownCtrl[ i ].InputState + BtnInpState( i );
             P3DGUIManager.FocusedControl:= LastMouseOverCtrl;
           end
         else                    //released
           begin
-            if ( Assigned( LastMouseDownCtrl[ i ])) then
+            if ( Assigned( LastMouseDownCtrl[ i ]) and P3DData.IsValid( LastMouseDownCtrl[ i ])) then
               LastMouseDownCtrl[ i ].InputState:= LastMouseDownCtrl[ i ].InputState - BtnInpState( i );
             // Drag and Drop release
             if (( DragDropSrc <> nil )) then
               begin
                 Accept:= False;
-                if ( Assigned( LastMouseOverCtrl )) then
+                if ( Assigned( LastMouseOverCtrl ) and P3DData.IsValid( LastMouseOverCtrl )) then
                   LastMouseOverCtrl.DragDrop( LastMouseOverCtrl, DragDropSrc, X, Y, Accept );
                 if ( not Accept ) then
                   DragDropSrc.DragCancel( DragDropSrc, X, Y );
@@ -330,13 +292,14 @@ begin
           end;
 
   for Control in Self do
-    begin
-      //Handle Mouse
+    if ( Control.Enabled and Control.Visible ) then
+      begin
+        //Handle Mouse
 
-      with P3DInput.Mouse do
-        Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
-      Control.KeyboardAction();
-    end;
+        with P3DInput.Mouse do
+          Control.MouseAction( mx, my, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
+        Control.KeyboardAction();
+      end;
 end;
 
 function TP3DControlList.MouseRay( X, Y: Integer; const Recurse: Boolean ): TP3DGraphicControl;
@@ -351,7 +314,7 @@ var
 begin
   Result:= nil;
   for i:= Count - 1 downto 0 do // The Control on top of the stack is rendered last so this will be the control on top
-    if ( Items[ i ].Visible and InControlRect( Items[ i ])) then
+    if ( Items[ i ].Visible and Items[ i ].Enabled and InControlRect( Items[ i ])) then
       begin
         if ( Recurse ) then
           Result:= Items[ i ].Controls.MouseRay( X, Y, Recurse );

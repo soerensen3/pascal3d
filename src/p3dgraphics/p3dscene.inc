@@ -57,6 +57,13 @@ type
 
   TP3DRenderListModifierList = specialize gP3DCustomObjectList < TP3DRenderListModifier >;
 
+  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors );
+  TP3DRenderListFlags = set of TP3DRenderListFlag;
+
+const
+  P3DRenderListFlagsDefault = [ rlfMaterials ];
+
+type
   TP3DRenderList = class ( TP3DCustomRenderList )
     private
       FLights: TP3DLightList;
@@ -73,7 +80,7 @@ type
       function Add( AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene ): Integer;
       function PickFromCamera( X, Y: Integer; Camera: TP3DActor ): TP3DActor;
       function Find( AData: TP3DDataBlock; Material: TP3DMaterial ): Integer;
-      procedure Render( Camera: TP3DActor );
+      procedure Render( Camera: TP3DActor; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure Sort( Func: TP3DRenderListScoreFunc; lo, hi: Integer );
       procedure Optimize;
 
@@ -104,9 +111,12 @@ type
       property Lights: TP3DLightList read FLights write FLights;
 
     public
-      constructor Create( const AData: TP3DData = nil ); override;
-      constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DLibrary = nil ); override;
+      constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DLibrary = nil );
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
+      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
+      function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
+      class function DOMNodeName: String; override;
       procedure FastDestroy; override;
 
       procedure ClearFields; override;
@@ -122,7 +132,7 @@ type
       procedure RenderFromCamera( ACam: TP3DActor );
       procedure RenderFromCamera( ACam: TP3DActor; world: TMat4 );
       procedure AppendFile( AFileName: String );
-      procedure AppendFromData( AData: TP3DData );
+      procedure AppendFromData(AData: TP3DLibrary);
       procedure PassToShader; virtual;
       procedure RemoveFromFields( Block: TP3DDataBlock ); override;
       //function Pick( X,Y: Integer; const ARootScene: TP3DScene=nil ): TP3DActor;
@@ -133,6 +143,8 @@ type
       property OnRenderCallback: TP3DSceneRenderCallback read FOnRenderCallback write FOnRenderCallback;
   end;
   TP3DSceneList = specialize gP3DCustomDatablockList < TP3DScene >;
+  TP3DPropertyAccessScene = specialize gP3DPropertyAccessDataBlock < TP3DScene >;
+  TP3DPropertyAccessSceneList = specialize gP3DListPropertyAccess < TP3DSceneList, TP3DScene >;
 
 {$ENDIF}
 
@@ -267,7 +279,7 @@ begin
       end;
 end;
 
-procedure TP3DRenderList.Render( Camera: TP3DActor );
+procedure TP3DRenderList.Render(Camera: TP3DActor; const AFlags: TP3DRenderListFlags);
 
   function Mat4ListToTexture( m: TMat4List ): TP3DTexture;
     function nextPowerOfTwo( Value: Integer ): Integer;
@@ -308,11 +320,17 @@ var
   i, j: Integer;
   idx: LongInt;
   decl: TP3DShaderDecl;
+  //iv: array [0..3] of byte absolute i;
+  Diff: TVec3;
 begin
   if ( not ( Camera.Data is TP3DCamera )) then
     exit;
   cam:= TP3DCamera( Camera.Data );
-  mat:= nil;
+  mat:= P3DMaterialActive;
+  mat.PassToShader();
+  cam.PassToShader();
+  Lights.PassToActiveShader( cam.View, [ liLightParams, liPosition ]);
+
   Optimize;
   glEnable( GL_DEPTH_TEST );
   glDepthMask( True );
@@ -321,62 +339,75 @@ begin
       begin
         if ( i = FTransparencyStart ) then
           glDepthMask( False );
-        if ( mat <> Items[ i ].Material ) then
+        if (( rlfMaterials in AFlags ) and ( mat <> Items[ i ].Material )) then
           begin
             mat:= Items[ i ].Material;
             mat.PassToShader();
             cam.PassToShader();
             Lights.PassToActiveShader( cam.View, [ liLightParams, liPosition ]);
           end;
+        if ( rlfIndexColors in AFlags ) then
+          begin
+            //Diff:= vec3( iv[ 0 ], iv[ 1 ], iv[ 2 ]) / 255;
+            glVertexAttrib4f( P3DAttribColor,
+              Diff.R, Diff.G, Diff.B, 1.0 ); cle( nil );
+          end;
+
+
         with( TP3DMesh( Items[ i ].Data )) do
           begin
-            idx:= MaterialGroups.Find( mat );
+            if ( rlfMaterials in AFlags ) then
+              idx:= MaterialGroups.Find( mat )
+            else
+              idx:= MaterialGroups.Find( Items[ i ].Material );//-1;
 
-            if ( Items[ i ].Material.Shader.Uniforms.FindByName( 'instanceGridWidth', decl )) then
+            if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWidth', decl )) then
               decl.AsInt:= 1;
 
-            if ( Items[ i ].Material.Shader.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
+            if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
               decl.AsFloat:= 1.0;
 
             for j:= 0 to high( Items[ i ].Modifiers ) do
               Items[ i ].Modifiers[ j ].PassToShader( Items[ i ]);
 
-            if ( Items[ i ].Material.Shader.Uniforms.FindByName( 'world', decl )) then
+            if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'world', decl )) then
               decl.AsMat4:= Mat4Identity;
 
-            if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instanceID', decl )) then
+            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
               begin
-                Items[ i ].Material.Shader.DumpAttributes;
+//                P3DMaterialActive.Shader.DumpAttributes;
                 glVertexAttrib1f( decl.Addr, 0.0 );
-                glDisableVertexAttribArray( decl.Addr ); //Disable by default
-                Items[ i ].Material.Shader.DumpAttributes;
+//                glDisableVertexAttribArray( decl.Addr ); //Disable by default
+//                Items[ i ].Material.Shader.DumpAttributes;
               end;
 
-            if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instance_position', decl )) then
+            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_position', decl )) then
               begin
                 Items[ i ].Positions.PushData();
                 Items[ i ].Positions.Divisor:= Items[ i ].InstanceCount div Items[ i ].Positions.Count;
                 Items[ i ].Positions.SetAttribArray( decl.Addr );
+                //WriteLn( 'Positions divisor:', Items[ i ].Positions.Divisor );
                 //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Positions.Count ); cle( Self );
               end;
 
-            if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instance_rotation', decl )) then
+            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_rotation', decl )) then
               begin
                 Items[ i ].Rotations.PushData();
                 Items[ i ].Rotations.Divisor:= Items[ i ].InstanceCount div Items[ i ].Rotations.Count;
                 Items[ i ].Rotations.SetAttribArray( decl.Addr );
+                //WriteLn( 'Rotations divisor:', Items[ i ].Rotations.Divisor );
                 //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Rotations.Count ); cle( Self );
               end;
 
-            if ( Items[ i ].Material.Shader.Attributes.FindByName( 'instance_scaling', decl )) then
+            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_scaling', decl )) then
               begin
                 Items[ i ].Scalings.PushData();
                 Items[ i ].Scalings.Divisor:= Items[ i ].InstanceCount div Items[ i ].Scalings.Count;
                 Items[ i ].Scalings.SetAttribArray( decl.Addr );
+                //WriteLn( 'Scalings divisor:', Items[ i ].Scalings.Divisor );
                 //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Scalings.Count ); cle( Self );
               end;
-            if ( idx > -1 ) then
-              RenderMaterialGroupInstanced( Items[ i ].InstanceCount, idx );
+            RenderMaterialGroupInstanced( Items[ i ].InstanceCount, idx );
           end;
       end;
   glDepthMask( True );
@@ -467,25 +498,27 @@ begin
     begin
       Item.AddUser( Self );
       Item.FScene:= Self;
+      Item.FParent:= Self;
     end
   else
     begin
       Item.RemoveUser( Self );
       Item.FScene:= nil;
+      Item.FParent:= nil;
     end;
 end;
 
-constructor TP3DScene.Create( const AData: TP3DData );
+constructor TP3DScene.Create( const AData: TP3DLibrary );
 begin
   inherited Create( AData );
   FObjects:= TP3DActorList.Create( Self );
   FObjects.OnChange:= @OnObjChange;
   Lights:= TP3DLightList.Create;
   Owner.Scenes.Add( Self );
+  Properties.Add( TP3DPropertyAccessActor.CreateFieldSet( 'Cam', @FCam, @SetCam, smAttribute ));
 end;
 
-constructor TP3DScene.Create( AFileName: String;
-  const AWatchFileForChanges: Boolean; const AData: TP3DData );
+constructor TP3DScene.Create(AFileName: String; const AWatchFileForChanges: Boolean; const AData: TP3DLibrary);
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
@@ -498,6 +531,7 @@ var
   Element: TDOMElement;
   Child: TP3DActor;
   CamName: DOMString;
+  n: Integer;
 begin
   inherited LoadFromDOM( ADOMNode );
   Name:= ADOMNode.GetAttribute( 'name' );
@@ -514,7 +548,40 @@ begin
     end;
   CamName:= ADOMNode.GetAttribute( 'camera' );
   if ( CamName > '' ) then
-    Cam:= Objects[ Objects.FindByName( CamName )];
+    begin
+      n:= Owner.AppendFromPath( CamName, TP3DActor );
+      Cam:= TP3DActor( Owner.DataBlocks[ n ]);
+    end;
+end;
+
+procedure TP3DScene.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  Element: TDOMElement;
+  Child: TP3DActor;
+begin
+  Element:= TDOMElement( ADOMNode.FirstChild );
+  while ( Assigned( Element )) do
+    begin
+      case Element.NodeName of
+        'object': begin Child:= TP3DActor.CreateFromDOM( Element, Owner ); Objects.Add( Child ); end;
+      else
+        raise Exception.Create( 'Unknown tag inside scene element: '+ Element.NodeName );
+      end;
+      Element:= TDOMElement( Element.NextSibling );
+    end;
+
+  inherited LoadFromDOMNew(ADOMNode);
+end;
+
+function TP3DScene.SaveToDOM(AParent: TDOMElement): TDOMElement;
+begin
+  Result:= inherited SaveToDOM( AParent );
+  Objects.SaveToDOM( Result );
+end;
+
+class function TP3DScene.DOMNodeName: String;
+begin
+  Result:= 'scene';
 end;
 
 {
@@ -638,21 +705,20 @@ procedure TP3DScene.AppendFile( AFileName: String );
 var
   n: Integer;
 begin
-  n:= OpenLibrary( AFileName );
+  n:= P3DData.OpenLibrary( AFileName );
   AppendFromData( P3DData.Libraries[ n ]);
 end;
 
-procedure TP3DScene.AppendFromData( AData: TP3DData );
+procedure TP3DScene.AppendFromData( AData: TP3DLibrary );
 var
   Scene: TP3DScene;
   Obj: TP3DActor;
 begin
   for Scene in AData.Scenes do
     begin
-      Obj:= TP3DActor.Create();
+      Obj:= TP3DActor.Create( AData );
       Obj.Data:= Scene;
       Objects.Add( Obj );
-      //Obj.Users.Add( Self );
     end;
 end;
 

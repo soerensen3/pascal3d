@@ -35,11 +35,18 @@
     diffuse = "1.000000, 1.000000, 1.000000"
     specular = "50.000000, 0.500000, 0.500000, 0.500000"
     unlit = "yes">
-    <texture
-      diffuse = "1.0"
+    <map
+      mode = "mix"
       name = "martian_sunset"
-      file = "martian_sunset.png"
-      mode = "mix">
-    </texture>
+      data = "tex_martian_sunset"
+      diffuse = "1.0">
+    </map>    
   </material>
+  <texture
+    diffuse = "1.0"
+    name = "tex_martian_sunset"
+    file = "martian_sunset.png"
+    mode = "mix">
+  </texture>
+  
 </p3dfile>

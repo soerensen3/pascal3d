@@ -9,12 +9,14 @@ type
 
   TP3DFileWatch = class;
 
-  TP3DFileWatchChange = procedure ( Sender: TP3DFileWatch; out DoReload: Boolean ) of object;
+  TP3DFileWatchOnFileChanged = procedure ( Sender: TP3DFileWatch; out DoReload: Boolean ) of object;
+  TP3DFileWatchOnFileNameChanged = procedure ( Sender: TP3DFileWatch; ANewValue: String ) of object;
   TP3DFileWatch = class ( TPersistent )
     private
       FLastFileAge: LongInt;
       FFileName: String;
-      FOnFileChange: TP3DFileWatchChange;
+      FOnFileChange: TP3DFileWatchOnFileChanged;
+      FOnFileNameChange: TP3DFileWatchOnFileNameChanged;
       FUserPointer: Pointer;
 
       function GetFileAge: LongInt;
@@ -32,7 +34,8 @@ type
     published
       property FileName: String read FFileName write SetFileName;
       property LastFileAge: LongInt read FLastFileAge;
-      property OnFileChange: TP3DFileWatchChange read FOnFileChange write FOnFileChange;
+      property OnFileChange: TP3DFileWatchOnFileChanged read FOnFileChange write FOnFileChange;
+      property OnFileNameChange: TP3DFileWatchOnFileNameChanged read FOnFileNameChange write FOnFileNameChange;
   end;
 
   TP3DFileWatchList = class( specialize gP3DCustomObjectList < TP3DFileWatch > )
@@ -135,11 +138,16 @@ begin
 end;
 
 procedure TP3DFileWatch.SetFileName(AValue: String);
+var
+  FN: String;
 begin
   if ( FFileName = AValue ) then
     Exit;
 
-  FFileName:= AValue;
+  FN:= ExpandFileName( AValue );
+  if ( Assigned( OnFileNameChange )) then
+    OnFileNameChange( Self, FN );
+  FFileName:= FN;
   Reload;
 end;
 

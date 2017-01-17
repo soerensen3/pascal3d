@@ -109,10 +109,12 @@ type
       procedure Enable;
       procedure Disable;
 
-      constructor Create( const AData: TP3DData = nil ); override;
-      constructor CreateFromVertexAndFragmentShaderFile( fnvshader, fnfshader: String; const AData: TP3DData = nil );
-      constructor CreateFromVertexAndFragmentShader( AVShader, AFShader: String; const AData: TP3DData = nil );
+      constructor Create( const AData: TP3DLibrary = nil ); override;
+      constructor CreateFromVertexAndFragmentShaderFile( fnvshader, fnfshader: String; const AData: TP3DLibrary = nil );
+      constructor CreateFromVertexAndFragmentShader( AVShader, AFShader: String; const AData: TP3DLibrary = nil );
       procedure FastDestroy; override;
+
+      class function DOMNodeName: String; override;
 
       procedure UpdateUniforms();
       procedure BindAttribLocations();
@@ -589,6 +591,7 @@ var
   slen: PGLsizei;
 begin
   glGetProgramiv( glProgram, GL_INFO_LOG_LENGTH, @blen ); cle( nil );
+  slen:= Nil;
   if ( blen > 1 ) then
     begin
       GetMem( InfoLog, blen * SizeOf( GLCharARB ));
@@ -989,7 +992,7 @@ begin
   glUseProgram( 0 );
 end;
 
-constructor TP3DShader.Create( const AData: TP3DData );
+constructor TP3DShader.Create(const AData: TP3DLibrary);
 begin
   inherited Create( AData );
   ProgramObj:= -1;
@@ -998,8 +1001,7 @@ begin
   Owner.Shaders.Add( Self );
 end;
 
-constructor TP3DShader.CreateFromVertexAndFragmentShaderFile(fnvshader,
-  fnfshader: String; const AData: TP3DData);
+constructor TP3DShader.CreateFromVertexAndFragmentShaderFile(fnvshader, fnfshader: String; const AData: TP3DLibrary);
 var
   path: String;
 begin
@@ -1011,8 +1013,7 @@ begin
   FFShaderWatch:= TP3DFileWatch.Create( fnfshader );
 end;
 
-constructor TP3DShader.CreateFromVertexAndFragmentShader(AVShader,
-  AFShader: String; const AData: TP3DData);
+constructor TP3DShader.CreateFromVertexAndFragmentShader(AVShader, AFShader: String; const AData: TP3DLibrary);
 var
   len: Integer;
 
@@ -1066,6 +1067,11 @@ begin
   FUniforms.Clear( True );
   FUniforms.Free;
   inherited FastDestroy;
+end;
+
+class function TP3DShader.DOMNodeName: String;
+begin
+  Result:= 'shader';
 end;
 
 procedure TP3DShader.UpdateUniforms;
