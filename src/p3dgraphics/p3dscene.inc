@@ -57,15 +57,9 @@ type
 
   TP3DRenderListModifierList = specialize gP3DCustomObjectList < TP3DRenderListModifier >;
 
-  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors );
-  TP3DRenderListFlags = set of TP3DRenderListFlag;
-
-const
-  P3DRenderListFlagsDefault = [ rlfMaterials ];
-
-type
   TP3DRenderList = class ( TP3DCustomRenderList )
     private
+      FLastUpdate: Integer;
       FLights: TP3DLightList;
       FModifierStack: TP3DRenderListModifierList;
       FTransparencyStart: Integer;
@@ -77,14 +71,17 @@ type
       constructor Create;
       destructor Destroy; override;
 
-      function Add( AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene ): Integer;
+      function Add( AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault ): Integer; reintroduce;
       function PickFromCamera( X, Y: Integer; Camera: TP3DActor ): TP3DActor;
       function Find( AData: TP3DDataBlock; Material: TP3DMaterial ): Integer;
       procedure Render( Camera: TP3DActor; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
+      procedure SetupMaterial( Material: TP3DMaterial; Camera: TP3DActor; const Fast: Boolean = False; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
+      procedure RenderMesh( Idx: Integer; Camera: TP3DActor; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure Sort( Func: TP3DRenderListScoreFunc; lo, hi: Integer );
       procedure Optimize;
 
       property Lights: TP3DLightList read FLights write FLights;
+      property LastUpdate: Integer read FLastUpdate;
   end;
 
   { TP3DScene }
@@ -128,7 +125,7 @@ type
 
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor); override;
       procedure Render(const ARootScene: TP3DScene=nil); reintroduce;
-      procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList );
+      procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure RenderFromCamera( ACam: TP3DActor );
       procedure RenderFromCamera( ACam: TP3DActor; world: TMat4 );
       procedure AppendFile( AFileName: String );
@@ -173,7 +170,7 @@ begin
   inherited Destroy;
 end;
 
-function TP3DRenderList.Add(AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene ): Integer;
+function TP3DRenderList.Add(AData: TP3DDataBlock; world: TMat4; AScene: TP3DScene; const AFlags: TP3DRenderListFlags): Integer;
   function MakeRenderObject( AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial ): Integer;
   var
     Obj: TP3DRenderObject;
@@ -182,10 +179,18 @@ function TP3DRenderList.Add(AData: TP3DDataBlock; world: TMat4; AScene: TP3DScen
     loc, scale: TVec3;
     rot: TMat3;
   begin
-    {Result:= Find( AData, AMaterial );
+    Result:= Find( AData, AMaterial );
     if ( Result > -1 ) then
-      Self[ Result ].Matrices.Add( world )
-    else}
+      begin
+        Obj:= Items[ Result ];
+        mat4decompose( AMatrix, loc, rot, scale );
+        q:= quat( rot );
+        Obj.Rotations.Add( q );
+        Obj.Positions.Add( loc );
+        Obj.Scalings.Add( scale );
+        Obj.InstanceCount:= Obj.InstanceCount + 1;
+      end
+    else
       begin
         Obj:= TP3DRenderObject.Create;
         Obj.Data:= AData;
@@ -221,13 +226,18 @@ begin
   if ( Assigned( AData )) then
     begin
       if ( AData is TP3DScene ) then
-        TP3DScene( AData ).MakeRenderList( AScene, world, Self )
+        TP3DScene( AData ).MakeRenderList( AScene, world, Self, AFlags )
       else if ( AData is TP3DMesh ) then
-        for i:= 0 to TP3DMesh( AData ).MaterialGroups.Count - 1 do
-          begin
-            mat:= TP3DMesh( AData ).MaterialGroups[ i ].Material;
-            Result:= MakeRenderObject( AData, world, mat );
-          end
+        begin
+          if ( rlfMaterials in AFlags ) then
+            for i:= 0 to TP3DMesh( AData ).MaterialGroups.Count - 1 do
+              begin
+                mat:= TP3DMesh( AData ).MaterialGroups[ i ].Material;
+                Result:= MakeRenderObject( AData, world, mat );
+              end
+          else
+            Result:= MakeRenderObject( AData, world, P3DMaterialActive );
+        end
       else if ( AData is TP3DTileGrid ) then
         with ( TP3DTileGrid( AData )) do
           for i:= 0 to Scenes.Count - 1 do
@@ -240,7 +250,7 @@ begin
                   Modifier:= Scenes[ i ].Modifier;
 
                   ModifierStack.Add( Modifier );
-                  Scenes[ i ].Scene.MakeRenderList( AScene.RootScene, world, Self );
+                  Scenes[ i ].Scene.MakeRenderList( AScene.RootScene, world, Self, AFlags );
                   ModifierStack.Remove( Modifier );
                 end;
             end
@@ -327,90 +337,126 @@ begin
     exit;
   cam:= TP3DCamera( Camera.Data );
   mat:= P3DMaterialActive;
-  mat.PassToShader();
-  cam.PassToShader();
-  Lights.PassToActiveShader( cam.View, [ liLightParams, liPosition ]);
+  SetupMaterial( mat, Camera, False, AFlags );
 
   Optimize;
-  glEnable( GL_DEPTH_TEST );
-  glDepthMask( True );
+  if ( rlfDepthTest in AFlags ) then
+    begin
+      glEnable( GL_DEPTH_TEST );
+      glDepthMask( True );
+    end
+  else
+    begin
+      glDisable( GL_DEPTH_TEST );
+      glDepthMask( False );
+    end;
+  if ( rlfWireFrame in AFlags ) then
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
   for i:= 0 to Count - 1 do
     if ( Items[ i ].Data is TP3DMesh ) then
-      begin
-        if ( i = FTransparencyStart ) then
-          glDepthMask( False );
-        if (( rlfMaterials in AFlags ) and ( mat <> Items[ i ].Material )) then
-          begin
-            mat:= Items[ i ].Material;
-            mat.PassToShader();
-            cam.PassToShader();
-            Lights.PassToActiveShader( cam.View, [ liLightParams, liPosition ]);
-          end;
-        if ( rlfIndexColors in AFlags ) then
-          begin
-            //Diff:= vec3( iv[ 0 ], iv[ 1 ], iv[ 2 ]) / 255;
-            glVertexAttrib4f( P3DAttribColor,
-              Diff.R, Diff.G, Diff.B, 1.0 ); cle( nil );
-          end;
+      RenderMesh( i, Camera, AFlags );
+  if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
+    begin
+      glVertexAttrib1f( decl.Addr, 0.0 );
+      glVertexAttribDivisorARB( decl.Addr, 0 ); cle( Self );
+    end;
 
+  if ( rlfWireFrame in AFlags ) then
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-        with( TP3DMesh( Items[ i ].Data )) do
-          begin
-            if ( rlfMaterials in AFlags ) then
-              idx:= MaterialGroups.Find( mat )
-            else
-              idx:= MaterialGroups.Find( Items[ i ].Material );//-1;
-
-            if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWidth', decl )) then
-              decl.AsInt:= 1;
-
-            if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
-              decl.AsFloat:= 1.0;
-
-            for j:= 0 to high( Items[ i ].Modifiers ) do
-              Items[ i ].Modifiers[ j ].PassToShader( Items[ i ]);
-
-            if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'world', decl )) then
-              decl.AsMat4:= Mat4Identity;
-
-            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
-              begin
-//                P3DMaterialActive.Shader.DumpAttributes;
-                glVertexAttrib1f( decl.Addr, 0.0 );
-//                glDisableVertexAttribArray( decl.Addr ); //Disable by default
-//                Items[ i ].Material.Shader.DumpAttributes;
-              end;
-
-            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_position', decl )) then
-              begin
-                Items[ i ].Positions.PushData();
-                Items[ i ].Positions.Divisor:= Items[ i ].InstanceCount div Items[ i ].Positions.Count;
-                Items[ i ].Positions.SetAttribArray( decl.Addr );
-                //WriteLn( 'Positions divisor:', Items[ i ].Positions.Divisor );
-                //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Positions.Count ); cle( Self );
-              end;
-
-            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_rotation', decl )) then
-              begin
-                Items[ i ].Rotations.PushData();
-                Items[ i ].Rotations.Divisor:= Items[ i ].InstanceCount div Items[ i ].Rotations.Count;
-                Items[ i ].Rotations.SetAttribArray( decl.Addr );
-                //WriteLn( 'Rotations divisor:', Items[ i ].Rotations.Divisor );
-                //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Rotations.Count ); cle( Self );
-              end;
-
-            if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_scaling', decl )) then
-              begin
-                Items[ i ].Scalings.PushData();
-                Items[ i ].Scalings.Divisor:= Items[ i ].InstanceCount div Items[ i ].Scalings.Count;
-                Items[ i ].Scalings.SetAttribArray( decl.Addr );
-                //WriteLn( 'Scalings divisor:', Items[ i ].Scalings.Divisor );
-                //glVertexAttribDivisorARB( decl.Addr, Items[ i ].InstanceCount div Items[ i ].Scalings.Count ); cle( Self );
-              end;
-            RenderMaterialGroupInstanced( Items[ i ].InstanceCount, idx );
-          end;
-      end;
   glDepthMask( True );
+  glEnable( GL_DEPTH_TEST );
+end;
+
+procedure TP3DRenderList.SetupMaterial( Material: TP3DMaterial; Camera: TP3DActor; const Fast: Boolean; const AFlags: TP3DRenderListFlags );
+begin
+  Material.PassToShader();
+  TP3DCamera( Camera.Data ).PassToShader();
+  if ( rlfLighting in AFlags ) then
+    Lights.PassToActiveShader( TP3DCamera( Camera.Data ).View, [ liLightParams, liPosition ]);
+end;
+
+procedure TP3DRenderList.RenderMesh(Idx: Integer; Camera: TP3DActor; const AFlags: TP3DRenderListFlags);
+var
+  n, j: Integer;
+  decl: TP3DShaderDecl;
+begin
+  if ( Items[ Idx ].Data is TP3DMesh ) then
+    begin
+      if ( Idx = FTransparencyStart ) then
+        glDepthMask( False );
+      if (( rlfMaterials in AFlags ) and ( P3DMaterialActive <> Items[ Idx ].Material )) then
+        SetupMaterial( Items[ Idx ].Material, Camera, False, AFlags );
+      if ( rlfIndexColors in AFlags ) then
+        begin
+          //Diff:= vec3( iv[ 0 ], iv[ 1 ], iv[ 2 ]) / 255;
+//          glVertexAttrib4f( P3DAttribColor,
+//            Diff.R, Diff.G, Diff.B, 1.0 ); cle( nil );
+        end;
+
+
+      with( TP3DMesh( Items[ Idx ].Data )) do
+        begin
+          if ( rlfMaterials in AFlags ) then
+            n:= MaterialGroups.Find( P3DMaterialActive )
+          else
+            n:= -1;
+
+          if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWidth', decl )) then
+            decl.AsInt:= 1;
+
+          if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
+            decl.AsFloat:= 1.0;
+
+          for j:= 0 to high( Items[ Idx ].Modifiers ) do
+            Items[ Idx ].Modifiers[ j ].PassToShader( Items[ Idx ]);
+
+          if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'world', decl )) then
+            decl.AsMat4:= Mat4Identity;
+
+          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
+            begin
+//                P3DMaterialActive.Shader.DumpAttributes;
+              glVertexAttrib1f( decl.Addr, 0.0 );
+              glVertexAttribDivisorARB( decl.Addr, Items[ Idx ].InstanceCount div Items[ Idx ].Positions.Count ); cle( Self );
+//                glDisableVertexAttribArray( decl.Addr ); //Disable by default
+//                Items[ Idx ].Material.Shader.DumpAttributes;
+            end;
+
+          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_position', decl )) then
+            begin
+              Items[ Idx ].Positions.PushData();
+              Items[ Idx ].Positions.Divisor:= Items[ Idx ].InstanceCount div Items[ Idx ].Positions.Count;
+              Items[ Idx ].Positions.SetAttribArray( decl.Addr );
+              //WriteLn( 'Positions divisor:', Items[ Idx ].Positions.Divisor );
+              //glVertexAttribDivisorARB( decl.Addr, Items[ Idx ].InstanceCount div Items[ Idx ].Positions.Count ); cle( Self );
+            end;
+
+          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_rotation', decl )) then
+            begin
+              Items[ Idx ].Rotations.PushData();
+              Items[ Idx ].Rotations.Divisor:= Items[ Idx ].InstanceCount div Items[ Idx ].Rotations.Count;
+              Items[ Idx ].Rotations.SetAttribArray( decl.Addr );
+              //WriteLn( 'Rotations divisor:', Items[ Idx ].Rotations.Divisor );
+              //glVertexAttribDivisorARB( decl.Addr, Items[ Idx ].InstanceCount div Items[ Idx ].Rotations.Count ); cle( Self );
+            end;
+
+          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_scaling', decl )) then
+            begin
+              Items[ Idx ].Scalings.PushData();
+              Items[ Idx ].Scalings.Divisor:= Items[ Idx ].InstanceCount div Items[ Idx ].Scalings.Count;
+              Items[ Idx ].Scalings.SetAttribArray( decl.Addr );
+              //WriteLn( 'Scalings divisor:', Items[ Idx ].Scalings.Divisor );
+              //glVertexAttribDivisorARB( decl.Addr, Items[ Idx ].InstanceCount div Items[ Idx ].Scalings.Count ); cle( Self );
+            end;
+          if ( rlfRenderEdges in AFlags ) then
+            RenderEdgesInstanced( Items[ Idx].InstanceCount )
+          else
+            RenderMaterialGroupInstanced( Items[ Idx ].InstanceCount, n );
+          //WriteLn( P3DMaterialActive.Shader.DumpAttributes );
+        end;
+    end;
 end;
 
 procedure TP3DRenderList.Sort(Func: TP3DRenderListScoreFunc; lo, hi: Integer);
@@ -678,14 +724,14 @@ begin
   Objects.Render( Mat4Identity, Self );
 end;
 
-procedure TP3DScene.MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList );
+procedure TP3DScene.MakeRenderList(ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; const AFlags: TP3DRenderListFlags);
 begin
   if ( not Assigned( ARenderList )) then
     ARenderList:= TP3DRenderList.Create;
   if ( not Assigned( ARootScene )) then
     ARootScene:= Self;
 
-  Objects.MakeRenderList( ARootScene, world, ARenderList );
+  Objects.MakeRenderList( ARootScene, world, ARenderList, AFlags );
 end;
 
 procedure TP3DScene.RenderFromCamera( ACam: TP3DActor );

@@ -156,7 +156,7 @@ begin
   LibraryButton.Left:= DataButton.Width;
   SceneButton:= CreateButton( P3DSymbolScene );
   SceneButton.Left:= DataButton.Width + LibraryButton.Width;
-  OnMouseClick:= @DataMouseClick;
+  Viewer.OnMouseClick:= @DataMouseClick;
   UpdateViewMode( SceneMain.ViewMode );
   UpdateButtons;
 end;

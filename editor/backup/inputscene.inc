@@ -30,7 +30,6 @@ var
 begin
   if ( Event.keysym.scancode = SDL_SCANCODE_F2 ) then
     begin
-      SetCurrentDir( P3DSearchPaths.Models[ 0 ]);
       {with ( P3DData ) do
         begin
           CreateDOMFile;
@@ -49,9 +48,10 @@ begin
       if ( Assigned( SceneMain.ActiveLibrary )) then
         with ( SceneMain.ActiveLibrary ) do
           begin
+            SetCurrentDir( P3DSearchPaths.BaseDir ); //SceneMain.ActiveLibrary.FileWatch.FileName );
             CreateDOMFile;
             SaveToDOM();
-            SaveDOMFile();
+            SaveDOMFile( SceneMain.ActiveLibrary.FileWatch.FileName );
             CloseDOMFile;
           end;
     end;

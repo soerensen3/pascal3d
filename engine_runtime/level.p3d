@@ -1,0 +1,1077 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Cam = ""
+     Name = "Scene">
+    <object
+       Data = "/mesh_Wall.001"
+       Name = "Cube.023"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, 7.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 1.00000000, 0.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall.001"
+       Name = "Cube.022"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, -9.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall.001"
+       Name = "Cube.021"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, -9.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.019"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "0.00000000, -9.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.018"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-4.00000000, -9.00000000, 1.97000003"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.017"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "4.00000000, -9.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.016"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "4.00000000, 7.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.015"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-4.00000000, 7.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.013"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, -1.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.012"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, 3.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.011"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, -5.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.010"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, -5.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.009"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, 3.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/lamp_Sun"
+       Name = "Sun"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "3.87200308, 8.49972343, 29.35461998"
+       Quaternion = "0.32569000, 0.32922500, 0.36342201, 0.80836898"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.007"
+       Name = "Cube.007"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "1.00000000, -4.00000000, 3.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.12163400, 0.99257499"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.006"
+       Name = "Cube.006"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "4.00000000, 4.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.005"
+       Name = "Cube.005"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "-2.00000000, 0.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.004"
+       Name = "Cube.004"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "4.00000000, -4.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.003"
+       Name = "Cube.003"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "2.00000000, -4.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.002"
+       Name = "Cube.002"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "0.00000000, -4.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.001"
+       Name = "Cube.001"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "-2.00000000, -4.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube"
+       Name = "Cube"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "-2.00000000, 4.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall"
+       Name = "Cube.008"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, -1.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Wall.001"
+       Name = "Cube.020"
+       Scale = "0.25000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, 7.00000000, 2.00000000"
+       Quaternion = "0.00000000, 0.00000000, -0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Cube.008"
+       Name = "Cube.014"
+       Scale = "1.00000000, 8.00000000, 1.00000000"
+       Visible = "1"
+       Position = "13.00000000, 0.00000000, 1.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+  </scene>
+  <mesh
+     Name = "mesh_Wall.001"
+     Edges = "level.mesh_Wall.001.p3dmesh:9320"
+     Faces = "level.mesh_Wall.001.p3dmesh:7696"
+     Indices = "level.mesh_Wall.001.p3dmesh:10604"
+     Normals = "level.mesh_Wall.001.p3dmesh:1924"
+     Tangents = "level.mesh_Wall.001.p3dmesh:3848"
+     Positions = "level.mesh_Wall.001.p3dmesh:0"
+     Cotangents = "level.mesh_Wall.001.p3dmesh:5772"
+     TexCoords0 = "level.mesh_Wall.001.p3dmesh:8036"
+     VertexGroups = "level.mesh_Wall.001.p3dmesh:11520"
+     VertexWeights = "level.mesh_Wall.001.p3dmesh:14084">
+    <!--summary for mesh mesh_Wall.001
+      Positions: 160
+      Normals: 160
+      Tangents: 160
+      Cotangents: 160
+      Faces: 42
+      TexCoords0: 160
+      Edges: 320
+      Indices: 228
+      VertexGroups: 640
+      VertexWeights: 160
+    -->
+    <materialgroup
+       IndexEnd = "227"
+       Material = "/material_Material.Wall"
+       IndexStart = "0" />
+  </mesh>
+  <materialbase
+     Diff = "0.63999999, 0.63999999, 0.63999999"
+     Name = "material_Material.Wall"
+     Spec = "0.50000000, 0.50000000, 0.50000000"
+     Alpha = "1"
+     Unlit = "0"
+     Instancing = "1"
+     Spec_Hardness = "50"
+     UseVertexColor = "0"
+     AlphaThreshhold = "0.9"
+     TransparencyMode = "p3dmtStep">
+    <map
+       Map = "/tex_Tex.001"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       DiffuseFactor = "1"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+  </materialbase>
+  <texture
+     File = "assets/TexturesCom_ConcreteNew0049_1_seamless_S.png"
+     Name = "tex_Tex.001"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <mesh
+     Name = "mesh_Wall"
+     Edges = "level.mesh_Wall.p3dmesh:5608"
+     Faces = "level.mesh_Wall.p3dmesh:4624"
+     Indices = "level.mesh_Wall.p3dmesh:6380"
+     Normals = "level.mesh_Wall.p3dmesh:1156"
+     Tangents = "level.mesh_Wall.p3dmesh:2312"
+     Positions = "level.mesh_Wall.p3dmesh:0"
+     Cotangents = "level.mesh_Wall.p3dmesh:3468"
+     TexCoords0 = "level.mesh_Wall.p3dmesh:4836"
+     VertexGroups = "level.mesh_Wall.p3dmesh:6912"
+     VertexWeights = "level.mesh_Wall.p3dmesh:8452">
+    <!--summary for mesh mesh_Wall
+      Positions: 96
+      Normals: 96
+      Tangents: 96
+      Cotangents: 96
+      Faces: 26
+      TexCoords0: 96
+      Edges: 192
+      Indices: 132
+      VertexGroups: 384
+      VertexWeights: 96
+    -->
+    <materialgroup
+       IndexEnd = "131"
+       Material = "/material_Material.Wall"
+       IndexStart = "0" />
+  </mesh>
+  <light
+     Name = "lamp_Sun"
+     Color = "1.00000000, 1.00000000, 1.00000000"
+     Energy = "1"
+     LightType = "p3dltSun"
+     LinearAttenuation = "0.1"
+     QuadraticAttenuation = "0" />
+  <mesh
+     Name = "mesh_Cube.007"
+     Edges = "level.mesh_Cube.007.p3dmesh:12552"
+     Faces = "level.mesh_Cube.007.p3dmesh:10384"
+     Indices = "level.mesh_Cube.007.p3dmesh:14284"
+     Normals = "level.mesh_Cube.007.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.007.p3dmesh:5192"
+     Positions = "level.mesh_Cube.007.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.007.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.007.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.007.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.007.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube.007
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <materialbase
+     Diff = "0.63999999, 0.63999999, 0.63999999"
+     Name = "material_Material"
+     Spec = "0.50000000, 0.50000000, 0.50000000"
+     Alpha = "1"
+     Unlit = "0"
+     Instancing = "1"
+     Spec_Hardness = "50"
+     UseVertexColor = "0"
+     AlphaThreshhold = "0.9"
+     TransparencyMode = "p3dmtStep">
+    <map
+       Map = "/tex_Tex"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       DiffuseFactor = "0"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+    <map
+       Map = "/tex_Texture"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       DiffuseFactor = "0"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+    <map
+       Map = "/tex_Texture.001"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       DiffuseFactor = "1"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+  </materialbase>
+  <texture
+     File = "assets/box_normal.png"
+     Name = "tex_Tex"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "assets/box_displ.png"
+     Name = "tex_Texture"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "assets/box_color.png"
+     Name = "tex_Texture.001"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <mesh
+     Name = "mesh_Cube.006"
+     Edges = "level.mesh_Cube.006.p3dmesh:12552"
+     Faces = "level.mesh_Cube.006.p3dmesh:10384"
+     Indices = "level.mesh_Cube.006.p3dmesh:14284"
+     Normals = "level.mesh_Cube.006.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.006.p3dmesh:5192"
+     Positions = "level.mesh_Cube.006.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.006.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.006.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.006.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.006.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube.006
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cube.005"
+     Edges = "level.mesh_Cube.005.p3dmesh:12552"
+     Faces = "level.mesh_Cube.005.p3dmesh:10384"
+     Indices = "level.mesh_Cube.005.p3dmesh:14284"
+     Normals = "level.mesh_Cube.005.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.005.p3dmesh:5192"
+     Positions = "level.mesh_Cube.005.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.005.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.005.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.005.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.005.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube.005
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cube.004"
+     Edges = "level.mesh_Cube.004.p3dmesh:12552"
+     Faces = "level.mesh_Cube.004.p3dmesh:10384"
+     Indices = "level.mesh_Cube.004.p3dmesh:14284"
+     Normals = "level.mesh_Cube.004.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.004.p3dmesh:5192"
+     Positions = "level.mesh_Cube.004.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.004.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.004.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.004.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.004.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube.004
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cube.003"
+     Edges = "level.mesh_Cube.003.p3dmesh:12552"
+     Faces = "level.mesh_Cube.003.p3dmesh:10384"
+     Indices = "level.mesh_Cube.003.p3dmesh:14284"
+     Normals = "level.mesh_Cube.003.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.003.p3dmesh:5192"
+     Positions = "level.mesh_Cube.003.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.003.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.003.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.003.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.003.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube.003
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cube.002"
+     Edges = "level.mesh_Cube.002.p3dmesh:12552"
+     Faces = "level.mesh_Cube.002.p3dmesh:10384"
+     Indices = "level.mesh_Cube.002.p3dmesh:14284"
+     Normals = "level.mesh_Cube.002.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.002.p3dmesh:5192"
+     Positions = "level.mesh_Cube.002.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.002.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.002.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.002.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.002.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube.002
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cube.001"
+     Edges = "level.mesh_Cube.001.p3dmesh:12552"
+     Faces = "level.mesh_Cube.001.p3dmesh:10384"
+     Indices = "level.mesh_Cube.001.p3dmesh:14284"
+     Normals = "level.mesh_Cube.001.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.001.p3dmesh:5192"
+     Positions = "level.mesh_Cube.001.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.001.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.001.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.001.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.001.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube.001
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cube"
+     Edges = "level.mesh_Cube.p3dmesh:12552"
+     Faces = "level.mesh_Cube.p3dmesh:10384"
+     Indices = "level.mesh_Cube.p3dmesh:14284"
+     Normals = "level.mesh_Cube.p3dmesh:2596"
+     Tangents = "level.mesh_Cube.p3dmesh:5192"
+     Positions = "level.mesh_Cube.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.p3dmesh:7788"
+     TexCoords0 = "level.mesh_Cube.p3dmesh:10820"
+     VertexGroups = "level.mesh_Cube.p3dmesh:15584"
+     VertexWeights = "level.mesh_Cube.p3dmesh:19044">
+    <!--summary for mesh mesh_Cube
+      Positions: 216
+      Normals: 216
+      Tangents: 216
+      Cotangents: 216
+      Faces: 54
+      TexCoords0: 216
+      Edges: 432
+      Indices: 324
+      VertexGroups: 864
+      VertexWeights: 216
+    -->
+    <materialgroup
+       IndexEnd = "323"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cube.008"
+     Edges = "level.mesh_Cube.008.p3dmesh:94028"
+     Faces = "level.mesh_Cube.008.p3dmesh:67696"
+     Indices = "level.mesh_Cube.008.p3dmesh:105312"
+     Normals = "level.mesh_Cube.008.p3dmesh:16924"
+     Tangents = "level.mesh_Cube.008.p3dmesh:33848"
+     Positions = "level.mesh_Cube.008.p3dmesh:0"
+     Cotangents = "level.mesh_Cube.008.p3dmesh:50772"
+     TexCoords0 = "level.mesh_Cube.008.p3dmesh:71460"
+     TexCoords1 = "level.mesh_Cube.008.p3dmesh:82744"
+     VertexGroups = "level.mesh_Cube.008.p3dmesh:110956"
+     VertexWeights = "level.mesh_Cube.008.p3dmesh:133520">
+    <!--summary for mesh mesh_Cube.008
+      Positions: 1410
+      Normals: 1410
+      Tangents: 1410
+      Cotangents: 1410
+      Faces: 470
+      TexCoords0: 1410
+      TexCoords1: 1410
+      Edges: 2820
+      Indices: 1410
+      VertexGroups: 5640
+      VertexWeights: 1410
+    -->
+    <materialgroup
+       IndexEnd = "1409"
+       Material = "/material_Material.006"
+       IndexStart = "0" />
+    <weightgroup
+       Name = "Group" />
+  </mesh>
+  <materialbase
+     Diff = "0.63999999, 0.63999999, 0.63999999"
+     Name = "material_Material.006"
+     Spec = "0.05639100, 0.05639100, 0.05639100"
+     Alpha = "1"
+     Unlit = "0"
+     Instancing = "1"
+     Spec_Hardness = "339"
+     UseVertexColor = "0"
+     AlphaThreshhold = "0.9"
+     TransparencyMode = "p3dmtStep">
+    <map
+       Map = "/tex_Texture.002"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       DiffuseFactor = "1"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+    <map
+       Map = "/tex_Texture.012"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       DiffuseFactor = "0"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+  </materialbase>
+  <texture
+     File = "assets/conveyour_color.png"
+     Name = "tex_Texture.002"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "assets/conveyour_n.png"
+     Name = "tex_Texture.012"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <scene
+     Cam = ""
+     Name = "ShadowScene">
+    <object
+       Data = "/mesh_Plane"
+       Name = "Shadow"
+       Scale = "2.53030896, 10.27780247, 1.00000000"
+       Visible = "1"
+       Position = "13.00000000, 0.00000000, 0.08380000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.004"
+       Name = "Shadow.003"
+       Scale = "10.29967403, 2.57491899, 2.57491899"
+       Visible = "1"
+       Position = "1.00000000, -4.00000000, 0.08380000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.003"
+       Name = "Shadow.002"
+       Scale = "2.57491899, 2.57491899, 2.57491899"
+       Visible = "1"
+       Position = "-2.00000000, 0.00000000, 0.08380000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.002"
+       Name = "Shadow.000"
+       Scale = "2.57491899, 2.57491899, 2.57491899"
+       Visible = "1"
+       Position = "4.00000000, 4.00000000, 0.08380000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.001"
+       Name = "Shadow.001"
+       Scale = "2.57491899, 2.57491899, 2.57491899"
+       Visible = "1"
+       Position = "-2.00000000, 4.00000000, 0.08380000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.016"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, -1.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.017"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, 3.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.018"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, -5.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.019"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, -5.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.020"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, 3.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.021"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, -1.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.023"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-4.00000000, 7.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.024"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "4.00000000, 7.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.025"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "4.00000000, -9.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.026"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-4.00000000, -9.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.006"
+       Name = "Shadow.027"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "0.00000000, -9.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.007"
+       Name = "Shadow.028"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, 7.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, -0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.007"
+       Name = "Shadow.029"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "-8.00000000, -9.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.007"
+       Name = "Shadow.030"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, -9.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 0.70710701, 0.70710701"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_Shadow.007"
+       Name = "Shadow.031"
+       Scale = "2.00000000, 2.00000000, 2.00000000"
+       Visible = "1"
+       Position = "8.00000000, 7.00000000, 0.09224100"
+       Quaternion = "0.00000000, 0.00000000, 1.00000000, 0.00000000"
+       RotationOrder = "roXYZ" />
+  </scene>
+  <mesh
+     Name = "mesh_Plane"
+     Edges = "level.mesh_Plane.p3dmesh:256"
+     Faces = "level.mesh_Plane.p3dmesh:208"
+     Indices = "level.mesh_Plane.p3dmesh:292"
+     Normals = "level.mesh_Plane.p3dmesh:52"
+     Tangents = "level.mesh_Plane.p3dmesh:104"
+     Positions = "level.mesh_Plane.p3dmesh:0"
+     Cotangents = "level.mesh_Plane.p3dmesh:156"
+     TexCoords0 = "level.mesh_Plane.p3dmesh:220"
+     VertexGroups = "level.mesh_Plane.p3dmesh:320"
+     VertexWeights = "level.mesh_Plane.p3dmesh:388">
+    <!--summary for mesh mesh_Plane
+      Positions: 4
+      Normals: 4
+      Tangents: 4
+      Cotangents: 4
+      Faces: 1
+      TexCoords0: 4
+      Edges: 8
+      Indices: 6
+      VertexGroups: 16
+      VertexWeights: 4
+    -->
+    <materialgroup
+       IndexEnd = "5"
+       Material = "/material_Material.005"
+       IndexStart = "0" />
+  </mesh>
+  <materialbase
+     Diff = "0.63999999, 0.63999999, 0.63999999"
+     Name = "material_Material.005"
+     Spec = "0.50000000, 0.50000000, 0.50000000"
+     Alpha = "1"
+     Unlit = "0"
+     Instancing = "1"
+     Spec_Hardness = "50"
+     UseVertexColor = "0"
+     AlphaThreshhold = "0.9"
+     TransparencyMode = "p3dmtStep">
+    <map
+       Map = "/tex_Texture.011"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "1"
+       DiffuseFactor = "1"
+       DisplaceFactor = "0"
+       SpecularFactor = "1" />
+  </materialbase>
+  <texture
+     File = "assets/floor_ambientocclusion.png"
+     Name = "tex_Texture.011"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <mesh
+     Name = "mesh_Shadow.004"
+     Edges = "level.mesh_Shadow.004.p3dmesh:256"
+     Faces = "level.mesh_Shadow.004.p3dmesh:208"
+     Indices = "level.mesh_Shadow.004.p3dmesh:292"
+     Normals = "level.mesh_Shadow.004.p3dmesh:52"
+     Tangents = "level.mesh_Shadow.004.p3dmesh:104"
+     Positions = "level.mesh_Shadow.004.p3dmesh:0"
+     Cotangents = "level.mesh_Shadow.004.p3dmesh:156"
+     TexCoords0 = "level.mesh_Shadow.004.p3dmesh:220"
+     VertexGroups = "level.mesh_Shadow.004.p3dmesh:320"
+     VertexWeights = "level.mesh_Shadow.004.p3dmesh:388">
+    <!--summary for mesh mesh_Shadow.004
+      Positions: 4
+      Normals: 4
+      Tangents: 4
+      Cotangents: 4
+      Faces: 1
+      TexCoords0: 4
+      Edges: 8
+      Indices: 6
+      VertexGroups: 16
+      VertexWeights: 4
+    -->
+    <materialgroup
+       IndexEnd = "5"
+       Material = "/material_Material Shadow"
+       IndexStart = "0" />
+  </mesh>
+  <materialbase
+     Diff = "0.00000000, 0.00000000, 0.00000000"
+     Name = "material_Material Shadow"
+     Spec = "0.50000000, 0.50000000, 0.50000000"
+     Alpha = "1"
+     Unlit = "1"
+     Instancing = "1"
+     Spec_Hardness = "50"
+     UseVertexColor = "0"
+     AlphaThreshhold = "0.9"
+     TransparencyMode = "p3dmtStep">
+    <map
+       Map = "/tex_Texture.004"
+       Mode = "p3dmmMix"
+       TexChannel = "0"
+       AlphaFactor = "1"
+       DiffuseFactor = "0"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+  </materialbase>
+  <texture
+     File = "assets/floor_ambient.png"
+     Name = "tex_Texture.004"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <mesh
+     Name = "mesh_Shadow.003"
+     Edges = "level.mesh_Shadow.003.p3dmesh:256"
+     Faces = "level.mesh_Shadow.003.p3dmesh:208"
+     Indices = "level.mesh_Shadow.003.p3dmesh:292"
+     Normals = "level.mesh_Shadow.003.p3dmesh:52"
+     Tangents = "level.mesh_Shadow.003.p3dmesh:104"
+     Positions = "level.mesh_Shadow.003.p3dmesh:0"
+     Cotangents = "level.mesh_Shadow.003.p3dmesh:156"
+     TexCoords0 = "level.mesh_Shadow.003.p3dmesh:220"
+     VertexGroups = "level.mesh_Shadow.003.p3dmesh:320"
+     VertexWeights = "level.mesh_Shadow.003.p3dmesh:388">
+    <!--summary for mesh mesh_Shadow.003
+      Positions: 4
+      Normals: 4
+      Tangents: 4
+      Cotangents: 4
+      Faces: 1
+      TexCoords0: 4
+      Edges: 8
+      Indices: 6
+      VertexGroups: 16
+      VertexWeights: 4
+    -->
+    <materialgroup
+       IndexEnd = "5"
+       Material = "/material_Material Shadow"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Shadow.002"
+     Edges = "level.mesh_Shadow.002.p3dmesh:256"
+     Faces = "level.mesh_Shadow.002.p3dmesh:208"
+     Indices = "level.mesh_Shadow.002.p3dmesh:292"
+     Normals = "level.mesh_Shadow.002.p3dmesh:52"
+     Tangents = "level.mesh_Shadow.002.p3dmesh:104"
+     Positions = "level.mesh_Shadow.002.p3dmesh:0"
+     Cotangents = "level.mesh_Shadow.002.p3dmesh:156"
+     TexCoords0 = "level.mesh_Shadow.002.p3dmesh:220"
+     VertexGroups = "level.mesh_Shadow.002.p3dmesh:320"
+     VertexWeights = "level.mesh_Shadow.002.p3dmesh:388">
+    <!--summary for mesh mesh_Shadow.002
+      Positions: 4
+      Normals: 4
+      Tangents: 4
+      Cotangents: 4
+      Faces: 1
+      TexCoords0: 4
+      Edges: 8
+      Indices: 6
+      VertexGroups: 16
+      VertexWeights: 4
+    -->
+    <materialgroup
+       IndexEnd = "5"
+       Material = "/material_Material Shadow"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Shadow.001"
+     Edges = "level.mesh_Shadow.001.p3dmesh:256"
+     Faces = "level.mesh_Shadow.001.p3dmesh:208"
+     Indices = "level.mesh_Shadow.001.p3dmesh:292"
+     Normals = "level.mesh_Shadow.001.p3dmesh:52"
+     Tangents = "level.mesh_Shadow.001.p3dmesh:104"
+     Positions = "level.mesh_Shadow.001.p3dmesh:0"
+     Cotangents = "level.mesh_Shadow.001.p3dmesh:156"
+     TexCoords0 = "level.mesh_Shadow.001.p3dmesh:220"
+     VertexGroups = "level.mesh_Shadow.001.p3dmesh:320"
+     VertexWeights = "level.mesh_Shadow.001.p3dmesh:388">
+    <!--summary for mesh mesh_Shadow.001
+      Positions: 4
+      Normals: 4
+      Tangents: 4
+      Cotangents: 4
+      Faces: 1
+      TexCoords0: 4
+      Edges: 8
+      Indices: 6
+      VertexGroups: 16
+      VertexWeights: 4
+    -->
+    <materialgroup
+       IndexEnd = "5"
+       Material = "/material_Material Shadow"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Shadow.006"
+     Edges = "level.mesh_Shadow.006.p3dmesh:256"
+     Faces = "level.mesh_Shadow.006.p3dmesh:208"
+     Indices = "level.mesh_Shadow.006.p3dmesh:292"
+     Normals = "level.mesh_Shadow.006.p3dmesh:52"
+     Tangents = "level.mesh_Shadow.006.p3dmesh:104"
+     Positions = "level.mesh_Shadow.006.p3dmesh:0"
+     Cotangents = "level.mesh_Shadow.006.p3dmesh:156"
+     TexCoords0 = "level.mesh_Shadow.006.p3dmesh:220"
+     VertexGroups = "level.mesh_Shadow.006.p3dmesh:320"
+     VertexWeights = "level.mesh_Shadow.006.p3dmesh:388">
+    <!--summary for mesh mesh_Shadow.006
+      Positions: 4
+      Normals: 4
+      Tangents: 4
+      Cotangents: 4
+      Faces: 1
+      TexCoords0: 4
+      Edges: 8
+      Indices: 6
+      VertexGroups: 16
+      VertexWeights: 4
+    -->
+    <materialgroup
+       IndexEnd = "5"
+       Material = "/material_Material Shadow"
+       IndexStart = "0" />
+  </mesh>
+  <mesh
+     Name = "mesh_Shadow.007"
+     Edges = "level.mesh_Shadow.007.p3dmesh:488"
+     Faces = "level.mesh_Shadow.007.p3dmesh:400"
+     Indices = "level.mesh_Shadow.007.p3dmesh:556"
+     Normals = "level.mesh_Shadow.007.p3dmesh:100"
+     Tangents = "level.mesh_Shadow.007.p3dmesh:200"
+     Positions = "level.mesh_Shadow.007.p3dmesh:0"
+     Cotangents = "level.mesh_Shadow.007.p3dmesh:300"
+     TexCoords0 = "level.mesh_Shadow.007.p3dmesh:420"
+     VertexGroups = "level.mesh_Shadow.007.p3dmesh:608"
+     VertexWeights = "level.mesh_Shadow.007.p3dmesh:740">
+    <!--summary for mesh mesh_Shadow.007
+      Positions: 8
+      Normals: 8
+      Tangents: 8
+      Cotangents: 8
+      Faces: 2
+      TexCoords0: 8
+      Edges: 16
+      Indices: 12
+      VertexGroups: 32
+      VertexWeights: 8
+    -->
+    <materialgroup
+       IndexEnd = "11"
+       Material = "/material_Material Shadow"
+       IndexStart = "0" />
+  </mesh>
+</p3dfile>

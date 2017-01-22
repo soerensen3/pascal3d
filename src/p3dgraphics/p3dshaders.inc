@@ -920,7 +920,7 @@ begin
         Addr:= glGetAttribLocation( ProgramObj, pname ); cle( Self );
 
         {$IFDEF VERBOSE}
-        WriteLn( 'attribute ', GLAttrTypeToStr( VarType ), ' ', Name, ' @', Addr );
+//        WriteLn( 'attribute ', GLAttrTypeToStr( VarType ), ' ', Name, ' @', Addr );
         {$ENDIF}
         msg+= LineEnding + '<span>attribute</span>' + GLAttrTypeToStr( VarType ) + ' ' + Name + ' @' + IntToStr( Addr );
       end;
@@ -939,7 +939,7 @@ begin
         Addr:= glGetUniformLocation( ProgramObj, pname ); cle( Self );
 
         {$IFDEF VERBOSE}
-        WriteLn( 'uniform ', GLAttrTypeToStr( VarType ), ' ', Name, ' @', Addr );
+//        WriteLn( 'uniform ', GLAttrTypeToStr( VarType ), ' ', Name, ' @', Addr );
         {$ENDIF}
         msg+=  LineEnding + '<span>uniform</span>' + GLAttrTypeToStr( VarType ) + ' ' + Name + ' @' + IntToStr( Addr );
       end;

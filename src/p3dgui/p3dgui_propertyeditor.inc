@@ -344,6 +344,11 @@ procedure gP3DPropertyEditorList.MouseDown( mb1, mb2, mb3: Boolean; X, Y: Intege
   end;}
 
 begin
+  Canvas.GetValidText( P3DSymbolPlus, FPlusSymbol, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
+  Canvas.GetValidText( P3DSymbolClose, FDeleteSymbol, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
+  Canvas.GetValidText( P3DSymbolClear, FClearSymbol, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
+
+
   {if ( FDrawInsertion > -1 ) then
     begin
       Prop.Value.Insert( GetIndex( FDrawInsertion ), nil );

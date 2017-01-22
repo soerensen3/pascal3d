@@ -9,6 +9,7 @@ type
 
   TP3DSceneViewer = class ( TP3DGroupBox )
     private
+      FOverrideMaterial: TP3DMaterial;
       FRenderFlags: TP3DRenderListFlags;
       FRenderList: TP3DRenderList;
       FAfterRender: TNotifyEvent;
@@ -44,6 +45,7 @@ type
       property Cam: TP3DCamera read FCam write FCam;
       property CamObject: TP3DActor read FCamObject write FCamObject;
       property RenderFlags: TP3DRenderListFlags read FRenderFlags write FRenderFlags;
+      property OverrideMaterial: TP3DMaterial read FOverrideMaterial write FOverrideMaterial;
   end;
 
 //  procedure InitTriangle;
@@ -150,7 +152,10 @@ begin
     begin
       if ( Assigned( FRenderList )) then
         FreeAndNil( FRenderList );
-      Scene.MakeRenderList( nil, Mat4Identity, FRenderList );
+      if ( rlfMaterials in RenderFlags ) then
+        if ( Assigned( OverrideMaterial )) then
+          OverrideMaterial.PassToShader();
+      Scene.MakeRenderList( nil, Mat4Identity, FRenderList, RenderFlags );
       RenderList.Optimize;
       if ( Assigned( BeforeRender )) then
         BeforeRender( Self );
@@ -159,11 +164,9 @@ begin
         begin
           UpdateCamPos;
           FCam.Aspect:= ClientRect.Width / ClientRect.Height;
-          //Scene.RenderFromCamera( FCamObject );
           RenderList.Render( FCamObject, RenderFlags );
         end
       else
-//        Scene.Render;
         RenderList.Render( Scene.Cam, RenderFlags );
       if ( Assigned( AfterRender )) then
         AfterRender( Self );

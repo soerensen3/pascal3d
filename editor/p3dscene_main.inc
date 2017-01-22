@@ -23,6 +23,8 @@ type
       function NewScene( const Name: String = 'NewScene%d' ): TP3DScene;
       procedure CheckLastChange;
       procedure Update;
+      function FindFirstLib: TP3DLibrary;
+      function FindFirstScene: TP3DScene;
 
     published
       property ActiveScene: TP3DScene read FActiveScene write SetActiveScene;
@@ -43,12 +45,12 @@ begin
   FActiveLibrary:=AValue;
 
   if ( Assigned( ActiveLibrary ) and ( ActiveLibrary.Scenes.Count > 0 )) then
-    ActiveScene:= ActiveLibrary.Scenes[ 0 ];
+    ActiveScene:= ActiveLibrary.Scenes[ 0 ]
+  else if ( Assigned( SceneView )) then
+    SceneView.ToolBar.UpdateButtonsFast;
 
   if ( Assigned( DataView )) then
     DataView.UpdateButtons;
-  if ( Assigned( SceneView )) then
-    SceneView.ToolBar.UpdateButtons( ViewMode );
 end;
 
 procedure TP3DSceneMain.SetActiveScene(AValue: TP3DScene);
@@ -61,8 +63,8 @@ begin
       SceneView.Scene:= SceneMain.ActiveScene;
       SceneMain.ActiveLibrary:= SceneMain.ActiveScene.Owner;
     end;
-  if (( SceneMain.ViewMode in [ dvmLibrary, dvmScene ]) and Assigned( SceneView )) then
-    SceneView.ToolBar.UpdateButtons( ViewMode );
+  if ( Assigned( SceneView )) then
+    SceneView.ToolBar.UpdateButtonsFast;
 end;
 
 procedure TP3DSceneMain.SetViewMode(AValue: TP3DDataViewerMode);
@@ -145,13 +147,54 @@ begin
   if ( FUpdating ) then
     exit;
   BeginUpdate;
+  if ( Assigned( ActiveLibrary ) and ( P3DData.Libraries.IndexOf( ActiveLibrary ) < 0 )) then
+    FActiveLibrary:= FindFirstLib;
+  if ( Assigned( ActiveScene ) and ( not P3DData.IsValid( ActiveScene ))) then
+    begin
+      FActiveScene:= FindFirstScene;
+      SceneView.Scene:= ActiveScene;
+    end;
   if ( Assigned( DataView )) then
-    DataView.UpdateViewMode( ViewMode );
+    begin
+      DataView.Viewer.Update;
+      DataView.Viewer.Children.ExpandAll();
+    end;
   if ( Assigned( SceneView )) then
     SceneView.ToolBar.UpdateButtons( ViewMode );
   FLastUpdate:= SDL_GetTicks;
   FNeedsUpdate:= False;
   EndUpdate;
+end;
+
+function TP3DSceneMain.FindFirstLib: TP3DLibrary;
+var
+  i: Integer;
+begin
+  Result:= P3DData;
+  i:= 0;
+  while ( i < P3DData.Libraries.Count ) do
+    if ( not P3DData.Libraries[ i ].IsDesignerPackage ) then
+      begin
+        Result:= P3DData.Libraries[ i ];
+        break;
+      end
+    else
+      Inc( i );
+end;
+
+function TP3DSceneMain.FindFirstScene: TP3DScene;
+var
+  Lib: TP3DLibrary;
+begin
+  if ( Assigned( ActiveLibrary )) then
+    Lib:= ActiveLibrary
+  else
+    Lib:= FindFirstLib;
+
+  if ( Lib.Scenes.Count > 0 ) then
+    Result:= Lib.Scenes[ 0 ]
+  else
+    Result:= nil;
 end;
 
 {$ENDIF}

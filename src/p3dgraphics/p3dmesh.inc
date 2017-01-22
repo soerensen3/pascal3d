@@ -173,6 +173,7 @@
         procedure RenderMaterialGroupInstanced( world: TMat4List; Idx: Integer );
         procedure RenderMaterialGroupInstanced( world: TP3DTexture; numInstance: Integer; Idx: Integer );
         procedure RenderMaterialGroupInstanced( numInstance: Integer; MatIdx: Integer );
+        procedure RenderEdgesInstanced( numInstance: Integer );
         procedure RenderEdges( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor );
         function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; override;
         procedure UnpackBuffers;
@@ -872,6 +873,53 @@ begin
     TexCoords[ i ].UnsetAttribArray();
 end;
 
+procedure TP3DMesh.RenderEdgesInstanced(numInstance: Integer);
+var
+  i: Integer;
+  decl: TP3DShaderDecl;
+  mat: TMat4;
+  Modifier: TP3DMeshModifier;
+begin
+  if ( Positions.Count > 0 ) then
+    Positions.SetAttribArray( P3DAttribPosition );
+  if ( Normals.Count > 0 ) then
+    Normals.SetAttribArray( P3DAttribNormal );
+  if ( Cotangents.Count > 0 ) then
+    Cotangents.SetAttribArray( P3DAttribCotangent );
+  if ( Tangents.Count > 0 ) then
+    Tangents.SetAttribArray( P3DAttribTangent );
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+//  VBArray.Bind;
+
+  decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
+  if ( Assigned( decl )) and ( VertexGroupsf.Count > 0 ) then
+    VertexGroupsf.SetAttribArray( decl.Addr );
+  decl:= P3DShaderActive.Attributes.Names[ 'jointWeight' ];
+  if ( Assigned( decl )) and ( VertexWeights.Count > 0 ) then
+    VertexWeights.SetAttribArray( decl.Addr );
+
+  mat:= Mat4Identity; //only a workaround
+  for Modifier in Modifiers do
+    Modifier.PassToShader( P3DMaterialActive, mat );
+
+  Edges.Bind( GL_ELEMENT_ARRAY_BUFFER );
+
+  glDrawElements( GL_LINES, Edges.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
+  //VBArray.Unbind;
+
+  if ( Positions.Count > 0 ) then
+    Positions.UnsetAttribArray();
+  if ( Normals.Count > 0 ) then
+    Normals.UnsetAttribArray();
+  if ( Cotangents.Count > 0 ) then
+    Cotangents.UnsetAttribArray();
+  if ( Tangents.Count > 0 ) then
+    Tangents.UnsetAttribArray();
+  for i:= 0 to High( TexCoords ) do
+    TexCoords[ i ].UnsetAttribArray();
+end;
+
 procedure TP3DMesh.RenderEdges(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DActor);
 var
@@ -1030,10 +1078,10 @@ begin
       MaterialGroups[ i ].FIndexStart:= Faces[ MaterialGroups[ i ].PolyStart ].X;
       MaterialGroups[ i ].FIndexEnd:= Faces[ MaterialGroups[ i ].PolyEnd ].X
                                     + Faces[ MaterialGroups[ i ].PolyEnd ].Y - 1;
-      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].PolyStart, ' (polystart) ',
-               MaterialGroups[ i ].PolyEnd, ' (polyend) Faces[ polystart ] = ' + Faces[ MaterialGroups[ i ].PolyStart ].ToString() + ' Faces[ polyend ] = ' + Faces[ MaterialGroups[ i ].PolyEnd ].ToString());
-      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].FIndexStart, ' (loopstart) ',
-               MaterialGroups[ i ].FIndexEnd, ' (loopend) ');
+//      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].PolyStart, ' (polystart) ',
+//               MaterialGroups[ i ].PolyEnd, ' (polyend) Faces[ polystart ] = ' + Faces[ MaterialGroups[ i ].PolyStart ].ToString() + ' Faces[ polyend ] = ' + Faces[ MaterialGroups[ i ].PolyEnd ].ToString());
+//      WriteLn( 'GRP: ', i, ' (idx) ', MaterialGroups[ i ].FIndexStart, ' (loopstart) ',
+//               MaterialGroups[ i ].FIndexEnd, ' (loopend) ');
     end;
 //  Write( 'Edges: [' );
 //  for i:= 0 to _Edges.Count - 1 do

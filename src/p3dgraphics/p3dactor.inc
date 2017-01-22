@@ -126,7 +126,8 @@ type
       constructor Create( AOwner: TPersistent );
       procedure Render( world: TMat4; Scene: TP3DScene );
       procedure RenderCallBackOnly( world: TMat4; Scene: TP3DScene );
-      procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList );
+      procedure MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList;
+                                const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       function OutputDebugInfo: String;
 
       function CalcBoundingBox(): TP3DBoundingBox;
@@ -508,7 +509,7 @@ begin
         TP3DActor( Items[ i ]).RenderCallbackOnly( world, Scene );
 end;
 
-procedure TP3DActorList.MakeRenderList( ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList );
+procedure TP3DActorList.MakeRenderList(ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; const AFlags: TP3DRenderListFlags);
 var
   Actor: TP3DActor;
   mat: TMat4;
@@ -519,8 +520,8 @@ begin
     begin
       mat:= world * Actor.Matrix;
       Actor.FMatrixFinal:= mat;
-      ARenderList.Add( Actor.Data, mat, ARootScene );
-      Actor.Children.MakeRenderList( ARootScene, mat, ARenderList );
+      ARenderList.Add( Actor.Data, mat, ARootScene, AFlags );
+      Actor.Children.MakeRenderList( ARootScene, mat, ARenderList, AFlags );
     end;
 end;
 
