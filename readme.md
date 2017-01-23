@@ -5,21 +5,21 @@
 # Features
 * Object oriented
 * Game data is organized in datablocks similar to blender
-  * Saving and loading
-  * Blender export script (Python)
-  * Garbage collector
-  * Scenes that can be rendered separately
-  * Instancing
-  * Properties will be saved automatically
+    * Saving and loading
+    * Blender export script (Python)
+    * Garbage collector
+    * Scenes that can be rendered separately
+    * Instancing
+    * Properties will be saved automatically
 * Materials
-  * Base Materials with Blinn/Phong Shading
-  * Custom Shader Materials with GLSL
-  * Node Based Materials using P3D Markdown with GLSL
+    * Base Materials with Blinn/Phong Shading
+    * Custom Shader Materials with GLSL
+    * Node Based Materials using P3D Markdown with GLSL
 * Graphical User Interface
-  * A GUI similar to Lazarus' LCL
+    * A GUI similar to Lazarus' LCL
 * Bitmap and Native fonts
-  * Signed distance field for Bitmap Fonts
-  * Fonts can be easily converted to Bitmap Fonts
+    * Signed distance field for Bitmap Fonts
+    * Fonts can be easily converted to Bitmap Fonts
 * Works with OpenGL 2.1+
 
 # Pascal3D License #
