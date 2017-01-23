@@ -15,6 +15,11 @@
   * Base Materials with Blinn/Phong Shading
   * Custom Shader Materials with GLSL
   * Node Based Materials using P3D Markdown with GLSL
+* Graphical User Interface
+  * A GUI similar to Lazarus' LCL
+* Bitmap and Native fonts
+  * Signed distance field for Bitmap Fonts
+  * Fonts can be easily converted to Bitmap Fonts
 * Works with OpenGL 2.1+
 
 # Pascal3D License #
@@ -62,7 +67,7 @@ Download the files from above and install the dmg files.
 
 ## Lazarus
 
-You can get lazarus from https://www.getlazarus.org/ or from the repositories of 
+You can get Lazarus from http://www.lazarus-ide.org/ or (Linux) from the repositories of your distro. This website offers a simplified installer suitable for all platforms: https://www.getlazarus.org/
 
 ## Pascal3DMath
 
@@ -82,11 +87,11 @@ You can clone the repository with the following git command:
 
 ## Register the packages
 Before you can compile any Pascal3D you have to first register the packages in Lazarus. You can do this by opening the packages in the IDE. You need to open the following packages:
-&lt;the math3d package&gt;
-./external/dglopengl/pl_opengl.lpk
-./external/libsdl2/libsdl2.lpk
-./src/pascal3d.lpk
-./src/p3dgui/pascal3d_gui.lpk
+* <the math3d package>
+* ./external/dglopengl/pl_opengl.lpk
+* ./external/libsdl2/libsdl2.lpk
+* ./src/pascal3d.lpk
+* ./src/p3dgui/pascal3d_gui.lpk
 
 ## Compiling
 The easiest way is to open the project in Lazarus and compile there. You can however also compile from commandline using lazbuild. You will find the project for the official p3dscene editor in ./editor/p3dscene.lpi
