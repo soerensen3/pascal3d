@@ -79,6 +79,7 @@ begin
   if ( not Assigned( P3DCanvasMaterialDefault )) then
     begin
       P3DCanvasMaterialDefault:= TP3DMaterialBase.Create();
+      P3DCanvasMaterialDefault.Name:= 'CanvasDefaultMat';
       P3DCanvasMaterialDefault.Unlit:= True;
       P3DCanvasMaterialDefault.UseVertexColor:= True;
     end;

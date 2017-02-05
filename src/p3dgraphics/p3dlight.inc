@@ -1,7 +1,7 @@
 {$IFDEF INTERFACE}
   { TP3DLight }
 
-  TP3DLightType = ( p3dltPoint = 0, p3dltSun = 1, p3dltSpot = 2 );
+  TP3DLightType = ( ltPoint = 0, ltSun = 1, ltSpot = 2 );
   TP3DLight = class ( TP3DDataBlock )
     private
       FColor: TVec3;
@@ -19,6 +19,7 @@
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DActor ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
+      procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); override;
 
       property Color: TVec3 read FColor write FColor;
 
@@ -74,6 +75,7 @@ begin
   inherited Create( AData );
   FLinearAttenuation:= 0.1;
   FColor:= vec3( 1 );
+  FEnergy:= 1.0;
   Owner.Lights.Add( Self );
   Properties.Add( TP3DPropertyAccessVec3.CreateField( 'Color', @Color, smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Energy', smAttribute ));
@@ -97,7 +99,7 @@ end;
 procedure TP3DLight.Render(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DActor);
 begin
-  if ( LightType = p3dltSun ) then
+  if ( LightType = ltSun ) then
     begin
       world:= mat4translate( vec4( -RenderObject.Direction * 3, 1 )) * world;
       //RenderLine3D( vec3( 0 ), RenderObject.Direction * 10, vec4( 0, 1, 1, 1 ));
@@ -113,11 +115,11 @@ begin
   inherited LoadFromDOM( ADOMNode );
   case ADOMNode.GetAttribute( 'type' ) of
     'sun':
-      LightType:= p3dltSun;
+      LightType:= ltSun;
     'point':
-      LightType:= p3dltPoint;
+      LightType:= ltPoint;
     'spot':
-      LightType:= p3dltSpot;
+      LightType:= ltSpot;
     else
       raise Exception.Create( 'Cannot create light from DOM. Either no or an unsupported light type was specified: "' + ADOMNode.GetAttribute( 'type' ) + '"' );
   end;
@@ -136,6 +138,12 @@ begin
   AttrS:= ADOMNode.GetAttribute( 'energy' );
   if ( AttrS > '' ) then
     Energy:= StrToFloatDef( AttrS, 0.0, DefaultFormatSettings );
+end;
+
+procedure TP3DLight.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
+begin
+  if ( rlfLighting in AFlags ) then
+    AList.Lights.Add( Self );
 end;
 
 { TP3DLightList }
@@ -168,7 +176,7 @@ begin
         if ( liLightParams in Params ) then
           begin
             //Color
-            glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.color' ), Items[ i ].Color.R, Items[ i ].Color.G, Items[ i ].Color.B, 1 ); cle( Self );
+            glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.color' ), Items[ i ].Color.R, Items[ i ].Color.G, Items[ i ].Color.B, Items[ i ].Energy ); cle( Self );
 
             //linear Attenuation
             glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.linearAttenuation' ), Items[ i ].LinearAttenuation ); cle( Self );
@@ -180,7 +188,7 @@ begin
             glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.range' ), Items[ i ].GetLightRange ); cle( Self );
 
             //energy
-            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.energy' ), Items[ i ].Energy ); cle( Self );
+//            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.energy' ), Items[ i ].Energy ); cle( Self );
 
             //type
             glUniform1i( P3DShaderActive.Uniforms.AddrByName( l + '.type' ), Ord( Items[ i ].LightType )); cle( Self );

@@ -132,6 +132,7 @@ constructor TP3DSceneViewer.Create(const AData: TP3DLibrary; const AParent: TP3D
 begin
   inherited Create(AData, AParent);
   RenderFlags:= P3DRenderListFlagsDefault;
+  RenderList:= TP3DRenderList.Create;
 end;
 
 procedure TP3DSceneViewer.PushVPClientRect;
@@ -150,8 +151,7 @@ begin
 
   if ( Assigned( Scene ) and ( ClientRect.Width * ClientRect.Height > 0 )) then
     begin
-      if ( Assigned( FRenderList )) then
-        FreeAndNil( FRenderList );
+      RenderList.Clear;
       if ( rlfMaterials in RenderFlags ) then
         if ( Assigned( OverrideMaterial )) then
           OverrideMaterial.PassToShader();

@@ -37,7 +37,6 @@ var
   AssetView: TP3DSAssetPanel;
   DataView: TP3DDataPanel;
   SceneView: TP3DScenePanel;
-  MainWindow: TP3DGraphicControl;
   OIPanel: TP3DOIPanel;
 
   MeshArrows: TP3DActor;
@@ -78,26 +77,26 @@ var
 
 begin
   //P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
-  MainWindow:= TP3DGraphicControl.Create();
-  MainWindow.Align:= alClient;
 
   SceneMain:= TP3DSceneMain.Create();
+  SceneMain.Align:= alClient;
   DataView:= TP3DDataPanel.Create();
-  DataView.Parent:= MainWindow;
+  DataView.Parent:= SceneMain;
   DataView.Align:= alLeft;
   AssetView:= TP3DSAssetPanel.Create();
-  AssetView.Parent:= MainWindow;
+  AssetView.Parent:= SceneMain;
   AssetView.Align:= alBottom;
   SceneView:= TP3DScenePanel.Create();
-  SceneView.Parent:= MainWindow;
+  SceneView.Parent:= SceneMain;
   SceneView.Align:= alClient;
   DataView.BringToFront;
   //DataView.ActorList:= TestScene.Objects;
 
   SceneMain.ActiveLibrary:= SceneMain.NewLibrary();
   SceneMain.ActiveScene:= SceneMain.NewScene();
+  SceneMain.ViewMode:= dvmScene;
   OIPanel:= TP3DOIPanel.Create();
-  OIPanel.Parent:= MainWindow;
+  OIPanel.Parent:= SceneMain;
   OIPanel.Align:= alRight;
   OIPanel.ObjectInspector.Obj:= OIPanel;
 
@@ -223,7 +222,7 @@ begin
   FreeAndNil( SceneView );
   FreeAndNil( DataView );
   FreeAndNil( OIPanel );
-  FreeAndNil( MainWindow );
+  FreeAndNil( SceneMain );
   FreeAndNil( SymbolMesh );
   FreeAndNil( SymbolScene );
   FreeAndNil( SymbolFont );

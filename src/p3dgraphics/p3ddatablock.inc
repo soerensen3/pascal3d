@@ -21,6 +21,7 @@ type
 
   { TP3DDataBlock }
 
+  TP3DRenderList = class;
   TP3DDataBlockList = class;
   TP3DDataBlock = class ( TP3DObject )
     private
@@ -51,6 +52,7 @@ type
       procedure ClearFields; virtual;
       procedure ClearUsers;
       class function DOMNodeName: String; override;
+      procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); virtual;
 
       property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
       property Owner: TP3DLibrary read FOwner;
@@ -118,6 +120,7 @@ type
   TP3DDataBlockList = class ( TP3DCustomDataBlockList )
     public
       function DumpUsers: String;
+
   end;
 
   { gP3DPropertyAccessDataBlock }
@@ -683,7 +686,7 @@ begin
 
   if ( lowercase( ExtractFileExt( FN )) = '.p3d' ) then
     begin
-      FName:= P3DSearchPaths.Models.FindFileEx( FN, GetCurrentDir );
+      FName:= P3DSearchPaths.FindFileEx( FN, GetCurrentDir );
       if ( FName = '' ) then
         raise Exception.Create( Format( 'Cannot load datablock from file! The specified file "%s" was not found!', [ FileName ]));
       ReadXMLFile( xml, FName );
@@ -766,6 +769,11 @@ end;
 class function TP3DDataBlock.DOMNodeName: String;
 begin
   Result:= 'datablock';
+end;
+
+procedure TP3DDataBlock.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
+begin
+  //Don't do anything but we don't want to generate an error when mothod is not overriden by ancestor class
 end;
 
 procedure TP3DDataBlock.LoadFromBinary(FileName: String);

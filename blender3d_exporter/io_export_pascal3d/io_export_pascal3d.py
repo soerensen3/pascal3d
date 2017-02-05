@@ -1,8 +1,8 @@
 bl_info = {
-  'name': 'Pascal3D Scene (.p3d)',
+  'name': 'Pascal3D Scene Exporter (.p3d)',
   'author': 'Johannes Rosleff Sörensen',
-  'version': (1, 0, 0),
-  'blender': (2, 76, 0),
+  'version': ( 1, 0, 0 ),
+  'blender': ( 2, 76, 0 ),
   'location': 'File > Export > Pascal3D Scene (.p3d)',
   'description': 'Export Pascal3D Scene (.p3d)',
   'warning': '',
@@ -18,10 +18,12 @@ from bpy.props import StringProperty, EnumProperty, BoolProperty
 from xml.etree import cElementTree as et
 
 PathModes = (
-    ('0', 'Absolute Paths', ''),
-    ('1', 'Relative Paths', ''),
-    ('2', 'Filenames only', ''),
+    ( '0', 'Absolute Paths', '' ),
+    ( '1', 'Relative Paths', '' ),
+    ( '2', 'Filenames only', '' ),
     )
+    
+Version = '0.1'
 
 ## P3DXMLFile ------------------------------------------------------------------
 
@@ -29,6 +31,7 @@ class P3DXMLFile:
     def __init__( self, fname ):
         self.fname = fname
         self.root = et.Element( 'p3dfile' )
+        self.root.attrib[ 'version' ] = Version
         self.docstack = [ self.root ]
         self.meshes = set()
         self.lamps = set()
@@ -52,19 +55,22 @@ class P3DXMLFile:
         result = indent + '<' + element.tag
         if ( len( element.attrib )):
             for attrib in element.attrib:
-                result += '\n%s  %s = "%s"'%( indent, attrib, element.attrib[ attrib ])
-        result += '>' + '\n'
+                result += '\n%s   %s = "%s"'%( indent, attrib, element.attrib[ attrib ])
+        #since text is unused there is no need to check if a full closing tag is required        
         if len( element ):
+            result += '>' + '\n'        
             for el in element:
               result += self.tostring( el, level + 1 )
-        result += indent + '</' + element.tag + '>' + '\n'
+            result += indent + '</' + element.tag + '>' + '\n'
+        else: 
+            result += ' />' + '\n'
         return result
 
     def write( self ):
         file = open( self.fname, 'w')
         xml_text = self.tostring( self.root )
 
-        file.write('<?xml version="1.0" ?>\n' + xml_text )
+        file.write( '<?xml version="1.0" ?>\n' + xml_text )
         file.close()
 #---------------------------------------------------------------------------------
 
@@ -90,7 +96,17 @@ class P3DBinaryFile:
         bin = struct.pack( 'i' * len( ivec ), *ivec )
         self.file.write( bin )
 
+    def getposition( self ):
+        return self.file.tell()
+        
+    def getfname( self ):
+        return self.file.name
+        
+    def getfileandpos( self ):
+        return self.file.name + ':' + str( self.file.tell())
+
 class P3DExporter( bpy.types.Operator ):
+    binfile = None
     bl_idname = 'export.p3d'
     bl_label = 'Export Pascal3D Scene'
 
@@ -148,14 +164,14 @@ class P3DExporter( bpy.types.Operator ):
 
     def execute( self, context ):
         self.ExportFile()
-        return {'FINISHED'}
+        return { 'FINISHED' }
 
     def invoke( self, context, event ):
         if not self.filepath:
             self.filepath = os.path.splitext( bpy.data.filepath )[ 0 ] + '.p3d'
         WindowManager = context.window_manager
-        WindowManager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        WindowManager.fileselect_add( self )
+        return { 'RUNNING_MODAL' }
 
     def ExportPath( self, path ):
         if ( self.PathMode == '1' ):
@@ -166,12 +182,12 @@ class P3DExporter( bpy.types.Operator ):
 
     ##EXPORTING TRANSFORM ------------------------------------------------------------
     def ExportTransform( self, obj ):
-        transform = self.file.push( 'transform' )
-        transform.attrib['position'] = '{:9f},{:9f},{:9f}'.format( *obj.location )
+        transform = self.file.docstack[ - 1 ]
+        transform.attrib[ 'Position' ] = '{:9f},{:9f},{:9f}'.format( *obj.location )
         quat = obj.matrix_world.to_quaternion()
-        transform.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
-        transform.attrib['scale'] = '{:9f},{:9f},{:9f}'.format( *obj.scale )
-        self.file.pop()
+        transform.attrib[ 'Quaternion' ] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+        transform.attrib[ 'Scale' ] = '{:9f},{:9f},{:9f}'.format( *obj.scale )
+        transform.attrib[ 'RotationOrder' ] = 'ro' + obj.rotation_mode # Does not matter for quaternion rotation but when rotating with euler angles later
     ##--------------------------------------------------------------------------------
 
     ##EXPORTING FILE -----------------------------------------------------------------
@@ -201,7 +217,7 @@ class P3DExporter( bpy.types.Operator ):
         for data in self.file.meshes: # will cause duplicates for now because objects instead of meshes are
                                       # put into self.file.meshes. This is necessary because of the modifiers
                                       # which need to be applied. There is no solution for detecting same modifer
-                                      # configuration across multiple objects
+                                      # configuration across multiple objects yet
             self.ExportMesh( data )
 
         for data in self.file.lamps:
@@ -234,6 +250,9 @@ class P3DExporter( bpy.types.Operator ):
             self.ExportAction( data )
 
         self.file.write()
+        if not ( self.binfile is None ):
+            self.binfile.close()
+            self.binfile = None
 
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Written file' )
@@ -253,7 +272,7 @@ class P3DExporter( bpy.types.Operator ):
         bpy.ops.render.opengl()
         #save image
         img_name = os.path.splitext( self.file.fname )[ 0 ] + '.thumb.' + scene.name + '.png' #filename without extension as base
-        bpy.data.images['Render Result'].save_render( img_name )
+        bpy.data.images[ 'Render Result' ].save_render( img_name )
         #bpy.ops.image.open( filepath = file_dir+img_name )
         #bpy.data.images[img_name].pack()
         
@@ -261,10 +280,10 @@ class P3DExporter( bpy.types.Operator ):
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Exporting scene ' + scene.name )
         el = self.file.push( 'scene' )
-        el.attrib[ 'name' ] = scene.name
+        el.attrib[ 'Name' ] = scene.name
         if ( self.ExportSceneCamera ):
-            if ( not ( scene.camera is None )):
-              el.attrib[ 'camera' ] = scene.camera.name
+          if ( not ( scene.camera is None )):
+            el.attrib[ 'Cam' ] = scene.camera.name
         self.report({ 'INFO' }, ', '.join( self.supported_types ))
         self.ExportSceneScreenshot( scene )
         for obj in scene.objects:
@@ -281,11 +300,10 @@ class P3DExporter( bpy.types.Operator ):
           self.report({ 'INFO' }, 'Exporting object ' + obj.name )
 
         el = self.file.push( 'object' )
-        el.attrib[ 'name' ] = obj.name
-        el.attrib[ 'type' ] = str( obj.type ).lower()
+        el.attrib[ 'Name' ] = obj.name
         if ( obj.data != None and obj.type in self.supported_types ):
             type = str( obj.type ).lower()
-            el.attrib[ 'data' ] = type + '_' + obj.data.name
+            el.attrib[ 'Data' ] = '/' + type + '_' + obj.data.name
             if ( type == 'mesh' ):
                 self.file.meshes.add( obj ) #use object instead of data
             elif ( type == 'lamp' ):
@@ -302,99 +320,138 @@ class P3DExporter( bpy.types.Operator ):
   ##--------------------------------------------------------------------------------
 
   ##EXPORTING MESH HELPERS ---------------------------------------------------------
-    def ExportVertices( self, file ):
+    def ExportVertices( self ):
         totno = 0
-        for vertex in file.mesh.vertices:
+        self.binfile.writeint( len( self.binfile.mesh.vertices ))        
+        for vertex in self.binfile.mesh.vertices:
             totno += 1
-            file.writevec( vertex.co )
+            self.binfile.writevec( vertex.co )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' positions written' )
 
         return totno
 
-    def ExportNormals( self, file ):
-        file.mesh.calc_normals()
+    def ExportNormals( self ):
+        self.binfile.mesh.calc_normals()
         totno = 0
-        for vertex in file.mesh.vertices:
+        self.binfile.writeint( len( self.binfile.mesh.vertices ))
+        for vertex in self.binfile.mesh.vertices:
             totno += 1
-            file.writevec( vertex.normal )
+            self.binfile.writevec( vertex.normal )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' normals written' )
         return totno
 
-    def ExportTangents( self, file ):
-        file.mesh.calc_tangents()
+    def ExportTangents( self ):
+        self.binfile.mesh.calc_tangents()
         totno = 0
-        file.LoopVertex = {}
-        for l in file.mesh.loops:
-            file.LoopVertex[ l.vertex_index ] = l.index
+        self.binfile.LoopVertex = {}
+        self.binfile.writeint( len( self.binfile.mesh.loops ))
+        for l in self.binfile.mesh.loops:
+            self.binfile.LoopVertex[ l.vertex_index ] = l.index
             totno += 1
-            file.writevec( l.tangent )
+            self.binfile.writevec( l.tangent )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' tangents written' )
 
         return totno
 
-    def ExportCotangents( self, file ):
+    def ExportCotangents( self ):
         totno = 0
-        for l in file.mesh.loops:
+        self.binfile.writeint( len( self.binfile.mesh.loops ))      
+        for l in self.binfile.mesh.loops:
           totno += 1
-          file.writevec( l.bitangent )
+          self.binfile.writevec( l.bitangent )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' cotangents written' )
 
         return totno
 
-    def ExportUVs( self, file ):
+    def ExportUVs( self ):
         totno = 0
-        for uv in file.mesh.uv_layers:
+        el = self.file.docstack[ -1 ]
+        idx = 0
+        for uv in self.binfile.mesh.uv_layers:
+          el.attrib[ 'TexCoords' + str( idx )] = self.binfile.getfileandpos()
+          self.binfile.writeint( len( uv.data ))      
           for uvloop in uv.data:
             totno += 1
-            file.writevec([ uvloop.uv[ 0 ], 1 - uvloop.uv[ 1 ]])
+            self.binfile.writevec([ uvloop.uv[ 0 ], 1 - uvloop.uv[ 1 ]])
+          idx += 1
 
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' texcoords written' )
 
         if ( totno == 0 ):
             return 0, 0
-        return len( file.mesh.uv_layers ), int( totno / len( file.mesh.uv_layers ))
+        return len( self.binfile.mesh.uv_layers ), int( totno / len( self.binfile.mesh.uv_layers ))
 
-    def ExportLoops( self, file ):
+    def ExportLoops( self ):
         totno = 0
-        for loop in file.mesh.loops:
+        self.binfile.writeint( len( self.binfile.mesh.loops ))
+        
+        for loop in self.binfile.mesh.loops:
           totno += 1
-          file.writeint( loop.vertex_index )
+          self.binfile.writeint( loop.vertex_index )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' loops written' )
 
         return totno
 
-    def ExportFaces( self, file ):
+    def ExportEdges( self ):
+        totno = 0
+        self.binfile.writeint( len( self.binfile.mesh.loops ) * 2 )
+        
+        for loop in self.binfile.mesh.loops:
+          totno += 1
+          self.binfile.writeint( self.binfile.mesh.edges[ loop.edge_index ].vertices[ 0 ])
+          self.binfile.writeint( self.binfile.mesh.edges[ loop.edge_index ].vertices[ 1 ])          
+        if ( self.Verbose ):
+            self.report({ 'INFO' }, str( totno ) + ' edges written' )
+
+        return totno
+
+    def ExportFaces( self ):
         cur_matidx = 0
         materials = {}
         materials[ 0 ] = {}
         materials[ 0 ][ 'start' ] = 0
 
         totno = 0
-        for polygon in file.mesh.polygons:
+        mesh = self.binfile.mesh
+        self.binfile.writeint( len( mesh.polygons ))
+        for polygon in mesh.polygons:
             if not ( polygon.material_index == cur_matidx ):
                 materials[ cur_matidx ][ 'end' ] = polygon.index - 1
                 cur_matidx = polygon.material_index
                 materials[ cur_matidx ] = { 'start' : polygon.index }
 
             bin = struct.pack( 'i', polygon.loop_start )
-            file.file.write( bin )
+            self.binfile.file.write( bin )
             totno += 1
 
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' faces written' )
 
         materials[ cur_matidx ][ 'end' ] = polygon.index
-        return len( file.mesh.polygons ), materials
+        return materials    
+        
+    def ExportIndices( self ):
+        totno = 0
+        self.binfile.writeint( len( self.binfile.mesh.polygons ))
+        for polygon in self.binfile.mesh.polygons:         
+            self.binfile.writeint( polygon.loop_start )
+            self.binfile.writeint( polygon.loop_total )
+            totno += 1
 
-    def ExportVertexGroups( self, file ):
+        if ( self.Verbose ):
+            self.report({ 'INFO' }, str( totno ) + ' faces written' )
+
+        return totno
+
+    def ExportVertexGroups( self ):
         grps = []
-        for vgroup in file.obj.vertex_groups:
+        for vgroup in self.binfile.obj.vertex_groups:
             grps.append( vgroup.name )
 
         totno = 0 #for debugging only
@@ -402,7 +459,9 @@ class P3DExporter( bpy.types.Operator ):
 
         if ( len( grps ) > 0 ):
             bin = b''
-            for vertex in file.mesh.vertices: #make dictionary of all groups
+            self.binfile.writeint( len( self.binfile.mesh.vertices ))
+          
+            for vertex in self.binfile.mesh.vertices: #make dictionary of all groups
                 vgrps = {}
                 for vgroup in vertex.groups:
                     vgrps[ vgroup.group ] = vgroup.weight
@@ -419,13 +478,14 @@ class P3DExporter( bpy.types.Operator ):
                   	vec /= lenManh #scale vector by 1/manhattan distance
 
                 self.report({ 'INFO' }, 'vertexweights: [{:2f},{:2f},{:2f},{:2f}]'.format( *vec )+ ' indices: [{:d},{:d},{:d},{:d}]'.format( *idx ))
-                file.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
+                self.binfile.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
                 totno += 1
 
                 bin += struct.pack( '4i', *idx ) #write indices separately from weights
                 totno_idx += 1
                 #file.writeintvec( idx )
-            file.file.write( bin )
+            self.binfile.writeint( totno )             
+            self.binfile.file.write( bin )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' vertex weights written' )
             self.report({ 'INFO' }, str( totno_idx ) + ' vertex weight indices written' )
@@ -455,17 +515,17 @@ class P3DExporter( bpy.types.Operator ):
             self.report({ 'INFO' }, 'Exporting data ' + obj.data.name + ' for object ' + obj.name )
 
         el = self.file.push( 'mesh' )
-        el.attrib[ 'name' ] = 'mesh_' + obj.data.name
+        el.attrib[ 'Name' ] = 'mesh_' + obj.data.name
 
-        file = P3DBinaryFile( os.path.splitext( self.file.fname )[ 0 ] + '.mesh_' + obj.data.name + '.p3dmesh' ) #filename without extension as base
-        file.mesh = mesh
-        file.obj = obj
+        if ( self.binfile is None ):
+          self.binfile = P3DBinaryFile( os.path.splitext( self.file.fname )[ 0 ] + '.p3dbin' )
+          #file = P3DBinaryFile( os.path.splitext( self.file.fname )[ 0 ] + '.mesh_' + obj.data.name + '.p3dmesh' ) #filename without extension as base
+        self.binfile.mesh = mesh
+        self.binfile.obj = obj
 
-
-        el.attrib[ 'binary' ] = self.ExportPath( file.fname )
-
-        el.attrib[ 'vertices' ] = self.ExportVertices( file )
-        grps = self.ExportVertexGroups( file )
+        el.attrib[ 'Positions' ] = self.binfile.getfileandpos()
+        self.ExportVertices()
+        grps = self.ExportVertexGroups()
         for grp in grps:
             elgrp = self.file.push( 'weightgroup' )
             elgrp.attrib[ 'name' ] = grp
@@ -473,27 +533,28 @@ class P3DExporter( bpy.types.Operator ):
 
         #el.attrib['vertexgroups'] = '\'' + '\', \''.join( grps ) + '\''
 
-        el.attrib[ 'normals' ] = self.ExportNormals( file )
-        el.attrib[ 'loops' ] = self.ExportLoops( file )
+        el.attrib[ 'Normals' ] = self.binfile.getfileandpos()
+        self.ExportNormals()
+        el.attrib[ 'Loops' ] = self.binfile.getfileandpos()
+        self.ExportLoops()
 
-        nl, n = self.ExportUVs( file )
+        nl, n = self.ExportUVs()
         if ( nl > 0 ):
-            el.attrib[ 'texcoords' ] = str( n )
-            el.attrib[ 'texlayers' ] = str( nl )
-            el.attrib[ 'tangents' ] = self.ExportTangents( file )
-            el.attrib[ 'cotangents' ] = self.ExportCotangents( file )
+            el.attrib[ 'Tangents' ] = self.binfile.getfileandpos()
+            self.ExportTangents()
+            el.attrib[ 'Cotangents' ] = self.binfile.getfileandpos()
+            self.ExportCotangents()
 
-        el.attrib['faces'], materials = self.ExportFaces( file )
-
-        file.close()
+        el.attrib[ 'Faces' ]= self.binfile.getfileandpos()
+        materials = self.ExportFaces()
 
         for matidx in materials:
             mat = mesh.materials[ matidx ]
-            el = self.file.push( 'material' )
+            el = self.file.push( 'materialgroup' )
             mat_offset = materials[ matidx ]
-            el.attrib[ 'name' ] = 'material_' + mat.name
-            el.attrib[ 'start' ] = str( mat_offset[ 'start' ])
-            el.attrib[ 'end' ] = str( mat_offset[ 'end' ])
+            el.attrib[ 'Material' ] = '/material_' + mat.name
+            el.attrib[ 'PolyStart' ] = str( mat_offset[ 'start' ])
+            el.attrib[ 'PolyEnd' ] = str( mat_offset[ 'end' ])
 
             self.file.materials.add( mat )
             self.file.pop()
@@ -502,8 +563,8 @@ class P3DExporter( bpy.types.Operator ):
             armature = obj.find_armature()
             if ( not ( armature is None )):
                 el = self.file.push( 'modifier' )
-                el.attrib[ 'name' ] = 'armature'
-                el.attrib[ 'data' ] = 'armature_' + armature.data.name
+                el.attrib[ 'Name' ] = 'armature'
+                el.attrib[ 'Data' ] = '/armature_' + armature.data.name
                 self.file.armatures.add( armature ) #use object instead of data
                 self.file.pop()
 
@@ -523,45 +584,47 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'map' )
 
-        el.attrib[ 'name' ] = map.name
+        el.attrib[ 'Name' ] = map.name
 
         # write relative image path
         #filepath = bpy_extras.io_utils.path_reference(filepath, , Config.FilePath,
         #                                  'AUTO', '', copy_set, face_img.library)
 
         #el.attrib[ 'file' ] = self.ExportPath( filepath )
-        el.attrib[ 'data' ] = 'tex_' + map.texture.name
+        el.attrib[ 'Data' ] = '/tex_' + map.texture.name
         self.file.textures.add( map )
 
         if ( map.use_map_color_diffuse ):
-            el.attrib[ 'diffuse' ] = str( map.diffuse_color_factor )
+            el.attrib[ 'DiffuseFactor' ] = str( map.diffuse_color_factor )
+        else:
+            el.attrib[ 'DiffuseFactor' ] = '0.0'
 
         if ( map.use_map_diffuse ):
-            el.attrib[ 'diffuse_intensity' ] = str( map.diffuse_factor )
+            el.attrib[ 'DiffuseIntensity' ] = str( map.diffuse_factor ) # Not actually used at the moment
 
         if ( map.use_map_normal ):
-            el.attrib[ 'normal' ] = str( map.normal_factor )
+            el.attrib[ 'NormalFactor' ] = str( map.normal_factor )
 
         if ( map.use_map_color_spec ):
-            el.attrib[ 'specular' ] = str( map.specular_color_factor )
+            el.attrib[ 'SpecularFactor' ] = str( map.specular_color_factor )
 
         if ( map.use_map_specular ):
-            el.attrib[ 'specular_intensity' ] = str( map.specular_factor )
+            el.attrib[ 'SpecularIntensity' ] = str( map.specular_factor )
 
         if ( map.use_map_alpha ):
-            el.attrib[ 'alpha' ] = str( map.alpha_factor )
+            el.attrib[ 'AlphaFactor' ] = str( map.alpha_factor )
 
         if ( not(( map.offset == Vector(( 0.0, 0.0, 0.0 )) and ( map.scale == Vector(( 1.0, 1.0, 1.0 )))))):
             transform = self.file.push( 'transform' )
-            transform.attrib[ 'position' ] = '{:9f},{:9f},{:9f}'.format( *map.offset )
-            transform.attrib[ 'quaternion' ] = '{:9f},{:9f},{:9f},{:9f}'.format( 0.0, 0.0, 0.0, 1.0 )
-            transform.attrib[ 'scale' ] = '{:9f},{:9f},{:9f}'.format( *map.scale )
+            transform.attrib[ 'Position' ] = '{:9f},{:9f},{:9f}'.format( *map.offset )
+            transform.attrib[ 'Quaternion' ] = '{:9f},{:9f},{:9f},{:9f}'.format( 0.0, 0.0, 0.0, 1.0 )
+            transform.attrib[ 'Scale' ] = '{:9f},{:9f},{:9f}'.format( *map.scale )
             self.file.pop()
 
-        el.attrib[ 'mode' ] = str( map.blend_type.lower())
+        el.attrib[ 'Mode' ] = 'map' + str( map.blend_type ).capitalize()
 
         if ( map.uv_layer != '' ):
-            el.attrib[ 'layer' ] = 0 #self.file.mesh.uv_layers.find( map.uv_layer )
+            el.attrib[ 'TexChannel' ] = 0 #self.file.mesh.uv_layers.find( map.uv_layer )
 
         self.file.pop()
 
@@ -578,13 +641,18 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'texture' )
 
-        el.attrib[ 'name' ] = 'tex_' + map.texture.name
+        el.attrib[ 'Name' ] = 'tex_' + map.texture.name
+   
+        if ( map.texture.use_interpolation ):
+          el.attrib[ 'Filtering' ] = 'tfLinear'
+          el.attrib[ 'FilteringMipMap' ] = 'tfLinear'
+        else:
+          el.attrib[ 'Filtering' ] = 'tfNearest'
+          el.attrib[ 'FilteringMipMap' ] = 'tfNearest'
+        if ( map.texture.use_mipmap ):
+          el.attrib[ 'MipMap' ] = '1'
 
-        # write relative image path
-        #filepath = bpy_extras.io_utils.path_reference(filepath, , Config.FilePath,
-        #                                  'AUTO', '', copy_set, face_img.library)
-
-        el.attrib[ 'file' ] = self.ExportPath( filepath )
+        el.attrib[ 'File' ] = self.ExportPath( filepath )
 
         self.file.pop()
 
@@ -597,14 +665,29 @@ class P3DExporter( bpy.types.Operator ):
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Exporting data ' + material.name )
 
-        el = self.file.push( 'material' )
-        el.attrib[ 'name' ] = 'material_' + material.name
+        el = self.file.push( 'materialbase' )
+        el.attrib[ 'Name' ] = 'material_' + material.name
 
-        el.attrib['diffuse'] = '{:6f}, {:6f}, {:6f}'.format(*( material.diffuse_color * material.diffuse_intensity ))
-        el.attrib['specular'] = '{:6f}, {:6f}, {:6f}, {:6f}'.format( material.specular_hardness, *( material.specular_color * material.specular_intensity ))  # Specular
+        el.attrib['Diff'] = '{:6f}, {:6f}, {:6f}'.format(*( material.diffuse_color * material.diffuse_intensity ))
+        el.attrib['Spec'] = '{:6f}, {:6f}, {:6f}'.format( *( material.specular_color ))
+        el.attrib['Spec_Hardness'] = '{:6f}'.format( material.specular_hardness )  # Specular
 
         if ( material.use_shadeless ):
-            el.attrib[ 'unlit' ] = 'yes';
+            el.attrib[ 'Unlit' ] = '1'
+        else:
+            el.attrib[ 'Unlit' ] = '0'
+        el.attrib[ 'Instancing' ] = '1'
+        
+        if ( material.use_transparency ):
+          if ( material.transparency_method == 'Mask' ):
+            el.attrib[ 'AlphaThreshhold' ] = "0.9"
+            el.attrib[ 'TransparencyMode' ] = "p3dmtStep"
+          else:
+            el.attrib[ 'TransparencyMode' ] = "p3dmMultiply"
+        else:
+          el.attrib[ 'TransparencyMode' ] = "p3dmtNone"
+        
+        
         texlist = (map for map in material.texture_slots if ( not ( map is None )) and map.use and ( map.texture.type == 'IMAGE' ) and ( not ( map.texture.image is None )))
 
         for map in texlist:
@@ -620,12 +703,12 @@ class P3DExporter( bpy.types.Operator ):
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Exporting data ' + lamp.name )
 
-        el = self.file.push( 'lamp' )
-        el.attrib[ 'name' ] = 'lamp_' + lamp.name
+        el = self.file.push( 'light' )
+        el.attrib[ 'Name' ] = 'lamp_' + lamp.name
 
-        el.attrib[ 'type' ] = str( lamp.type.lower())
-        el.attrib[ 'color' ] = str( '{:6f}, {:6f}, {:6f}'.format( *lamp.color ))
-        el.attrib[ 'energy' ] = str( lamp.energy )
+        el.attrib[ 'LightType' ] = 'lt' + lamp.type.capitalize()
+        el.attrib[ 'Color' ] = str( '{:6f}, {:6f}, {:6f}'.format( *lamp.color ))
+        el.attrib[ 'Energy' ] = str( lamp.energy )
 
         self.file.pop()
 
@@ -638,11 +721,11 @@ class P3DExporter( bpy.types.Operator ):
             self.report({ 'INFO' }, 'Exporting data ' + cam.name )
 
         el = self.file.push( 'camera' )
-        el.attrib[ 'name' ] = 'camera_' + cam.name
+        el.attrib[ 'Name' ] = 'camera_' + cam.name
 
-        el.attrib[ 'near' ] = str( cam.clip_start )
-        el.attrib[ 'far' ] = str( cam.clip_end )
-        el.attrib[ 'fov' ] = str( cam.angle )
+        el.attrib[ 'Near' ] = str( cam.clip_start )
+        el.attrib[ 'Far' ] = str( cam.clip_end )
+        el.attrib[ 'Fov' ] = str( cam.angle )
 
         self.file.pop()
   ##--------------------------------------------------------------------------------
@@ -671,9 +754,9 @@ class P3DExporter( bpy.types.Operator ):
         #position, quat, scale = bone_matrix.decompose() 
         position = bone.head_local
         quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
-        el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+        el.attrib['Position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
         #quat = ( bone_matrix ).to_quaternion()
-        el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
 
         if children:
             bones = bone.children
@@ -747,7 +830,7 @@ class P3DExporter( bpy.types.Operator ):
         #  self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
 
         el = self.file.push( 'joint' )
-        el.attrib[ 'name' ] = 'joint_' + pose_bone.name
+        el.attrib[ 'Name' ] = 'joint_' + pose_bone.name
 
         bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         #matrix = self.get_pose_bone_matrix( armature, pose_bone ) * bone_space
@@ -756,8 +839,8 @@ class P3DExporter( bpy.types.Operator ):
         position = pose_bone.head
         quat = matrix.to_quaternion()
         #quat = pose_bone.rotation_quaternion #quat.normalized()
-        el.attrib['position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
-        el.attrib['quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+        el.attrib['Position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
 
         self.file.pop()
   ##--------------------------------------------------------------------------------
@@ -767,7 +850,7 @@ class P3DExporter( bpy.types.Operator ):
             self.report({ 'INFO' }, 'Exporting data ' + armature.data.name )
 
         el = self.file.push( 'armature' )
-        el.attrib[ 'name' ] = 'armature_' + armature.data.name
+        el.attrib[ 'Name' ] = 'armature_' + armature.data.name
 
         bones = armature.data.bones
         idx = 0
@@ -778,7 +861,7 @@ class P3DExporter( bpy.types.Operator ):
 
         if ( not ( armature.animation_data is None ) and not ( armature.animation_data.action is None )):
             self.file.actions.add(( armature.animation_data.action, armature ))
-            el.attrib[ 'action' ] = 'action_' + armature.data.name + armature.animation_data.action.name
+            el.attrib[ 'Action' ] = '/action_' + armature.data.name + armature.animation_data.action.name
 
         self.file.pop()
 
@@ -791,7 +874,7 @@ class P3DExporter( bpy.types.Operator ):
             self.report({ 'INFO' }, 'Exporting data ' + action[ 0 ].name )
 
         el = self.file.push( 'action' )
-        el.attrib[ 'name' ] = 'action_' + action[ 1 ].data.name + action[ 0 ].name #armature.data.name + action.name
+        el.attrib[ 'Name' ] = 'action_' + action[ 1 ].data.name + action[ 0 ].name #armature.data.name + action.name
         scene = bpy.context.scene
         idx = 0
         for frame in range( scene.frame_end + 1 ):

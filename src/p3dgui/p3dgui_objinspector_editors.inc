@@ -8,7 +8,7 @@ type
 
   TP3DOIEditorObject = class ( TP3DOIEditorGroup )
     private
-      FNameEdit: TP3DEdit;
+      FNameEdit: TP3DPropertyEditorString;
       FTypeLbl: TP3DLabel;
 
     public
@@ -17,7 +17,7 @@ type
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
     published
-      property NameEdit: TP3DEdit read FNameEdit write FNameEdit;
+      property NameEdit: TP3DPropertyEditorString read FNameEdit write FNameEdit;
       property TypeLbl: TP3DLabel read FTypeLbl write FTypeLbl;
   end;
 
@@ -61,6 +61,7 @@ type
 
     public
       procedure Update; override;
+      procedure DataDragDrop(Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean);
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
@@ -125,6 +126,7 @@ type
     private
       FLight: TP3DLight;
       FLightColorCombo: TP3DColorComboBox;
+      FLightEnergyEdit: TP3DPropertyEditorFloat;
       FLightLinearAttenuationEdit: TP3DEventValueEdit;
       FLightQuadraticAttenuationEdit: TP3DEventValueEdit;
       FLightType: TP3DComboBox;
@@ -147,6 +149,7 @@ type
       property LightColorCombo: TP3DColorComboBox read FLightColorCombo write FLightColorCombo;
       property LightLinearAttenuationEdit: TP3DEventValueEdit read FLightLinearAttenuationEdit write FLightLinearAttenuationEdit;
       property LightQuadraticAttenuationEdit: TP3DEventValueEdit read FLightQuadraticAttenuationEdit write FLightQuadraticAttenuationEdit;
+      property LightEnergyEdit: TP3DPropertyEditorFloat read FLightEnergyEdit write FLightEnergyEdit;
       property Light: TP3DLight read FLight write FLight;
   end;
 
@@ -475,7 +478,7 @@ begin
   if ( Obj is IP3DObject ) then
     with ( Obj as IP3DObject ) do
       begin
-        NameEdit.Text:= Name;
+        NameEdit.Prop:= TP3DObject( Obj ).Properties.GetPropByName( 'Name' );
         TypeLbl.Caption:= Obj.ClassName;
       end;
 end;
@@ -486,7 +489,7 @@ begin
   Caption:= 'Object';
   Height:= 60;
 
-  NameEdit:= TP3DEdit.Create( AData, AddContainer( Self, 'Name ' ));
+  NameEdit:= TP3DPropertyEditorString.Create( AData, AddContainer( Self, 'Name ' ));
   NameEdit.Align:= alClient;
 
   TypeLbl:= TP3DLabel.Create( AData, AddContainer( Self, 'Type ' ));
@@ -540,6 +543,34 @@ begin
       end
 end;
 
+procedure TP3DOIEditorDatablock.DataDragDrop(Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean);
+begin
+  if ( Source is TP3DListViewFile ) then
+    with ( TP3DListViewFile( Source )) do
+      begin
+        {if ( Assigned( Selection )) then
+          if ( P3DMatchFileName( Selection.Caption, '*.p3d' )) then
+            begin
+              try
+                Sc:= SceneMain.ActiveScene;
+                if ( Assigned( Sc )) then
+                  Sc.AppendFile( AppendPathDelim( Directory ) + Selection.Caption );
+              except
+                on E: Exception do
+                  SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + Selection.Caption ), PChar( E.Message ), Nil );
+              end;
+            end;}
+      end
+  else if ( Source is TP3DTreeViewActors ) then
+    with ( TP3DTreeViewActors( Source )) do
+      if (( TPersistent( DragItem.Data ) is TP3DDataBlock ) and ( Self.Obj is TP3DActor )) then
+        begin
+          TP3DActor( Self.Obj ).Data:= TP3DDataBlock( DragItem.Data );
+          Update; //TODO: Update whole Object Inspector from here
+        end;
+  Accept:= False;
+end;
+
 constructor TP3DOIEditorDatablock.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
@@ -561,6 +592,7 @@ begin
   DataCombo:= TP3DComboBoxDataBlock.Create( nil, AddContainer( Self, 'Data' ));
   DataCombo.Height:= 20;
   DataCombo.Align:= alTop;
+  DataCombo.OnDragDrop:= @DataDragDrop;
 
   AutoSize:= True;
 end;
@@ -623,7 +655,7 @@ begin
   inherited;
   if ( Obj is IP3DTransform ) then
     begin
-      QuaternionLbl.Caption:= '<' + ( Obj as IP3DTransform ).Quaternion.ToString( 2 ) + '>';
+      QuaternionLbl.Caption:= '<' + ( Obj as IP3DTransform ).Quaternion.ToString( 1 ) + '>';
       case ( Obj as IP3DTransform ).RotationOrder of
         roZYX: RotationMethodCombo.FCaption:= 'ZYX Euler';
         roZXY: RotationMethodCombo.FCaption:= 'ZXY Euler';
@@ -667,7 +699,7 @@ begin
   RotationMethodCombo.Items.Add( 'XYZ Euler' );
   //RotationMethodCombo.Items.Add( 'Quaternion XYZW' );
 
-  QuaternionLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Quaternion (XYZW) ' ));
+  QuaternionLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Quat (XYZW) ' ));
   QuaternionLbl.Align:= alClient;
 
   ScaleEdit:= TP3DVectorEdit.Create( nil, AddContainer( Self, 'Scale ' ));
@@ -776,9 +808,9 @@ procedure TP3DOIEditorDataLight.ComboChange(Sender: TP3DComboBox;
 begin
   if ( Assigned( Light )) then
     case AValue of
-      'Point': Light.LightType := p3dltPoint;
-      'Spot': Light.LightType := p3dltSpot;
-      'Sun': Light.LightType := p3dltSun;
+      'Point': Light.LightType := ltPoint;
+      'Spot': Light.LightType := ltSpot;
+      'Sun': Light.LightType := ltSun;
     end;
 end;
 
@@ -831,10 +863,13 @@ begin
     Light:= nil;
 
   if ( Assigned( Light )) then
-    case Light.LightType of
-      p3dltPoint: LightTypeCombo.Caption:= 'Point';
-      p3dltSpot: LightTypeCombo.Caption:= 'Spot';
-      p3dltSun: LightTypeCombo.Caption:= 'Sun';
+    begin
+      LightEnergyEdit.Prop:= Light.Properties.GetPropByName( 'Energy' );
+      case Light.LightType of
+        ltPoint: LightTypeCombo.Caption:= 'Point';
+        ltSpot: LightTypeCombo.Caption:= 'Spot';
+        ltSun: LightTypeCombo.Caption:= 'Sun';
+      end;
     end;
 end;
 
@@ -869,6 +904,9 @@ begin
   LightQuadraticAttenuationEdit.GetValueEvent:= @GetLightAttenuation;
   LightQuadraticAttenuationEdit.SetValueEvent:= @SetLightAttenuation;
   LightQuadraticAttenuationEdit.Align:= alClient;
+
+  LightEnergyEdit:= TP3DPropertyEditorFloat.Create( nil, AddContainer( Self, 'Energy ' ));
+  LightEnergyEdit.Align:= alClient;
 
   AutoSize:= True;
 end;
@@ -1362,10 +1400,10 @@ begin
     exit;
 
   case AValue of
-    'add': TP3DMaterialMapBase( Map ).Mode:= p3dmmAdd;
-    'mix': TP3DMaterialMapBase( Map ).Mode:= p3dmmMix;
-    'multiply': TP3DMaterialMapBase( Map ).Mode:= p3dmmMultiply;
-    'subtract': TP3DMaterialMapBase( Map ).Mode:= p3dmmSubtract;
+    'add': TP3DMaterialMapBase( Map ).Mode:= mapAdd;
+    'mix': TP3DMaterialMapBase( Map ).Mode:= mapMix;
+    'multiply': TP3DMaterialMapBase( Map ).Mode:= mapMultiply;
+    'subtract': TP3DMaterialMapBase( Map ).Mode:= mapSubtract;
   end;
 end;
 
@@ -1380,10 +1418,10 @@ begin
       Map:= TP3DMaterialMap( Obj );
       //TextureEditor.Obj:= Map.Map;
       case TP3DMaterialMapBase( Map ).Mode of
-        p3dmmAdd: ModeCombo.Caption:= 'add';
-        p3dmmMix: ModeCombo.Caption:= 'mix';
-        p3dmmMultiply: ModeCombo.Caption:= 'multiply';
-        p3dmmSubtract: ModeCombo.Caption:= 'subtract';
+        mapAdd: ModeCombo.Caption:= 'add';
+        mapMix: ModeCombo.Caption:= 'mix';
+        mapMultiply: ModeCombo.Caption:= 'multiply';
+        mapSubtract: ModeCombo.Caption:= 'subtract';
       end;
     end
   else

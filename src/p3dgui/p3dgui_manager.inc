@@ -68,7 +68,7 @@ begin
   ScrollSpeed:= -50;
   Controls:= TP3DControlList.Create( nil );
   ScreenCanvas:= TP3DCanvas2D.Create( nil );
-  ScreenCanvas.Font.Size:= 32;
+  ScreenCanvas.Font.Size:= 48;
   Cursor:= curArrow;
   CursorOverride:= curArrow;
   if ( Assigned( P3DApplication ) and Assigned( P3DApplication.MainWindow )) then
@@ -110,7 +110,7 @@ begin
   if ( Assigned( FCursorTxt )) then
     FreeAndNil( FCursorTxt );
   if ( ShowCursor ) then
-    FCursorTxt:= TP3DTextBmp.CreateSimple( Char( FCursor ), P3DFontManagerBmp.Fonts[ 'Pascal3D-Cursors' ], 16 );
+    FCursorTxt:= TP3DTextBmp.CreateSimple( Char( FCursor ), P3DFontManagerBmp.Fonts[ 'Pascal3D-Cursors' ], 24 );
 end;
 
 procedure TP3DGUIManager.SetFocusedControl(AValue: TP3DGraphicControl);

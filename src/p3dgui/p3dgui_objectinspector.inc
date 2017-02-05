@@ -14,7 +14,7 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       procedure Update; virtual;
 
@@ -41,7 +41,7 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       procedure Update; virtual;
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; virtual;
@@ -74,7 +74,7 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       function AddPage(Page: TP3DOIEditorPage): TP3DOIEditorPage;
       procedure ButtonMouseClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
@@ -118,10 +118,10 @@ begin
   CanCollapse:= True;
 end;
 
-destructor TP3DOIEditorGroup.Destroy;
+procedure TP3DOIEditorGroup.FastDestroy;
 begin
   Controls.Clear( True );
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 class function TP3DOIEditorGroup.IsCompatible(AObj: TInterfacedPersistent): Boolean;
@@ -153,12 +153,12 @@ begin
   Groups:= TP3DOIEditorList.Create();
 end;
 
-destructor TP3DOIEditorPage.Destroy;
+procedure TP3DOIEditorPage.FastDestroy;
 begin
   Groups.Clear( True );
   Groups.Free;
   Button.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 procedure TP3DOIEditorPage.Update;
@@ -254,7 +254,7 @@ begin
   AddPage( TP3DOIEditorPageGrid.Create( nil, Container ));
 end;
 
-destructor TP3DObjectInspector.Destroy;
+procedure TP3DObjectInspector.FastDestroy;
 begin
   Pages.Clear( True );
   Pages.Free;
@@ -262,7 +262,7 @@ begin
   Toolbar.Free;
   Container.Free;
   Scrollbar.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 function TP3DObjectInspector.AddPage(Page: TP3DOIEditorPage): TP3DOIEditorPage;

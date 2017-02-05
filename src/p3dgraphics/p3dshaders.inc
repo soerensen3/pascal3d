@@ -24,6 +24,7 @@ type
       function GetAsMat2: TMat2;
       function GetAsMat3: TMat3;
       function GetAsMat4: TMat4;
+      function GetAsQuat: TQuaternion;
       function GetAsQuatList: TQuaternionList;
       function GetAsString: String;
       function GetAsVec2: TVec2;
@@ -39,6 +40,7 @@ type
       procedure SetAsMat2( AValue: TMat2 );
       procedure SetAsMat3( AValue: TMat3 );
       procedure SetAsMat4( AValue: TMat4 );
+      procedure SetAsQuat(AValue: TQuaternion);
       procedure SetAsQuatList(AValue: TQuaternionList);
       procedure SetAsVec2( AValue: TVec2 );
       procedure SetAsVec2List(AValue: TVec2List);
@@ -55,6 +57,7 @@ type
       property AsVec2: TVec2 read GetAsVec2 write SetAsVec2;
       property AsVec3: TVec3 read GetAsVec3 write SetAsVec3;
       property AsVec4: TVec4 read GetAsVec4 write SetAsVec4;
+      property AsQuat: TQuaternion read GetAsQuat write SetAsQuat;
       property AsMat2: TMat2 read GetAsMat2 write SetAsMat2;
       property AsMat3: TMat3 read GetAsMat3 write SetAsMat3;
       property AsMat4: TMat4 read GetAsMat4 write SetAsMat4;
@@ -228,6 +231,14 @@ begin
   end;
 end;
 
+function TP3DShaderDecl.GetAsQuat: TQuaternion;
+begin
+  case DeclType of
+    sdtUniform: begin glGetUniformfv( ProgramObject, Addr, @Result ); cle( Self ); end;
+    sdtAttribute: Result:= quat( 0, 0, 0, 0 );
+  end;
+end;
+
 function TP3DShaderDecl.GetAsQuatList: TQuaternionList;
 var
   BaseName: String;
@@ -384,6 +395,7 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform1f( Addr, AValue ); cle( Self ); end;
+    sdtAttribute: begin glVertexAttrib1f( Addr, AValue ); cle( Self ); end;
   end;
 end;
 
@@ -393,6 +405,7 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform1fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+//    sdtAttribute: begin glVertexAttrib1fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
 end;
 
@@ -402,6 +415,7 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform1i( Addr, AValue ); cle( Self ); end;
+//    sdtAttribute: begin glVertexAttrib1i( Addr, AValue ); cle( Self ); end;
   end;
 end;
 
@@ -411,6 +425,7 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform1iv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+//    sdtAttribute: begin glVertexAttrib1v( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
 end;
 
@@ -441,6 +456,16 @@ begin
   end;
 end;
 
+procedure TP3DShaderDecl.SetAsQuat(AValue: TQuaternion);
+begin
+  if ( not Assigned( Self )) then
+    exit;
+  case DeclType of
+    sdtUniform: begin glUniform4fv( Addr, 1, @AValue ); cle( Self ); end;
+    sdtAttribute: begin glVertexAttrib4f( Addr, AValue.x, AValue.Y, AValue.Z, AValue.W ); cle( Self ); end;
+  end;
+end;
+
 procedure TP3DShaderDecl.SetAsQuatList(AValue: TQuaternionList);
 var
   i: Integer;
@@ -463,6 +488,7 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform2fv( Addr, 1, @AValue ); cle( Self ); end;
+    sdtAttribute: begin glVertexAttrib2f( Addr, AValue.X, AValue.Y ); cle( Self ); end;
   end;
 end;
 
@@ -481,6 +507,7 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform3fv( Addr, 1, @AValue ); cle( Self ); end;
+    sdtAttribute: begin glVertexAttrib3f( Addr, AValue.x, AValue.Y, AValue.Z ); cle( Self ); end;
   end;
 end;
 
@@ -499,6 +526,7 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform4fv( Addr, 1, @AValue ); cle( Self ); end;
+    sdtAttribute: begin glVertexAttrib4f( Addr, AValue.x, AValue.Y, AValue.Z, AValue.W ); cle( Self ); end;
   end;
 end;
 
@@ -556,7 +584,7 @@ var
   end;
 
 begin
-  FileName:= P3DSearchPaths.Shaders.FindFileEx( FName, GetCurrentDir );
+  FileName:= P3DSearchPaths.FindFileEx( FName, GetCurrentDir );
 
   if ( FileExists( FileName )) then
     begin

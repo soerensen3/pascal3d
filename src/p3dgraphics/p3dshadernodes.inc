@@ -415,7 +415,7 @@ var
   line: String;
   Path: String;
 begin
-  Path:= IncludeTrailingPathDelimiter( P3DSearchPaths.Shaders.FindFileEx( PathName, GetCurrentDir()));
+  Path:= IncludeTrailingPathDelimiter( P3DSearchPaths.FindFileEx( PathName, GetCurrentDir()));
   if ( Path = DirectorySeparator ) then
     raise Exception.Create( Format( 'Could not load shader library from path. The specified path "%s" was not found', [ PathName ]));
   Files:= P3DListFolderFiles( Path + Ext, True, True );

@@ -29,13 +29,16 @@ uniform int numLightSource;
 uniform LightSourceParameters LightSource[8];
 
 
-vec3 viewDir;
+vec3 viewDir = vec3( 0, 0, -1 );
 
-float calculateAttenuation(in int i, in float dist)
+float calculateAttenuation(in int i, in float dist, in float light_radius )
 {
     return(1.0 / (max( 0.01, 
                   LightSource[i].linearAttenuation * dist +
                   LightSource[i].quadraticAttenuation * dist * dist)));
+    return pow( clamp( 1 - pow( dist / light_radius, 4 ), 0, 1 ), 2 ) / ( pow( dist, 2) + 1 );
+    //inverse square falloff
+    
 }
 
 void util_PointLight( in int i, in float shininess,                  
@@ -47,19 +50,19 @@ void util_PointLight( in int i, in float shininess,
 
     // attenuation
 
-    float attenuation = calculateAttenuation( i, length( lVector )); //pointLightDistance[ i ], pointLightDecay[ i ] );
+    float attenuation = calculateAttenuation( i, length( lVector ), LightSource[i].linearAttenuation ); //pointLightDistance[ i ], pointLightDecay[ i ] );
 
     // diffuse
 
     float cosineTerm = saturate( dot( N, lightDir ) );
 
-    diffuse += ( LightSource[ i ].color.rgb ) * attenuation * cosineTerm;
+    diffuse += ( LightSource[ i ].color.rgb ) * attenuation * LightSource[ i ].color.a * cosineTerm;
 
     // specular
 
     vec3 brdf = BRDF_BlinnPhong( vec3( 1 ), shininess, N, lightDir, viewDir );
 
-    specular += brdf * LightSource[ i ].color.rgb * attenuation * cosineTerm;
+    specular += brdf * LightSource[ i ].color.rgb * attenuation * LightSource[ i ].color.a * cosineTerm;
 }
 
 /*{
@@ -99,13 +102,13 @@ void util_directionalLight( in int i,
 
     float cosineTerm = saturate( dot( N, LightSource[ i ].direction.xyz ));
 
-    diffuse += ( LightSource[ i ].color.rgb ) * cosineTerm;
+    diffuse += ( LightSource[ i ].color.rgb ) * LightSource[ i ].color.a * cosineTerm;
 
     // specular
 
-    vec3 brdf = BRDF_BlinnPhong( vec3( 1 ), shininess, N, LightSource[ i ].direction.xyz, viewDir );
+    vec3 brdf = BRDF_BlinnPhong( LightSource[ i ].color.rgb * LightSource[ i ].color.a, shininess, N, LightSource[ i ].direction.xyz, viewDir );
 
-    specular += brdf * LightSource[ i ].color.rgb * cosineTerm;
+    specular += brdf * cosineTerm;
 }
 ```
 
@@ -122,6 +125,10 @@ node: 1000_light_pass_calc_lighting
     if ( LightSource[ i ].type == p3dltSun )
       util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   }
+  //shadow = vec3( 1 );
+  //spec = vec3( 0 );
+//  Color= vec4( Normal.xyz, 1 );
+  //Color= vec4( vTangent.xyz, 1 );
 ```
 
 ---

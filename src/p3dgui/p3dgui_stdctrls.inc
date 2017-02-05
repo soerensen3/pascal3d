@@ -95,6 +95,7 @@
       procedure SetCollapsed(AValue: Boolean);
       procedure UpdateAutoSize;
       procedure UpdateCollapsed;
+      class function HasShadow: Boolean; override;
 
     protected
       procedure SetHeight(const Value: Float); override;
@@ -696,6 +697,11 @@ begin
     end;
 end;
 
+class function TP3DGroupBox.HasShadow: Boolean;
+begin
+  Result:= True;
+end;
+
 
 procedure TP3DGroupBox.SetHeight(const Value: Float);
 begin
@@ -780,7 +786,8 @@ end;
 
 class function TP3DGroupBox.IsFocusControl: Boolean;
 begin
-  Result:= True;
+  Result:= False;
+//  Result:= True;
 end;
 
 procedure TP3DGroupBox.SetAutoSize(AValue: Boolean);
@@ -902,7 +909,7 @@ begin
 
 
   Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
-  Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( 0, 0, 0, 0.1 ));
+  Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( Primary900.xyz, 0.05 ));
   Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
 
   Canvas.Font.Color:= Preset.FontColor;
@@ -1341,6 +1348,7 @@ begin
     P:= vec2( Width - FDownSymbol.Width, ( Height - FDownSymbol.Height ) / 2 )
   else
     P:= vec2( 0 );
+
   Canvas.Font.Name:= 'Pascal3D-Symbols';
   Canvas.RenderText( P3DSymbolTriangleDown, P, FDownSymbol );
   Canvas.Font.Name:= 'OpenSans-Semibold';//'RobotoCondensed-Light';
@@ -1401,8 +1409,35 @@ begin
   else
     Preset:= PresetNormal;
 
-  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
-  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+{  if (( Enabled ) and
+    ( gcisMouseBtn1Down in InputState )) then
+    begin
+      RenderButton( Accent900, Accent400, Accent600, Accent900, Accent900, Accent900, Accent900, Accent900 );
+      RenderButtonText( Accent50 );
+    end
+  else if (( Enabled ) and
+    ( gcisMouseOver in InputState )) then
+      begin
+        RenderButton( Accent100, vec4( 1 ), Accent50, Accent100, Accent900, Accent900, Accent900, Accent900 );
+        RenderButtonText( Accent700 );
+      end
+  else
+    begin
+      RenderButton( Accent200, Accent100, Accent200, Accent200, Accent900, Accent900, Accent900, Accent900 );
+      RenderButtonText( Accent900 );
+    end }
+
+  if (( Enabled ) and
+      ( gcisMouseBtn1Down in InputState )) then
+    RenderButton( Accent900, Accent400, Accent600, Accent900, Accent900, Accent900, Accent900, Accent900 )
+  else if (( Enabled ) and
+    ( gcisMouseOver in InputState )) then
+    RenderButton( Accent100, vec4( 1 ), Accent50, Accent100, Accent900, Accent900, Accent900, Accent900 )
+  else
+    RenderButton( Accent200, Accent100, Accent200, Accent200, Accent900, Accent900, Accent900, Accent900 );
+
+  //Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+  //Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
 
 
   if ( Focused ) then
@@ -1431,10 +1466,10 @@ begin
       end;
     end;
 
-  if ( Checked ) then
-    ColorChecked:= vec4( $78 / 255, $F2 / 255, $2C / 255, 1 )
+{  if ( Checked ) then
+    ColorChecked:= Accent900//vec4( $78 / 255, $F2 / 255, $2C / 255, 1 )
   else
-    ColorChecked:= vec4( 1 );
+    ColorChecked:= Accent100;}
 
   case HAlignment of
     haLeft: R:= P3DRect( 5, P.Y, CheckBoxWidth, CheckBoxWidth );
@@ -1443,10 +1478,13 @@ begin
   end;
 
   Canvas.RenderRectShadow( R.TopLeft + 1, R.BottomRight + 1, 2, vec4( 0, 0, 0, 0.1 ));
-  Canvas.RenderRect( R.TopLeft, R.BottomRight, ColorChecked );
+  if ( Checked ) then
+    Canvas.RenderRect( R.TopLeft, R.BottomRight, Accent900, Accent400, Accent600, Accent900 )
+  else
+    Canvas.RenderRect( R.TopLeft, R.BottomRight, Accent100, Accent50, Accent100, Accent100 );
   if ( Checked ) then
     begin
-      Canvas.Font.Color:= vec4( 1 );
+      Canvas.Font.Color:= Accent50;
       Canvas.RenderText( FSymbolChecked, R.TopLeft );
     end;
 

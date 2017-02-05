@@ -1,46 +1,66 @@
 <?xml version="1.0" ?>
-<p3dfile
-  name = "grid">
+<p3dfile>
   <scene
     name = "Scene">
     <object
-      type = "mesh"
       data = "mesh_Plane"
+      type = "mesh"
       name = "Plane">
       <transform
-        scale = "100.000000,100.000000, 1.000000"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        position = " 0.000000, 0.000000, 0.000000">
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = "100.000000,100.000000,100.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "lamp_Lamp"
+      type = "lamp"
+      name = "Lamp">
+      <transform
+        position = " 4.076245, 1.005454, 5.903862"
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947">
       </transform>
     </object>
   </scene>
   <mesh
-    faces = "1"
+    cotangents = "4"
+    loops = "4"
     name = "mesh_Plane"
     normals = "4"
-    vertices = "4"
     texcoords = "4"
+    vertices = "4"
     tangents = "4"
-    cotangents = "4"
-    binary = "grid.mesh_Plane.p3dmesh">
+    binary = "grid.mesh_Plane.p3dmesh"
+    faces = "1"
+    texlayers = "1">
     <material
+      start = "0"
       end = "0"
-      name = "material_Material"
-      start = "0">
+      name = "material_GridMaterial">
     </material>
   </mesh>
+  <lamp
+    energy = "1.0"
+    type = "point"
+    name = "lamp_Lamp"
+    color = "1.000000, 1.000000, 1.000000">
+  </lamp>
   <material
-    specular = "50.000000, 0.000000, 0.000000, 0.000000"
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
     unlit = "yes"
-    name = "material_Material"
-    diffuse = "1.000000, 1.000000, 1.000000">
-    <texture
-      name = "grid"
-      mode = "mix"
+    name = "material_GridMaterial"
+    diffuse = "0.800000, 0.800000, 0.800000">
+    <map
+      data = "tex_Texture"
       alpha = "1.0"
-      layer = "0"
-      file = "grid.png"
+      mode = "mix"
+      name = "Texture"
       diffuse = "1.0">
-    </texture>
+    </map>
   </material>
+  <texture
+    file = "grid.png"
+    name = "tex_Texture">
+  </texture>
 </p3dfile>

@@ -17,6 +17,7 @@
 
          function GetName: String;
          procedure SetMap( AValue: TP3DTexture );
+         procedure SetTexChannel(AValue: Integer); virtual;
 
        public
          constructor Create( AParentMaterial: TP3DMaterial ); virtual;
@@ -27,7 +28,7 @@
          class function DOMNodeName: String; override;
 
        published
-         property TexChannel: Integer read FTexChannel write FTexChannel;
+         property TexChannel: Integer read FTexChannel write SetTexChannel;
          property Map: TP3DTexture read FMap write SetMap;
          property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
          property HasTransparency: Boolean read FHasTransparency;
@@ -39,8 +40,8 @@
      TP3DMaterialBase = class;
      TP3DMaterialModifierType = class of TP3DMaterialModifier;
 
-     TP3DMapMode = ( p3dmmMix, p3dmmMultiply, p3dmmAdd, p3dmmSubtract );
-     TP3DMapTransparencyMode = ( p3dmtMultiply, p3dmtStep, p3dmtNone );
+     TP3DMapMode = ( mapMix, mapMultiply, mapAdd, mapSubtract );
+     TP3DMapTransparencyMode = ( tmMultiply, tmStep, tmNone );
 
      { TP3DMaterialMapBase }
 
@@ -54,6 +55,7 @@
          FSpecularFactor: Single;
          FTransform: TMat4;
          FTransformDynamic: Boolean;
+
          procedure LoadTransformFromDOM(DOM: TDOMElement);
          procedure SetAlphaFactor(AValue: Single);
          procedure SetDiffuseFactor(AValue: Single);
@@ -61,6 +63,7 @@
          procedure SetMode(AValue: TP3DMapMode);
          procedure SetNormalFactor(AValue: Single);
          procedure SetSpecularFactor(AValue: Single);
+         procedure SetTexChannel(AValue: Integer); override;
 
        public
          constructor Create( AParentMaterial: TP3DMaterial ); override;
@@ -304,6 +307,12 @@ begin
     Map.AddUser( ParentMaterial );
 end;
 
+procedure TP3DMaterialMap.SetTexChannel(AValue: Integer);
+begin
+  if FTexChannel=AValue then Exit;
+  FTexChannel:=AValue;
+end;
+
 function TP3DMaterialMap.GetName: String;
 begin
   if ( Assigned( Map )) then
@@ -320,8 +329,8 @@ begin
   FTexChannel:= 0;
   Properties.Context:= AParentMaterial;
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TexChannel', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name' ));
-  Properties.Add( TP3DPropertyAccessTexture.CreateFieldSet( 'Map', @FMap, @SetMap, smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smAttribute ));
+  Properties.Add( TP3DPropertyAccessTexture.CreateFieldSet( 'Data', @FMap, @SetMap, smAttribute ));
 end;
 
 constructor TP3DMaterialMap.CreateFromDOM(AParentMaterial: TP3DMaterial; ADOMNode: TDOMElement; const AData: TP3DLibrary);
@@ -418,22 +427,27 @@ begin
   TP3DMaterialBase( ParentMaterial ).BuildShader();
 end;
 
-constructor TP3DMaterialMapBase.Create(AParentMaterial: TP3DMaterial);
+procedure TP3DMaterialMapBase.SetTexChannel(AValue: Integer);
 begin
-  inherited;
+  inherited SetTexChannel(AValue);
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+constructor TP3DMaterialMapBase.Create( AParentMaterial: TP3DMaterial );
+begin
+  inherited Create( AParentMaterial );
   FDiffuseFactor:= 1.0;
   FNormalFactor:= 0.0;
   FSpecularFactor:= 0.0;
-  FMode:= p3dmmMix;
+  FMode:= mapMix;
   FTransform:= Mat4Identity;
-  TexChannel:= 0;
   Properties.Context:= AParentMaterial;
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DiffuseFactor', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'NormalFactor', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'SpecularFactor', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DisplaceFactor', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaFactor', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Mode', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TexChannel', smAttribute ));
 end;
 
 procedure TP3DMaterialMapBase.LoadTransformFromDOM( DOM: TDOMElement );
@@ -457,10 +471,10 @@ var
 begin
   Create( AParentMaterial );
 
-  TexName:= ADOMNode.GetAttribute( 'file' );
-  FullTexName:= P3DSearchPaths.Models.FindFileEx( TexName, GetCurrentDir );
+  {TexName:= ADOMNode.GetAttribute( 'file' );
+  FullTexName:= P3DSearchPaths.FindFileEx( TexName, GetCurrentDir );
   if ( not FileExists( FullTexName )) then
-    raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );
+    raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );}
 
   if ( not Assigned( AData )) then
     _Data:= P3DData
@@ -484,11 +498,11 @@ begin
   TexChannel:= StrToIntDef( ADOMNode.GetAttribute( 'layer' ), 0 );
 
   case ADOMNode.GetAttribute( 'mode' ) of
-    'add': Mode:= p3dmmAdd;
-    'multiply': Mode:= p3dmmMultiply;
-    'subtract': Mode:= p3dmmSubtract;
+    'add': Mode:= mapAdd;
+    'multiply': Mode:= mapMultiply;
+    'subtract': Mode:= mapSubtract;
     else
-      Mode:= p3dmmMix;
+      Mode:= mapMix;
   end;
 
   TransSect:= ADOMNode.GetElementsByTagName( 'transform' );
@@ -527,7 +541,7 @@ var
 begin
   FHasTransparency:= FAlpha < 1;
 
-  if (( not FHasTransparency ) and ( TransparencyMode = p3dmtMultiply )) then
+  if (( not FHasTransparency ) and ( TransparencyMode = tmMultiply )) then
     for Map in Maps do
       if ( Map.HasTransparency ) then
         begin
@@ -580,7 +594,7 @@ begin
 
   Alpha:= 1.0;
   Diff:= vec3( 1 );
-  FTransparencyMode:= p3dmtMultiply;
+  FTransparencyMode:= tmMultiply;
   FAlphaThreshhold:= 0.9;
 
   Modifiers:= TP3DMaterialModifierList.Create;
@@ -735,7 +749,7 @@ begin
   if ( ADOMNode.GetAttribute( 'unlit' ) = 'yes' ) then
     FUnlit:= True;
 
-  FTransparencyMode:= p3dmtStep;
+  FTransparencyMode:= tmStep;
 
   Instancing:= True;
 
@@ -960,7 +974,7 @@ procedure TP3DMaterialModifierMaps.AddPass(ShaderTree: TP3DShaderNodeTree; Mater
   end;
 
 const
-  Mode: array [ p3dmmMix .. p3dmmSubtract ] of String = ( 'mix', 'multiply', 'add', 'subtract' );
+  Mode: array [ mapMix .. mapSubtract ] of String = ( 'mix', 'multiply', 'add', 'subtract' );
 
 var
   i: Integer;
@@ -968,8 +982,8 @@ begin
   with ( Material ) do
     for i:= 0 to Maps.Count - 1 do
       begin
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_read_frag' ), 'Index', i ), 'TexCoordIndex', i );
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_read_vert' ), 'Index', i ), 'TexCoordIndex', i );
+        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_read_frag' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_read_vert' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
         if (( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor <> 0 ) or ( TP3DMaterialMapBase( Maps[ i ]).AlphaFactor <> 0 )) then
           ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '100_map_pass_diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
                          'Alpha', TP3DMaterialMapBase( Maps[ i ]).AlphaFactor ),
@@ -1058,9 +1072,9 @@ procedure TP3DMaterialModifierCombine.AddPass(ShaderTree: TP3DShaderNodeTree; Ma
   end;
 
 begin
-  if ( Material.TransparencyMode = p3dmtStep ) then
+  if ( Material.TransparencyMode = tmStep ) then
     ChangeSocketValueFloat( ShaderTree.AddCopyEx( '9990_map_pass_clip_transparency' ), 'AlphaTreshhold', Material.AlphaThreshhold )
-  else if ( Material.TransparencyMode = p3dmtNone ) then
+  else if ( Material.TransparencyMode = tmNone ) then
     ChangeSocketValueFloat( ShaderTree.AddCopyEx( '9990_map_pass_clip_transparency' ), 'AlphaTreshhold', 0 );
   ShaderTree.AddCopy( '10000_map_pass_final' );
 end;

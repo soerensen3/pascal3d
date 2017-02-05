@@ -463,7 +463,7 @@ var
   F: TStringList;
   FileName: String;
 begin
-  FileName:= P3DSearchPaths.Shaders.FindFileEx( FN, GetCurrentDir());
+  FileName:= P3DSearchPaths.FindFileEx( FN, GetCurrentDir());
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'Error while parsing markdown file. The file "%f" could not be found', [ FN ]));
   F:= TStringlist.Create;
@@ -477,7 +477,7 @@ var
   F: TStringList;
   FileName: String;
 begin
-  FileName:= P3DSearchPaths.Shaders.FindFileEx( FN, GetCurrentDir());
+  FileName:= P3DSearchPaths.FindFileEx( FN, GetCurrentDir());
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'Error while parsing markdown file. The file "%f" could not be found', [ FN ]));
   F:= TStringlist.Create;

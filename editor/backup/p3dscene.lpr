@@ -29,19 +29,16 @@ var
   Path: String;
 begin
   WriteLn( 'Basedir: ' + P3DSearchPaths.BaseDir );
-  for Path in P3DSearchPaths.Models do
-    WriteLn( 'modelpath: ' + Path );
-  for Path in P3DSearchPaths.Fonts do
-    WriteLn( 'fontspath: ' + Path );
-  for Path in P3DSearchPaths.Shaders do
-    WriteLn( 'shaderspath: ' + Path );
+  for Path in P3DSearchPaths do
+    WriteLn( 'Path: ' + Path );
 end;
 
 begin
-  //SetHeapTraceOutput('heap.trc');
+  DeleteFile( 'heap.trc' );
+  SetHeapTraceOutput( 'heap.trc' );
   P3DEventsInit;
   P3DUtilsInit;
-  P3DLog.FileName:= 'p3dscene.xml';
+  P3DLog.FileName:= 'p3dscene.html';
   P3DGraphicsInit;
   P3DApplication.MainWindow:= TP3DWindow.Create;
   //P3DApplication.OnInit:= @Init;
@@ -56,7 +53,7 @@ begin
 
   P3DApplication.Initialize;
 
-  P3DLoadConfig( 'settings_default.html' );
+  P3DLoadConfig( 'settings_default.xml' );
   P3DShaderNodeLib.LoadLibraryPath( P3DSearchPaths.BaseDir + 'shaders/nodes/core/', '*.pmd' );
   //Init( P3DApplication );
   P3DGUIInit;

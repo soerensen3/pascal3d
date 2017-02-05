@@ -93,8 +93,8 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure UpdateExtents; virtual; //Update both client and canvas extents
     procedure UpdateCanvasArea; virtual; //Update canvas draw area
     procedure UpdateClientRect; virtual; //Recalculate the client rect
-    procedure DragCancel( Sender: TP3DGraphicControl; X, Y: Integer ); //Cancel dragging.
-    procedure DragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean ); //This procedure is called internally when the mouse is released on the control during dragging. It can be overriden to make this control a drag target.
+    procedure DragCancel( Sender: TP3DGraphicControl; X, Y: Integer ); virtual; //Cancel dragging.
+    procedure DragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean ); virtual; //This procedure is called internally when the mouse is released on the control during dragging. It can be overriden to make this control a drag target.
     procedure Realign( var ClientArea: TP3DRect ); virtual; //Realign the control. Is called from TP3DControlList when parent changes
     procedure Paint( BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect ); virtual; //Prepare the canvas for drawing and call draw procedure.
 
@@ -105,7 +105,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     constructor Create( const AData: TP3DLibrary = nil ); override;
     procedure FastDestroy; override;
 
-    procedure BeginDrag(); //Start drag and drop with control as drag source
+    procedure BeginDrag(); virtual; //Start drag and drop with control as drag source
     procedure Draw; virtual;
     procedure KeyboardAction(); virtual;
     procedure KeyDown; virtual;
@@ -538,7 +538,7 @@ begin
     begin
       p:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
       P3DGUIManager.ScreenCanvas.Lock;
-      P3DGUIManager.ScreenCanvas.RenderRectShadow( p, p + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
+      P3DGUIManager.ScreenCanvas.RenderRectShadow( p, p + vec2( Canvas.Width, Canvas.Height ), 10, vec4( 0, 0, 0, 0.05 ));
       P3DGUIManager.ScreenCanvas.Unlock();
     end;
 

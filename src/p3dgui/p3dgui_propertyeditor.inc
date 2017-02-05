@@ -194,10 +194,11 @@ end;
 
 procedure TP3DPropertyEditorString.SetFocused(AValue: Boolean);
 begin
-  if ( AValue ) then
+  {if ( AValue ) then
     ReadValue()
   else
-    ApplyValue();
+    ApplyValue();}
+  ReadValue;
   inherited SetFocused(AValue);
 end;
 
@@ -222,7 +223,10 @@ begin
   if ( Focused ) then
     begin
       if ( P3DInput.Keyboard.DKeysLayout[ P3DK_RETURN ] = ksPressed ) then
-        ApplyValue;
+        begin
+          ApplyValue;
+          Focused:= False;
+        end;
       if ( P3DInput.Keyboard.DKeysLayout[ P3DK_ESCAPE ] = ksPressed ) then
         Focused:= False;
     end;

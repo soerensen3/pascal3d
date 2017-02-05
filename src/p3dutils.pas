@@ -28,7 +28,7 @@ uses
 
 var
   P3DFileWatch: TP3DFileWatchList;
-  P3DSearchPaths: TP3DSearchPaths;
+  P3DSearchPaths: TP3DSearchPathContainer;
 
 
 procedure P3DUtilsInit;
@@ -93,6 +93,7 @@ var
 begin
   for i:= 0 to ADOMNode.Attributes.Length - 1 do
     begin
+      //WriteLn( ADOMNode.Attributes[ i ].NodeName, ' = ', ADOMNode.Attributes[ i ].NodeValue );
       propI:= Properties.FindByName( ADOMNode.Attributes[ i ].NodeName );
       if ( propI > -1 ) then
         Properties[ propI ].AsString:= ADOMNode.Attributes[ i ].NodeValue;
@@ -130,7 +131,7 @@ begin
   if ( not Assigned( P3DFileWatch )) then
     P3DFileWatch:= TP3DFileWatchList.Create;
   if ( not Assigned( P3DSearchPaths )) then
-    P3DSearchPaths:= TP3DSearchPaths.Create;
+    P3DSearchPaths:= TP3DSearchPathContainer.Create;
 end;
 
 procedure P3DUtilsFinish;

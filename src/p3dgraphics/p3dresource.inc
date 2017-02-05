@@ -623,10 +623,10 @@ var
 begin
   Result:= '';
   P3DLog.LogInfo( Self, Format( 'Loading file "%s"', [ AFileName ]));
-  FName:= P3DSearchPaths.Models.FindFileEx( AFileName, GetCurrentDir );
+  FName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
   if ( FName = '' ) then
     raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ AFileName ]));
-  FName:= P3DSearchPaths.Models.FindFile( AFileName );
+  FName:= P3DSearchPaths.FindFile( AFileName );
   if ( not FileExists( FName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
 
@@ -921,7 +921,7 @@ var
   F: TP3DLibrary;
   FName: String;
 begin
-  FName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
+  FName:= P3DSearchPaths.FindFileEx( FileName, GetCurrentDir );
   if ( FName = '' ) then
     raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ FileName ]));
   Result:= Libraries.FindByFileName( FName );

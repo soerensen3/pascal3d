@@ -3,7 +3,7 @@ type
 
   { TP3DSceneMain }
 
-  TP3DSceneMain = class( TPersistent )
+  TP3DSceneMain = class( TP3DGraphicControl )
     private
       FActiveLibrary: TP3DLibrary;
       FActiveScene: TP3DScene;
@@ -19,8 +19,9 @@ type
       procedure EndUpdate;
 
     public
-      function NewLibrary( const FName: String = 'Untitled%d.p3d' ): TP3DLibrary;
-      function NewScene( const Name: String = 'NewScene%d' ): TP3DScene;
+      function NewLibrary( const AFileName: String = 'Untitled%d.p3d' ): TP3DLibrary;
+      function NewScene( const AName: String = 'NewScene%d' ): TP3DScene;
+      procedure Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
       procedure CheckLastChange;
       procedure Update;
       function FindFirstLib: TP3DLibrary;
@@ -87,7 +88,7 @@ begin
   FUpdating:= False;
 end;
 
-function TP3DSceneMain.NewLibrary(const FName: String): TP3DLibrary;
+function TP3DSceneMain.NewLibrary(const AFileName: String): TP3DLibrary;
 var
   i: Integer;
   FN: String;
@@ -95,20 +96,20 @@ begin
   SetCurrentDirUTF8( P3DSearchPaths.BaseDir );
   Result:= TP3DLibrary.Create;
   i:= 1;
-  if ( Pos( '%d', FName ) > 0 ) then
+  if ( Pos( '%d', AFileName ) > 0 ) then
     begin
-      while (( P3DData.Libraries.FindByFileName( Format( FName, [ i ])) > -1 ) or ( FileExists( Format( FName, [ i ])))) do
+      while (( P3DData.Libraries.FindByFileName( Format( AFileName, [ i ])) > -1 ) or ( FileExists( Format( AFileName, [ i ])))) do
         Inc( i );
-      FN:= Format( FName, [ i ]);
+      FN:= Format( AFileName, [ i ]);
     end
   else
-    FN:= FName;
+    FN:= AFileName;
 
   Result.FileWatch.FileName:= FN;
   P3DData.Libraries.Add( Result );
 end;
 
-function TP3DSceneMain.NewScene(const Name: String): TP3DScene;
+function TP3DSceneMain.NewScene(const AName: String): TP3DScene;
 var
   i: Integer;
   Lib: TP3DLibrary;
@@ -131,6 +132,14 @@ begin
 
   Result:= TP3DScene.Create( ActiveLibrary );
   Result.Name:= N;
+end;
+
+procedure TP3DSceneMain.Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
+begin
+  inherited Paint( BaseColor, ScrollAcc, ClipRect );
+  Canvas.Lock;
+  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ), vec4( vec3( 0 ), 0.4 ));
+  Canvas.Unlock();
 end;
 
 procedure TP3DSceneMain.CheckLastChange;
@@ -167,6 +176,8 @@ begin
 end;
 
 function TP3DSceneMain.FindFirstLib: TP3DLibrary;
+var
+  i: Integer;
 begin
   Result:= P3DData;
   i:= 0;

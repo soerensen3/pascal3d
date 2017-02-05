@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Cam = ""
+     Name = "Scene">
+    <object
+       Data = "/mesh_Plane"
+       Name = "Plane"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "0.00000000, 0.00000000, 0.00000000"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/lamp_Lamp"
+       Name = "Lamp"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "4.07624483, 1.00545394, 5.90386200"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Data = "/mesh_tree"
+       Name = "tree"
+       Scale = "0.20000000, 0.20000000, 0.20000000"
+       Visible = "1"
+       Position = "0.01558400, 0.00094600, -0.00644400"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+  </scene>
+  <mesh
+     Name = "mesh_Plane"
+     Edges = "tree_new.mesh_Plane.p3dmesh:256"
+     Faces = "tree_new.mesh_Plane.p3dmesh:208"
+     Indices = "tree_new.mesh_Plane.p3dmesh:292"
+     Normals = "tree_new.mesh_Plane.p3dmesh:52"
+     Tangents = "tree_new.mesh_Plane.p3dmesh:104"
+     Positions = "tree_new.mesh_Plane.p3dmesh:0"
+     Cotangents = "tree_new.mesh_Plane.p3dmesh:156"
+     TexCoords0 = "tree_new.mesh_Plane.p3dmesh:220"
+     VertexWeights = "tree_new.mesh_Plane.p3dmesh:388"
+     VertexWeightIndices = "tree_new.mesh_Plane.p3dmesh:320">
+    <!--summary for mesh mesh_Plane
+      Positions: 4
+      Normals: 4
+      Tangents: 4
+      Cotangents: 4
+      Faces: 1
+      TexCoords0: 4
+      Edges: 8
+      Indices: 6
+      VertexWeightIndices: 4
+      VertexWeights: 4
+    -->
+    <materialgroup
+       IndexEnd = "5"
+       Material = "/material_Material"
+       IndexStart = "0" />
+  </mesh>
+  <materialbase
+     Diff = "0.00000000, 0.00000000, 0.00000000"
+     Name = "material_Material"
+     Spec = "1.00000000, 1.00000000, 1.00000000"
+     Alpha = "1"
+     Unlit = "1"
+     Instancing = "1"
+     Spec_Hardness = "38"
+     UseVertexColor = "0"
+     AlphaThreshhold = "0.9"
+     TransparencyMode = "tmMultiply">
+    <map
+       Data = "/tex_Tex"
+       Mode = "mapMix"
+       Name = "tex_Tex"
+       TexChannel = "0"
+       AlphaFactor = "1"
+       NormalFactor = "0"
+       DiffuseFactor = "0"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+  </materialbase>
+  <texture
+     File = "assets/tree_shadow.png"
+     Name = "tex_Tex"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <light
+     Name = "lamp_Lamp"
+     Color = "1.00000000, 1.00000000, 1.00000000"
+     Energy = "1"
+     LightType = "ltSun"
+     LinearAttenuation = "0.1"
+     QuadraticAttenuation = "0" />
+  <mesh
+     Name = "mesh_tree"
+     Edges = "tree_new.mesh_tree.p3dmesh:1112232"
+     Faces = "tree_new.mesh_tree.p3dmesh:920464"
+     Indices = "tree_new.mesh_tree.p3dmesh:1265644"
+     Normals = "tree_new.mesh_tree.p3dmesh:230116"
+     Tangents = "tree_new.mesh_tree.p3dmesh:460232"
+     Positions = "tree_new.mesh_tree.p3dmesh:0"
+     Cotangents = "tree_new.mesh_tree.p3dmesh:690348"
+     TexCoords0 = "tree_new.mesh_tree.p3dmesh:958820"
+     VertexWeights = "tree_new.mesh_tree.p3dmesh:1687524"
+     VertexWeightIndices = "tree_new.mesh_tree.p3dmesh:1380704">
+    <!--summary for mesh mesh_tree
+      Positions: 19176
+      Normals: 19176
+      Tangents: 19176
+      Cotangents: 19176
+      Faces: 4794
+      TexCoords0: 19176
+      Edges: 38352
+      Indices: 28764
+      VertexWeightIndices: 19176
+      VertexWeights: 19176
+    -->
+    <materialgroup
+       IndexEnd = "28763"
+       Material = "/material_tree_mat"
+       IndexStart = "0" />
+  </mesh>
+  <materialbase
+     Diff = "0.80000001, 0.80000001, 0.80000001"
+     Name = "material_tree_mat"
+     Spec = "0.11666667, 0.11666667, 0.11666667"
+     Alpha = "1"
+     Unlit = "0"
+     Instancing = "1"
+     Spec_Hardness = "0"
+     UseVertexColor = "0"
+     AlphaThreshhold = "0.9"
+     TransparencyMode = "tmMultiply">
+    <map
+       Data = "/tex_Texture.003"
+       Mode = "mapMix"
+       Name = "tex_Texture.003"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       NormalFactor = "0"
+       DiffuseFactor = "1"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+    <map
+       Data = "/tex_Texture"
+       Mode = "mapMix"
+       Name = "tex_Texture"
+       TexChannel = "0"
+       AlphaFactor = "0"
+       NormalFactor = "1"
+       DiffuseFactor = "0"
+       DisplaceFactor = "0"
+       SpecularFactor = "0" />
+  </materialbase>
+  <texture
+     File = "assets/TexturesCom_WillowTreeBark_albedo_S.png"
+     Name = "tex_Texture.003"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "assets/TexturesCom_WillowTreeBark_normalmap_S.png"
+     Name = "tex_Texture"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+</p3dfile>

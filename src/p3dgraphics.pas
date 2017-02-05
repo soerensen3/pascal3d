@@ -36,11 +36,11 @@ type
   TP3DScene = class;
   TP3DActor = class;
 
-  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors, rlfWireFrame, rlfDepthTest, rlfLighting, rlfRenderEdges );
+  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors, rlfWireFrame, rlfDepthTest, rlfLighting, rlfRenderEdges, rlfActors, rlfMeshes, rlfScenes, rlfTileGrids );
   TP3DRenderListFlags = set of TP3DRenderListFlag;
 
  const
-   P3DRenderListFlagsDefault = [ rlfMaterials, rlfDepthTest, rlfLighting ];
+   P3DRenderListFlagsDefault = [ rlfMaterials, rlfDepthTest, rlfLighting, rlfMeshes, rlfScenes, rlfTileGrids ];
 
 {$MACRO ON}
 {$IfDef CHECKFORERRORS}{$Assertions ON}{$EndIf}

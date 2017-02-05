@@ -44,58 +44,22 @@ type
     procedure CheckForChange;
   end;
 
-  { TP3DSearchPathCategory }
-
-  TP3DSearchPaths = class;
-
-  TP3DSearchPathCategory = ( p3dsc_Models, p3dsc_Shaders, p3dsc_Fonts );
 
   { TP3DSearchPathContainer }
 
   TP3DSearchPathContainer = class( TStringList )
     private
-      FCategory: TP3DSearchPathCategory;
-      FSearchPaths: TP3DSearchPaths;
+      FBaseDir: String;
+
+      procedure SetBaseDir(AValue: String);
       function GetFullPath( Index: Integer ): String;
 
-    protected
-      property SearchPaths: TP3DSearchPaths read FSearchPaths write FSearchPaths;
-
     public
-      constructor Create( ASearchPaths: TP3DSearchPaths );
-
       function FindFile( FName: String ): String;
       function FindFileEx( FName: String; PreferedPath: String ): String;
 
       property FullPath[ Index: Integer ]: String read GetFullPath;
-
-    published
-      property Category: TP3DSearchPathCategory read FCategory write FCategory;
-  end;
-
-  { TP3DSearchPaths }
-
-  TP3DSearchPaths = class ( TPersistent )
-    private
-      FBaseDir: String;
-      SearchPaths: array [ p3dsc_Models..p3dsc_Fonts ] of TP3DSearchPathContainer;
-
-      function GetItem( Index: TP3DSearchPathCategory ): TP3DSearchPathContainer;
-      procedure SetBaseDir(AValue: String);
-      procedure SetItem( Index: TP3DSearchPathCategory ; AValue: TP3DSearchPathContainer );
-
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-      property Items[ Index: TP3DSearchPathCategory ]: TP3DSearchPathContainer
-        read GetItem write SetItem; default;
-
-    published
       property BaseDir: String read FBaseDir write SetBaseDir;
-      property Fonts: TP3DSearchPathContainer read Searchpaths[ p3dsc_Fonts ] write Searchpaths[ p3dsc_Fonts ];
-      property Models: TP3DSearchPathContainer read Searchpaths[ p3dsc_Models ] write Searchpaths[ p3dsc_Models ];
-      property Shaders: TP3DSearchPathContainer read Searchpaths[ p3dsc_Shaders ] write Searchpaths[ p3dsc_Shaders ];
   end;
 
   function P3DListFolderFiles( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
@@ -139,12 +103,18 @@ end;
 
 procedure TP3DFileWatch.SetFileName(AValue: String);
 var
-  FN: String;
+  FN, FName: String;
 begin
   if ( FFileName = AValue ) then
     Exit;
 
-  FN:= ExpandFileName( AValue );
+  FN:= AValue;
+  if ( FN > '' ) then
+    begin
+      FName:= P3DSearchPaths.FindFileEx( AValue, GetCurrentDir ); //ExpandFileName( AValue );
+      if ( FileExists( FName )) then
+        FN:= FName;
+    end;
   if ( Assigned( OnFileNameChange )) then
     OnFileNameChange( Self, FN );
   FFileName:= FN;
@@ -299,19 +269,13 @@ procedure ReadPaths( BaseNode: TDOMElement );
 var
   Path: TDOMElement;
   sptype, value: DOMString;
-  ptype: TP3DSearchPathCategory;
 begin
   Path:= TDOMElement( BaseNode.FirstChild );
   while ( Assigned( Path )) do
     begin
       sptype:= Path.GetAttribute( 'type' );
-      case sptype of
-        'models': ptype:= p3dsc_Models;
-        'fonts': ptype:= p3dsc_Fonts;
-        'shaders': ptype:= p3dsc_Shaders;
-      end;
       value:= Path.GetAttribute( 'value' );
-      P3DSearchPaths[ ptype ].Add( value );
+      P3DSearchPaths.Add( value );
       Path:= TDOMElement( Path.NextSibling );
     end;
 end;
@@ -596,14 +560,8 @@ begin
     begin
       Result:= AppendPathDelim( Self[ Index ]);
       if ( not FilenameIsAbsolute( Result )) then
-        Result:= AppendPathDelim( SearchPaths.BaseDir + Result );
+        Result:= AppendPathDelim( BaseDir + Result );
     end;
-end;
-
-constructor TP3DSearchPathContainer.Create(ASearchPaths: TP3DSearchPaths);
-begin
-  inherited Create;
-  SearchPaths:= ASearchPaths;
 end;
 
 function TP3DSearchPathContainer.FindFile(FName: String): String;
@@ -617,6 +575,8 @@ var
   BasePath, FileName: String;
 begin
   Result:= '';
+  if ( FName = '' ) then
+    exit;
   if ( FilenameIsAbsolute( FName ) and FileExistsUTF8( FName )) then
     begin
       Result:= FName;
@@ -631,7 +591,7 @@ begin
           exit;
         end;
     end;
-  BasePath:= AppendPathDelim( SearchPaths.BaseDir );
+  BasePath:= AppendPathDelim( BaseDir );
   FileName:= BasePath + FName;
   if ( FileExists( FileName )) then
     begin
@@ -649,40 +609,10 @@ begin
     end;
 end;
 
-{ TP3DSearchPaths }
-
-function TP3DSearchPaths.GetItem(Index: TP3DSearchPathCategory): TP3DSearchPathContainer;
-begin
-  Result:= SearchPaths[ Index ];
-end;
-
-procedure TP3DSearchPaths.SetBaseDir(AValue: String);
+procedure TP3DSearchPathContainer.SetBaseDir(AValue: String);
 begin
   if FBaseDir= AValue then Exit;
   FBaseDir:= AppendPathDelim( ExpandFileName( AValue ));
-end;
-
-procedure TP3DSearchPaths.SetItem(Index: TP3DSearchPathCategory; AValue: TP3DSearchPathContainer);
-begin
-  SearchPaths[ Index ]:= AValue;
-end;
-
-constructor TP3DSearchPaths.Create;
-var
-  Item: TP3DSearchPathCategory;
-begin
-  inherited;
-  for Item in TP3DSearchPathCategory do
-    Items[ Item ]:= TP3DSearchPathContainer.Create( Self );
-end;
-
-destructor TP3DSearchPaths.Destroy;
-var
-  Item: TP3DSearchPathCategory;
-begin
-  for Item in TP3DSearchPathCategory do
-    Items[ Item ].Free;
-  inherited Destroy;
 end;
 
 

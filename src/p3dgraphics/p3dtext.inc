@@ -359,7 +359,7 @@ end;
 
 function TP3DFontManager.Add(Item: TP3DFont): Integer;
 begin
-	Result:= inherited Add(Item);
+  Result:= inherited Add(Item);
   Item.FontManager:= Self;
 end;
 
@@ -372,6 +372,7 @@ constructor TP3DFontManager.Create;
 begin
   inherited;
   FMaterial:= TP3DMaterialBase.Create;
+  FMaterial.Name:= 'FontMaterial';
   FMaterial.FUnlit:= True;
   FMaterial.FUseVertexColor:= True;
 end;
@@ -405,7 +406,7 @@ var
 begin
   inherited Create;
   Size:= ASize;
-  FileName:= P3DSearchPaths.Fonts.FindFile( AFileName );
+  FileName:= P3DSearchPaths.FindFile( AFileName );
   if ( FileName = '' ) then
     raise Exception.Create( 'p3dtext.TP3DFont: Failed to load font "' + AFileName + '"! Not found!' );
   FFileWatch:= TP3DFileWatch.Create( FileName );

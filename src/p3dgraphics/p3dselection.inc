@@ -28,6 +28,7 @@ begin
   if ( not Assigned( PickMaterial )) then
     begin
       PickMaterial:= TP3DMaterialBase.Create();
+      PickMaterial.Name:= 'PickMaterial';
       PickMaterial.Unlit:= True;
     end;
   PickMaterial.PassToShader();

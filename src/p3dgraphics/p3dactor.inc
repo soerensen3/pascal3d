@@ -92,6 +92,7 @@ type
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
+      procedure AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags); override;
       class function DOMNodeName: String; override;
 
       property Position: TVec3 read FPosition write SetPosition;
@@ -114,7 +115,6 @@ type
   TP3DPropertyAccessActor = specialize gP3DPropertyAccessDataBlock < TP3DActor >;
   TP3DCustomActorList = specialize gP3DCustomDatablockList < TP3DActor >;
 
-  TP3DRenderList = class;
   TP3DRenderListModifier = class;
 
   { TP3DActorList }
@@ -476,6 +476,19 @@ begin
   //TODO: TP3DActor.RotateAroundLocalAxis
 end;
 
+procedure TP3DActor.AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
+var
+  mat: TMat4;
+begin
+  mat:= AWorld * Matrix;
+  FMatrixFinal:= mat;
+  if ( rlfActors in AFlags ) then
+    AList.PushRenderObject( Self, mat, P3DMaterialActive );
+  if ( Assigned( Data )) then
+    AList.Add( Data, mat, ARootScene, AFlags );
+  Children.MakeRenderList( ARootScene, mat, AList, AFlags );
+end;
+
 class function TP3DActor.DOMNodeName: String;
 begin
   Result:= 'object';
@@ -517,12 +530,7 @@ begin
   if ( not Assigned( ARenderList )) then
     ARenderList:= TP3DRenderList.Create;
   for Actor in Self do
-    begin
-      mat:= world * Actor.Matrix;
-      Actor.FMatrixFinal:= mat;
-      ARenderList.Add( Actor.Data, mat, ARootScene, AFlags );
-      Actor.Children.MakeRenderList( ARootScene, mat, ARenderList, AFlags );
-    end;
+    Actor.AddToRenderList( ARootScene, world, ARenderList, AFlags );
 end;
 
 function TP3DActorList.OutputDebugInfo: String;

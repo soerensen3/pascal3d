@@ -67,6 +67,7 @@ TP3DTileGrid = class ( TP3DDatablock )
     procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
     procedure PassToShader(Scene: TP3DGridScene; baseInstanceCount: Integer);
+    procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); override;
 
     property SceneAt[ x, y: Integer ]: TP3DGridScene read GetSceneAt write SetSceneAt;
     function OnGridDataSet( Sender: TPersistent; ItemIndex: Integer; AValue: TP3DGridScene ): Boolean;
@@ -358,6 +359,22 @@ begin
           p:= vec2( j mod Width, j div Width ) * GridWorldUnit;
           Meshes[ i ].Render( world * mat4translate( vec4( p, 0, 1 )), Scene, RenderObject );
         end;}
+end;
+
+procedure TP3DTileGrid.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
+var
+  i: Integer;
+  Modifier: TP3DRenderListModifier;
+begin
+  for i:= 0 to Scenes.Count - 1 do
+    if ( Assigned( Scenes[ i ].Scene ) and Assigned( Scenes[ i ].Modifier )) then
+      begin
+        Modifier:= Scenes[ i ].Modifier;
+
+        AList.ModifierStack.Add( Modifier );
+        Scenes[ i ].Scene.MakeRenderList( ARootScene, AWorld, AList, AFlags );
+        AList.ModifierStack.Remove( Modifier );
+      end;
 end;
 
 function TP3DTileGrid.OnGridDataSet(Sender: TPersistent; ItemIndex: Integer; AValue: TP3DGridScene): Boolean;

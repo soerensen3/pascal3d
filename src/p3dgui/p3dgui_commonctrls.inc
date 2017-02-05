@@ -49,6 +49,7 @@ type
       FChildren: TP3DTreeNodeList;
       FExpanded: Boolean;
       FParent: TP3DTreeNode;
+      procedure SetParent(AValue: TP3DTreeNode);
 
     public
       constructor Create( const AParent: TP3DTreeNode = nil );
@@ -57,7 +58,7 @@ type
     published
       property Children: TP3DTreeNodeList read FChildren write FChildren;
       property Expanded: Boolean read FExpanded write FExpanded;
-      property Parent: TP3DTreeNode read FParent write FParent;
+      property Parent: TP3DTreeNode read FParent write SetParent;
   end;
 
   TP3DCustomTreeNodeList = specialize gP3DCustomObjectList < TP3DTreeNode >;
@@ -65,11 +66,20 @@ type
   { TP3DTreeNodeList }
 
   TP3DTreeNodeList = class ( TP3DCustomTreeNodeList )
-    function Add( Caption: String; Data: Pointer; const Expanded: Boolean = False; const Symbol: String = '' ): Integer; overload;
-    function Find( Caption: String ): Integer;
-    function FindByData( Data: Pointer ): Integer;
-    function FindByData( Data: Pointer; Recurse: Boolean ): TP3DTreeNode;
-    procedure ExpandAll( const Recurse: Boolean = True );
+    private
+      FTreeNode: TP3DTreeNode;
+
+    public
+      constructor Create( ATreeNode: TP3DTreeNode );
+
+      function Add( Caption: String; Data: Pointer; const Expanded: Boolean = False; const Symbol: String = '' ): Integer; overload;
+      procedure Delete(Index: Integer); override;
+      function Find( Caption: String ): Integer;
+      function FindByData( Data: Pointer ): Integer;
+      function FindByData( Data: Pointer; Recurse: Boolean ): TP3DTreeNode;
+      procedure ExpandAll( const Recurse: Boolean = True );
+
+      property TreeNode: TP3DTreeNode read FTreeNode;
   end;
 
   { TP3DCustomItemView }
@@ -96,7 +106,7 @@ type
       procedure Draw; override;
       procedure OnScroll( Sender: TObject );
       procedure MouseWheel(delta: Integer); override;
-      procedure MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
+      procedure MouseMove( X, Y: Integer ); override;
 
     published
       property Preset: TP3DButtonPreset read FPreset write FPreset;
@@ -116,6 +126,7 @@ type
   TP3DTreeView = class( TP3DCustomItemView )
     private
       FChildren: TP3DTreeNodeList;
+      FDragItem: TP3DTreeNode;
       FOnSelectionChange: TP3DTreeViewSelectionChangeEvent;
       FSelection: TP3DTreeNode;
 
@@ -129,8 +140,11 @@ type
       destructor Destroy; override;
 
       procedure Draw; override;
-      procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+      procedure MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
       procedure MouseDblClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
+      procedure BeginDrag; override;
+      procedure DragCancel(Sender: TP3DGraphicControl; X, Y: Integer); override;
+      procedure KeyboardAction; override;
 
       function NodeAtPos(p: TVec2): TP3DTreeNode;
 
@@ -138,6 +152,7 @@ type
       property Children: TP3DTreeNodeList read FChildren write FChildren;
       property Selection: TP3DTreeNode read FSelection write SetSelection;
       property OnSelectionChange: TP3DTreeViewSelectionChangeEvent read FOnSelectionChange write fOnSelectionChange;
+      property DragItem: TP3DTreeNode read FDragItem;
   end;
 
   { TP3DListView }
@@ -147,6 +162,7 @@ type
   TP3DListView = class ( TP3DCustomItemView )
     private
       FChildren: TP3DListItemList;
+      FDragItem: TP3DListItem;
       FOnSelectionChange: TP3DListViewSelectionChangeEvent;
       FSelection: TP3DListItem;
       FViewStyle: TP3DListViewStyle;
@@ -160,13 +176,17 @@ type
 
       procedure Draw; override;
       function DrawListItem( p: TVec2; Node: TP3DListItem ): TVec2; virtual;
-      procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+      procedure MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
+      procedure BeginDrag; override;
+      procedure DragCancel(Sender: TP3DGraphicControl; X, Y: Integer); override;
+      procedure KeyboardAction; override;
 
     published
       property Children: TP3DListItemList read FChildren write FChildren;
       property Selection: TP3DListItem read FSelection write SetSelection;
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read FOnSelectionChange write fOnSelectionChange;
       property ViewStyle: TP3DListViewStyle read FViewStyle write FViewStyle;
+      property DragItem: TP3DListItem read FDragItem;
   end;
 
   TP3DListViewFile = class;
@@ -300,6 +320,7 @@ begin
   inherited Draw;
   Canvas.RenderRect( Scroll, vec2( Width, Height ) - 1 + Scroll, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
   Canvas.RenderLineRect( Scroll, vec2( Width, Height ) - 1 + Scroll, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+  Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( Primary900.xyz, 0.05 ));
 
   if ( Focused ) then
     Canvas.RenderLineRect( vec2( 4 ) + Scroll, vec2( Width, Height ) - 4 + Scroll, vec4( 0.5, 0.5, 0.5, 0.5 ));
@@ -320,10 +341,11 @@ begin
     ScrollBarV.Position:= ScrollBarV.Position + delta * P3DGUIManager.ScrollSpeed;
 end;
 
-procedure TP3DCustomItemView.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
+procedure TP3DCustomItemView.MouseMove(X, Y: Integer);
 begin
-  inherited MouseDown(mb1, mb2, mb3, X, Y);
-  if ( mb1 and AllowDrag ) then
+  inherited MouseMove( X, Y);
+  if ( not Assigned( DragDropSrc ) and ( gcisMouseBtn1Down in InputState ) and
+       AllowDrag and (( P3DInput.Mouse.DX <> 0 ) or ( P3DInput.Mouse.DY <> 0 ))) then
     BeginDrag();
 end;
 
@@ -341,7 +363,7 @@ end;
 constructor TP3DTreeView.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
-  Children:= TP3DTreeNodeList.Create;
+  Children:= TP3DTreeNodeList.Create( nil );
 
   SymbolPlus:= TP3DTextBmp.CreateSimple( P3DSymbolPlus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );
   SymbolMinus:= TP3DTextBmp.CreateSimple( P3DSymbolMinus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );
@@ -366,7 +388,13 @@ procedure TP3DTreeView.Draw;
     if ( not Assigned( Node.Text )) then
       Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
     Canvas.Font.Color:= Accent900;
-    if ( Node = Selection ) then
+    if ( Node = DragItem ) then
+      begin
+        Canvas.Font.Color:= Accent50;
+        Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
+                           Secondary900, Secondary400, Secondary600, Secondary900 );
+      end
+    else if ( Node = Selection ) then
       begin
         Canvas.Font.Color:= Accent50;
         Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
@@ -422,12 +450,12 @@ begin
   ScrollBarV.Max:= p.Y * ( 1 - ScrollBarV.PageSize );
 end;
 
-procedure TP3DTreeView.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
+procedure TP3DTreeView.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
 var
   Node: TP3DTreeNode;
 begin
-  inherited MouseDown(mb1, mb2, mb3, X, Y);
-  if ( P3DInput.Mouse.Buttons[ 0 ] and P3DInput.Mouse.DButtons[ 0 ]) then
+  inherited MouseClick(mb1, mb2, mb3, X, Y);
+  if ( mb1 ) then
     begin
       Node:= NodeAtPos( vec2( X + Scroll.X, Y + Scroll.Y ));
       if ( Assigned( Node )) then
@@ -452,6 +480,183 @@ begin
       Item:= NodeAtPos( vec2( X + Scroll.X, Y + Scroll.Y ));
       if ( Assigned( Item ) and ( Item.Children.Count > 0 )) then
         Item.Expanded:= not Item.Expanded;
+    end;
+end;
+
+procedure TP3DTreeView.BeginDrag;
+begin
+  inherited BeginDrag();
+  FDragItem:= NodeAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ) + Scroll );
+end;
+
+procedure TP3DTreeView.DragCancel(Sender: TP3DGraphicControl; X, Y: Integer);
+begin
+  FDragItem:= nil;
+end;
+
+procedure TP3DTreeView.KeyboardAction;
+  procedure Select( n: Integer );
+  var
+    NewSelection: TP3DTreeNode = nil;
+    Previous: TP3DTreeNode = nil;
+
+    function Find( Ch: TP3DTreeNodeList ): Boolean;
+    var
+      i: Integer;
+      Child: TP3DTreeNode;
+
+      procedure SelectPrevious;
+      begin
+
+      end;
+
+      procedure SelectNext;
+      begin
+        if (( Child.Expanded ) and ( Child.Children.Count > 0 )) then
+          NewSelection:= Child.Children[ 0 ]
+        else if ( Ch.Count > i + 1 ) then
+          NewSelection:= Ch[ i + 1 ];
+      end;
+
+    begin
+      Result:= False;
+      Child:= nil;
+      for i:= 0 to Ch.Count - 1 do
+        begin
+          if ( i > 0 ) then
+            Previous:= Child;
+          Child:= Ch[ i ];
+          if ( Child = Selection ) then
+            begin
+              Result:= True;
+              if ( n < 0 ) then
+                Selection:= Previous
+              else
+                SelectNext;
+              break;
+            end
+          else if ( Child.Expanded ) then
+            begin
+              Result:= Find( Child.Children );
+              if ( Result ) then
+                begin
+                  if ( not Assigned( NewSelection )) then
+                    begin
+                      if ( n < 0 ) then
+                        NewSelection:= Child
+                      else if ( Ch.Count > i + 1 ) then
+                        NewSelection:= Ch[ i + 1 ];
+                    end;
+                  break;
+                end;
+            end;
+          if ( Result ) then
+            break;
+        end;
+    end;
+
+  begin
+    if ( Selection = nil ) then
+      Selection:= Children[ 0 ]
+    else
+      begin
+        Find( Children );
+        if ( Assigned( NewSelection )) then
+          Selection:= NewSelection;
+      end;
+  end;
+
+  procedure SearchBackward;
+    function FindLast( N: TP3DTreeNode ): TP3DTreeNode;
+    begin
+      Result:= n;
+      while ( Result.Expanded ) and ( Result.Children.Count > 0 ) do
+        Result:= Result.Children[ N.Children.Count - 1 ];
+    end;
+
+  var
+    ch: TP3DTreeNodeList;
+    n: Integer;
+  begin
+    if ( Selection = nil ) then
+      Selection:= Children[ 0 ]
+    else
+      begin
+        if ( Assigned( Selection.Parent )) then
+          ch:= Selection.Parent.Children
+        else
+          ch:= Children;
+
+        n:= ch.IndexOf( Selection );
+        if ( n = 0 ) then
+          begin
+            if ( Assigned( Selection.Parent )) then
+              Selection:= Selection.Parent;
+          end
+        else if ( n > 0 ) then
+          Selection:= FindLast( ch[ n - 1 ]);
+      end;
+  end;
+
+  procedure SearchForward;
+    function FindNext( N: TP3DTreeNode ): TP3DTreeNode;
+    var
+      ch: TP3DTreeNodeList;
+      i: Integer;
+    begin
+      Result:= n.Parent;
+      while ( Assigned( Result.Parent ) and ( Result.Parent.Children.IndexOf( Result ) = Result.Parent.Children.Count -1 )) do
+        Result:= Result.Parent;
+      if ( Assigned( Result.Parent )) then
+        ch:= Result.Parent.Children
+      else
+        ch:= Children;
+
+      i:= ch.IndexOf( Result );
+      if ( i >= 0 ) then
+        Result:= ch[ i + 1 ];
+    end;
+
+  var
+    ch: TP3DTreeNodeList;
+    n: Integer;
+  begin
+    if ( Selection = nil ) then
+      Selection:= Children[ 0 ]
+    else if ( Selection.Expanded ) and ( Selection.Children.Count > 0 ) then
+      Selection:= Selection.Children[ 0 ]
+    else
+      begin
+        if ( Assigned( Selection.Parent )) then
+          ch:= Selection.Parent.Children
+        else
+          ch:= Children;
+
+        n:= ch.IndexOf( Selection );
+        if ( n = ch.Count - 1 ) then
+          begin
+            if ( Assigned( Selection.Parent )) then
+              Selection:= FindNext( Selection );
+          end
+        else if ( n >= 0 ) then
+          Selection:= ch[ n + 1 ];
+      end;
+  end;
+
+begin
+  inherited KeyboardAction;
+  if (( not Focused ) or ( Children.Count = 0 )) then
+    exit;
+  if ( P3DInput.Keyboard.DKeys[ P3DK_UP ] = ksPressed ) then
+    SearchBackward;
+  if ( P3DInput.Keyboard.DKeys[ P3DK_DOWN ] = ksPressed ) then
+    SearchForward;
+  if ( Assigned( Selection )) then
+    begin
+      if ( P3DInput.Keyboard.DKeys[ P3DK_LEFT ] = ksPressed ) then
+        Selection.Expanded:= False;
+      if ( P3DInput.Keyboard.DKeys[ P3DK_RIGHT ] = ksPressed ) then
+        Selection.Expanded:= True;
     end;
 end;
 
@@ -481,11 +686,23 @@ end;
 
 { TP3DTreeNode }
 
+procedure TP3DTreeNode.SetParent(AValue: TP3DTreeNode);
+begin
+  if FParent=AValue then Exit;
+
+  if ( Assigned( Parent )) then
+    Parent.Children.Remove( Self );
+
+  FParent:=AValue;
+
+  if ( Assigned( Parent )) then
+    Parent.Children.Add( Self );
+end;
 
 constructor TP3DTreeNode.Create(const AParent: TP3DTreeNode);
 begin
   inherited Create;
-  Children:= TP3DTreeNodeList.Create;
+  Children:= TP3DTreeNodeList.Create( Self );
   Parent:= AParent;
 end;
 
@@ -657,6 +874,12 @@ end;
 
 { TP3DTreeNodeList }
 
+constructor TP3DTreeNodeList.Create(ATreeNode: TP3DTreeNode);
+begin
+  inherited Create;
+  FTreeNode:= ATreeNode;
+end;
+
 function TP3DTreeNodeList.Add(Caption: String; Data: Pointer;
   const Expanded: Boolean; const Symbol: String): Integer;
 var
@@ -667,7 +890,14 @@ begin
   Node.Data:= Data;
   Node.Expanded:= Expanded;
   Node.SymbolText:= Symbol;
+  Node.FParent:= TreeNode;
   Result:= inherited Add( Node );
+end;
+
+procedure TP3DTreeNodeList.Delete(Index: Integer);
+begin
+  Items[ Index ].FParent:= nil;
+  inherited Delete( Index );
 end;
 
 function TP3DTreeNodeList.Find(Caption: String): Integer;
@@ -783,7 +1013,14 @@ procedure TP3DListView.Draw;
     if ( not Assigned( Node.Text )) then
       Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
     Canvas.Font.Color:= Accent900;
-    if ( Node = Selection ) then
+    if ( Node = DragItem ) then
+      begin
+        Canvas.Font.Color:= Accent50;
+        Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
+          Secondary900, Secondary400, Secondary600, Secondary900 );
+          //Preset.OutlineColor, vec4( Preset.OutlineColor.xyz, 0 ), vec4( Preset.OutlineColor.xyz, 0 ), Preset.OutlineColor );
+      end
+    else if ( Node = Selection ) then
       begin
         Canvas.Font.Color:= Accent50;
         Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
@@ -839,7 +1076,13 @@ begin
   if ( not Assigned( Node.Text )) then
     Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
   Canvas.Font.Color:= Accent900;
-  if ( Node = Selection ) then
+  if ( Node = DragItem ) then
+    begin
+      Canvas.Font.Color:= Accent50;
+      Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
+        Secondary900, Secondary400, Secondary600, Secondary900 );
+    end
+  else if ( Node = Selection ) then
     begin
       Canvas.Font.Color:= Accent50;
       Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
@@ -857,12 +1100,41 @@ begin
   Result.y:= p.y + Node.Text.Height;
 end;
 
-procedure TP3DListView.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer);
+procedure TP3DListView.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
-  inherited MouseDown(mb1, mb2, mb3, X, Y);
+  inherited MouseClick( mb1, mb2, mb3, X, Y );
 
-  if ( P3DInput.Mouse.Buttons[ 0 ] and P3DInput.Mouse.DButtons[ 0 ]) then
+  if ( mb1 ) then
     Selection:= ItemAtPos( vec2( X + Scroll.X, Y + Scroll.Y ));
+end;
+
+procedure TP3DListView.BeginDrag;
+begin
+  inherited BeginDrag;
+  FDragItem:= ItemAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ) + Scroll );
+end;
+
+procedure TP3DListView.DragCancel(Sender: TP3DGraphicControl; X, Y: Integer);
+begin
+  inherited DragCancel(Sender, X, Y);
+  FDragItem:= nil;
+end;
+
+procedure TP3DListView.KeyboardAction;
+  procedure Select( n: Integer );
+  begin
+    n:= Min( Children.Count - 1, Max( 0, n ));
+    Selection:= Children[ n ];
+  end;
+
+begin
+  inherited KeyboardAction;
+  if (( not Focused ) or ( Children.Count = 0 )) then
+    exit;
+  if ( P3DInput.Keyboard.DKeys[ P3DK_UP ] = ksPressed ) then
+    Select( Children.IndexOf( Selection ) - 1 );
+  if ( P3DInput.Keyboard.DKeys[ P3DK_DOWN ] = ksPressed ) then
+    Select( Children.IndexOf( Selection ) + 1 );
 end;
 
 
@@ -1336,7 +1608,7 @@ begin
   if ( Assigned( Selection )) then
     begin
       SelectionData:= Selection.Data;
-      Selection:= nil;
+      FSelection:= nil;
     end
   else
     SelectionData:= nil;

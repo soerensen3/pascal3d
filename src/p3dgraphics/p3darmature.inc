@@ -971,6 +971,7 @@ end;
 destructor TP3DActionFrame.Destroy;
 begin
   Action.Frames.Remove( Self );
+  Pose.Clear( True );
   Pose.Free;
   Rotations.Free;
   Translations.Free;

@@ -646,7 +646,7 @@ var
   FN: String;
 begin
   Create;
-  FN:= P3DSearchPaths.Fonts.FindFile( Font.FontName + '.p3d' );
+  FN:= P3DSearchPaths.FindFile( Font.FontName + '.p3d' );
   if (( FN > '' ) and ( FileAge( Font.FileWatch.FileName ) < FileAge( FN ))) then
     LoadFromFile( FN )
   else
@@ -670,11 +670,10 @@ begin
       Texture.MipMap:= False;
 
       Texture.FileWatch.FileName:= Font.FontName + '.png';
-      if ( P3DSearchPaths.Fonts.Count > 0 ) then
-        begin
-          Texture.SaveToFile( P3DSearchPaths.Fonts.FullPath[ 0 ] + Texture.FileWatch.FileName );
-          SaveToFile( P3DSearchPaths.Fonts.FullPath[ 0 ] + Font.FontName + '.p3d' );
-        end;
+
+      Texture.SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Texture.FileWatch.FileName );
+      SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.p3d' );
+
       MipMapLoadBias:= FMipMapLoadBias;
     end;
 end;
@@ -737,7 +736,7 @@ var
 begin
   if ( lowercase( ExtractFileExt( FName )) = '.p3d' ) then
     begin
-      FileName:= P3DSearchPaths.Models.FindFileEx( FName, GetCurrentDir );
+      FileName:= P3DSearchPaths.FindFileEx( FName, GetCurrentDir );
       if ( FileName = '' ) then
         raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" was not found!', [ FName ]));
       ReadXMLFile( xml, FileName );
@@ -864,6 +863,7 @@ begin
   DefaultTextSize:= 72 * 2;
   DefaultTextMargin:= 48;
   Material:= TP3DMaterialBase.Create();
+  Material.Name:= 'FontBmpMaterial';
   Material.FUnlit:= True;
   TextModifier:= TP3DMaterialModifierText.Create;
   Material.Modifiers.Add( TextModifier );

@@ -3,7 +3,7 @@ program p3dscene;
 {$mode objfpc}{$H+}
 
 uses
-  heaptrc,
+  //heaptrc,
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
@@ -29,17 +29,13 @@ var
   Path: String;
 begin
   WriteLn( 'Basedir: ' + P3DSearchPaths.BaseDir );
-  for Path in P3DSearchPaths.Models do
-    WriteLn( 'modelpath: ' + Path );
-  for Path in P3DSearchPaths.Fonts do
-    WriteLn( 'fontspath: ' + Path );
-  for Path in P3DSearchPaths.Shaders do
-    WriteLn( 'shaderspath: ' + Path );
+  for Path in P3DSearchPaths do
+    WriteLn( 'Path: ' + Path );
 end;
 
 begin
   DeleteFile( 'heap.trc' );
-  SetHeapTraceOutput( 'heap.trc' );
+  //SetHeapTraceOutput( 'heap.trc' );
   P3DEventsInit;
   P3DUtilsInit;
   P3DLog.FileName:= 'p3dscene.html';

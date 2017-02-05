@@ -437,7 +437,9 @@ begin
     end;
 
   inherited LoadFromBinary( FileName );
+  FileWatch.OnFileNameChange:= nil;
   FileWatch.FileName:= FileName;
+  FileWatch.OnFileNameChange:= @FileNameChanged;
 
   LoadFromTextureFile( FileName );
 end;
@@ -449,7 +451,7 @@ var
 begin
   inherited LoadFromDOM(ADOMNode);
   FileName:= ADOMNode.GetAttribute( 'file' );
-  FullTexName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
+  FullTexName:= P3DSearchPaths.FindFileEx( FileName, GetCurrentDir );
 
   if ( not FileExists( FullTexName )) then
     raise Exception.Create( 'Error: The specified texture "' + ExtractFileName( FileName ) + '" could not be found!' );
@@ -462,15 +464,25 @@ begin
 end;
 
 procedure TP3DTexture.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  FullTexName: String;
+  FileName: DOMString;
 begin
-  inherited LoadFromDOMNew(ADOMNode);
+  inherited LoadFromDOMNew( ADOMNode );
+  {FileName:= ADOMNode.GetAttribute( 'File' );
+  FullTexName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
+
+  if ( not FileExists( FullTexName )) then
+    raise Exception.Create( 'Error: The specified texture "' + ExtractFileName( FileName ) + '" could not be found!' );
+
+  LoadFromBinary( FullTexName );}
 end;
 
 constructor TP3DTexture.CreateFromFile(AFileName: String; const AData: TP3DLibrary);
 var
   FileName: String;
 begin
-  FileName:= P3DSearchPaths.Models.FindFileEx( AFileName, GetCurrentDir );
+  FileName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AFileName ]));
   Create( AData );

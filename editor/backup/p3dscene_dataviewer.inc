@@ -11,7 +11,9 @@ type
       FSceneButton: TP3DGroupButton;
       FToolBar: TP3DGraphicControl;
       FViewer: TP3DTreeViewActors;
+      FSelectionParent: TPersistent;
 
+      procedure SetEmptyParent;
       procedure UpdateActiveScene;
       procedure UpdateButtons;
       function UpdateViewMode(AViewMode: TP3DDataViewerMode): Boolean;
@@ -24,6 +26,7 @@ type
       procedure DataMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
       procedure PopupMouseClick( Sender: TP3DMenuItem );
       procedure SelectionChange( var NewSelection: TP3DTreeNode );
+      procedure DataDragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean );
 
     published
       property LibraryPopup: TP3DPopupMenu read FLibraryPopup write FLibraryPopup;
@@ -108,6 +111,11 @@ begin
           Result:= True;
         end;
   end;
+  UpdateButtons;
+  if ( Assigned( Viewer.Selection )) then
+    Viewer.Selection:= nil
+  else
+    SetEmptyParent;
 end;
 
 constructor TP3DDataPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
@@ -157,8 +165,11 @@ begin
   SceneButton:= CreateButton( P3DSymbolScene );
   SceneButton.Left:= DataButton.Width + LibraryButton.Width;
   Viewer.OnMouseClick:= @DataMouseClick;
+  Viewer.AllowDrag:= True;
+  Viewer.OnDragDrop:= @DataDragDrop;
+
+  SetEmptyParent;
   UpdateViewMode( SceneMain.ViewMode );
-  UpdateButtons;
 end;
 
 destructor TP3DDataPanel.Destroy;
@@ -188,111 +199,134 @@ end;
 
 procedure TP3DDataPanel.DataMouseClick(Sender: TP3DGraphicControl; mb1, mb2,
   mb3: Boolean; X, Y: Integer);
+var
+  SelParent: TPersistent;
 begin
   if ( mb3 ) then
-    if ( Assigned( DataView.Viewer.Selection )) then
-      if ( TPersistent( DataView.Viewer.Selection.Data ) is TP3DLibrary or TPersistent( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
-        LibraryPopup.PopUp( X, Y );
+    LibraryPopup.PopUp( X + Sender.Canvas.Left, Y + Sender.Canvas.Top );
 end;
 
 procedure TP3DDataPanel.PopupMouseClick(Sender: TP3DMenuItem);
-  procedure AddToParentScene( Data: Pointer; TP: TP3DDataBlockType );
-    function FindParentScene( Block: TP3DDataBlock ): TP3DScene;
-    var
-      User: TP3DDataBlock;
-    begin
-      if ( Block is TP3DScene ) then
-        Result:= TP3DScene( Block )
-      else if ( Assigned( Block ) and ( Block is TP3DActor ) and ( TP3DActor( Block ).Users.Count > 0 )) then
-        for User in TP3DActor( Block ).Users do
-          begin
-            Result:= FindParentScene( User );
-            if ( Assigned( Result )) then
-              break;
-          end
-      else
-        Result:= nil;
-    end;
 
+  procedure AddToParent( TP: TP3DDataBlockType );
   var
-    scene: TP3DScene;
     Obj: TP3DActor;
   begin
-    if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
-      Obj:= TP3DDataBlock( DataView.Viewer.Selection.Data ).Owner.Objects[ TP3DDataBlock( DataView.Viewer.Selection.Data ).Owner.CreateNew( TP )]
-    else if ( TObject( DataView.Viewer.Selection.Data ) is TP3DLibrary ) then
-      Obj:= TP3DData( DataView.Viewer.Selection.Data ).Objects[ TP3DData( DataView.Viewer.Selection.Data ).CreateNew( TP )];
-
-    if ( TObject( Data ) is TP3DDataBlock ) then
+    if ( FSelectionParent is TP3DActorList ) then
       begin
-        scene:= FindParentScene( TP3DDataBlock( Data ));
-        if ( Assigned( scene )) then
-          scene.Objects.Add( TP3DActor( Obj ));
-      end;
-
+        Obj:= SceneMain.ActiveLibrary.Objects[ SceneMain.ActiveLibrary.CreateNew( TP )];
+        TP3DActorList( FSelectionParent ).Add( Obj );
+      end
+    else if ( FSelectionParent is TP3DLibrary ) then
+      TP3DLibrary( FSelectionParent ).CreateNew( TP, False );
   end;
 
 begin
-  if ( Sender is TP3DButton ) then
-    with ( TP3DButton( Sender )) do
-      begin
-        case Caption of
-          '  Reload': if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
-            TP3DDataBlock( DataView.Viewer.Selection.Data ).Reload;
-          '  Remove':
-              if ( TObject( DataView.Viewer.Selection.Data ) is TP3DLibrary ) then
-                begin
-                  P3DData.Libraries.Remove( TP3DLibrary( DataView.Viewer.Selection.Data ));
-                  TP3DLibrary( DataView.Viewer.Selection.Data ).Free;
-                  if ( Viewer.Selection.Data = DataView.Viewer.Selection.Data ) then
-                    Viewer.Selection:= nil;
-                  DataView.Viewer.Update;
-                  DataView.Viewer.Children.ExpandAll();
-                end
-              else if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
-                begin
-                  TP3DDataBlock( DataView.Viewer.Selection.Data ).Free;
-                  if ( Viewer.Selection.Data = DataView.Viewer.Selection.Data ) then
-                    Viewer.Selection:= nil;
-                  DataView.Viewer.Update;
-                  DataView.Viewer.Children.ExpandAll();
-                end;
-          '  Light': AddToParentScene( DataView.Viewer.Selection.Data, TP3DLight );
-          '  Camera': AddToParentScene( DataView.Viewer.Selection.Data, TP3DCamera );
-          '  TileGrid': AddToParentScene( DataView.Viewer.Selection.Data, TP3DTileGrid );
-        end;
-        LibraryPopup.Hide;
-      end;
+  case Sender.Caption of
+    '  Reload': if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
+      TP3DDataBlock( DataView.Viewer.Selection.Data ).Reload;
+    '  Remove':
+        if ( TObject( DataView.Viewer.Selection.Data ) is TP3DLibrary ) then
+          begin
+            P3DData.Libraries.Remove( TP3DLibrary( DataView.Viewer.Selection.Data ));
+            TP3DLibrary( DataView.Viewer.Selection.Data ).Free;
+            if ( Viewer.Selection.Data = DataView.Viewer.Selection.Data ) then
+              Viewer.Selection:= nil;
+            DataView.Viewer.Update;
+            DataView.Viewer.Children.ExpandAll();
+          end
+        else if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
+          begin
+            TP3DDataBlock( DataView.Viewer.Selection.Data ).Free;
+            if ( Viewer.Selection.Data = DataView.Viewer.Selection.Data ) then
+              Viewer.Selection:= nil;
+            DataView.Viewer.Update;
+            DataView.Viewer.Children.ExpandAll();
+          end;
+    '  Light': AddToParent( TP3DLight );
+    '  Camera': AddToParent( TP3DCamera );
+    '  TileGrid': AddToParent( TP3DTileGrid );
+  end;
+  LibraryPopup.Hide;
+end;
+
+procedure TP3DDataPanel.SetEmptyParent;
+begin
+  case SceneMain.ViewMode of
+    dvmData: FSelectionParent:= P3DData;
+    dvmLibrary: FSelectionParent:= SceneMain.ActiveLibrary;
+    dvmScene: FSelectionParent:= SceneMain.ActiveScene.Objects;
+  end;
 end;
 
 procedure TP3DDataPanel.SelectionChange(var NewSelection: TP3DTreeNode);
+
+var
+  Sel: TPersistent;
 begin
   if (( Assigned( NewSelection ) and ( TObject( NewSelection.Data ) is TPersistent ))) then
     begin
+      Sel:= TPersistent( NewSelection.Data );
       OIPanel.ObjectInspector.Obj:= TInterfacedPersistent( NewSelection.Data );
       if ( TInterfacedPersistent( NewSelection.Data ) is TP3DDataBlock ) then
         SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).Owner;
 
-      if ( TPersistent( NewSelection.Data ) is TP3DActor ) then
+      if ( Sel is TP3DActor ) then
         begin
-          SceneView.FSelection:= TP3DActor( NewSelection.Data );
-          SceneMain.ActiveScene:= TP3DActor( NewSelection.Data ).Scene;
+          SceneView.FSelection:= TP3DActor( Sel );
+          SceneMain.ActiveScene:= TP3DActor( Sel ).Scene;
+          FSelectionParent:= SceneView.FSelection.Children;
         end
-      else if ( TPersistent( NewSelection.Data ) is TP3DLibrary ) then
+      else if ( Sel is TP3DLibrary ) then
         begin
           SceneView.FSelection:= nil;
           SceneMain.ActiveLibrary:= TP3DLibrary( NewSelection.Data );
+          FSelectionParent:= SceneMain.ActiveLibrary;
+        end
+      else if ( Sel is TP3DScene) then
+        begin
+          SceneView.FSelection:= nil;
+          SceneMain.ActiveScene:= TP3DScene( Sel );
+          FSelectionParent:= SceneMain.ActiveScene.Objects;
+        end
+      else if ( Sel is TP3DDataBlock ) then
+        begin
+          SceneView.FSelection:= nil;
+          SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).Owner;
+          FSelectionParent:= SceneMain.ActiveLibrary;
         end
       else
         begin
+          SetEmptyParent;
           SceneView.FSelection:= nil;
         end;
     end
   else
     begin
+      SetEmptyParent;
       OIPanel.ObjectInspector.Obj:= nil;
       SceneView.FSelection:= nil;
     end;
+
+end;
+
+procedure TP3DDataPanel.DataDragDrop(Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean);
+begin
+  if ( Source is TP3DListViewFile ) then
+    with ( TP3DListViewFile( Source )) do
+      begin
+        if ( Assigned( DragItem )) then
+          if ( P3DMatchFileName( DragItem.Caption, '*.p3d' )) then
+            begin
+              try
+                P3DData.OpenLibrary( AppendPathDelim( Directory ) + DragItem.Caption );
+              except
+                on E: Exception do
+                  SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + DragItem.Caption ), PChar( E.Message ), Nil );
+              end;
+            end;
+      end;
+  Accept:= False;
 end;
 
 

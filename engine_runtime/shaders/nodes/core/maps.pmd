@@ -32,8 +32,8 @@ vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec4 BumpMapNorm
     //BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
     vec4 NewNormal;
     mat3 TBN = mat3(Tangent.xyz, Cotangent.xyz, Normal.xyz);
-    NewNormal = vec4( TBN * BumpMapNormal.xyz, 1 );
-    NewNormal = normalize(NewNormal);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 0 );
+    NewNormal = normalize( NewNormal );
     return NewNormal;
 }
 
@@ -225,21 +225,21 @@ uniform int world_instance_repeat;
 
 //Credit goes to three.js skinning_pars_vertex.glsl
 mat4 getTexMatrix( float i ) {
-	float j = i * 4.0;
-	float x = mod( j, float( world_instance_w ));
-	float y = floor( j / float( world_instance_w ));
+  float j = i * 4.0;
+  float x = mod( j, float( world_instance_w ));
+  float y = floor( j / float( world_instance_w ));
 
-	float dx = 1.0 / float( world_instance_w );
-	float dy = 1.0 / float( world_instance_h );
+  float dx = 1.0 / float( world_instance_w );
+  float dy = 1.0 / float( world_instance_h );
 
-	y = dy * ( y + 0.5 );
+  y = dy * ( y + 0.5 );
 
-	vec4 v1 = texture2D( world_instance, vec2( dx * ( x + 0.5 ), y ));
-	vec4 v2 = texture2D( world_instance, vec2( dx * ( x + 1.5 ), y ));
-	vec4 v3 = texture2D( world_instance, vec2( dx * ( x + 2.5 ), y ));
-	vec4 v4 = texture2D( world_instance, vec2( dx * ( x + 3.5 ), y ));
+  vec4 v1 = texture2D( world_instance, vec2( dx * ( x + 0.5 ), y ));
+  vec4 v2 = texture2D( world_instance, vec2( dx * ( x + 1.5 ), y ));
+  vec4 v3 = texture2D( world_instance, vec2( dx * ( x + 2.5 ), y ));
+  vec4 v4 = texture2D( world_instance, vec2( dx * ( x + 3.5 ), y ));
 
-	return mat4( v1, v2, v3, v4 );
+  return mat4( v1, v2, v3, v4 );
 }
 ```
 
@@ -324,7 +324,7 @@ input: {name="Mode", type="text"}
 ---
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
-  Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz *2 - 1, 0 )), $Factor$ );
+  Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz, 0 )), $Factor$ );
 ```
 
 ---
@@ -358,6 +358,7 @@ node: 100_map_pass_mix
 ---
 
 ```{name="CODE", type="shader", restrict="fshader,main"}
+  Normal = Normal * 2 - 1;
   Normal = CalcBumpedNormal( vNormal, vTangent, vCotangent, Normal);
   Normal = normalize( view * vec4( Normal.xyz, 0 ));
 ```
@@ -393,8 +394,8 @@ node: 10000_map_pass_final
 ```
 
 ```{restrict="fshader,main"}
-  FragColor = vec4( color_overlay_light( shadow.rgb, Color.rgb * vColor.rgb ) + spec.rgb * Specular.rgb, Color.a * vColor.a ); //(Normal.xyz + 1 )/2
-  #if (__VERSION__ < 130)
+  FragColor = vec4( color_overlay_light( shadow.rgb, Color.rgb * vColor.rgb ) + spec.rgb * Specular.rgb, Color.a * vColor.a ); //*/(Normal.xyz + 1 )/2
+  #if ( __VERSION__ < 130 )
   gl_FragColor = FragColor;
   #endif
 ```
