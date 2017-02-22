@@ -1,0 +1,132 @@
+---
+node: 00025_pass_armature
+input: {name="numJoints", type="int"}
+---
+```{name="CODE", type="shader", restrict="declaration"}
+//uniform vec3 jointPos[ $numJoints$ ];
+//uniform vec4 jointQuat[ $numJoints$ ];
+uniform sampler2D jointTex;
+uniform int jointTexWidth;
+uniform int jointTexHeight;
+uniform float time;
+
+
+void NormalizeDualQuat( inout vec4 real, inout vec4 dual )
+{
+  real = normalize( real );
+  dual -= real * dot( real, dual );
+}
+
+void getJointTransform( const in float i, out vec4 quat, out vec4 trans ) {
+  float tw = max( 1.0, float( jointTexWidth )); 
+  float dx = 1.0 / tw;
+  trans = texture2D( jointTex, vec2( dx * ( i * 2.0 + 0.5 ), time ));
+  quat = normalize( texture2D( jointTex, vec2( dx * ( i * 2.0 + 1.5 ), time )));
+  NormalizeDualQuat( quat, trans );
+  
+}
+```
+
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+IN vec3 jointWeight;
+IN vec4 fjointID;
+
+vec3 transformNormal(in vec3 normal, in vec4 real )
+{
+  return normal + 2.0*cross(real.xyz, cross(real.xyz, normal) + real.w*normal);
+}
+
+
+vec3 transformPosition(in vec3 position, in vec4 real, in vec4 dual)
+{
+  vec3 blendPosition = position + 2.0*cross(real.xyz, cross(real.xyz, position) + real.w*position);  
+  vec3 trans = 2.0*(real.w*dual.xyz - dual.w*real.xyz + cross(real.xyz, dual.xyz));
+  blendPosition += trans;
+  return blendPosition;
+}
+
+/*
+vec3 transformNormal( in vec3 n, in vec4 quat )
+{
+//  n += 2.0 * cross(quat.xyz, cross(quat.xyz, n) + quat.w*n);
+//  return n;
+  vec3 uv, uuv;
+  uv = cross( q.xyz, n );
+  uuv = cross( q.xyz, uv );
+  uv *= ( 2.0f * q.w );
+  uuv *= 2.0f;
+  return n + uv + uuv;
+}
+
+vec3 transformPosition( in vec3 v, in vec4 quat, in vec3 trans)
+{
+  return transformNormal(v, quat) + trans;
+}
+
+vec3 transformPosition( in vec3 v, in vec4 real, in vec4 dual )
+{
+//  vec3 term1 = cross( real.xyz, cross (real.xyz, v ) + real.w * v );
+//  v += 2.0 * ( term1 + real.w * dual.xyz - dual.w * real.xyz + cross( real.xyz, dual.xyz ));
+//  return v;
+  return 2.0 * ( cross(real.xyz, cross(real.xyz,v) + v * real.w + dual.xyz ) + dual.xyz * real.w - real.xyz * dual.w ) + v;
+}*/
+
+void getTransform( out vec4 quat, out vec4 trans )
+{
+  float jointWeight3 = 1-( jointWeight[ 0 ] + jointWeight[ 1 ] + jointWeight[ 2 ]);
+  vec4 quat0, quat1, quat2, quat3;
+  vec4 trans0, trans1, trans2, trans3;  
+  getJointTransform( floor( fjointID[ 0 ]), quat0, trans0 );
+  getJointTransform( floor( fjointID[ 1 ]), quat1, trans1 );
+  getJointTransform( floor( fjointID[ 2 ]), quat2, trans2 );
+  getJointTransform( floor( fjointID[ 3 ]), quat3, trans3 );
+  quat= quat0 * jointWeight[ 0 ]
+      + quat1 * jointWeight[ 1 ]
+      + quat2 * jointWeight[ 2 ]
+      + quat3 * jointWeight3;
+  trans= trans0 * jointWeight[ 0 ]
+       + trans1 * jointWeight[ 1 ]
+       + trans2 * jointWeight[ 2 ]
+       + trans3 * jointWeight3;
+  NormalizeDualQuat( quat, trans );
+}
+```
+---
+node: 01050_pass_armature_debug
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+OUT vec3 vjointWeight;
+OUT vec4 vjointID;
+OUT vec4 vjointQuat;
+OUT vec4 vjointTrans;
+```
+
+```{restrict="vshader,main"}
+
+  vec4 quat;
+  vec4 trans;
+  getTransform( quat, trans );
+  vNormal.xyz = transformNormal( vNormal.xyz, quat );
+  vTangent.xyz = transformNormal( vTangent.xyz, quat );
+  vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
+  vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
+  vjointWeight = jointWeight;
+  vjointID = fjointID;
+  vjointQuat = quat;
+  vjointTrans = trans;
+```
+```{restrict="fshader,declaration"}
+IN vec3 vjointWeight;
+IN vec4 vjointID;
+IN vec4 vjointQuat;
+IN vec4 vjointTrans;
+
+
+```
+```{restrict="fshader,main"}
+  //shadow = vec3( 1 );
+  //spec = vec3( 0 );
+  //Color = vec4( vec3( vjointWeight[ int( floor( time * 3 ))]) / 3, 1 );
+  //Color = vec4( vjointWeight.xyz, 1 );
+  //Color = vec4( vec3( vjointID[ 0 ] / 3 ) * vjointTrans.xyz, 1 );
+```

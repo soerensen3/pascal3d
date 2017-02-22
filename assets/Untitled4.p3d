@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Cam = ""
+     Name = "P3DSceneMain1">
+    <object
+       Data = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3d$/Scene"
+       Name = "P3DActor1"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "0.00000000, 0.00000000, 0.00000000"
+       Collision = "acNone"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+  </scene>
+</p3dfile>

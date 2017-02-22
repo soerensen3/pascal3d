@@ -111,6 +111,24 @@ type
       property Prop: TP3DPropertyAccess read FProp write SetProp;
   end;
 
+  { TP3DPropertyEditorBoolean }
+
+  TP3DPropertyEditorBoolean = class ( TP3DCheckBox )
+    protected
+      FProp: TP3DPropertyAccess;
+
+      procedure SetProp( AValue: TP3DPropertyAccess );
+      procedure SetChecked(AValue: Boolean); override;
+      function GetChecked: Boolean; override;
+      function GetCaption: String; override;
+
+    public
+      constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
+
+    published
+      property Prop: TP3DPropertyAccess read FProp write SetProp;
+  end;
+
 
   { gP3DPropertyEditorList }
 

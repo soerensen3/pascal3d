@@ -143,7 +143,7 @@ end;
 procedure TP3DLight.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
 begin
   if ( rlfLighting in AFlags ) then
-    AList.Lights.Add( Self );
+    AList.Lights.PushRenderObject( Self, AWorld, nil );
 end;
 
 { TP3DLightList }

@@ -184,7 +184,7 @@ begin
       if ( P3DViewports.Count = 0 ) then
         P3DViewports.Push( Left, Top, Width, Height )
       else
-        P3DViewports[ 0 ]:= P3DViewport( Left, Top, Width, Height );
+        P3DViewports.Screen:= P3DViewport( Left, Top, Width, Height );
       P3DViewports.WndHeight:= Height;
     end;
 end;

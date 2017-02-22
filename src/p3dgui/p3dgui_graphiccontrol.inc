@@ -427,6 +427,7 @@ begin
     alLeft:
       begin
         FLeft:= ClientArea.Left;
+        FTop:= ClientArea.Top;
         FHeight:= ClientArea.Height;
         ClientArea.Left:= ClientArea.Left + Width;
         ClientArea.Width:= ClientArea.Width - Width;

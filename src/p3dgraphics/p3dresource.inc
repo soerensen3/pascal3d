@@ -33,7 +33,7 @@ type
       FTextures: TP3DTextureList;
 
       function GetDOMFile: TXMLDocument;
-      function GetName: String;
+      function GetName: String; virtual;
 //      function LoadDataBlockByPathNoCheck( LocalPath: String ): TP3DDataBlock;
 
     public
@@ -91,6 +91,7 @@ type
   TP3DData = class ( TP3DLibrary )
     private
       FLibraries: TP3DLibraryList;
+      function GetName: String; override;
 
     public
       constructor Create;
@@ -876,6 +877,11 @@ begin
 end;
 
 { TP3DData }
+
+function TP3DData.GetName: String;
+begin
+  Result:= 'P3DData';
+end;
 
 constructor TP3DData.Create;
 begin

@@ -22,6 +22,7 @@ type
       FCamObject: TP3DActor;
 
       procedure SetOrbitCamera(AValue: Boolean);
+      procedure SetOrbitDistance(AValue: Single);
       procedure UpdateCamPos;
       procedure ResetOrbit;
 
@@ -37,7 +38,7 @@ type
       property Scene: TP3DScene read FScene write FScene;
       property OrbitCamera: Boolean read FOrbitCamera write SetOrbitCamera;
 //      property OrbitRotation: TVec3 read FCam.Rotation write FCam.Rotation;
-      property OrbitDistance: Single read FOrbitDistance write FOrbitDistance;
+      property OrbitDistance: Single read FOrbitDistance write SetOrbitDistance;
       property OrbitCenter: TVec3 read FOrbitCenter write FOrbitCenter;
       property BeforeRender: TNotifyEvent read FBeforeRender write FBeforeRender;
       property AfterRender: TNotifyEvent read FAfterRender write FAfterRender;
@@ -111,6 +112,12 @@ begin
     FreeAndNil( FOrbitCamera );
 end;
 
+procedure TP3DSceneViewer.SetOrbitDistance(AValue: Single);
+begin
+  if FOrbitDistance=AValue then Exit;
+  FOrbitDistance:=AValue;
+end;
+
 procedure TP3DSceneViewer.UpdateCamPos;
 begin
   FCamObject.Position:= FCamObject.Matrix.Row[ 2 ].xyz * OrbitDistance + OrbitCenter;
@@ -137,7 +144,7 @@ end;
 
 procedure TP3DSceneViewer.PushVPClientRect;
 begin
-  P3DViewports.Push( Round( Canvas.Left + ClientRect.Left ), Round( P3DViewports[ 0 ].Height - ( Canvas.Top + ClientRect.Top ) - Round( ClientRect.Height )),
+  P3DViewports.Push( Round( Canvas.Left + ClientRect.Left ), Round( P3DViewports.Screen.Height - ( Canvas.Top + ClientRect.Top ) - Round( ClientRect.Height )),
                      Round( ClientRect.Width ), Round( ClientRect.Height ));
 end;
 

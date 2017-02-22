@@ -23,7 +23,7 @@ var
 
 procedure P3DSelectStart( ARect: TP3DRect );
 begin
-  glScissor( ARect.LeftI, P3DViewports[ 0 ].Height - ARect.TopI, ARect.WidthI, ARect.HeightI ); cle( nil );
+  glScissor( ARect.LeftI, P3DViewports.Screen.Height - ARect.TopI, ARect.WidthI, ARect.HeightI ); cle( nil );
   glEnable( GL_SCISSOR_TEST ); cle( nil );
   if ( not Assigned( PickMaterial )) then
     begin
@@ -76,7 +76,7 @@ begin
   PickMaterial.Shader.Disable;
 
   SetLength( PixelData, P3DSelRect.WidthI * P3DSelRect.HeightI );
-  glReadPixels( P3DSelRect.LeftI, P3DViewports[ 0 ].Height - P3DSelRect.TopI, P3DSelRect.WidthI, P3DSelRect.HeightI, GL_RGBA, GL_UNSIGNED_BYTE, @PixelData[ 0 ]); cle( nil, 'glReadPixels' );
+  glReadPixels( P3DSelRect.LeftI, P3DViewports.Screen.Height - P3DSelRect.TopI, P3DSelRect.WidthI, P3DSelRect.HeightI, GL_RGBA, GL_UNSIGNED_BYTE, @PixelData[ 0 ]); cle( nil, 'glReadPixels' );
 
   P3DSelectionSize := 0;
 

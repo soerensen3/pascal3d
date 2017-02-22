@@ -344,7 +344,7 @@ begin
 
       decl:= P3DShaderActive.Uniforms.Names[ 'world_instance_repeat' ];
       if ( Assigned( decl )) then
-        decl.AsFloat:= baseInstanceCount;
+        decl.AsFloat:= baseInstanceCount * Scene.Instances.Count;
 
       if ( P3DShaderActive.Attributes.FindByName( 'instanceID', instanceID )) then
         begin
@@ -431,12 +431,12 @@ end;
 procedure TP3DRenderListModifierGrid.PassToShader(Obj: TP3DRenderObject);
 begin
   if ( Assigned( Scene.TileGrid )) then
-    Scene.TileGrid.PassToShader( Scene, Obj.Positions.Count );
+    Scene.TileGrid.PassToShader( Scene, Obj.Positions.Count * Scene.Instances.Count );
 end;
 
 procedure TP3DRenderListModifierGrid.AddObject(var Obj: TP3DRenderObject);
 begin
-  Obj.InstanceCount:= Obj.InstanceCount * Scene.Instances.Count;
+  Obj.InstanceCount:= Obj.InstanceCount;
 end;
 
 

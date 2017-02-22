@@ -29,26 +29,49 @@ type
   {$UNDEF INTERFACE}
 
 
+  { TP3DSceneApplication }
+  TP3DSceneApplication = class ( TP3DApplication )
+    private
+      procedure SetClearColor(AValue: TVec4);
+
+    protected
+      procedure Events; override;
+      procedure Render; override;
+      procedure InitGL;
+      procedure MouseMotion(Event: TSDL_MouseMotionEvent); override;
+      procedure Keyboard(Event: TSDL_KeyboardEvent); override;
+      procedure LoadShaders;
+
+    public
+      procedure Initialize; override;
+      procedure Finalize; override;
+  end;
+
   procedure P3DSceneGUIInit;
   procedure P3DSceneGUIFinish;
 
 var
+  MeshArrows: TP3DActor;
+  MeshGrid: TP3DActor;
+
   SceneMain: TP3DSceneMain;
   AssetView: TP3DSAssetPanel;
   DataView: TP3DDataPanel;
   SceneView: TP3DScenePanel;
   OIPanel: TP3DOIPanel;
 
-  MeshArrows: TP3DActor;
-  MeshGrid: TP3DActor;
 
-  SymbolActor, SymbolMesh,
+
+  {SymbolActor, SymbolMesh,
     SymbolScene, SymbolFont,
     SymbolCamera, SymbolTexture,
     SymbolMaterial, SymbolShader,
-    SymbolLight, SymbolLibrary: TP3DText;
+    SymbolLight, SymbolLibrary: TP3DText; }
 
 implementation
+
+{ TP3DSceneApplication }
+
 
 {$DEFINE IMPLEMENTATION}
   {$INCLUDE p3dscene_main.inc}
@@ -57,6 +80,12 @@ implementation
   {$INCLUDE p3dscene_assetviewer.inc}
   {$INCLUDE p3dscene_objectinspector.inc}
 {$UNDEF IMPLEMENTATION}
+
+{$INCLUDE initscene.inc}
+
+{$INCLUDE renderscene.inc}
+
+{$INCLUDE inputscene.inc}
 
 
 procedure CreateSceneTree;
@@ -217,21 +246,24 @@ begin
   //  WriteLn( '<' + ExtractFileNameOnly( Lib.FileWatch.FileName ) + '>.Objects: ' + Lib.DataBlocks.DumpObjectList );
 
   DestroyEditModes;
-  FreeAndNil( DataView );
-  FreeAndNil( AssetView );
-  FreeAndNil( SceneView );
-  FreeAndNil( DataView );
-  FreeAndNil( OIPanel );
-  FreeAndNil( SceneMain );
-  FreeAndNil( SymbolMesh );
-  FreeAndNil( SymbolScene );
-  FreeAndNil( SymbolFont );
-  FreeAndNil( SymbolCamera );
-  FreeAndNil( SymbolTexture );
-  FreeAndNil( SymbolMaterial );
-  FreeAndNil( SymbolShader );
-  FreeAndNil( SymbolLight );
-  FreeAndNil( SymbolLibrary );
+  if ( Assigned( P3DData )) then
+    begin
+      if ( P3DData.IsValid( DataView )) then
+        DataView.Free;
+      DataView:= nil;
+      if ( P3DData.IsValid( AssetView )) then
+        AssetView.Free;
+      AssetView:= nil;
+      if ( P3DData.IsValid( SceneView )) then
+        SceneView.Free;
+      SceneView:= nil;
+      if ( P3DData.IsValid( OIPanel )) then
+        OIPanel.Free;
+      OIPanel:= nil;
+      if ( P3DData.IsValid( SceneMain )) then
+        SceneMain.Free;
+      SceneMain:= nil;
+    end;
 end;
 
 

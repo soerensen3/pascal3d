@@ -30,18 +30,21 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="libsdl2"/>
+        <PackageName Value="pascal3d_gui"/>
       </Item1>
       <Item2>
-        <PackageName Value="pl_opengl"/>
+        <PackageName Value="pascal3d"/>
       </Item2>
       <Item3>
-        <PackageName Value="p3d_engine"/>
+        <PackageName Value="libsdl2"/>
       </Item3>
+      <Item4>
+        <PackageName Value="pl_opengl"/>
+      </Item4>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="__PROJNAME__.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -63,6 +66,10 @@
         <Filename Value="render.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="settings_default.xml"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -74,11 +81,6 @@
       <IncludeFiles Value="bin/$(TargetOS)/$(TargetCPU);$(ProjOutDir)"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
-    <Linking>
-      <Debugging>
-        <GenerateDebugInfo Value="False"/>
-      </Debugging>
-    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

@@ -160,7 +160,7 @@ type
 
     published
       function GetAsString: String; override;
-      procedure SetAsString(AValue: String); override;
+      procedure SetAsString( AValue: String ); override;
 
       constructor Create( AOwner: TObject; AName: String; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
       property TypeName: String read FTypeName;
@@ -234,25 +234,6 @@ type
       procedure SetAsString(AValue: String); override;
       property AbsolutePaths: Boolean read FAbsolutePaths write FAbsolutePaths;
       function GetDefaultValue: TP3DFileWatch; override;
-  end;
-
-
-  { TP3DInterfacedPersistent }
-
-  TP3DInterfacedPersistent = class ( TInterfacedPersistent )
-    private
-      FProperties: TP3DPropertyAccessList;
-
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-      function SaveToDOM( AParent: TDOMElement ): TDOMElement; virtual;
-      procedure LoadFromDOMNew( ADOMNode: TDOMElement ); virtual;
-
-      class function DOMNodeName: String; virtual; abstract;
-
-      property Properties: TP3DPropertyAccessList read FProperties write FProperties;
   end;
 
 {$ENDIF}
@@ -820,7 +801,27 @@ begin
 
 end;
 
+{ TP3DPropertyAccessFileWatch }
 
+function TP3DPropertyAccessFileWatch.GetAsString: String;
+begin
+  if ( Assigned( Value )) then
+    if ( AbsolutePaths ) then
+      Result:= Value.FileName
+    else
+      Result:= ExtractRelativepath( AppendPathDelim( GetCurrentDir()), Value.FileName );
+end;
+
+procedure TP3DPropertyAccessFileWatch.SetAsString(AValue: String);
+begin
+  if ( Assigned( Value )) then
+    Value.FileName:= AValue;
+end;
+
+function TP3DPropertyAccessFileWatch.GetDefaultValue: TP3DFileWatch;
+begin
+  Result:= nil;
+end;
 
 
 {$ENDIF}

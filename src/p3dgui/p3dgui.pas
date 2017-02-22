@@ -69,10 +69,6 @@ implementation
 uses
   Types, XMLRead;
 
-var
-  LastMouseOverCtrl: TP3DGraphicControl;
-  LastMouseDownCtrl: array[ 0..2 ] of TP3DGraphicControl;
-
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dgui_colors.inc}
 {$INCLUDE p3dgui_manager.inc}
@@ -93,16 +89,15 @@ begin
   P3DGUIInitColors;
   if ( not Assigned( P3DGUIManager )) then
     P3DGUIManager:= TP3DGUIManager.Create;
-  LastMouseOverCtrl:= nil;
-  LastMouseDownCtrl[ 0 ]:= nil;
-  LastMouseDownCtrl[ 1 ]:= nil;
-  LastMouseDownCtrl[ 2 ]:= nil;
 end;
 
 procedure P3DGUIFinish;
 begin
   if ( Assigned( P3DGUIManager )) then
-    FreeAndNil( P3DGUIManager );
+    begin
+      P3DGUIManager.Free;
+      P3DGUIManager:= nil;
+    end;
 end;
 
 finalization

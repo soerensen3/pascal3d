@@ -203,6 +203,7 @@
 var
   EditorSceneArrow: TP3DScene;
   EditorSceneArrows: TP3DScene;
+  EditorSceneJoint: TP3DScene;
   EditorSceneLamp: TP3DScene;
   EditorSceneLampMaterial: TP3DMaterialBase;
   EditModeDefault: TP3DSceneEditModeDefault;
@@ -242,15 +243,18 @@ procedure CreateEditorScenes;
 var
   n: Integer;
 begin
-  n:= P3DData.OpenLibrary( 'armature_test/media/EditorArrow.p3d' );
+  n:= P3DData.OpenLibrary( 'EditorArrow.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
-  n:= P3DData.OpenLibrary( 'armature_test/media/EditorArrows.p3d' );
+  n:= P3DData.OpenLibrary( 'EditorArrows.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrows:= P3DData.Libraries[ n ].Scenes[ 0 ];
-  n:= P3DData.OpenLibrary( 'armature_test/media/EditorLamp.p3d' );
-  //P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  n:= P3DData.OpenLibrary( 'EditorLamp.p3d' );
+  P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneLamp:= P3DData.Libraries[ n ].Scenes[ 0 ];
+  n:= P3DData.OpenLibrary( 'EditorJoint.p3d' );
+  P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  EditorSceneJoint:= P3DData.Libraries[ n ].Scenes[ 0 ];
   EditorSceneLampMaterial:= TP3DMaterialBase.Create();//TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]); //Error
 end;
 
@@ -702,7 +706,7 @@ begin
         glDepthMask( False );
         SelectionMaterial.Diff:= Accent200.XYZ;//vec3( 1, 1, 0 );
         SelectionMaterial.Alpha:= 0.1;
-        glLineWidth( 2 );
+        glLineWidth( 1 );
   //      glDisable( GL_DEPTH_TEST );
         glDepthMask( False );
   //      glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -772,13 +776,13 @@ begin
   end;
 
   case ( AxisLock ) of
-    alX: Result+= ' X]';
-    alY: Result+= ' Y]';
-    alZ: Result+= ' Z]';
-    alXY: Result+= ' XY]';
-    alXZ: Result+= ' XZ]';
-    alYZ: Result+= ' YZ]';
-    alNone: Result+= ']';
+    alX: Result+= ' X] ';
+    alY: Result+= ' Y] ';
+    alZ: Result+= ' Z] ';
+    alXY: Result+= ' XY] ';
+    alXZ: Result+= ' XZ] ';
+    alYZ: Result+= ' YZ] ';
+    alNone: Result+= '] ';
   end;
 end;
 
@@ -873,6 +877,22 @@ var
 begin
   if ( Source is TP3DListViewFile ) then
     with ( TP3DListViewFile( Source )) do
+      begin
+        if ( Assigned( DragItem )) then
+          if ( P3DMatchFileName( DragItem.Caption, '*.p3d' )) then
+            begin
+              try
+                Sc:= SceneMain.ActiveScene;
+                if ( Assigned( Sc )) then
+                  Sc.AppendFile( AppendPathDelim( Directory ) + DragItem.Caption );
+              except
+                on E: Exception do
+                  SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + DragItem.Caption ), PChar( E.Message ), Nil );
+              end;
+            end;
+      end
+  else if ( Source is TP3DTreeViewDirectory ) then
+    with ( TP3DTreeViewDirectory( Source )) do
       begin
         if ( Assigned( DragItem )) then
           if ( P3DMatchFileName( DragItem.Caption, '*.p3d' )) then
@@ -1002,7 +1022,7 @@ var
   begin
     p:= Joint.Position;
     //p2:= p + vec3( 0, 0, 10 );
-    p2:= p + Joint.Rotation * vec3( 0, 0, 1 );
+    p2:= p + Joint.Quaternion * vec3( 0, 0, 1 );
     Canvas3D.RenderLine( p, p2, vec4( 1, 0, 0, 1 ), vec4( 0, 1, 0, 1 ));
   end;
 
@@ -1026,17 +1046,33 @@ begin
 end;
 
 procedure TP3DScenePanel.RenderListOnAdd(AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; AFlags: TP3DRenderListFlags; var Accept: Boolean);
+var
+  i: Integer;
 begin
   Accept:= True;
   if ( AData is TP3DLight ) then
-    if ( Assigned( Selection ) and ( Selection.Data = AData )) then
+    begin
+      if ( Assigned( Selection ) and ( Selection.Data = AData )) then
+        begin
+          SelectionMaterial.Alpha:= 1;
+          SelectionMaterial.PassToShader();
+          EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials ]);
+        end
+      else
+        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
+    end
+  else if ( AData is TP3DMesh ) then
+    if ( Assigned( Selection ) and ( Selection.Data = AData ) and ( Assigned( TP3DMesh( AData ).Armature ))) then
       begin
-        SelectionMaterial.Alpha:= 1;
-        SelectionMaterial.PassToShader();
-        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials ]);
-      end
-    else
-      EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
+//        SelectionMaterial.Alpha:= 1;
+//        SelectionMaterial.PassToShader();
+        with ( TP3DMesh( AData ).Armature ) do
+          begin
+            CurrentAction.UpdateFrameSample;
+            for i:= 0 to CurrentAction.FrameSample.Translations.Count - 1 do
+              EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4translate( vec4( CurrentAction.FrameSample.Translations[ i ], 1 )) * mat4( mat3scale( vec3( Joints[ i ].Length )) * mat3( CurrentAction.FrameSample.Rotations[ i ])), Viewer.RenderList, AFlags {- [ rlfMaterials ]});
+          end;
+      end;
 end;
 
 
@@ -1146,6 +1182,9 @@ begin
   Editor.MousePos:= vec2( X, Y );
   if ( EditMode in [ emDefault, emTileGrid ]) then
     inherited MouseMove( X, Y );
+  if ( ClientRect.PtInRect( vec2( X, Y ))) then
+    //if ( P3DGUIManager.FocusedControl = nil ) then
+    Viewer.Focused:= True;
 {  if (( Assigned( Selection )) and ( EditMode <> emDefault )) then
     begin
       if ( FMousePosStored = vec2( -1 )) then
@@ -1302,7 +1341,7 @@ procedure TP3DScenePanel.BeforeDraw(Sender: TObject);
 begin
   Editor.BeforeRender;
   if ( Assigned( Viewer.RenderList ) and ( Viewer.RenderList.Lights.Count = 0 )) then
-    Viewer.RenderList.Lights.Add( EditorLight );
+    Viewer.RenderList.Lights.PushRenderObject( EditorLight, EditorLightObj.Matrix, nil );
 end;
 
 procedure TP3DScenePanel.AfterDraw(Sender: TObject);
@@ -1310,46 +1349,6 @@ var
   Obj: TP3DActor;
   AData: TP3DLibrary;
 begin
-  //TODO: FIX THIS!
-
-  if ( Assigned( DataView.Viewer.Selection )) and ( TInterfacedPersistent( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
-    AData:= TP3DDataBlock( DataView.Viewer.Selection.Data ).Owner
-  else
-    AData:= P3DData;
-
-  if ( not Assigned( AData )) then
-    AData:= P3DData;
-  for Obj in AData.Objects do
-{    if ( Obj.Data is TP3DLight ) then
-      begin
-        if ( Assigned( EditorSceneLampMaterial )) then
-          if ( Selection = Obj ) then
-            EditorSceneLampMaterial.Diff:= Accent500.XYZ
-          else
-            EditorSceneLampMaterial.Diff:= TP3DLight( Obj.Data ).Color;
-
-        if ( TP3DLight( Obj.Data ).LightType in [ p3dltSun, p3dltSpot ]) then
-          EditorSceneArrow.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )) * mat4( mat3( Obj.Quaternion )));
-        EditorSceneLamp.RenderFromCamera( FCamObject, mat4translate( vec4( Obj.Matrix.Row[ 3 ].XYZ, 1 )));
-      {Canvas.RenderText( TP3DSymbolActor,
-                         vec2( ClientRect.Width, ClientRect.Height ) / 2
-                         * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy
-                         + vec2( ClientRect.Width, ClientRect.Height ) / 2,
-                         SymbolActor );}
-      end
-    else }if ( Obj.Data is TP3DArmature ) then
-      begin
-        FCanvas3D.Proj:= Cam.Proj;
-        FCanvas3D.View:= Cam.View;
-        Canvas3D.Pen.Width:= 5;
-        DrawArmature( Obj );
-      {Canvas.RenderText( TP3DSymbolActor,
-                         vec2( ClientRect.Width, ClientRect.Height ) / 2
-                         * ( FCam.Proj * FCam.View * vec4( Actor.Position, 1 )).xy
-                         + vec2( ClientRect.Width, ClientRect.Height ) / 2,
-                         SymbolActor );}
-      end;
-
   {glScissor( P3DInput.Mouse.X - 50, P3DViewports[ 0 ].Height - P3DInput.Mouse.Y - 50, 100, 100 );
   glEnable( GL_SCISSOR_TEST );
   Pick(P3DInput.Mouse.X,P3DInput.Mouse.Y);
@@ -1357,7 +1356,8 @@ begin
   Editor.AfterRender;
 
   Canvas.Lock;
-  Canvas.RenderText( Editor.StatusText, vec2( 0, Height - Viewer.Font.Size ), FInfoText );
+  Canvas.Font.Color:= Accent50;
+  Canvas.RenderText( Editor.StatusText, vec2( 20, -20 + Height - Viewer.Font.Size ), FInfoText );
 
   {Canvas.Font.Name:= 'Pascal3D-Symbols';
   Canvas.Font.Size:= 32;}

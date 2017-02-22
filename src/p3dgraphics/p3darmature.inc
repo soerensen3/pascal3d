@@ -34,8 +34,8 @@ type
       FName: String;
       PosIdx: Integer;
       RotIdx: Integer;
-      function GetRotation: TQuaternion;
-      procedure SetRotation(AValue: TQuaternion);
+      function GetQuaternion: TQuaternion;
+      procedure SetQuaternion(AValue: TQuaternion);
       function GetPosition: TVec3;
       procedure SetPosition(AValue: TVec3);
 
@@ -46,7 +46,7 @@ type
       procedure LoadFromDOM(ADOMNode: TDOMElement);
       class function DOMNodeName: String; override;
 
-      property Rotation: TQuaternion read GetRotation write SetRotation;
+      property Quaternion: TQuaternion read GetQuaternion write SetQuaternion;
       property Position: TVec3 read GetPosition write SetPosition;
 
     published
@@ -71,6 +71,7 @@ type
 
     public
       constructor Create( AAction: TP3DArmatureAction );
+      constructor CreateFrameSample( AAction: TP3DArmatureAction );
       constructor CreateFromDOM( ADOMNode: TDOMElement; AAction: TP3DArmatureAction );
       destructor Destroy; override;
 
@@ -170,6 +171,7 @@ type
 
     public
       procedure ClearFields; override;
+      procedure RemoveFromFields(Block: TP3DDataBlock); override;
 
       constructor Create( const AData: TP3DLibrary= nil ); override;
       procedure FastDestroy; override;
@@ -200,11 +202,12 @@ type
     private
       FArmature: TP3DArmature;
       FJoints: TP3DJointList;
+      FLength: Float;
       FName: String;
       PosIdx: Integer;
       RotIdx: Integer;
-      function GetRotation: TQuaternion;
-      procedure SetRotation(AValue: TQuaternion);
+      function GetQuaternion: TQuaternion;
+      procedure SetQuaternion(AValue: TQuaternion);
       function GetPosition: TVec3;
       procedure SetPosition(AValue: TVec3);
 
@@ -217,12 +220,13 @@ type
       procedure LoadFromDOM(ADOMNode: TDOMElement);
       class function DOMNodeName: String; override;
 
-      property Rotation: TQuaternion read GetRotation write SetRotation;
+      property Quaternion: TQuaternion read GetQuaternion write SetQuaternion;
       property Position: TVec3 read GetPosition write SetPosition;
       property Joints: TP3DJointList read FJoints;
       property Armature: TP3DArmature read FArmature write FArmature;
 
     published
+      property Length: Float read FLength write FLength;
       property Name: String read FName write FName;
   end;
 
@@ -248,6 +252,7 @@ type
   TP3DMeshModifierArmature = class ( TP3DMeshModifier )
     private
       FArmature: TP3DArmature;
+      procedure SetArmature(AValue: TP3DArmature);
 
     public
       constructor Create( AMesh: TP3DMesh ); override;
@@ -258,7 +263,7 @@ type
       procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
     published
-      property Armature: TP3DArmature read FArmature write FArmature;
+      property Armature: TP3DArmature read FArmature write SetArmature;
   end;
 
 {$ENDIF}
@@ -356,6 +361,7 @@ begin
       begin
         Items[ i ]:= TP3DPoseJoint.Create( Frame.Action, Frame.Index );
         Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
+        WriteLn( 'Q: ', Items[ i ].Quaternion.ToString(), ' T: ', Items[ i ].Position.ToString());
       end;
 
   finally
@@ -366,24 +372,37 @@ end;
 
 { TP3DPoseJoint }
 
-function TP3DPoseJoint.GetRotation: TQuaternion;
+function TP3DPoseJoint.GetQuaternion: TQuaternion;
 begin
-  Result:= Action.Frames[ FrameIndex ].Rotations[ RotIdx ];
+  if ( FrameIndex > -1 ) then
+    Result:= Action.Frames[ FrameIndex ].Rotations[ RotIdx ]
+  else
+    Result:= Action.FrameSample.Rotations[ RotIdx ];
 end;
 
-procedure TP3DPoseJoint.SetRotation(AValue: TQuaternion);
+procedure TP3DPoseJoint.SetQuaternion(AValue: TQuaternion);
 begin
-  Action.Frames[ FrameIndex ].Rotations[ RotIdx ]:= AValue;
+  if ( FrameIndex > -1 ) then
+    Action.Frames[ FrameIndex ].Rotations[ RotIdx ]:= AValue
+  else
+    Action.FrameSample.Rotations[ RotIdx ]:= AValue;
 end;
+
 
 function TP3DPoseJoint.GetPosition: TVec3;
 begin
-  Result:= Action.Frames[ FrameIndex ].Translations[ PosIdx ];
+  if ( FrameIndex > -1 ) then
+    Result:= Action.Frames[ FrameIndex ].Translations[ PosIdx ]
+  else
+    Result:= Action.FrameSample.Translations[ PosIdx ];
 end;
 
 procedure TP3DPoseJoint.SetPosition(AValue: TVec3);
 begin
-  Action.Frames[ FrameIndex ].Translations[ PosIdx ]:= AValue;
+  if ( FrameIndex > -1 ) then
+    Action.Frames[ FrameIndex ].Translations[ PosIdx ]:= AValue
+  else
+    Action.FrameSample.Translations[ PosIdx ]:= AValue;
 end;
 
 constructor TP3DPoseJoint.Create(AAction: TP3DArmatureAction; AFrameIndex: Integer);
@@ -391,10 +410,20 @@ begin
   inherited Create;
   FFrameIndex:= AFrameIndex;
   Action:= AAction;
-  RotIdx:= Action.Frames[ FrameIndex ].Rotations.Add( quat( 0, 0, 0, 1 ));
-  PosIdx:= Action.Frames[ FrameIndex ].Translations.Add( vec3( 0 ));
+
+  if ( FrameIndex > -1 ) then
+    begin
+      RotIdx:= Action.Frames[ FrameIndex ].Rotations.Add( quat( 0, 0, 0, 1 ));
+      PosIdx:= Action.Frames[ FrameIndex ].Translations.Add( vec3( 0 ));
+    end
+  else
+    begin
+      RotIdx:= Action.FrameSample.Rotations.Add( quat( 0, 0, 0, 1 ));
+      PosIdx:= Action.FrameSample.Translations.Add( vec3( 0 ));
+    end;
+
   Properties.Context:= Action;
-  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Rotation', @GetRotation, @SetRotation, smAttribute ));
+  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ));
   Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smAttribute ));
 end;
@@ -414,7 +443,7 @@ begin
   Pos.FromString( ADOMNode.GetAttribute( 'position' ));;
   Position:= Pos;
   Rot.FromString( ADOMNode.GetAttribute( 'quaternion' ));
-  Rotation:= Rot;
+  Quaternion:= Rot;
 end;
 
 class function TP3DPoseJoint.DOMNodeName: String;
@@ -424,12 +453,12 @@ end;
 
 { TP3DJoint }
 
-function TP3DJoint.GetRotation: TQuaternion;
+function TP3DJoint.GetQuaternion: TQuaternion;
 begin
   Result:= Armature.Rotations[ RotIdx ];
 end;
 
-procedure TP3DJoint.SetRotation(AValue: TQuaternion);
+procedure TP3DJoint.SetQuaternion(AValue: TQuaternion);
 begin
   Armature.Rotations[ RotIdx ]:= AValue;
 end;
@@ -452,10 +481,10 @@ begin
   FJoints:= TP3DJointList.Create( AArmature );
   RotIdx:= Armature.Rotations.Add( quat( 0, 0, 0, 1 ));
   PosIdx:= Armature.Translations.Add( vec3( 0 ));
-  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Rotation', @GetRotation, @SetRotation, smAttribute ));
+  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ));
   Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Length', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smAttribute ));
-
 end;
 
 constructor TP3DJoint.CreateFromDOM(ADOMNode: TDOMElement; AArmature: TP3DArmature);
@@ -487,7 +516,7 @@ begin
   Pos.FromString( ADOMNode.GetAttribute( 'position' ));;
   Position:= Pos;
   Rot.FromString( ADOMNode.GetAttribute( 'quaternion' ));
-  Rotation:= Rot;
+  Quaternion:= Rot;
 
   Element:= TDOMElement( ADOMNode.FirstChild );
   while ( Assigned( Element )) do
@@ -531,6 +560,13 @@ procedure TP3DArmature.ClearFields;
 begin
   CurrentAction:= nil;
   inherited ClearFields;
+end;
+
+procedure TP3DArmature.RemoveFromFields(Block: TP3DDataBlock);
+begin
+  if ( Block = CurrentAction ) then
+    CurrentAction:= nil;
+  inherited RemoveFromFields(Block);
 end;
 
 constructor TP3DArmature.Create(const AData: TP3DLibrary);
@@ -608,13 +644,18 @@ end;
 
 { TP3DMeshModifierArmature }
 
+procedure TP3DMeshModifierArmature.SetArmature(AValue: TP3DArmature);
+begin
+  if FArmature=AValue then Exit;
+  FArmature:=AValue;
+  Mesh.FArmature:= AValue;
+end;
+
 constructor TP3DMeshModifierArmature.Create( AMesh: TP3DMesh );
-var
-  i: Integer;
 begin
   inherited Create( AMesh );
 
-  Properties.Add( TP3DPropertyAccessArmature.CreateField( 'Armature', @FArmature, smAttribute ));
+  Properties.Add( TP3DPropertyAccessArmature.CreateFieldSet( 'Armature', @FArmature, @SetArmature, smAttribute ));
 end;
 
 destructor TP3DMeshModifierArmature.Destroy;
@@ -672,12 +713,13 @@ begin
         decl.AsInt:= i;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexWidth' ];
       if ( Assigned( decl )) then
-        decl.AsInt:= Armature.CurrentAction.JointTex.Width div 2;
+        decl.AsInt:= Armature.CurrentAction.JointTex.Width;
       decl:= Material.Shader.Uniforms.Names[ 'jointTexHeight' ];
       if ( Assigned( decl )) then
         decl.AsInt:= Armature.CurrentAction.JointTex.Height;
 
       Armature.CurrentAction.CurrentFrame:= SDL_GetTicks() / 100;
+      P3DApplication.MainWindow.Title:= FloatToStr( Armature.CurrentAction.CurrentFrame ) + ':' + FloatToStr( frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count ));
       decl:= Material.Shader.Uniforms.Names[ 'time' ];
       if ( Assigned( decl )) then
         decl.AsFloat:= frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count );
@@ -733,7 +775,10 @@ procedure TP3DMaterialModifierArmature.AddPass(ShaderTree: TP3DShaderNodeTree; M
   end;
 begin
   if ( Assigned( TP3DMeshModifierArmature( MeshModifier ).Armature )) then
-    ChangeSocketValueInt( ShaderTree.AddCopyEx( 'armature' ), 'numJoints', TP3DMeshModifierArmature( MeshModifier ).Armature.Joints.Count );
+    begin
+      ChangeSocketValueInt( ShaderTree.AddCopyEx( '00025_pass_armature' ), 'numJoints', TP3DMeshModifierArmature( MeshModifier ).Armature.Joints.Count );
+      ShaderTree.AddCopyEx( '01050_pass_armature_debug' );
+    end;
 end;
 
 procedure TP3DMaterialModifierArmature.PassToShader(Material: TP3DMaterialBase);
@@ -821,7 +866,7 @@ begin
     for j:= 0 to w div 2 - 1 do
       if ( i >= Frames.Count ) or ( j >= Frames[ i ].Translations.Count ) then
       //if ( j <> 10 ) then
-        Buffer.Add([ vec4( 0 ), vec4( 0 ), vec4( 0 ), vec4( 0 )])
+        Buffer.Add([ vec4( 0 ), vec4( 0 ){, vec4( 0 ), vec4( 0 )}])
       else
         begin
       //  Buffer.Add([ vec4( 0, 0, 0, 1 ), quatRotation( vec3_Axis_PZ, i * 5 )]);
@@ -833,21 +878,51 @@ begin
           m:= minv*m2*mat4translate( vec4( -Parent.Armatures[ 0 ].Joints[ j ].Position , 1 ));
           q:= quat( mat3( m ));
           t:= m.Row[ 3 ];}
-          q:= ( {-Owner.Armatures[ 0 ].Joints[ j ].Rotation * }Frames[ i ].Rotations[ j ]);
+          //q:= ( {-Owner.Armatures[ 0 ].Joints[ j ].Rotation * }Frames[ i ].Rotations[ j ]);
+          //q:= quat( -q.y, q.x, q.z, q.w );
+          {if ( j = 0 ) then
+            begin
+              q:= quat( vec4( 0, 0, 0, 1 ));
+              t:= quat( vec4( 0, 0, 0, 1 ));
+            end
+{          else if ( j > 0 ) then
+            begin
+              q:= quat( mix( vec4( 0, 0, 0, 1 ), vec4( 0, 0, 0.383, 0.924 ), i / h ));
+              t:= quat( vec4( Frames[ i ].Translations[ j ] - armature.Joints[ j ].Position, 1 ));
+            end;}
 
-          t:=
-              //  vec4( Frames[ i ].Translations[ j ]
+          else if ( j = 1 ) then
+            begin
+              q:= quat( mix( vec4( 0, 0, 0, 1 ), vec4( -0.271, 0.271, 0.653, 0.653 ), i / h ));
+              t:= quat( mix( vec4( 0,0,-0.666, 1 ), vec4( 0.000000, 0.000000, 0.666000, 1 ), i / h ));
+            end
+          else if ( j = 2 ) then
+            begin
+              q:= quat( mix( vec4( 0, 0, 0, 1 ), vec4( 0, 0, 0.707, 0.707 ), i / h ));
+              t:= quat( mix( vec4( 0, 0, 0, 1 ), vec4( 0.471908, 0.471796, 0.666191, 1 ), i / h ));
+            end;}
+
+//          t:= quat( vec4( Frames[ i ].Translations[ j ].xyz, 1 ));
+          q:= ( {-Owner.Armatures[ 0 ].Joints[ j ].Rotation * }Frames[ i ].Rotations[ j ]);
+          t:= quat( vec4( Frames[ i ].Translations[ j ] - armature.Joints[ j ].Position, 1 ));
+
+          t:= quat( 0.5 * vec4( t.x * q.w + t.y * q.z - t.z * q.y,
+                               -t.x * q.z + t.y * q.w + t.z * q.x,
+                                t.x * q.y - t.y * q.x + t.z * q.w,
+                                t.x * q.x + t.y * q.y + t.z * q.z ));
+
+          {t:= //vec4( Frames[ i ].Translations[ j ]
               //- ( q * vec4( Parent.Armatures[ 0 ].Joints[ j ].Position, 1 )).xyz
               quat( 0.5*vec4(
                 ( q * ( -armature.Joints[ j ].Position )) + Frames[ i ].Translations[ j ]
-                , 0 ))*q;
+                , 0 ))*q;}
           {m:=  mat4translate( Owner.Armatures[ 0 ].Joints[ j ].Position )
              * mat4( mat3(  )
              * mat4translate( -Owner.Armatures[ 0 ].Joints[ j ].Position );}
-          Buffer.Add([ t, t, q, q ]); //prevent mix of translation and quaternion through pixel bleeding while having smooth transitions in y direction
+          Buffer.Add([ t, q ]); //prevent mix of translation and quaternion through pixel bleeding while having smooth transitions in y direction
           //Buffer.Add([ vec4( Frames[ i ].Translations[ j ], 1 ), m * mat4( mat3( Frames[ i ].Rotations[ j ]])));
         end;
-  FJointTex:= TP3DTexture.CreateFromBuffer( w * 2, h, 4, dtFloat, Buffer.Ptr );
+  FJointTex:= TP3DTexture.CreateFromBuffer( w, h, 4, dtFloat, Buffer.Ptr );
   OwnsJointTex:= True;
   FJointTex.AddUser( Self );
   Buffer.Free;
@@ -857,13 +932,13 @@ constructor TP3DArmatureAction.Create(const AData: TP3DLibrary);
 begin
   inherited Create( AData );
   Frames:= TP3DActionFrameList.Create( Self );
-//  FrameSample:= TP3DActionFrame.Create( Self, -1 );
+  FrameSample:= TP3DActionFrame.CreateFrameSample( Self );
   Owner.Actions.Add( Self );
 end;
 
 procedure TP3DArmatureAction.FastDestroy;
 begin
-//  FrameSample.Free;
+  FrameSample.Free;
   Frames.Clear( True );
   Frames.Free;
   if ( Assigned( JointTex )) then
@@ -922,14 +997,14 @@ begin
   blend:= frac( CurrentFrame );
   for i:= 0 to Frames[ FrameStart ].Translations.Count - 1 do
     begin
-    FrameSample.Translations.Add( Frames[ FrameEnd ].Translations[ i ] * blend
-                                + Frames[ FrameStart ].Translations[ i ] * ( 1 - blend ));
+      FrameSample.Translations.Add( Frames[ FrameEnd ].Translations[ i ] * blend
+                                  + Frames[ FrameStart ].Translations[ i ] * ( 1 - blend ));
     //WriteLn( FrameSample.Translations[ i ].ToString());
     end;
   for i:= 0 to Frames[ FrameStart ].Rotations.Count - 1 do
     begin
-    FrameSample.Rotations.Add( Quat( Frames[ FrameEnd ].Rotations[ i ] * blend
-                             + Frames[ FrameStart ].Rotations[ i ] * ( 1 - blend )));
+      FrameSample.Rotations.Add( Quat( Frames[ FrameEnd ].Rotations[ i ] * blend
+                               + Frames[ FrameStart ].Rotations[ i ] * ( 1 - blend )));
     //WriteLn( FrameSample.Rotations[ i ].ToString());
     end;
 end;
@@ -960,6 +1035,16 @@ begin
   Translations:= TVec3List.Create;
   Pose:= TP3DPoseJointList.Create( Self );
   Index:= Action.Frames.Add( Self );
+end;
+
+constructor TP3DActionFrame.CreateFrameSample(AAction: TP3DArmatureAction);
+begin
+  inherited Create();
+  Action:= AAction;
+  Rotations:= TQuaternionList.Create;
+  Translations:= TVec3List.Create;
+  Pose:= TP3DPoseJointList.Create( Self );
+  Index:= -1;
 end;
 
 constructor TP3DActionFrame.CreateFromDOM(ADOMNode: TDOMElement; AAction: TP3DArmatureAction );

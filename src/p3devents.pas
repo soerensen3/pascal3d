@@ -15,6 +15,8 @@ uses
   XMLRead,
   DOM,
 
+  p3dutils,
+
   SDL2
   ;
 
@@ -49,8 +51,8 @@ procedure P3DEventsInit;
 begin
   if ( not Assigned( P3DLog )) then
     P3DLog:= TP3DLogger.Create;
-  if ( not Assigned( P3DApplication )) then
-    P3DApplication:= TP3DApplication.Create;
+  //if ( not Assigned( P3DApplication )) then
+  //  P3DApplication:= TP3DApplication.Create;
   if ( not Assigned( P3DInput )) then
     P3DInput:= TP3DInputManager.Create;
 end;

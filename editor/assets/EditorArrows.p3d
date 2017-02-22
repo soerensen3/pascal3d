@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Data = "/mesh_ArrowX"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "ArrowX" />
+    <object
+       Data = "/mesh_ArrowY"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "ArrowY" />
+    <object
+       Data = "/mesh_ArrowZ"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "ArrowZ" />
+  </scene>
+  <mesh
+     Positions = "EditorArrows.p3dbin:0"
+     Normals = "EditorArrows.p3dbin:232"
+     Faces = "EditorArrows.p3dbin:1392"
+     Name = "mesh_ArrowX"
+     Loops = "EditorArrows.p3dbin:1100">
+    <materialgroup
+       Material = "/material_MaterialX"
+       PolyEnd = "18"
+       PolyStart = "0" />
+  </mesh>
+  <mesh
+     Positions = "EditorArrows.p3dbin:1472"
+     Normals = "EditorArrows.p3dbin:1704"
+     Faces = "EditorArrows.p3dbin:2864"
+     Name = "mesh_ArrowY"
+     Loops = "EditorArrows.p3dbin:2572">
+    <materialgroup
+       Material = "/material_MaterialY"
+       PolyEnd = "18"
+       PolyStart = "0" />
+  </mesh>
+  <mesh
+     Positions = "EditorArrows.p3dbin:2944"
+     Normals = "EditorArrows.p3dbin:3176"
+     Faces = "EditorArrows.p3dbin:4336"
+     Name = "mesh_ArrowZ"
+     Loops = "EditorArrows.p3dbin:4044">
+    <materialgroup
+       Material = "/material_MaterialZ"
+       PolyEnd = "18"
+       PolyStart = "0" />
+  </mesh>
+  <materialbase
+     Diff = "0.800000, 0.000000, 0.000000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Unlit = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_MaterialX"
+     Instancing = "1" />
+  <materialbase
+     Diff = "0.000000, 0.000000, 1.000000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Unlit = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_MaterialZ"
+     Instancing = "1" />
+  <materialbase
+     Diff = "0.000000, 0.800000, 0.000000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Unlit = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_MaterialY"
+     Instancing = "1" />
+</p3dfile>

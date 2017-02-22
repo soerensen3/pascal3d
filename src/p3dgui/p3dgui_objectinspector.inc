@@ -157,7 +157,8 @@ procedure TP3DOIEditorPage.FastDestroy;
 begin
   Groups.Clear( True );
   Groups.Free;
-  Button.Free;
+  if ( P3DData.IsValid( Button )) then
+    Button.Free;
   inherited FastDestroy;
 end;
 
@@ -256,12 +257,15 @@ end;
 
 procedure TP3DObjectInspector.FastDestroy;
 begin
-  Pages.Clear( True );
+  //Pages.Clear( True );
   Pages.Free;
-  Toolbar.Controls.Clear( True );
-  Toolbar.Free;
-  Container.Free;
-  Scrollbar.Free;
+  //Toolbar.Controls.Clear( True );
+  if ( P3DData.IsValid( Toolbar )) then
+    Toolbar.Free;
+  if ( P3DData.IsValid( Container )) then
+    Container.Free;
+  if ( P3DData.IsValid( Scrollbar )) then
+    Scrollbar.Free;
   inherited FastDestroy;
 end;
 

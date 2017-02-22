@@ -1,0 +1,460 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "ground_normal">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_ground_low"
+       Data = "/mesh_ground_low" />
+  </scene>
+  <scene
+     Name = "ground_wall_E">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_rock_E"
+       Data = "/mesh_ground_wall.005" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_ground_E"
+       Data = "/mesh_ground_wall.001" />
+  </scene>
+  <scene
+     Name = "ground_wall_N">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 1.000000, 0.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_rock_N"
+       Data = "/mesh_ground_wall.005" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 1.000000, 0.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_ground_N"
+       Data = "/mesh_ground_wall.001" />
+  </scene>
+  <scene
+     Name = "ground_wall_S">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_rock_S"
+       Data = "/mesh_ground_wall.005" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_ground_S"
+       Data = "/mesh_ground_wall.001" />
+  </scene>
+  <scene
+     Name = "ground_wall_SW_conc">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_rock_conc_SW"
+       Data = "/mesh_rock.000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_ground_conc_SW"
+       Data = "/mesh_ground_high.011" />
+  </scene>
+  <scene
+     Name = "ground_wall_SW_conv">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_rock_wall_corner_convex_SW.001"
+       Data = "/mesh_rock.003" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_ground_wall_corner_convex_SW.001"
+       Data = "/mesh_ground_high.012" />
+  </scene>
+  <scene
+     Name = "ground_wall_W">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_rock_W"
+       Data = "/mesh_ground_wall.005" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "obj_ground_W"
+       Data = "/mesh_ground_wall.001" />
+  </scene>
+  <scene
+     Name = "ground_ĥigh">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 1.000000"
+       Name = "obj_ground_high"
+       Data = "/mesh_ground_low" />
+  </scene>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:8108"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:1952"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:976"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:5032"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:0"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:11184"
+     Name = "mesh_ground_low"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:2980">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "63"
+       Material = "/material_ground" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:41396"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:22952"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:20296"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:32176"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:11444"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:50616"
+     Name = "mesh_ground_wall.005"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:26028">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "191"
+       Material = "/material_rock" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:59664"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:55044"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:54200"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:57356"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:51388"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:61972"
+     Name = "mesh_ground_wall.001"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:55816">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "47"
+       Material = "/material_ground" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:92120"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:73676"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:71020"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:82900"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:62168"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:101340"
+     Name = "mesh_ground_wall.005"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:76752">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "191"
+       Material = "/material_rock" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:110388"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:105768"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:104924"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:108080"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:102112"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:112696"
+     Name = "mesh_ground_wall.001"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:106540">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "47"
+       Material = "/material_ground" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:142844"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:124400"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:121744"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:133624"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:112892"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:152064"
+     Name = "mesh_ground_wall.005"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:127476">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "191"
+       Material = "/material_rock" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:161112"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:156492"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:155648"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:158804"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:152836"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:163420"
+     Name = "mesh_ground_wall.001"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:157264">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "47"
+       Material = "/material_ground" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:257164"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:183424"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:173520"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:220296"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:163616"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:294032"
+     Name = "mesh_rock.000"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:195716">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "767"
+       Material = "/material_rock" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:316184"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:301580"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:299344"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:308884"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:297108"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:323484"
+     Name = "mesh_ground_high.011"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:304016">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "151"
+       Material = "/material_ground" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:417644"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:343904"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:334000"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:380776"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:324096"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:454512"
+     Name = "mesh_rock.003"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:356196">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "767"
+       Material = "/material_rock" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:487540"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:469096"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:466440"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:478320"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:457588"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:496760"
+     Name = "mesh_ground_wall.005"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:472172">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "191"
+       Material = "/material_rock" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:505640"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:499484"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:498508"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:502564"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:497532"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:508716"
+     Name = "mesh_ground_low"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:500512">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "63"
+       Material = "/material_ground" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:517252"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:512632"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:511788"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:514944"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:508976"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:519560"
+     Name = "mesh_ground_wall.001"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:513404">
+    <weightgroup
+       name = "Group" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "47"
+       Material = "/material_ground" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:535856"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:523556"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:521656"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:529708"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:519756"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:542004"
+     Name = "mesh_ground_high.012"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tiles_rock.p3dbin:525608">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "127"
+       Material = "/material_ground" />
+  </mesh>
+  <materialbase
+     Unlit = "0"
+     Instancing = "1"
+     Spec_Hardness = "5.000000"
+     TransparencyMode = "p3dmtNone"
+     Diff = "0.640000, 0.640000, 0.640000"
+     Name = "material_ground"
+     Spec = "0.020000, 0.020000, 0.020000">
+    <map
+       Mode = "mapMix"
+       TexChannel = "0"
+       Name = "Texture"
+       DiffuseFactor = "1.0"
+       Data = "/tex_Texture" />
+    <map
+       NormalFactor = "1.0"
+       DiffuseFactor = "0.0"
+       Mode = "mapMix"
+       TexChannel = "0"
+       Name = "Texture.001"
+       Data = "/tex_Texture.001" />
+    <map
+       TexChannel = "0"
+       DiffuseFactor = "0.0"
+       Mode = "mapMultiply"
+       SpecularIntensity = "1.0"
+       Name = "Texture.002"
+       Data = "/tex_Texture.002" />
+  </materialbase>
+  <materialbase
+     Unlit = "0"
+     Instancing = "1"
+     Spec_Hardness = "20.000000"
+     TransparencyMode = "p3dmtNone"
+     Diff = "0.640000, 0.640000, 0.640000"
+     Name = "material_rock"
+     Spec = "0.500000, 0.500000, 0.500000">
+    <map
+       Mode = "mapMix"
+       TexChannel = "0"
+       Name = "Texture.006"
+       DiffuseFactor = "1.0"
+       Data = "/tex_Texture.006" />
+    <map
+       NormalFactor = "1.0"
+       DiffuseFactor = "0.0"
+       Mode = "mapMix"
+       TexChannel = "0"
+       Name = "Texture.007"
+       Data = "/tex_Texture.007" />
+    <map
+       TexChannel = "0"
+       DiffuseFactor = "0.0"
+       SpecularFactor = "1.0"
+       Mode = "mapMultiply"
+       SpecularIntensity = "1.0"
+       Name = "Texture.008"
+       Data = "/tex_Texture.008" />
+    <map
+       DiffuseFactor = "0.8181818127632141"
+       SpecularFactor = "0.8601398468017578"
+       Mode = "mapOverlay"
+       TexChannel = "0"
+       Name = "Texture.003"
+       Data = "/tex_Texture.003" />
+  </materialbase>
+  <texture
+     MipMap = "1"
+     File = "rock2_disp.png"
+     FilteringMipMap = "tfLinear"
+     Name = "tex_Texture.008"
+     Filtering = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "ground_displacement.png"
+     FilteringMipMap = "tfLinear"
+     Name = "tex_Texture.002"
+     Filtering = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "rock2_norm.png"
+     FilteringMipMap = "tfLinear"
+     Name = "tex_Texture.007"
+     Filtering = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "ground_baked_normal.png"
+     FilteringMipMap = "tfLinear"
+     Name = "tex_Texture.001"
+     Filtering = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "ground.png"
+     FilteringMipMap = "tfLinear"
+     Name = "tex_Texture"
+     Filtering = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "rock2_diff.png"
+     FilteringMipMap = "tfLinear"
+     Name = "tex_Texture.006"
+     Filtering = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "moss.png"
+     FilteringMipMap = "tfLinear"
+     Name = "tex_Texture.003"
+     Filtering = "tfLinear" />
+</p3dfile>

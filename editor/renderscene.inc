@@ -1,7 +1,7 @@
-
-
-procedure Render( Sender: TP3DWindow );
+procedure TP3DSceneApplication.Render;
 begin
+  inherited Render;
+
   SceneMain.CheckLastChange;
   if ( SceneMain.NeedsUpdate ) then
     SceneMain.Update;
@@ -13,3 +13,4 @@ begin
   glDisable( GL_DEPTH_TEST );
   P3DGUIManager.Render;
 end;
+

@@ -3,7 +3,7 @@
 {$IFDEF INTERFACE}
   type
     TP3DMesh = class;
-    TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowBoundingBox, rfDebugShowArmature );
+    TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowAABB, rfDebugShowArmature );
     TP3DRenderFlags = set of TP3DRenderFlag;
 
     { TP3DMeshMaterialGroup }
@@ -141,7 +141,7 @@
 
     TP3DMesh = class( TP3DDataBlock )
       private
-        //FArmature: TP3DArmature;
+        FArmature: TP3DArmature;
         FFileWatch: TP3DFileWatch;
         FModifiers: TP3DMeshModifierList;
 
@@ -201,15 +201,17 @@
         procedure CreateVBO;
         procedure CalcCotangentsFromTangents;
         procedure Calc_Tangents_Cotangents;
-        function CalcBoundingBox(): TP3DBoundingBox; override;
+        function CalcAABB(): TP3DAABB; override;
+        function CalcSphere: TP3DSphere; override;
         procedure RemoveFromFields( Block: TP3DDataBlock ); override;
         procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); override;
 
         //        procedure ClearChildren;
         property Modifiers: TP3DMeshModifierList read FModifiers write FModifiers;
         property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
-//        property Armature: TP3DArmature read FArmature write SetArmature;
+        property Armature: TP3DArmature read FArmature;
       end;
+
       TP3DPropertyAccessMesh = specialize gP3DPropertyAccessDataBlock < TP3DMesh >;
       TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
 var
@@ -565,9 +567,6 @@ var
 begin
   S:= nil;
   inherited LoadFromDOMNew(ADOMNode);
-  WeightGroups.LoadFromDOM( ADOMNode );
-  Modifiers.LoadFromDOM( ADOMNode );
-
   ClearVBO;
 
   if ( SetupStream( 'Positions' )) then
@@ -612,8 +611,10 @@ begin
     BuildIndicesFromFaces;}
 
   PackedMaterialGroups.LoadFromDOM( ADOMNode );
-
   UnpackBuffers;
+
+  WeightGroups.LoadFromDOM( ADOMNode );
+  Modifiers.LoadFromDOM( ADOMNode );
 
   S.Free;
 end;
@@ -627,20 +628,19 @@ begin
   Result:= inherited SaveToDOM( AParent );
 
   comment:= 'summary for mesh ' + Name + LineEnding;
-  comment+= '  Positions: ' + IntToStr( Positions.Count ) + LineEnding;
-  comment+= '  Normals: ' + IntToStr( Normals.Count ) + LineEnding;
-  comment+= '  Tangents: ' + IntToStr( Tangents.Count ) + LineEnding;
-  comment+= '  Cotangents: ' + IntToStr( Cotangents.Count ) + LineEnding;
-  comment+= '  Faces: ' + IntToStr( Faces.Count ) + LineEnding;
+  comment+= '  Positions: ' + IntToStr( PackedPositions.Count ) + LineEnding;
+  comment+= '  Normals: ' + IntToStr( PackedNormals.Count ) + LineEnding;
+  comment+= '  Tangents: ' + IntToStr( PackedTangents.Count ) + LineEnding;
+  comment+= '  Cotangents: ' + IntToStr( PackedCotangents.Count ) + LineEnding;
+  comment+= '  Faces: ' + IntToStr( PackedFaces.Count ) + LineEnding;
 
   for i:= 0 to high( TexCoords ) do
     comment+= '  TexCoords' + IntToStr( i ) + ': ' + IntToStr( TexCoords[ i ].Count ) + LineEnding;
 
-  comment+= '  Edges: ' + IntToStr( Edges.Count ) + LineEnding;
-  comment+= '  Indices: ' + IntToStr( Indices.Count ) + LineEnding;
+  comment+= '  Loops: ' + IntToStr( Loops.Count ) + LineEnding;
 
-  comment+= '  VertexWeightIndices: ' + IntToStr( VertexWeightIndices.Count ) + LineEnding;
-  comment+= '  VertexWeights: ' + IntToStr( VertexWeights.Count ) + LineEnding;
+  comment+= '  VertexWeightIndices: ' + IntToStr( PackedVertexWeightIndices.Count ) + LineEnding;
+  comment+= '  VertexWeights: ' + IntToStr( PackedVertexWeights.Count ) + LineEnding;
 
   Result.AppendChild( Result.OwnerDocument.CreateComment( comment ));
 
@@ -648,19 +648,19 @@ begin
   S:= TFileStream.Create( fn, fmCreate );
 
   Result.AttribStrings[ 'Positions' ]:= fn + ':' + IntToStr( S.Position );
-  Positions.SaveToStream( S );
+  PackedPositions.SaveToStream( S );
 
   Result.AttribStrings[ 'Normals' ]:= fn + ':' + IntToStr( S.Position );
-  Normals.SaveToStream( S );
+  PackedNormals.SaveToStream( S );
 
   Result.AttribStrings[ 'Tangents' ]:= fn + ':' + IntToStr( S.Position );
-  Tangents.SaveToStream( S );
+  PackedTangents.SaveToStream( S );
 
   Result.AttribStrings[ 'Cotangents' ]:= fn + ':' + IntToStr( S.Position );
-  Cotangents.SaveToStream( S );
+  PackedCotangents.SaveToStream( S );
 
   Result.AttribStrings[ 'Faces' ]:= fn + ':' + IntToStr( S.Position );
-  Faces.SaveToStream( S );
+  PackedFaces.SaveToStream( S );
 
   for i:= 0 to high( TexCoords ) do
     begin
@@ -668,21 +668,18 @@ begin
       TexCoords[ i ].SaveToStream( S );
     end;
 
-  Result.AttribStrings[ 'Edges' ]:= fn + ':' + IntToStr( S.Position );
-  Edges.SaveToStream( S );
-
-  Result.AttribStrings[ 'Indices' ]:= fn + ':' + IntToStr( S.Position );
-  Indices.SaveToStream( S );
+  Result.AttribStrings[ 'Loops' ]:= fn + ':' + IntToStr( S.Position );
+  Loops.SaveToStream( S );
 
   Result.AttribStrings[ 'VertexWeightIndices' ]:= fn + ':' + IntToStr( S.Position );
-  VertexWeightIndices.SaveToStream( S );
+  PackedVertexWeightIndices.SaveToStream( S );
 
   Result.AttribStrings[ 'VertexWeights' ]:= fn + ':' + IntToStr( S.Position );
-  VertexWeights.SaveToStream( S );
+  PackedVertexWeights.SaveToStream( S );
 
   S.Free;
 
-  MaterialGroups.SaveToDOM( Result );
+  PackedMaterialGroups.SaveToDOM( Result );
   WeightGroups.SaveToDOM( Result );
   Modifiers.SaveToDOM( Result );
 end;
@@ -1087,6 +1084,7 @@ var
   Idx: Integer;
 
   vidx, LastVertex: Integer;
+  vindices: TIVec4;
 
 begin
   ClearVBO;
@@ -1114,14 +1112,18 @@ begin
 
       for j:= 0 to LastVertex do
         begin
-          vidx:= Loops[ PackedFaces[ i ] + j ];
-          Positions.Add( PackedPositions[ vidx ]);
+          vidx:= PackedFaces[ i ] + j;
+          Positions.Add( PackedPositions[ Loops[ vidx ]]);
           Normals.Add( PackedNormals[ vidx ]);
           Tangents.Add( PackedTangents[ vidx ]);
           Cotangents.Add( PackedCotangents[ vidx ]);
-          VertexWeights.Add( PackedVertexWeights[ vidx ]);
-          VertexWeightIndices.Add( vec4( PackedVertexWeightIndices[ vidx ][ 0 ], PackedVertexWeightIndices[ vidx ][ 1 ],
-                                         PackedVertexWeightIndices[ vidx ][ 2 ], PackedVertexWeightIndices[ vidx ][ 3 ]));
+          if ( PackedVertexWeights.Count > 0 ) then
+            VertexWeights.Add( PackedVertexWeights[ Loops[ vidx ]]);
+          if ( PackedVertexWeightIndices.Count > 0 ) then
+            begin
+              vindices:= PackedVertexWeightIndices[ Loops[ vidx ]];
+              VertexWeightIndices.Add( vec4( vindices[ 0 ], vindices[ 1 ], vindices[ 2 ], vindices[ 3 ]));
+            end;
         end;
       for j:= 1 to LastVertex do
         begin
@@ -1144,7 +1146,8 @@ begin
     end;
 
   CreateVBO;
-  BoundingBox:= CalcBoundingBox();
+  CalcAABB();
+  CalcSphere();
 end;
 
 procedure TP3DMesh.ClearVBO;
@@ -1299,24 +1302,36 @@ begin
     end;}
 end;
 
-function TP3DMesh.CalcBoundingBox: TP3DBoundingBox;
+function TP3DMesh.CalcAABB: TP3DAABB;
 var
   p: TVec3;
 begin
-  FBoundingBox.Min:= vec3( 0 );
-  FBoundingBox.Max:= vec3( 0 );
-  FBoundingBox.Center:= vec3( 0 );
+  FAABB.Min:= vec3( 0 );
+  FAABB.Max:= vec3( 0 );
+  FAABB.Position:= vec3( 0 );
   for p in Positions do
     begin
-      FBoundingBox.Min.X:= Min( p.X, BoundingBox.Min.X );
-      FBoundingBox.Min.Y:= Min( p.Y, BoundingBox.Min.Y );
-      FBoundingBox.Min.Z:= Min( p.Z, BoundingBox.Min.Z );
-      FBoundingBox.Max.X:= Max( p.X, BoundingBox.Max.X );
-      FBoundingBox.Max.Y:= Max( p.Y, BoundingBox.Max.Y );
-      FBoundingBox.Max.Z:= Max( p.Z, BoundingBox.Max.Z );
+      FAABB.Min.X:= Min( p.X, AABB.Min.X );
+      FAABB.Min.Y:= Min( p.Y, AABB.Min.Y );
+      FAABB.Min.Z:= Min( p.Z, AABB.Min.Z );
+      FAABB.Max.X:= Max( p.X, AABB.Max.X );
+      FAABB.Max.Y:= Max( p.Y, AABB.Max.Y );
+      FAABB.Max.Z:= Max( p.Z, AABB.Max.Z );
     end;
-  FBoundingBox.Center:= ( BoundingBox.Min + BoundingBox.Max ) / 2;
-  Result:= FBoundingBox;
+  Result:= FAABB;
+end;
+
+function TP3DMesh.CalcSphere: TP3DSphere;
+var
+  sqrrad: Float;
+  p, ctr: TVec3;
+begin
+  sqrrad:= 0.0;
+  ctr:= ( AABB.Min + AABB.Max ) / 2;
+  for p in Positions do
+    sqrrad:= max( sqrrad, ( p - ctr ).GetDistSqr );
+  FSphere:= P3DSphere( ctr, sqrt( sqrrad ));
+  Result:= Sphere;
 end;
 
 procedure TP3DMesh.RemoveFromFields(Block: TP3DDataBlock);
@@ -1329,7 +1344,7 @@ begin
   inherited RemoveFromFields( Block );
 end;
 
-procedure TP3DMesh.AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
+procedure TP3DMesh.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
 var
   i: Integer;
   mat: TP3DMaterial;
@@ -1382,10 +1397,10 @@ begin
   inherited Create;
 
   Properties.Context:= AParentMesh;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyStart' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyEnd' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexStart', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexEnd', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyStart', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyEnd', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexStart' ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexEnd' ));
   Properties.Add( TP3DPropertyAccessMaterial.CreateFieldSet( 'Material', @FMaterial, @SetMaterial, smAttribute ));
 end;
 

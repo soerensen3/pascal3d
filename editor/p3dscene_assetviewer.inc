@@ -35,6 +35,7 @@ begin
   FDirectoryView.Mask:= '*.p3d';
   FDirectoryView.Align:= alLeft;
   FDirectoryView.Width:= 200;
+  FDirectoryView.AllowDrag:= True;
   FAssetView.ShowSymbols:= True;
   FAssetView.TreeViewDirectory:= FDirectoryView;
   FAssetView.ShowFolderUp:= True;

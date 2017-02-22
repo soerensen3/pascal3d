@@ -1,0 +1,1576 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       RotationOrder = "roXYZ"
+       Data = "/mesh_Cube.001"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 1.000000, 0.000000, 0.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Cube.001" />
+    <object
+       RotationOrder = "roXYZ"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Armature">
+      <object
+         RotationOrder = "roXYZ"
+         Data = "/mesh_Cube"
+         Scale = " 1.000000, 1.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Cube" />
+    </object>
+    <object
+       RotationOrder = "roXYZ"
+       Data = "/mesh_Cube.002"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = "-1.000000, 0.000000, 0.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Cube.002" />
+    <object
+       RotationOrder = "roXYZ"
+       Data = "/lamp_Lamp"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 4.076245, 1.005454, 5.903862"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+       Collision = "acNone"
+       Name = "Lamp" />
+    <object
+       RotationOrder = "roXYZ"
+       Position = " 7.481132,-6.507640, 5.343665"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       Collision = "acNone"
+       Name = "Camera" />
+  </scene>
+  <mesh
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:2804"
+     VertexWeightIndices = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:680"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:2384"
+     VertexWeights = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:340"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:0"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:1132"
+     Name = "mesh_Cube.001">
+    <weightgroup
+       Name = "Bone" />
+    <weightgroup
+       Name = "Bone.001" />
+    <weightgroup
+       Name = "Bone.002" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "25"
+       Material = "/material_Material.002" />
+  </mesh>
+  <mesh
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:46276"
+     VertexWeightIndices = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:12952"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:39616"
+     VertexWeights = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:7932"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:2912"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:19644"
+     Name = "mesh_Cube">
+    <weightgroup
+       Name = "Bone" />
+    <weightgroup
+       Name = "Bone.001" />
+    <weightgroup
+       Name = "Bone.002" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "415"
+       Material = "/material_Material" />
+    <modifier
+       Armature = "/armature_Armature"
+       Type = "TP3DMeshModifierArmature" />
+  </mesh>
+  <mesh
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:50748"
+     VertexWeightIndices = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:48624"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:50328"
+     VertexWeights = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:48284"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:47944"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/armature_test/media/armatures/armature_test4.p3dbin:49076"
+     Name = "mesh_Cube.002">
+    <weightgroup
+       Name = "Bone" />
+    <weightgroup
+       Name = "Bone.001" />
+    <weightgroup
+       Name = "Bone.002" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "25"
+       Material = "/material_Material.001" />
+  </mesh>
+  <light
+     Color = "1.000000, 1.000000, 1.000000"
+     LightType = "ltPoint"
+     Energy = "1.0"
+     Name = "lamp_Lamp" />
+  <materialbase
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0"
+     Spec = "0.147059, 0.147059, 0.147059"
+     Spec_Hardness = "2.000000"
+     Diff = "0.640000, 0.029470, 0.086685"
+     Instancing = "1"
+     Name = "material_Material.002" />
+  <materialbase
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0"
+     Spec = "0.147059, 0.147059, 0.147059"
+     Spec_Hardness = "2.000000"
+     Diff = "1.0, 1.0, 1.0"
+     Instancing = "1"
+     Name = "material_Material" />
+  <materialbase
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0"
+     Spec = "0.147059, 0.147059, 0.147059"
+     Spec_Hardness = "2.000000"
+     Diff = "0.640000, 0.029470, 0.086685"
+     Instancing = "1"
+     Name = "material_Material.001" />
+  <armature
+     CurrentAction = "/action_ArmatureArmatureAction"
+     Name = "armature_Armature">
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Name = "joint_Bone" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.666000"
+       Name = "joint_Bone.001" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 1.333300"
+       Name = "joint_Bone.002" />
+  </armature>
+  <action
+     Name = "action_ArmatureArmatureAction">
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 1.333300"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 1.333300"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.000059, 0.000059,-0.000143, 1.000000"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.000060, 0.000060, 0.000144, 1.000000"
+         Position = " 0.000191, 0.000079, 1.333300"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.000238, 0.000238,-0.000574, 1.000000"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.000235, 0.000235, 0.000567, 1.000000"
+         Position = " 0.000765, 0.000317, 1.333299"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.000536, 0.000536,-0.001293, 0.999999"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.000521, 0.000521, 0.001258, 0.999999"
+         Position = " 0.001726, 0.000716, 1.333297"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.000954, 0.000954,-0.002304, 0.999997"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.000915, 0.000915, 0.002208, 0.999997"
+         Position = " 0.003073, 0.001276, 1.333292"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.001494, 0.001494,-0.003607, 0.999991"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.001411, 0.001411, 0.003407, 0.999992"
+         Position = " 0.004811, 0.002001, 1.333280"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.002156, 0.002156,-0.005206, 0.999982"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.002008, 0.002008, 0.004847, 0.999984"
+         Position = " 0.006941, 0.002893, 1.333258"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.002941, 0.002941,-0.007101, 0.999966"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.002701, 0.002701, 0.006520, 0.999972"
+         Position = " 0.009465, 0.003953, 1.333221"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.003851, 0.003850,-0.009296, 0.999942"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.003487, 0.003487, 0.008418, 0.999952"
+         Position = " 0.012386, 0.005186, 1.333165"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.004885, 0.004885,-0.011792, 0.999907"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.004364, 0.004364, 0.010536, 0.999925"
+         Position = " 0.015705, 0.006595, 1.333083"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.006045, 0.006045,-0.014593, 0.999857"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.005330, 0.005330, 0.012868, 0.999889"
+         Position = " 0.019424, 0.008184, 1.332967"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.007331, 0.007331,-0.017699, 0.999790"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.006382, 0.006382, 0.015407, 0.999841"
+         Position = " 0.023545, 0.009955, 1.332810"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.008746, 0.008746,-0.021114, 0.999701"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.007518, 0.007518, 0.018149, 0.999779"
+         Position = " 0.028069, 0.011915, 1.332603"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.010289, 0.010289,-0.024840, 0.999586"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.008736, 0.008736, 0.021089, 0.999701"
+         Position = " 0.032996, 0.014067, 1.332335"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.011962, 0.011962,-0.028878, 0.999440"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.010034, 0.010034, 0.024223, 0.999606"
+         Position = " 0.038328, 0.016416, 1.331996"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.013765, 0.013765,-0.033231, 0.999258"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.011410, 0.011410, 0.027547, 0.999490"
+         Position = " 0.044065, 0.018967, 1.331573"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.015699, 0.015699,-0.037901, 0.999035"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.012864, 0.012864, 0.031057, 0.999352"
+         Position = " 0.050205, 0.021726, 1.331054"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.017765, 0.017765,-0.042889, 0.998764"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.014394, 0.014394, 0.034750, 0.999189"
+         Position = " 0.056747, 0.024697, 1.330424"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.019963, 0.019963,-0.048196, 0.998439"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.015997, 0.015997, 0.038621, 0.998998"
+         Position = " 0.063690, 0.027886, 1.329668"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.022294, 0.022294,-0.053823, 0.998053"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.017674, 0.017674, 0.042669, 0.998777"
+         Position = " 0.071030, 0.031298, 1.328770"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.024758, 0.024758,-0.059772, 0.997598"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.019422, 0.019422, 0.046890, 0.998522"
+         Position = " 0.078762, 0.034938, 1.327714"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.027356, 0.027356,-0.066042, 0.997067"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.021242, 0.021241, 0.051282, 0.998232"
+         Position = " 0.086882, 0.038813, 1.326480"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.030086, 0.030086,-0.072633, 0.996451"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.023130, 0.023130, 0.055841, 0.997904"
+         Position = " 0.095384, 0.042926, 1.325051"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.032948, 0.032948,-0.079544, 0.995742"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.025087, 0.025087, 0.060566, 0.997534"
+         Position = " 0.104258, 0.047283, 1.323407"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.035943, 0.035943,-0.086774, 0.994931"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.027112, 0.027112, 0.065454, 0.997119"
+         Position = " 0.113497, 0.051888, 1.321527"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.039068, 0.039068,-0.094320, 0.994008"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.029203, 0.029203, 0.070503, 0.996656"
+         Position = " 0.123088, 0.056746, 1.319390"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.042324, 0.042324,-0.102179, 0.992964"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.031360, 0.031360, 0.075710, 0.996143"
+         Position = " 0.133018, 0.061860, 1.316975"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.045708, 0.045708,-0.110349, 0.991789"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.033582, 0.033582, 0.081073, 0.995576"
+         Position = " 0.143274, 0.067232, 1.314261"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.049218, 0.049218,-0.118823, 0.990473"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.035867, 0.035867, 0.086591, 0.994952"
+         Position = " 0.153837, 0.072866, 1.311224"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.052852, 0.052852,-0.127597, 0.989006"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.038216, 0.038216, 0.092261, 0.994267"
+         Position = " 0.164691, 0.078762, 1.307843"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.056608, 0.056608,-0.136664, 0.987377"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.040626, 0.040626, 0.098081, 0.993519"
+         Position = " 0.175813, 0.084920, 1.304097"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.060482, 0.060482,-0.146016, 0.985578"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.043098, 0.043098, 0.104049, 0.992703"
+         Position = " 0.187180, 0.091341, 1.299963"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.064470, 0.064470,-0.155644, 0.983597"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.045631, 0.045631, 0.110162, 0.991817"
+         Position = " 0.198768, 0.098022, 1.295422"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.068569, 0.068569,-0.165539, 0.981424"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.048223, 0.048223, 0.116419, 0.990856"
+         Position = " 0.210550, 0.104960, 1.290453"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.072773, 0.072773,-0.175689, 0.979051"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.050873, 0.050873, 0.122818, 0.989818"
+         Position = " 0.222495, 0.112151, 1.285037"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.077078, 0.077078,-0.186082, 0.976469"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.053581, 0.053581, 0.129356, 0.988699"
+         Position = " 0.234572, 0.119589, 1.279159"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.081477, 0.081477,-0.196704, 0.973669"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.056346, 0.056346, 0.136031, 0.987495"
+         Position = " 0.246749, 0.127266, 1.272801"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.085966, 0.085966,-0.207540, 0.970642"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.059166, 0.059166, 0.142841, 0.986202"
+         Position = " 0.258989, 0.135173, 1.265952"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.090537, 0.090537,-0.218575, 0.967384"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.062042, 0.062042, 0.149782, 0.984818"
+         Position = " 0.271256, 0.143300, 1.258600"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.095182, 0.095182,-0.229790, 0.963886"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.064971, 0.064971, 0.156854, 0.983338"
+         Position = " 0.283512, 0.151633, 1.250737"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.099895, 0.099895,-0.241168, 0.960146"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.067953, 0.067953, 0.164053, 0.981760"
+         Position = " 0.295718, 0.160159, 1.242359"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.104668, 0.104668,-0.252690, 0.956157"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.070986, 0.070986, 0.171376, 0.980078"
+         Position = " 0.307834, 0.168863, 1.233462"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.109491, 0.109491,-0.264335, 0.951919"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.074070, 0.074070, 0.178820, 0.978290"
+         Position = " 0.319820, 0.177727, 1.224048"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.114357, 0.114356,-0.276081, 0.947430"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.077203, 0.077203, 0.186384, 0.976392"
+         Position = " 0.331635, 0.186733, 1.214123"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.119255, 0.119255,-0.287907, 0.942691"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.080384, 0.080384, 0.194063, 0.974380"
+         Position = " 0.343240, 0.195859, 1.203694"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.124178, 0.124178,-0.299791, 0.937702"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.083611, 0.083611, 0.201855, 0.972252"
+         Position = " 0.354596, 0.205086, 1.192774"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.129114, 0.129114,-0.311709, 0.932468"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.086884, 0.086884, 0.209756, 0.970003"
+         Position = " 0.365665, 0.214392, 1.181378"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.134056, 0.134056,-0.323639, 0.926993"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.090200, 0.090200, 0.217762, 0.967630"
+         Position = " 0.376411, 0.223751, 1.169527"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.138992, 0.138992,-0.335557, 0.921284"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.093559, 0.093559, 0.225871, 0.965130"
+         Position = " 0.386799, 0.233142, 1.157244"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.143914, 0.143914,-0.347439, 0.915349"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.096959, 0.096958, 0.234079, 0.962500"
+         Position = " 0.396799, 0.242540, 1.144554"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.148811, 0.148811,-0.359263, 0.909198"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.100397, 0.100397, 0.242380, 0.959736"
+         Position = " 0.406380, 0.251921, 1.131489"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.153675, 0.153675,-0.371005, 0.902842"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.103874, 0.103873, 0.250773, 0.956835"
+         Position = " 0.415518, 0.261260, 1.118081"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.158497, 0.158497,-0.382645, 0.896293"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.107386, 0.107385, 0.259252, 0.953795"
+         Position = " 0.424190, 0.270533, 1.104365"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.163266, 0.163266,-0.394160, 0.889565"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.110932, 0.110932, 0.267812, 0.950613"
+         Position = " 0.432377, 0.279718, 1.090379"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.167976, 0.167976,-0.405530, 0.882674"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.114510, 0.114510, 0.276451, 0.947286"
+         Position = " 0.440064, 0.288791, 1.076162"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.172617, 0.172617,-0.416736, 0.875636"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.118118, 0.118118, 0.285162, 0.943811"
+         Position = " 0.447240, 0.297730, 1.061755"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.177183, 0.177183,-0.427758, 0.868467"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.121754, 0.121754, 0.293941, 0.940186"
+         Position = " 0.453897, 0.306517, 1.047201"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.181666, 0.181666,-0.438580, 0.861187"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.125417, 0.125417, 0.302784, 0.936410"
+         Position = " 0.460033, 0.315130, 1.032541"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.186059, 0.186059,-0.449187, 0.853812"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.129104, 0.129104, 0.311684, 0.932479"
+         Position = " 0.465646, 0.323554, 1.017818"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.190357, 0.190357,-0.459562, 0.846363"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.132812, 0.132812, 0.320638, 0.928393"
+         Position = " 0.470741, 0.331771, 1.003075"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.194554, 0.194554,-0.469694, 0.838859"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.136541, 0.136541, 0.329639, 0.924149"
+         Position = " 0.475326, 0.339768, 0.988354"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.198645, 0.198645,-0.479572, 0.831319"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.140287, 0.140286, 0.338682, 0.919747"
+         Position = " 0.479411, 0.347532, 0.973694"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.202626, 0.202626,-0.489183, 0.823763"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.144047, 0.144047, 0.347761, 0.915185"
+         Position = " 0.483010, 0.355053, 0.959135"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.206494, 0.206494,-0.498521, 0.816209"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.147821, 0.147821, 0.356871, 0.910462"
+         Position = " 0.486138, 0.362322, 0.944715"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.210245, 0.210245,-0.507577, 0.808678"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.151605, 0.151605, 0.366007, 0.905578"
+         Position = " 0.488815, 0.369332, 0.930468"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.213877, 0.213877,-0.516345, 0.801187"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.155397, 0.155397, 0.375161, 0.900532"
+         Position = " 0.491060, 0.376077, 0.916430"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.217388, 0.217388,-0.524822, 0.793755"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.159194, 0.159194, 0.384329, 0.895325"
+         Position = " 0.492897, 0.382554, 0.902631"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.220777, 0.220777,-0.533003, 0.786399"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.162994, 0.162994, 0.393503, 0.889956"
+         Position = " 0.494350, 0.388760, 0.889099"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.224042, 0.224042,-0.540886, 0.779136"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.166795, 0.166795, 0.402679, 0.884425"
+         Position = " 0.495442, 0.394695, 0.875862"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.227184, 0.227184,-0.548470, 0.771982"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.170594, 0.170594, 0.411850, 0.878735"
+         Position = " 0.496200, 0.400360, 0.862944"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.230201, 0.230201,-0.555755, 0.764951"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.174388, 0.174388, 0.421009, 0.872886"
+         Position = " 0.496649, 0.405756, 0.850366"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.233096, 0.233096,-0.562742, 0.758059"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.178175, 0.178175, 0.430152, 0.866878"
+         Position = " 0.496816, 0.410887, 0.838147"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.235867, 0.235867,-0.569433, 0.751319"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.181952, 0.181952, 0.439270, 0.860714"
+         Position = " 0.496728, 0.415756, 0.826303"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.238516, 0.238516,-0.575829, 0.744743"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.185717, 0.185717, 0.448360, 0.854396"
+         Position = " 0.496410, 0.420369, 0.814850"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.241045, 0.241045,-0.581933, 0.738342"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.189467, 0.189467, 0.457413, 0.847926"
+         Position = " 0.495888, 0.424730, 0.803799"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.243454, 0.243454,-0.587750, 0.732128"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.193199, 0.193199, 0.466425, 0.841306"
+         Position = " 0.495187, 0.428846, 0.793162"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.245746, 0.245746,-0.593282, 0.726109"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.196912, 0.196912, 0.475389, 0.834540"
+         Position = " 0.494332, 0.432723, 0.782945"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.247921, 0.247921,-0.598535, 0.720295"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.200603, 0.200603, 0.484299, 0.827630"
+         Position = " 0.493345, 0.436369, 0.773156"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.249983, 0.249983,-0.603513, 0.714695"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.204269, 0.204269, 0.493149, 0.820580"
+         Position = " 0.492249, 0.439791, 0.763800"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.251933, 0.251933,-0.608221, 0.709314"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.207908, 0.207908, 0.501934, 0.813394"
+         Position = " 0.491065, 0.442995, 0.754880"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.253774, 0.253774,-0.612664, 0.704159"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.211517, 0.211517, 0.510648, 0.806076"
+         Position = " 0.489814, 0.445990, 0.746398"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.255507, 0.255507,-0.616847, 0.699237"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.215095, 0.215095, 0.519285, 0.798631"
+         Position = " 0.488515, 0.448783, 0.738356"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.257134, 0.257134,-0.620776, 0.694551"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.218639, 0.218639, 0.527840, 0.791062"
+         Position = " 0.487186, 0.451382, 0.730754"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.258658, 0.258658,-0.624456, 0.690107"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.222146, 0.222146, 0.536307, 0.783375"
+         Position = " 0.485844, 0.453793, 0.723590"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.260081, 0.260081,-0.627891, 0.685907"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.225615, 0.225615, 0.544682, 0.775576"
+         Position = " 0.484504, 0.456025, 0.716863"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.261405, 0.261405,-0.631087, 0.681956"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.229043, 0.229043, 0.552958, 0.767669"
+         Position = " 0.483180, 0.458083, 0.710570"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.262632, 0.262632,-0.634050, 0.678255"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.232428, 0.232428, 0.561131, 0.759662"
+         Position = " 0.481886, 0.459974, 0.704710"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.263764, 0.263764,-0.636783, 0.674807"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.235768, 0.235768, 0.569195, 0.751561"
+         Position = " 0.480635, 0.461705, 0.699279"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.264804, 0.264804,-0.639292, 0.671613"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.239062, 0.239061, 0.577145, 0.743372"
+         Position = " 0.479436, 0.463283, 0.694273"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.265752, 0.265752,-0.641581, 0.668674"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.242305, 0.242305, 0.584977, 0.735105"
+         Position = " 0.478301, 0.464711, 0.689688"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.266611, 0.266611,-0.643655, 0.665992"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.245498, 0.245497, 0.592683, 0.726766"
+         Position = " 0.477237, 0.465997, 0.685521"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.267382, 0.267382,-0.645517, 0.663568"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.248636, 0.248636, 0.600259, 0.718366"
+         Position = " 0.476253, 0.467144, 0.681769"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.268067, 0.268067,-0.647171, 0.661400"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.251717, 0.251717, 0.607698, 0.709916"
+         Position = " 0.475356, 0.468157, 0.678425"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.268667, 0.268667,-0.648620, 0.659490"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.254737, 0.254737, 0.614990, 0.701431"
+         Position = " 0.474553, 0.469041, 0.675488"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.269185, 0.269185,-0.649869, 0.657837"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.257692, 0.257692, 0.622125, 0.692929"
+         Position = " 0.473847, 0.469798, 0.672953"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.269620, 0.269620,-0.650919, 0.656441"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.260576, 0.260576, 0.629087, 0.684434"
+         Position = " 0.473243, 0.470433, 0.670817"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.269974, 0.269974,-0.651774, 0.655301"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.263378, 0.263378, 0.635850, 0.675987"
+         Position = " 0.472745, 0.470948, 0.669076"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.270248, 0.270248,-0.652436, 0.654416"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.266076, 0.266076, 0.642364, 0.667664"
+         Position = " 0.472355, 0.471346, 0.667726"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.270443, 0.270443,-0.652907, 0.653785"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.268617, 0.268617, 0.648498, 0.659652"
+         Position = " 0.472076, 0.471628, 0.666766"
+         Name = "joint_Bone.002" />
+    </frame>
+    <frame>
+      <pose
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Name = "joint_Bone" />
+      <pose
+         Quaternion = "-0.270559, 0.270559,-0.653188, 0.653407"
+         Position = " 0.000000, 0.000000, 0.666000"
+         Name = "joint_Bone.001" />
+      <pose
+         Quaternion = "-0.270598, 0.270598, 0.653282, 0.653281"
+         Position = " 0.471908, 0.471796, 0.666191"
+         Name = "joint_Bone.002" />
+    </frame>
+  </action>
+</p3dfile>

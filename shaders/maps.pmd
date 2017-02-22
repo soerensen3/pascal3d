@@ -1,0 +1,165 @@
+---
+node: 00005_map_lib
+---
+
+```{name="CODE", type="shader", restrict="declaration"}
+uniform mat4 view;
+uniform mat3 matnormal;
+uniform mat4 proj;
+uniform vec3 campos;
+vec4 CalcBumpedNormal(vec4 Normal,vec4 Tangent, vec4 Cotangent, vec4 BumpMapNormal)
+{
+    //BumpMapNormal = vec4( 2.0 * BumpMapNormal.xyz - vec3(1.0, 1.0, 1.0), 1 );
+    vec4 NewNormal;
+    mat3 TBN = mat3(Tangent.xyz, Cotangent.xyz, Normal.xyz);
+    NewNormal = vec4( TBN * BumpMapNormal.xyz, 0 );
+    NewNormal = normalize( NewNormal );
+    return NewNormal;
+}
+
+vec4 color_add( vec4 v1, vec4 v2 ){
+  return v1 + v2;
+}
+
+vec4 color_sub( vec4 v1, vec4 v2 ){
+  return v1 - v2;
+}
+
+vec4 color_mul( vec4 v1, vec4 v2 ){
+  return v1 * v2;
+}
+
+vec4 color_div( vec4 v1, vec4 v2 ){
+  return v1 / v2;
+}
+
+vec4 color_mix( vec4 v1, vec4 v2 ){
+  return v2;
+}
+
+vec3 color_overlay(vec3 base, vec3 blend) {
+  return mix(1.0 - 2.0 * (1.0 - base) * (1.0 - blend), 2.0 * base * blend, step(base, vec3(0.5)));
+}
+
+```
+
+---
+node: 00100_map_pass_combine
+---
+
+```{name="mix", type="text" restrict="main"}
+color_mix```
+
+```{name="multiply", type="text" restrict="main"}
+color_mul```
+
+```{name="add", type="text" restrict="main"}
+color_add```
+
+```{name="subtract", type="text" restrict=main}
+color_sub```
+
+---
+
+node: 00100_map_pass_read_frag
+input: {name="TexCoordIndex", type="int"}
+input: {name="Index", type="int"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,declaration"}
+uniform sampler2D tex$Index$;
+```
+
+```{restrict="fshader,main"}
+  vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$TexCoordIndex$.xy );
+```
+
+---
+node: 00100_map_pass_read_vert
+input: {name="TexCoordIndex", type="int"}
+input: {name="Index", type="int"}
+---
+
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform sampler2D tex$Index$;
+```
+
+```{restrict="vshader,main"}
+  vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$TexCoordIndex$.xy );
+```
+
+---
+node: 00105_map_pass_displace
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="vshader,main"}
+  Displace= mix( Displace, $Mode$( vec4( Displace ), val$Index$.aaaa ).a, $Factor$ );
+```
+
+---
+node: 00105_map_pass_normal
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+  Normal= mix( Normal, $Mode$( Normal, vec4( val$Index$.xyz, 0 )), $Factor$ );
+```
+
+---
+node: 00105_map_pass_diffuse
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Alpha", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+  Color.rgb = mix( Color.rgb, $Mode$( Color, val$Index$ ).rgb, $Factor$ );
+  Color.a = mix( Color.a, $Mode$( vec4( Color.a ), vec4( val$Index$.a )).a, $Alpha$ );
+//MIX INDEPENTLY
+```
+
+---
+node: 00105_map_pass_specular
+input: {name="Index", type="int"}
+input: {name="Factor", type="float"}
+input: {name="Mode", type="text"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+  Specular= mix( Specular, $Mode$( Specular, val$Index$ ), $Factor$ );
+```
+
+
+---
+node: 09990_map_pass_clip_transparency
+input: {name="AlphaTreshhold", type="float"}
+---
+
+```{name="CODE", type="shader", restrict="fshader,main"}
+  Color.a = step( $AlphaTreshhold$, Color.a );
+  if ( Color.a == 0.0 ) 
+    discard;
+```
+
+---
+node: 10000_map_pass_final
+---
+
+```{name="CODE", type="shader", restrict="vshader,main"}
+//cameye = - ( view * Position ).xyz;
+  gl_Position = proj * vPosition;
+```
+
+```{restrict="fshader,main"}
+  FragColor = vec4( shadow.rgb * Color.rgb * vColor.rgb + spec.rgb * Specular.rgb, Color.a * vColor.a ); //*/(Normal.xyz + 1 )/2
+  #if ( __VERSION__ < 130 )
+  gl_FragColor = FragColor;
+  #endif
+```
+

@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      name = "ArrowX"
+      type = "mesh"
+      data = "mesh_ArrowX">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      name = "ArrowY"
+      type = "mesh"
+      data = "mesh_ArrowY">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+    <object
+      name = "ArrowZ"
+      type = "mesh"
+      data = "mesh_ArrowZ">
+      <transform
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+        scale = " 1.000000, 1.000000, 1.000000"
+        position = " 0.000000, 0.000000, 0.000000">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    binary = "EditorArrows.mesh_ArrowX.p3dmesh"
+    normals = "19"
+    name = "mesh_ArrowX"
+    faces = "19"
+    loops = "72"
+    vertices = "19">
+    <material
+      name = "material_MaterialX"
+      end = "18"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    binary = "EditorArrows.mesh_ArrowY.p3dmesh"
+    normals = "19"
+    name = "mesh_ArrowY"
+    faces = "19"
+    loops = "72"
+    vertices = "19">
+    <material
+      name = "material_MaterialY"
+      end = "18"
+      start = "0">
+    </material>
+  </mesh>
+  <mesh
+    binary = "EditorArrows.mesh_ArrowZ.p3dmesh"
+    normals = "19"
+    name = "mesh_ArrowZ"
+    faces = "19"
+    loops = "72"
+    vertices = "19">
+    <material
+      name = "material_MaterialZ"
+      end = "18"
+      start = "0">
+    </material>
+  </mesh>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_MaterialX"
+    unlit = "yes"
+    diffuse = "0.800000, 0.000000, 0.000000">
+  </material>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_MaterialY"
+    unlit = "yes"
+    diffuse = "0.000000, 0.800000, 0.000000">
+  </material>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_MaterialZ"
+    unlit = "yes"
+    diffuse = "0.000000, 0.000000, 1.000000">
+  </material>
+</p3dfile>

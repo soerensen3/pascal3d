@@ -47,18 +47,28 @@ type
 
   { TP3DSearchPathContainer }
 
-  TP3DSearchPathContainer = class( TStringList )
+  TP3DSearchPathContainer = class( TP3DInterfacedPersistent )
     private
       FBaseDir: String;
+      FPaths: TStringList;
 
       procedure SetBaseDir(AValue: String);
       function GetFullPath( Index: Integer ): String;
 
     public
+      constructor Create;
+      destructor Destroy; override;
+
       function FindFile( FName: String ): String;
       function FindFileEx( FName: String; PreferedPath: String ): String;
 
+      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
+      class function DOMNodeName: String; override;
+
       property FullPath[ Index: Integer ]: String read GetFullPath;
+      property Paths: TStringList read FPaths write FPaths;
+
+    published
       property BaseDir: String read FBaseDir write SetBaseDir;
   end;
 
@@ -275,7 +285,7 @@ begin
     begin
       sptype:= Path.GetAttribute( 'type' );
       value:= Path.GetAttribute( 'value' );
-      P3DSearchPaths.Add( value );
+      P3DSearchPaths.Paths.Add( value );
       Path:= TDOMElement( Path.NextSibling );
     end;
 end;
@@ -556,12 +566,25 @@ end;
 function TP3DSearchPathContainer.GetFullPath( Index: Integer ): String;
 begin
   Result:= '';
-  if ( InRange( Index, 0, Count - 1 )) then
+  if ( InRange( Index, 0, Paths.Count - 1 )) then
     begin
-      Result:= AppendPathDelim( Self[ Index ]);
+      Result:= AppendPathDelim( Paths[ Index ]);
       if ( not FilenameIsAbsolute( Result )) then
         Result:= AppendPathDelim( BaseDir + Result );
     end;
+end;
+
+constructor TP3DSearchPathContainer.Create;
+begin
+  inherited Create;
+  FPaths:= TStringList.Create;
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'BaseDir', smAttribute ));
+end;
+
+destructor TP3DSearchPathContainer.Destroy;
+begin
+  FPaths.Free;
+  inherited Destroy;
 end;
 
 function TP3DSearchPathContainer.FindFile(FName: String): String;
@@ -598,15 +621,37 @@ begin
       Result:= FileName;
       exit;
     end;
-  for i:= Count - 1 downto 0 do
+  for i:= Paths.Count - 1 downto 0 do
     begin
-      FileName:= CleanAndExpandDirectory( BasePath + Self[ i ]) + FName;
+      FileName:= CleanAndExpandDirectory( BasePath + Paths[ i ]) + FName;
       if ( FileExists( FileName ) or DirectoryExists( FileName )) then
         begin
           Result:= FileName;
           break;
         end;
     end;
+end;
+
+procedure TP3DSearchPathContainer.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  Path: TDOMElement;
+  value: DOMString;
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+
+  Path:= TDOMElement( ADOMNode.FirstChild );
+  while ( Assigned( Path )) do
+    if ( Path.NodeName = 'path' ) then
+      begin
+        value:= Path.GetAttribute( 'value' );
+        P3DSearchPaths.Paths.Add( value );
+        Path:= TDOMElement( Path.NextSibling );
+      end;
+end;
+
+class function TP3DSearchPathContainer.DOMNodeName: String;
+begin
+  Result:= 'paths';
 end;
 
 procedure TP3DSearchPathContainer.SetBaseDir(AValue: String);

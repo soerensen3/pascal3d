@@ -327,6 +327,20 @@ begin
                   SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + DragItem.Caption ), PChar( E.Message ), Nil );
               end;
             end;
+      end
+  else if ( Source is TP3DTreeViewDirectory ) then
+    with ( TP3DTreeViewDirectory( Source )) do
+      begin
+        if ( Assigned( DragItem )) then
+          if ( P3DMatchFileName( DragItem.Caption, '*.p3d' )) then
+            begin
+              try
+                P3DData.OpenLibrary( AppendPathDelim( Directory ) + DragItem.Caption );
+              except
+                on E: Exception do
+                  SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + DragItem.Caption ), PChar( E.Message ), Nil );
+              end;
+            end;
       end;
   Accept:= False;
 end;

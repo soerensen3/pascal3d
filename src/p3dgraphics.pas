@@ -61,7 +61,7 @@ var
   P3DAttributes: TP3DAttributeList = nil;
 
 procedure P3DGraphicsInit;
-procedure P3DGraphicssFinish;
+procedure P3DGraphicsFinish;
 function P3DCheckLastError( Sender: TObject; const AddMsg: String = '' ): Boolean; inline;
 procedure P3DDumpGraphicsInfo;
 
@@ -103,7 +103,6 @@ begin
       AssertErrorProc := S;
     end;
 end;
-
 
 
 { TP3DGridSceneList }
@@ -197,7 +196,7 @@ begin
   {$UNDEF INITIALIZATION}
 end;
 
-procedure P3DGraphicssFinish;
+procedure P3DGraphicsFinish;
 begin
   if ( Assigned( P3DFontManagerBmp )) then
     FreeAndNil( P3DFontManagerBmp );
@@ -223,7 +222,7 @@ begin
 end;
 
 finalization
-  P3DGraphicssFinish;
+  P3DGraphicsFinish;
 
 end.
 

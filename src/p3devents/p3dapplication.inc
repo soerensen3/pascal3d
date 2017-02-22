@@ -29,11 +29,10 @@ type
   TP3DApplication = class
     private
       FActiveWindow: TP3DWindow;
-      FGLInitialized: Boolean;
       FMainWindow: TP3DWindow;
-      fOnDeinit: TSDLEvent;
-      fOnInit: TSDLEvent;
-      fOnInput: TSDLEvent;
+      FOnDeinit: TSDLEvent;
+      FOnInit: TSDLEvent;
+      FOnInput: TSDLEvent;
       FOnKey: TSDLEventKey;
       FOnMouseButton: TSDLEventMouseButton;
       FOnMouseMotion: TSDLEventMouseMotion;
@@ -41,17 +40,35 @@ type
       FRunning: Boolean;
       FSDLInitialized: Boolean;
       ReadingTextInput: Boolean;
+
       procedure SetActiveWindow(AValue: TP3DWindow);
       procedure SetMainWindow(AValue: TP3DWindow);
+
+    protected
+      procedure InitializeWindow( Sender: TP3DWindow ); virtual;
+      procedure FinalizeWindow( Sender: TP3DWindow ); virtual;
+      procedure ResizeWindow( Sender: TP3DWindow; Event: TSDL_WindowEvent ); virtual;
+      procedure Render; virtual;
+      procedure Events; virtual;
+      procedure MouseMotion( Event: TSDL_MouseMotionEvent ); virtual;
+      procedure MouseButton( Event: TSDL_MouseButtonEvent ); virtual;
+      procedure MouseWheel( Event: TSDL_MouseWheelEvent ); virtual;
+      procedure Keyboard( Event: TSDL_KeyboardEvent ); virtual;
+      procedure TextInput( Event: TSDL_TextInputEvent ); virtual;
+      procedure StopRunning; virtual;
 
     public
       constructor Create;
       destructor Destroy; override;
 
       procedure InitSDL;
-      procedure HandleEvents_SDL;
-      procedure Initialize; //calls InitSDL and InitGL
+      procedure Initialize; virtual; //calls InitSDL
+      procedure Finalize; virtual;
       procedure Run;
+      procedure LoadConfig( FileName: String );
+      procedure LoadConfig( XML: TXMLDocument );
+      procedure LoadConfigSection( FileName, NodeName: String );
+      procedure LoadConfigSection( XML: TXMLDocument; DOMNode: TDOMElement );
 
       property OnMouseMotion: TSDLEventMouseMotion read FOnMouseMotion write FOnMouseMotion;
       property OnMouseButton: TSDLEventMouseButton read FOnMouseButton write FOnMouseButton;
@@ -63,9 +80,11 @@ type
       property MainWindow: TP3DWindow read FMainWindow write SetMainWindow;
       property ActiveWindow: TP3DWindow read FActiveWindow write SetActiveWindow;
       property SDLInitialized: Boolean read FSDLInitialized write FSDLInitialized;
-      property GLInitialized: Boolean read FGLInitialized write FGLInitialized;
       property Running: Boolean read FRunning write FRunning;
   end;
+
+const
+  SDL2P3DKeystate: array [ SDL_KEYDOWN..SDL_KEYUP ] of TP3DKeyState = ( ksPressed, ksReleased );
 
 {$ENDIF}
 
@@ -81,33 +100,34 @@ begin
   ActiveWindow:= AValue;
 end;
 
-procedure TP3DApplication.SetActiveWindow(AValue: TP3DWindow);
+procedure TP3DApplication.InitializeWindow(Sender: TP3DWindow);
 begin
-  if FActiveWindow=AValue then Exit;
-  FActiveWindow:=AValue;
+
 end;
 
-constructor TP3DApplication.Create;
+
+procedure TP3DApplication.FinalizeWindow(Sender: TP3DWindow);
 begin
-  inherited;
-  MainWindow:= nil;
+  if ( Sender = MainWindow ) then
+    StopRunning;
 end;
 
-destructor TP3DApplication.Destroy;
+procedure TP3DApplication.ResizeWindow(Sender: TP3DWindow; Event: TSDL_WindowEvent);
+var
+  vp: TP3DViewport;
 begin
-  SDL_Quit();
-  inherited Destroy;
+  Sender.ResizeViewport( Event.data1, Event.data2 );
+
+  if ( Assigned( Sender.OnResize )) then
+    Sender.OnResize( Sender );
 end;
 
-procedure TP3DApplication.InitSDL;
+procedure TP3DApplication.Render;
 begin
-  if ( SDL_Init( SDL_INIT_EVERYTHING ) > 0 ) then
-    raise Exception.Create('Initialization of SDL2 failed: '
-                           + SDL_GetError);
-  SDLInitialized:= True;
+
 end;
 
-procedure TP3DApplication.HandleEvents_SDL;
+procedure TP3DApplication.Events;
   procedure debug_printeventname( E: TSDL_Event );
   begin
     case E.type_ of
@@ -202,8 +222,6 @@ procedure TP3DApplication.HandleEvents_SDL;
     {$ENDIF}
   end;
 
-const
-  SDL2P3DKeystate: array [ SDL_KEYDOWN..SDL_KEYUP ] of TP3DKeyState = ( ksPressed, ksReleased );
 var
   event: TSDL_Event;
   wnd: Pointer;
@@ -216,74 +234,27 @@ begin
           wnd:= SDL_GetWindowData( SDL_GetWindowFromID( event.window.windowID ), 'p3dwindow' );
           case event.window.event of
             SDL_WINDOWEVENT_SIZE_CHANGED:
-              with ( TP3DWindow( wnd )) do
-                begin
-                  TP3DWindow( wnd ).ResizeViewport( event.window.data1, event.window.data2 );
-                  if ( Assigned( OnResize )) then
-                    OnResize( TP3DWindow( wnd ));
-                end;
+              ResizeWindow( TP3DWindow( wnd ), event.window );
             SDL_WINDOWEVENT_CLOSE:
-                begin
-                  if ( TP3DWindow( wnd ) = MainWindow ) then
-                    begin
-                      Running:= false; // Hauptschleife soll beendet werden
-                      TP3DWindow( wnd ).Hide;
-                      if ( Assigned( TP3DWindow( wnd ).OnClose )) then
-                        TP3DWindow( wnd ).OnClose( TP3DWindow( wnd ));
-                    end;
-                end;
+              FinalizeWindow( TP3DWindow( wnd ));
           end;
         end;
       SDL_MOUSEMOTION:
-        begin
-          P3DInput.Mouse.X:= event.motion.x;
-          P3DInput.Mouse.Y:= event.motion.y;
-          P3DInput.Mouse.DX:= event.motion.xrel;
-          P3DInput.Mouse.DY:= event.motion.yrel;
-          if ( Assigned( FOnMouseMotion )) then
-            FOnMouseMotion( Self, event.motion );
-        end;
+        MouseMotion( event.motion );
       SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP:
-        begin
-          P3DInput.Mouse.Buttons[ event.button.button - 1 ]:= not Boolean( event.type_ - SDL_MOUSEBUTTONDOWN );
-          P3DInput.Mouse.DButtons[ event.button.button - 1 ]:= True;
-          if ( Assigned( FOnMouseButton )) then
-            FOnMouseButton( Self, event.button );
-        end;
+        MouseButton( event.button );
       SDL_MOUSEWHEEL:
-        begin
-          P3DInput.Mouse.DZ:= event.wheel.y;
-          if ( Assigned( FOnMouseWheel )) then
-            FOnMouseWheel( Self, event.wheel );
-        end;
+        MouseWheel( event.wheel );
       SDL_KEYDOWN, SDL_KEYUP:
-        begin
-          if ( event.key._repeat = 1 ) then
-            continue;
-          debug_printevent( event );
-          P3DInput.Keyboard.Keys[ event.key.keysym.scancode ]:= Boolean( event.key.state );
-          P3DInput.Keyboard.DKeys[ event.key.keysym.scancode ]:= SDL2P3DKeystate[ event.key.type_ ];
-          ScanCode:= SDL_GetScancodeFromName( SDL_GetKeyName( event.key.keysym.sym ));
-          P3DInput.Keyboard.KeysLayout[ ScanCode ]:= Boolean( event.key.state );
-          P3DInput.Keyboard.DKeysLayout[ ScanCode ]:= SDL2P3DKeystate[ event.key.type_ ];
-          if ( Assigned( FOnKey )) then
-            FOnKey( Self, event.key );
-        end;
+        Keyboard( event.key );
       SDL_TEXTINPUT, SDL_TEXTEDITING:
-        begin
-          P3DInput.Keyboard.InputText:= P3DInput.Keyboard.InputText + event.text.text;
-        end;
+        TextInput( event.text );
       SDL_RENDER_TARGETS_RESET:
         P3DLog.LogInfo( Self, 'The render targets have been reset and their contents need to be updated!' );{;
       SDL_RENDER_DEVICE_RESET:
         P3DLog.LogInfo( Self, 'The device has been reset and all textures need to be recreated' )}
       SDL_QUITEV:
-        begin
-          Running:= False; // Quit main loop
-          MainWindow.Hide;
-          if ( Assigned( MainWindow.OnClose )) then
-            MainWindow.OnClose( MainWindow );
-        end
+        StopRunning;
 
       else
         debug_printevent( event );
@@ -300,6 +271,91 @@ begin
     end;
 end;
 
+procedure TP3DApplication.MouseMotion(Event: TSDL_MouseMotionEvent);
+begin
+  P3DInput.Mouse.X:= Event.x;
+  P3DInput.Mouse.Y:= event.y;
+  P3DInput.Mouse.DX:= Event.xrel;
+  P3DInput.Mouse.DY:= Event.yrel;
+  if ( Assigned( FOnMouseMotion )) then
+    FOnMouseMotion( Self, Event );
+end;
+
+procedure TP3DApplication.MouseButton(Event: TSDL_MouseButtonEvent);
+begin
+  P3DInput.Mouse.Buttons[ Event.button - 1 ]:= not Boolean( Event.type_ - SDL_MOUSEBUTTONDOWN );
+  P3DInput.Mouse.DButtons[ Event.button - 1 ]:= True;
+  if ( Assigned( FOnMouseButton )) then
+    FOnMouseButton( Self, Event );
+end;
+
+procedure TP3DApplication.MouseWheel(Event: TSDL_MouseWheelEvent);
+begin
+  P3DInput.Mouse.DZ:= Event.y;
+  if ( Assigned( FOnMouseWheel )) then
+    FOnMouseWheel( Self, Event );
+end;
+
+procedure TP3DApplication.Keyboard(Event: TSDL_KeyboardEvent);
+var
+  ScanCode: TSDL_ScanCode;
+begin
+  if ( Event._repeat = 1 ) then
+    exit;
+  //debug_printevent( event );
+  P3DInput.Keyboard.Keys[ Event.keysym.scancode ]:= Boolean( Event.state );
+  P3DInput.Keyboard.DKeys[ Event.keysym.scancode ]:= SDL2P3DKeystate[ Event.type_ ];
+  ScanCode:= SDL_GetScancodeFromName( SDL_GetKeyName( Event.keysym.sym ));
+  P3DInput.Keyboard.KeysLayout[ ScanCode ]:= Boolean( Event.state );
+  P3DInput.Keyboard.DKeysLayout[ ScanCode ]:= SDL2P3DKeystate[ Event.type_ ];
+  if ( Assigned( FOnKey )) then
+    FOnKey( Self, Event );
+end;
+
+procedure TP3DApplication.TextInput(Event: TSDL_TextInputEvent);
+begin
+  P3DInput.Keyboard.InputText:= P3DInput.Keyboard.InputText + Event.text;
+end;
+
+procedure TP3DApplication.StopRunning;
+begin
+  Running:= False; // Quit main loop
+  MainWindow.Hide;
+  if ( Assigned( MainWindow.OnClose )) then
+    MainWindow.OnClose( MainWindow );
+end;
+
+procedure TP3DApplication.SetActiveWindow(AValue: TP3DWindow);
+begin
+  if FActiveWindow=AValue then Exit;
+  FActiveWindow:=AValue;
+end;
+
+constructor TP3DApplication.Create;
+begin
+  inherited;
+  P3DUtilsInit;
+  P3DEventsInit;
+  MainWindow:= nil;
+end;
+
+destructor TP3DApplication.Destroy;
+begin
+  Finalize;
+  SDL_Quit();
+  if ( Assigned( MainWindow )) then
+    MainWindow.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DApplication.InitSDL;
+begin
+  if ( SDL_Init( SDL_INIT_EVERYTHING ) > 0 ) then
+    raise Exception.Create('Initialization of SDL2 failed: '
+                           + SDL_GetError);
+  SDLInitialized:= True;
+end;
+
 procedure TP3DApplication.Initialize;
 begin
   P3DLog.LogInfo( Self, 'initializing application' ).AttribStrings['function']:= 'Initialize';
@@ -309,6 +365,11 @@ begin
     OnInit( Self );
 end;
 
+procedure TP3DApplication.Finalize;
+begin
+
+end;
+
 procedure TP3DApplication.Run;
 begin
   try
@@ -316,7 +377,8 @@ begin
     Running := True;
     while Running do
       begin                // Mainloop
-        HandleEvents_SDL;
+        Events;
+        Render;
         if ( Assigned( MainWindow )) then
           MainWindow.Render;
         P3DInput.NextCycle;
@@ -326,10 +388,71 @@ begin
     on E: Exception do
       P3DLog.LogException( Self, E.Message );
   end;
-  P3DLog.LogInfo( Self, 'exit mainloop' ).AttribStrings['function']:= 'Run';
+  P3DLog.LogInfo( Self, 'exit mainloop' ).AttribStrings[ 'function' ]:= 'Run';
   // Resourcen freigeben
   if ( Assigned( OnDeinit )) then
     OnDeinit( Self );
+end;
+
+procedure TP3DApplication.LoadConfig(FileName: String);
+var
+  F: TXMLDocument;
+begin
+  if ( FileExists( FileName )) then
+    begin
+      ReadXMLFile( F, FileName );
+      LoadConfig( F );
+      F.Free;
+    end
+  else
+    raise Exception.Create( 'Could not load config! File not found: "' + FileName + '"' );
+end;
+
+procedure TP3DApplication.LoadConfig(XML: TXMLDocument);
+var
+  Child: TDOMElement;
+begin
+  Child:= TDOMElement( XML.DocumentElement.FirstChild );
+  while ( Assigned( Child )) do
+    begin
+      LoadConfigSection( XML, Child );
+
+      Child:= TDOMElement( Child.NextSibling );
+    end;
+end;
+
+procedure TP3DApplication.LoadConfigSection(FileName, NodeName: String);
+var
+  F: TXMLDocument;
+  Node: TDOMElement;
+begin
+  if ( FileExists( FileName )) then
+    begin
+      ReadXMLFile( F, FileName );
+      Node:= TDOMElement( F.DocumentElement.FindNode( NodeName ));
+      if ( Assigned( Node )) then
+        LoadConfigSection( F, Node );
+      F.Free;
+    end
+  else
+    raise Exception.Create( 'Could not load config! File not found: "' + FileName + '"' );
+end;
+
+procedure TP3DApplication.LoadConfigSection(XML: TXMLDocument; DOMNode: TDOMElement);
+var
+  wnd: TP3DWindow;
+begin
+  if ( DOMNode.NodeName = TP3DWindow.DOMNodeName ) then
+    begin
+      wnd:= TP3DWindow.Create;
+      wnd.LoadFromDOMNew( DOMNode );
+    end
+  else if ( DOMNode.NodeName = TP3DSearchPathContainer.DOMNodeName ) then
+    P3DSearchPaths.LoadFromDOMNew( DOMNode )
+  else if ( DOMNode.NodeName = TP3DLogger.DOMNodeName ) then
+    P3DLog.LoadFromDOMNew( DOMNode )
+  else if ( DOMNode.NodeName = TP3DShaderNodeLibrary.DOMNodeName ) then
+    P3DShaderNodeLib.LoadFromDOMNew( DOMNode );
 end;
 
 {$ENDIF}

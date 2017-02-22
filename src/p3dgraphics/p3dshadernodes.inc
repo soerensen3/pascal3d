@@ -130,6 +130,9 @@ type
     procedure LoadLibrary( FileName: String );
     procedure LoadLibraryPath( PathName: String; const Ext: String = '*.*' );
     function FindNode( ANode: String ): TP3DShaderNode;
+
+    class function DOMNodeName: String; override;
+    procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
   end;
 
   { TP3DShaderBuffer }
@@ -201,6 +204,7 @@ function TP3DShaderNodeTree.GetShaderOutputFromNodes(Buffer: TP3DShaderBuffer ):
 var
   Node: TP3DNode;
   Socket: TP3DNodeSocket;
+  Code: String;
 begin
   Result:= '';
   for Node in Nodes do
@@ -209,7 +213,12 @@ begin
         if ( Socket.SocketType = 'shader' ) then
           begin
             //WriteLn( 'Processing ', Node.Name, '.', Socket.Name, ' defines=', Buffer.Defines.CommaText );
-            Result+= TP3DShaderNodeSocket( Socket ).GetOutput( Buffer );
+            Code:= TP3DShaderNodeSocket( Socket ).GetOutput( Buffer );
+            if ( Code > '' ) then
+              Result+= '/*' + Node.Name + '-->*/' +
+                       Code
+                     + '/*<--' + Node.Name + '*/';
+
             Buffer.RegisterSocket( TP3DShaderNodeSocket( Socket ));
           end;
 end;
@@ -434,6 +443,28 @@ begin
       begin
         Result:= TP3DShaderNode( Node );
         break;
+      end;
+end;
+
+class function TP3DShaderNodeLibrary.DOMNodeName: String;
+begin
+  Result:= 'shadernodelibrary';
+end;
+
+procedure TP3DShaderNodeLibrary.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  Path: TDOMElement;
+  value: DOMString;
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+
+  Path:= TDOMElement( ADOMNode.FirstChild );
+  while ( Assigned( Path )) do
+    if ( Path.NodeName = 'path' ) then
+      begin
+        value:= Path.GetAttribute( 'value' );
+        LoadLibraryPath( value );
+        Path:= TDOMElement( Path.NextSibling );
       end;
 end;
 

@@ -1,0 +1,17 @@
+---
+node: pass_terraininit
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+uniform float uvX;
+uniform float uvY;
+uniform float uvMultiplier;
+```
+
+---
+node: pass_terrainshift
+input: {name="MapIndex", type="int"}
+---
+```{name="CODE", type="shader", restrict="vshader,main"}
+  vTexCoord$MapIndex$.s = ( vTexCoord$MapIndex$.x/uvMultiplier+float(uvX))*uvMultiplier;
+  vTexCoord$MapIndex$.t = ( vTexCoord$MapIndex$.y/uvMultiplier+float(uvY))*uvMultiplier;
+```

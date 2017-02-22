@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="pascal3d"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value=".;p3devents;p3dutils;p3dgraphictools;p3dgraphics;p3dgui"/>
+        <OtherUnitFiles Value="scene;input;."/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx4105="True"/>
+        </CompilerMessages>
+        <CustomOptions Value="-dCHECKFORERRORS
+-dVERBOSE"/>
+        <OtherDefines Count="2">
+          <Define0 Value="CHECKFORERRORS"/>
+          <Define1 Value="VERBOSE"/>
+        </OtherDefines>
+      </Other>
+    </CompilerOptions>
+    <Files Count="51">
+      <Item1>
+        <AddToUsesPkgSection Value="False"/>
+      </Item1>
+      <Item2>
+        <AddToUsesPkgSection Value="False"/>
+      </Item2>
+      <Item3>
+        <AddToUsesPkgSection Value="False"/>
+      </Item3>
+      <Item4>
+        <AddToUsesPkgSection Value="False"/>
+      </Item4>
+      <Item5>
+        <Filename Value="p3devents.pas"/>
+        <UnitName Value="p3devents"/>
+      </Item5>
+      <Item6>
+        <Filename Value="p3dgraphics.pas"/>
+        <UnitName Value="p3dgraphics"/>
+      </Item6>
+      <Item7>
+        <Filename Value="p3dgraphics_lib.inc"/>
+        <Type Value="Include"/>
+      </Item7>
+      <Item8>
+        <Filename Value="p3dutils.pas"/>
+        <UnitName Value="p3dutils"/>
+      </Item8>
+      <Item9>
+        <Filename Value="pascal3d.pas"/>
+        <UnitName Value="pascal3d"/>
+      </Item9>
+      <Item10>
+        <Filename Value="pascal3d.lrs"/>
+        <Type Value="LRS"/>
+      </Item10>
+      <Item11>
+        <Filename Value="p3devents\p3dapplication.inc"/>
+        <Type Value="Include"/>
+      </Item11>
+      <Item12>
+        <Filename Value="p3devents\p3dinput.inc"/>
+        <Type Value="Include"/>
+      </Item12>
+      <Item13>
+        <Filename Value="p3devents\p3dinput_scancodes.inc"/>
+        <Type Value="Include"/>
+      </Item13>
+      <Item14>
+        <Filename Value="p3devents\p3dlogging.inc"/>
+        <Type Value="Include"/>
+      </Item14>
+      <Item15>
+        <Filename Value="p3devents\p3dwindow.inc"/>
+        <Type Value="Include"/>
+      </Item15>
+      <Item16>
+        <Filename Value="p3dgraphics\p3dactor.inc"/>
+        <Type Value="Include"/>
+      </Item16>
+      <Item17>
+        <Filename Value="p3dgraphics\p3darmature.inc"/>
+        <Type Value="Include"/>
+      </Item17>
+      <Item18>
+        <Filename Value="p3dgraphics\p3dbuffers.inc"/>
+        <Type Value="Include"/>
+      </Item18>
+      <Item19>
+        <Filename Value="p3dgraphics\p3dbuffers_bufferobjectgl.inc"/>
+        <Type Value="Include"/>
+      </Item19>
+      <Item20>
+        <Filename Value="p3dgraphics\p3dcamera.inc"/>
+        <Type Value="Include"/>
+      </Item20>
+      <Item21>
+        <Filename Value="p3dgraphics\p3dcanvas.inc"/>
+        <Type Value="Include"/>
+      </Item21>
+      <Item22>
+        <Filename Value="p3dgraphics\p3dcanvas_2d.inc"/>
+        <Type Value="Include"/>
+      </Item22>
+      <Item23>
+        <Filename Value="p3dgraphics\p3dcanvas_3d.inc"/>
+        <Type Value="Include"/>
+      </Item23>
+      <Item24>
+        <Filename Value="p3dgraphics\p3dclassfactory.inc"/>
+        <Type Value="Include"/>
+      </Item24>
+      <Item25>
+        <Filename Value="p3dgraphics\p3dcollision.inc"/>
+        <Type Value="Include"/>
+      </Item25>
+      <Item26>
+        <Filename Value="p3dgraphics\p3dcolors.inc"/>
+        <Type Value="Include"/>
+      </Item26>
+      <Item27>
+        <Filename Value="p3dgraphics\p3ddatablock.inc"/>
+        <Type Value="Include"/>
+      </Item27>
+      <Item28>
+        <Filename Value="p3dgraphics\p3dgrids.inc"/>
+        <Type Value="Include"/>
+      </Item28>
+      <Item29>
+        <Filename Value="p3dgraphics\p3dlight.inc"/>
+        <Type Value="Include"/>
+      </Item29>
+      <Item30>
+        <Filename Value="p3dgraphics\p3dmaterial.inc"/>
+        <Type Value="Include"/>
+      </Item30>
+      <Item31>
+        <Filename Value="p3dgraphics\p3dmesh.inc"/>
+        <Type Value="Include"/>
+      </Item31>
+      <Item32>
+        <Filename Value="p3dgraphics\p3dobject.inc"/>
+        <Type Value="Include"/>
+      </Item32>
+      <Item33>
+        <Filename Value="p3dgraphics\p3drendertarget.inc"/>
+        <Type Value="Include"/>
+      </Item33>
+      <Item34>
+        <Filename Value="p3dgraphics\p3dresource.inc"/>
+        <Type Value="Include"/>
+      </Item34>
+      <Item35>
+        <Filename Value="p3dgraphics\p3dscene.inc"/>
+        <Type Value="Include"/>
+      </Item35>
+      <Item36>
+        <Filename Value="p3dgraphics\p3dselection.inc"/>
+        <Type Value="Include"/>
+      </Item36>
+      <Item37>
+        <Filename Value="p3dgraphics\p3dshadernodes.inc"/>
+        <Type Value="Include"/>
+      </Item37>
+      <Item38>
+        <Filename Value="p3dgraphics\p3dshadernodes_core.inc"/>
+        <Type Value="Include"/>
+      </Item38>
+      <Item39>
+        <Filename Value="p3dgraphics\p3dshadernodes_markdown.inc"/>
+        <Type Value="Include"/>
+      </Item39>
+      <Item40>
+        <Filename Value="p3dgraphics\p3dshaders.inc"/>
+        <Type Value="Include"/>
+      </Item40>
+      <Item41>
+        <Filename Value="p3dgraphics\p3dsymbols.inc"/>
+        <Type Value="Include"/>
+      </Item41>
+      <Item42>
+        <Filename Value="p3dgraphics\p3dterrain.inc"/>
+        <Type Value="Include"/>
+      </Item42>
+      <Item43>
+        <Filename Value="p3dgraphics\p3dtext.inc"/>
+        <Type Value="Include"/>
+      </Item43>
+      <Item44>
+        <Filename Value="p3dgraphics\p3dtextbitmap.inc"/>
+        <Type Value="Include"/>
+      </Item44>
+      <Item45>
+        <Filename Value="p3dgraphics\p3dtexture.inc"/>
+        <Type Value="Include"/>
+      </Item45>
+      <Item46>
+        <Filename Value="p3dgraphics\p3dviewport.inc"/>
+        <Type Value="Include"/>
+      </Item46>
+      <Item47>
+        <Filename Value="p3dutils\p3dfileutil.inc"/>
+        <Type Value="Include"/>
+      </Item47>
+      <Item48>
+        <Filename Value="p3dutils\p3dgenerics.inc"/>
+        <Type Value="Include"/>
+      </Item48>
+      <Item49>
+        <Filename Value="p3dutils\p3dpropaccess.inc"/>
+        <Type Value="Include"/>
+      </Item49>
+      <Item50>
+        <Filename Value="p3dutils\p3dsimpletypes.inc"/>
+        <Type Value="Include"/>
+      </Item50>
+      <Item51>
+        <Filename Value="p3dutils\p3dxmlutils.inc"/>
+        <Type Value="Include"/>
+      </Item51>
+    </Files>
+    <RequiredPkgs Count="5">
+      <Item1>
+        <PackageName Value="pascal3d_math"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="pl_opengl"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="libsdl2"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="LCLBase"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="FCL"/>
+      </Item5>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
+  </Package>
+</CONFIG>

@@ -88,11 +88,12 @@ type
   TP3DNodeList = class( specialize gP3DCustomObjectList < TP3DNode >)
     public
       function Find( Name: String ): Integer;
+      procedure SortByName;
   end;
 
   { TP3DNodeTree }
 
-  TP3DNodeTree = class ( TPersistent ) //NodeTree
+  TP3DNodeTree = class ( TP3DInterfacedPersistent ) //NodeTree
     private
       FNodes: TP3DNodeList;
 
@@ -266,6 +267,62 @@ procedure TP3DNodeSocket.AcceptConnection(ATarget: TP3DNodeSocket;
   const Accept: Boolean);
 begin
 
+end;
+
+{ TP3DNodeList }
+
+function TP3DNodeList.Find( Name: String ): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Items[ i ].Name = Name ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+procedure TP3DNodeList.SortByName;
+  procedure swap( a, b: Integer );
+  var
+    Element: TP3DNode;
+  begin
+    Element:= Self[ a ];
+    FItems[ a ]:= Self[ b ];
+    FItems[ b ]:= Element;
+  end;
+
+  function partition( lo, hi: Integer ): Integer;
+  var
+    i, j: Integer;
+  begin
+    i:= lo;        // place for swapping
+    for j := lo to hi - 1 do
+      if ( Self[ j ].Name <= Self[ hi ].Name ) then
+        begin
+          swap( i, j );
+          Inc( i );
+        end;
+    swap( i, hi );
+    Result:= i;
+  end;
+
+  procedure quicksort( lo, hi: Integer );
+  var
+    p: Integer;
+  begin
+    if lo < hi then
+      begin
+        p:= partition( lo, hi );
+        quicksort( lo, p - 1 );
+        quicksort( p + 1, hi );
+      end;
+  end;
+
+begin
+  quicksort( 0, Count - 1 );
 end;
 
 {$ENDIF}

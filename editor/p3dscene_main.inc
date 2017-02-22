@@ -121,14 +121,14 @@ begin
     Lib:= P3DData;
 
   i:= 1;
-  if ( Pos( '%d', Name ) > 0 ) then
+  if ( Pos( '%d', AName ) > 0 ) then
     begin
-      while ( Lib.Scenes.FindByName( Format( Name, [ i ])) > -1 ) do
+      while ( Lib.Scenes.FindByName( Format( AName, [ i ])) > -1 ) do
         Inc( i );
-      N:= Format( Name, [ i ]);
+      N:= Format( AName, [ i ]);
     end
   else
-    N:= Name;
+    N:= AName;
 
   Result:= TP3DScene.Create( ActiveLibrary );
   Result.Name:= N;

@@ -341,7 +341,8 @@
       FOnChange: TP3DNotifyEvent;
       FSymbolChecked: TP3DTextBmp;
 
-      procedure SetChecked( AValue: Boolean );
+      function GetChecked: Boolean; virtual;
+      procedure SetChecked( AValue: Boolean ); virtual;
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
@@ -351,7 +352,7 @@
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
 
     published
-      property Checked: Boolean read FChecked write SetChecked;
+      property Checked: Boolean read GetChecked write SetChecked;
       property OnChange: TP3DNotifyEvent read FOnChange write FOnChange;
   end;
 
@@ -1278,7 +1279,8 @@ var
   i: Integer;
 begin
   for i:= 0 to EdCount - 1 do
-    Editors[ i ].Free;
+    if ( P3DData.IsValid( Editors[ i ])) then
+      Editors[ i ].Free;
   inherited Destroy;
 end;
 
@@ -1370,6 +1372,11 @@ end;
 
 
 { TP3DCheckBox }
+
+function TP3DCheckBox.GetChecked: Boolean;
+begin
+  Result:= FChecked;
+end;
 
 procedure TP3DCheckBox.SetChecked(AValue: Boolean);
 begin

@@ -183,18 +183,15 @@ var
   VP: TP3DViewport;
 begin
   if ( LockID < 0 ) then
-    raise Exception.Create( 'TP3DCanvas.Unlock: Failed to update canvas. The canvas is not currently locked!' );
+    raise Exception.Create( 'TP3DCanvas.UpdateLockedArea: Failed to update canvas. The canvas is not currently locked!' );
   if ( LockID = P3DViewports.Count - 1 ) then
-    begin
-      P3DViewports.Pop;
-      LockID:= P3DViewports.Push( Left, P3DViewports[ 0 ].Height - Top - Height, Width, Height );
-    end
+    P3DViewports[ LockID ]:= P3DViewport( Left, P3DViewports.Screen.Height - Top - Height, Width, Height )
   else
     begin
       VP.Left:= Left;
       VP.Top:= Top;
       VP.Width:= Width;
-      VP.Height:= P3DViewports[ 0 ].Height - Top - Height;
+      VP.Height:= P3DViewports.Screen.Height - Top - Height;
       P3DViewports.VP[ LockID ]:= VP;
     end;
 end;
@@ -211,7 +208,7 @@ function TP3DCanvas.Lock: Integer;
 begin
   if ( LockID >= 0 ) then
     raise Exception.Create( 'TP3DCanvas.Lock: Failed to lock canvas. The canvas is already locked!' );
-  LockID:= P3DViewports.Push( Left, P3DViewports[ 0 ].Height - Top - Height, Width, Height );
+  LockID:= P3DViewports.Push( Left, P3DViewports.Screen.Height - Top - Height, Width, Height );
   Result:= LockID;
 end;
 

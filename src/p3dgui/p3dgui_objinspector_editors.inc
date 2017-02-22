@@ -8,8 +8,10 @@ type
 
   TP3DOIEditorObject = class ( TP3DOIEditorGroup )
     private
+      FCollisionEdit: TP3DPropertyEditorEnum;
       FNameEdit: TP3DPropertyEditorString;
       FTypeLbl: TP3DLabel;
+      FVisibleCheckBox: TP3DPropertyEditorBoolean;
 
     public
       procedure Update; override;
@@ -18,6 +20,8 @@ type
 
     published
       property NameEdit: TP3DPropertyEditorString read FNameEdit write FNameEdit;
+      property CollisionEdit: TP3DPropertyEditorEnum read FCollisionEdit write FCollisionEdit;
+      property VisibleCheckBox: TP3DPropertyEditorBoolean read FVisibleCheckBox write FVisibleCheckBox;
       property TypeLbl: TP3DLabel read FTypeLbl write FTypeLbl;
   end;
 
@@ -26,7 +30,7 @@ type
   TP3DOIEditorTransform3D = class ( TP3DOIEditorGroup )
     private
       FPositionEdit: TP3DVectorEdit;
-      FQuaternionLbl: TP3DLabel;
+      FQuaternionEdit: TP3DPropertyEditorVec4;
       FRotationEdit: TP3DVectorEdit;
       FRotationMethodCombo: TP3DComboBox;
       FScaleEdit: TP3DVectorEdit;
@@ -46,7 +50,7 @@ type
       property PositionEdit: TP3DVectorEdit read FPositionEdit write FPositionEdit;
       property RotationEdit: TP3DVectorEdit read FRotationEdit write FRotationEdit;
       property RotationMethodCombo: TP3DComboBox read FRotationMethodCombo write FRotationMethodCombo;
-      property QuaternionLbl: TP3DLabel read FQuaternionLbl write FQuaternionLbl;
+      property QuaternionEdit: TP3DPropertyEditorVec4 read FQuaternionEdit write FQuaternionEdit;
       property ScaleEdit: TP3DVectorEdit read FScaleEdit write FScaleEdit;
   end;
 
@@ -452,6 +456,49 @@ var
 
 {$IFDEF IMPLEMENTATION}
 
+{ TP3DPropertyEditorBoolean }
+
+procedure TP3DPropertyEditorBoolean.SetProp(AValue: TP3DPropertyAccess);
+begin
+  if ( AValue = Prop ) then
+    exit;
+
+  FProp:= AValue;
+
+  if ( Assigned( AValue )) then
+    FChecked:= Boolean( StrToInt( AValue.AsString ));
+end;
+
+procedure TP3DPropertyEditorBoolean.SetChecked(AValue: Boolean);
+begin
+  if ( Assigned( Prop )) then
+    Prop.AsString:= IntToStr( Integer( AValue ));
+end;
+
+function TP3DPropertyEditorBoolean.GetChecked: Boolean;
+begin
+  if ( Assigned( Prop )) then
+    Result:= Boolean( StrToInt( FProp.AsString ))
+  else
+    Result:= False;
+end;
+
+function TP3DPropertyEditorBoolean.GetCaption: String;
+begin
+  if ( Assigned( Prop )) then
+    Result:= Prop.Name
+  else
+    Result:= '<empty>';
+end;
+
+constructor TP3DPropertyEditorBoolean.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+end;
+
+
+
+
 function AddContainer( Parent: TP3DGraphicControl; Title: String ): TP3DGraphicControl;
 var
   Lbl: TP3DLabel;
@@ -480,6 +527,20 @@ begin
       begin
         NameEdit.Prop:= TP3DObject( Obj ).Properties.GetPropByName( 'Name' );
         TypeLbl.Caption:= Obj.ClassName;
+        if ( Obj is TP3DActor ) then
+          begin
+            CollisionEdit.Prop:= TP3DObject( Obj ).Properties.GetPropByName( 'Collision' );
+            CollisionEdit.Parent.Visible:= True;
+            VisibleCheckBox.Prop:= TP3DObject( Obj ).Properties.GetPropByName( 'Visible' );
+            VisibleCheckBox.Visible:= True;
+          end
+        else
+          begin
+            CollisionEdit.Prop:= nil;
+            CollisionEdit.Parent.Visible:= False;
+            VisibleCheckBox.Prop:= nil;
+            VisibleCheckBox.Visible:= False;
+          end;
       end;
 end;
 
@@ -495,6 +556,15 @@ begin
   TypeLbl:= TP3DLabel.Create( AData, AddContainer( Self, 'Type ' ));
   TypeLbl.Height:= 20;
   TypeLbl.Align:= alTop;
+
+  CollisionEdit:= TP3DPropertyEditorEnum.Create( AData, AddContainer( Self, 'Collision ' ));
+  CollisionEdit.Height:= 20;
+  CollisionEdit.Align:= alClient;
+
+  VisibleCheckBox:= TP3DPropertyEditorBoolean.Create( AData, Self );
+  VisibleCheckBox.Height:= 20;
+  VisibleCheckBox.Align:= alTop;
+  VisibleCheckBox.HAlignment:= haRight;
 
   AutoSize:= True;
 end;
@@ -655,7 +725,7 @@ begin
   inherited;
   if ( Obj is IP3DTransform ) then
     begin
-      QuaternionLbl.Caption:= '<' + ( Obj as IP3DTransform ).Quaternion.ToString( 1 ) + '>';
+      QuaternionEdit.Prop:= ( Obj as IP3DTransform ).Properties.GetPropByName( 'Quaternion' );
       case ( Obj as IP3DTransform ).RotationOrder of
         roZYX: RotationMethodCombo.FCaption:= 'ZYX Euler';
         roZXY: RotationMethodCombo.FCaption:= 'ZXY Euler';
@@ -699,8 +769,8 @@ begin
   RotationMethodCombo.Items.Add( 'XYZ Euler' );
   //RotationMethodCombo.Items.Add( 'Quaternion XYZW' );
 
-  QuaternionLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Quat (XYZW) ' ));
-  QuaternionLbl.Align:= alClient;
+  QuaternionEdit:= TP3DPropertyEditorVec4.Create( nil, AddContainer( Self, 'Quat ' ));
+  QuaternionEdit.Align:= alClient;
 
   ScaleEdit:= TP3DVectorEdit.Create( nil, AddContainer( Self, 'Scale ' ));
   ScaleEdit.Align:= alClient;

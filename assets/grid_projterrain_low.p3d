@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<p3dfile>
+  <scene
+    name = "Scene">
+    <object
+      data = "mesh_Grid"
+      name = "Grid"
+      type = "mesh">
+      <transform
+        position = " 0.000000, 0.000000, 0.000000"
+        scale = "16.000000,16.000000, 1.000000"
+        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+      </transform>
+    </object>
+    <object
+      data = "lamp_Lamp"
+      name = "Lamp"
+      type = "lamp">
+      <transform
+        scale = " 1.000000, 1.000000, 1.000000"
+        quaternion = " 0.573576, 0.000000, 0.000000, 0.819152"
+        position = " 4.076245, 1.005454, 5.903862">
+      </transform>
+    </object>
+  </scene>
+  <mesh
+    texlayers = "1"
+    loops = "275264"
+    texcoords = "275264"
+    normals = "68889"
+    name = "mesh_Grid"
+    cotangents = "275264"
+    tangents = "275264"
+    faces = "68816"
+    binary = "grid_projterrain_low.mesh_Grid.p3dmesh"
+    vertices = "68889">
+    <material
+      start = "0"
+      name = "material_Material"
+      end = "68815">
+    </material>
+  </mesh>
+  <lamp
+    color = "0.729, 0.808, 1.0"
+    name = "lamp_Lamp"
+    type = "sun"
+    energy = "1.0">
+  </lamp>
+  <material
+    specular = "50.000000, 0.500000, 0.500000, 0.500000"
+    name = "material_Material"
+    vshader = "terrain.vert"
+    fshader = "terrain.frag"
+    type="shader"
+    diffuse = "0.640000, 0.640000, 0.640000">
+    <texture
+      mode = "mix"
+      file = "megt00n270hb_diff_4k_high.png"
+      diffuse = "1.0"
+      texture_filter = "nearest"
+      mipmap_filter = "nearest">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "megt00n270hb_n_displ_high.png"
+      diffuse = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock.jpg"
+      diffuse = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_normal.png"
+      diffuse = "1.0">
+    </texture>
+    <texture
+      mode = "mix"
+      file = "rock_spec.png"
+      diffuse = "1.0">
+    </texture>
+  </material>
+</p3dfile>

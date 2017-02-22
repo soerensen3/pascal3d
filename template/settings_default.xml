@@ -1,22 +1,21 @@
 <p3dsettings>
-  <general
-    rootdir=".">
-  </general>
-  <window
-    title="__PROJNAME__"
-    width="800"
-    height="600"
-    fullscreen="no"
-    />
-  <paths>
-    <path 
-    type="fonts"
-    value="fonts"/>
-    <path 
-    type="models"
-    value="assets"/>
-    <path 
-    type="shaders"
-    value="shaders"/>
+  <paths
+    BaseDir=".">
+    <path
+      value="assets"/>
+    <path
+      value="fonts" />
   </paths>
+  <window
+    Title="__PROJNAME__"
+    Width="800"
+    Height="600"
+    Fullscreen="0"
+    />
+  <logging
+    FileName="__PROJNAME__.html" />
+  <shadernodelibrary>
+    <path
+      value="shaders" />
+  </shadernodelibrary>
 </p3dsettings>

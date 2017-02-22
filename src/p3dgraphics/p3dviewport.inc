@@ -13,9 +13,11 @@
 
   TP3DViewportStack = class
     private
+      FScreen: TP3DViewport;
       VPs: array of TP3DViewport;
       function GetCount: Integer;
       function GetVP( Index: Integer ): TP3DViewport;
+      procedure SetScreen(AValue: TP3DViewport);
       procedure SetVP( Index: Integer ; AValue: TP3DViewport);
       procedure ApplyVP( VP: TP3DViewport );
 
@@ -29,6 +31,7 @@
 
       property VP[ Index: Integer ]: TP3DViewport read GetVP write SetVP; default;
       property Count: Integer read GetCount;
+      property Screen: TP3DViewport read FScreen write SetScreen;
   end;
 
 function P3DViewport( Left, Top, Width, Height: Integer ): TP3DViewport; inline;
@@ -51,6 +54,13 @@ begin
   Result:= VPs[ Index ];
 end;
 
+procedure TP3DViewportStack.SetScreen(AValue: TP3DViewport);
+begin
+  FScreen:= AValue;
+  if ( Count = 0 ) then
+    ApplyVP( Screen );
+end;
+
 procedure TP3DViewportStack.SetVP( Index: Integer ; AValue: TP3DViewport);
 begin
   VPs[ Index ]:= AValue;
@@ -60,8 +70,7 @@ end;
 
 procedure TP3DViewportStack.ApplyVP(VP: TP3DViewport);
 begin
-  if ( Count > 0 ) then
-    glViewport( VP.Left, {VPs[ 0 ].Height-}VP.Top{-VP.Height}, VP.Width, VP.Height ); cle( Self );
+  glViewport( VP.Left, {VPs[ 0 ].Height-}VP.Top{-VP.Height}, VP.Width, VP.Height ); cle( Self );
 end;
 
 function TP3DViewportStack.Push(Left, Top, Width, Height: Integer): Integer;
@@ -94,18 +103,19 @@ begin
   if ( Count > 0 ) then
     begin
       Result:= VPs[ Count - 1 ];
-      if ( Count > 1 ) then
-        begin
-          SetLength( VPs, Count - 1 );
-        end;
+      SetLength( VPs, Count - 1 );
       ApplyVP( Peek );
-    end;
+    end
+  else
+    ApplyVP( Screen );
 end;
 
 function TP3DViewportStack.Peek: TP3DViewport;
 begin
   if ( Count > 0 ) then
-    Result:= VPs[ Count - 1 ];
+    Result:= VPs[ Count - 1 ]
+  else
+    Result:= Screen;
 end;
 
 procedure TP3DViewportStack.DebugShowVP(Color: TVec4);

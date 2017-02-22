@@ -364,7 +364,6 @@ begin
   TP3DMaterialMapBase( P3DFontManagerBmp.Material.Maps[ 0 ]).DiffuseFactor:= 0;
   if ( not Assigned( P3DFontManagerBmp.Material.Shader )) then
     P3DFontManagerBmp.Material.BuildShader();
-  P3DFontManagerBmp.Material.Shader.Enable;
   P3DFontManagerBmp.Material.PassToShader();
 end;
 
@@ -806,7 +805,7 @@ procedure TP3DMaterialModifierText.AddPass(ShaderTree: TP3DShaderNodeTree;
     Result:= Node;
   end;
 begin
-  ShaderTree.AddCopy( 'Pass_Text_Alpha_Transform' );
+  ShaderTree.AddCopy( '06000_Pass_Text_Alpha_Transform' );
 end;
 
 procedure TP3DMaterialModifierText.PassToShader(Material: TP3DMaterialBase);

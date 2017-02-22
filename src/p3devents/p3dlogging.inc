@@ -6,7 +6,7 @@
 type
   { TP3DLogger }
 
-  TP3DLogger = class
+  TP3DLogger = class ( TP3DInterfacedPersistent )
     private
       FFileName: String;
       FLevel: TDOMElement;
@@ -26,9 +26,13 @@ type
       function LogException( Sender: TObject; Message: String ): TDOMElement;
       function LogException( Sender: TObject; Message: Exception ): TDOMElement;
 
+      class function DOMNodeName: String; override;
+
       property LogFile: TXMLDocument read FLogFile write FLogFile;
-      property FileName: String read FFileName write SetFileName;
       property Level: TDOMElement read FLevel write FLevel;
+
+    published
+      property FileName: String read FFileName write SetFileName;
   end;
 
 const
@@ -169,11 +173,11 @@ begin
   Result.AttribStrings[ 'class' ]:= 'messageheader';
 
   if ( Sender is TP3DDataBlock ) then
-    N:= TP3DDataBlock( Sender ).Owner.Name + '.' + TP3DObject( Sender ).Name + ': '
+    N:= '{' + TP3DDataBlock( Sender ).Owner.Name + '}.' + TP3DObject( Sender ).Name + ': '
   else if ( Sender is TP3DObject ) then
     N:= TP3DObject( Sender ).Name + ': '
   else
-    N:= '';
+    N:= 'Instance of ';
 
   Txt:= '<span>Unit</span> ' + Sender.UnitName + ' <span>Object</span> ' + N + Sender.ClassName;
   S:= TStringStream.Create( Txt );
@@ -185,7 +189,7 @@ constructor TP3DLogger.Create;
 var
   F: TStringStream;
 begin
-  //FLogFile:= TXMLDocument.Create;
+  inherited Create;
   F:= TStringStream.Create( P3DLogOutput );
   XMLRead.ReadXMLFile( FLogFile, F );
   F.Free;
@@ -193,6 +197,7 @@ begin
   Level.AppendChild( LogFile.CreateTextNode( 'Logfile for ' + ExtractFileName( ParamStr( 0 ))));
 
   Level:= TDOMElement( FLogFile.DocumentElement.FindNode( 'body' ).FindNode( 'table'));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FileName', smAttribute ));
 end;
 
 destructor TP3DLogger.Destroy;
@@ -296,7 +301,12 @@ end;
 
 function TP3DLogger.LogException(Sender: TObject; Message: Exception ): TDOMElement;
 begin //TODO: Sender might be invalid - in this case this would cause another exception
-  Result:= LogException( Sender, Message );//StringReplace( Message.Message, LineEnding, '<br />', [ rfReplaceAll ]));
+  Result:= LogException( Sender, Message.Message );//StringReplace( Message.Message, LineEnding, '<br />', [ rfReplaceAll ]));
+end;
+
+class function TP3DLogger.DOMNodeName: String;
+begin
+  Result:= 'logging';
 end;
 
 

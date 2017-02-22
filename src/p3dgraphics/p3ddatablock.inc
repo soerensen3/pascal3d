@@ -1,21 +1,6 @@
 //p3ddatablock.inc
 
 {$IFDEF INTERFACE}
-type
-  TP3DBoundingBox = record
-    Min, Max, Center: TVec3;
-  end;
-
-  operator = ( A, B: TP3DBoundingBox ): Boolean;
-  operator + ( A: TP3DBoundingBox; B: TVec3 ): TP3DBoundingBox;
-  operator - ( A: TP3DBoundingBox; B: TVec3 ): TP3DBoundingBox;
-
-
-const
-  P3DInvalidBoundingBox: TP3DBoundingBox
-      = ( Min: ( FCoord: ( -MaxSingle, -MaxSingle, -MaxSingle ));
-          Max: ( FCoord: ( MaxSingle, MaxSingle, MaxSingle ));
-          Center: ( FCoord: ( 0, 0, 0 )));
 
 type
 
@@ -25,8 +10,9 @@ type
   TP3DDataBlockList = class;
   TP3DDataBlock = class ( TP3DObject )
     private
-      FBoundingBox: TP3DBoundingBox;
+      FAABB: TP3DAABB;
       FOwner: TP3DLibrary;
+      FSphere: TP3DSphere;
       FUsers: TP3DDataBlockList;
 
       function GetDOMPath: String; virtual;
@@ -44,7 +30,8 @@ type
       procedure LoadFromFile( FileName: String );
       procedure LoadFromBinary( FileName: String ); virtual;
       procedure Reload;
-      function CalcBoundingBox(): TP3DBoundingBox; virtual;
+      function CalcAABB(): TP3DAABB; virtual;
+      function CalcSphere(): TP3DSphere; virtual;
       procedure RemoveFromFields( Block: TP3DDataBlock ); virtual;
       function CastRay( Orig, Dir: TVec3; Actor: TP3DActor; out HitPos: TVec3 ): Boolean; virtual;
       procedure RemoveUser( User: TP3DDataBlock );
@@ -52,9 +39,14 @@ type
       procedure ClearFields; virtual;
       procedure ClearUsers;
       class function DOMNodeName: String; override;
-      procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); virtual;
+      procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );  virtual;
 
-      property BoundingBox: TP3DBoundingBox read FBoundingBox write FBoundingBox;
+      function CollideSphere( Mat: TMat4; ASphere: TP3DSphere ): Boolean; virtual;
+      function CollideAABB( Mat: TMat4; AAABB: TP3DAABB ): Boolean; virtual;
+      function CollidePoint( Mat: TMat4; APoint: TVec3 ): Boolean; virtual;
+
+      property AABB: TP3DAABB read FAABB write FAABB;
+      property Sphere: TP3DSphere read FSphere write FSphere;
       property Owner: TP3DLibrary read FOwner;
 
     published
@@ -100,6 +92,7 @@ type
       procedure Insert( Index: Integer; Item: TCustomItem );
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
+      function GetByName( AName: String ): TCustomItem;
       function FindByFileName( AFileName: String ): Integer;
       procedure SaveToDOM(AParent: TDOMElement);
       //TODO: Implement load from DOM
@@ -158,10 +151,6 @@ type
       procedure SetAsString( AValue: String ); override;
       property Count: Integer read GetCount write SetCount;
   end;}
-
-  function P3DBoundingBox( vMin, vMax, vCenter: TVec3 ): TP3DBoundingBox;
-  function P3DBoundingBoxTransform( Box: TP3DBoundingBox; Matrix: TMat4 ): TP3DBoundingBox;
-
 
 {$ENDIF}
 
@@ -452,6 +441,17 @@ begin
       end;
 end;
 
+function gP3DCustomDatablockList.GetByName(AName: String): TP3DDataBlock;
+var
+  idx: Integer;
+begin
+  idx:= FindByName( AName );
+  if ( idx > -1 ) then
+    Result:= Items[ idx ]
+  else
+    Result:= nil;
+end;
+
 function gP3DCustomDatablockList.FindByFileName(AFileName: String): Integer;
 var
   i: Integer;
@@ -546,38 +546,6 @@ begin
   DoUpdate;
 end;
 
-function P3DBoundingBox(vMin, vMax, vCenter: TVec3): TP3DBoundingBox;
-begin
-  Result.Center:= vCenter;
-  Result.Min:= vMin;
-  Result.Max:= vMax;
-end;
-
-function P3DBoundingBoxTransform(Box: TP3DBoundingBox; Matrix: TMat4 ): TP3DBoundingBox;
-  procedure _MinMax( p: TVec3 );// inline;
-  begin
-    p:= ( Matrix * vec4( p, 1 )).xyz;
-    P3DBoundingBoxTransform.Min:= Min( P3DBoundingBoxTransform.Min, p );
-    P3DBoundingBoxTransform.Max:= Max( P3DBoundingBoxTransform.Max, p );
-  end;
-
-begin  // This could be optimized more ... but well..
-  Result:= P3DBoundingBox( vec3( 0 ), vec3( 0 ), vec3( 0 ));
-  with ( Box ) do
-    begin
-      Result.Min:= ( Matrix * vec4( Min, 1 )).xyz;
-      Result.Max:= Result.Min;
-      //_MinMax( Min );
-      _MinMax( vec3( Min.xy, Max.z ));
-      _MinMax( vec3( Min.x, Max.y, Min.z ));
-      _MinMax( vec3( Min.x, Max.yz ));
-      _MinMax( vec3( Max.x, Min.yz ));
-      _MinMax( vec3( Max.x, Min.y, Max.z ));
-      _MinMax( vec3( Max.xy, Min.z ));
-      _MinMax( Max );
-    end;
-  Result.Center:= ( Result.Max + Result.Min ) / 2;
-end;
 
 { TP3DDataBlock }
 
@@ -605,7 +573,7 @@ begin
   inherited Create( Owner.DataBlocks );
   //FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
   //DOMPath:= '';
-  BoundingBox:= P3DInvalidBoundingBox;
+  AABB:= P3DInvalidAABB;
   FUsers:= TP3DDataBlockList.Create;
   P3DDataBlockCache.Add( Self );
 end;
@@ -727,9 +695,9 @@ begin
     begin
       idx:= P3DDataBlockCache.FindBlock( Self );
       if ( idx > -1 ) then
-        WriteLn( 'Orphaned user with cached name ' + P3DDataBlockCache[ idx ].Name )
+        WriteLn( User.Name + ': Orphaned user with cached name ' + P3DDataBlockCache[ idx ].Name )
       else
-        WriteLn( 'Orphaned user! ' );
+        WriteLn( User.Name + ': Orphaned user! ' );
     end;
 end;
 
@@ -776,6 +744,21 @@ begin
   //Don't do anything but we don't want to generate an error when mothod is not overriden by ancestor class
 end;
 
+function TP3DDataBlock.CollideSphere(Mat: TMat4; ASphere: TP3DSphere): Boolean;
+begin
+  Result:= False;
+end;
+
+function TP3DDataBlock.CollideAABB(Mat: TMat4; AAABB: TP3DAABB): Boolean;
+begin
+  Result:= False;
+end;
+
+function TP3DDataBlock.CollidePoint(Mat: TMat4; APoint: TVec3): Boolean;
+begin
+  Result:= False;
+end;
+
 procedure TP3DDataBlock.LoadFromBinary(FileName: String);
 begin
 
@@ -798,12 +781,17 @@ begin
   SetCurrentDir( Dir );
 end;
 
-function TP3DDataBlock.CalcBoundingBox: TP3DBoundingBox;
+function TP3DDataBlock.CalcAABB: TP3DAABB;
 begin
-  FBoundingBox.Center:= vec3( 0 );
-  FBoundingBox.Max:= vec3( 0 );
-  FBoundingBox.Min:= vec3( 0 );
-  Result:= BoundingBox;
+  FAABB.Position:= vec3( 0 );
+  FAABB.Max:= vec3( 0 );
+  FAABB.Min:= vec3( 0 );
+  Result:= AABB;
+end;
+
+function TP3DDataBlock.CalcSphere: TP3DSphere;
+begin
+  Result:= Sphere;
 end;
 
 procedure TP3DDataBlock.RemoveFromFields(Block: TP3DDataBlock);
@@ -821,22 +809,6 @@ function TP3DDataBlock.CastRay(Orig, Dir: TVec3; Actor: TP3DActor; out
   HitPos: TVec3): Boolean;
 begin
   Result:= False;
-end;
-
-
-operator=(A, B: TP3DBoundingBox): Boolean;
-begin
-  Result:= ( A.Min = B.Min ) and ( A.Max = B.Max ) and ( A.Center = B.Center );
-end;
-
-operator+(A: TP3DBoundingBox; B: TVec3): TP3DBoundingBox;
-begin
-  Result:= P3DBoundingBox( A.Min + B, A.Max + B, A.Center + B );
-end;
-
-operator-(A: TP3DBoundingBox; B: TVec3): TP3DBoundingBox;
-begin
-  Result:= P3DBoundingBox( A.Min - B, A.Max - B, A.Center - B );
 end;
 
 {$ENDIF}

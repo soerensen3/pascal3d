@@ -139,7 +139,7 @@ begin
         Inc( GlobalCursor, Length( Separator ));
     end
   else
-    Error( 'Assignment or Separator expected' );
+    Error( GlobalActiveNode.Name + ': Assignment or Separator expected' );
 end;
 
 
@@ -315,7 +315,7 @@ var
           if ( ChunkName = '' ) then
             begin
               if ( GlobalActiveOutput = nil ) then
-                Error( 'First chunk in node has to have a name!' );
+                Error( GlobalActiveNode.Name + ': First chunk in node has to have a name!' );
             end
           else
             begin

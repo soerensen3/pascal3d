@@ -17,6 +17,7 @@ type
     function GetRotation: TVec3;
     function GetRotationOrder: TRotationOrder;
     function GetScale: TVec3;
+    function GetProperties: TP3DPropertyAccessList;
     procedure SetMatrix(AValue: TMat4);
     procedure SetPosition(AValue: TVec3);
     procedure SetQuaternion(AValue: TQuaternion);
@@ -36,11 +37,15 @@ type
     property Scale: TVec3 read GetScale write SetScale;
     property Matrix: TMat4 read GetMatrix write SetMatrix;
     property Quaternion: TQuaternion read GetQuaternion write SetQuaternion;
+    property Properties: TP3DPropertyAccessList read GetProperties;
   end;
+
+  TP3DActorCollision = ( acNone, acBox, acSphere );
 
   TP3DActor = class ( TP3DDataBlock, IP3DTransform )
     private
       FChildren: TP3DActorList;
+      FCollision: TP3DActorCollision;
       FData: TP3DDataBlock;
       FMatrixFinal: TMat4;
       FParent: TP3DDataBlock;
@@ -68,7 +73,7 @@ type
       procedure SetRotationOrder( AValue: TRotationOrder );
       procedure SetScale( AValue: TVec3 );
       procedure SetScene( AValue: TP3DScene );
-      //property BoundingBox;
+      //property AABB;
       procedure UpdateMatrix;
       procedure UpdateEuler;
       function GetDOMPath: String; override;
@@ -78,12 +83,14 @@ type
       constructor Create( const AData: TP3DLibrary = nil ); override;
 
       procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
+      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
       function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
 
       procedure FastDestroy(); override;
       procedure Render( world: TMat4; Scene: TP3DScene ); reintroduce;
       procedure RenderCallbackOnly( world: TMat4; Scene: TP3DScene ); reintroduce;
-      function  CalcBoundingBox(): TP3DBoundingBox; override;
+      function  CalcAABB(): TP3DAABB; override;
+      function CalcSphere: TP3DSphere; override;
       procedure RemoveFromFields( Block: TP3DDataBlock ); override;
       function  CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): Boolean; reintroduce;
       procedure ClearFields(); override;
@@ -92,7 +99,13 @@ type
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
-      procedure AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags); override;
+
+      function CollideActor( SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor ): Boolean;
+      function CollideSphere( Mat: TMat4; ASphere: TP3DSphere ): Boolean; override;
+      function CollideAABB( Mat: TMat4; AAABB: TP3DAABB ): Boolean; override;
+      function CollidePoint( Mat: TMat4; APoint: TVec3 ): Boolean; override;
+
+      procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); override;
       class function DOMNodeName: String; override;
 
       property Position: TVec3 read FPosition write SetPosition;
@@ -110,6 +123,7 @@ type
       property Scene: TP3DScene read FScene write SetScene;
       property Parent: TP3DDataBlock read FParent;
       property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
+      property Collision: TP3DActorCollision read FCollision write FCollision;
   end;
 
   TP3DPropertyAccessActor = specialize gP3DPropertyAccessDataBlock < TP3DActor >;
@@ -130,7 +144,7 @@ type
                                 const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       function OutputDebugInfo: String;
 
-      function CalcBoundingBox(): TP3DBoundingBox;
+      function CalcAABB(): TP3DAABB;
       function CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): TP3DActor;
 
       property Owner: TPersistent read FOwner write FOwner;
@@ -156,7 +170,7 @@ end;
 procedure TP3DActor.UpdateMatrix;
 begin
   FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
-  FBoundingBox:= CalcBoundingBox();
+  FAABB:= CalcAABB();
 end;
 
 procedure TP3DActor.UpdateEuler;
@@ -308,6 +322,7 @@ begin
   Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Collision', smAttribute ));
   Properties.Add( TP3DPropertyAccessDataBlock.CreateFieldSet( 'Data', @Data, @SetData, smAttribute ));
 end;
 
@@ -357,6 +372,25 @@ begin
           end;
       else
         raise Exception.Create( 'Unknown tag inside Object Element: '+ Element.NodeName );
+      end;
+      Element:= TDOMElement( Element.NextSibling );
+    end;
+end;
+
+procedure TP3DActor.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  Element: TDOMElement;
+  Child: TP3DActor;
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+
+  Element:= TDOMElement( ADOMNode.FirstChild );
+  while ( Assigned( Element )) do
+    begin
+      case Element.NodeName of
+        'object': begin Child:= TP3DActor.CreateFromDOM( Element, Owner ); Children.Add( Child ); end;
+      else
+        raise Exception.Create( 'Unknown tag inside object element: '+ Element.NodeName );
       end;
       Element:= TDOMElement( Element.NextSibling );
     end;
@@ -412,20 +446,25 @@ begin
     Scene.RenderCallback( world, Self );
 end;
 
-function TP3DActor.CalcBoundingBox: TP3DBoundingBox;
+function TP3DActor.CalcAABB: TP3DAABB;
 var
-  BB: TP3DBoundingBox;
+  BB: TP3DAABB;
 begin
   if ( Assigned( Data )) then
     begin
-      if ( Data.BoundingBox = P3DInvalidBoundingBox ) then
-        BB:= Data.CalcBoundingBox()
+      if ( Data.AABB = P3DInvalidAABB ) then
+        BB:= Data.CalcAABB()
       else
-        BB:= Data.BoundingBox;
-      Result:= P3DBoundingBoxTransform( BB, Matrix );
+        BB:= Data.AABB;
+      Result:= P3DTransformAABBObjSpace( Matrix, BB );
     end
   else
-    Result:= P3DBoundingBox( Position, Position, Position );
+    Result:= P3DAABB( Position, Position, Position );
+end;
+
+function TP3DActor.CalcSphere: TP3DSphere;
+begin
+  Result:=inherited CalcSphere;
 end;
 
 procedure TP3DActor.RemoveFromFields(Block: TP3DDataBlock);
@@ -463,7 +502,7 @@ end;
 
 procedure TP3DActor.MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
 begin
-  Position:= Position + ( vec4( AAxis, 0 ) * Matrix ).xyz * AValue;
+  Position:= Position + ( Quaternion * AAxis ) * AValue; //( Matrix[ 0 ].XYZ * AAxis.X + Matrix[ 1 ].XYZ * AAxis.Y + Matrix[ 2 ].XYZ * AAxis.Z ) * AValue;
 end;
 
 procedure TP3DActor.RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
@@ -476,7 +515,57 @@ begin
   //TODO: TP3DActor.RotateAroundLocalAxis
 end;
 
-procedure TP3DActor.AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
+function TP3DActor.CollideActor(SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor): Boolean;
+begin
+  if ( Assigned( AActor.Data )) then
+    case AActor.Collision of
+      acNone: Result:= False;
+      acBox: Result:= CollideAABB( SelfMat, P3DTransformAABBObjSpace( ActMat, AActor.Data.AABB ));
+      acSphere: Result:= CollideSphere( SelfMat, P3DTransformSphereObjSpace( ActMat, AActor.Data.Sphere ));
+    end
+  else
+    Result:= False;
+end;
+
+{
+function TP3DActor.CollideActor( AActor: TP3DActor ): Boolean;
+begin
+  case Collision of
+    acNone: Result:= False;
+    acBox: AActor.CollideAABB( AABB );
+  end;
+end;
+}
+function TP3DActor.CollideSphere( Mat: TMat4; ASphere: TP3DSphere ): Boolean;
+begin
+  if ( Assigned( Data )) then
+    case Collision of
+      acNone: Result:= False;
+      acBox: Result:= P3DCollideSPHEREwithAABB( ASphere, P3DTransformAABBObjSpace( Mat, Data.AABB ));
+      acSphere: Result:= P3DCollideSPHEREwithSPHERE( P3DTransformSphereObjSpace( Mat, Data.Sphere ), ASphere );
+    end
+  else
+    Result:= False;
+end;
+
+function TP3DActor.CollideAABB( Mat: TMat4; AAABB: TP3DAABB ): Boolean;
+begin
+  if ( Assigned( Data )) then
+    case Collision of
+      acNone: Result:= False;
+      acBox: Result:= P3DCollideAABBwithAABB( P3DTransformAABBObjSpace( Mat, Data.AABB ), AAABB );
+      acSphere: Result:= P3DCollideSPHEREwithAABB( P3DTransformSphereObjSpace( Mat, Data.Sphere ), AAABB );
+    end
+  else
+    Result:= False;
+end;
+
+function TP3DActor.CollidePoint(Mat: TMat4; APoint: TVec3): Boolean;
+begin
+
+end;
+
+procedure TP3DActor.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
 var
   mat: TMat4;
 begin
@@ -550,19 +639,19 @@ begin
     Result+= Format( 'Name: "%s" Class "%s" Visible %s Data: "%s"'+LineEnding, [ Item.Name, Item.ClassName, BoolToStr( TP3DActor( Item ).Visible, 'Yes', 'No' ), DebugData( TP3DActor( Item ).Data )]);
 end;
 
-function TP3DActorList.CalcBoundingBox: TP3DBoundingBox;
+function TP3DActorList.CalcAABB: TP3DAABB;
 var
   Obj: TP3DObject;
-  BB: TP3DBoundingBox;
+  BB: TP3DAABB;
 begin
-  Result:= P3DBoundingBox( vec3( 0 ), vec3( 0 ), vec3( 0 ));
+  Result:= P3DAABB( vec3( 0 ), vec3( 0 ), vec3( 0 ));
   for Obj in Self do
     begin
-      BB:= TP3DActor( Obj ).CalcBoundingBox();
+      BB:= TP3DActor( Obj ).CalcAABB();
       Result.Min:= Min( Result.Min, BB.Min );
       Result.Max:= Max( Result.Max, BB.Max );
     end;
-  Result.Center:= ( Result.Min + Result.Max ) / 2;
+  Result.Position:= ( Result.Min + Result.Max ) / 2;
 end;
 
 function TP3DActorList.CastRay(Orig, Dir: TVec3; out HitPos: TVec3): TP3DActor;

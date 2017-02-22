@@ -1,3 +1,4 @@
+{$INCLUDE p3dcollision.inc}
 {$INCLUDE p3dcolors.inc}
 {$INCLUDE p3dclassfactory.inc}
 {$INCLUDE p3dbuffers.inc}

@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Name = "Sphere"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.000000"
+       RotationOrder = "roXYZ"
+       Scale = " 0.050000, 0.050000, 0.050000"
+       Data = "/mesh_Sphere"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <object
+       Name = "Cone.001"
+       Collision = "acNone"
+       Position = " 0.000000, 0.000000, 0.100000"
+       RotationOrder = "roXYZ"
+       Scale = " 0.106759, 0.106759, 0.042703"
+       Data = "/mesh_Cone.001"
+       Quaternion = " 1.000000, 0.000000, 0.000000,-0.000000" />
+    <object
+       Name = "Lamp"
+       Collision = "acNone"
+       Position = " 4.076245, 1.005454, 6.103862"
+       RotationOrder = "roXYZ"
+       Scale = " 0.214491, 0.309147, 0.363263"
+       Data = "/lamp_Lamp"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948" />
+    <object
+       Name = "Camera"
+       Scale = " 0.213517, 0.394007, 0.269641"
+       Position = " 7.481132,-6.507640, 5.543665"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       RotationOrder = "roXYZ"
+       Collision = "acNone" />
+  </scene>
+  <mesh
+     Name = "mesh_Sphere"
+     Normals = "EditorJoint.p3dbin:700"
+     Faces = "EditorJoint.p3dbin:4548"
+     Positions = "EditorJoint.p3dbin:0"
+     Loops = "EditorJoint.p3dbin:3584">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "63"
+       Material = "/material_Material" />
+  </mesh>
+  <mesh
+     Name = "mesh_Cone.001"
+     Normals = "EditorJoint.p3dbin:4884"
+     Faces = "EditorJoint.p3dbin:5340"
+     Positions = "EditorJoint.p3dbin:4808"
+     Loops = "EditorJoint.p3dbin:5224">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "8"
+       Material = "/material_Material" />
+  </mesh>
+  <light
+     LightType = "ltPoint"
+     Name = "lamp_Lamp"
+     Color = "1.000000, 1.000000, 1.000000"
+     Energy = "1.0" />
+  <materialbase
+     Name = "material_Material"
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Unlit = "0"
+     Diff = "0.640000, 0.640000, 0.640000"
+     TransparencyMode = "p3dmtNone" />
+</p3dfile>

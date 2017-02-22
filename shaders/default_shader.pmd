@@ -5,7 +5,6 @@ input: {name="extensions", type="shader"}
 input: {name="declaration", type="shader"}
 input: {name="main", type="shader"}
 ---
-
 ```{name="vshader", type="shader"}
 #version $version$
 $extensions$

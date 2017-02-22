@@ -30,12 +30,14 @@ TP3DGUIManager = class
     procedure SetMouseY( const Value: Integer );
     procedure CtrlDeleteNotifier( Ctrl: TP3DGraphicControl );
     procedure SetShowCursor(AValue: Boolean);
-    procedure SetWindow(AValue: TP3DWindow);
     procedure SetCursorOverride(AValue: TP3DCursor);
 
     property CursorOverride: TP3DCursor read FCUrsorOverride write SetCursorOverride;
 
   public
+    LastMouseDownCtrl: array[ 0..2 ] of TP3DGraphicControl;
+    LastMouseOverCtrl: TP3DGraphicControl;
+
     constructor Create;
     destructor Destroy; override;
 
@@ -47,7 +49,6 @@ TP3DGUIManager = class
     property MouseX: Integer read GetMouseX write SetMouseX;
     property MouseY: Integer read GetMouseY write SetMouseY;
     property ScrollSpeed: Single read FScrollSpeed write FScrollSpeed;
-    property Window: TP3DWindow read FWindow write SetWindow;
     property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
     property Controls: TP3DControlList read FControls write FControls;
     property Cursor: TP3DCursor read FCursor write SetCursor;
@@ -71,17 +72,15 @@ begin
   ScreenCanvas.Font.Size:= 48;
   Cursor:= curArrow;
   CursorOverride:= curArrow;
-  if ( Assigned( P3DApplication ) and Assigned( P3DApplication.MainWindow )) then
-    Window:= P3DApplication.MainWindow;
 end;
 
 destructor TP3DGUIManager.Destroy;
 begin
+  Controls.Clear( True );
+  Controls.Free;
   ScreenCanvas.Free;
   FCursorTxt.Free;
   FCursorOverrideTxt.Free;
-  Controls.Clear( True );
-  Controls.Free;
   inherited;
 end;
 
@@ -136,8 +135,8 @@ var
   DrawCursor: TP3DTextBmp;
 begin
   glDisable( GL_DEPTH_TEST );
-  if (( ScreenCanvas.Width <> P3DViewports[ 0 ].Width ) or
-      ( ScreenCanvas.Height <> P3DViewports[ 0 ].Height )) then
+  if (( ScreenCanvas.Width <> P3DViewports.Screen.Width ) or
+      ( ScreenCanvas.Height <> P3DViewports.Screen.Height )) then
     UpdateExtents;
   Controls.Render( vec4( 1 ), vec2( 0 ), P3DRect( ScreenCanvas.Left, ScreenCanvas.Top, ScreenCanvas.Width, ScreenCanvas.Height ));
 
@@ -208,35 +207,15 @@ begin
   SetCursor( Cursor );
 end;
 
-procedure TP3DGUIManager.SetWindow(AValue: TP3DWindow);
-begin
-  if FWindow=AValue then Exit;
-  FWindow:=AValue;
-  if ( Assigned( Window )) then
-    begin
-      ScreenCanvas.Left:= 0;
-      ScreenCanvas.Top:= 0;
-      ScreenCanvas.Width:= Window.Width;
-      ScreenCanvas.Height:= Window.Height;
-      UpdateExtents;
-    end;
-end;
-
 procedure TP3DGUIManager.UpdateExtents;
 begin
   if ( not Assigned( P3DViewports )) then
     exit;
 
-  if ( P3DViewports.Count = 0 ) then
-    if ( Assigned( Window )) then
-      Window.UpdateViewport
-    else
-      exit;
-
-  ScreenCanvas.Left:= P3DViewports.VP[ 0 ].Left;
-  ScreenCanvas.Top:= P3DViewports.VP[ 0 ].Top;
-  ScreenCanvas.Width:= P3DViewports.VP[ 0 ].Width;
-  ScreenCanvas.Height:= P3DViewports.VP[ 0 ].Height;
+  ScreenCanvas.Left:= P3DViewports.Screen.Left;
+  ScreenCanvas.Top:= P3DViewports.Screen.Top;
+  ScreenCanvas.Width:= P3DViewports.Screen.Width;
+  ScreenCanvas.Height:= P3DViewports.Screen.Height;
 
   Controls.Realign;
 end;

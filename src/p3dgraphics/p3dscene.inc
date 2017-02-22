@@ -19,8 +19,9 @@ type
 
   { TP3DRenderObject }
 
-  TP3DRenderObject = class
+  TP3DRenderObject = class ( TPersistent )
     private
+      FActors: TP3DActorList;
       FData: TP3DDataBlock;
       FInstanceCount: Integer;
       FMaterial: TP3DMaterial;
@@ -35,6 +36,10 @@ type
       constructor Create;
       destructor Destroy; override;
 
+      function CollideWithRenderObject( ARenderObject: TP3DRenderObject ): Boolean;
+      function CollideWithSphere( ASphere: TP3DSphere ): Boolean;
+      function CollideWithAABB( AAABB: TP3DAABB ): Boolean;
+
       property Data: TP3DDataBlock read FData write FData;
       property Positions: TP3DVec3BufferGL read FPositions write FPositions;
       property Rotations: TP3DVec4BufferGL read FRotations write FRotations;
@@ -44,11 +49,34 @@ type
       property InstanceCount: Integer read FInstanceCount write FInstanceCount;
   end;
 
-  TP3DCustomRenderList = specialize gP3DCustomObjectList < TP3DRenderObject >;
-
-  { TP3DRenderList }
-
   TP3DRenderListScoreFunc = function ( Item: TP3DRenderObject ): Integer;
+  TP3DRenderListModifierList = specialize gP3DCustomObjectList < TP3DRenderListModifier >;
+
+  { TP3DCustomRenderList }
+
+  TP3DCustomRenderList = class( specialize gP3DCustomObjectList < TP3DRenderObject >)
+    private
+      FModifierStack: TP3DRenderListModifierList;
+
+    protected
+      function PushRenderObject( AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial ): Integer; virtual;
+
+      property ModifierStack: TP3DRenderListModifierList read FModifierStack write FModifierStack;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      function Find( AData: TP3DDataBlock; Material: TP3DMaterial ): Integer;
+  end;
+
+  { TP3DLightRenderList }
+
+  TP3DLightRenderList = class( TP3DCustomRenderList )
+    public
+      function PushRenderObject( AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial ): Integer; override;
+      procedure PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
+  end;
 
   { TP3DRenderListModifier }
 
@@ -58,21 +86,14 @@ type
       procedure AddObject( var Obj: TP3DRenderObject ); virtual; abstract;
   end;
 
-  TP3DRenderListModifierList = specialize gP3DCustomObjectList < TP3DRenderListModifier >;
   TP3DRenderListAddCallBack = procedure ( AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; AFlags: TP3DRenderListFlags; var Accept: Boolean ) of object;
 
   TP3DRenderList = class ( TP3DCustomRenderList )
     private
       FLastUpdate: Integer;
-      FLights: TP3DLightList;
-      FModifierStack: TP3DRenderListModifierList;
+      FLights: TP3DLightRenderList;
       FOnAdd: TP3DRenderListAddCallBack;
       FTransparencyStart: Integer;
-
-      function PushRenderObject(AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial): Integer;
-
-    protected
-      property ModifierStack: TP3DRenderListModifierList read FModifierStack write FModifierStack;
 
     public
       constructor Create;
@@ -80,15 +101,17 @@ type
 
       procedure Add( AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault ); reintroduce;
       function PickFromCamera( X, Y: Integer; Camera: TP3DActor ): TP3DActor;
-      function Find( AData: TP3DDataBlock; Material: TP3DMaterial ): Integer;
       procedure Render( Camera: TP3DActor; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure SetupMaterial( Material: TP3DMaterial; Camera: TP3DActor; const Fast: Boolean = False; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure RenderMesh( Idx: Integer; Camera: TP3DActor; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure Sort( Func: TP3DRenderListScoreFunc; lo, hi: Integer );
       procedure Optimize;
       procedure Clear; reintroduce;
+      function CheckCollision( RenderList: TP3DRenderList; out A, B: TP3DRenderObject ): Boolean;
+      function CheckCollision( ASphere: TP3DSphere; out B: TP3DRenderObject ): Boolean;
+      function CheckCollision( AAABB: TP3DAABB; out B: TP3DRenderObject ): Boolean;
 
-      property Lights: TP3DLightList read FLights write FLights;
+      property Lights: TP3DLightRenderList read FLights write FLights;
       property LastUpdate: Integer read FLastUpdate;
       property OnAdd: TP3DRenderListAddCallBack read FOnAdd write FOnAdd;
   end;
@@ -162,25 +185,76 @@ begin
   Result:= Integer( Item.Material.HasTransparency );
 end;
 
-{ TP3DRenderList }
+{ TP3DLightRenderList }
 
-constructor TP3DRenderList.Create;
+function TP3DLightRenderList.PushRenderObject(AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial): Integer;
 begin
-  inherited Create;
-  Lights:= TP3DLightList.Create;
-  ModifierStack:= TP3DRenderListModifierList.Create;
+  if ( AData is TP3DLight ) then
+    Result:= inherited PushRenderObject(AData, AMatrix, AMaterial)
+  else
+    Result:= -1;
 end;
 
-destructor TP3DRenderList.Destroy;
+procedure TP3DLightRenderList.PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
+var
+  numLights: Integer;
+  i, j: Integer;
+  l: String;
+  pos: TVec4;
+  obj: TP3DDataBlock;
+
 begin
-  inherited Clear( True );
-  Lights.Clear( False );
-  FreeAndNil( FLights );
-  FreeAndNil( FModifierStack );
-  inherited Destroy;
+  if ( not Assigned( P3DShaderActive )) then
+    exit;
+
+  numLights:= 0;
+  for i:= 0 to Count - 1 do
+    for j:= 0 to Items[ i ].Positions.Count - 1 do
+      with ( Items[ i ].Data as TP3DLight ) do
+        begin
+          l:= 'LightSource[' + IntToStr( numLights ) + ']';
+
+          if ( liLightParams in Params ) then
+            begin
+              //Color
+              glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.color' ), Color.R, Color.G, Color.B, Energy ); cle( Self );
+
+              //linear Attenuation
+              glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.linearAttenuation' ), LinearAttenuation ); cle( Self );
+
+              //quadratic Attenuation
+              glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.quadraticAttenuation' ), QuadraticAttenuation ); cle( Self );
+
+              //range
+              glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.range' ), GetLightRange ); cle( Self );
+
+              //type
+              glUniform1i( P3DShaderActive.Uniforms.AddrByName( l + '.type' ), Ord( LightType )); cle( Self );
+            end;
+
+          if ( liPosition in Params ) then
+            begin
+              //position in viewspace
+              pos:= matView * vec4( Items[ i ].Positions[ j ], 1 );
+              glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
+              pos:= vec4( normalize( mat3( matView ) * {mat3( matWorld ) * }Items[ i ].Matrices[ i ].Row[ 2 ].XYZ ), 0 );
+              glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
+              pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
+              glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
+              //light_vect = light_position - face_center_position
+              //cam_vect = cam_position - face_center_position
+              //halfangle_vect = (light_vect.normal() + cam_vect.normal()).normal()
+            end;
+          Inc( numLights );
+          //WriteLn( P3DShaderActive.DumpUniforms );
+        end;
+  glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'numLightSource'), numLights ); cle( Self );
 end;
 
-function TP3DRenderList.PushRenderObject( AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial ): Integer;
+
+{ TP3DCustomRenderList }
+
+function TP3DCustomRenderList.PushRenderObject(AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial): Integer;
 var
   Obj: TP3DRenderObject;
   q: TQuaternion;
@@ -189,7 +263,7 @@ var
   rot: TMat3;
 begin
   Result:= Find( AData, AMaterial );
-  if ( Result > -1 ) then
+  {if ( Result > -1 ) then
     begin
       Obj:= Items[ Result ];
       mat4decompose( AMatrix, loc, rot, scale );
@@ -200,7 +274,7 @@ begin
       Obj.Matrices.Add( AMatrix );
       Obj.InstanceCount:= Obj.InstanceCount + 1;
     end
-  else
+  else}
     begin
       Obj:= TP3DRenderObject.Create;
       Obj.Data:= AData;
@@ -229,6 +303,34 @@ begin
     end;
 end;
 
+constructor TP3DCustomRenderList.Create;
+begin
+  inherited Create;
+  ModifierStack:= TP3DRenderListModifierList.Create;
+end;
+
+destructor TP3DCustomRenderList.Destroy;
+begin
+  FreeAndNil( FModifierStack );
+  inherited Destroy;
+end;
+
+
+{ TP3DRenderList }
+
+constructor TP3DRenderList.Create;
+begin
+  inherited Create;
+  Lights:= TP3DLightRenderList.Create;
+end;
+
+destructor TP3DRenderList.Destroy;
+begin
+  inherited Clear( True );
+  Lights.Clear( True );
+  FreeAndNil( FLights );
+  inherited Destroy;
+end;
 
 procedure TP3DRenderList.Add(AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; const AFlags: TP3DRenderListFlags);
 var
@@ -257,7 +359,7 @@ begin
   glDisable( GL_SCISSOR_TEST );}
 end;
 
-function TP3DRenderList.Find(AData: TP3DDataBlock; Material: TP3DMaterial): Integer;
+function TP3DCustomRenderList.Find(AData: TP3DDataBlock; Material: TP3DMaterial): Integer;
 var
   i: Integer;
 begin
@@ -318,7 +420,8 @@ begin
     exit;
   cam:= TP3DCamera( Camera.Data );
   mat:= P3DMaterialActive;
-  SetupMaterial( mat, Camera, False, AFlags );
+  if ( Assigned( mat )) then
+    SetupMaterial( mat, Camera, False, AFlags );
 
   Optimize;
   if ( rlfDepthTest in AFlags ) then
@@ -337,7 +440,7 @@ begin
   for i:= 0 to Count - 1 do
     if ( Items[ i ].Data is TP3DMesh ) then
       RenderMesh( i, Camera, AFlags );
-  if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
+  if ( Assigned( P3DMaterialActive ) and P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
     begin
       glVertexAttrib1f( decl.Addr, 0.0 );
       glVertexAttribDivisorARB( decl.Addr, 0 ); cle( Self );
@@ -511,8 +614,53 @@ end;
 procedure TP3DRenderList.Clear;
 begin
   inherited Clear( True );
-  Lights.Clear( False );
+  Lights.Clear( True );
   ModifierStack.Clear( False );
+end;
+
+function TP3DRenderList.CheckCollision(RenderList: TP3DRenderList; out A, B: TP3DRenderObject): Boolean;
+var
+  i, j: Integer;
+begin
+  Result:= False;
+  A:= nil;
+  B:= nil;
+  for i:= 0 to Count - 1 do
+    for j:= 0 to RenderList.Count - 1 do
+      if ( Self[ i ].CollideWithRenderObject( RenderList[ j ])) then
+        begin
+          Result:= True;
+          A:= Self[ i ];
+          B:= RenderList[ j ];
+        end;
+end;
+
+function TP3DRenderList.CheckCollision(ASphere: TP3DSphere; out B: TP3DRenderObject): Boolean;
+var
+  i: Integer;
+begin
+  Result:= False;
+  B:= nil;
+  for i:= 0 to Count - 1 do
+    if ( Self[ i ].CollideWithSphere( ASphere )) then
+      begin
+        Result:= True;
+        B:= Self[ i ];
+      end;
+end;
+
+function TP3DRenderList.CheckCollision(AAABB: TP3DAABB; out B: TP3DRenderObject): Boolean;
+var
+  i: Integer;
+begin
+  Result:= False;
+  B:= nil;
+  for i:= 0 to Count - 1 do
+    if ( Self[ i ].CollideWithAABB( AAABB )) then
+      begin
+        Result:= True;
+        B:= Self[ i ];
+      end;
 end;
 
 { TP3DScene }
@@ -764,7 +912,7 @@ var
 begin
   for Scene in AData.Scenes do
     begin
-      Obj:= TP3DActor.Create( AData );
+      Obj:= TP3DActor.Create( Owner );
       Obj.Data:= Scene;
       Objects.Add( Obj );
     end;
@@ -830,6 +978,7 @@ begin
   FPositions:= TP3DVec3BufferGL.Create( True );
   FRotations:= TP3DVec4BufferGL.Create( True );
   FScalings:= TP3DVec3BufferGL.Create( True );
+  FActors:= TP3DActorList.Create( Self );
   FMatrices:= TMat4List.Create;
   Material:= nil;
   Data:= nil;
@@ -842,12 +991,57 @@ begin
   FRotations.Free;
   FScalings.Free;
   FMatrices.Free;
+  FActors.Free;
   SetLength( Modifiers, 0 );
   {if ( Assigned( Data )) then
     WriteLn( 'Destroying RenderObject with data ' + Data.Name )
   else
     WriteLn( 'Destroying RenderObject without data.' );
   inherited Destroy;}
+end;
+
+function TP3DRenderObject.CollideWithRenderObject(ARenderObject: TP3DRenderObject): Boolean;
+var
+  i, j: Integer;
+begin
+  Result:= False;
+  if (( ARenderObject.Data is TP3DActor ) and ( Self.Data is TP3DActor ) and
+      ( TP3DActor( ARenderObject.Data ).Collision <> acNone ) and ( TP3DActor( Self.Data ).Collision <> acNone )) then
+    for i:= 0 to Self.Matrices.Count - 1 do
+      for j:= 0 to ARenderObject.Matrices.Count - 1 do
+        if ( TP3DActor( Data ).CollideActor( Self.Matrices[ i ], ARenderObject.Matrices[ j ], TP3DActor( ARenderObject.Data ))) then
+          begin
+            Result:= True;
+            break;
+          end;
+end;
+
+function TP3DRenderObject.CollideWithSphere(ASphere: TP3DSphere): Boolean;
+var
+  i: Integer;
+begin
+  Result:= False;
+  if (( Self.Data is TP3DActor ) and ( TP3DActor( Self.Data ).Collision <> acNone )) then
+    for i:= 0 to Self.Matrices.Count - 1 do
+      if ( TP3DActor( Data ).CollideSphere( Self.Matrices[ i ], ASphere )) then
+        begin
+          Result:= True;
+          break;
+        end;
+end;
+
+function TP3DRenderObject.CollideWithAABB(AAABB: TP3DAABB): Boolean;
+var
+  i: Integer;
+begin
+  Result:= False;
+  if (( Self.Data is TP3DActor ) and ( TP3DActor( Self.Data ).Collision <> acNone )) then
+    for i:= 0 to Self.Matrices.Count - 1 do
+      if ( TP3DActor( Data ).CollideAABB( Self.Matrices[ i ], AAABB )) then
+        begin
+          Result:= True;
+          break;
+        end;
 end;
 
 

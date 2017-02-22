@@ -990,8 +990,11 @@ begin
 
   BindAttribLocations();
 
-  glLinkProgram( ProgramObj );
-
+  try
+    glLinkProgram( ProgramObj );
+  except
+    on E: Exception do;
+  end;
   glGetProgramiv( ProgramObj, GL_LINK_STATUS, @isLinked );
 
   glDetachShader( ProgramObj, _vshader );

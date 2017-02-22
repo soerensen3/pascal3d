@@ -14,32 +14,37 @@ uses
   cthreads,
   Interfaces, //crashes in linux without
   {$ENDIF}{$ENDIF}
-  p3dSDLApplication,
-  p3dwindow,
-  p3dlogging,
+  p3devents,
+  p3dgraphics,
+  p3dutils,
   __MAINUNIT__;
 
 
 Begin
   try
-    P3DLog.FileName:= '__PROJNAME__.xml';
-    P3DApplication.MainWindow:= TSDLWindow.Create;
-    P3DApplication.OnInit:= @Init;
-    P3DApplication.OnDeinit:= @DeInit;
+    //Initialize all the Pascal3D subsystems
+    P3DUtilsInit;
+    P3DEventsInit;
+    P3DGraphicsInit;
 
-    P3DApplication.MainWindow.OnRender:= @__MAINUNIT__.Render;
-    P3DApplication.OnMouseButton:= @__MAINUNIT__.OnMouseButton;
-    P3DApplication.OnMouseMotion:= @__MAINUNIT__.OnMouseMotion;
-    P3DApplication.OnMouseWheel:= @__MAINUNIT__.OnMouseWheel;
-    P3DApplication.OnKey:= @__MAINUNIT__.OnKey;
-    P3DApplication.OnInput:= @__MAINUNIT__.OnInput;
-    P3DApplication.MainWindow.OnResize:= @__MAINUNIT__.OnWndResize;
+    //Create the application from your class
+    P3DApplication:= __appclassname__.Create;
 
+    //Load the config which for example contains paths for assets and shaders and setups the main window
+    P3DApplication.LoadConfig( 'settings_default.xml' );
+
+    //Initialize everything and run the application
     P3DApplication.Initialize;
     P3DApplication.Run;
   except
     On E: Exception do
-      P3DLog.LogException( nil, E );
+      P3DLog.LogException( nil, E ); // On Exception we add a message to the log.
+      //This is saved to a html file after each message. The logpath is in the config.
   end;
-  P3DApplication.MainWindow.Free;
+  //Finalize Pascal3D subsystems
+  //Note that this is optional (finalization section of each unit will call these functions
+  //anyway) but this way we have more control in which order they are called
+  P3DGraphicsFinish;
+  P3DEventsFinish;
+  P3DUtilsFinish;
 End.

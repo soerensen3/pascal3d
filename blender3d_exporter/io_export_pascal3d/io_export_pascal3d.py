@@ -103,7 +103,7 @@ class P3DBinaryFile:
         return self.file.name
         
     def getfileandpos( self ):
-        return self.file.name + ':' + str( self.file.tell())
+        return os.path.basename( self.file.name ) + ':' + str( self.file.tell())
 
 class P3DExporter( bpy.types.Operator ):
     binfile = None
@@ -185,6 +185,8 @@ class P3DExporter( bpy.types.Operator ):
         transform = self.file.docstack[ - 1 ]
         transform.attrib[ 'Position' ] = '{:9f},{:9f},{:9f}'.format( *obj.location )
         quat = obj.matrix_world.to_quaternion()
+        #quat.negate() #change handedness zxw
+        #quat = Vector(( -quat.y, quat.x, quat.z, quat.w ))
         transform.attrib[ 'Quaternion' ] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
         transform.attrib[ 'Scale' ] = '{:9f},{:9f},{:9f}'.format( *obj.scale )
         transform.attrib[ 'RotationOrder' ] = 'ro' + obj.rotation_mode # Does not matter for quaternion rotation but when rotating with euler angles later
@@ -287,7 +289,7 @@ class P3DExporter( bpy.types.Operator ):
         self.report({ 'INFO' }, ', '.join( self.supported_types ))
         self.ExportSceneScreenshot( scene )
         for obj in scene.objects:
-            if obj.parent is None and obj.type in self.supported_types and obj.is_visible( scene ):
+            if obj.parent is None and obj.is_visible( scene ):
                 self.ExportObject( obj )
         self.file.pop()
 
@@ -301,6 +303,10 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'object' )
         el.attrib[ 'Name' ] = obj.name
+        if (( obj.game.use_collision_bounds ) and ( not obj.game.use_ghost )):
+          el.attrib[ 'Collision' ] = 'ac' + obj.game.collision_bounds_type.capitalize()
+        else:
+          el.attrib[ 'Collision' ] = 'acNone'
         if ( obj.data != None and obj.type in self.supported_types ):
             type = str( obj.type ).lower()
             el.attrib[ 'Data' ] = '/' + type + '_' + obj.data.name
@@ -322,22 +328,21 @@ class P3DExporter( bpy.types.Operator ):
   ##EXPORTING MESH HELPERS ---------------------------------------------------------
     def ExportVertices( self ):
         totno = 0
-        self.binfile.writeint( len( self.binfile.mesh.vertices ))        
+        self.binfile.writeint( len( self.binfile.mesh.vertices ))
         for vertex in self.binfile.mesh.vertices:
             totno += 1
             self.binfile.writevec( vertex.co )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' positions written' )
-
         return totno
 
     def ExportNormals( self ):
-        self.binfile.mesh.calc_normals()
+        self.binfile.mesh.calc_normals_split()
         totno = 0
-        self.binfile.writeint( len( self.binfile.mesh.vertices ))
-        for vertex in self.binfile.mesh.vertices:
+        self.binfile.writeint( len( self.binfile.mesh.loops ))
+        for l in self.binfile.mesh.loops:
             totno += 1
-            self.binfile.writevec( vertex.normal )
+            self.binfile.writevec( l.normal )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' normals written' )
         return totno
@@ -348,7 +353,7 @@ class P3DExporter( bpy.types.Operator ):
         self.binfile.LoopVertex = {}
         self.binfile.writeint( len( self.binfile.mesh.loops ))
         for l in self.binfile.mesh.loops:
-            self.binfile.LoopVertex[ l.vertex_index ] = l.index
+#            self.binfile.LoopVertex[ l.vertex_index ] = l.index
             totno += 1
             self.binfile.writevec( l.tangent )
         if ( self.Verbose ):
@@ -393,6 +398,7 @@ class P3DExporter( bpy.types.Operator ):
         for loop in self.binfile.mesh.loops:
           totno += 1
           self.binfile.writeint( loop.vertex_index )
+          self.report({ 'INFO' }, 'loop: ' + str( loop.vertex_index ))
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' loops written' )
 
@@ -405,7 +411,7 @@ class P3DExporter( bpy.types.Operator ):
         for loop in self.binfile.mesh.loops:
           totno += 1
           self.binfile.writeint( self.binfile.mesh.edges[ loop.edge_index ].vertices[ 0 ])
-          self.binfile.writeint( self.binfile.mesh.edges[ loop.edge_index ].vertices[ 1 ])          
+          self.binfile.writeint( self.binfile.mesh.edges[ loop.edge_index ].vertices[ 1 ])
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' edges written' )
 
@@ -458,6 +464,8 @@ class P3DExporter( bpy.types.Operator ):
         totno_idx = 0
 
         if ( len( grps ) > 0 ):
+            el = self.file.docstack[ -1 ]
+            el.attrib[ 'VertexWeights' ] = self.binfile.getfileandpos()      
             bin = b''
             self.binfile.writeint( len( self.binfile.mesh.vertices ))
           
@@ -484,7 +492,8 @@ class P3DExporter( bpy.types.Operator ):
                 bin += struct.pack( '4i', *idx ) #write indices separately from weights
                 totno_idx += 1
                 #file.writeintvec( idx )
-            self.binfile.writeint( totno )             
+            el.attrib[ 'VertexWeightIndices' ] = self.binfile.getfileandpos()
+            self.binfile.writeint( totno )
             self.binfile.file.write( bin )
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' vertex weights written' )
@@ -506,9 +515,9 @@ class P3DExporter( bpy.types.Operator ):
               armature.update_tag()
               scene = bpy.context.scene
               scene.frame_set(scene.frame_current)
-            mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
+          mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
         else:
-            mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
+          mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
         #if ( not ( armature is None )):
         #  armature.data.pose_position = pose_position
         if ( self.Verbose ):
@@ -525,10 +534,11 @@ class P3DExporter( bpy.types.Operator ):
 
         el.attrib[ 'Positions' ] = self.binfile.getfileandpos()
         self.ExportVertices()
-        grps = self.ExportVertexGroups()
+        
+        grps = self.ExportVertexGroups() #xml elements will be added inside the function
         for grp in grps:
             elgrp = self.file.push( 'weightgroup' )
-            elgrp.attrib[ 'name' ] = grp
+            elgrp.attrib[ 'Name' ] = grp
             self.file.pop()
 
         #el.attrib['vertexgroups'] = '\'' + '\', \''.join( grps ) + '\''
@@ -563,8 +573,8 @@ class P3DExporter( bpy.types.Operator ):
             armature = obj.find_armature()
             if ( not ( armature is None )):
                 el = self.file.push( 'modifier' )
-                el.attrib[ 'Name' ] = 'armature'
-                el.attrib[ 'Data' ] = '/armature_' + armature.data.name
+                el.attrib[ 'Type' ] = 'TP3DMeshModifierArmature'
+                el.attrib[ 'Armature' ] = '/armature_' + armature.data.name
                 self.file.armatures.add( armature ) #use object instead of data
                 self.file.pop()
 
@@ -669,7 +679,7 @@ class P3DExporter( bpy.types.Operator ):
         el.attrib[ 'Name' ] = 'material_' + material.name
 
         el.attrib['Diff'] = '{:6f}, {:6f}, {:6f}'.format(*( material.diffuse_color * material.diffuse_intensity ))
-        el.attrib['Spec'] = '{:6f}, {:6f}, {:6f}'.format( *( material.specular_color ))
+        el.attrib['Spec'] = '{:6f}, {:6f}, {:6f}'.format( *( material.specular_color * material.specular_intensity ))
         el.attrib['Spec_Hardness'] = '{:6f}'.format( material.specular_hardness )  # Specular
 
         if ( material.use_shadeless ):
@@ -737,11 +747,14 @@ class P3DExporter( bpy.types.Operator ):
             self.report({ 'INFO' }, 'Exporting data ' + bone.name )
 
         el = self.file.push( 'joint' )
-        el.attrib[ 'name' ] = 'joint_' + bone.name
+        el.attrib[ 'Name' ] = 'joint_' + bone.name
 
+        bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         bone_matrix = bone.matrix_local
         if ( bone.parent ):
             bone_matrix = bone.parent.matrix_local.inverted() * bone_matrix
+        else:
+            bone_matrix = bone_space * bone_matrix
         bone_matrix *= arm.matrix_world.inverted()
         #self.BoneMatrix *= BlenderObject.matrix_world
         #if bone.parent is None:
@@ -753,8 +766,11 @@ class P3DExporter( bpy.types.Operator ):
         #bone_matrix *= bone_space
         #position, quat, scale = bone_matrix.decompose() 
         position = bone.head_local
-        quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
+        #quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
+        quat = bone_matrix.to_quaternion()
         el.attrib['Position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+        length = ( bone.head_local - bone.tail_local ).length
+        el.attrib['Length'] = '{:9f}'.format( length )
         #quat = ( bone_matrix ).to_quaternion()
         el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
 
@@ -829,18 +845,20 @@ class P3DExporter( bpy.types.Operator ):
         #if ( self.Verbose ):
         #  self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
 
-        el = self.file.push( 'joint' )
+        el = self.file.push( 'pose' )
         el.attrib[ 'Name' ] = 'joint_' + pose_bone.name
 
-        bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
+        #bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         #matrix = self.get_pose_bone_matrix( armature, pose_bone ) * bone_space
         #position, quat, scale = matrix.decompose()
-        matrix = self.get_local_pose_matrix( pose_bone )
+        #matrix = self.get_local_pose_matrix( pose_bone )
+        matrix = pose_bone.matrix_basis
         position = pose_bone.head
-        quat = matrix.to_quaternion()
-        #quat = pose_bone.rotation_quaternion #quat.normalized()
+        #quat = matrix.to_quaternion()
+        quat = pose_bone.rotation_quaternion #quat.normalized()
         el.attrib['Position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
-        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+#        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
+        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 3 ], quat[ 0 ], quat[ 1 ], quat[ 2 ])
 
         self.file.pop()
   ##--------------------------------------------------------------------------------
@@ -853,15 +871,13 @@ class P3DExporter( bpy.types.Operator ):
         el.attrib[ 'Name' ] = 'armature_' + armature.data.name
 
         bones = armature.data.bones
-        idx = 0
         for bone in bones:
             #if bone.parent is None:
-            self.ExportJoint( bone, armature, False ).attrib['index'] = str( idx )
-            idx += 1
+            self.ExportJoint( bone, armature, False )
 
         if ( not ( armature.animation_data is None ) and not ( armature.animation_data.action is None )):
             self.file.actions.add(( armature.animation_data.action, armature ))
-            el.attrib[ 'Action' ] = '/action_' + armature.data.name + armature.animation_data.action.name
+            el.attrib[ 'CurrentAction' ] = '/action_' + armature.data.name + armature.animation_data.action.name
 
         self.file.pop()
 

@@ -1,0 +1,299 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Plane"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 1.387618, 1.387618, 1.387618"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Data = "/mesh_Plane" />
+    <object
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Cube"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 0.208745,-0.078288, 0.056551"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Data = "/mesh_Cube" />
+    <object
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Grid"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.200000"
+       Data = "/mesh_Grid" />
+    <object
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Lamp"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 5.684449,-1.029559, 8.872979"
+       Data = "/lamp_Lamp" />
+    <object
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Plane.001"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 5.095441, 5.095441, 5.095441"
+       Position = "-0.176498,-0.029741, 0.107434"
+       Data = "/mesh_Plane" />
+    <object
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "tree"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Scale = " 1.019088, 1.019088, 1.019088"
+       Position = " 0.047496, 0.002884,-0.019639"
+       Data = "/mesh_tree" />
+  </scene>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:212"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:124"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:0"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:52"
+     Name = "mesh_Plane"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:264"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:160"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:104">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "0"
+       Material = "/material_Material.002" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:600196"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:216668"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:272"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:70116"
+     Name = "mesh_tree"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:830312"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:370080"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:139960">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "4793"
+       Material = "/material_tree_mat" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1006784"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:903096"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:849492"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:865924"
+     Name = "mesh_Grid"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1068996"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:944572"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:882356">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "1295"
+       Material = "/material_Material.001" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074396"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074308"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074184"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074236"
+     Name = "mesh_Plane"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074448"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074344"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074288">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "0"
+       Material = "/material_Material" />
+  </mesh>
+  <mesh
+     Cotangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1172396"
+     TexCoords0 = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1107588"
+     Positions = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1074456"
+     Normals = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1084540"
+     Name = "mesh_Cube"
+     Faces = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1211280"
+     Tangents = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1133512"
+     Loops = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/engine_runtime/assets/tree_new.p3dbin:1094624">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "809"
+       Material = "/material_Material" />
+  </mesh>
+  <light
+     Name = "lamp_Lamp"
+     Energy = "1.0"
+     Color = "1.000000, 1.000000, 1.000000"
+     LightType = "ltSun" />
+  <materialbase
+     Instancing = "1"
+     Spec_Hardness = "48.000000"
+     Name = "material_Material.002"
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.100000, 0.100000, 0.100000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0">
+    <map
+       Name = "Texture.004"
+       DiffuseFactor = "1.0"
+       Mode = "mapMix"
+       Data = "/tex_Texture.004" />
+    <map
+       Name = "Texture.005"
+       DiffuseFactor = "0.0"
+       NormalFactor = "1.0"
+       Mode = "mapMix"
+       Data = "/tex_Texture.005" />
+    <map
+       Name = "Texture.006"
+       DiffuseFactor = "0.0"
+       Mode = "mapMix"
+       Data = "/tex_Texture.006" />
+  </materialbase>
+  <materialbase
+     Instancing = "1"
+     Spec_Hardness = "7.000000"
+     Name = "material_Material"
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.258865, 0.258865, 0.258865"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0">
+    <map
+       Name = "Tex"
+       DiffuseFactor = "1.0"
+       Mode = "mapMix"
+       Data = "/tex_Tex" />
+    <map
+       Name = "Texture.001"
+       DiffuseFactor = "0.0"
+       NormalFactor = "1.0"
+       Mode = "mapMix"
+       Data = "/tex_Texture.001" />
+    <map
+       SpecularIntensity = "1.0"
+       Mode = "mapMultiply"
+       Name = "Texture.002"
+       DiffuseFactor = "0.0"
+       SpecularFactor = "1.0"
+       Data = "/tex_Texture.002" />
+  </materialbase>
+  <materialbase
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     Name = "material_Material.001"
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmMultiply"
+     Unlit = "0">
+    <map
+       AlphaFactor = "1.0"
+       Name = "Texture.003"
+       TexChannel = "0"
+       DiffuseFactor = "1.0"
+       Data = "/tex_Texture.003"
+       Mode = "mapMix" />
+  </materialbase>
+  <materialbase
+     Instancing = "1"
+     Spec_Hardness = "511.000000"
+     Name = "material_tree_mat"
+     Diff = "0.800000, 0.800000, 0.800000"
+     Spec = "0.050000, 0.050000, 0.050000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0">
+    <map
+       Name = "Texture.003"
+       DiffuseFactor = "1.0"
+       Mode = "mapMix"
+       Data = "/tex_Texture.003" />
+    <map
+       NormalFactor = "1.0"
+       Name = "Texture"
+       TexChannel = "0"
+       DiffuseFactor = "0.0"
+       Data = "/tex_Texture"
+       Mode = "mapMix">
+      <transform
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Scale = " 5.000000, 1.000000, 1.000000" />
+    </map>
+  </materialbase>
+  <materialbase
+     Instancing = "1"
+     Spec_Hardness = "38.000000"
+     Name = "material_Material"
+     Diff = "0.000000, 0.000000, 0.000000"
+     Spec = "0.000000, 0.000000, 0.000000"
+     TransparencyMode = "p3dmMultiply"
+     Unlit = "1">
+    <map
+       Name = "Tex"
+       AlphaFactor = "1.0"
+       DiffuseFactor = "0.0"
+       Mode = "mapMix"
+       Data = "/tex_Tex" />
+  </materialbase>
+  <texture
+     Name = "tex_Texture.002"
+     File = "TexturesCom_Concrete2_roughness_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Texture.001"
+     File = "TexturesCom_Concrete2_normalmap_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Texture.003"
+     File = "TexturesCom_LeavesDead0027_1_S_tile.png"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Tex"
+     File = "tree_shadow.png"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Texture"
+     File = "TexturesCom_WillowTreeBark_normalmap_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Tex"
+     File = "TexturesCom_Concrete2_albedo_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Texture.005"
+     File = "TexturesCom_SmoothCobblestone_normalmap_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Texture.003"
+     File = "TexturesCom_WillowTreeBark_albedo_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Texture.004"
+     File = "TexturesCom_SmoothCobblestone_albedo_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+  <texture
+     Name = "tex_Texture.006"
+     File = "TexturesCom_SmoothCobblestone_roughness_S.tif"
+     FilteringMipMap = "tfLinear"
+     MipMap = "1"
+     Filtering = "tfLinear" />
+</p3dfile>

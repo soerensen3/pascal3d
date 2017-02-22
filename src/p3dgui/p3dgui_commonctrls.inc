@@ -1277,7 +1277,9 @@ procedure TP3DListViewFile.Update;
       list:= XML.GetElementsByTagName( 'scene' );
       for i:= 0 to list.Count - 1 do
         begin
-          name:= TDOMElement( list[ i ]).AttribStrings[ 'name' ];
+          name:= TDOMElement( list[ i ]).AttribStrings[ 'Name' ];
+          if ( name = '' ) then
+            name:= TDOMElement( list[ i ]).AttribStrings[ 'name' ];
           if ( name > '' ) then
             Children.Add( name, nil, P3DSymbolScene );
         end;

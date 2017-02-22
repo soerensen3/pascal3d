@@ -1,19 +1,14 @@
-procedure OnMouseButton( Sender: TP3DApplication; Event: TSDL_MouseButtonEvent );
+procedure TP3DSceneApplication.SetClearColor(AValue: TVec4);
 begin
 
 end;
 
-procedure OnMouseMotion( Sender: TP3DApplication; Event: TSDL_MouseMotionEvent );
+procedure TP3DSceneApplication.MouseMotion(Event: TSDL_MouseMotionEvent);
 begin
-
+  inherited MouseMotion(Event);
 end;
 
-procedure OnMouseWheel( Sender: TP3DApplication; Event: TSDL_MouseWheelEvent );
-begin
-
-end;
-
-procedure OnKey( Sender: TP3DApplication; Event: TSDL_KeyboardEvent );
+procedure TP3DSceneApplication.Keyboard(Event: TSDL_KeyboardEvent);
   procedure UpdateMaterials( Data: TP3DLibrary );
   var
     i: Integer;
@@ -27,7 +22,10 @@ var
   i: Integer;
   Tex: TP3DTexture;
   FrameBuffer: TP3DFrameBuffer;
+
 begin
+  inherited Keyboard(Event);
+
   if ( Event.keysym.scancode = SDL_SCANCODE_F2 ) then
     begin
       {with ( P3DData ) do
@@ -103,14 +101,19 @@ begin
   if ( Event.keysym.scancode = SDL_SCANCODE_F8 ) then
     begin
       P3DShaderNodeLib.Nodes.Clear( True );
-      P3DShaderNodeLib.LoadLibraryPath( P3DSearchPaths.BaseDir + 'shaders/nodes/core/', '*.pmd' );;
+
+      SetCurrentDir( ExtractFileDir( ParamStr( 0 )));
+      P3DApplication.LoadConfigSection( ExtractFileDir( ParamStr( 0 )) + '/settings_default.xml', 'shadernodelibrary' );
       UpdateMaterials( P3DData );
       for i:= 0 to P3DData.Libraries.Count - 1 do
         UpdateMaterials( P3DData.Libraries[ i ]);
     end;
 end;
 
-procedure OnInput( Sender: TP3DApplication );
+
+procedure TP3DSceneApplication.Events;
 begin
+  inherited Events;
   P3DGUIManager.Input;
 end;
+

@@ -104,11 +104,9 @@ begin
       R.Left:= 0;
       R.Top:= 0; //Left/Top start already at the Client Rect
     end
-  else if P3DViewports.Count > 0 then
-    with ( P3DViewports[ 0 ]) do
-      R:= P3DRect( 0, 0, Width, Height )
-  else //NO VIEWPORTS AND NO PARENT
-    exit;
+  else
+    with ( P3DViewports.Screen ) do
+      R:= P3DRect( 0, 0, Width, Height );
   FPageSize:= vec2( 0 );
   for Control in Self do
     if ( P3DData.IsValid( Control ) and ( Control.Visible ) and ( Control.Align <> alClient )) then
@@ -250,13 +248,13 @@ begin
   my:= P3DGUIManager.MouseY;
 
   Result:= MouseRay( mx, my, True );
-  if ( Result <> LastMouseOverCtrl ) then
+  if ( Result <> P3DGUIManager.LastMouseOverCtrl ) then
     begin
-      if ( Assigned( LastMouseOverCtrl )) then
-        LastMouseOverCtrl.InputState:= LastMouseOverCtrl.InputState - [ gcisMouseOver ];
+      if ( Assigned( P3DGUIManager.LastMouseOverCtrl )) then
+        P3DGUIManager.LastMouseOverCtrl.InputState:= P3DGUIManager.LastMouseOverCtrl.InputState - [ gcisMouseOver ];
       if ( Assigned( Result )) then
         Result.InputState:= Result.InputState + [ gcisMouseOver ];
-      LastMouseOverCtrl:= Result;
+      P3DGUIManager.LastMouseOverCtrl:= Result;
     end;
   if ( not Assigned( Result ) and ( P3DGUIManager.Cursor <> curArrow )) then
     P3DGUIManager.Cursor:= curArrow
@@ -269,26 +267,26 @@ begin
       if ( DButtons[ i ]) then
         if ( Buttons[ i ]) then //pushed
           begin
-            LastMouseDownCtrl[ i ]:= LastMouseOverCtrl;
-            if ( Assigned( LastMouseDownCtrl[ i ]) and P3DData.IsValid( LastMouseDownCtrl[ i ])) then
-              LastMouseDownCtrl[ i ].InputState:= LastMouseDownCtrl[ i ].InputState + BtnInpState( i );
-            P3DGUIManager.FocusedControl:= LastMouseOverCtrl;
+            P3DGUIManager.LastMouseDownCtrl[ i ]:= P3DGUIManager.LastMouseOverCtrl;
+            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DData.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
+              P3DGUIManager.LastMouseDownCtrl[ i ].InputState:= P3DGUIManager.LastMouseDownCtrl[ i ].InputState + BtnInpState( i );
+            P3DGUIManager.FocusedControl:= P3DGUIManager.LastMouseOverCtrl;
           end
         else                    //released
           begin
-            if ( Assigned( LastMouseDownCtrl[ i ]) and P3DData.IsValid( LastMouseDownCtrl[ i ])) then
-              LastMouseDownCtrl[ i ].InputState:= LastMouseDownCtrl[ i ].InputState - BtnInpState( i );
+            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DData.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
+              P3DGUIManager.LastMouseDownCtrl[ i ].InputState:= P3DGUIManager.LastMouseDownCtrl[ i ].InputState - BtnInpState( i );
             // Drag and Drop release
             if (( DragDropSrc <> nil )) then
               begin
                 Accept:= False;
-                if ( Assigned( LastMouseOverCtrl ) and P3DData.IsValid( LastMouseOverCtrl )) then
-                  LastMouseOverCtrl.DragDrop( LastMouseOverCtrl, DragDropSrc, X, Y, Accept );
+                if ( Assigned( P3DGUIManager.LastMouseOverCtrl ) and P3DData.IsValid( P3DGUIManager.LastMouseOverCtrl )) then
+                  P3DGUIManager.LastMouseOverCtrl.DragDrop( P3DGUIManager.LastMouseOverCtrl, DragDropSrc, X, Y, Accept );
                 if ( not Accept ) then
                   DragDropSrc.DragCancel( DragDropSrc, X, Y );
                 DragDropSrc:= nil;
               end;
-            LastMouseDownCtrl[ i ]:= nil;
+            P3DGUIManager.LastMouseDownCtrl[ i ]:= nil;
           end;
 
   for Control in Self do
