@@ -48,7 +48,6 @@ procedure TP3DSceneApplication.Initialize;
 begin
   inherited Initialize;
 
-  CreateTestSurface;
   InitGL;
 
   P3DSceneGUIInit;

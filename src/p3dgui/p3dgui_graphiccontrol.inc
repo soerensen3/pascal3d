@@ -98,7 +98,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure Realign( var ClientArea: TP3DRect ); virtual; //Realign the control. Is called from TP3DControlList when parent changes
     procedure Paint( BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect ); virtual; //Prepare the canvas for drawing and call draw procedure.
 
-    property HideChildren: Boolean read FHideChildren write FHideChildren; //Do not children's render procedure
+    property HideChildren: Boolean read FHideChildren write FHideChildren; //Do not call children's render procedure
 
   public
     constructor Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl); virtual;

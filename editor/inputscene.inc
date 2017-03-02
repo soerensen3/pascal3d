@@ -3,6 +3,12 @@ begin
 
 end;
 
+constructor TP3DSceneApplication.Create;
+begin
+  inherited Create;
+  CreateTestSurface;
+end;
+
 procedure TP3DSceneApplication.MouseMotion(Event: TSDL_MouseMotionEvent);
 begin
   inherited MouseMotion(Event);

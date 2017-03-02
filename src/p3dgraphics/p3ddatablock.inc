@@ -41,8 +41,8 @@ type
       class function DOMNodeName: String; override;
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );  virtual;
 
-      function CollideSphere( Mat: TMat4; ASphere: TP3DSphere ): Boolean; virtual;
-      function CollideAABB( Mat: TMat4; AAABB: TP3DAABB ): Boolean; virtual;
+      function CollideSphere( Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3 ): Boolean; virtual;
+      function CollideAABB( Mat: TMat4; AAABB: TP3DAABB; out Intersect: TVec3; out N: TVec3 ): Boolean; virtual;
       function CollidePoint( Mat: TMat4; APoint: TVec3 ): Boolean; virtual;
 
       property AABB: TP3DAABB read FAABB write FAABB;
@@ -744,12 +744,12 @@ begin
   //Don't do anything but we don't want to generate an error when mothod is not overriden by ancestor class
 end;
 
-function TP3DDataBlock.CollideSphere(Mat: TMat4; ASphere: TP3DSphere): Boolean;
+function TP3DDataBlock.CollideSphere(Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3): Boolean;
 begin
   Result:= False;
 end;
 
-function TP3DDataBlock.CollideAABB(Mat: TMat4; AAABB: TP3DAABB): Boolean;
+function TP3DDataBlock.CollideAABB(Mat: TMat4; AAABB: TP3DAABB; out Intersect: TVec3; out N: TVec3): Boolean;
 begin
   Result:= False;
 end;

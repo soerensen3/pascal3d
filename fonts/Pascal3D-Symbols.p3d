@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<font name="Pascal3D-Symbols" size="0.0634765625" texture="Pascal3D-Symbols.png">
+<font name="Pascal3D-Symbols" size="0.0634765625" texture="/home/johannes/Documents/dev/Lazarus/pascal3d/fonts/Pascal3D-Symbols.png">
   <char uv1="0.02343750,0.02343750" uv2="0.09375000,0.08691406" char="A"/>
   <char uv1="0.11718750,0.02343750" uv2="0.18750000,0.08691406" char="B"/>
   <char uv1="0.21093750,0.02343750" uv2="0.28125000,0.08691406" char="C"/>

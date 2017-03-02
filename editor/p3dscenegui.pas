@@ -43,6 +43,8 @@ type
       procedure LoadShaders;
 
     public
+      constructor Create;
+
       procedure Initialize; override;
       procedure Finalize; override;
   end;

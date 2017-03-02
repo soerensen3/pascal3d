@@ -26,7 +26,7 @@ type
 
   { TP3DApplication }
 
-  TP3DApplication = class
+  TP3DApplication = class ( TPersistent )
     private
       FActiveWindow: TP3DWindow;
       FMainWindow: TP3DWindow;
@@ -55,7 +55,7 @@ type
       procedure MouseWheel( Event: TSDL_MouseWheelEvent ); virtual;
       procedure Keyboard( Event: TSDL_KeyboardEvent ); virtual;
       procedure TextInput( Event: TSDL_TextInputEvent ); virtual;
-      procedure StopRunning; virtual;
+      procedure AfterRun; virtual;
 
     public
       constructor Create;
@@ -109,7 +109,7 @@ end;
 procedure TP3DApplication.FinalizeWindow(Sender: TP3DWindow);
 begin
   if ( Sender = MainWindow ) then
-    StopRunning;
+    Running:= False;
 end;
 
 procedure TP3DApplication.ResizeWindow(Sender: TP3DWindow; Event: TSDL_WindowEvent);
@@ -254,8 +254,7 @@ begin
       SDL_RENDER_DEVICE_RESET:
         P3DLog.LogInfo( Self, 'The device has been reset and all textures need to be recreated' )}
       SDL_QUITEV:
-        StopRunning;
-
+        Running:= False;
       else
         debug_printevent( event );
     end;
@@ -317,9 +316,8 @@ begin
   P3DInput.Keyboard.InputText:= P3DInput.Keyboard.InputText + Event.text;
 end;
 
-procedure TP3DApplication.StopRunning;
+procedure TP3DApplication.AfterRun;
 begin
-  Running:= False; // Quit main loop
   MainWindow.Hide;
   if ( Assigned( MainWindow.OnClose )) then
     MainWindow.OnClose( MainWindow );
@@ -388,6 +386,7 @@ begin
     on E: Exception do
       P3DLog.LogException( Self, E.Message );
   end;
+  AfterRun;
   P3DLog.LogInfo( Self, 'exit mainloop' ).AttribStrings[ 'function' ]:= 'Run';
   // Resourcen freigeben
   if ( Assigned( OnDeinit )) then

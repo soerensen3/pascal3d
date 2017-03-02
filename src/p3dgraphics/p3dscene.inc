@@ -36,9 +36,9 @@ type
       constructor Create;
       destructor Destroy; override;
 
-      function CollideWithRenderObject( ARenderObject: TP3DRenderObject ): Boolean;
-      function CollideWithSphere( ASphere: TP3DSphere ): Boolean;
-      function CollideWithAABB( AAABB: TP3DAABB ): Boolean;
+      function CollideWithRenderObject( ARenderObject: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
+      function CollideWithSphere( ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3 ): Boolean;
+      function CollideWithAABB( AAABB: TP3DAABB; out Intersect: TVec3; out N: TVec3 ): Boolean;
 
       property Data: TP3DDataBlock read FData write FData;
       property Positions: TP3DVec3BufferGL read FPositions write FPositions;
@@ -107,9 +107,9 @@ type
       procedure Sort( Func: TP3DRenderListScoreFunc; lo, hi: Integer );
       procedure Optimize;
       procedure Clear; reintroduce;
-      function CheckCollision( RenderList: TP3DRenderList; out A, B: TP3DRenderObject ): Boolean;
-      function CheckCollision( ASphere: TP3DSphere; out B: TP3DRenderObject ): Boolean;
-      function CheckCollision( AAABB: TP3DAABB; out B: TP3DRenderObject ): Boolean;
+      function CheckCollision( RenderList: TP3DRenderList; out A, B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
+      function CheckCollision( ASphere: TP3DSphere; out B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
+      function CheckCollision( AAABB: TP3DAABB; out B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
 
       property Lights: TP3DLightRenderList read FLights write FLights;
       property LastUpdate: Integer read FLastUpdate;
@@ -618,7 +618,7 @@ begin
   ModifierStack.Clear( False );
 end;
 
-function TP3DRenderList.CheckCollision(RenderList: TP3DRenderList; out A, B: TP3DRenderObject): Boolean;
+function TP3DRenderList.CheckCollision(RenderList: TP3DRenderList; out A, B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3): Boolean;
 var
   i, j: Integer;
 begin
@@ -627,7 +627,7 @@ begin
   B:= nil;
   for i:= 0 to Count - 1 do
     for j:= 0 to RenderList.Count - 1 do
-      if ( Self[ i ].CollideWithRenderObject( RenderList[ j ])) then
+      if ( Self[ i ].CollideWithRenderObject( RenderList[ j ], Intersect, N )) then
         begin
           Result:= True;
           A:= Self[ i ];
@@ -635,31 +635,33 @@ begin
         end;
 end;
 
-function TP3DRenderList.CheckCollision(ASphere: TP3DSphere; out B: TP3DRenderObject): Boolean;
+function TP3DRenderList.CheckCollision(ASphere: TP3DSphere; out B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3): Boolean;
 var
   i: Integer;
 begin
   Result:= False;
   B:= nil;
   for i:= 0 to Count - 1 do
-    if ( Self[ i ].CollideWithSphere( ASphere )) then
+    if ( Self[ i ].CollideWithSphere( ASphere, Intersect, N )) then
       begin
         Result:= True;
         B:= Self[ i ];
+        break;
       end;
 end;
 
-function TP3DRenderList.CheckCollision(AAABB: TP3DAABB; out B: TP3DRenderObject): Boolean;
+function TP3DRenderList.CheckCollision(AAABB: TP3DAABB; out B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3): Boolean;
 var
   i: Integer;
 begin
   Result:= False;
   B:= nil;
   for i:= 0 to Count - 1 do
-    if ( Self[ i ].CollideWithAABB( AAABB )) then
+    if ( Self[ i ].CollideWithAABB( AAABB, Intersect, N )) then
       begin
         Result:= True;
         B:= Self[ i ];
+        break;
       end;
 end;
 
@@ -1000,7 +1002,7 @@ begin
   inherited Destroy;}
 end;
 
-function TP3DRenderObject.CollideWithRenderObject(ARenderObject: TP3DRenderObject): Boolean;
+function TP3DRenderObject.CollideWithRenderObject(ARenderObject: TP3DRenderObject; out Intersect: TVec3; out N: TVec3): Boolean;
 var
   i, j: Integer;
 begin
@@ -1009,35 +1011,35 @@ begin
       ( TP3DActor( ARenderObject.Data ).Collision <> acNone ) and ( TP3DActor( Self.Data ).Collision <> acNone )) then
     for i:= 0 to Self.Matrices.Count - 1 do
       for j:= 0 to ARenderObject.Matrices.Count - 1 do
-        if ( TP3DActor( Data ).CollideActor( Self.Matrices[ i ], ARenderObject.Matrices[ j ], TP3DActor( ARenderObject.Data ))) then
+        if ( TP3DActor( Data ).CollideActor( Self.Matrices[ i ], ARenderObject.Matrices[ j ], TP3DActor( ARenderObject.Data ), Intersect, N )) then
           begin
             Result:= True;
             break;
           end;
 end;
 
-function TP3DRenderObject.CollideWithSphere(ASphere: TP3DSphere): Boolean;
+function TP3DRenderObject.CollideWithSphere(ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3): Boolean;
 var
   i: Integer;
 begin
   Result:= False;
   if (( Self.Data is TP3DActor ) and ( TP3DActor( Self.Data ).Collision <> acNone )) then
     for i:= 0 to Self.Matrices.Count - 1 do
-      if ( TP3DActor( Data ).CollideSphere( Self.Matrices[ i ], ASphere )) then
+      if ( TP3DActor( Data ).CollideSphere( Self.Matrices[ i ], ASphere, Intersect, N )) then
         begin
           Result:= True;
           break;
         end;
 end;
 
-function TP3DRenderObject.CollideWithAABB(AAABB: TP3DAABB): Boolean;
+function TP3DRenderObject.CollideWithAABB(AAABB: TP3DAABB; out Intersect: TVec3; out N: TVec3): Boolean;
 var
   i: Integer;
 begin
   Result:= False;
   if (( Self.Data is TP3DActor ) and ( TP3DActor( Self.Data ).Collision <> acNone )) then
     for i:= 0 to Self.Matrices.Count - 1 do
-      if ( TP3DActor( Data ).CollideAABB( Self.Matrices[ i ], AAABB )) then
+      if ( TP3DActor( Data ).CollideAABB( Self.Matrices[ i ], AAABB, Intersect, N )) then
         begin
           Result:= True;
           break;

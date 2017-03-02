@@ -668,9 +668,8 @@ begin
 
       Texture.MipMap:= False;
 
+      Texture.SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.png' );
       Texture.FileWatch.FileName:= Font.FontName + '.png';
-
-      Texture.SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Texture.FileWatch.FileName );
       SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.p3d' );
 
       MipMapLoadBias:= FMipMapLoadBias;

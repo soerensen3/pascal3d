@@ -4,107 +4,107 @@
   <scene
      Name = "Scene">
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_ring_top2"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 0.164580, 0.164580, 0.164580"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "ring_top2" />
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_ring_center"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 0.164580, 0.164580, 0.164580"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "ring_center" />
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_ring_bottom"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 0.164580, 0.164580, 0.164580"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "ring_bottom" />
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_ring_top1"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 0.164580, 0.164580, 0.164580"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "ring_top1" />
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_bulb"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 0.164580, 0.164580, 0.164580"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "bulb" />
   </scene>
   <mesh
+     Loops = "EditorLamp.p3dbin:776"
+     Faces = "EditorLamp.p3dbin:908"
      Positions = "EditorLamp.p3dbin:0"
      Normals = "EditorLamp.p3dbin:388"
-     Faces = "EditorLamp.p3dbin:908"
-     Name = "mesh_ring_top2"
-     Loops = "EditorLamp.p3dbin:776">
+     Name = "mesh_ring_top2">
     <materialgroup
-       Material = "/material_Material.001"
        PolyEnd = "7"
+       Material = "/material_Material.001"
        PolyStart = "0" />
   </mesh>
   <mesh
+     Loops = "EditorLamp.p3dbin:1720"
+     Faces = "EditorLamp.p3dbin:1852"
      Positions = "EditorLamp.p3dbin:944"
      Normals = "EditorLamp.p3dbin:1332"
-     Faces = "EditorLamp.p3dbin:1852"
-     Name = "mesh_ring_center"
-     Loops = "EditorLamp.p3dbin:1720">
+     Name = "mesh_ring_center">
     <materialgroup
-       Material = "/material_Material.001"
        PolyEnd = "7"
+       Material = "/material_Material.001"
        PolyStart = "0" />
   </mesh>
   <mesh
+     Loops = "EditorLamp.p3dbin:10944"
+     Faces = "EditorLamp.p3dbin:13380"
      Positions = "EditorLamp.p3dbin:1888"
      Normals = "EditorLamp.p3dbin:3644"
-     Faces = "EditorLamp.p3dbin:13380"
-     Name = "mesh_bulb"
-     Loops = "EditorLamp.p3dbin:10944">
+     Name = "mesh_bulb">
     <materialgroup
-       Material = "/material_Material.001"
        PolyEnd = "159"
+       Material = "/material_Material.001"
        PolyStart = "0" />
   </mesh>
   <mesh
+     Loops = "EditorLamp.p3dbin:14800"
+     Faces = "EditorLamp.p3dbin:14932"
      Positions = "EditorLamp.p3dbin:14024"
      Normals = "EditorLamp.p3dbin:14412"
-     Faces = "EditorLamp.p3dbin:14932"
-     Name = "mesh_ring_top1"
-     Loops = "EditorLamp.p3dbin:14800">
+     Name = "mesh_ring_top1">
     <materialgroup
-       Material = "/material_Material.001"
        PolyEnd = "7"
+       Material = "/material_Material.001"
        PolyStart = "0" />
   </mesh>
   <mesh
+     Loops = "EditorLamp.p3dbin:15744"
+     Faces = "EditorLamp.p3dbin:15876"
      Positions = "EditorLamp.p3dbin:14968"
      Normals = "EditorLamp.p3dbin:15356"
-     Faces = "EditorLamp.p3dbin:15876"
-     Name = "mesh_ring_bottom"
-     Loops = "EditorLamp.p3dbin:15744">
+     Name = "mesh_ring_bottom">
     <materialgroup
-       Material = "/material_Material.001"
        PolyEnd = "7"
+       Material = "/material_Material.001"
        PolyStart = "0" />
   </mesh>
   <materialbase
      Diff = "0.640000, 0.212805, 0.069932"
      Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Instancing = "1"
      Unlit = "1"
      Spec_Hardness = "50.000000"
-     TransparencyMode = "p3dmtNone"
-     Name = "material_Material.001"
-     Instancing = "1" />
+     Name = "material_Material.001" />
 </p3dfile>

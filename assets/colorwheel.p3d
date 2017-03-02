@@ -1,140 +1,129 @@
 <?xml version="1.0" ?>
-<p3dfile>
+<p3dfile
+   version = "0.1">
   <scene
-    name = "Scene">
+     Name = "Scene">
     <object
-      data = "mesh_Plane"
-      type = "mesh"
-      name = "Plane">
-      <transform
-        position = " 0.000000, 0.000000,-0.549173"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        scale = " 2.046625, 2.046625, 2.046625">
-      </transform>
-    </object>
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Data = "/mesh_Plane"
+       Name = "Plane"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
     <object
-      data = "mesh_Mesh"
-      type = "mesh"
-      name = "Text">
-      <transform
-        position = "-0.582724,-0.335222,-0.360305"
-        quaternion = " 0.241165,-0.217466, 0.101905, 0.940300"
-        scale = " 1.644466, 1.644466, 1.644466">
-      </transform>
-    </object>
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Data = "/mesh_Mesh"
+       Name = "Text"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
     <object
-      data = "mesh_Circle"
-      type = "mesh"
-      name = "Circle">
-      <transform
-        position = " 0.000000, 0.000000, 0.000000"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        scale = " 1.000000, 1.000000, 1.000000">
-      </transform>
-    </object>
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Data = "/mesh_Circle"
+       Name = "Circle"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
     <object
-      data = "lamp_Lamp"
-      type = "lamp"
-      name = "Lamp">
-      <transform
-        position = " 4.076245, 1.005454, 5.903862"
-        quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
-        scale = " 1.000000, 1.000000, 1.000000">
-      </transform>
-    </object>
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Data = "/lamp_Lamp"
+       Name = "Lamp"
+       Position = " 4.076245, 1.005454, 5.903862"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570947" />
   </scene>
   <mesh
-    binary = "colorwheel.mesh_Plane.p3dmesh"
-    vertices = "4"
-    normals = "4"
-    cotangents = "4"
-    loops = "4"
-    texlayers = "1"
-    texcoords = "4"
-    faces = "1"
-    tangents = "4"
-    name = "mesh_Plane">
-    <material
-      end = "0"
-      start = "0"
-      name = "material_Material.002">
-    </material>
+     Normals = "colorwheel.p3dbin:52"
+     Cotangents = "colorwheel.p3dbin:212"
+     Faces = "colorwheel.p3dbin:264"
+     Tangents = "colorwheel.p3dbin:160"
+     Positions = "colorwheel.p3dbin:0"
+     TexCoords0 = "colorwheel.p3dbin:124"
+     Loops = "colorwheel.p3dbin:104"
+     Name = "mesh_Plane">
+    <materialgroup
+       Material = "/material_Material.002"
+       PolyStart = "0"
+       PolyEnd = "0" />
   </mesh>
   <mesh
-    binary = "colorwheel.mesh_Circle.p3dmesh"
-    vertices = "192"
-    normals = "192"
-    cotangents = "512"
-    loops = "512"
-    texlayers = "1"
-    texcoords = "512"
-    faces = "128"
-    tangents = "512"
-    name = "mesh_Circle">
-    <material
-      end = "127"
-      start = "0"
-      name = "material_Material.001">
-    </material>
+     Name = "mesh_Mesh"
+     Normals = "colorwheel.p3dbin:67188"
+     Positions = "colorwheel.p3dbin:272"
+     Loops = "colorwheel.p3dbin:217600"
+     Faces = "colorwheel.p3dbin:267740">
+    <materialgroup
+       Material = "/material_Material.000"
+       PolyStart = "0"
+       PolyEnd = "3480" />
   </mesh>
   <mesh
-    binary = "colorwheel.mesh_Mesh.p3dmesh"
-    vertices = "5576"
-    normals = "5576"
-    loops = "12534"
-    faces = "3481"
-    name = "mesh_Mesh">
-    <material
-      end = "3480"
-      start = "0"
-      name = "material_Material.000">
-    </material>
+     Normals = "colorwheel.p3dbin:283976"
+     Cotangents = "colorwheel.p3dbin:302424"
+     Faces = "colorwheel.p3dbin:308572"
+     Tangents = "colorwheel.p3dbin:296276"
+     Positions = "colorwheel.p3dbin:281668"
+     TexCoords0 = "colorwheel.p3dbin:292176"
+     Loops = "colorwheel.p3dbin:290124"
+     Name = "mesh_Circle">
+    <materialgroup
+       Material = "/material_Material.001"
+       PolyStart = "0"
+       PolyEnd = "127" />
   </mesh>
-  <lamp
-    color = "1.000000, 1.000000, 1.000000"
-    energy = "1.0"
-    type = "point"
-    name = "lamp_Lamp">
-  </lamp>
-  <material
-    specular = "50.000000, 0.500000, 0.500000, 0.500000"
-    diffuse = "0.640000, 0.640000, 0.640000"
-    name = "material_Material.002">
+  <light
+     Color = "1.000000, 1.000000, 1.000000"
+     LightType = "ltPoint"
+     Name = "lamp_Lamp"
+     Energy = "1.0" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_Material.002"
+     Instancing = "1">
     <map
-      data = "tex_Texture"
-      diffuse = "1.0"
-      mode = "mix"
-      name = "Texture">
-      <transform
-        position = "-0.300000, 0.000000, 0.000000"
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        scale = " 200.00000, 200.000000, 200.00000">
-      </transform>
-    </map>
-  </material>
-  <material
-    specular = "10.000000, 0.039877, 0.039877, 0.039877"
-    diffuse = "0.640000, 0.340006, 0.021493"
-    name = "material_Material.000">
-  </material>
-  <material
-    specular = "50.000000, 0.500000, 0.500000, 0.500000"
-    diffuse = "0.640000, 0.640000, 0.640000"
-    unlit = "yes"
-    name = "material_Material.001">
+       Data = "/tex_Texture"
+       Name = "Texture"
+       Mode = "mapMix"
+       DiffuseFactor = "1.0" />
+  </materialbase>
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "10.000000"
+     Diff = "0.640000, 0.340006, 0.021493"
+     Spec = "0.039877, 0.039877, 0.039877"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_Material.000"
+     Instancing = "1" />
+  <materialbase
+     Unlit = "1"
+     Spec_Hardness = "50.000000"
+     Diff = "0.800000, 0.800000, 0.800000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_Material.001"
+     Instancing = "1">
     <map
-      data = "tex_Tex"
-      diffuse = "1.0"
-      mode = "mix"
-      name = "Tex">
-    </map>
-  </material>
+       Data = "/tex_Tex"
+       Name = "Tex"
+       Mode = "mapMix"
+       DiffuseFactor = "1.0" />
+  </materialbase>
   <texture
-    file = "checkerboard.png"
-    name = "tex_Texture">
-  </texture>
+     Name = "tex_Texture"
+     FilteringMipMap = "tfNearest"
+     Filtering = "tfNearest"
+     File = "checkerboard.png" />
   <texture
-    file = "gradient.png"
-    name = "tex_Tex">
-  </texture>
+     Name = "tex_Tex"
+     FilteringMipMap = "tfNearest"
+     Filtering = "tfNearest"
+     File = "gradient.png" />
 </p3dfile>

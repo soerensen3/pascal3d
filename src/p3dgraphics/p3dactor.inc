@@ -100,9 +100,9 @@ type
       procedure RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
 
-      function CollideActor( SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor ): Boolean;
-      function CollideSphere( Mat: TMat4; ASphere: TP3DSphere ): Boolean; override;
-      function CollideAABB( Mat: TMat4; AAABB: TP3DAABB ): Boolean; override;
+      function CollideActor( SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor; out Intersect: TVec3; out N: TVec3 ): Boolean;
+      function CollideSphere( Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3 ): Boolean; override;
+      function CollideAABB( Mat: TMat4; AAABB: TP3DAABB; out Intersect: TVec3; out N: TVec3 ): Boolean; override;
       function CollidePoint( Mat: TMat4; APoint: TVec3 ): Boolean; override;
 
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); override;
@@ -515,13 +515,15 @@ begin
   //TODO: TP3DActor.RotateAroundLocalAxis
 end;
 
-function TP3DActor.CollideActor(SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor): Boolean;
+function TP3DActor.CollideActor(SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor; out Intersect: TVec3; out N: TVec3): Boolean;
+var
+  APlane: TP3DPlane;
 begin
   if ( Assigned( AActor.Data )) then
     case AActor.Collision of
       acNone: Result:= False;
-      acBox: Result:= CollideAABB( SelfMat, P3DTransformAABBObjSpace( ActMat, AActor.Data.AABB ));
-      acSphere: Result:= CollideSphere( SelfMat, P3DTransformSphereObjSpace( ActMat, AActor.Data.Sphere ));
+      acBox: Result:= CollideAABB( SelfMat, P3DTransformAABBObjSpace( ActMat, AActor.Data.AABB ), Intersect, N );
+      acSphere: Result:= CollideSphere( SelfMat, P3DTransformSphereObjSpace( ActMat, AActor.Data.Sphere ), Intersect, N );
     end
   else
     Result:= False;
@@ -536,25 +538,69 @@ begin
   end;
 end;
 }
-function TP3DActor.CollideSphere( Mat: TMat4; ASphere: TP3DSphere ): Boolean;
+function TP3DActor.CollideSphere(Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3): Boolean;
+var
+  APlane: TP3DPlane;
+  box: TP3DAABB;
+  sph: TP3DSphere;
 begin
   if ( Assigned( Data )) then
     case Collision of
       acNone: Result:= False;
-      acBox: Result:= P3DCollideSPHEREwithAABB( ASphere, P3DTransformAABBObjSpace( Mat, Data.AABB ));
-      acSphere: Result:= P3DCollideSPHEREwithSPHERE( P3DTransformSphereObjSpace( Mat, Data.Sphere ), ASphere );
+      acBox:
+        begin
+          box:= P3DTransformAABBObjSpace( Mat, Data.AABB );
+          Result:= P3DCollideSPHEREwithAABB( ASphere, box );
+          if ( Result ) then
+            begin
+              Intersect:= P3DFindClosestPointAABB( box, ASphere.Position );
+              N:= P3DFindNormalToPointAABB( box, ASphere.Position );
+            end;
+        end;
+      acSphere:
+        begin
+          sph:= P3DTransformSphereObjSpace( Mat, Data.Sphere );
+          Result:= P3DCollideSPHEREwithSPHERE( sph, ASphere );
+          if ( Result ) then
+            begin
+              Intersect:= P3DFindClosestPointSPHERE( sph, ASphere.Position );
+              N:= P3DFindNormalToPointSPHERE( sph, ASphere.Position );
+            end;
+        end;
     end
   else
     Result:= False;
 end;
 
-function TP3DActor.CollideAABB( Mat: TMat4; AAABB: TP3DAABB ): Boolean;
+function TP3DActor.CollideAABB(Mat: TMat4; AAABB: TP3DAABB; out Intersect: TVec3; out N: TVec3): Boolean;
+var
+  APlane: TP3DPlane;
+  box: TP3DAABB;
+  sph: TP3DSphere;
 begin
   if ( Assigned( Data )) then
     case Collision of
       acNone: Result:= False;
-      acBox: Result:= P3DCollideAABBwithAABB( P3DTransformAABBObjSpace( Mat, Data.AABB ), AAABB );
-      acSphere: Result:= P3DCollideSPHEREwithAABB( P3DTransformSphereObjSpace( Mat, Data.Sphere ), AAABB );
+      acBox:
+        begin
+          box:= P3DTransformAABBObjSpace( Mat, Data.AABB );
+          Result:= P3DCollideAABBwithAABB( AAABB, box );
+          if ( Result ) then
+            begin
+              Intersect:= P3DFindClosestPointAABB( box, AAABB.Position );
+              N:= P3DFindNormalToPointAABB( box, AAABB.Position );
+            end;
+        end;
+      acSphere:
+        begin
+          sph:= P3DTransformSphereObjSpace( Mat, Data.Sphere );
+          Result:= P3DCollideSPHEREwithAABB( sph, AAABB );
+          if ( Result ) then
+            begin
+              Intersect:= P3DFindClosestPointSPHERE( sph, AAABB.Position );
+              N:= P3DFindNormalToPointSPHERE( sph, AAABB.Position );
+            end;
+        end;
     end
   else
     Result:= False;

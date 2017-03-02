@@ -243,9 +243,9 @@ procedure CreateEditorScenes;
 var
   n: Integer;
 begin
-  n:= P3DData.OpenLibrary( 'EditorArrow.p3d' );
-  P3DData.Libraries[ n ].IsDesignerPackage:= True;
-  EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
+  //n:= P3DData.OpenLibrary( 'EditorArrow.p3d' );
+  //P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  //EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
   n:= P3DData.OpenLibrary( 'EditorArrows.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrows:= P3DData.Libraries[ n ].Scenes[ 0 ];

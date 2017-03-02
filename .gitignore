@@ -2,6 +2,7 @@
 !*/
 bin/
 lib/
+backup/
 !*.pas
 !*.pp
 !*.inc
@@ -16,6 +17,7 @@ lib/
 !*.py
 !*.p3d
 !*.p3dmesh
+!*.p3dbin
 !*.txt
 !*.html
 !*.css

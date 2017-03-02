@@ -4,85 +4,85 @@
   <scene
      Name = "Scene">
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_ArrowX"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 1.000000, 1.000000, 1.000000"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "ArrowX" />
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_ArrowY"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 1.000000, 1.000000, 1.000000"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "ArrowY" />
     <object
+       Position = " 0.000000, 0.000000, 0.000000"
        Data = "/mesh_ArrowZ"
+       RotationOrder = "roXYZ"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        Scale = " 1.000000, 1.000000, 1.000000"
-       Position = " 0.000000, 0.000000, 0.000000"
        Collision = "acNone"
-       RotationOrder = "roXYZ"
        Name = "ArrowZ" />
   </scene>
   <mesh
+     Loops = "EditorArrows.p3dbin:1100"
+     Faces = "EditorArrows.p3dbin:1392"
      Positions = "EditorArrows.p3dbin:0"
      Normals = "EditorArrows.p3dbin:232"
-     Faces = "EditorArrows.p3dbin:1392"
-     Name = "mesh_ArrowX"
-     Loops = "EditorArrows.p3dbin:1100">
+     Name = "mesh_ArrowX">
     <materialgroup
-       Material = "/material_MaterialX"
        PolyEnd = "18"
+       Material = "/material_MaterialX"
        PolyStart = "0" />
   </mesh>
   <mesh
+     Loops = "EditorArrows.p3dbin:2572"
+     Faces = "EditorArrows.p3dbin:2864"
      Positions = "EditorArrows.p3dbin:1472"
      Normals = "EditorArrows.p3dbin:1704"
-     Faces = "EditorArrows.p3dbin:2864"
-     Name = "mesh_ArrowY"
-     Loops = "EditorArrows.p3dbin:2572">
+     Name = "mesh_ArrowY">
     <materialgroup
-       Material = "/material_MaterialY"
        PolyEnd = "18"
+       Material = "/material_MaterialY"
        PolyStart = "0" />
   </mesh>
   <mesh
+     Loops = "EditorArrows.p3dbin:4044"
+     Faces = "EditorArrows.p3dbin:4336"
      Positions = "EditorArrows.p3dbin:2944"
      Normals = "EditorArrows.p3dbin:3176"
-     Faces = "EditorArrows.p3dbin:4336"
-     Name = "mesh_ArrowZ"
-     Loops = "EditorArrows.p3dbin:4044">
+     Name = "mesh_ArrowZ">
     <materialgroup
-       Material = "/material_MaterialZ"
        PolyEnd = "18"
+       Material = "/material_MaterialZ"
        PolyStart = "0" />
   </mesh>
   <materialbase
      Diff = "0.800000, 0.000000, 0.000000"
      Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Instancing = "1"
      Unlit = "1"
      Spec_Hardness = "50.000000"
-     TransparencyMode = "p3dmtNone"
-     Name = "material_MaterialX"
-     Instancing = "1" />
+     Name = "material_MaterialX" />
   <materialbase
      Diff = "0.000000, 0.000000, 1.000000"
      Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Instancing = "1"
      Unlit = "1"
      Spec_Hardness = "50.000000"
-     TransparencyMode = "p3dmtNone"
-     Name = "material_MaterialZ"
-     Instancing = "1" />
+     Name = "material_MaterialZ" />
   <materialbase
      Diff = "0.000000, 0.800000, 0.000000"
      Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Instancing = "1"
      Unlit = "1"
      Spec_Hardness = "50.000000"
-     TransparencyMode = "p3dmtNone"
-     Name = "material_MaterialY"
-     Instancing = "1" />
+     Name = "material_MaterialY" />
 </p3dfile>

@@ -117,7 +117,7 @@ begin
 
   glBegin( GL_LINES );
   glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
-  glVertexAttrib3f( P3DAttribPosition, p1.X, p1.Y, p2.Z );
+  glVertexAttrib3f( P3DAttribPosition, p1.X, p1.Y, p1.Z );
   glVertexAttrib3f( P3DAttribPosition, p2.X, p2.Y, p2.Z );
   glEnd(); cle( Self );
 end;
@@ -128,7 +128,7 @@ begin
 
   glBegin( GL_LINES );
   glVertexAttrib4f( P3DAttribColor, Color1.R, Color1.G, Color1.B, Color1.A );
-  glVertexAttrib3f( P3DAttribPosition, p1.X, p1.Y, p2.Z );
+  glVertexAttrib3f( P3DAttribPosition, p1.X, p1.Y, p1.Z );
   glVertexAttrib4f( P3DAttribColor, Color2.R, Color2.G, Color2.B, Color2.A );
   glVertexAttrib3f( P3DAttribPosition, p2.X, p2.Y, p2.Z );
   glEnd(); cle( Self );
