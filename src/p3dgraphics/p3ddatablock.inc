@@ -666,7 +666,7 @@ begin
         Root:= P3DXMLFindPath( xml.DocumentElement, XMLPath );
         if ( not Assigned( Root )) then
           raise Exception.Create( Format( 'Cannot load datablock from file! The specified node "%s" was not found in the file "%s"!', [ XMLPath, FName ]));
-        LoadFromDOM( Root );
+        LoadFromDOMNew( Root );
       finally
         SetCurrentDir( dir );
         xml.Free;

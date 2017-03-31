@@ -19,10 +19,12 @@ type
     private
       FActions: TP3DArmatureActionList;
       FArmatures: TP3DArmatureList;
+      FBinFile: TFileStream;
       FCameras: TP3DCameraList;
       FDataBlocks: TP3DObjectList;
       FDOMFile: TXMLDocument;
       FFileWatch: TP3DFileWatch;
+      FFonts: TP3DFontListBmp;
       FIsDesignerPackage: Boolean;
       FLights: TP3DLightList;
       FMaterials: TP3DMaterialList;
@@ -32,9 +34,18 @@ type
       FShaders: TP3DShaderList;
       FTextures: TP3DTextureList;
 
+      function GetBinFile: TFileStream;
       function GetDOMFile: TXMLDocument;
       function GetName: String; virtual;
 //      function LoadDataBlockByPathNoCheck( LocalPath: String ): TP3DDataBlock;
+
+    protected
+      procedure OpenDOMFile;
+      procedure CreateDOMFile;
+      procedure CloseDOMFile;
+      procedure SaveDOMFile( const FName: String = '' );
+      procedure CreateBinFile( const AFileName: String = '' );
+      procedure CloseBinFile;
 
     public
       constructor Create;
@@ -42,10 +53,6 @@ type
       constructor CreateFromFile( AFileName: String );
       destructor Destroy; override;
 
-      procedure OpenDOMFile;
-      procedure CreateDOMFile;
-      procedure CloseDOMFile;
-      procedure SaveDOMFile( const FName: String = '' );
       function FindDOMToPath( DOMPath: String ): TDOMElement;
       function GetOwnerFromPath( DOMPath: TP3DXMLPath; const ForceLoad: Boolean = False ): TP3DLibrary;
 //      function FindDataBlockByPath( DOMPath: String ): TP3DDataBlock;
@@ -63,6 +70,8 @@ type
       function AppendFile( AFileName: String ): String;
       function CreateNew( Tp: TP3DDataBlockType; const CreateObject: Boolean = True ): Integer;
       procedure SaveToDOM( const ADOMNode: TDOMElement = nil );
+      procedure SaveToFile( const AFileName: String = '' );
+      procedure SaveToFile( AParentClass: TP3DDataBlockType; const AFileName: String = '' );
       procedure RemoveFromFields( Block: TP3DDataBlock ); virtual;
       procedure ClearFields; virtual;
       function IsValid( Obj: TP3DObject ): Boolean; virtual;
@@ -81,9 +90,11 @@ type
       property Textures: TP3DTextureList read FTextures write FTextures;
       property Armatures: TP3DArmatureList read FArmatures write FArmatures;
       property Actions: TP3DArmatureActionList read FActions write FActions;
+      property Fonts: TP3DFontListBmp read FFonts write FFonts;
 
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       property DOMFile: TXMLDocument read GetDOMFile write FDOMFile;
+      property BinFile: TFileStream read GetBinFile write FBinFile;
       property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
       property Name: String read GetName;
   end;
@@ -163,6 +174,13 @@ begin
   Result:= FDOMFile;
 end;
 
+function TP3DLibrary.GetBinFile: TFileStream;
+begin
+  if ( not Assigned( FBinFile )) then
+    CreateBinFile;
+  Result:= FBinFile;
+end;
+
 constructor TP3DLibrary.Create;
 begin
   inherited;
@@ -179,6 +197,7 @@ begin
   Textures:= TP3DTextureList.Create;
   Armatures:= TP3DArmatureList.Create;
   Actions:= TP3DArmatureActionList.Create;
+  Fonts:= TP3DFontListBmp.Create;
   FileWatch:= TP3DFileWatch.Create( '', Self );
 end;
 
@@ -220,6 +239,7 @@ begin
   FreeAndNil( FTextures );
   FreeAndNil( FArmatures );
   FreeAndNil( FActions );
+  FreeAndNil( FFonts );
   FreeAndNil( FFileWatch );
 
   FreeAndNil( FDataBlocks );
@@ -237,6 +257,8 @@ procedure TP3DLibrary.CreateDOMFile;
 begin
   CloseDOMFile;
   FDOMFile:= TXMLDocument.Create;
+  DOMFile.AppendChild( DOMFile.CreateElement( 'p3dscene' ));
+  DOMFile.DocumentElement.AttribStrings[ 'version' ]:= IntToStr( P3DFileVerMaj ) + '.' + IntToStr( P3DFileVerMin );
 end;
 
 procedure TP3DLibrary.CloseDOMFile;
@@ -252,7 +274,39 @@ begin
     FileName:= FName
   else
     FileName:= FileWatch.FileName;
+
   P3DXMLWrite( DOMFile.DocumentElement, FileName );
+end;
+
+procedure TP3DLibrary.CreateBinFile(const AFileName: String);
+var
+  FName: String;
+begin
+  if ( AFileName > '' ) then
+    FName:= AFileName
+  else
+    FName:= ChangeFileExt( FileWatch.FileName, '.p3dbin' );
+
+  if ( Assigned( FBinFile )) then
+    FreeAndNil( FBinFile );
+
+  BinFile:= TFileStream.Create( FName, fmCreate );
+end;
+
+procedure TP3DLibrary.CloseBinFile;
+var
+  FName: String;
+  Del: Boolean;
+begin
+  if ( Assigned( FBinFile )) then
+    begin
+      FName:= FBinFile.FileName;
+      Del:= FBinFile.Size = 0;
+      FreeAndNil( FBinFile );
+      if ( Del ) then
+        DeleteFileUTF8( FName );
+    end;
+  FreeAndNil( FBinFile );
 end;
 
 function TP3DLibrary.FindDOMToPath(DOMPath: String): TDOMElement;
@@ -665,17 +719,47 @@ procedure TP3DLibrary.SaveToDOM(const ADOMNode: TDOMElement);
 var
   Parent: TDOMElement;
 begin
-  //IF ExportScenesOnly
   if ( Assigned( ADOMNode )) then
     Parent:= ADOMNode
   else
-    begin
-      Parent:= DOMFile.CreateElement( 'p3dfile' );
-      Parent.AttribStrings[ 'version' ]:= IntToStr( P3DFileVerMaj ) + '.' + IntToStr( P3DFileVerMin );
-      DOMFile.AppendChild( Parent );
-    end;
+    Parent:= DOMFile.DocumentElement;
 
   Scenes.SaveToDOM( Parent );
+end;
+
+procedure TP3DLibrary.SaveToFile(const AFileName: String);
+begin
+  SaveToFile( TP3DScene, AFileName );
+end;
+
+procedure TP3DLibrary.SaveToFile( AParentClass: TP3DDataBlockType; const AFileName: String );
+var
+  FileName: String;
+begin
+  if ( AFileName > '' ) then
+    FileName:= AFileName
+  else
+    FileName:= FileWatch.FileName;
+
+  CreateBinFile( ChangeFileExt( FileName, '.p3dbin' ));
+
+  if ( Assigned( FDOMFile )) then
+    FreeAndNil( FDOMFile );
+  CreateDOMFile;
+
+  if ( AParentClass = TP3DActor ) then Objects.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DArmature ) then  Armatures.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DArmatureAction ) then Actions.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DCamera ) then Cameras.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DFontBmp ) then Fonts.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DLight ) then Lights.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DMaterial ) then Materials.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DMesh ) then Meshes.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DScene ) then Scenes.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DShader ) then Shaders.SaveToDOM( DOMFile.DocumentElement );
+
+  SaveDOMFile( FileName );
+  CloseBinFile;
 end;
 
 procedure TP3DLibrary.RemoveFromFields( Block: TP3DDataBlock );

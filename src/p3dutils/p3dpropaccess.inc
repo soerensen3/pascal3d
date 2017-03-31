@@ -27,16 +27,44 @@ type
   { TP3DPropertyAccess }
 
   TP3DPropertyAccessStoreMode = ( smDoNotStore, smAttribute, smNode, smExternalBinary );
+  IP3DPropertyAccess = interface
+    ['{05DADF8D-8437-49E9-8287-2620D1E71948}']
+    function GetContext: TInterfacedPersistent;
+    function GetStoreMode: TP3DPropertyAccessStoreMode;
+    procedure SetContext(AValue: TInterfacedPersistent);
+    procedure SetStoreMode(AValue: TP3DPropertyAccessStoreMode);
+    function GetAsString: String;
+    procedure SetAsString(AValue: String);
+    function GetCategory: String;
+    function GetName: String;
+    procedure SetCategory(AValue: String);
+    procedure SetName(AValue: String);
+    function GetNames: TStringList;
 
-  TP3DPropertyAccess = class abstract ( TPersistent )
+    property Name: String read GetName write SetName;
+    property Category: String read GetCategory write SetCategory;
+    property AsString: String read GetAsString write SetAsString;
+    property StoreMode: TP3DPropertyAccessStoreMode read GetStoreMode write SetStoreMode;
+    property Context: TInterfacedPersistent read GetContext write SetContext;
+  end;
+
+  TP3DPropertyAccess = class abstract ( TInterfacedPersistent, IP3DPropertyAccess )
     protected
       FContext: TInterfacedPersistent;
       FStoreMode: TP3DPropertyAccessStoreMode;
       FCategory: String;
       FName: String;
 
+      function GetContext: TInterfacedPersistent;
+      function GetStoreMode: TP3DPropertyAccessStoreMode;
+      procedure SetContext(AValue: TInterfacedPersistent);
+      procedure SetStoreMode(AValue: TP3DPropertyAccessStoreMode);
       function GetAsString: String; virtual; abstract;
       procedure SetAsString(AValue: String); virtual; abstract;
+      function GetCategory: String;
+      function GetName: String;
+      procedure SetCategory(AValue: String);
+      procedure SetName(AValue: String);
 
     public
       constructor Create( AName: String; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
@@ -45,11 +73,11 @@ type
       procedure LoadFromDOM( AParentNode: TDOMElement ); virtual;
 
     published
-      property Name: String read FName write FName;
-      property Category: String read FCategory write FCategory;
+      property Name: String read GetName write SetName;
+      property Category: String read GetCategory write SetCategory;
       property AsString: String read GetAsString write SetAsString;
-      property StoreMode: TP3DPropertyAccessStoreMode read FStoreMode write FStoreMode;
-      property Context: TInterfacedPersistent read FContext write FContext;
+      property StoreMode: TP3DPropertyAccessStoreMode read GetStoreMode write SetStoreMode;
+      property Context: TInterfacedPersistent read GetContext write SetContext;
   end;
 
   { TP3DPropertyAccessList }
@@ -59,9 +87,12 @@ type
       FContext: TInterfacedPersistent;
 
     published
-      function Add(Item: TCustomItem): Integer; override;
+      function Add( Item: TCustomItem ): Integer; override;
+      function Add( Item: TCustomItem; Category: String ): Integer; inline;
+      function Add( AItems: array of TCustomItem; const Category: String = '' ): Integer;
       function FindByName( AName: String ): Integer;
       function GetPropByName( AName: String ): TP3DPropertyAccess;
+      procedure Sort;
 
       constructor Create( AContext: TInterfacedPersistent );
       property Context: TInterfacedPersistent read FContext write FContext;
@@ -295,6 +326,20 @@ begin
   Item.Context:= Context;
 end;
 
+function TP3DPropertyAccessList.Add(Item: TCustomItem; Category: String): Integer;
+begin
+  Item.Category:= Category;
+  Add( Item );
+end;
+
+function TP3DPropertyAccessList.Add( AItems: array of TCustomItem; const Category: String ): Integer;
+var
+  i: Integer;
+begin
+  for i:= low( AItems ) to high( AItems ) do
+    Add( AItems[ i ], Category );
+end;
+
 function TP3DPropertyAccessList.FindByName(AName: String): Integer;
 var
   i: Integer;
@@ -319,6 +364,11 @@ begin
     Result:= nil;
 end;
 
+procedure TP3DPropertyAccessList.Sort;
+begin
+
+end;
+
 constructor TP3DPropertyAccessList.Create(AContext: TInterfacedPersistent);
 begin
   inherited Create;
@@ -327,7 +377,47 @@ end;
 
 { TP3DPropertyAccess }
 
-constructor TP3DPropertyAccess.Create(AName: String; const AStoreMode: TP3DPropertyAccessStoreMode);
+function TP3DPropertyAccess.GetContext: TInterfacedPersistent;
+begin
+  Result:= FContext;
+end;
+
+function TP3DPropertyAccess.GetStoreMode: TP3DPropertyAccessStoreMode;
+begin
+  Result:= FStoreMode;
+end;
+
+procedure TP3DPropertyAccess.SetContext(AValue: TInterfacedPersistent);
+begin
+  FContext:= AValue;
+end;
+
+procedure TP3DPropertyAccess.SetStoreMode(AValue: TP3DPropertyAccessStoreMode);
+begin
+  FStoreMode:= AValue;
+end;
+
+function TP3DPropertyAccess.GetCategory: String;
+begin
+  Result:= FCategory;
+end;
+
+function TP3DPropertyAccess.GetName: String;
+begin
+  Result:= FName;
+end;
+
+procedure TP3DPropertyAccess.SetCategory(AValue: String);
+begin
+  FCategory:= AValue;
+end;
+
+procedure TP3DPropertyAccess.SetName(AValue: String);
+begin
+  FName:= AValue;
+end;
+
+constructor TP3DPropertyAccess.Create( AName: String; const AStoreMode: TP3DPropertyAccessStoreMode );
 begin
   inherited Create;
   FName:= AName;

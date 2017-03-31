@@ -21,23 +21,13 @@
         property FontColor: TVec4 read FFontColor write FFontColor;
     end;
 
-    THorizontalAlignment = (
-        haLeft,
-        haCenter,
-        haRight);
-
-      TVerticalAlignment = (
-        vaTop,
-        vaCenter,
-        vaBottom);
-
     { TP3DButton }
 
     TP3DButton = class( TP3DGraphicControl )
       private
         FFont: TP3DCanvasFont;
-        FHAlignment: THorizontalAlignment;
-        FVAlignment: TVerticalAlignment;
+        FHAlignment: TP3DHorizontalAlignment;
+        FVAlignment: TP3DVerticalAlignment;
 
         function GetTextHeight: Single;
         function GetTextWidth: Single;
@@ -53,7 +43,7 @@
         function GetCaption: String; virtual;
         procedure SetCaption( AValue: String ); virtual;
         procedure RenderButton( C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4 );//APreset: TP3DButtonPreset );
-        procedure RenderButtonText( C: TVec4 );
+        function RenderButtonText( C: TVec4 ): TVec2;
 
       public
         constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
@@ -70,8 +60,8 @@
         property PresetHover: TP3DButtonPreset read FPresetHover write FPresetHover;
         property Font: TP3DCanvasFont read FFont write FFont;
         property Caption: String read GetCaption write SetCaption;
-        property HAlignment: THorizontalAlignment read FHAlignment write FHAlignment;
-        property VAlignment: TVerticalAlignment read FVAlignment write FVAlignment;
+        property HAlignment: TP3DHorizontalAlignment read FHAlignment write FHAlignment;
+        property VAlignment: TP3DVerticalAlignment read FVAlignment write FVAlignment;
         property TextWidth: Single read GetTextWidth;
         property TextHeight: Single read GetTextHeight;
     end;
@@ -152,7 +142,7 @@ begin
     end;
 end;
 
-procedure TP3DButton.RenderButtonText(C: TVec4);
+function TP3DButton.RenderButtonText(C: TVec4): TVec2;
 var
   P: TVec2;
 begin
@@ -161,7 +151,7 @@ begin
       if ( not Assigned( FCaptionTxt )) then
         FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 
-      case HAlignment of
+      {case HAlignment of
         haLeft: P.x:= 0;
         haRight: P.x:= Width - FCaptionTxt.Width;
         haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
@@ -170,13 +160,18 @@ begin
         vaTop: P.y:= 0;
         vaBottom: P.y:= Height - FCaptionTxt.Height;
         vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
-      end;
+      end;}
+
+      P:= Canvas.CalcAlignedTextRect( FCaptionTxt, ClientRect, HAlignment, VAlignment );
 
       Canvas.Font.Color:= C * vec4( 1, 1, 1, 0.5 + 0.5 * Ord( Enabled ));
       Canvas.Font.Size:= Font.Size;
       Canvas.Font.Name:= Font.Name;
       Canvas.RenderText( Caption, P, FCaptionTxt );
-    end;
+      Result:= P;
+    end
+  else
+    Result:= vec2( 0 );
 end;
 
 

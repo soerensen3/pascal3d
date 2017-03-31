@@ -40,7 +40,7 @@ type
     property Properties: TP3DPropertyAccessList read GetProperties;
   end;
 
-  TP3DActorCollision = ( acNone, acBox, acSphere );
+  TP3DActorCollision = ( acNone, acBox, acSphere, acDataBlock );
 
   TP3DActor = class ( TP3DDataBlock, IP3DTransform )
     private
@@ -524,6 +524,8 @@ begin
       acNone: Result:= False;
       acBox: Result:= CollideAABB( SelfMat, P3DTransformAABBObjSpace( ActMat, AActor.Data.AABB ), Intersect, N );
       acSphere: Result:= CollideSphere( SelfMat, P3DTransformSphereObjSpace( ActMat, AActor.Data.Sphere ), Intersect, N );
+      acDataBlock:
+        WriteLn( 'Not implemented yet' );
     end
   else
     Result:= False;
@@ -567,6 +569,13 @@ begin
               N:= P3DFindNormalToPointSPHERE( sph, ASphere.Position );
             end;
         end;
+      acDataBlock:
+        begin
+          if ( Assigned( Data )) then
+            Result:= Data.CollideSphere( Mat, ASphere, Intersect, N )
+          else
+            Result:= False;
+        end;
     end
   else
     Result:= False;
@@ -600,6 +609,13 @@ begin
               Intersect:= P3DFindClosestPointSPHERE( sph, AAABB.Position );
               N:= P3DFindNormalToPointSPHERE( sph, AAABB.Position );
             end;
+        end;
+      acDataBlock:
+        begin
+          if ( Assigned( Data )) then
+            Result:= Data.CollideAABB( Mat, AAABB, Intersect, N )
+          else
+            Result:= False;
         end;
     end
   else

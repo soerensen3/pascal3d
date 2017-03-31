@@ -26,7 +26,8 @@ interface
     p3dutils,
     p3devents,
     p3dgraphics,
-    p3dMath;
+    p3dMath,
+    typinfo;
 
   type
     TP3DGraphicControl = class;

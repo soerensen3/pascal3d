@@ -171,6 +171,8 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property OnParentRealign: TNotifyEvent read FOnParentRealign write FOnParentRealign;
     property Cursor: TP3DCursor read FCursor write SetCursor;
 end;
+
+TP3DPropertyAccessGraphicControl = specialize gP3DPropertyAccessDataBlock < TP3DGraphicControl >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -197,16 +199,40 @@ begin
   Height:= 50;
   Cursor:= curArrow;
 
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Left' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Top' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Left' ));
+  Properties.Add( [ TP3DPropertyAccessRTTI.Create( Self, 'Align', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Left', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Top', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Width', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Height', smAttribute ),
+                    TP3DPropertyAccessVec2.CreateGetSet( 'LeftTop', @GetLeftTop, @SetLeftTop ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'MinWidth', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'MaxWidth', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'MinHeight', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'MaxHeight', smAttribute )],
+                    'Position and Size' );
 
-  Properties.Add( TP3DPropertyAccessVec2.CreateGetSet( 'LeftTop', @GetLeftTop, @SetLeftTop ));
-  Properties.Add( TP3DPropertyAccessVec2.CreateGetSet( 'Scroll', @GetScroll, @SetScroll ));
-  //TODO: Add rest of graphiccontrol properties
+  Properties.Add( [ TP3DPropertyAccessVec2.CreateFieldSet( 'MarginTL', @FMarginTL, @SetMarginTL, smAttribute ),
+                    TP3DPropertyAccessVec2.CreateFieldSet( 'MarginBR', @FMarginBR, @SetMarginBR, smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'NoMargin', smAttribute )],
+                    'Margin' );
 
+  Properties.Add( [
+                    TP3DPropertyAccessRTTI.Create( Self, 'Enabled', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Focused', smAttribute ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Cursor', smAttribute )],
+                    'Behavior' );
+
+  Properties.Add( [ TP3DPropertyAccessGraphicControl.CreateGetSet( 'Parent', @GetParent, @SetParent, smAttribute ),
+                    TP3DPropertyAccessVec2.CreateGetSet( 'Scroll', @GetScroll, @SetScroll ),
+                    TP3DPropertyAccessRTTI.Create( Self, 'Tag', smAttribute )],
+                    'Other' );
+
+
+//  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'ClientRect', smAttribute )); //cannot be published
+
+
+  //property Controls: TP3DControlList read FControls write FControls;
 end;
 
 constructor TP3DGraphicControl.Create(const AData: TP3DLibrary);

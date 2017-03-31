@@ -23,13 +23,31 @@
 
 {$IFDEF INTERFACE}
 type
+  { IP3DPropertyEditor }
+
+  IP3DPropertyEditor = interface
+    ['{A6524E5C-6F92-4CF2-BBF4-FB68F1436A32}']
+    function GetProp: TP3DPropertyAccess;
+    procedure SetProp(AValue: TP3DPropertyAccess);
+    property Prop: TP3DPropertyAccess read GetProp write SetProp;
+  end;
+
+{  IP3DPropertyEditorList = interface
+    ['{0E1AE98B-41B5-4ACB-9F41-021C7DDC5490}']
+    function GetProp: TP3DPropertyAccessList;
+    procedure SetProp(AValue: TP3DPropertyAccessList);
+    property Prop: TP3DPropertyAccess read GetProp write SetProp;
+  end;}
+
   { gP3DPropertyEditorVector }
 
-  generic gP3DPropertyEditorVector < TVecType > = class ( TP3DVectorEdit )
+  generic gP3DPropertyEditorVector < TVecType > = class ( TP3DVectorEdit, IP3DPropertyEditor )
     private
       FProp: TP3DPropertyAccess;
+      FLabel: TP3DTextBmp;
 
       procedure SetProp( AValue: TP3DPropertyAccess );
+      function GetProp: TP3DPropertyAccess;
       function GetValue: TVec4; override;
       procedure SetValue( AValue: TVec4 ); override;
 
@@ -38,9 +56,12 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      destructor Destroy; override;
+
+      procedure Draw; override;
 
     published
-      property Prop: TP3DPropertyAccess read FProp write SetProp;
+      property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
   TP3DPropertyEditorVec2 = specialize gP3DPropertyEditorVector < TVec2 >;
@@ -49,42 +70,53 @@ type
 
   { TP3DPropertyEditorString }
 
-  TP3DPropertyEditorString = class ( TP3DEdit )
+  TP3DPropertyEditorString = class ( TP3DEdit, IP3DPropertyEditor )
     protected
       FProp: TP3DPropertyAccess;
+      FLabel: TP3DTextBmp;
 
       procedure SetProp( AValue: TP3DPropertyAccess );
+      function GetProp: TP3DPropertyAccess;
       procedure SetFocused( AValue: Boolean ); override;
       procedure ReadValue;
       procedure ApplyValue;
 
     public
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      destructor Destroy; override;
+
+      procedure Draw; override;
       procedure KeyboardAction; override;
 
     published
-      property Prop: TP3DPropertyAccess read FProp write SetProp;
+      property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
   { TP3DPropertyEditorFloat }
 
-  TP3DPropertyEditorFloat = class ( TP3DCustomValueEdit )
+  TP3DPropertyEditorFloat = class ( TP3DCustomValueEdit, IP3DPropertyEditor )
     protected
       FProp: TP3DPropertyAccess;
       procedure SetProp( AValue: TP3DPropertyAccess );
+      function GetProp: TP3DPropertyAccess;
       function GetValue: Single; override;
       procedure SetValue(AValue: Single); override;
       function GetValueName: String; override;
 
+    public
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+
     published
-      property Prop: TP3DPropertyAccess read FProp write SetProp;
+      property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
   { TP3DPropertyEditorInt }
 
-  TP3DPropertyEditorInt = class ( TP3DCustomValueEdit )
+  TP3DPropertyEditorInt = class ( TP3DCustomValueEdit, IP3DPropertyEditor )
     protected
       FProp: TP3DPropertyAccess;
       procedure SetProp( AValue: TP3DPropertyAccess );
+      function GetProp: TP3DPropertyAccess;
       function GetValue: Single; override;
       procedure SetValue( AValue: Single ); override;
       function GetValueName: String; override;
@@ -93,31 +125,35 @@ type
       constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
 
     published
-      property Prop: TP3DPropertyAccess read FProp write SetProp;
+      property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
   { TP3DPropertyEditorEnum }
 
-  TP3DPropertyEditorEnum = class ( TP3DComboBox )
+  TP3DPropertyEditorEnum = class ( TP3DComboBox, IP3DPropertyEditor )
     protected
       FProp: TP3DPropertyAccess;
+      FLabel: TP3DTextBmp;
       procedure SetProp( AValue: TP3DPropertyAccess );
+      function GetProp: TP3DPropertyAccess;
       procedure SetCaption(AValue: String); override;
 
     public
       constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
+      procedure Draw; override;
 
     published
-      property Prop: TP3DPropertyAccess read FProp write SetProp;
+      property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
   { TP3DPropertyEditorBoolean }
 
-  TP3DPropertyEditorBoolean = class ( TP3DCheckBox )
+  TP3DPropertyEditorBoolean = class ( TP3DCheckBox, IP3DPropertyEditor )
     protected
       FProp: TP3DPropertyAccess;
 
       procedure SetProp( AValue: TP3DPropertyAccess );
+      function GetProp: TP3DPropertyAccess;
       procedure SetChecked(AValue: Boolean); override;
       function GetChecked: Boolean; override;
       function GetCaption: String; override;
@@ -126,23 +162,27 @@ type
       constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
 
     published
-      property Prop: TP3DPropertyAccess read FProp write SetProp;
+      property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
 
   { gP3DPropertyEditorList }
 
-  generic gP3DPropertyEditorList < TList, TListData > = class ( TP3DListView )
+  generic gP3DPropertyEditorList < TList, TListData > = class ( TP3DListView, IP3DPropertyEditor )
     protected
-      type TListProp =  specialize gP3DListPropertyAccess < TList, TListData >;
+      type TListProp = specialize gP3DListPropertyAccess < TList, TListData >;
     protected
       FProp: TListProp;
+      FLabel: TP3DTextBmp;
       FDeleteSymbol: TP3DTextBmp;
       FClearSymbol: TP3DTextBmp;
       FPlusSymbol: TP3DTextBmp;
       FDrawInsertion: Single;
 
-      procedure SetProp( AValue: TListProp );
+      procedure SetLProp( AValue: TListProp );
+      function GetLProp: TListProp;
+      function GetProp: TP3DPropertyAccess;
+      procedure SetProp(AValue: TP3DPropertyAccess);
       procedure Update;
 
     public
@@ -153,7 +193,9 @@ type
 
       constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
 
-      property Prop: TListProp read FProp write SetProp;
+    published
+      property LProp: TListProp read GetLProp write SetLProp;
+      property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
   TP3DPropertyEditorDataBlockList = specialize gP3DPropertyEditorList < TP3DDataBlockList, TP3DDataBlock >;
@@ -168,6 +210,18 @@ procedure gP3DPropertyEditorVector.SetProp( AValue: TP3DPropertyAccess );
 begin
   if ( FProp = AValue ) then Exit;
   FProp:= AValue;
+  if ( Assigned( Prop )) then
+    Canvas.GetValidText( Prop.Name + ':', FLabel )
+  else
+    Canvas.GetValidText( '<noprop>', FLabel );
+
+  MarginTL.X:= FLabel.Width + 4;
+  Update;
+end;
+
+function gP3DPropertyEditorVector.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp;
 end;
 
 
@@ -195,7 +249,21 @@ end;
 constructor gP3DPropertyEditorVector.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
+  Height:= 20;
   EdCount:= Length( TVecType.FCoord );
+end;
+
+destructor gP3DPropertyEditorVector.Destroy;
+begin
+  FreeAndNil( FLabel );
+  inherited Destroy;
+end;
+
+procedure gP3DPropertyEditorVector.Draw;
+begin
+  inherited Draw;
+
+  Canvas.RenderText( FLabel, vec2( 0, 0 ));
 end;
 
 
@@ -206,8 +274,22 @@ begin
   if FProp=AValue then Exit;
   FProp:=AValue;
 
+  Canvas.Font.Name:= Font.Name;
+  Canvas.Font.Size:= Font.Size;
   if ( Assigned( Prop )) then
-    ReadValue;
+    begin
+      ReadValue;
+      Canvas.GetValidText( Prop.Name + ':', FLabel );
+    end
+  else
+    Canvas.GetValidText( '<noprop>', FLabel );
+
+  if ( Assigned( Prop )) then
+end;
+
+function TP3DPropertyEditorString.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp;
 end;
 
 procedure TP3DPropertyEditorString.SetFocused(AValue: Boolean);
@@ -234,6 +316,7 @@ begin
     Prop.AsString:= Caption;
 end;
 
+
 procedure TP3DPropertyEditorString.KeyboardAction;
 begin
   inherited KeyboardAction;
@@ -250,6 +333,26 @@ begin
     end;
 end;
 
+constructor TP3DPropertyEditorString.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  HAlignment:= haRight;
+  Height:= 20;
+end;
+
+destructor TP3DPropertyEditorString.Destroy;
+begin
+  FreeAndNil( FLabel );
+  inherited Destroy;
+end;
+
+procedure TP3DPropertyEditorString.Draw;
+begin
+  inherited Draw;
+  if ( not Focused ) then
+    Canvas.RenderText( FLabel, vec2( 0 ));
+end;
+
 { TP3DPropertyEditorInt }
 
 procedure TP3DPropertyEditorInt.SetProp(AValue: TP3DPropertyAccess);
@@ -260,6 +363,11 @@ begin
   FProp:= AValue;
   UpdateValueText( GetValue );
   UpdateNameText( GetValueName );
+end;
+
+function TP3DPropertyEditorInt.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp;
 end;
 
 function TP3DPropertyEditorInt.GetValue: Single;
@@ -283,11 +391,18 @@ end;
 constructor TP3DPropertyEditorInt.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
+  Height:= 20;
   Precision:= 0;
   FixedDigits:= 0;
+  HAlignment:= haRight;
 end;
 
 { TP3DPropertyEditorFloat }
+
+function TP3DPropertyEditorFloat.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp;
+end;
 
 procedure TP3DPropertyEditorFloat.SetProp( AValue: TP3DPropertyAccess );
 begin
@@ -317,20 +432,56 @@ begin
     Result:= Prop.Name;
 end;
 
+constructor TP3DPropertyEditorFloat.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  Height:= 20;
+  HAlignment:= haRight;
+end;
+
 { TP3DPropertyEditorDataBlockList }
 
 constructor gP3DPropertyEditorList.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
   Font.Size:= 20;
+  Height:= 60;
   ScrollBarH.Visible:= True;
 end;
 
-procedure gP3DPropertyEditorList.SetProp(AValue: TListProp);
+function gP3DPropertyEditorList.GetLProp: TListProp;
+begin
+  Result:= FProp;
+end;
+
+procedure gP3DPropertyEditorList.SetLProp( AValue: TListProp );
+begin
+  FProp:= AValue;
+end;
+
+function gP3DPropertyEditorList.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp;
+end;
+
+procedure gP3DPropertyEditorList.SetProp( AValue: TP3DPropertyAccess );
 begin
   if ( AValue = Prop ) then
     exit;
-  FProp:= AValue;
+
+
+  //if ( AValue is TListProp ) then // ClassName required because this doesn't work
+  if (( Assigned( AValue )) and ( AValue.ClassName = TListProp.ClassName )) then
+    begin
+      FProp:= TListProp( AValue );
+      Canvas.GetValidText( Prop.Name + ':', FLabel );
+    end
+  else
+    begin
+      FProp:= nil;
+      Canvas.GetValidText( '<noprop>', FLabel );
+    end;
+
   Update;
 end;
 
@@ -340,10 +491,10 @@ var
   Item: TListData;
 begin
   Children.Clear();
-  if ( Assigned( Prop )) then
-    for i:= 0 to Prop.Count - 1 do
+  if ( Assigned( LProp )) then
+    for i:= 0 to LProp.Count - 1 do
       begin
-        Item:= Prop.Values[ i ];
+        Item:= LProp.Values[ i ];
         if ( Assigned( Item )) then
           Children.Add( {Item.Owner.Name + '.' + } Item.Name, Item )
         else
@@ -382,14 +533,14 @@ begin
       if ( P3DRect( ClientRect.Right - FDeleteSymbol.Width - ScrollBarV.Width, Selection.FRenderPos.Y,
                     FDeleteSymbol.Width, FDeleteSymbol.Height ).PtInRect( vec2( X, Y + Scroll.Y ))) then
         begin // Delete
-          Prop.Value.Delete( Children.IndexOf( Selection ));
+          LProp.Value.Delete( Children.IndexOf( Selection ));
           Children.Remove( Selection );
           FreeAndNil( FSelection );
         end
       else if ( P3DRect( ClientRect.Right - FDeleteSymbol.Width - FClearSymbol.Width - ScrollBarV.Width, Selection.FRenderPos.Y,
                     FClearSymbol.Width, FClearSymbol.Height ).PtInRect( vec2( X, Y + Scroll.Y ))) then
         begin // Clear
-          Prop.Values[ Children.IndexOf( Selection )]:= nil;
+          LProp.Values[ Children.IndexOf( Selection )]:= nil;
           Selection.Data:= nil;
           Selection.Caption:= '<empty>';
         end
@@ -426,6 +577,8 @@ begin
       Canvas.Font.Color:= vec4( 0 );
       Canvas.RenderText( FPlusSymbol, vec2(( Width - FPlusSymbol.Width ) / 2, FDrawInsertion - FPlusSymbol.Height / 2 ));
     end;
+  if ( not Focused ) then
+    Canvas.RenderText( FLabel, vec2( 0 ));
 end;
 
 procedure gP3DPropertyEditorList.MouseMove(X, Y: Integer);
@@ -457,9 +610,12 @@ begin
   Items.Clear( True );
 
   FProp:= AValue;
+  Canvas.Font.Name:= Font.Name;
+  Canvas.Font.Size:= Font.Size;
 
   if ( Assigned( Prop ))  then
     begin
+      Canvas.GetValidText( Prop.Name + ':', FLabel );
       Names:= Prop.GetNames;
       inherited SetCaption( Prop.AsString );
       if ( Assigned( Names )) then
@@ -470,7 +626,15 @@ begin
         end;
     end
   else
-    inherited SetCaption( '<empty>' );
+    begin
+      inherited SetCaption( '<empty>' );
+      Canvas.GetValidText( '<noprop>', FLabel );
+    end;
+end;
+
+function TP3DPropertyEditorEnum.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp;
 end;
 
 procedure TP3DPropertyEditorEnum.SetCaption(AValue: String);
@@ -483,6 +647,15 @@ end;
 constructor TP3DPropertyEditorEnum.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
+  HAlignment:= haRight;
+  Height:= 20;
+end;
+
+procedure TP3DPropertyEditorEnum.Draw;
+begin
+  inherited Draw;
+  if ( not Focused ) then
+    Canvas.RenderText( FLabel, vec2( 0 ));
 end;
 
 

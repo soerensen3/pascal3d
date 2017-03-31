@@ -10,6 +10,17 @@ end;
 
 TP3DPenStyle = ( psSolid, psStippled1, psStippled2, psStippled3, psStippled4, psStippled5, psStippled6 );
 
+TP3DHorizontalAlignment = (
+  haLeft,
+  haCenter,
+  haRight);
+
+TP3DVerticalAlignment = (
+  vaTop,
+  vaCenter,
+  vaBottom);
+
+
 { TP3DRect }
 
 TP3DRect = object
@@ -118,6 +129,8 @@ TP3DCanvas2D = class ( TP3DCanvas )
     procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
     procedure RenderText( Text: TP3DTextBmp; P: TVec2 );
     procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DTextBmp );
+    procedure RenderTextShadow( Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TVec4 );
+    procedure RenderTextShadow( Text: String; P: TVec2; blur: Single; Color: TVec4; var CacheObj: TP3DTextBmp );
     procedure RenderLetter( Text: TP3DText; Idx: Integer; P: TVec2 );
     procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TVec4 );
     procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TVec4);
@@ -126,6 +139,8 @@ TP3DCanvas2D = class ( TP3DCanvas )
     function GetValidText( Text: String; var CacheObj: TP3DText; AFont: TP3DFont ): TP3DText;
     function GetValidText( Text: String; var CacheObj: TP3DTextBmp; AFont: TP3DFont ): TP3DTextBmp;
     function GetValidText( Text: String; var CacheObj: TP3DTextBmp ): TP3DTextBmp; inline;
+    function CalcAlignedTextRect( Text: TP3DText; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment ): TVec2;
+    function CalcAlignedTextRect( Text: TP3DTextBmp; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment ): TVec2;
     procedure PassToShader;
 
     function Lock: Integer; override;
@@ -424,6 +439,9 @@ end;
 procedure TP3DCanvas2D.RenderText(Text: TP3DTextBmp; P: TVec2);
 begin
   if ( not PrepareForDrawing ) then exit;
+
+  P3DFontManagerBmp.TextModifier.Reset;
+  P3DFontManagerBmp.TextModifier.TextAlpha:= 1.0;
   if ( Assigned( Text )) then
     Text.Render( P, ScreenColor * Font.Color, World * Proj );
 end;
@@ -436,6 +454,27 @@ begin
 
   GetValidText( Text, CacheObj );
   RenderText( CacheObj, P );
+end;
+
+procedure TP3DCanvas2D.RenderTextShadow(Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TVec4);
+begin
+  if ( not PrepareForDrawing ) then exit;
+
+  P3DFontManagerBmp.TextModifier.Reset;
+  P3DFontManagerBmp.TextModifier.TextSmoothing:= blur;
+  P3DFontManagerBmp.TextModifier.TextBias:= -0.05;
+  P3DFontManagerBmp.TextModifier.TextAlpha:= ScreenColor.a * Color.a;
+  if ( Assigned( Text )) then
+    Text.Render( P, ScreenColor * Font.Color, World * Proj );
+end;
+
+procedure TP3DCanvas2D.RenderTextShadow(Text: String; P: TVec2; blur: Single; Color: TVec4; var CacheObj: TP3DTextBmp);
+begin
+  if ( Text = '' ) then
+    exit;
+
+  GetValidText( Text, CacheObj );
+  RenderTextShadow( CacheObj, P, blur, Color );
 end;
 
 procedure TP3DCanvas2D.RenderLetter(Text: TP3DText; Idx: Integer; P: TVec2);
@@ -546,7 +585,7 @@ begin
   if ( Text = '' ) then
     Text:= ' ';
 
-  if (( not Assigned( CacheObj )) or ( CacheObj.Text <> Text )) then
+  if (( not Assigned( CacheObj )) or ( CacheObj.Text <> Text ) or ( CacheObj.Font <> AFont )) then
     begin
       FreeAndNil( CacheObj );
       CacheObj:= p3dTextSimple( Text, AFont );
@@ -571,6 +610,34 @@ end;
 function TP3DCanvas2D.GetValidText(Text: String; var CacheObj: TP3DTextBmp ): TP3DTextBmp;
 begin
   Result:= GetValidText( Text, CacheObj, P3DFontManager[ Font.Name, Font.Size ]);
+end;
+
+function TP3DCanvas2D.CalcAlignedTextRect(Text: TP3DText; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment): TVec2;
+begin
+  case HAlignment of
+    haLeft: Result.x:= R.Left;
+    haRight: Result.x:= R.Left + R.Width - Text.Width;
+    haCenter: Result.x:= R.Left + ( R.Width - Text.Width ) / 2;
+  end;
+  case VAlignment of
+    vaTop: Result.y:= R.Top;
+    vaBottom: Result.y:= R.Top + R.Height - Text.Height;
+    vaCenter: Result.y:= R.Top + ( R.Height - Text.Height ) / 2;
+  end;
+end;
+
+function TP3DCanvas2D.CalcAlignedTextRect(Text: TP3DTextBmp; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment): TVec2;
+begin
+  case HAlignment of
+    haLeft: Result.x:= R.Left;
+    haRight: Result.x:= R.Left + R.Width - Text.Width;
+    haCenter: Result.x:= R.Left + ( R.Width - Text.Width ) / 2;
+  end;
+  case VAlignment of
+    vaTop: Result.y:= R.Top;
+    vaBottom: Result.y:= R.Top + R.Height - Text.Height;
+    vaCenter: Result.y:= R.Top + ( R.Height - Text.Height ) / 2;
+  end;
 end;
 
 procedure TP3DCanvas2D.PassToShader;

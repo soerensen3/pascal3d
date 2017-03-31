@@ -493,9 +493,6 @@ begin
           if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
             decl.AsFloat:= 1.0;
 
-          for j:= 0 to high( Items[ Idx ].Modifiers ) do
-            Items[ Idx ].Modifiers[ j ].PassToShader( Items[ Idx ]);
-
           if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'world', decl )) then
             decl.AsMat4:= Mat4Identity;
 
@@ -534,6 +531,10 @@ begin
               //WriteLn( 'Scalings divisor:', Items[ Idx ].Scalings.Divisor );
               //glVertexAttribDivisorARB( decl.Addr, Items[ Idx ].InstanceCount div Items[ Idx ].Scalings.Count ); cle( Self );
             end;
+
+          for j:= 0 to high( Items[ Idx ].Modifiers ) do
+            Items[ Idx ].Modifiers[ j ].PassToShader( Items[ Idx ]);
+
           if ( rlfRenderEdges in AFlags ) then
             RenderEdgesInstanced( Items[ Idx].InstanceCount )
           else

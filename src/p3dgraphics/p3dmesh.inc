@@ -644,8 +644,9 @@ begin
 
   Result.AppendChild( Result.OwnerDocument.CreateComment( comment ));
 
-  fn:= ExtractFileNameOnly( Owner.Name ) + '.' + Name + '.p3dmesh';
-  S:= TFileStream.Create( fn, fmCreate );
+  fn:= Owner.BinFile.FileName; //ExtractFileNameOnly( Owner.Name ) + '.' + Name + '.p3dbin';
+  //S:= TFileStream.Create( fn, fmCreate );
+  S:= Owner.BinFile;
 
   Result.AttribStrings[ 'Positions' ]:= fn + ':' + IntToStr( S.Position );
   PackedPositions.SaveToStream( S );
@@ -677,7 +678,7 @@ begin
   Result.AttribStrings[ 'VertexWeights' ]:= fn + ':' + IntToStr( S.Position );
   PackedVertexWeights.SaveToStream( S );
 
-  S.Free;
+  //S.Free;
 
   PackedMaterialGroups.SaveToDOM( Result );
   WeightGroups.SaveToDOM( Result );

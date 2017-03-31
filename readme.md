@@ -95,3 +95,9 @@ Before you can compile any Pascal3D you have to first register the packages in L
 
 ## Compiling
 The easiest way is to open the project in Lazarus and compile there. You can however also compile from commandline using lazbuild. You will find the project for the official p3dscene editor in ./editor/p3dscene.lpi
+
+# TODO List
+* Object inspector
+  * dynamic pages that uses property editors and categories (partly implemented)
+  * make new spatial object, that can be used by other classes than TP3DActor (for example for joints and pose joints) and be selected and edited in the viewer
+

@@ -53,10 +53,7 @@ begin
         with ( SceneMain.ActiveLibrary ) do
           begin
             SetCurrentDir( P3DSearchPaths.BaseDir ); //SceneMain.ActiveLibrary.FileWatch.FileName );
-            CreateDOMFile;
-            SaveToDOM();
-            SaveDOMFile( ExtractFileName( SceneMain.ActiveLibrary.FileWatch.FileName ));
-            CloseDOMFile;
+            SaveToFile();
           end;
     end;
   {  begin

@@ -57,6 +57,7 @@
          FTransformDynamic: Boolean;
 
          procedure LoadTransformFromDOM(DOM: TDOMElement);
+         procedure LoadTransformFromDOMNew(DOM: TDOMElement);
          procedure SetAlphaFactor(AValue: Single);
          procedure SetDiffuseFactor(AValue: Single);
          procedure SetDisplaceFactor(AValue: Single);
@@ -68,6 +69,7 @@
        public
          constructor Create( AParentMaterial: TP3DMaterial ); override;
          constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary = nil );
+         procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
          property Transform: TMat4 read FTransform write FTransform;
          property TransformDynamic: Boolean read FTransformDynamic write FTransformDynamic;
@@ -141,9 +143,11 @@
      { TP3DMaterialModifier }
 
      TP3DMaterialModifier = class( TInterfacedPersistent )
-       class function GetIndex: Integer; virtual; abstract;
-       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); virtual; abstract;
-       procedure PassToShader( Material: TP3DMaterialBase ); virtual; abstract;
+       public
+         class function GetIndex: Integer; virtual; abstract;
+
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); virtual; abstract;
+         procedure PassToShader( Material: TP3DMaterialBase ); virtual; abstract;
      end;
 
      { TP3DMaterialModifierList }
@@ -158,33 +162,37 @@
      { TP3DMaterialModifierTexTransform }
 
      TP3DMaterialModifierTexTransform = class ( TP3DMaterialModifier )
-       class function GetIndex: Integer; override;
-       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
-       procedure PassToShader( Material: TP3DMaterialBase ); override;
+       public
+         class function GetIndex: Integer; override;
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+         procedure PassToShader( Material: TP3DMaterialBase ); override;
      end;
 
      { TP3DMaterialModifierInit }
 
      TP3DMaterialModifierInit = class ( TP3DMaterialModifier )
-       class function GetIndex: Integer; override;
-       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
-       procedure PassToShader( Material: TP3DMaterialBase ); override;
+       public
+         class function GetIndex: Integer; override;
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+         procedure PassToShader( Material: TP3DMaterialBase ); override;
      end;
 
      { TP3DMaterialModifierMaps }
 
      TP3DMaterialModifierMaps = class ( TP3DMaterialModifier )
-       class function GetIndex: Integer; override;
-       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
-       procedure PassToShader( Material: TP3DMaterialBase ); override;
+       public
+         class function GetIndex: Integer; override;
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+         procedure PassToShader( Material: TP3DMaterialBase ); override;
      end;
 
      { TP3DMaterialModifierLightning }
 
      TP3DMaterialModifierLightning = class ( TP3DMaterialModifier )
-       class function GetIndex: Integer; override;
-       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
-       procedure PassToShader( Material: TP3DMaterialBase ); override;
+       public
+         class function GetIndex: Integer; override;
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+         procedure PassToShader( Material: TP3DMaterialBase ); override;
      end;
 
      { TP3DMaterialModifierTransform }
@@ -192,9 +200,10 @@
      TP3DMaterialTransformType = ( mttNone, mttWorld, mttView, mttProj );
      TP3DMaterialTransformTypes = set of TP3DMaterialTransformType;
      TP3DMaterialModifierTransform = class ( TP3DMaterialModifier )
-       class function GetIndex: Integer; override;
-       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
-       procedure PassToShader( Material: TP3DMaterialBase ); override;
+       public
+         class function GetIndex: Integer; override;
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+         procedure PassToShader( Material: TP3DMaterialBase ); override;
 
        {property Positions: TP3DMaterialTransformTypes read FPositions write FPositions;
        property Normals: TP3DMaterialTransformTypes read FNormals write FNormals;
@@ -206,9 +215,10 @@
      { TP3DMaterialModifierCombine }
 
      TP3DMaterialModifierCombine = class ( TP3DMaterialModifier )
-       class function GetIndex: Integer; override;
-       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
-       procedure PassToShader( Material: TP3DMaterialBase ); override;
+       public
+         class function GetIndex: Integer; override;
+         procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
+         procedure PassToShader( Material: TP3DMaterialBase ); override;
      end;
 
      { TP3DMaterialModifierArray }
@@ -461,6 +471,17 @@ begin
   Transform:= mat4translate( vec4( Position, 1 )){ * mat4( mat3( Quaternion ))} * mat4scale( vec4( Scale, 1 ));
 end;
 
+procedure TP3DMaterialMapBase.LoadTransformFromDOMNew(DOM: TDOMElement);
+var
+  Position, Scale: TVec3;
+  Quaternion: TQuaternion;
+begin
+  Position.FromString( DOM.GetAttribute( 'Position' ));
+  Quaternion.FromString( DOM.GetAttribute( 'Quaternion' ));
+  Scale.FromString( DOM.GetAttribute( 'Scale' ));
+  Transform:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
+end;
+
 constructor TP3DMaterialMapBase.CreateFromDOM(AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary);
 var
   TexName, FullTexName, DataName: DOMString;
@@ -508,6 +529,16 @@ begin
   if ( TransSect.Count > 0 ) then
     LoadTransformFromDOM( TDOMElement( TransSect.Item[ 0 ]));
   FreeAndNil( TransSect );
+end;
+
+procedure TP3DMaterialMapBase.LoadFromDOMNew(ADOMNode: TDOMElement);
+var
+  TransSect: TDOMNode;
+begin
+  inherited LoadFromDOMNew(ADOMNode);
+  TransSect:= ADOMNode.FindNode( 'transform' );
+  if ( Assigned( TransSect )) then
+    LoadTransformFromDOMNew( TDOMElement( TransSect ));
 end;
 
 
@@ -1255,7 +1286,7 @@ begin
 
   Maps:= TP3DMaterialMapList.Create( Self );
   Maps.MapClass:= TP3DMaterialMap;
-  Properties.Add( TP3DPropertyAccessDataBlockList.CreateField( 'Maps', @FMaps ));
+  Properties.Add( TP3DPropertyAccessMaterialMapList.CreateField( 'Maps', @FMaps ));
 end;
 
 procedure TP3DMaterial.FastDestroy;

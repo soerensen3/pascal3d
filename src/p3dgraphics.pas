@@ -104,6 +104,16 @@ begin
     end;
 end;
 
+{ TP3DFontListBmp }
+
+procedure TP3DFontListBmp.SaveToDOM(AParent: TDOMElement);
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].SaveToDOM( AParent );
+end;
+
 
 { TP3DGridSceneList }
 
@@ -136,11 +146,24 @@ end;
 
 { TP3DFontLetter }
 
+constructor TP3DFontLetter.Create;
+begin
+  inherited Create;
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Letter', smAttribute ));
+  Properties.Add( TP3DPropertyAccessVec2.CreateField( 'uv1', @Fuv1, smAttribute ));
+  Properties.Add( TP3DPropertyAccessVec2.CreateField( 'uv2', @Fuv2, smAttribute ));
+end;
+
 destructor TP3DFontLetter.Destroy;
 begin
   if ( Assigned( Texture ) and P3DData.IsValid( Texture )) then
     FreeAndNil( FTexture );
   inherited Destroy;
+end;
+
+class function TP3DFontLetter.DOMNodeName: String;
+begin
+  Result:= 'char';
 end;
 
 

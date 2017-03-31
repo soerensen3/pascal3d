@@ -257,7 +257,7 @@ begin
   case SceneMain.ViewMode of
     dvmData: FSelectionParent:= P3DData;
     dvmLibrary: FSelectionParent:= SceneMain.ActiveLibrary;
-    dvmScene: FSelectionParent:= SceneMain.ActiveScene.Objects;
+    dvmScene: if ( Assigned( SceneMain.ActiveScene )) then FSelectionParent:= SceneMain.ActiveScene.Objects;
   end;
 end;
 

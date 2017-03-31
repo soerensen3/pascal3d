@@ -10,6 +10,7 @@
       FCursorRight: Boolean;
       FSel1,
       FSel2: Integer;
+      FTPos: TVec2;
       function GetSelLength(): Integer;
       function GetSelStart(): Integer;
       procedure SetSel1(AValue: Integer);
@@ -52,8 +53,8 @@
       FCaption: String;
       FCaptionTxt: TP3DTextBmp;
       FFont: TP3DCanvasFont;
-      FHAlignment: THorizontalAlignment;
-      FVAlignment: TVerticalAlignment;
+      FHAlignment: TP3DHorizontalAlignment;
+      FVAlignment: TP3DVerticalAlignment;
 
       procedure SetAutoSize(AValue: Boolean);
       procedure SetCaption( AValue: String ); virtual;
@@ -69,8 +70,8 @@
       property Caption: String read FCaption write SetCaption;
       property AutoSize: Boolean read FAutoSize write SetAutoSize;
       property Font: TP3DCanvasFont read FFont write FFont;
-      property HAlignment: THorizontalAlignment read FHAlignment write FHAlignment;
-      property VAlignment: TVerticalAlignment read FVAlignment write FVAlignment;
+      property HAlignment: TP3DHorizontalAlignment read FHAlignment write FHAlignment;
+      property VAlignment: TP3DVerticalAlignment read FVAlignment write FVAlignment;
   end;
 
   { TP3DGroupBox }
@@ -214,10 +215,12 @@
       FEdCount: Integer;
       FEds: array [ 0..3 ] of TP3DEventValueEdit;
       FGetValueEvent: TGetValue;
+      FHAlignment: TP3DHorizontalAlignment;
       FSetValueEvent: TSetValue;
       FStep: Single;
       FTransmission: Single;
       FLabels: array [ 0..3 ] of String;
+      FVAlignment: TP3DVerticalAlignment;
 
       function GetEd( Index: Integer ): TP3DEventValueEdit;
       function GetEdValueName( Sender: TP3DEventValueEdit ): String;
@@ -225,9 +228,11 @@
       function GetValue: TVec4; virtual;
       procedure SetEd( Index: Integer ; AValue: TP3DEventValueEdit );
       procedure SetEdCount(AValue: Integer);
+      procedure SetHAlignment(AValue: TP3DHorizontalAlignment);
       procedure SetLabel( Index: Integer ; AValue: String);
       procedure SetStep(AValue: Single);
       procedure SetTransmission(AValue: Single);
+      procedure SetVAlignment(AValue: TP3DVerticalAlignment);
       procedure SetValue(AValue: TVec4); virtual;
       function GetEdValue( Sender: TP3DEventValueEdit ): Single;
       procedure SetEdValue( Sender: TP3DEventValueEdit; AValue: Single );
@@ -247,6 +252,8 @@
       property Step: Single read FStep write SetStep;
       property Transmission: Single read FTransmission write SetTransmission;
       property Labels[ Index: Integer ]: String read GetLabel write SetLabel;
+      property HAlignment: TP3DHorizontalAlignment read FHAlignment write SetHAlignment;
+      property VAlignment: TP3DVerticalAlignment read FVAlignment write SetVAlignment;
   end;
 
   TP3DScrollBarKind = ( p3dsbHorizontal, p3dsbVertical );
@@ -869,7 +876,7 @@ end;
 
 procedure TP3DEdit.DeleteRightOfCursor();
 begin
-  if (( FCaption > '' ) AND ( SelStart > 0 )) then
+  if (( FCaption > '' ) AND ( SelStart >= 0 )) then
     begin
       if ( Sel1 = Sel2 ) then
         Sel1:= Sel1 + 1;
@@ -896,7 +903,6 @@ end;
 procedure TP3DEdit.Draw;
 var
   Preset: TP3DButtonPreset;
-  tp: TVec2; //Text Position
   s: TVec2; //Cursor Position
   soff: TVec4; //Offset to the beginning of the selection
   swidth: TVec4; //Length of the selection
@@ -916,27 +922,9 @@ begin
   Canvas.Font.Color:= Preset.FontColor;
   Canvas.Font.Size:= Font.Size;
   Canvas.Font.Name:= Font.Name;
-  tp:= ( vec2( 0, Height ) - vec2( 0, FCaptionTxt.Height )) / 2;
-  Canvas.RenderText( FCaptionTxt, tp );
+  FTPos:= RenderButtonText( Preset.FontColor );
   if (( Focused ) and ( Assigned( FCaptionTxt ))) then
     begin
-      {if ( Sel1 > 0 ) then
-        soff:= FCaptionTxt.WidthFromTo( 1, Sel1 + 1 )
-      else
-        soff:= vec4( 0 );
-
-      if ( Sel1 <> Sel2 ) then
-        begin
-          swidth:= FCaptionTxt.WidthFromTo( Min( Sel1, Sel2 ) + 1, Max( Sel1, Sel2 ) + 1 );
-
-          s:= tp;
-          if ( Sel1 > Sel2 ) then
-            s.x:= s.x - swidth.x;
-          Canvas.RenderRect( s + vec2( soff.X, 0 ), s + vec2( soff.X + swidth.X, swidth.Y ), vec4( accent900.xyz, 0.5 ), vec4( accent400.xyz, 0.5), vec4( accent600.xyz, 0.5 ), vec4( accent900.xyz, 0.5 ));
-        end;
-
-      swidth:= p3dTextSize( 'W', FCaptionTxt.Font );
-      Canvas.RenderRect( tp + vec2( soff.X, 0 ), tp + vec2( soff.X + 2, soff.Y ), Preset.FontColor );}
       if ( Sel1 <> Sel2 ) then
         begin
           swidth:= FCaptionTxt.WidthFromTo( Min( Sel1, Sel2 ), Max( Sel1, Sel2 ));
@@ -944,10 +932,10 @@ begin
           //s:= tp;
           //if ( Sel1 > Sel2 ) then
           //  s.x:= s.x - swidth.x;
-          Canvas.RenderRect( vec2( swidth[ 0 ], swidth[ 1 ]), vec2( swidth[ 0 ], swidth[ 1 ]) + vec2( swidth[ 2 ], swidth[ 3 ]), vec4( accent900.xyz, 0.5 ), vec4( accent400.xyz, 0.5), vec4( accent600.xyz, 0.5 ), vec4( accent900.xyz, 0.5 ));
+          Canvas.RenderRect( FTPos + vec2( swidth[ 0 ], swidth[ 1 ]), FTPos + vec2( swidth[ 0 ], swidth[ 1 ]) + vec2( swidth[ 2 ], swidth[ 3 ]), vec4( accent900.xyz, 0.5 ), vec4( accent400.xyz, 0.5), vec4( accent600.xyz, 0.5 ), vec4( accent900.xyz, 0.5 ));
         end;
       swidth:= FCaptionTxt.WidthFromTo( 0, Sel1 );
-      Canvas.RenderRect( tp + vec2( swidth[ 2 ] - 1, swidth[ 1 ]), tp + vec2( swidth[ 2 ] + 1, swidth[ 3 ]), Preset.FontColor );
+      Canvas.RenderRect( FTPos + vec2( swidth[ 2 ] - 1, swidth[ 1 ]), FTPos + vec2( swidth[ 2 ] + 1, swidth[ 3 ]), Preset.FontColor );
     end;
 
   if ( Assigned( FOnDraw )) then
@@ -981,20 +969,21 @@ var
   tp: Single;
   nx: Single;
 begin
-  tp:= 0;
+  tp:= round( FTPos.x );
   nx:= X - tp;
   Result:= Length( FCaption );
-  for i:= Length( FCaption ) downto 0 do
-    if ( i = Length( FCaption )) then
-      begin
-        if ( FCaptionTxt.LetterPosAndSize[ i - 1 ].X + FCaptionTxt.LetterPosAndSize[ i - 1 ].Z < nx ) then
-          break; //PREVENT UNASSIGNED MEMORY ACCESS
-      end
-    else if ( FCaptionTxt.LetterPosAndSize[ i ].X <= nx ) then
-      begin
-        Result:= i;
-        break;
-      end;
+  if ( Result > 0 ) then
+    for i:= Length( FCaption ) downto 0 do
+      if ( i = Length( FCaption )) then
+        begin
+          if ( FCaptionTxt.LetterPosAndSize[ i - 1 ].X + FCaptionTxt.LetterPosAndSize[ i - 1 ].Z < nx ) then
+            break; //PREVENT UNASSIGNED MEMORY ACCESS
+        end
+      else if ( FCaptionTxt.LetterPosAndSize[ i ].X <= nx ) then
+        begin
+          Result:= i;
+          break;
+        end;
 end;
 
 procedure TP3DEdit.KeyboardAction;
@@ -1204,6 +1193,13 @@ begin
   Update;
 end;
 
+procedure TP3DVectorEdit.SetHAlignment(AValue: TP3DHorizontalAlignment);
+begin
+  if FHAlignment=AValue then Exit;
+  FHAlignment:=AValue;
+  Update;
+end;
+
 procedure TP3DVectorEdit.SetLabel( Index: Integer ; AValue: String);
 begin
   FLabels[ Index ]:= AValue;
@@ -1227,6 +1223,13 @@ begin
   FTransmission:=AValue;
   for i:= 0 to EdCount - 1 do
     Editors[ i ].Transmission:= AValue;
+end;
+
+procedure TP3DVectorEdit.SetVAlignment(AValue: TP3DVerticalAlignment);
+begin
+  if FVAlignment=AValue then Exit;
+  FVAlignment:=AValue;
+  Update;
 end;
 
 procedure TP3DVectorEdit.SetValue(AValue: TVec4);
@@ -1272,6 +1275,7 @@ begin
   FLabels[ 1 ]:= 'Y';
   FLabels[ 2 ]:= 'Z';
   FLabels[ 3 ]:= 'W';
+  HAlignment:= haRight;
 end;
 
 destructor TP3DVectorEdit.Destroy;
@@ -1296,9 +1300,11 @@ var
 begin
   for i:= 0 to EdCount - 1 do
     begin
-      Editors[ i ].FWidth:= Width / EdCount;
-      Editors[ i ].FLeft:= ( Width / EdCount ) * i;
-      Editors[ i ].FHeight:= Height;
+      Editors[ i ].FWidth:= ClientRect.Width / EdCount;
+      Editors[ i ].FLeft:= ( ClientRect.Width / EdCount ) * i;
+      Editors[ i ].FHeight:= ClientRect.Height;
+      Editors[ i ].HAlignment:= HAlignment;
+      Editors[ i ].VAlignment:= VAlignment;
     end;
 end;
 
@@ -1329,6 +1335,7 @@ begin
   inherited Create( AData, AParent );
   FDropDownMenu:= TP3DPopupMenu.Create( AData, nil );
   FDropDownMenu.OnItemClick:= @DropDownItemClick;
+  MarginBR.X:= 20;
 end;
 
 destructor TP3DComboBox.Destroy;
@@ -1488,7 +1495,7 @@ begin
   if ( Checked ) then
     Canvas.RenderRect( R.TopLeft, R.BottomRight, Accent900, Accent400, Accent600, Accent900 )
   else
-    Canvas.RenderRect( R.TopLeft, R.BottomRight, Accent100, Accent50, Accent100, Accent100 );
+    Canvas.RenderRect( R.TopLeft, R.BottomRight, Accent400, Accent200, Accent300, Accent400 );
   if ( Checked ) then
     begin
       Canvas.Font.Color:= Accent50;

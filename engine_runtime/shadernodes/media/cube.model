@@ -1,9 +1,0 @@
-<?xml version="1.0" ?>
-<p3dscene>
-  <world ambient="0.000000, 0.000000, 0.000000" horizon="0.050876, 0.050876, 0.050876" />
-  <mesh binary="cube.modelCube.p3dobj" faces="1536" name="Cube" normals="102" texcoords="289" vertices="1538">
-    <matrix c0=" 1.000000, 0.000000, 0.000000, 0.000000" c1=" 0.000000, 1.000000, 0.000000, 0.000000" c2=" 0.000000, 0.000000, 1.000000, 0.000000" c3=" 0.000000, 0.000000, 0.000000, 1.000000" />
-    <material name="Material" />
-  </mesh>
-  <material diffuse="0.640000, 0.640000, 0.640000" name="Material" specular="50.000000, 0.500000, 0.500000, 0.500000" />
-</p3dscene>

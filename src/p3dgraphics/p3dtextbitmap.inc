@@ -3,19 +3,23 @@ type
 
   { TP3DFontLetter }
 
-  TP3DFontLetter = class
+  TP3DFontLetter = class ( TP3DInterfacedPersistent )
   private
     Fuv1, Fuv2: TVec2;
     FTexture: TP3DTexture;
     FLetter: WideChar; //UNICODE
 
   public
+    constructor Create;
     destructor Destroy; override;
+    class function DOMNodeName: String; override;
 
-    property Letter: WideChar read FLetter write FLetter;
     property Texture: TP3DTexture read FTexture write FTexture;
     property uv1: TVec2 read Fuv1 write Fuv1;
     property uv2: TVec2 read Fuv2 write Fuv2;
+
+  published
+    property Letter: WideChar read FLetter write FLetter;
   end;
 
   TCustomFontLetterList = specialize gP3DCustomObjectList < TP3DFontLetter >;
@@ -24,15 +28,17 @@ type
 
   TP3DFontLetterList = class ( TCustomFontLetterList )
     function Find( C: WideChar ): Integer;
+    function SaveToDOM(AParent: TDOMElement ): TDOMElement;
+    procedure LoadFromDOM( ADOMNode: TDOMElement );
   end;
 
   { TP3DFontBmp }
 
-  TP3DFontBmp = class
+  TP3DFontBmp = class ( TP3DDataBlock )
     private
       FFileName: String;
-      FFontName: String;
       FLetters: TP3DFontLetterList;
+      FMargin: Single;
       FMipMapLoadBias: Single;
       FSizeFactor: Single;
       FTexture: TP3DTexture;
@@ -42,27 +48,28 @@ type
       procedure SetMipMapLodBias(AValue: Single);
 
     public
-      constructor Create;
-      constructor CreateByFont( Font: TP3DFont; Width, Height, Margin: Integer );
+      constructor Create( const AData: TP3DLibrary = nil ); override;
+      constructor CreateByFont( Font: TP3DFont; Width, Height, Margin: Integer; const AData: TP3DLibrary = nil );
 
-      destructor Destroy; override;
-      constructor CreateFromDOM( XML: TDOMElement );
-      constructor CreateFromFile( FName: String );
-      procedure LoadFromDOM( XML: TDOMElement );
-      procedure LoadFromFile( FName: String );
-      procedure SaveToDOM(XML: TDOMDocument);
-      procedure SaveToFile( FName: String );
+      procedure FastDestroy; override;
+
+      function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
+      procedure LoadFromDOMNew( ADOMNode: TDOMElement ); override;
+      class function DOMNodeName: String; override;
 
     published
       property Letters: TP3DFontLetterList read FLetters write FLetters;
       property Texture: TP3DTexture read FTexture write FTexture;
-      property FileName: String read FFileName write SetFileName;
-      property FontName: String read FFontName;
       property SizeFactor: Single read FSizeFactor write FSizeFactor;
+      property Margin: Single read FMargin write FMargin;
       property MipMapLoadBias: Single read FMipMapLoadBias write SetMipMapLodBias;
   end;
 
-TP3DCustomFontListBmp = specialize gP3DCustomObjectList < TP3DFontBmp >;
+{ TP3DFontListBmp }
+
+TP3DFontListBmp = class ( specialize gP3DCustomObjectList < TP3DFontBmp >)
+  procedure SaveToDOM( AParent: TDOMElement );
+end;
 
 TP3DMaterialModifierText = class ( TP3DMaterialModifier )
   private
@@ -70,11 +77,16 @@ TP3DMaterialModifierText = class ( TP3DMaterialModifier )
     FTextBias: Float;
     FTextSmoothing: Float;
 
-  published
+  public
+    constructor Create;
+
     class function GetIndex: Integer; override;
+
     procedure AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase); override;
     procedure PassToShader(Material: TP3DMaterialBase); override;
+    procedure Reset;
 
+  published
     property TextSmoothing: Float read FTextSmoothing write FTextSmoothing;
     property TextAlpha: Float read FTextAlpha write FTextAlpha;
     property TextBias: Float read FTextBias write FTextBias;
@@ -82,7 +94,7 @@ end;
 
 { TP3DFontManagerBmp }
 
-TP3DFontManagerBmp = class ( TP3DCustomFontListBmp )
+TP3DFontManagerBmp = class ( TP3DFontListBmp )
   private
     FDefaultTexHeight: Integer;
     FDefaultTextMargin: Integer;
@@ -98,7 +110,7 @@ TP3DFontManagerBmp = class ( TP3DCustomFontListBmp )
     destructor Destroy; override;
 
     function AddByP3DFont( Font: TP3DFont ): Integer;
-    property Fonts [ FontName: String ]: TP3DFontBmp read GetFont; default;
+    property Fonts[ FontName: String ]: TP3DFontBmp read GetFont; default;
     property FontsByP3DFont[ Font: TP3DFont ]: TP3DFontBmp read GetFontByP3DFont;
 
   published
@@ -143,9 +155,6 @@ TP3DTextBmp = class ( TPersistent )
     property TexCoords: TP3DVec2BufferGL read FTexCoords write FTexCoords;
     property Indices: TP3DIntBufferGL read FIndices write FIndices;
     property LetterPosAndSize: TVec4List read FLetterPosAndSize write FLetterPosAndSize;
-{    property TextSmoothing: Float read FTextSmoothing write FTextSmoothing;
-    property TextAlpha: Float read FTextAlpha write FTextAlpha;
-    property TextBias: Float read FTextBias write FTextBias;}
 end;
 {$ENDIF}
 
@@ -175,7 +184,7 @@ begin
   tc2:= vec2( tc3.x, tc1.y );
   tc4:= vec2( tc1.x, tc3.y );
 
-  n:= Vertices.Add([ v1, v2, v3, v4 ]);
+  n:= Vertices.Add([ v1 - Font.Margin, v2 - Font.Margin, v3 + Font.Margin, v4 + Font.Margin ]);
   TexCoords.Add([ tc1, tc2, tc3, tc4 ]);
   Indices.Add([ n + 0, n + 1, n + 2, n + 0, n + 2, n + 3 ]);
   LetterPosAndSize.Add( vec4( v1, v3 - v1 ));
@@ -234,82 +243,24 @@ var
   Uniform: TP3DShaderDecl;
   mt, m: TMat4;
 begin
-{  P3DFontManagerBmp.TextModifier.TextBias:= 0.0;
-  P3DFontManagerBmp.TextModifier.TextAlpha:= 0.15;
-  P3DFontManagerBmp.TextModifier.TextSmoothing:= 0.5;
+  Font.ApplyShader;
+  Shader:= P3DShaderActive;
 
-  begin
-    Font.ApplyShader;
+  mt:= mat4translate( vec4( p, 0, 1 ));
+  m:= proj * mt;
+  if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
+    Uniform.AsMat4:= m;
+  if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
+    Uniform.AsMat4:= Mat4Identity;
+  if ( Shader.Uniforms.FindByName( 'world', Uniform )) then
+    Uniform.AsMat4:= Mat4Identity;
 
-    if ( not Assigned( P3DFontManagerBmp.Material.Shader )) then
-      exit;
+  glVertexAttrib4f( P3DAttribColor, Color.X, Color.Y, Color.Z, Color.A );
 
-    Shader:= P3DFontManagerBmp.Material.Shader;
-
-
-    mt:= mat4translate( vec4( p + vec2( 2, 2 ), 0, 1 ));
-    m:= proj * mt;
-    if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
-      Uniform.AsMat4:= m;
-    if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
-      Uniform.AsMat4:= Mat4Identity;
-    if ( Shader.Uniforms.FindByName( 'world', Uniform )) then
-      Uniform.AsMat4:= Mat4Identity;
-
-    glVertexAttrib4f( P3DAttribColor, Color.X, Color.Y, Color.Z, Color.A );
-
-    Vertices.SetAttribArray( P3DAttribPosition );
-    TexCoords.SetAttribArray( P3DAttribTexCoord0 );
-    Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
-    glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
-  end;}
-
-  P3DFontManagerBmp.TextModifier.TextBias:= -0.1;
-  P3DFontManagerBmp.TextModifier.TextAlpha:= 1.0;
-  P3DFontManagerBmp.TextModifier.TextSmoothing:= 1.0;
-
-  begin
-    Font.ApplyShader;
-    Shader:= P3DFontManagerBmp.Material.Shader;
-    mt:= mat4translate( vec4( p, 0, 1 ));
-    m:= proj * mt;
-    if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
-      Uniform.AsMat4:= m;
-    if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
-      Uniform.AsMat4:= Mat4Identity;
-    if ( Shader.Uniforms.FindByName( 'world', Uniform )) then
-      Uniform.AsMat4:= Mat4Identity;
-
-    glVertexAttrib4f( P3DAttribColor, 1-Color.R, 1-Color.G, 1-Color.B, Color.A );
-
-    Vertices.SetAttribArray( P3DAttribPosition );
-    TexCoords.SetAttribArray( P3DAttribTexCoord0 );
-    Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
-    glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
-  end;
-
-
-  P3DFontManagerBmp.TextModifier.TextBias:= -0.01; //-0.015;
-  P3DFontManagerBmp.TextModifier.TextAlpha:= 1.0;
-  P3DFontManagerBmp.TextModifier.TextSmoothing:= 1.0/128.0;
-
-  begin
-    mt:= mat4translate( vec4( p, 0, 1 ));
-    m:= proj * mt;
-    if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
-      Uniform.AsMat4:= m;
-    if ( Shader.Uniforms.FindByName( 'view', Uniform )) then
-      Uniform.AsMat4:= Mat4Identity;
-    if ( Shader.Uniforms.FindByName( 'world', Uniform )) then
-      Uniform.AsMat4:= Mat4Identity;
-
-    glVertexAttrib4f( P3DAttribColor, Color.X, Color.Y, Color.Z, Color.A );
-
-    Vertices.SetAttribArray( P3DAttribPosition );
-    TexCoords.SetAttribArray( P3DAttribTexCoord0 );
-    Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
-    glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
-  end;
+  Vertices.SetAttribArray( P3DAttribPosition );
+  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
+  Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
+  glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
 end;
 
 function TP3DTextBmp.WidthFromTo(idx1: Integer; idx2: Integer): TVec4;
@@ -353,6 +304,34 @@ begin
       end;
 end;
 
+function TP3DFontLetterList.SaveToDOM(AParent: TDOMElement): TDOMElement;
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    Items[ i ].SaveToDOM( AParent );
+end;
+
+procedure TP3DFontLetterList.LoadFromDOM(ADOMNode: TDOMElement);
+var
+  lst: TDOMNodeList;
+  i: Integer;
+begin
+  Clear();
+  lst:= ADOMNode.GetElementsByTagName( TP3DFontLetter.DOMNodeName );
+  try
+    Count:= lst.Count;
+    for i:= 0 to lst.Count - 1 do
+      begin
+        Items[ i ]:= TP3DFontLetter.Create;
+        Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
+      end;
+
+  finally
+    lst.Free;
+  end;
+end;
+
 { TP3DFontBmp }
 
 procedure TP3DFontBmp.ApplyShader;
@@ -372,16 +351,29 @@ begin
   FFileName:= AValue;
 end;
 
-constructor TP3DFontBmp.Create;
+constructor TP3DFontBmp.Create(const AData: TP3DLibrary);
 begin
-  inherited Create;
+  inherited Create( AData );
   Letters:= TP3DFontLetterList.Create;
   SizeFactor:= 1;
   MipMapLoadBias:= 0;//-0.65;
+  Margin:= 0;
+
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'SizeFactor', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'MipMapLoadBias', smAttribute ));
+  Properties.Add( TP3DPropertyAccessTexture.CreateField( 'Texture', @FTexture, smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Margin', smAttribute ));
+  Owner.Fonts.Add( Self );
+
+  {property Letters: TP3DFontLetterList read FLetters write FLetters;
+  property Texture: TP3DTexture read FTexture write FTexture;
+  property FileName: String read FFileName write SetFileName;
+  property FontName: String read FFontName;
+  property SizeFactor: Single read FSizeFactor write FSizeFactor;
+  property MipMapLoadBias: Single read FMipMapLoadBias write SetMipMapLodBias;}
 end;
 
-constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height,
-  Margin: Integer);
+constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height, Margin: Integer; const AData: TP3DLibrary);
 
   procedure DrawText( ASurface: PSDL_Surface; Font: TP3DFont );
   var
@@ -396,9 +388,13 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height,
     r1, r2: Classes.TRect;
     letter: TP3DFontLetter;
   begin
-    FFontName:= Font.FontName;
-    fnt:= Font.Font;
+    {if ( Font.Size <> P3DFontManagerBmp.DefaultTextSize ) then
+      Font:= P3DFontManager.Fonts[ Font.FontName, round( P3DFontManagerBmp.DefaultTextSize )];}
+//    FFontName:= Font.FontName;
+    fnt:= TTF_OpenFont( PChar( Font.FileWatch.FileName ), round( P3DFontManagerBmp.DefaultTextSize ));
     SizeFactor:= TTF_FontHeight( fnt ) / ASurface^.h;
+    FMargin:= Margin / ASurface^.h;
+    WriteLn( Font.FontName + ' Font Size: ', TTF_FontHeight( fnt ), ' Pt', Font.Size );
 
     cl.r:= 0;
     cl.g:= 0;
@@ -440,6 +436,7 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height,
           Letters.Add( letter );
           oldsz.x:= oldsz.x + sz.x + Margin;
         end;
+    TTF_CloseFont( fnt );
   end;
 
   const
@@ -644,12 +641,13 @@ var
   Surface, dist1, dist2: PSDL_Surface;
   FN: String;
 begin
-  Create;
+  Create( AData );
   FN:= P3DSearchPaths.FindFile( Font.FontName + '.p3d' );
   if (( FN > '' ) and ( FileAge( Font.FileWatch.FileName ) < FileAge( FN ))) then
-    LoadFromFile( FN )
+    LoadFromFile( FN + '?' + Font.FontName )
   else
     begin
+      Name:= Font.FontName;
       Surface:= SDL_CreateRGBSurface( SDL_SWSURFACE, Width, Height, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
       DrawText( Surface, Font );
 
@@ -662,7 +660,7 @@ begin
       SDL_FreeSurface( dist1 );
       SDL_FreeSurface( dist2 );
 
-      Texture:= TP3DTexture.CreateFromSurface( Surface );
+      Texture:= TP3DTexture.CreateFromSurface( Surface, AData );
 
       SDL_FreeSurface( Surface );
 
@@ -670,18 +668,26 @@ begin
 
       Texture.SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.png' );
       Texture.FileWatch.FileName:= Font.FontName + '.png';
-      SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.p3d' );
+      //SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.p3d' );
 
       MipMapLoadBias:= FMipMapLoadBias;
     end;
 end;
 
-destructor TP3DFontBmp.Destroy;
+procedure TP3DFontBmp.FastDestroy;
 begin
   Letters.Clear( True );
   Letters.Free;
-  inherited Destroy;
+  Owner.Fonts.Remove( Self );
+  inherited FastDestroy;
 end;
+
+class function TP3DFontBmp.DOMNodeName: String;
+begin
+  Result:= 'font';
+end;
+
+{
 
 constructor TP3DFontBmp.CreateFromDOM(XML: TDOMElement);
 begin
@@ -727,33 +733,46 @@ begin
       end;
 end;
 
-procedure TP3DFontBmp.LoadFromFile(FName: String);
+procedure TP3DFontBmp.LoadFromFile(FileName: String);
 var
   xml: TXMLDocument;
   dir: String;
 begin
-  if ( lowercase( ExtractFileExt( FName )) = '.p3d' ) then
+  if ( lowercase( ExtractFileExt( FileName )) = '.p3d' ) then
     begin
-      FileName:= P3DSearchPaths.FindFileEx( FName, GetCurrentDir );
-      if ( FileName = '' ) then
-        raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" was not found!', [ FName ]));
-      ReadXMLFile( xml, FileName );
+      FileWatch.FileName:= P3DSearchPaths.FindFileEx( FileName, GetCurrentDir );
+      if ( FileWatch.FileName = '' ) then
+        raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" was not found!', [ FileName ]));
+      ReadXMLFile( xml, FileWatch.FileName );
       dir:= GetCurrentDir;
       try
-        xml.DocumentElement.SetAttribute( 'filename', FileName );
-        SetCurrentDir( ExtractFilePath( FileName ));
+        xml.DocumentElement.SetAttribute( 'filename', FileWatch.FileName );
+        SetCurrentDir( ExtractFilePath( FileWatch.FileName ));
 
-        if ( not ( xml.DocumentElement.TagName = 'font' )) then
-          raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" is not a font file!', [ FName ]));
+        if ( not ( xml.DocumentElement.TagName = 'p3dfile' )) then
+          raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" is not a font file!', [ FileName ]));
 
-        LoadFromDOM( xml.DocumentElement );
+        LoadFromDOMNew( xml.DocumentElement );
       finally
         SetCurrentDir( dir );
         xml.Free;
       end;
     end
+end;}
+
+function TP3DFontBmp.SaveToDOM(AParent: TDOMElement): TDOMElement;
+begin
+  Result:= inherited SaveToDOM(AParent);
+  Letters.SaveToDOM( Result );
 end;
 
+procedure TP3DFontBmp.LoadFromDOMNew(ADOMNode: TDOMElement);
+begin
+  inherited LoadFromDOMNew( ADOMNode );
+  Letters.LoadFromDOM( ADOMNode );
+end;
+
+{
 procedure TP3DFontBmp.SaveToDOM(XML: TDOMDocument );
 var
   letter: TP3DFontLetter;
@@ -775,20 +794,27 @@ begin
     end;
 end;
 
-procedure TP3DFontBmp.SaveToFile(FName: String);
+procedure TP3DFontBmp.SaveToFile(FileName: String);
 var
   XML: TXMLDocument;
 begin
   XML:= TXMLDocument.Create;
-  SaveToDOM( XML );
-  WriteXML( XML, FName );
+  XML.AppendChild( XML.CreateElement( 'p3dfile' ));
+  SaveToDOM( XML.DocumentElement );
+  WriteXML( XML, FileName );
 end;
-
+}
 { TP3DMaterialModifierText }
 
 class function TP3DMaterialModifierText.GetIndex: Integer;
 begin
   Result:= 550;
+end;
+
+constructor TP3DMaterialModifierText.Create;
+begin
+  inherited Create;
+  Reset;
 end;
 
 procedure TP3DMaterialModifierText.AddPass(ShaderTree: TP3DShaderNodeTree;
@@ -811,7 +837,7 @@ procedure TP3DMaterialModifierText.PassToShader(Material: TP3DMaterialBase);
 var
   decl: TP3DShaderDecl;
 begin
-  {decl:= Material.Shader.Uniforms.Names[ 'text_smoothing' ];
+  decl:= Material.Shader.Uniforms.Names[ 'text_smoothing' ];
   if ( Assigned( decl )) then
     decl.AsFloat:= TextSmoothing;
   decl:= Material.Shader.Uniforms.Names[ 'text_basealpha' ];
@@ -819,8 +845,14 @@ begin
     decl.AsFloat:= TextAlpha;
   decl:= Material.Shader.Uniforms.Names[ 'text_bias' ];
   if ( Assigned( decl )) then
-    decl.AsFloat:= TextBias;}
+    decl.AsFloat:= TextBias;
+end;
 
+procedure TP3DMaterialModifierText.Reset;
+begin
+  TextBias:= -0.02;
+  TextAlpha:= 1.0;
+  TextSmoothing:= 1/32;
 end;
 
 { TP3DFontManagerBmp }
@@ -858,7 +890,7 @@ begin
   inherited Create;
   DefaultTexWidth:= 2048;
   DefaultTexHeight:= 2048;
-  DefaultTextSize:= 72 * 2;
+  DefaultTextSize:= 48*2;
   DefaultTextMargin:= 48;
   Material:= TP3DMaterialBase.Create();
   Material.Name:= 'FontBmpMaterial';
@@ -878,13 +910,21 @@ function TP3DFontManagerBmp.AddByP3DFont(Font: TP3DFont): Integer;
 var
   OldSize: Integer;
   Fnt: TP3DFontBmp;
+  Lib: TP3DLibrary;
 begin
   Result:= Find( Font.FontName );
   if ( Result < 0 ) then
     begin
       OldSize:= Font.Size;
       Font.Size:= round( DefaultTextSize );
-      Fnt:= TP3DFontBmp.CreateByFont( Font, DefaultTexWidth, DefaultTexHeight, DefaultTextMargin );
+      Lib:= P3DData.Libraries[ P3DData.Libraries.Add( TP3DLibrary.Create )];
+      Lib.FileWatch.FileName:= ChangeFileExt( Font.FileWatch.FileName, '.p3d' );
+      Lib.IsDesignerPackage:= True;
+      Fnt:= TP3DFontBmp.CreateByFont( Font, DefaultTexWidth, DefaultTexHeight, DefaultTextMargin, Lib );
+      {Lib.CreateDOMFile();
+      Lib.SaveToDOM();
+      Lib.Fonts.SaveToDOM( Lib.DOMFile.DocumentElement );
+      Lib.SaveDOMFile();}
       Result:= Add( Fnt );
       Font.Size:= OldSize;
     end;
@@ -896,7 +936,7 @@ var
 begin
   Result:= -1;
   for i:= 0 to Count - 1 do
-    if ( Items[ i ].FontName = FontName ) then
+    if ( Items[ i ].Name = FontName ) then
       begin
         Result:= i;
         break;

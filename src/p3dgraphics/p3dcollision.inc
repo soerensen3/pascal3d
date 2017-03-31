@@ -216,7 +216,7 @@ begin
   denom:= dot( b.vNormal, a.Dir );
 
   Result:= False;
-  if ( abs( denom ) > -epsilon ) then
+  if ( abs( denom ) > epsilon ) then
     begin
       vPlanar:= b.vNormal * b.d;
       t:= dot( vPlanar - a.Orig, b.vNormal ) / denom;
@@ -309,11 +309,11 @@ begin
 
   if ( P3DCollideRAYwithPLANE( Ray, Plane, vIntersection )) then
     begin
-      l:= len( Line.B - Line.A );
-      d:= len( Ray.Orig - vIntersection );
-      Result:= d < l;
+      l:= ( Line.B - Line.A ).GetDistSqr;
+      d:= ( Ray.Orig - vIntersection ).GetDistSqr;
+      Result:= d <= l + epsilon;
       if ( Result ) then
-        vFinal:= vIntersection + ( Ray.Dir - project( Ray.Dir, Plane.vNormal )) * ( l - d );
+        vFinal:= vIntersection + ( Ray.Dir - project( Ray.Dir, Plane.vNormal )) * sqrt( l - d );
     end;
 end;
 
@@ -353,17 +353,17 @@ begin
   bMin:= b.Min + b.Position;
   // find closest point to the sphere center
   p:= clamp( a.Position, bMin, bMax ) - a.Position;
-  Result:= len( p ) < a.Radius;
+  Result:= ( p ).GetDistSqr <= sqr( a.Radius + epsilon );
 end;
 
 function P3DCollideSPHEREwithSPHERE(a: TP3DSphere; b: TP3DSphere): Boolean;
 begin
-  Result:= len( a.Position - b.Position ) < a.Radius + b.Radius;
+  Result:= ( a.Position - b.Position ).GetDistSqr <= sqr( a.Radius + b.Radius + epsilon );
 end;
 
 function P3DCollidePOINTwithSPHERE(a: TVec3; b: TP3DSphere): Boolean;
 begin
-  Result:= ( a - b.Position ).GetDistSqr < sqr( b.Radius );
+  Result:= ( a - b.Position ).GetDistSqr <= sqr( b.Radius + epsilon );
 end;
 
 {

@@ -11,6 +11,7 @@ type
       FObj: TInterfacedPersistent;
 
       procedure SetObj(AValue: TInterfacedPersistent); virtual;
+      function AddPropertyEditor( Prop: TP3DPropertyAccess ): TP3DGraphicControl;
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
@@ -98,6 +99,75 @@ type
 
 {$IFDEF IMPLEMENTATION}
 
+function GetPropEdForPropRTTI( AProp: TP3DPropertyAccessRTTI ): TP3DGraphicControlClass;
+begin
+
+  case AProp.PropInfo^.PropType^.Kind of
+    tkInteger: Result := TP3DPropertyEditorInt;
+    tkChar: Result := TP3DPropertyEditorString;
+    tkEnumeration: Result := TP3DPropertyEditorEnum;
+    tkFloat: Result:= TP3DPropertyEditorFloat;
+    tkAstring: Result := TP3DPropertyEditorString;
+    tkWString: Result := TP3DPropertyEditorString;
+    tkWChar: Result := TP3DPropertyEditorString;
+    tkVariant: Result := TP3DPropertyEditorString;
+    tkInt64: Result := TP3DPropertyEditorInt;
+    tkString: Result := TP3DPropertyEditorString;
+//    tkSet: Result := TP3DPropertyEditorString;
+    tkClass: Result := TP3DPropertyEditorString;
+    tkBool: Result := TP3DPropertyEditorBoolean;
+  end;
+end;
+
+function GetPropEdForProp( AProp: TP3DPropertyAccess ): TP3DGraphicControlClass;
+begin
+  if ( AProp is TP3DPropertyAccessActor ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessArmature ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessArmatureAction ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessCamera ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessDataBlock ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessDataBlockList ) then
+    Result:= TP3DPropertyEditorDataBlockList
+  else if ( AProp is TP3DPropertyAccessMaterial ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessMaterialMapList ) then
+    Result:= TP3DPropertyEditorMaterialMapList
+  else if ( AProp is TP3DPropertyAccessMesh ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessScene ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessSceneList ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessTexture ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessFileWatch ) then
+    Result:= TP3DPropertyEditorString
+
+  else if ( AProp is TP3DPropertyAccessFloat ) then
+    Result:= TP3DPropertyEditorFloat
+  else if ( AProp is TP3DPropertyAccessInt ) then
+    Result:= TP3DPropertyEditorInt
+  else if ( AProp is TP3DPropertyAccessQuat ) then
+    Result:= TP3DPropertyEditorVec4
+  else if ( AProp is TP3DPropertyAccessRTTI ) then
+    Result:= GetPropEdForPropRTTI( TP3DPropertyAccessRTTI( AProp ))
+  else if ( AProp is TP3DPropertyAccessString ) then
+    Result:= TP3DPropertyEditorString
+  else if ( AProp is TP3DPropertyAccessVec2 ) then
+    Result:= TP3DPropertyEditorVec2
+  else if ( AProp is TP3DPropertyAccessVec3 ) then
+    Result:= TP3DPropertyEditorVec3
+  else if ( AProp is TP3DPropertyAccessVec4 ) then
+    Result:= TP3DPropertyEditorVec4
+  else
+    Result:= TP3DPropertyEditorString
+end;
+
 { TP3DOIEditorGroup }
 
 procedure TP3DOIEditorGroup.SetObj(AValue: TInterfacedPersistent);
@@ -105,6 +175,42 @@ begin
   if FObj=AValue then Exit;
   FObj:=AValue;
   Update;
+end;
+
+function TP3DOIEditorGroup.AddPropertyEditor(Prop: TP3DPropertyAccess): TP3DGraphicControl;
+  function AddContainer( Parent: TP3DGraphicControl; Title: String ): TP3DGraphicControl;
+  var
+    Lbl: TP3DLabel;
+    Owner: TP3DLibrary;
+  begin
+    if ( Assigned( Parent )) then
+      Owner:= Parent.Owner
+    else
+      Owner:= P3DData;
+    Result:= TP3DGraphicControl.Create( Owner, Parent );
+    Result.Align:= alTop;
+    Result.Height:= 20;
+    Lbl:= TP3DLabel.Create( Owner, Result );
+    Lbl.Align:= alLeft;
+    Lbl.Caption:= Title + ' '; //One space for safety distance - looks better!
+    Lbl.AutoSize:= True;
+  end;
+var
+//  Cnt: TP3DGraphicControl;
+  Cl: TP3DGraphicControlClass;
+begin
+  if ( not Assigned( Prop )) then
+    exit;
+
+  //Cnt:= AddContainer( Self, Prop.Name );
+
+  Cl:= GetPropEdForProp( Prop );
+
+  Result:= Cl.Create( Owner, Self );
+
+  if ( Result is IP3DPropertyEditor ) then
+  ( Result as IP3DPropertyEditor ).Prop:= Prop;
+  Result.Align:= alTop;
 end;
 
 procedure TP3DOIEditorGroup.Update;
@@ -253,6 +359,7 @@ begin
   with ( AddPage( TP3DOIEditorPageMaterial.Create( nil, Self )) as TP3DOIEditorPageMaterial ) do
     EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( nil, Container )));
   AddPage( TP3DOIEditorPageGrid.Create( nil, Container ));
+  AddPage( TP3DOIEditorPageProperties.Create( nil, Container ));
 end;
 
 procedure TP3DObjectInspector.FastDestroy;

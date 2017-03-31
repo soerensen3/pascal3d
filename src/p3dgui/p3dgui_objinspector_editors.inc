@@ -449,6 +449,18 @@ published
       property EditorPageMaps: TP3DOIEditorPageMaps read FEditorPageMaps write FEditorPageMaps;
   end;
 
+  { TP3DOIEditorPageProperties }
+
+  TP3DOIEditorPageProperties = class ( TP3DOIEditorPage )
+    public
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
+  end;
+
 var
   TileGridSelIndex: Integer = 0;
 
@@ -467,6 +479,11 @@ begin
 
   if ( Assigned( AValue )) then
     FChecked:= Boolean( StrToInt( AValue.AsString ));
+end;
+
+function TP3DPropertyEditorBoolean.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp;
 end;
 
 procedure TP3DPropertyEditorBoolean.SetChecked(AValue: Boolean);
@@ -494,6 +511,8 @@ end;
 constructor TP3DPropertyEditorBoolean.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create(AData, AParent);
+  Height:= 20;
+  HAlignment:= haRight;
 end;
 
 
@@ -1785,5 +1804,55 @@ begin
   Result:= inherited CreateButton(AParent, AMouseClick);
   Result.Caption:= P3DSymbolCamera;
 end;
+
+{ TP3DOIEditorPageProperties }
+
+constructor TP3DOIEditorPageProperties.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+end;
+
+procedure TP3DOIEditorPageProperties.Update;
+  function AddCategory( Prop: TP3DPropertyAccess; var Cat: TP3DOIEditorGroup ):TP3DOIEditorGroup;
+  begin
+    if ( not Assigned( Cat ) or ( Cat.Caption <> Prop.Category )) then
+      begin
+        Cat:= TP3DOIEditorGroup.Create( Owner, Self );
+        Cat.Align:= alTop;
+        Cat.Caption:= Prop.Category;
+        Cat.AutoSize:= True;
+      end;
+    Result:= Cat;
+  end;
+
+var
+  _O: TInterfacedPersistent;
+  O: TP3DInterfacedPersistent absolute _O;
+  Cat: TP3DOIEditorGroup;
+  Prop: TP3DPropertyAccess;
+
+begin
+  Controls.Clear( True );
+
+  _O:= Obj;
+  if ( O is TP3DInterfacedPersistent ) then
+    for Prop in O.Properties do
+      AddCategory( Prop, Cat ).AddPropertyEditor( Prop );
+
+  inherited Update;
+end;
+
+class function TP3DOIEditorPageProperties.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= AObj is TP3DInterfacedPersistent;
+end;
+
+function TP3DOIEditorPageProperties.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
+begin
+  Result:= inherited CreateButton(AParent, AMouseClick);
+  Result.Caption:= P3DSymbolOptions;
+end;
+
+
 
 {$ENDIF}

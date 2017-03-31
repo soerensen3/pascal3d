@@ -9,10 +9,13 @@ TP3DRenderListModifierGrid = class;
 
 TP3DGridScene = class ( TP3DInterfacedPersistent )
   private
+    FActorList: TP3DRenderList;
     FInstances: TP3DFloatBufferGL;
     FModifier: TP3DRenderListModifierGrid;
     FScene: TP3DScene;
     FTileGrid: TP3DTileGrid;
+
+    procedure SetScene(AValue: TP3DScene);
 
   public
     constructor Create( ATileGrid: TP3DTileGrid );
@@ -23,9 +26,10 @@ TP3DGridScene = class ( TP3DInterfacedPersistent )
 
   published
     property TileGrid: TP3DTileGrid read FTileGrid;
-    property Scene: TP3DScene read FScene write FScene;
+    property Scene: TP3DScene read FScene write SetScene;
     property Instances: TP3DFloatBufferGL read FInstances;
     property Modifier: TP3DRenderListModifierGrid read FModifier;
+    property ActorList: TP3DRenderList read FActorList write FActorList;
 end;
 
 { TP3DGridSceneList }
@@ -68,6 +72,7 @@ TP3DTileGrid = class ( TP3DDatablock )
 
     procedure PassToShader(Scene: TP3DGridScene; baseInstanceCount: Integer);
     procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); override;
+    function CollideSphere(Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3): Boolean; override;
 
     property SceneAt[ x, y: Integer ]: TP3DGridScene read GetSceneAt write SetSceneAt;
     function OnGridDataSet( Sender: TPersistent; ItemIndex: Integer; AValue: TP3DGridScene ): Boolean;
@@ -102,6 +107,15 @@ end;
 
 { TP3DGridScene }
 
+procedure TP3DGridScene.SetScene(AValue: TP3DScene);
+begin
+  if FScene=AValue then Exit;
+  FScene:=AValue;
+  FreeAndNil( FActorList );
+  if ( Assigned( Scene )) then
+    Scene.MakeRenderList( nil, Mat4Identity, FActorList, [ rlfActors ]);
+end;
+
 constructor TP3DGridScene.Create(ATileGrid: TP3DTileGrid );
 begin
   inherited Create;
@@ -109,19 +123,20 @@ begin
   FModifier:= TP3DRenderListModifierGrid.Create( Self );
   FInstances:= TP3DFloatBufferGL.Create( True );
   Properties.Context:= ATileGrid;
-  Properties.Add( TP3DPropertyAccessScene.CreateField( 'Scene', @FScene, smAttribute ));
+  Properties.Add( TP3DPropertyAccessScene.CreateFieldSet( 'Scene', @FScene, @SetScene, smAttribute ));
 end;
 
 destructor TP3DGridScene.Destroy;
 begin
   Modifier.Free;
   Instances.Free;
+  FreeAndNil( FActorList );
   inherited Destroy;
 end;
 
 function TP3DGridScene.SaveToDOM(AParent: TDOMElement): TDOMElement;
 begin
-  Result:=inherited SaveToDOM(AParent);
+  Result:= inherited SaveToDOM(AParent);
 
 end;
 
@@ -257,15 +272,17 @@ begin
 
   if ( Scenes.Count > 0 ) then
     begin
-      fn:= ExtractFileNameOnly( Owner.Name ) + '.' + Name + '.p3dmesh';
-      S:= TFileStream.Create( fn, fmCreate );
+      //fn:= ExtractFileNameOnly( Owner.Name ) + '.' + Name + '.p3dbin';
+      //S:= TFileStream.Create( fn, fmCreate );
+      fn:= Owner.BinFile.FileName;
+      S:= Owner.BinFile;
       for i:= 0 to Scenes.Count - 1 do
         if ( Assigned( Scenes[ i ]) and ( Scenes[ i ].Instances.Count > 0 )) then
           begin
             Scenes[ i ].SaveToDOM( Prop ).AttribStrings[ 'Instances' ]:= fn + ':' + IntToStr( S.Position );
             Scenes[ i ].Instances.SaveToStream( S );
           end;
-      S.Free;
+      //S.Free;
     end;
 end;
 
@@ -366,6 +383,9 @@ var
   i: Integer;
   Modifier: TP3DRenderListModifier;
 begin
+  if ( rlfActors in AFlags ) then
+    exit;
+
   for i:= 0 to Scenes.Count - 1 do
     if ( Assigned( Scenes[ i ].Scene ) and Assigned( Scenes[ i ].Modifier )) then
       begin
@@ -375,6 +395,41 @@ begin
         Scenes[ i ].Scene.MakeRenderList( ARootScene, AWorld, AList, AFlags );
         AList.ModifierStack.Remove( Modifier );
       end;
+end;
+
+function TP3DTileGrid.CollideSphere(Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3): Boolean;
+var
+  m: TMat4;
+  gridpos: TVec3;
+  transsp: TP3DSphere;
+  sz: Single;
+  x: Integer;
+  y: Integer;
+  B: TP3DRenderObject;
+  sc: TP3DGridScene;
+begin
+  Result:= inherited CollideSphere( Mat, ASphere, Intersect, N );
+
+  m:= -Mat;
+
+  transsp:= P3DTransformSphere( m, ASphere );
+  gridpos:= transsp.Position / GridWorldUnit;
+
+  sz:= transsp.Radius / GridWorldUnit;
+  for x:= clamp( floor( gridpos.X - sz ), 0, Width - 1 ) to clamp( ceil( gridpos.X + sz ), 0, Width - 1 ) do
+    for y:= clamp( floor( gridpos.Y - sz ), 0, Height - 1 ) to clamp( ceil( gridpos.Y + sz ), 0, Height - 1 ) do
+      begin
+        sc:= SceneAt[ x, y ];
+        if ( Assigned( sc ) and Assigned( sc.ActorList )) then
+          if ( sc.ActorList.CheckCollision( P3DSphere( transsp.Position - vec3( x, y, 0 ) * GridWorldUnit, transsp.Radius ), B, Intersect, N )) then
+            begin
+              Intersect += vec3( x, y, 0 ) * GridWorldUnit;
+              Result:= True;
+              Break;
+            end;
+      end;
+
+  P3DApplication.MainWindow.Title:= gridpos.ToString();
 end;
 
 function TP3DTileGrid.OnGridDataSet(Sender: TPersistent; ItemIndex: Integer; AValue: TP3DGridScene): Boolean;
@@ -431,12 +486,13 @@ end;
 procedure TP3DRenderListModifierGrid.PassToShader(Obj: TP3DRenderObject);
 begin
   if ( Assigned( Scene.TileGrid )) then
-    Scene.TileGrid.PassToShader( Scene, Obj.Positions.Count * Scene.Instances.Count );
+    Scene.TileGrid.PassToShader( Scene, Obj.Positions.Count );
 end;
 
 procedure TP3DRenderListModifierGrid.AddObject(var Obj: TP3DRenderObject);
 begin
-  Obj.InstanceCount:= Obj.InstanceCount;
+  if ( Assigned( Scene )) then
+    Obj.InstanceCount:= Scene.Instances.Count * Obj.Positions.Count;
 end;
 
 

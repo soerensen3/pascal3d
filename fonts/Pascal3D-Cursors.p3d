@@ -1,11 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<font name="Pascal3D-Cursors" size="0.0859375" texture="/home/johannes/Documents/dev/Lazarus/pascal3d/fonts/Pascal3D-Cursors.png">
-  <char uv1="0.02343750,0.02343750" uv2="0.09375000,0.10937500" char="A"/>
-  <char uv1="0.11718750,0.02343750" uv2="0.18750000,0.10937500" char="B"/>
-  <char uv1="0.21093750,0.02343750" uv2="0.28125000,0.10937500" char="C"/>
-  <char uv1="0.30468750,0.02343750" uv2="0.37500000,0.10937500" char="D"/>
-  <char uv1="0.39843750,0.02343750" uv2="0.46875000,0.10937500" char="E"/>
-  <char uv1="0.49218750,0.02343750" uv2="0.56250000,0.10937500" char="F"/>
-  <char uv1="0.58593750,0.02343750" uv2="0.65625000,0.10937500" char="G"/>
-  <char uv1="0.67968750,0.02343750" uv2="0.78125000,0.10937500" char="H"/>
-</font>
+<p3dfile
+   version = "0.1">
+  <font
+     Name = "Pascal3D-Cursors"
+     Margin = "0.0234375"
+     Texture = "/P3DTexture1"
+     SizeFactor = "0.05761719"
+     MipMapLoadBias = "0">
+    <char
+       uv1 = "0.02343750,0.02343750"
+       uv2 = "0.07031250,0.08105469"
+       Letter = "A" />
+    <char
+       uv1 = "0.09375000,0.02343750"
+       uv2 = "0.14062500,0.08105469"
+       Letter = "B" />
+    <char
+       uv1 = "0.16406250,0.02343750"
+       uv2 = "0.21093750,0.08105469"
+       Letter = "C" />
+    <char
+       uv1 = "0.23437500,0.02343750"
+       uv2 = "0.28125000,0.08105469"
+       Letter = "D" />
+    <char
+       uv1 = "0.30468750,0.02343750"
+       uv2 = "0.35156250,0.08105469"
+       Letter = "E" />
+    <char
+       uv1 = "0.37500000,0.02343750"
+       uv2 = "0.42187500,0.08105469"
+       Letter = "F" />
+    <char
+       uv1 = "0.44531250,0.02343750"
+       uv2 = "0.49218750,0.08105469"
+       Letter = "G" />
+    <char
+       uv1 = "0.51562500,0.02343750"
+       uv2 = "0.58349609,0.08105469"
+       Letter = "H" />
+  </font>
+  <texture
+     File = "../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../../fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/Pascal3D-Cursors.png"
+     Name = "P3DTexture1"
+     MipMap = "1"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+</p3dfile>

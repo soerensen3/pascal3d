@@ -412,6 +412,7 @@ begin
   FFileWatch:= TP3DFileWatch.Create( FileName );
   FFontName:= ExtractFileNameOnly( FileName );
   Font:= TTF_OpenFont( PChar( FileName ), Size );
+  WriteLn( AFileName + ' height: ', TTF_FontHeight( Font ), ' ascent: ', TTF_FontAscent( Font ), ' descent: ', TTF_FontDescent( Font ), ' line skip: ', TTF_FontLineSkip( Font ));
 end;
 
 destructor TP3DFont.Destroy;

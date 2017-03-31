@@ -409,6 +409,7 @@ procedure TP3DTreeView.Draw;
       end;
 
     Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * ( 1.5 + Ord( ShowSymbols )));
+
     MaxX:= Max( MaxX, p.x + Font.Size * ( 1 + Ord( ShowSymbols )) + Node.Text.Width );
     Result.y:= Result.y + Node.Text.Height;
     if ( Node.Children.Count > 0 ) then
@@ -1562,6 +1563,22 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
+
+  procedure AddFontList( List: TP3DFontListBmp; Parent: TP3DTreeNodeList );
+  var
+    Font: TP3DFontBmp;
+    n: LongInt;
+  begin
+    for Font in List do
+      begin
+        if ( P3DData.IsValid( Font )) then
+          n:= Parent.Add( Font.Name, Font )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
+        Parent[ n ].SymbolText:= P3DSymbolFont;
+      end;
+  end;
+
   procedure AddDataList( Data: TP3DLibrary; Parent: TP3DTreeNodeList );
   var
     Node: TP3DTreeNodeList;
@@ -1601,6 +1618,9 @@ procedure TP3DTreeViewActors.Update;
 
     Node:= Parent[ Parent.Add( 'Actions', Data.Actions, False, P3DSymbolArmature )].Children;
     AddActionList( Data.Actions, Node );
+
+    Node:= Parent[ Parent.Add( 'Fonts', Data.Fonts, False, P3DSymbolFont )].Children;
+    AddFontList( Data.Fonts, Node );
   end;
 
 var

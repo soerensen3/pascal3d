@@ -107,7 +107,7 @@
       procedure AfterRender; override;
       function StatusText: String; override;
       procedure CheckInput; override;
-      procedure Paint;
+      procedure Paint( const Clear: Boolean = False );
 
       property Grid: TP3DTileGrid read FGrid write FGrid;
       property BrushPos: TVec3 read FBrushPos write SetBrushPos;
@@ -467,17 +467,20 @@ begin
   if (( gcisMouseBtn1Down in ScenePanel.Viewer.InputState ) and ( InRange( BrushGridPos.X, 0, Grid.Width - 1 )) and ( InRange( BrushGridPos.Y, 0, Grid.Height - 1 ))) then
     Paint;
 
+  if (( gcisMouseBtn3Down in ScenePanel.Viewer.InputState ) and ( InRange( BrushGridPos.X, 0, Grid.Width - 1 )) and ( InRange( BrushGridPos.Y, 0, Grid.Height - 1 ))) then
+    Paint( True );
+
   if ( P3DInput.Keyboard.DKeys[ P3DK_F2 ] = ksPressed ) then
     Grid.UpdateArrays;
 end;
 
-procedure TP3DSceneEditModeTileGrid.Paint;
+procedure TP3DSceneEditModeTileGrid.Paint(const Clear: Boolean);
 var
   Scene: TP3DGridScene;
 begin
   if ( CanPaint ) then
     begin
-      if ( P3DInput.Keyboard.Keys[ P3DK_LSHIFT ]) then
+      if ( Clear ) then
         Grid.SceneAt[ BrushGridPos.X, BrushGridPos.Y ]:= nil
       else
         begin

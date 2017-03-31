@@ -11,7 +11,8 @@ bl_info = {
   'category': 'Import-Export' }
 
 import bpy, os, struct
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, Euler, Quaternion
+import math
 
 from bpy.props import StringProperty, EnumProperty, BoolProperty
 
@@ -183,12 +184,12 @@ class P3DExporter( bpy.types.Operator ):
     ##EXPORTING TRANSFORM ------------------------------------------------------------
     def ExportTransform( self, obj ):
         transform = self.file.docstack[ - 1 ]
-        transform.attrib[ 'Position' ] = '{:9f},{:9f},{:9f}'.format( *obj.location )
-        quat = obj.matrix_world.to_quaternion()
+        loc, quat, scal = obj.matrix_local.decompose()
+        transform.attrib[ 'Position' ] = '{:9f},{:9f},{:9f}'.format( *loc )
         #quat.negate() #change handedness zxw
         #quat = Vector(( -quat.y, quat.x, quat.z, quat.w ))
         transform.attrib[ 'Quaternion' ] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
-        transform.attrib[ 'Scale' ] = '{:9f},{:9f},{:9f}'.format( *obj.scale )
+        transform.attrib[ 'Scale' ] = '{:9f},{:9f},{:9f}'.format( *scal )
         transform.attrib[ 'RotationOrder' ] = 'ro' + obj.rotation_mode # Does not matter for quaternion rotation but when rotating with euler angles later
     ##--------------------------------------------------------------------------------
 
@@ -841,25 +842,47 @@ class P3DExporter( bpy.types.Operator ):
         """
         return self.get_pose_matrix_in_other_space( pose_bone.matrix, pose_bone )
 
-    def ExportPoseJoint( self, armature, pose_bone ):
+    def ExportPoseJoint( self, armature, pose_bone, bonedict ):
         #if ( self.Verbose ):
         #  self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
-
+        
         el = self.file.push( 'pose' )
         el.attrib[ 'Name' ] = 'joint_' + pose_bone.name
-
+        
         #bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         #matrix = self.get_pose_bone_matrix( armature, pose_bone ) * bone_space
         #position, quat, scale = matrix.decompose()
         #matrix = self.get_local_pose_matrix( pose_bone )
-        matrix = pose_bone.matrix_basis
+        #matrix = pose_bone.matrix_basis
         position = pose_bone.head
         #quat = matrix.to_quaternion()
-        quat = pose_bone.rotation_quaternion #quat.normalized()
+        #rot3 = rotation.to_3d()
+        #rotation.xyz = rot3 * bone.matrix_local.inverted()
+        #rotation.xyz = armature_matrix * rotation.xyzdef bn_mat( bn ):
+        #if ( pose_bone.parent ):
+        #  m = pose_bone.parent.matrix.inverted()
+        #else:
+        #  m = Matrix()
+        #m = m*pose_bone.matrix
+        
+        #eul = Euler(mat_euler( m )[::-1]) #reverse order
+        #quat = eul.to_quaternion()
+        #quat = blbn_2_p3dbn( pose_bone )
+
+        parent = pose_bone.parent
+        rot = bonedict[ pose_bone ]
+        while ( parent ):
+          rot = bonedict[ parent ] * rot
+          parent = parent.parent
+        quat = rot
+        
+        #quat = pose_bone.rotation_quaternion #quat.normalized()
+        #if ( pose_bone.parent ):
+        #  quat = pose_bone.parent.rotation_quaternion * quat
         el.attrib['Position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
 #        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ])
-        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 3 ], quat[ 0 ], quat[ 1 ], quat[ 2 ])
-
+        el.attrib['Quaternion'] = '{:9f},{:9f},{:9f},{:9f}'.format( quat.x, quat.y, quat.z, quat.w )
+        
         self.file.pop()
   ##--------------------------------------------------------------------------------
 
@@ -889,6 +912,9 @@ class P3DExporter( bpy.types.Operator ):
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Exporting data ' + action[ 0 ].name )
 
+        mat_2_euler = lambda mat : [ x for x in mat.to_euler('XYZ')]
+        blbn_2_p3dbn = lambda bn : Euler( mat_2_euler( bn.matrix_basis )[::-1]).to_quaternion()
+        
         el = self.file.push( 'action' )
         el.attrib[ 'Name' ] = 'action_' + action[ 1 ].data.name + action[ 0 ].name #armature.data.name + action.name
         scene = bpy.context.scene
@@ -897,9 +923,13 @@ class P3DExporter( bpy.types.Operator ):
             elframe = self.file.push( 'frame' )
             scene.frame_set( frame )
             self.report({ 'INFO' }, 'Exporting frame ' + str( frame ))
+            bonedict = {}
+            for pose_bone in action[ 1 ].pose.bones:
+              bonedict[ pose_bone ] = blbn_2_p3dbn( pose_bone )
+            
             for pose_bone in action[ 1 ].pose.bones:
                 #bone = action[ 1 ].data.bones[ pose_bone.name ]
-                self.ExportPoseJoint( action[ 1 ], pose_bone )
+                self.ExportPoseJoint( action[ 1 ], pose_bone, bonedict )
             idx += 1
             self.file.pop()
 

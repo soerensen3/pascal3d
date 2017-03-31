@@ -62,14 +62,6 @@ var
   SceneView: TP3DScenePanel;
   OIPanel: TP3DOIPanel;
 
-
-
-  {SymbolActor, SymbolMesh,
-    SymbolScene, SymbolFont,
-    SymbolCamera, SymbolTexture,
-    SymbolMaterial, SymbolShader,
-    SymbolLight, SymbolLibrary: TP3DText; }
-
 implementation
 
 { TP3DSceneApplication }
