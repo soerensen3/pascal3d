@@ -8,14 +8,17 @@ type
 
   TP3DRenderList = class;
   TP3DDataBlockList = class;
+  TP3DAction = class;
   TP3DDataBlock = class ( TP3DObject )
     private
       FAABB: TP3DAABB;
+      FAction: TP3DAction;
       FOwner: TP3DLibrary;
       FSphere: TP3DSphere;
       FUsers: TP3DDataBlockList;
 
       function GetDOMPath: String; virtual;
+      procedure SetAction(AValue: TP3DAction);
       procedure SetName(NewName: TComponentName); override;
 
     public
@@ -48,6 +51,7 @@ type
       property AABB: TP3DAABB read FAABB write FAABB;
       property Sphere: TP3DSphere read FSphere write FSphere;
       property Owner: TP3DLibrary read FOwner;
+      property Action: TP3DAction read FAction write SetAction;
 
     published
       property DOMPath: String read GetDOMPath;
@@ -222,7 +226,7 @@ begin
       if ( not Assigned( Owner )) then
         raise Exception.Create( 'Could not find resource: ' + AValue );
       Path:= P3DXMLExtractRelativePath( AValue, FN );
-      n:= Owner.AppendFromPath( Path{, TItem} );
+      n:= Owner.AppendFromPath( Path{, TItem} ); // No need to check if already loaded, this is done in appendfrompath
       Value:= TItem( Owner.DataBlocks[ n ]);
       Write( TP3DDataBlock( Context ).Name, ' > ', Name );
       if ( Assigned( Value )) then
@@ -266,60 +270,6 @@ end;
 procedure gP3DPropertyAccessDataBlock.LoadFromDOM(AParentNode: TDOMElement);
 begin
   inherited LoadFromDOM(AParentNode);
-end;
-
-
-function FindDOMForClass( AClass: TP3DDataBlockType ): String;
-begin
-  case AClass.ClassName of
-    'TP3DMaterial', 'TP3DMaterialShader', 'TP3DMaterialBase': Result:= 'material';
-    'TP3DMesh': Result:= 'mesh';
-    'TP3DLight': Result:= 'lamp';
-    'TP3DCamera': Result:= 'camera';
-    'TP3DActor': Result:= 'object';
-    'TP3DScene': Result:= 'scene';
-    'TP3DTexture': Result:= 'texture';
-    'TP3DArmature': Result:= 'armature';
-    'TP3DArmatureAction': Result:= 'action';
-    'TP3DTileGrid': Result:= 'tilegrid';
-  end;
-end;
-
-function FindClassForDOM( ADOMName: String ): TP3DDataBlockType;
-begin
-  case ADOMName of
-    'material': Result:= TP3DMaterialShader;
-    'mesh': Result:= TP3DMesh;
-    'light', 'lamp': Result:= TP3DLight;
-    'camera': Result:= TP3DCamera;
-    'object': Result:= TP3DActor;
-    'scene': Result:= TP3DScene;
-    'armature': Result:= TP3DArmature;
-    'texture': Result:= TP3DTexture;
-    'action': Result:= TP3DArmatureAction;
-  end;
-end;
-
-function FindClassForDOM( ADOMNode: TDOMElement ): TP3DDataBlockType;
-begin
-  case ADOMNode.NodeName of
-    'material':
-      if ( ADOMNode.GetAttribute( 'type' ) = 'shader' ) then
-        Result:= TP3DMaterialShader
-      else
-        Result:= TP3DMaterialBase;
-    'materialshader': Result:= TP3DMaterialShader;
-    'materialbase': Result:= TP3DMaterialBase;
-    'tilegrid': Result:= TP3DTileGrid;
-    'mesh': Result:= TP3DMesh;
-    'light', 'lamp': Result:= TP3DLight;
-    'camera': Result:= TP3DCamera;
-    'object': Result:= TP3DActor;
-    'scene': Result:= TP3DScene;
-    'armature': Result:= TP3DArmature;
-    'texture': Result:= TP3DTexture;
-    'action','armatureaction': Result:= TP3DArmatureAction;
-  end;
 end;
 
 procedure StringSplit( S: String; Delim: Char; var S1, S2: String );
@@ -564,6 +514,12 @@ begin
   Result:= '/' + Name;
 end;
 
+procedure TP3DDataBlock.SetAction(AValue: TP3DAction);
+begin
+  if FAction=AValue then Exit;
+  FAction:=AValue;
+end;
+
 constructor TP3DDataBlock.Create(const AData: TP3DLibrary);
 begin
   if ( AData = nil ) then
@@ -576,6 +532,7 @@ begin
   AABB:= P3DInvalidAABB;
   FUsers:= TP3DDataBlockList.Create;
   P3DDataBlockCache.Add( Self );
+  Properties.Add( TP3DPropertyAccessAction.CreateFieldSet( 'Action', @FAction, @SetAction, smAttribute ));
 end;
 
 constructor TP3DDataBlock.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);
@@ -741,7 +698,7 @@ end;
 
 procedure TP3DDataBlock.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
 begin
-  //Don't do anything but we don't want to generate an error when mothod is not overriden by ancestor class
+  //Don't do anything but we don't want to generate an error when that method is not overridden by ancestor class
 end;
 
 function TP3DDataBlock.CollideSphere(Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3): Boolean;

@@ -122,29 +122,35 @@ end;
 function GetPropEdForProp( AProp: TP3DPropertyAccess ): TP3DGraphicControlClass;
 begin
   if ( AProp is TP3DPropertyAccessActor ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlock
   else if ( AProp is TP3DPropertyAccessArmature ) then
-    Result:= TP3DPropertyEditorString
-  else if ( AProp is TP3DPropertyAccessArmatureAction ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlock
+  else if ( AProp is TP3DPropertyAccessAction ) then
+    Result:= TP3DPropertyEditorDataBlock
   else if ( AProp is TP3DPropertyAccessCamera ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlock
   else if ( AProp is TP3DPropertyAccessDataBlock ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlock
   else if ( AProp is TP3DPropertyAccessDataBlockList ) then
     Result:= TP3DPropertyEditorDataBlockList
+  else if ( AProp is TP3DPropertyAccessJoint ) then
+    Result:= TP3DPropertyEditorDataBlock
+  else if ( AProp is TP3DPropertyAccessJointList ) then
+    Result:= TP3DPropertyEditorJointList
   else if ( AProp is TP3DPropertyAccessMaterial ) then
     Result:= TP3DPropertyEditorString
   else if ( AProp is TP3DPropertyAccessMaterialMapList ) then
     Result:= TP3DPropertyEditorMaterialMapList
   else if ( AProp is TP3DPropertyAccessMesh ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlock
   else if ( AProp is TP3DPropertyAccessScene ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlock
   else if ( AProp is TP3DPropertyAccessSceneList ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlockList
   else if ( AProp is TP3DPropertyAccessTexture ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorDataBlock
+  else if ( AProp is TP3DPropertyAccessGraphicControl ) then
+    Result:= TP3DPropertyEditorDataBlock
   else if ( AProp is TP3DPropertyAccessFileWatch ) then
     Result:= TP3DPropertyEditorString
 
@@ -209,7 +215,7 @@ begin
   Result:= Cl.Create( Owner, Self );
 
   if ( Result is IP3DPropertyEditor ) then
-  ( Result as IP3DPropertyEditor ).Prop:= Prop;
+    ( Result as IP3DPropertyEditor ).Prop:= Prop;
   Result.Align:= alTop;
 end;
 

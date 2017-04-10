@@ -38,15 +38,26 @@ class P3DXMLFile:
         self.lamps = set()
         self.cameras = set()
         self.materials = set()
-        self.armatures = set()
+        self.armatures = {}
         self.textures = set()
         self.actions = set()
+        self.datapaths = {}
+        self.elements = {}
+        self.storednames = {}
 
     def push( self, name ):
         el = et.Element( name )
         self.docstack[ -1 ].append( el )
         self.docstack.append( el )
         return el
+
+    def store( self, item, name ):
+        path = self.todatapath()
+        self.datapaths[ name ] = path
+        self.elements[ name ] = self.docstack[ -1 ]
+        if ( not ( item is None )):
+            self.storednames[ item ] = name
+        return [ name, path ]
 
     def pop( self ):
         self.docstack.pop()
@@ -59,12 +70,25 @@ class P3DXMLFile:
                 result += '\n%s   %s = "%s"'%( indent, attrib, element.attrib[ attrib ])
         #since text is unused there is no need to check if a full closing tag is required        
         if len( element ):
-            result += '>' + '\n'        
+            result += '>' + '\n'
             for el in element:
               result += self.tostring( el, level + 1 )
             result += indent + '</' + element.tag + '>' + '\n'
         else: 
             result += ' />' + '\n'
+        return result
+
+    def todatapath( self ):
+        return '/' + '/'.join( self.toarray())
+    
+    def toarray( self ):
+        result = []
+        for element in self.docstack:
+            try: 
+                name = element.attrib[ 'Name' ]
+                result.append( name )
+            except KeyError:
+                pass
         return result
 
     def write( self ):
@@ -215,7 +239,7 @@ class P3DExporter( bpy.types.Operator ):
             self.ExportScene( scene )
 
         if self.ExportArmatures:
-            self.supported_types.append( 'ARMATURE' ) #add armatures later as we do not care about the armature objects but only the datablock
+            self.supported_types.append( 'ARMATURE' ) # add armatures later as we do not care about the armature objects but only the datablock
 
         for data in self.file.meshes: # will cause duplicates for now because objects instead of meshes are
                                       # put into self.file.meshes. This is necessary because of the modifiers
@@ -236,17 +260,17 @@ class P3DExporter( bpy.types.Operator ):
             self.ExportTexture( data )
 
         for data in self.file.armatures:
-            data.data.pose_position = 'REST'
-            data.update_tag()
-            scene = bpy.context.scene
-            scene.frame_set(scene.frame_current)
+            #data.data.pose_position = 'REST'
+            #data.update_tag()
+            #scene = bpy.context.scene
+            #scene.frame_set(scene.frame_current)
 
             self.ExportArmature( data )
 
-            data.data.pose_position = 'POSE'
-            data.update_tag()
-            scene = bpy.context.scene
-            scene.frame_set(scene.frame_current)
+            #data.data.pose_position = 'POSE'
+            #data.update_tag()
+            #scene = bpy.context.scene
+            #scene.frame_set(scene.frame_current)
 
 
         for data in self.file.actions:
@@ -280,10 +304,12 @@ class P3DExporter( bpy.types.Operator ):
         #bpy.data.images[img_name].pack()
         
     def ExportScene( self, scene ):
-        if ( self.Verbose ):
-            self.report({ 'INFO' }, 'Exporting scene ' + scene.name )
         el = self.file.push( 'scene' )
         el.attrib[ 'Name' ] = scene.name
+        path = self.file.store( scene, scene.name )[1]
+        if ( self.Verbose ):
+            self.report({ 'INFO' }, 'Exporting scene ' + scene.name + ' to ' + path )
+        
         if ( self.ExportSceneCamera ):
           if ( not ( scene.camera is None )):
             el.attrib[ 'Cam' ] = scene.camera.name
@@ -293,22 +319,53 @@ class P3DExporter( bpy.types.Operator ):
             if obj.parent is None and obj.is_visible( scene ):
                 self.ExportObject( obj )
         self.file.pop()
+        
+     ##--------------------------------------------------------------------------------
+       
+    ##EXPORTING OBJECT ---------------------------------------------------------------
+    def ExportJointObject( self, joint, armature ):
+        def get_bone_relative_position( bone ):
+            position = Vector(( 0, 0, 0 )) * bone.matrix_local.inverted()
+            if bone.parent is None:
+                position.x += bone.head.x
+                position.y += bone.head.y
+                position.z += bone.head.z
+            else:
+                parent = bone.parent
+                parent_matrix = parent.matrix_local.inverted()
+                diff = parent.tail_local - parent.head_local
+                position.x += (bone.head * parent_matrix).x + diff.x
+                position.y += (bone.head * parent_matrix).y + diff.y
+                position.z += (bone.head * parent_matrix).z + diff.z
+            return position
+        el = self.file.push( 'object' )
+        el.attrib[ 'Name' ] = joint.name
+        path = self.file.store( None, joint.name )[1]
+        loc, quat = get_bone_relative_position( joint.bone ), Vector(( 1, 0, 0, 0 ))
+        #loc, quat = joint.location + joint.bone.head_local, joint.rotation_quaternion
+        el.attrib[ 'Position' ] = '{:9f},{:9f},{:9f}'.format( *loc )
+        el.attrib[ 'Quaternion' ] = '{:9f},{:9f},{:9f},{:9f}'.format( quat[ 3 ], quat[ 2 ], quat[ 1 ], quat[ 0 ]) #reverse quaternion because joint space
+        el.attrib[ 'RotationOrder' ] = 'ro' + joint.rotation_mode # Does not matter for quaternion rotation but when rotating with euler angles later
+        el.attrib[ 'Data' ] = '/armature_' + armature.data.name + '/joint_' + joint.name
+        for child in joint.children:
+            self.ExportJointObject( child, armature )
+        self.file.pop()
 
-  ##--------------------------------------------------------------------------------
 
-  ##EXPORTING OBJECT ---------------------------------------------------------------
 
     def ExportObject( self, obj ):
-        if ( self.Verbose ):
-          self.report({ 'INFO' }, 'Exporting object ' + obj.name )
-
         el = self.file.push( 'object' )
         el.attrib[ 'Name' ] = obj.name
+        
+        path = self.file.store( obj, obj.name )[1]
+        if ( self.Verbose ):
+          self.report({ 'INFO' }, 'Exporting object ' + obj.name + ' to ' + path )
+          
         if (( obj.game.use_collision_bounds ) and ( not obj.game.use_ghost )):
           el.attrib[ 'Collision' ] = 'ac' + obj.game.collision_bounds_type.capitalize()
         else:
           el.attrib[ 'Collision' ] = 'acNone'
-        if ( obj.data != None and obj.type in self.supported_types ):
+        if ( obj.data and ( obj.type in self.supported_types )):
             type = str( obj.type ).lower()
             el.attrib[ 'Data' ] = '/' + type + '_' + obj.data.name
             if ( type == 'mesh' ):
@@ -318,6 +375,17 @@ class P3DExporter( bpy.types.Operator ):
             elif ( type == 'camera' ):
                 self.file.cameras.add( obj.data )
         self.ExportTransform( obj )
+        
+        if self.ExportArmatures:
+            armature = obj.find_armature()
+            if ( armature ):
+                for bone in armature.pose.bones:
+                    if ( bone.parent is None ):
+                        self.ExportJointObject( bone, armature )
+
+        if ( obj.animation_data and obj.animation_data.action ):
+            self.file.actions.add(( obj.animation_data.action, obj ))
+
         for child in obj.children:
             if child.type in self.supported_types: #and child.is_visible( scene ):
                 self.ExportObject( child )     
@@ -399,7 +467,6 @@ class P3DExporter( bpy.types.Operator ):
         for loop in self.binfile.mesh.loops:
           totno += 1
           self.binfile.writeint( loop.vertex_index )
-          self.report({ 'INFO' }, 'loop: ' + str( loop.vertex_index ))
         if ( self.Verbose ):
             self.report({ 'INFO' }, str( totno ) + ' loops written' )
 
@@ -457,16 +524,30 @@ class P3DExporter( bpy.types.Operator ):
         return totno
 
     def ExportVertexGroups( self ):
+        armature = self.binfile.obj.find_armature()
+        if ( armature is None ):
+            baseindex = 0
+            arm_bones = None
+        else:
+            arm_bones = self.file.armatures[ armature ]['bones']
+            baseindex = len( armature.data.bones )
+        
         grps = []
         for vgroup in self.binfile.obj.vertex_groups:
-            grps.append( vgroup.name )
+            n = baseindex + vgroup.index
+            if ( not ( arm_bones is None )):
+                try:
+                    n = arm_bones.index( vgroup.name )
+                except ValueError:
+                    pass
+            grps.append({ 'index': n, 'name': vgroup.name })
 
         totno = 0 #for debugging only
         totno_idx = 0
 
         if ( len( grps ) > 0 ):
             el = self.file.docstack[ -1 ]
-            el.attrib[ 'VertexWeights' ] = self.binfile.getfileandpos()      
+            el.attrib[ 'VertexWeights' ] = self.binfile.getfileandpos()
             bin = b''
             self.binfile.writeint( len( self.binfile.mesh.vertices ))
           
@@ -481,12 +562,12 @@ class P3DExporter( bpy.types.Operator ):
                 idx = [ 0, 0, 0, 0 ] # fill with zero indices, weight will be zero if idx not used
                 for i in range( 0, min( 4, len( vgrps ))):
                     vec[ i ] = srt[ i ][ 1 ]
-                    idx[ i ] = srt[ i ][ 0 ]
+                    idx[ i ] = grps[ srt[ i ][ 0 ]][ 'index' ]
                 lenManh = vec[ 0 ] + vec[ 1 ] + vec[ 2 ] + vec[ 3 ]
                 if ( lenManh ):
                   	vec /= lenManh #scale vector by 1/manhattan distance
 
-                self.report({ 'INFO' }, 'vertexweights: [{:2f},{:2f},{:2f},{:2f}]'.format( *vec )+ ' indices: [{:d},{:d},{:d},{:d}]'.format( *idx ))
+                #self.report({ 'INFO' }, 'vertexweights: [{:2f},{:2f},{:2f},{:2f}]'.format( *vec )+ ' indices: [{:d},{:d},{:d},{:d}]'.format( *idx ))
                 self.binfile.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
                 totno += 1
 
@@ -526,12 +607,23 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'mesh' )
         el.attrib[ 'Name' ] = 'mesh_' + obj.data.name
-
+        
+        path = self.file.store( mesh, 'mesh_' + obj.data.name )[1]
+        
         if ( self.binfile is None ):
           self.binfile = P3DBinaryFile( os.path.splitext( self.file.fname )[ 0 ] + '.p3dbin' )
           #file = P3DBinaryFile( os.path.splitext( self.file.fname )[ 0 ] + '.mesh_' + obj.data.name + '.p3dmesh' ) #filename without extension as base
         self.binfile.mesh = mesh
         self.binfile.obj = obj
+        
+        if self.ExportArmatures:
+            armature = obj.find_armature()
+            if ( not ( armature is None )):
+                mod_el = self.file.push( 'modifier' )
+                mod_el.attrib[ 'Type' ] = 'TP3DMeshModifierArmature'
+                mod_el.attrib[ 'Armature' ] = '/armature_' + armature.data.name
+                self.file.armatures[ armature ] = { 'bones' : [ bone.name for bone in armature.data.bones ]} #use object instead of data
+                self.file.pop()
 
         el.attrib[ 'Positions' ] = self.binfile.getfileandpos()
         self.ExportVertices()
@@ -539,7 +631,8 @@ class P3DExporter( bpy.types.Operator ):
         grps = self.ExportVertexGroups() #xml elements will be added inside the function
         for grp in grps:
             elgrp = self.file.push( 'weightgroup' )
-            elgrp.attrib[ 'Name' ] = grp
+            elgrp.attrib[ 'Name' ] = grp['name']
+            elgrp.attrib[ 'Index' ] = grp['index']
             self.file.pop()
 
         #el.attrib['vertexgroups'] = '\'' + '\', \''.join( grps ) + '\''
@@ -570,15 +663,6 @@ class P3DExporter( bpy.types.Operator ):
             self.file.materials.add( mat )
             self.file.pop()
 
-        if self.ExportArmatures:
-            armature = obj.find_armature()
-            if ( not ( armature is None )):
-                el = self.file.push( 'modifier' )
-                el.attrib[ 'Type' ] = 'TP3DMeshModifierArmature'
-                el.attrib[ 'Armature' ] = '/armature_' + armature.data.name
-                self.file.armatures.add( armature ) #use object instead of data
-                self.file.pop()
-
         self.file.pop()
         del mesh
 
@@ -596,6 +680,8 @@ class P3DExporter( bpy.types.Operator ):
         el = self.file.push( 'map' )
 
         el.attrib[ 'Name' ] = map.name
+        
+        path = self.file.store( map, map.name )[1]
 
         # write relative image path
         #filepath = bpy_extras.io_utils.path_reference(filepath, , Config.FilePath,
@@ -653,6 +739,8 @@ class P3DExporter( bpy.types.Operator ):
         el = self.file.push( 'texture' )
 
         el.attrib[ 'Name' ] = 'tex_' + map.texture.name
+        
+        path = self.file.store( map.texture, 'tex_' + map.texture.name )[1]
    
         if ( map.texture.use_interpolation ):
           el.attrib[ 'Filtering' ] = 'tfLinear'
@@ -678,6 +766,8 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'materialbase' )
         el.attrib[ 'Name' ] = 'material_' + material.name
+
+        path = self.file.store( material, 'material_' + material.name )[1]
 
         el.attrib['Diff'] = '{:6f}, {:6f}, {:6f}'.format(*( material.diffuse_color * material.diffuse_intensity ))
         el.attrib['Spec'] = '{:6f}, {:6f}, {:6f}'.format( *( material.specular_color * material.specular_intensity ))
@@ -716,6 +806,7 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'light' )
         el.attrib[ 'Name' ] = 'lamp_' + lamp.name
+        path = self.file.store( lamp, 'lamp_' + lamp.name )[1]
 
         el.attrib[ 'LightType' ] = 'lt' + lamp.type.capitalize()
         el.attrib[ 'Color' ] = str( '{:6f}, {:6f}, {:6f}'.format( *lamp.color ))
@@ -733,6 +824,7 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'camera' )
         el.attrib[ 'Name' ] = 'camera_' + cam.name
+        path = self.file.store( cam, 'camera_' + cam.name )[1]
 
         el.attrib[ 'Near' ] = str( cam.clip_start )
         el.attrib[ 'Far' ] = str( cam.clip_end )
@@ -749,6 +841,7 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'joint' )
         el.attrib[ 'Name' ] = 'joint_' + bone.name
+        path = self.file.store( bone, 'joint_' + bone.name )[1]
 
         bone_space = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1)))
         bone_matrix = bone.matrix_local
@@ -767,8 +860,8 @@ class P3DExporter( bpy.types.Operator ):
         #bone_matrix *= bone_space
         #position, quat, scale = bone_matrix.decompose() 
         position = bone.head_local
-        #quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
-        quat = bone_matrix.to_quaternion()
+        quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
+        #quat = bone_matrix.to_quaternion()
         el.attrib['Position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
         length = ( bone.head_local - bone.tail_local ).length
         el.attrib['Length'] = '{:9f}'.format( length )
@@ -843,8 +936,8 @@ class P3DExporter( bpy.types.Operator ):
         return self.get_pose_matrix_in_other_space( pose_bone.matrix, pose_bone )
 
     def ExportPoseJoint( self, armature, pose_bone, bonedict ):
-        #if ( self.Verbose ):
-        #  self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
+        if ( self.Verbose ):
+            self.report({ 'INFO' }, 'Exporting data ' + pose_bone.name )
         
         el = self.file.push( 'pose' )
         el.attrib[ 'Name' ] = 'joint_' + pose_bone.name
@@ -892,15 +985,12 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'armature' )
         el.attrib[ 'Name' ] = 'armature_' + armature.data.name
+        path = self.file.store( armature, 'armature_' + armature.data.name )[1]
 
         bones = armature.data.bones
         for bone in bones:
             #if bone.parent is None:
             self.ExportJoint( bone, armature, False )
-
-        if ( not ( armature.animation_data is None ) and not ( armature.animation_data.action is None )):
-            self.file.actions.add(( armature.animation_data.action, armature ))
-            el.attrib[ 'CurrentAction' ] = '/action_' + armature.data.name + armature.animation_data.action.name
 
         self.file.pop()
 
@@ -909,31 +999,69 @@ class P3DExporter( bpy.types.Operator ):
   ##EXPORTING ACTION ---------------------------------------------------------------
 
     def ExportAction( self, action ):
+        def fcurve_propname( data_path ):
+            return data_path.rsplit( '.', 1 )
+
+        convertprop = { 'diffuse_color': 'Diff',
+                        'specular_color': 'Spec',
+                        'specular_hardness': 'Specular_Hardness',
+                        'location': 'Position',
+                        'rotation_quaternion': 'Quaternion',
+                        'rotation_euler': 'Rotation',
+                        'scale': 'Scale',
+                        'color': 'Color',
+                        'energy': 'Energy' }
+
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Exporting data ' + action[ 0 ].name )
 
-        mat_2_euler = lambda mat : [ x for x in mat.to_euler('XYZ')]
-        blbn_2_p3dbn = lambda bn : Euler( mat_2_euler( bn.matrix_basis )[::-1]).to_quaternion()
+        #mat_2_euler = lambda mat : [ x for x in mat.to_euler('XYZ')]
+        #blbn_2_p3dbn = lambda bn : Euler( mat_2_euler( bn.matrix_basis )[::-1]).to_quaternion()
         
-        el = self.file.push( 'action' )
-        el.attrib[ 'Name' ] = 'action_' + action[ 1 ].data.name + action[ 0 ].name #armature.data.name + action.name
-        scene = bpy.context.scene
-        idx = 0
-        for frame in range( scene.frame_end + 1 ):
-            elframe = self.file.push( 'frame' )
-            scene.frame_set( frame )
-            self.report({ 'INFO' }, 'Exporting frame ' + str( frame ))
-            bonedict = {}
-            for pose_bone in action[ 1 ].pose.bones:
-              bonedict[ pose_bone ] = blbn_2_p3dbn( pose_bone )
+        name = self.file.storednames.get( action[ 0 ])
+        path = self.file.datapaths.get( name )
+        self.report({ 'INFO' }, 'Action path = ' + str( path ))
+        if ( path is None ):
+            el = self.file.push( 'action' )
+            el.attrib[ 'Name' ] = 'action_' + action[ 0 ].name 
+            path = self.file.store( action[ 0 ], 'action_' + action[ 0 ].name )[ 1 ]
+        
+            for curve in action[ 0 ].fcurves:
+                elchannel = self.file.push( 'channel' )
+                prop = fcurve_propname( curve.data_path )
+                prop[ -1 ] = convertprop[ prop[ -1 ]]
+                if ( len( prop ) > 1 ):
+                    prop[ 0 ] = prop[ 0 ].split( '"' )[ 1 ]
+                    subel = self.file.elements[ prop[ 0 ]]
+                    subel.attrib[ 'Action' ] = path
+                elchannel.attrib[ 'PropStr' ] = ":".join( prop )
+                elchannel.attrib[ 'ArrayIndex' ] = curve.array_index
+                for key in curve.keyframe_points:
+                    elkey = self.file.push( 'key' )
+                    elkey.attrib[ 'Time' ] = key.co[0]
+                    elkey.attrib[ 'Value' ] = key.co[1]
+                    self.file.pop()
+                self.file.pop()
+            '''
+            scene = bpy.context.scene
+            idx = 0
+            for frame in range( scene.frame_end + 1 ):
+                elframe = self.file.push( 'frame' )
+                scene.frame_set( frame )
+                self.report({ 'INFO' }, 'Exporting frame ' + str( frame ))
+                bonedict = {}
+                for pose_bone in action[ 1 ].pose.bones:
+                  bonedict[ pose_bone ] = blbn_2_p3dbn( pose_bone )
             
-            for pose_bone in action[ 1 ].pose.bones:
-                #bone = action[ 1 ].data.bones[ pose_bone.name ]
-                self.ExportPoseJoint( action[ 1 ], pose_bone, bonedict )
-            idx += 1
+                for pose_bone in action[ 1 ].pose.bones:
+                    #bone = action[ 1 ].data.bones[ pose_bone.name ]
+                    self.ExportPoseJoint( action[ 1 ], pose_bone, bonedict )
+                idx += 1
+                self.file.pop()
+            '''
             self.file.pop()
-
-        self.file.pop()
+        el = self.file.elements[ self.file.storednames.get( action[ 1 ])]
+        el.attrib[ 'Action' ] = path
 
   ##--------------------------------------------------------------------------------
 

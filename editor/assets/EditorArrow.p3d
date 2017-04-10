@@ -1,36 +1,34 @@
 <?xml version="1.0" ?>
 <p3dfile
-  name = "EditorArrow">
+   version = "0.1">
   <scene
-    name = "Scene">
+     Name = "Scene">
     <object
-      type = "mesh"
-      name = "Arrow"
-      data = "mesh_Arrow">
-      <transform
-        position = " 0.000000, 0.000000, 0.000000"
-        quaternion = " 0.707106769, 0.000000, 0.000000, 0.707106769"
-        scale = " 1.000000, 1.000000, -1.000000">
-      </transform>
-    </object>
+       Data = "/mesh_ArrowX"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "ArrowX" />
   </scene>
   <mesh
-    normals = "19"
-    name = "mesh_Arrow"
-    faces = "19"
-    vertices = "19"
-    binary = "EditorArrow.mesh_ArrowY.p3dmesh"
-    loops = "72">
-    <material
-      start = "0"
-      name = "material_MaterialArrow"
-      end = "18">
-    </material>
+     Loops = "EditorArrow.p3dbin:1100"
+     Positions = "EditorArrow.p3dbin:0"
+     Faces = "EditorArrow.p3dbin:1392"
+     Normals = "EditorArrow.p3dbin:232"
+     Name = "mesh_ArrowX">
+    <materialgroup
+       PolyEnd = "18"
+       PolyStart = "0"
+       Material = "/material_MaterialX" />
   </mesh>
-  <material
-    diffuse = "0.800000, 0.800000, 0.800000"
-    unlit = "yes"
-    name = "material_MaterialArrow"
-    specular = "50.000000, 0.500000, 0.500000, 0.500000">
-  </material>
+  <materialbase
+     Unlit = "1"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Diff = "0.800000, 0.800000, 0.800000"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Instancing = "1"
+     Name = "material_MaterialX" />
 </p3dfile>

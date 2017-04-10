@@ -137,7 +137,7 @@
        Letter = "`" />
   </font>
   <texture
-     File = "../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../../fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/../../pascal3d/fonts/Pascal3D-Symbols.png"
+     File = "Pascal3D-Symbols.png"
      Name = "P3DTexture1"
      MipMap = "1"
      Filtering = "tfLinear"

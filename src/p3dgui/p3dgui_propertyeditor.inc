@@ -140,6 +140,8 @@ type
 
     public
       constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
+      procedure FastDestroy; override;
+
       procedure Draw; override;
 
     published
@@ -151,6 +153,7 @@ type
   TP3DPropertyEditorBoolean = class ( TP3DCheckBox, IP3DPropertyEditor )
     protected
       FProp: TP3DPropertyAccess;
+      FLabel: TP3DTextBmp;
 
       procedure SetProp( AValue: TP3DPropertyAccess );
       function GetProp: TP3DPropertyAccess;
@@ -160,11 +163,39 @@ type
 
     public
       constructor Create( const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil ); override;
+      procedure FastDestroy; override;
+      procedure Draw; override;
 
     published
       property Prop: TP3DPropertyAccess read GetProp write SetProp;
   end;
 
+  { TP3DPropertyEditorString }
+
+   { TP3DPropertyEditorDataBlock }
+
+   TP3DPropertyEditorDataBlock = class ( TP3DGraphicControl, IP3DPropertyEditor )
+   private
+     FPopup: TP3DPopupMenu;
+     protected
+       FButton: TP3DButton;
+       FEdit: TP3DPropertyEditorString;
+
+       procedure SetProp( AValue: TP3DPropertyAccess );
+       function GetProp: TP3DPropertyAccess;
+
+     public
+       constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+       destructor Destroy; override;
+       procedure ButtonClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
+       procedure PopupClick( Sender: TP3DMenuItem );
+
+     published
+       property Prop: TP3DPropertyAccess read GetProp write SetProp;
+       property Edit: TP3DPropertyEditorString read FEdit write FEdit;
+       property Button: TP3DButton read FButton write FButton;
+       property Popup: TP3DPopupMenu read FPopup write FPopup;
+   end;
 
   { gP3DPropertyEditorList }
 
@@ -262,7 +293,8 @@ end;
 procedure gP3DPropertyEditorVector.Draw;
 begin
   inherited Draw;
-
+  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Accent200, Accent100, Accent200, Accent200 );
+  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Accent900, Accent900, Accent900, Accent900 );
   Canvas.RenderText( FLabel, vec2( 0, 0 ));
 end;
 
@@ -283,8 +315,6 @@ begin
     end
   else
     Canvas.GetValidText( '<noprop>', FLabel );
-
-  if ( Assigned( Prop )) then
 end;
 
 function TP3DPropertyEditorString.GetProp: TP3DPropertyAccess;
@@ -350,7 +380,11 @@ procedure TP3DPropertyEditorString.Draw;
 begin
   inherited Draw;
   if ( not Focused ) then
-    Canvas.RenderText( FLabel, vec2( 0 ));
+    begin
+      Canvas.RenderRect( vec2( 0 ), vec2( FLabel.Width - 5, Height ), Primary200 );
+      Canvas.RenderRect( vec2( FLabel.Width - 5, 0 ), vec2( FLabel.Width + 5, Height ), Primary200, vec4( Primary200.XYZ, 0 ), vec4( Primary200.XYZ, 0 ), Primary200 );
+      Canvas.RenderText( FLabel, vec2( 0 ));
+    end;
 end;
 
 { TP3DPropertyEditorInt }
@@ -447,6 +481,7 @@ begin
   Font.Size:= 20;
   Height:= 60;
   ScrollBarH.Visible:= True;
+  SetProp( nil );
 end;
 
 function gP3DPropertyEditorList.GetLProp: TListProp;
@@ -577,8 +612,12 @@ begin
       Canvas.Font.Color:= vec4( 0 );
       Canvas.RenderText( FPlusSymbol, vec2(( Width - FPlusSymbol.Width ) / 2, FDrawInsertion - FPlusSymbol.Height / 2 ));
     end;
-  if ( not Focused ) then
-    Canvas.RenderText( FLabel, vec2( 0 ));
+  if ( not Focused and Assigned( FLabel )) then
+    begin
+      Canvas.RenderRect( vec2( 0 ), vec2( FLabel.Width - 5, Height ), Primary200 );
+      Canvas.RenderRect( vec2( FLabel.Width - 5, 0 ), vec2( FLabel.Width + 5, Height ), Primary200, vec4( Primary200.XYZ, 0 ), vec4( Primary200.XYZ, 0 ), Primary200 );
+      Canvas.RenderText( FLabel, vec2( 0 ));
+    end;
 end;
 
 procedure gP3DPropertyEditorList.MouseMove(X, Y: Integer);
@@ -651,13 +690,72 @@ begin
   Height:= 20;
 end;
 
+procedure TP3DPropertyEditorEnum.FastDestroy;
+begin
+  FLabel.Free;
+  inherited FastDestroy;
+end;
+
 procedure TP3DPropertyEditorEnum.Draw;
 begin
   inherited Draw;
   if ( not Focused ) then
-    Canvas.RenderText( FLabel, vec2( 0 ));
+    begin
+      Canvas.RenderRect( vec2( 0 ), vec2( FLabel.Width - 5, Height ), Primary200 );
+      Canvas.RenderRect( vec2( FLabel.Width - 5, 0 ), vec2( FLabel.Width + 5, Height ), Primary200, vec4( Primary200.XYZ, 0 ), vec4( Primary200.XYZ, 0 ), Primary200 );
+      Canvas.RenderText( FLabel, vec2( 0 ));
+    end;
 end;
 
+{ TP3DPropertyEditorDataBlock }
+
+procedure TP3DPropertyEditorDataBlock.SetProp(AValue: TP3DPropertyAccess);
+begin
+  Edit.Prop:= AValue;
+end;
+
+function TP3DPropertyEditorDataBlock.GetProp: TP3DPropertyAccess;
+begin
+  Result:= Edit.Prop;
+end;
+
+
+constructor TP3DPropertyEditorDataBlock.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  Height:= 20;
+  Edit:= TP3DPropertyEditorString.Create( AData, Self );
+  Edit.Align:= alClient;
+  Button:= TP3DButton.Create( AData, Self );
+  Button.Width:= 20;
+  Button.Caption:= '...';
+  Button.Align:= alRight;
+  Button.OnMouseClick:= @ButtonClick;
+  Popup:= TP3DPopupMenu.Create();
+  Popup.Items.Add( 'Select' );
+  Popup.Items.Add( 'Browse' );
+end;
+
+destructor TP3DPropertyEditorDataBlock.Destroy;
+begin
+  Edit.Free;
+  inherited Destroy;
+end;
+
+procedure TP3DPropertyEditorDataBlock.ButtonClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  Popup.Width:= Canvas.Width;
+  Popup.PopUp( round( Canvas.Left ), round( Canvas.Top + Canvas.Height ));
+end;
+
+procedure TP3DPropertyEditorDataBlock.PopupClick(Sender: TP3DMenuItem);
+begin
+  if ( Sender.Caption = 'Select' ) then
+    //Blubb
+  else if ( Sender.Caption = 'Browse' ) then
+    ;
+  Popup.Hide;
+end;
 
 
 

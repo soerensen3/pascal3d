@@ -1398,6 +1398,8 @@ procedure TP3DTreeViewActors.Update;
               Parent[ n ].SymbolText:= P3DSymbolArmature
             else if ( Item.Data is TP3DTileGrid ) then
               Parent[ n ].SymbolText:= P3DSymbolGrid
+            else if ( Item.Data is TP3DJoint) then
+              Parent[ n ].SymbolText:= P3DSymbolArmature
             //else if ( Item.Data is TP3DData ) then
             //  Parent[ n ].SymbolText:= TP3DSymbolLibrary
             else;
@@ -1437,6 +1439,21 @@ procedure TP3DTreeViewActors.Update;
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolCamera;
+      end;
+  end;
+
+  procedure AddJointList( List: TP3DJointList; Parent: TP3DTreeNodeList );
+  var
+    Joint: TP3DJoint;
+    n: LongInt;
+  begin
+    for Joint in List do
+      begin
+        if ( P3DData.IsValid( Joint )) then
+          n:= Parent.Add( Joint.Name, Joint )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
+        Parent[ n ].SymbolText:= P3DSymbolArmature;
       end;
   end;
 
@@ -1548,9 +1565,9 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddActionList( List: TP3DArmatureActionList; Parent: TP3DTreeNodeList );
+  procedure AddActionList( List: TP3DActionList; Parent: TP3DTreeNodeList );
   var
-    Action: TP3DArmatureAction;
+    Action: TP3DAction;
     n: LongInt;
   begin
     for Action in List do
@@ -1591,6 +1608,9 @@ procedure TP3DTreeViewActors.Update;
         Node:= Parent[ Parent.Add( 'Libraries', P3DData.Libraries, False, P3DSymbolLibrary )].Children;
         AddLibraryList( P3DData.Libraries, Node );
       end;
+
+    Node:= Parent[ Parent.Add( 'Joints', Data.Joints, False, P3DSymbolArmature )].Children;
+    AddJointList( Data.Joints, Node );
 
     Node:= Parent[ Parent.Add( 'Lights', Data.Lights, False, P3DSymbolLight )].Children;
     AddLightList( Data.Lights, Node );

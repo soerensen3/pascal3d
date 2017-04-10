@@ -14,6 +14,7 @@
 {$INCLUDE p3dmaterial.inc}
 {$INCLUDE p3dmesh.inc}
 {$INCLUDE p3darmature.inc}
+{$INCLUDE p3daction.inc}
 {$INCLUDE p3dactor.inc}
 {$INCLUDE p3dscene.inc}
 {$INCLUDE p3dterrain.inc}

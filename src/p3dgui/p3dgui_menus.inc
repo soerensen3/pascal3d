@@ -189,7 +189,7 @@ end;
 procedure TP3DPopupMenu.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
   inherited MouseClick( mb1, mb2, mb3, X, Y );
-  if ( Assigned( Selection ) and Selection.Enabled ) then
+  if ( Assigned( OnItemClick ) and Assigned( Selection ) and Selection.Enabled ) then
     OnItemClick( Selection );
 end;
 
@@ -199,13 +199,15 @@ var
 begin
   inherited MouseMove(X, Y);
 
-  if ( Assigned( Selection ) and P3DRect( Selection.Left, Selection.Top, Selection.Width, Selection.Height ).PtInRect( vec2( X, Y ))) then
+//  if ( Assigned( Selection ) and P3DRect( Selection.Left, Selection.Top, Selection.Width, Selection.Height ).PtInRect( vec2( X, Y ))) then
+  if ( Assigned( Selection ) and P3DRect( 0, Selection.Top, Width, Selection.Height ).PtInRect( vec2( X, Y ))) then
     exit;
 
   Selection:= nil;
 
   for Itm in Items do
-    if ( P3DRect( Itm.Left, Itm.Top, Itm.Width, Itm.Height ).PtInRect( vec2( X, Y ))) then
+//    if ( P3DRect( Itm.Left, Itm.Top, Itm.Width, Itm.Height ).PtInRect( vec2( X, Y ))) then
+    if ( P3DRect( 0, Itm.Top, Width, Itm.Height ).PtInRect( vec2( X, Y ))) then
       begin
         Selection:= Itm;
         break;

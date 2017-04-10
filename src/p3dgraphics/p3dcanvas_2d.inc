@@ -21,51 +21,6 @@ TP3DVerticalAlignment = (
   vaBottom);
 
 
-{ TP3DRect }
-
-TP3DRect = object
-  private
-    FHeight: Float;
-    FTop: Float;
-    FLeft: Float;
-    FWidth: Float;
-
-    function GetBottom: Float;
-    function GetBottomI: Integer;
-    function GetBottomRight: TVec2;
-    function GetHeightI: Integer;
-    function GetLeftI: Integer;
-    function GetRight: Float;
-    function GetRightI: Integer;
-    function GetTopI: Integer;
-    function GetTopLeft: TVec2;
-    function GetWidthI: Integer;
-    procedure SetBottom(AValue: Float);
-    procedure SetBottomRight(AValue: TVec2);
-    procedure SetRight(AValue: Float);
-    procedure SetTopLeft(AValue: TVec2);
-
-  public
-    function PtInRect( P: TVec2 ): Boolean;
-    function RectCollision( R: TP3DRect ): Boolean;
-    function Clip( R: TP3DRect ): TP3DRect;
-
-    property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
-    property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
-    property Left: Float read FLeft write FLeft;
-    property Top: Float read FTop write FTop;
-    property Width: Float read FWidth write FWidth;
-    property Height: Float read FHeight write FHeight;
-    property Bottom: Float read GetBottom write SetBottom;
-    property Right: Float read GetRight write SetRight;
-    property LeftI: Integer read GetLeftI;
-    property TopI: Integer read GetTopI;
-    property WidthI: Integer read GetWidthI;
-    property HeightI: Integer read GetHeightI;
-    property RightI: Integer read GetRightI;
-    property BottomI: Integer read GetBottomI;
-  end;
-
 { TP3DPen }
 
 TP3DPen = class
@@ -203,7 +158,7 @@ var
 begin
   if ( not PrepareForDrawing ) then exit;
 
-  glBegin( GL_LINES );
+  glBegin( GL_LINE_STRIP );
   for i:= low( points ) to high( points ) do
     begin
       glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
@@ -257,8 +212,9 @@ end;
 procedure TP3DCanvas2D.RenderRect(p1, p2: TVec2; Color: TVec4);
 begin
   if ( not PrepareForDrawing ) then exit;
-  glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
+
   glBegin( GL_TRIANGLE_FAN );
+  glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
   glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
   glVertexAttrib2f( P3DAttribPosition, p2.X, p1.Y );
   glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
@@ -802,6 +758,11 @@ begin
   Result:= vec2( Left, Top );
 end;
 
+function TP3DRect.GetWidthHeight: TVec2;
+begin
+  Result:= vec2( Width, Height );
+end;
+
 function TP3DRect.GetWidthI: Integer;
 begin
   Result:= round( Width );
@@ -832,6 +793,12 @@ begin
   Top:= AValue.Y;
 end;
 
+procedure TP3DRect.SetWidthHeight(AValue: TVec2);
+begin
+  Width:= AValue.X;
+  Height:= AValue.Y;
+end;
+
 
 function TP3DRect.PtInRect(P: TVec2): Boolean;
 begin
@@ -849,8 +816,19 @@ end;
 
 function TP3DRect.Clip(R: TP3DRect): TP3DRect;
 begin
-  Result.TopLeft:= Max( R.TopLeft, TopLeft );
-  Result.BottomRight:= Min( R.BottomRight, BottomRight );
+  Result.TopLeft:= Max( vec2( 0 ), Max( R.TopLeft, TopLeft ));
+  Result.BottomRight:= Max( Result.TopLeft + 1, Min( R.BottomRight, BottomRight ));
+end;
+
+function TP3DRect.Inset(ATopLeft, ABottomRight: TVec2): TP3DRect;
+begin
+  Result.TopLeft:= TopLeft + ATopLeft;
+  Result.BottomRight:= BottomRight - ABottomRight;
+end;
+
+function TP3DRect.ToString: String;
+begin
+  Result:= TopLeft.ToString() + ', ' + BottomRight.ToString();
 end;
 
 function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;

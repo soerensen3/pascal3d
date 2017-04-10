@@ -132,7 +132,7 @@ type
 
       procedure SetCam( AValue: TP3DActor );
       procedure RenderCallback( world: TMat4; AActor: TP3DActor ); virtual;
-      procedure OnObjChange( Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction );
+      procedure OnObjChange( Sender: TPersistent; Item: TP3DActor; AAction: TP3DCustomListOnChangeAction );
 
     protected
       property ActiveCam: TP3DActor read FActiveCam write FActiveCam;
@@ -687,9 +687,9 @@ begin
     OnRenderCallback( world, AActor );
 end;
 
-procedure TP3DScene.OnObjChange( Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction );
+procedure TP3DScene.OnObjChange(Sender: TPersistent; Item: TP3DActor; AAction: TP3DCustomListOnChangeAction);
 begin
-  if ( Action = actAdd ) then
+  if ( AAction = actAdd ) then
     begin
       Item.AddUser( Self );
       Item.FScene:= Self;

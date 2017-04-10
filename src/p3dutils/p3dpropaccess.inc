@@ -881,9 +881,10 @@ function gP3DListPropertyAccess.GetAsString: String;
 var
   i: Integer;
 begin
+  Result:= '';
   for i:= 0 to Count - 1 do
     Result+= ', ' + Values[ i ].ToString;
-  Result:= '[' + Copy( Result, 2, Length( Result ) - 2 ) + ']';
+  Result:= '[' + Copy( Result, 3, Length( Result ) - 2 ) + ']';
 end;
 
 procedure gP3DListPropertyAccess.SetAsString(AValue: String);

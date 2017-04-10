@@ -99,6 +99,13 @@ begin
       DataView.Update;
       DataView.Children.ExpandAll();
     end;}
+  if (( Event.keysym.scancode = SDL_SCANCODE_F4 ) and ( Event._repeat = 0 ) and ( Event.type_ = SDL_KEYDOWN )) then
+    with ( TP3DModalWindow.Create()) do
+      begin
+        Width:= 300;
+        Height:= 150;
+        ShowModal;
+      end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F5 ) then
     begin DataView.Viewer.Update; DataView.Viewer.Children.ExpandAll(); end;
   if ( Event.keysym.scancode = SDL_SCANCODE_F8 ) then

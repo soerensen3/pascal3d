@@ -353,6 +353,7 @@ published
   { TP3DOIEditorDataMaterialMaps }
 
   TP3DPropertyEditorMaterialMapList = specialize gP3DPropertyEditorList < TP3DMaterialMapList, TP3DMaterialMap >;
+  TP3DPropertyEditorJointList = specialize gP3DPropertyEditorList < TP3DJointList, TP3DJoint >;
 
   TP3DOIEditorDataMaterialMaps = class ( TP3DOIEditorGroup )
     private
@@ -478,7 +479,12 @@ begin
   FProp:= AValue;
 
   if ( Assigned( AValue )) then
-    FChecked:= Boolean( StrToInt( AValue.AsString ));
+    begin
+      FChecked:= Boolean( StrToInt( AValue.AsString ));
+      Canvas.GetValidText( Prop.Name + ':', FLabel );
+    end
+  else
+    Canvas.GetValidText( '<noprop>', FLabel );
 end;
 
 function TP3DPropertyEditorBoolean.GetProp: TP3DPropertyAccess;
@@ -502,10 +508,11 @@ end;
 
 function TP3DPropertyEditorBoolean.GetCaption: String;
 begin
-  if ( Assigned( Prop )) then
+  {if ( Assigned( Prop )) then
     Result:= Prop.Name
   else
-    Result:= '<empty>';
+    Result:= '<empty>';}
+  Result:= ''; //We want the caption to align left
 end;
 
 constructor TP3DPropertyEditorBoolean.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
@@ -515,7 +522,21 @@ begin
   HAlignment:= haRight;
 end;
 
+procedure TP3DPropertyEditorBoolean.FastDestroy;
+begin
+  FreeAndNil( FLabel );
+  inherited FastDestroy;
+end;
 
+procedure TP3DPropertyEditorBoolean.Draw;
+begin
+  inherited Draw;
+  begin
+    Canvas.RenderRect( vec2( 0 ), vec2( FLabel.Width - 5, Height ), Primary200 );
+    Canvas.RenderRect( vec2( FLabel.Width - 5, 0 ), vec2( FLabel.Width + 5, Height ), Primary200, vec4( Primary200.XYZ, 0 ), vec4( Primary200.XYZ, 0 ), Primary200 );
+    Canvas.RenderText( FLabel, vec2( 0 ));
+  end;
+end;
 
 
 function AddContainer( Parent: TP3DGraphicControl; Title: String ): TP3DGraphicControl;

@@ -17,7 +17,7 @@ type
 
   TP3DLibrary = class ( TPersistent )
     private
-      FActions: TP3DArmatureActionList;
+      FActions: TP3DActionList;
       FArmatures: TP3DArmatureList;
       FBinFile: TFileStream;
       FCameras: TP3DCameraList;
@@ -26,6 +26,7 @@ type
       FFileWatch: TP3DFileWatch;
       FFonts: TP3DFontListBmp;
       FIsDesignerPackage: Boolean;
+      FJoints: TP3DJointList;
       FLights: TP3DLightList;
       FMaterials: TP3DMaterialList;
       FMeshes: TP3DMeshList;
@@ -81,6 +82,7 @@ type
 
     published
       property Cameras: TP3DCameraList read FCameras write FCameras;
+      property Joints: TP3DJointList read FJoints write FJoints;
       property Lights: TP3DLightList read FLights write FLights;
       property Materials: TP3DMaterialList read FMaterials write FMaterials;
       property Meshes: TP3DMeshList read FMeshes write FMeshes;
@@ -89,7 +91,7 @@ type
       property Shaders: TP3DShaderList read FShaders write FShaders;
       property Textures: TP3DTextureList read FTextures write FTextures;
       property Armatures: TP3DArmatureList read FArmatures write FArmatures;
-      property Actions: TP3DArmatureActionList read FActions write FActions;
+      property Actions: TP3DActionList read FActions write FActions;
       property Fonts: TP3DFontListBmp read FFonts write FFonts;
 
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
@@ -156,6 +158,12 @@ type
       destructor Destroy; override;
   end;
 
+  { TP3DDataBlockClassFactory }
+
+  TP3DDataBlockClassFactory = class ( specialize gP3DClassFactory < TP3DDataBlockType >)
+    function FindByDOMNodeName( ADOMName: String ): TClassItem;
+  end;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -188,6 +196,7 @@ begin
   DataBlocks:= TP3DObjectList.Create( Self );
 
   Cameras:= TP3DCameraList.Create;
+  Joints:= TP3DJointList.Create;
   Lights:= TP3DLightList.Create;
   Materials:= TP3DMaterialList.Create;
   Meshes:= TP3DMeshList.Create;
@@ -196,7 +205,7 @@ begin
   Shaders:= TP3DShaderList.Create;
   Textures:= TP3DTextureList.Create;
   Armatures:= TP3DArmatureList.Create;
-  Actions:= TP3DArmatureActionList.Create;
+  Actions:= TP3DActionList.Create;
   Fonts:= TP3DFontListBmp.Create;
   FileWatch:= TP3DFileWatch.Create( '', Self );
 end;
@@ -230,6 +239,7 @@ begin
 
   ClearFields;
   FreeAndNil( FCameras );
+  FreeAndNil( FJoints );
   FreeAndNil( FLights );
   FreeAndNil( FMaterials );
   FreeAndNil( FMeshes );
@@ -484,15 +494,17 @@ end;
 function TP3DLibrary.AppendFromDOM( ADOMNode: TDOMElement; AType: TP3DDataBlockType; const AParent: TP3DDataBlock ): Integer;
 var
   ObjName: WideString;
+  tp: TP3DDataBlockType;
 begin
   ObjName:= ADOMNode.AttribStrings[ 'Name' ];
-  if ( not FindClassForDOM( ADOMNode.NodeName ).InheritsFrom( AType )) then
-    raise Exception.Create( Format( 'Error while appending from DOM: The DOM with name %s is of the wrong type. Expected "%s", Found "%s"', [ ObjName, AType.ClassName, FindClassForDOM( ADOMNode ).ClassName ]));
+  tp:= P3DDataBlockClassFactory.FindByDOMNodeName( ADOMNode.NodeName );
+  if ( tp.InheritsFrom( AType )) then
+    raise Exception.Create( Format( 'Error while appending from DOM: The DOM with name %s is of the wrong type. Expected "%s", Found "%s"', [ ObjName, AType.ClassName, tp.ClassName ]));
   Result:= DataBlocks.FindByName( ObjName );
   if ( Result > -1 ) then
     begin
       if ( not ( DataBlocks[ Result ] is AType )) then
-        raise Exception.Create( Format( 'Error while appending from DOM: A class with name %s was already loaded before but is of the wrong type. Expected "%s", Found "%s"', [ ObjName, AType.ClassName, FindClassForDOM( ADOMNode ).ClassName ]))
+        raise Exception.Create( Format( 'Error while appending from DOM: A class with name %s was already loaded before but is of the wrong type. Expected "%s", Found "%s"', [ ObjName, AType.ClassName, tp.ClassName ]))
     end
   else
     begin
@@ -514,38 +526,14 @@ var
     begin
       Result:= -1;
 
-      case ADOMNode.NodeName of
-        'object': raise Exception.Create( 'TP3DLibrary.AppendFromDOM - Error: An object must have a parent.' );
-        'mesh':
-          tp:= TP3DMesh;
-        'material':
-          case ADOMNode.GetAttribute( 'type' ) of
-            'shader': tp:= TP3DMaterialShader;
-            else
-              tp:= TP3DMaterialBase;
-          end;
-        'materialshader':
-          tp:= TP3DMaterialShader;
-        'materialbase':
-          tp:= TP3DMaterialBase;
-        'light', 'lamp':
-          tp:= TP3DLight;
-        'camera':
-          tp:= TP3DCamera;
-        'scene':
-          tp:= TP3DScene;
-        'armature':
-          tp:= TP3DArmature;
-        'action', 'armatureaction':
-          tp:= TP3DArmatureAction;
-        'texture':
-          tp:= TP3DTexture;
-        'tilegrid':
-          tp:= TP3DTileGrid;
-        else
-          P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ObjName + '". Skipping.' );
-      end;
-      Result:= CreateNew( tp, False );
+      if ( ADOMNode.NodeName = 'object' ) then
+        raise Exception.Create( 'TP3DLibrary.AppendFromDOM - Error: An object must have a parent.' )
+      else
+        tp:= P3DDataBlockClassFactory.FindByDOMNodeName( ADOMNode.NodeName );
+      if ( not Assigned( tp )) then
+        P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ObjName + '". Skipping.' )
+      else
+        Result:= CreateNew( tp, False );
     end;
 
   var
@@ -657,7 +645,7 @@ var
   lst: TDOMNodeList;
   i: Integer;
 begin
-  filter:= FindDOMForClass( AType );
+  filter:= AType.DOMNodeName;
   lst:= ADOMNode.GetElementsByTagName( filter );
   try
     Result:= 0;
@@ -748,10 +736,11 @@ begin
   CreateDOMFile;
 
   if ( AParentClass = TP3DActor ) then Objects.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DArmature ) then  Armatures.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DArmatureAction ) then Actions.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DArmature ) then Armatures.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DAction ) then Actions.SaveToDOM( DOMFile.DocumentElement )
   else if ( AParentClass = TP3DCamera ) then Cameras.SaveToDOM( DOMFile.DocumentElement )
   else if ( AParentClass = TP3DFontBmp ) then Fonts.SaveToDOM( DOMFile.DocumentElement )
+  else if ( AParentClass = TP3DJoint ) then Joints.SaveToDOM( DOMFile.DocumentElement )
   else if ( AParentClass = TP3DLight ) then Lights.SaveToDOM( DOMFile.DocumentElement )
   else if ( AParentClass = TP3DMaterial ) then Materials.SaveToDOM( DOMFile.DocumentElement )
   else if ( AParentClass = TP3DMesh ) then Meshes.SaveToDOM( DOMFile.DocumentElement )
@@ -826,6 +815,7 @@ begin
     end;
   Datablocks.Clear( False );
   Cameras.Clear();
+  Joints.Clear();
   Lights.Clear();
   Materials.Clear();
   Meshes.Clear();
@@ -1030,6 +1020,21 @@ begin
   Result:= max( Result, Libraries.LastUpdate );
   for i:= 0 to Libraries.Count - 1  do;
     Result:= max( Result, Libraries[ i ].CheckLastChange );
+end;
+
+{ TP3DDataBlockClassFactory }
+
+function TP3DDataBlockClassFactory.FindByDOMNodeName(ADOMName: String): TClassItem;
+var
+  i: Integer;
+begin
+  Result:= nil;
+  for i := 0 to Count - 1 do
+    if ( Items[ i ].DOMNodeName = ADOMName ) then
+      begin
+        Result:= Items[ i ];
+        break;
+      end;
 end;
 
 {$ENDIF}

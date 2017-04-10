@@ -36,7 +36,7 @@ type
   TP3DScene = class;
   TP3DActor = class;
 
-  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors, rlfWireFrame, rlfDepthTest, rlfLighting, rlfRenderEdges, rlfActors, rlfMeshes, rlfScenes, rlfTileGrids );
+  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors, rlfWireFrame, rlfDepthTest, rlfLighting, rlfRenderEdges, rlfActors, rlfMeshes, rlfScenes, rlfTileGrids, rlfJoints );
   TP3DRenderListFlags = set of TP3DRenderListFlag;
 
  const
@@ -58,6 +58,7 @@ var
   P3DFontManagerBmp: TP3DFontManagerBmp = nil;
   P3DCanvasMaterialDefault: TP3DMaterialBase = nil;
   P3DDataBlockCache: TP3DDataBlockCache = nil;
+  P3DDataBlockClassFactory: TP3DDataBlockClassFactory = nil;
   P3DAttributes: TP3DAttributeList = nil;
 
 procedure P3DGraphicsInit;
@@ -103,6 +104,7 @@ begin
       AssertErrorProc := S;
     end;
 end;
+
 
 { TP3DFontListBmp }
 
@@ -205,6 +207,15 @@ begin
     P3DViewports:= TP3DViewportStack.Create;
   if ( not Assigned( P3DData )) then
     P3DData:= TP3DData.Create;
+  if ( not Assigned( P3DDataBlockClassFactory )) then
+    begin
+      P3DDataBlockClassFactory:= TP3DDataBlockClassFactory.Create;
+      P3DDataBlockClassFactory.AddArray([ TP3DAction, TP3DActor,
+                                          TP3DArmature, TP3DJoint,
+                                          TP3DCamera, TP3DTileGrid, TP3DLight,
+                                          TP3DMaterialBase, TP3DMaterialShader,
+                                          TP3DMesh, TP3DScene, TP3DTexture ]);
+    end;
   if ( not Assigned( P3DShaderNodeLib )) then
     P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create;
 
@@ -234,6 +245,8 @@ begin
       P3DData.Free;
       P3DData:= nil;
     end;
+  if ( Assigned( P3DDataBlockClassFactory )) then
+    FreeAndNil( P3DDataBlockClassFactory );
   if ( Assigned( P3DDataBlockCache )) then
     FreeAndNil( P3DDataBlockCache );
   if ( Assigned( P3DAttributes )) then

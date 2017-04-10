@@ -53,6 +53,7 @@ interface
   {$INCLUDE p3dgui_commonctrls.inc}
   {$INCLUDE p3dgui_sceneviewer.inc}
   {$INCLUDE p3dgui_advanced.inc}
+  {$INCLUDE p3dgui_forms.inc}
   {$INCLUDE p3dgui_objectinspector.inc}
 
   {$UNDEF INTERFACE}
@@ -82,6 +83,7 @@ uses
 {$INCLUDE p3dgui_sceneviewer.inc}
 {$INCLUDE p3dgui_menus.inc}
 {$INCLUDE p3dgui_advanced.inc}
+{$INCLUDE p3dgui_forms.inc}
 {$INCLUDE p3dgui_objectinspector.inc}
 
 

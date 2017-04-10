@@ -77,7 +77,7 @@ type
       procedure UpdateMatrix;
       procedure UpdateEuler;
       function GetDOMPath: String; override;
-      procedure OnObjChange( Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction );
+      procedure OnObjChange( Sender: TPersistent; Item: TP3DActor; AAction: TP3DCustomListOnChangeAction );
 
     public
       constructor Create( const AData: TP3DLibrary = nil ); override;
@@ -128,7 +128,6 @@ type
 
   TP3DPropertyAccessActor = specialize gP3DPropertyAccessDataBlock < TP3DActor >;
   TP3DCustomActorList = specialize gP3DCustomDatablockList < TP3DActor >;
-
   TP3DRenderListModifier = class;
 
   { TP3DActorList }
@@ -150,20 +149,11 @@ type
       property Owner: TPersistent read FOwner write FOwner;
   end;
 
+  TP3DPropertyAccessActorList = specialize gP3DListPropertyAccess < TP3DActorList, TP3DActor >;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
-
-function LoadMat4FromDOM( DOM: TDOMElement ): TMat4;
-var
-  c0, c1, c2, c3: TVec4;
-begin
-  c0.FromString( DOM.GetAttribute( 'c0' ));
-  c1.FromString( DOM.GetAttribute( 'c1' ));
-  c2.FromString( DOM.GetAttribute( 'c2' ));
-  c3.FromString( DOM.GetAttribute( 'c3' ));
-  Result:= mat4( c0, c1, c2, c3 );
-end;
 
 { TP3DActor }
 
@@ -186,9 +176,9 @@ begin
     Result:= '/' + Name
 end;
 
-procedure TP3DActor.OnObjChange(Sender: TPersistent; Item: TP3DActor; Action: TP3DCustomListOnChangeAction);
+procedure TP3DActor.OnObjChange(Sender: TPersistent; Item: TP3DActor; AAction: TP3DCustomListOnChangeAction);
 begin
-  if ( Action = actAdd ) then
+  if ( AAction = actAdd ) then
     Item.FParent:= Self
   else
     Item.FParent:= nil;
@@ -315,15 +305,19 @@ begin
   FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
-  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ));
-  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Collision', smAttribute ));
-  Properties.Add( TP3DPropertyAccessDataBlock.CreateFieldSet( 'Data', @Data, @SetData, smAttribute ));
+  Properties.Add([ TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ),
+                   TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
+                   TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ),
+                   TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ),
+                   TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ),
+                   TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute )],
+                   'Transform' );
+
+  Properties.Add([ TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ),
+                   TP3DPropertyAccessRTTI.Create( Self, 'Collision', smAttribute ),
+                   TP3DPropertyAccessDataBlock.CreateFieldSet( 'Data', @Data, @SetData, smAttribute ),
+                   TP3DPropertyAccessActorList.CreateField( 'Children', @FChildren, smAttribute )],
+                   'Actor' );
 end;
 
 procedure TP3DActor.LoadFromDOM( ADOMNode: TDOMElement );
@@ -357,7 +351,6 @@ begin
   while ( Assigned( Element )) do
     begin
       case Element.NodeName of
-        'matrix': Matrix:= LoadMat4FromDOM( Element );
         'transform': LoadTransformFromDom( Element );
         'object':
           begin

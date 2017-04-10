@@ -20,14 +20,6 @@
        Collision = "acNone"
        Name = "Cone.001" />
     <object
-       Position = " 4.076245, 1.005454, 6.103862"
-       Data = "/lamp_Lamp"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
-       Scale = " 0.214491, 0.309147, 0.363263"
-       Collision = "acNone"
-       Name = "Lamp" />
-    <object
        Position = " 7.481132,-6.507640, 5.543665"
        RotationOrder = "roXYZ"
        Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
@@ -57,11 +49,6 @@
        Material = "/material_Material"
        PolyStart = "0" />
   </mesh>
-  <light
-     Color = "1.000000, 1.000000, 1.000000"
-     Name = "lamp_Lamp"
-     LightType = "ltPoint"
-     Energy = "1.0" />
   <materialbase
      Diff = "0.640000, 0.640000, 0.640000"
      Spec = "0.500000, 0.500000, 0.500000"

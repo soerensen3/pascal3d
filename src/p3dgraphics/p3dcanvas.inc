@@ -29,22 +29,77 @@ type
       property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
+  { TP3DRect }
+
+  TP3DRect = object
+    private
+      FHeight: Float;
+      FTop: Float;
+      FLeft: Float;
+      FWidth: Float;
+
+      function GetBottom: Float;
+      function GetBottomI: Integer;
+      function GetBottomRight: TVec2;
+      function GetHeightI: Integer;
+      function GetLeftI: Integer;
+      function GetRight: Float;
+      function GetRightI: Integer;
+      function GetTopI: Integer;
+      function GetTopLeft: TVec2;
+      function GetWidthHeight: TVec2;
+      function GetWidthI: Integer;
+      procedure SetBottom(AValue: Float);
+      procedure SetBottomRight(AValue: TVec2);
+      procedure SetRight(AValue: Float);
+      procedure SetTopLeft(AValue: TVec2);
+      procedure SetWidthHeight(AValue: TVec2);
+
+    public
+      function PtInRect( P: TVec2 ): Boolean;
+      function RectCollision( R: TP3DRect ): Boolean;
+      function Clip( R: TP3DRect ): TP3DRect;
+      function Inset( ATopLeft, ABottomRight: TVec2 ): TP3DRect;
+      function ToString: String;
+
+      property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
+      property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
+      property WidthHeight: TVec2 read GetWidthHeight write SetWidthHeight;
+      property Left: Float read FLeft write FLeft;
+      property Top: Float read FTop write FTop;
+      property Width: Float read FWidth write FWidth;
+      property Height: Float read FHeight write FHeight;
+      property Bottom: Float read GetBottom write SetBottom;
+      property Right: Float read GetRight write SetRight;
+      property LeftI: Integer read GetLeftI;
+      property TopI: Integer read GetTopI;
+      property WidthI: Integer read GetWidthI;
+      property HeightI: Integer read GetHeightI;
+      property RightI: Integer read GetRightI;
+      property BottomI: Integer read GetBottomI;
+    end;
+
+
   { TP3DCanvas }
 
   TP3DCanvas = class ( TPersistent )
     private
       FFont: TP3DCanvasFont;
       FLockID: Integer;
-      FLeft: Integer;
       FMaterial: TP3DMaterialBase;
       FOffScreenCanvas: Boolean;
       FOwner: TPersistent;
+      FRect: TP3DRect;
       FScreenColor: TVec4;
-      FTop: Integer;
-      FWidth: Integer;
-      FHeight: Integer;
 
+      function GetBottomRight: TVec2;
+      function GetExtent(AIndex: Integer): Integer;
+      function GetTopLeft: TVec2;
+      function GetWidthHeight: TVec2;
+      procedure SetBottomRight(AValue: TVec2);
       procedure SetExtent(AIndex: Integer; AValue: Integer);
+      procedure SetTopLeft(AValue: TVec2);
+      procedure SetWidthHeight(AValue: TVec2);
       procedure UpdateLockedArea(); virtual;
       procedure CheckDrawingAllowed;
 
@@ -54,13 +109,17 @@ type
       constructor Create( AOwner: TPersistent );
       destructor Destroy; override;
 
-      property Left: Integer index 0 read FLeft write SetExtent;
-      property Top: Integer index 1 read FTop write SetExtent;
-      property Width: Integer index 2 read FWidth write SetExtent;
-      property Height: Integer index 3 read FHeight write SetExtent;
+      property Rect: TP3DRect read FRect write FRect;
+      property Left: Integer index 0 read GetExtent write SetExtent;
+      property Top: Integer index 1 read GetExtent write SetExtent;
+      property Width: Integer index 2 read GetExtent write SetExtent;
+      property Height: Integer index 3 read GetExtent write SetExtent;
+      property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
+      property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
+      property WidthHeight: TVec2 read GetWidthHeight write SetWidthHeight;
       property LockID: Integer read FLockID write FLockID;
       property Owner: TPersistent read FOwner write FOwner;
-      property Font: TP3DCanvasFont read FFont write FFont; //TODO: OnChange event for font will fire redraw of texts in components
+      property Font: TP3DCanvasFont read FFont write FFont; //TODO: OnChange event for font should fire redraw of texts in components
       property ScreenColor: TVec4 read FScreenColor write FScreenColor;
       property Material: TP3DMaterialBase read FMaterial;
       property OffScreenCanvas: Boolean read FOffScreenCanvas write FOffScreenCanvas;
@@ -169,11 +228,57 @@ end;
 procedure TP3DCanvas.SetExtent(AIndex: Integer; AValue: Integer);
 begin
   case ( AIndex ) of
-    0: FLeft:= AValue;
-    1: FTop:= AValue;
-    2: FWidth:= Max( 1, AValue );
-    3: FHeight:= Max( 1, AValue );
+    0: Rect.Left:= AValue;
+    1: Rect.Top:= AValue;
+    2: Rect.Width:= Max( 1, AValue );
+    3: Rect.Height:= Max( 1, AValue );
   end;
+  if ( LockID >= 0 ) then
+    UpdateLockedArea();
+end;
+
+function TP3DCanvas.GetBottomRight: TVec2;
+begin
+  Result:= Rect.BottomRight;
+end;
+
+function TP3DCanvas.GetExtent(AIndex: Integer): Integer;
+begin
+  case ( AIndex ) of
+    0: Result:= Rect.LeftI;
+    1: Result:= Rect.TopI;
+    2: Result:= Rect.WidthI;
+    3: Result:= Rect.HeightI;
+  end;
+end;
+
+function TP3DCanvas.GetTopLeft: TVec2;
+begin
+  Result:= Rect.TopLeft;
+end;
+
+function TP3DCanvas.GetWidthHeight: TVec2;
+begin
+  Result:= Rect.WidthHeight;
+end;
+
+procedure TP3DCanvas.SetBottomRight(AValue: TVec2);
+begin
+  Rect.BottomRight:= AValue;
+  if ( LockID >= 0 ) then
+    UpdateLockedArea();
+end;
+
+procedure TP3DCanvas.SetTopLeft(AValue: TVec2);
+begin
+  Rect.TopLeft:= AValue;
+  if ( LockID >= 0 ) then
+    UpdateLockedArea();
+end;
+
+procedure TP3DCanvas.SetWidthHeight(AValue: TVec2);
+begin
+  Rect.WidthHeight:= AValue;
   if ( LockID >= 0 ) then
     UpdateLockedArea();
 end;
@@ -225,8 +330,8 @@ constructor TP3DCanvas.Create(AOwner: TPersistent);
 begin
   inherited Create;
   FFont:= TP3DCanvasFont.Create;
-  FWidth:= 1;
-  FHeight:= 1;
+  Rect.Width:= 1;
+  Rect.Height:= 1;
   FLockID:= -1;
   FScreenColor:= vec4( 1 );
   FOwner:= AOwner;

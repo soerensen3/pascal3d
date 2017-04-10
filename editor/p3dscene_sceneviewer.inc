@@ -1015,7 +1015,7 @@ begin
 end;
 
 procedure TP3DScenePanel.DrawArmature(ArmatureObject: TP3DActor);
-
+{
 var
   matrix_joint: TMat4;
 
@@ -1031,9 +1031,9 @@ var
 
 var
   Joint: TP3DJoint;
-
+}
 begin
-  matrix_joint:= mat4( 1,0,0,0,
+{  matrix_joint:= mat4( 1,0,0,0,
                        0,0,1,0,
                        0,-1,0,0,
                        0,0,0,1 );
@@ -1045,7 +1045,7 @@ begin
         RenderBone( Joint );
     end;
   glEnable( GL_DEPTH_TEST );
-  Canvas3D.Unlock();
+  Canvas3D.Unlock();}
 end;
 
 procedure TP3DScenePanel.RenderListOnAdd(AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; AFlags: TP3DRenderListFlags; var Accept: Boolean);
@@ -1064,17 +1064,28 @@ begin
       else
         EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
     end
+  else if ( AData is TP3DJoint ) then
+    begin
+      if ( Assigned( Selection ) and ( Selection.Data = AData )) then
+        begin
+          SelectionMaterial.Alpha:= 1;
+          SelectionMaterial.PassToShader();
+          EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags - [ rlfMaterials ]);
+        end
+      else
+        EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
+    end
   else if ( AData is TP3DMesh ) then
     if ( Assigned( Selection ) and ( Selection.Data = AData ) and ( Assigned( TP3DMesh( AData ).Armature ))) then
       begin
 //        SelectionMaterial.Alpha:= 1;
 //        SelectionMaterial.PassToShader();
-        with ( TP3DMesh( AData ).Armature ) do
+        {with ( TP3DMesh( AData ).Armature ) do
           begin
             CurrentAction.UpdateFrameSample;
             for i:= 0 to CurrentAction.FrameSample.Translations.Count - 1 do
               EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4translate( vec4( CurrentAction.FrameSample.Translations[ i ], 1 )) * mat4( mat3scale( vec3( Joints[ i ].Length )) * mat3( CurrentAction.FrameSample.Rotations[ i ])), Viewer.RenderList, AFlags {- [ rlfMaterials ]});
-          end;
+          end;}
       end;
 end;
 
