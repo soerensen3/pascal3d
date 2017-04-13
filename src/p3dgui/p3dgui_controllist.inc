@@ -6,11 +6,14 @@ TP3DCustomControlList = specialize gP3DCustomObjectList < TP3DGraphicControl >;
 
 TP3DControlList = class( TP3DCustomControlList )
   private
-    FPageSize: TVec2;
+    FOrigin: TVec2;
     FParent: TP3DGraphicControl;
 
   public
-    procedure Realign;
+    function CalculateDimensions(R: TP3DRect): TVec2;
+    function CalculatePageSize: TVec2;
+    function NeedsUpdate: Boolean;
+
     procedure Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
     function Input: TP3DGraphicControl;
     function MouseRay(X, Y: Integer; const Recurse: Boolean): TP3DGraphicControl;
@@ -28,7 +31,7 @@ TP3DControlList = class( TP3DCustomControlList )
     destructor Destroy; override;
 
     property Parent: TP3DGraphicControl read FParent;
-    //property PageSize: TVec2 read FPageSize;
+    property Origin: TVec2 read FOrigin;
 end;
 
 {$ENDIF}
@@ -76,6 +79,7 @@ begin
   inherited Delete( Index );
 end;
 
+{
 procedure TP3DControlList.Realign;
 var
   R: TP3DRect;
@@ -122,17 +126,67 @@ begin
         Control.Controls.Realign;
       end
 end;
+}
+
+
+function TP3DControlList.CalculateDimensions(R: TP3DRect): TVec2;
+var
+  Control: TP3DGraphicControl;
+  FullRect: TP3DRect;
+begin
+  Result:= vec2( 0 );
+  FullRect:= R;
+
+  FOrigin:= R.TopLeft;
+
+  for Control in Self do
+    if (( Control.Visible ) and ( Control.Align <> alClient )) then
+      begin
+        if ( Control.Align = alNone ) then
+          Control.CalculateDimensions( Origin, FullRect )
+        else
+          Control.CalculateDimensions( Origin, R );
+        Result:= max( Result, Control.Rect.BottomRight );
+      end;
+  for Control in Self do
+    if (( Control.Visible ) and ( Control.Align = alClient )) then
+      Control.CalculateDimensions( Origin, R );
+end;
+
+function TP3DControlList.CalculatePageSize: TVec2;
+var
+  Control: TP3DGraphicControl;
+  P: TVec2;
+begin
+  Result:= vec2( 0 );
+  for Control in Self do
+    if (( Control.Visible ) and ( Control.Align <> alClient )) then
+      begin
+        P:= max( Result, Control.BottomRight );
+        if ( Control.Align in [ alNone, alLeft, alRight ]) then
+          Result.X:= P.X;
+        if ( Control.Align in [ alNone, alTop, alBottom ]) then
+          Result.Y:= P.Y;
+      end;
+end;
+
+function TP3DControlList.NeedsUpdate: Boolean;
+var
+  Control: TP3DGraphicControl;
+begin
+  Result:= False;
+  for Control in Self do
+    if ( Control.NeedsUpdate or Control.Controls.NeedsUpdate ) then
+      begin
+        Result:= True;
+        break;
+      end;
+end;
 
 procedure TP3DControlList.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
   procedure RenderIfInRect( Item: TP3DGraphicControl; Scroll: TVec2 );
-  var
-    R: TP3DRect;
   begin
-    if ( Assigned( Parent )) then
-      R:= Parent.ClientRect
-    else
-      R:= P3DRect( 0, 0, P3DGUIManager.ScreenCanvas.Width, P3DGUIManager.ScreenCanvas.Height );
-    //if ( R.RectCollision( P3DRect( Item.Left + Scroll.x, Item.Top + Scroll.y, Item.Width, Item.Height ))) then
+    //if ( ClipRect.RectCollision( P3DRect( Item.Canvas.Left + Scroll.x, Item.Canvas.Top, Item.Canvas.Width, Item.Canvas.Height ))) then
       Item.Paint( BaseColor, Scroll, ClipRect );
   end;
 
@@ -141,10 +195,9 @@ var
 begin
   for i:= 0 to Count - 1 do
     if ( Items[ i ].Visible ) then
-      if ( Items[ i ].Align = alNone ) then
-        RenderIfInRect( Items[ i ], ScrollAcc )
-      else
-        RenderIfInRect( Items[ i ], vec2( 0 ));
+      RenderIfInRect( Items[ i ], vec2( Ord( Items[ i ].Align in [ alNone, alLeft, alRight ]),
+                                        Ord( Items[ i ].Align in [ alNone, alTop, alBottom ]))
+                                        * ScrollAcc );
 end;
 
 procedure TP3DControlList.BringToFront( Index: Integer );
@@ -157,7 +210,7 @@ begin
   Delete( Items[ Index ]);
   Insert( Count, Item );
   if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Realign;
+    Item.NeedsUpdate:= True;
 end;
 
 procedure TP3DControlList.OneLayerDown( Index: Integer );
@@ -170,7 +223,7 @@ begin
   Delete( Items[ Index ]);
   Insert( Index - 1, Item );
   if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Realign;
+    Item.NeedsUpdate:= True;
 end;
 
 function TP3DControlList.IndexOf(Name: String): Integer;
@@ -209,7 +262,7 @@ begin
   Delete( Items[ Index ]);
   Insert( Index, Item );
   if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Realign;
+    Item.NeedsUpdate:= True;
 end;
 
 procedure TP3DControlList.SendToBack( Index: Integer );
@@ -222,7 +275,7 @@ begin
   Delete( Items[ Index ]);
   Insert( 0, Item );
   if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Realign;
+    Item.NeedsUpdate:= True;
 end;
 
 //Calls the keyboard and mouse input for all the controls in the list.
@@ -301,29 +354,22 @@ begin
 end;
 
 function TP3DControlList.MouseRay( X, Y: Integer; const Recurse: Boolean ): TP3DGraphicControl;
-  function InControlRect( Ctrl: TP3DGraphicControl ): Boolean;
-  begin
-    with ( Ctrl ) do
-      Result:= PtInRect( Rect( Canvas.Left, Canvas.Top, Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), Point( X, Y ))
-  end;
-
 var
   i: Integer;
 begin
   Result:= nil;
   for i:= Count - 1 downto 0 do // The Control on top of the stack is rendered last so this will be the control on top
-    if ( Items[ i ].Visible and Items[ i ].Enabled and InControlRect( Items[ i ])) then
+    if ( Items[ i ].Visible and Items[ i ].Enabled and Items[ i ].Canvas.Rect.PtInRect( vec2( X, Y ))) then
       begin
         if ( Recurse ) then
           Result:= Items[ i ].Controls.MouseRay( X, Y, Recurse );
 
-        if ( Assigned( Result )) then
-          break;
-        if ( Items[ i ].MouseRay( X, Y )) then
-          begin
-            Result:= Items[ i ];
-            break;
-          end;
+        if ( not Assigned( Result )) then
+          if ( Items[ i ].MouseRay( X, Y )) then
+            Result:= Items[ i ]
+          else
+            continue;
+        break;
       end;
 end;
 

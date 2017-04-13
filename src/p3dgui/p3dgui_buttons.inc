@@ -51,7 +51,7 @@
 
         procedure Draw; override;
         procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
-        procedure ResizeToText( Margin: Integer );
+        procedure ResizeToText( AMargin: Integer );
 
         class function IsFocusControl: Boolean; override;
 
@@ -132,13 +132,13 @@ procedure TP3DButton.RenderButton(C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4);
 var
   clf: TVec4;
 begin
-  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, C1, C2, C3, C4 );
-  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, CE1, CE2, CE3, CE4 );
+  Canvas.RenderRect( vec2( 0 ), Canvas.WidthHeight - 1, C1, C2, C3, C4 );
+  Canvas.RenderLineRect( vec2( 0 ), WidthHeight - 1, CE1, CE2, CE3, CE4 );
 
   if ( Focused ) then
     begin
       clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
-      Canvas.RenderLineRect( vec2( 4 ), vec2( Width, Height ) - 4, clf, clf, clf, clf );
+      Canvas.RenderLineRect( vec2( 4 ), WidthHeight - 4, clf, clf, clf, clf );
     end;
 end;
 
@@ -176,10 +176,6 @@ end;
 
 
 procedure TP3DButton.Draw;
-var
-  Preset: TP3DButtonPreset;
-  clf: TVec4;
-  P: TVec2;
 begin
   if (( Enabled ) and
     ( gcisMouseBtn1Down in InputState )) then
@@ -207,13 +203,12 @@ begin
     Focused:= True;
 end;
 
-procedure TP3DButton.ResizeToText(Margin: Integer);
+procedure TP3DButton.ResizeToText( AMargin: Integer);
 begin
   if ( not Assigned( FCaptionTxt )) then
     FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 
-  Width:= Margin * 2 + FCaptionTxt.Width;
-  Height:= Margin * 2 + FCaptionTxt.Height;
+  WidthHeight:= vec2( AMargin * 2 + FCaptionTxt.Width, AMargin * 2 + FCaptionTxt.Height );
 end;
 
 class function TP3DButton.IsFocusControl: Boolean;

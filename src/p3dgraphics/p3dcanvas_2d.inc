@@ -808,16 +808,16 @@ end;
 
 function TP3DRect.RectCollision(R: TP3DRect): Boolean;
 begin
-  Result:= ( Left < R.Right ) and
-           ( Right > R.Left ) and
-           ( Top < R.Bottom ) and
-           ( Bottom > R.Top );
+  Result:= ( Left <= R.Right ) and
+           ( Right >= R.Left ) and
+           ( Top <= R.Bottom ) and
+           ( Bottom >= R.Top );
 end;
 
 function TP3DRect.Clip(R: TP3DRect): TP3DRect;
 begin
   Result.TopLeft:= Max( vec2( 0 ), Max( R.TopLeft, TopLeft ));
-  Result.BottomRight:= Max( Result.TopLeft + 1, Min( R.BottomRight, BottomRight ));
+  Result.BottomRight:= Max( Result.TopLeft, Min( R.BottomRight, BottomRight ));
 end;
 
 function TP3DRect.Inset(ATopLeft, ABottomRight: TVec2): TP3DRect;

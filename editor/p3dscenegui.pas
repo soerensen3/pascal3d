@@ -225,7 +225,7 @@ begin
   CreateSceneTree;
   CreateEditorScenes;
   CreateEditModes;
-  P3DGUIManager.Controls.Realign;
+//  P3DGUIManager.Controls.Realign;
   P3DGUIManager.UpdateExtents;
   P3DGUIManager.ShowCursor:= True;
   SDL_ShowCursor( 0 );

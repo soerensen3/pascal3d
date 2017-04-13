@@ -186,7 +186,7 @@ type
 
      public
        constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
-       destructor Destroy; override;
+       procedure FastDestroy; override;
        procedure ButtonClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
        procedure PopupClick( Sender: TP3DMenuItem );
 
@@ -246,7 +246,7 @@ begin
   else
     Canvas.GetValidText( '<noprop>', FLabel );
 
-  MarginTL.X:= FLabel.Width + 4;
+  Margin.X:= FLabel.Width + 4;
   Update;
 end;
 
@@ -736,10 +736,15 @@ begin
   Popup.Items.Add( 'Browse' );
 end;
 
-destructor TP3DPropertyEditorDataBlock.Destroy;
+procedure TP3DPropertyEditorDataBlock.FastDestroy;
 begin
-  Edit.Free;
-  inherited Destroy;
+  if ( P3DData.IsValid( Edit )) then
+    Edit.Free;
+  if ( P3DData.IsValid( Button )) then
+    Button.Free;
+  if ( P3DData.IsValid( Popup )) then
+    Popup.Free;
+  inherited FastDestroy;
 end;
 
 procedure TP3DPropertyEditorDataBlock.ButtonClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);

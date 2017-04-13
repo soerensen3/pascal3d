@@ -151,6 +151,10 @@ constructor TP3DDataPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGr
 
 begin
   inherited Create( AData, AParent );
+  ToolBar:= TP3DGraphicControl.Create( Owner, Self );
+  ToolBar.Height:= 32;
+  ToolBar.Align:= alTop;
+
   Viewer:= TP3DTreeViewActors.Create( Owner, Self );
   Viewer.Align:= alClient;
   Viewer.ShowSymbols:= True;
@@ -158,9 +162,6 @@ begin
   Viewer.OnSelectionChange:= @SelectionChange;
   CreatePopup;
 
-  ToolBar:= TP3DGraphicControl.Create( Owner, Self );
-  ToolBar.Height:= 32;
-  ToolBar.Align:= alTop;
   DataButton:= CreateButton( P3DSymbolOptions );
   LibraryButton:= CreateButton( P3DSymbolLibrary );
   LibraryButton.Left:= DataButton.Width;

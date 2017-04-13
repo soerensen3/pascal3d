@@ -82,7 +82,7 @@ type
 
       procedure Update;
       procedure UpdateScrollBar;
-      procedure Realign( var ClientArea: TP3DRect ); override;
+      procedure Realign(); override;
 
     published
       property Obj: TInterfacedPersistent read FObj write SetObj;
@@ -195,7 +195,7 @@ function TP3DOIEditorGroup.AddPropertyEditor(Prop: TP3DPropertyAccess): TP3DGrap
       Owner:= P3DData;
     Result:= TP3DGraphicControl.Create( Owner, Parent );
     Result.Align:= alTop;
-    Result.Height:= 20;
+    Result.Width:= 20;
     Lbl:= TP3DLabel.Create( Owner, Result );
     Lbl.Align:= alLeft;
     Lbl.Caption:= Title + ' '; //One space for safety distance - looks better!
@@ -227,6 +227,7 @@ end;
 constructor TP3DOIEditorGroup.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
+  StretchY:= True;
   CanCollapse:= True;
 end;
 
@@ -261,7 +262,7 @@ end;
 constructor TP3DOIEditorPage.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
-  Height:= 5000;
+  StretchY:= True;
   Groups:= TP3DOIEditorList.Create();
 end;
 
@@ -356,7 +357,6 @@ begin
   Container:= TP3DGraphicControl.Create( nil, Self );
 
   //Container.Align:= alTop;
-  Container.Height:= 5000;
   Container.Align:= alClient;
 
   AddPage( TP3DOIEditorPageObject.Create( nil, Container ));
@@ -430,24 +430,24 @@ end;
 
 procedure TP3DObjectInspector.UpdateScrollBar;
 begin
-  {if ( InRange( ActivePage, 0, Pages.Count - 1 ) and Assigned( Container )) then
+  if ( InRange( ActivePage, 0, Pages.Count - 1 ) and Assigned( Container )) then
     begin
-      if ( Container.Controls.PageSize.y > 0 ) then
+      if ( Container.PageSize.y > 0 ) then
         begin
-          Scrollbar.PageSize:= Container.Height / Container.Controls.PageSize.y;
-          Scrollbar.Max:= Container.Controls.PageSize.y
+          Scrollbar.ClientPageSize:= Container.ClientRect.Height / Container.PageSize.y;
+          Scrollbar.Max:= Container.PageSize.y
         end
       else
         begin
-          Scrollbar.PageSize:= 1;
+          Scrollbar.ClientPageSize:= 1;
           Scrollbar.Max:= 1;
         end;
-    end;}
+    end;
 end;
 
-procedure TP3DObjectInspector.Realign(var ClientArea: TP3DRect);
+procedure TP3DObjectInspector.Realign();
 begin
-  inherited Realign( ClientArea );
+  inherited Realign();
   if ( Assigned( Scrollbar ) and Assigned( Container )) then
     UpdateScrollBar;
 end;

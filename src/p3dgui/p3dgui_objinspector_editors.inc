@@ -588,7 +588,6 @@ constructor TP3DOIEditorObject.Create(const AData: TP3DLibrary; const AParent: T
 begin
   inherited Create( AData, AParent );
   Caption:= 'Object';
-  Height:= 60;
 
   NameEdit:= TP3DPropertyEditorString.Create( AData, AddContainer( Self, 'Name ' ));
   NameEdit.Align:= alClient;
@@ -605,8 +604,6 @@ begin
   VisibleCheckBox.Height:= 20;
   VisibleCheckBox.Align:= alTop;
   VisibleCheckBox.HAlignment:= haRight;
-
-  AutoSize:= True;
 end;
 
 class function TP3DOIEditorObject.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
@@ -704,7 +701,7 @@ begin
   DataCombo.Align:= alTop;
   DataCombo.OnDragDrop:= @DataDragDrop;
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 class function TP3DOIEditorDatablock.IsCompatible(AObj: TInterfacedPersistent ): Boolean;
@@ -816,7 +813,7 @@ begin
   ScaleEdit.Align:= alClient;
   ScaleEdit.GetValueEvent:= @EdGetValue;
   ScaleEdit.SetValueEvent:= @EdSetValue;
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 
@@ -1018,7 +1015,7 @@ begin
   LightEnergyEdit:= TP3DPropertyEditorFloat.Create( nil, AddContainer( Self, 'Energy ' ));
   LightEnergyEdit.Align:= alClient;
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 { TP3DOIEditorDataCamera }
@@ -1153,7 +1150,7 @@ begin
   CamTypeCombo.Items.Add( 'Isometric' );
   CamTypeCombo.OnChange:= @ComboChange;
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 { TP3DOIEditorDataTexture }
@@ -1257,7 +1254,7 @@ begin
   FileNameLbl.Align:= alClient;
   FileNameLbl.HAlignment:= haRight;
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 { TP3DOIEditorDataMaterialBase }
@@ -1399,7 +1396,7 @@ begin
   AlphaTreshHoldEdit.Align:= alTop;
 
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 { TP3DOIEditorDataMaterialMaps }
@@ -1451,7 +1448,7 @@ begin
   MapsListView.Height:= 100;
   MapsListView.OnSelectionChange:= @SelectionChange;
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 class function TP3DOIEditorDataMaterialMaps.IsCompatible(AObj: TInterfacedPersistent): Boolean;
@@ -1596,7 +1593,7 @@ begin
   ModeCombo.Items.Add( 'multiply' );
   ModeCombo.Items.Add( 'mix' );
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 class function TP3DOIEditorDataMaterialMap.IsCompatible(AObj: TInterfacedPersistent): Boolean;
@@ -1646,7 +1643,7 @@ begin
   MatListView.Align:= alTop;
   MatListView.Height:= 100;
 
-  AutoSize:= True;
+  StretchY:= True;
 end;
 
 class function TP3DOIEditorDataMeshMaterial.IsCompatible(AObj: TInterfacedPersistent): Boolean;
@@ -1841,7 +1838,7 @@ procedure TP3DOIEditorPageProperties.Update;
         Cat:= TP3DOIEditorGroup.Create( Owner, Self );
         Cat.Align:= alTop;
         Cat.Caption:= Prop.Category;
-        Cat.AutoSize:= True;
+        Cat.StretchY:= True;
       end;
     Result:= Cat;
   end;

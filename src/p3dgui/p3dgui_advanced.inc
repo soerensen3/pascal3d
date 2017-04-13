@@ -386,7 +386,7 @@ begin
   black:= vec4( 0, 0, 0, 1 );
   white:= vec4( 1 );
   Canvas.RenderRect( ClientRect.TopLeft, ClientRect.BottomRight, white, white, black, black );
-  c:= vec2( MarginTL.x + ClientRect.Width / 2, MarginTL.y + ( 1 - Value ) * ClientRect.Height );
+  c:= vec2( Margin.x + ClientRect.Width / 2, Margin.y + ( 1 - Value ) * ClientRect.Height );
   Canvas.RenderCircle( c, 5, 16, vec4( vec3( Value ), 1 ));
   Canvas.RenderLineCircle( c, 5, 16, BorderColor );
 end;
@@ -448,8 +448,7 @@ var
   container: TP3DGraphicControl;
 begin
   inherited Create( AData, AParent );
-  Height:= 200;
-  Width:= 150;
+  WidthHeight:= vec2( 200, 150 );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
   BGColor:= vec4( 1 );
   container:= TP3DGraphicControl.Create( nil, Self );
@@ -457,8 +456,7 @@ begin
 
   ColorValue:= TP3DColorValue.Create( nil, container );
   ColorValue.Align:= alRight;
-  ColorValue.MarginTL:= vec2( 15, 15 );
-  ColorValue.MarginBR:= vec2( 15, 15 );
+  ColorValue.Margin:= vec4( 15 );
   ColorValue.OnChange:= @ColorChange;
 
   ColorWheel:= TP3DColorWheel.Create( nil, container );
@@ -529,8 +527,7 @@ end;
 
 procedure TP3DColorComboBox.DropDown;
 begin
-  ColorPicker.Left:= Canvas.Left;
-  ColorPicker.Top:= Canvas.Top + Canvas.Height;
+  ColorPicker.TopLeft:= vec2( Canvas.Left, Canvas.Top + Canvas.Height );
   ColorPicker.Visible:= True;
 end;
 
@@ -594,8 +591,8 @@ var
 begin
   if ( Assigned( Texture ) and ( Texture.Width * Texture.Height > 0 )) then
     begin
-      c:= vec2( Width, Height ) / 2;
-      scale:= min( Width / Texture.Width, Height / Texture.Height ) / 2;
+      c:= WidthHeight / 2;
+      scale:= min( WidthHeight.X / Texture.Width, WidthHeight.Y / Texture.Height ) / 2;
 
       p1:= c - vec2( Texture.Width, Texture.Height ) * scale;
       p2:= c + vec2( Texture.Width, Texture.Height ) * scale;

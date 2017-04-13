@@ -274,8 +274,7 @@ procedure TP3DCustomItemView.SetScrollBarWidth(AValue: Float);
 begin
   if FScrollBarWidth=AValue then Exit;
   FScrollBarWidth:=AValue;
-  ScrollBarH.Height:= ScrollBarWidth;
-  ScrollBarV.Width:= ScrollBarWidth;
+  ScrollBarH.WidthHeight:= vec2( ScrollBarWidth );
 end;
 
 constructor TP3DCustomItemView.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
@@ -318,12 +317,12 @@ end;
 procedure TP3DCustomItemView.Draw;
 begin
   inherited Draw;
-  Canvas.RenderRect( Scroll, vec2( Width, Height ) - 1 + Scroll, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
-  Canvas.RenderLineRect( Scroll, vec2( Width, Height ) - 1 + Scroll, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
-  Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( Primary900.xyz, 0.05 ));
+  Canvas.RenderRect( Scroll, Canvas.WidthHeight - 1 + Scroll, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+  Canvas.RenderLineRect( Scroll, WidthHeight - 1 + Scroll, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+  Canvas.RenderRectShadowInner( vec2( 0 ), Canvas.WidthHeight, 2, 5, vec4( Primary900.xyz, 0.05 ));
 
   if ( Focused ) then
-    Canvas.RenderLineRect( vec2( 4 ) + Scroll, vec2( Width, Height ) - 4 + Scroll, vec4( 0.5, 0.5, 0.5, 0.5 ));
+    Canvas.RenderLineRect( vec2( 4 ) + Scroll, WidthHeight - 4 + Scroll, vec4( 0.5, 0.5, 0.5, 0.5 ));
 end;
 
 procedure TP3DCustomItemView.OnScroll(Sender: TObject);
@@ -437,18 +436,18 @@ begin
     p:= DrawNode( p, Child, MaxX );
 
   if ( MaxX > 0 ) then
-    ScrollBarH.PageSize:= ( ClientRect.Width - ScrollBarWidth - 10 ) / ( MaxX )
+    ScrollBarH.ClientPageSize:= ( ClientRect.Width - ScrollBarWidth - 10 ) / ( MaxX )
   else
-    ScrollBarH.PageSize:= 1;
-  ScrollBarH.Max:= MaxX * ( 1 - ScrollBarH.PageSize );
+    ScrollBarH.ClientPageSize:= 1;
+  ScrollBarH.Max:= MaxX * ( 1 - ScrollBarH.ClientPageSize );
 
   if ( p.Y > 0 ) then
-    ScrollBarV.PageSize:= ( ClientRect.Height - ScrollBarWidth - 10 ) / ( p.Y )
+    ScrollBarV.ClientPageSize:= ( ClientRect.Height - ScrollBarWidth - 10 ) / ( p.Y )
   else
-    ScrollBarV.PageSize:= 1;
-  if ( ScrollBarV.PageSize = 1 ) then
+    ScrollBarV.ClientPageSize:= 1;
+  if ( ScrollBarV.ClientPageSize = 1 ) then
     Canvas.Scroll.Y:= 0;
-  ScrollBarV.Max:= p.Y * ( 1 - ScrollBarV.PageSize );
+  ScrollBarV.Max:= p.Y * ( 1 - ScrollBarV.ClientPageSize );
 end;
 
 procedure TP3DTreeView.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -1057,18 +1056,18 @@ begin
     end;
 
   if ( MaxX > 0 ) then
-    ScrollBarH.PageSize:= ( ClientRect.Width - ScrollBarWidth - 10 ) / ( MaxX )
+    ScrollBarH.ClientPageSize:= ( ClientRect.Width - ScrollBarWidth - 10 ) / ( MaxX )
   else
-    ScrollBarH.PageSize:= 1;
-  ScrollBarH.Max:= MaxX * ( 1 - ScrollBarH.PageSize );
+    ScrollBarH.ClientPageSize:= 1;
+  ScrollBarH.Max:= MaxX * ( 1 - ScrollBarH.ClientPageSize );
 
   if ( p.Y > 0 ) then
-    ScrollBarV.PageSize:= ( ClientRect.Height - 10 ) / ( p.Y )
+    ScrollBarV.ClientPageSize:= ( ClientRect.Height - 10 ) / ( p.Y )
   else
-    ScrollBarV.PageSize:= 1;
-  if ( ScrollBarV.PageSize = 1 ) then
+    ScrollBarV.ClientPageSize:= 1;
+  if ( ScrollBarV.ClientPageSize = 1 ) then
     Canvas.Scroll.Y:= 0;
-  ScrollBarV.Max:= p.Y * ( 1 - ScrollBarV.PageSize );
+  ScrollBarV.Max:= p.Y * ( 1 - ScrollBarV.ClientPageSize );
 end;
 
 function TP3DListView.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;

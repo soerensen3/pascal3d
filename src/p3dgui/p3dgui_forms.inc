@@ -56,7 +56,7 @@ begin
   if ( mb1 and ( gcisMouseOver in InputState )) then
     begin
       BringToFront;
-      FMouseDownPos:= vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - LeftTop;
+      FMouseDownPos:= vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - TopLeft;
     end;
 end;
 
@@ -65,8 +65,7 @@ begin
   inherited MouseMove( X, Y );
   if ( gcisMouseBtn1Down in InputState ) then
     begin
-      Left:= P3DInput.Mouse.X - FMouseDownPos.X;
-      Top:= P3DInput.Mouse.Y - FMouseDownPos.Y;
+      TopLeft:= vec2( P3DInput.Mouse.X - FMouseDownPos.X, P3DInput.Mouse.Y - FMouseDownPos.Y );
     end;
 end;
 
@@ -103,7 +102,7 @@ end;
 
 procedure TP3DModalWindow.DrawOverlay(Sender: TP3DGraphicControl; OffSetX, OffSetY, _Width, _Height: Single);
 begin
-  Sender.Canvas.RenderRect( vec2( 0 ), vec2( Sender.Width, Sender.Height ), vec4( Primary900.XYZ, 0.6 ));
+  Sender.Canvas.RenderRect( vec2( 0 ), Sender.WidthHeight, vec4( Primary900.XYZ, 0.6 ));
 end;
 
 

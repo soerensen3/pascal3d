@@ -78,7 +78,6 @@
 
   TP3DGroupBox = class( TP3DGraphicControl )
     private
-      FAutoSize: Boolean;
       FBorderColor: TVec4;
       FCanCollapse: Boolean;
       FCaption: String;
@@ -90,17 +89,13 @@
       FCollapseSymbolTxt: TP3DTextBmp;
       FCollapseSymbol: Char;
 
-      procedure SetAutoSize(AValue: Boolean);
       procedure SetCanCollapse(AValue: Boolean);
       procedure SetCaption(AValue: String);
       procedure SetCollapsed(AValue: Boolean);
-      procedure UpdateAutoSize;
+      procedure SetHeight(AValue: Float); override;
+//      procedure UpdateAutoSize;
       procedure UpdateCollapsed;
       class function HasShadow: Boolean; override;
-
-    protected
-      procedure SetHeight(const Value: Float); override;
-      procedure Realign( var ClientArea: TP3DRect ); override;
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
@@ -114,7 +109,6 @@
       property Font: TP3DCanvasFont read FFont write FFont;
       property Color: TVec4 read FColor write FColor;
       property BorderColor: TVec4 read FBorderColor write FBorderColor;
-      property AutoSize: Boolean read FAutoSize write SetAutoSize;
       property CanCollapse: Boolean read FCanCollapse write SetCanCollapse;
       property Collapsed: Boolean read FCollapsed write SetCollapsed;
   end;
@@ -240,7 +234,7 @@
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
-      procedure Realign( var ClientArea: TP3DRect ); override;
+      procedure Realign(); override;
 
       procedure Update;
 
@@ -266,7 +260,7 @@
       FMax: Float;
       FMin: Float;
       FOnChange: TNotifyEvent;
-      FPageSize: Float;
+      FClientPageSize: Float;
       FPercentage: Float;
       FPreset: TP3DButtonPreset;
       function GetPosition: Float;
@@ -288,7 +282,7 @@
     published
       property Kind: TP3DScrollBarKind read FKind write SetKind;
       property Percentage: Float read FPercentage write SetPercentage;
-      property PageSize: Float read FPageSize write SetPageSize;
+      property ClientPageSize: Float read FClientPageSize write SetPageSize;
       property OnChange: TNotifyEvent read FOnChange write FOnChange;
       property Position: Float read GetPosition write SetPosition;
       property Min: Float read FMin write FMin;
@@ -507,18 +501,18 @@ begin
         Preset:= PresetHover
       else
         Preset:= PresetNormal;
-      Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
-      Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( 0, 0, 0, 0.1 ));
-      Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+      Canvas.RenderRect( vec2( 0 ), Canvas.WidthHeight - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+      Canvas.RenderRectShadowInner( vec2( 0 ), Canvas.WidthHeight, 2, 5, vec4( 0, 0, 0, 0.1 ));
+      Canvas.RenderLineRect( vec2( 0 ), WidthHeight - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
 
       if ( GetValueName + ':' <> FValueNameText.Text ) then
         UpdateNameText( GetValueName );
       if ( GetValue <> FValueCached ) then
         UpdateValueText( GetValue );
-      tp:= vec2( 5, Height / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
+      tp:= vec2( 5, WidthHeight.y / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
       Canvas.Font.Color:= Font.Color;
       Canvas.RenderText( FValueNameText, tp );
-      Canvas.RenderText( FValueText, tp + vec2( Width - 5 - FValueText.Width, 0 ));
+      Canvas.RenderText( FValueText, tp + vec2( WidthHeight.x - 5 - FValueText.Width, 0 ));
     end;
 end;
 
@@ -599,8 +593,7 @@ end;
 
 procedure TP3DLabel.Resize;
 begin
-  Width:= Round( FCaptionTxt.Width );
-  Height:= Round( FCaptionTxt.Height );
+  WidthHeight:= vec2( FCaptionTxt.Width, FCaptionTxt.Height );
 end;
 
 procedure TP3DLabel.Draw;
@@ -614,13 +607,13 @@ begin
   Canvas.GetValidText( Caption, FCaptionTxt );
   case HAlignment of
     haLeft: P.x:= 0;
-    haRight: P.x:= Width - FCaptionTxt.Width;
-    haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
+    haRight: P.x:= WidthHeight.x - FCaptionTxt.Width;
+    haCenter: P.x:= ( WidthHeight.x - FCaptionTxt.Width ) / 2;
   end;
   case VAlignment of
     vaTop: P.y:= 0;
-    vaBottom: P.y:= Height - FCaptionTxt.Height;
-    vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
+    vaBottom: P.y:= WidthHeight.y - FCaptionTxt.Height;
+    vaCenter: P.y:= ( WidthHeight.y - FCaptionTxt.Height ) / 2;
   end;
   Canvas.RenderText( FCaptionTxt, P );
 end;
@@ -659,47 +652,15 @@ begin
   UpdateCollapsed;
 end;
 
-procedure TP3DGroupBox.UpdateAutoSize;
-  function GetMaxXY: TVec2;
-  var
-    Control: TP3DGraphicControl;
-  begin
-    Result:= vec2( 0 );
-    for Control in Controls do
-      if ( Control.Visible ) then
-        Result:= max( vec2( Control.Left + Control.Width, Control.Top + Control.Height ), Result );
-    Result:= Result + vec2( MarginTL.X + MarginBR.X, MarginTL.Y + MarginBR.Y );
-  end;
-
-var
-  MaxXY: TVec2;
-begin
-  MaxXY:= GetMaxXY;
-  if ( AutoSize ) then
-    case Align of
-      alNone:
-        begin
-          FWidth:= MaxXY.x;
-          FHeight:= MaxXY.y;
-        end;
-      alLeft, alRight:
-        FWidth:= MaxXY.x;
-      alTop, alBottom:
-        FHeight:= MaxXY.y;
-    end;
-end;
-
 procedure TP3DGroupBox.UpdateCollapsed;
 begin
   if ( CanCollapse and Collapsed ) then
     begin
-      Height:= 20;
       FCollapseSymbol:= P3DSymbolTriangleRight;
       HideChildren:= True;
     end
   else
     begin
-      Height:= FStoredHeight;
       FCollapseSymbol:= P3DSymbolTriangleDown;
       HideChildren:= False;
     end;
@@ -711,20 +672,20 @@ begin
 end;
 
 
-procedure TP3DGroupBox.SetHeight(const Value: Float);
+procedure TP3DGroupBox.SetHeight( AValue: Float );
 begin
-  inherited SetHeight(Value);
+  inherited SetHeight( AValue );
   if ( not ( CanCollapse and Collapsed )) then
-    FStoredHeight:= Height;
+    FStoredHeight:= AValue;
 end;
-
+{
 procedure TP3DGroupBox.Realign(var ClientArea: TP3DRect);
 begin
   if ( not ( CanCollapse and Collapsed )) then
     UpdateAutoSize;
   inherited Realign( ClientArea );
 end;
-
+}
 
 constructor TP3DGroupBox.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
@@ -733,7 +694,7 @@ begin
   Caption:= Name;
   Color:= vec4( 1 );
   BorderColor:= Primary200; //vec4( 0, 0, 0, 0.1 );
-  SetMargin( 15, 25, 15, 15 );
+  Margin:= vec4( 15, 25, 15, 15 );
   FCollapseSymbol:= P3DSymbolTriangleDown;
 end;
 
@@ -763,7 +724,7 @@ var
   pt2: TVec2;
 begin
   inherited Draw;
-  Canvas.RenderRect( vec2( 0, 0 ), vec2( Width, Height ), Color );
+  Canvas.RenderRect( vec2( 0, 0 ), WidthHeight, Color );
   Canvas.GetValidText( Caption, FCaptionTxt,
     P3DFontManager[ Canvas.Font.Name, Canvas.Font.Size ]);
   if ( not Assigned( FCaptionTxt  )) then
@@ -772,7 +733,7 @@ begin
     hw:= FCaptionTxt.Height / 2;
   //Canvas.RenderLineRect( vec2( hw ), vec2( Width, Height ) - hw, BorderColor );
   pt1:= vec2( hw );
-  pt2:= vec2( Width, Height ) - hw;
+  pt2:= WidthHeight - hw;
   Canvas.RenderLine( pt1, vec2( hw * 2, pt1.y ), BorderColor );
   if ( Assigned( FCaptionTxt )) then
     Canvas.RenderLine( vec2( FCaptionTxt.Width + hw * 2, pt1.y ), vec2( pt2.x, pt1.y ), BorderColor );
@@ -796,14 +757,6 @@ class function TP3DGroupBox.IsFocusControl: Boolean;
 begin
   Result:= False;
 //  Result:= True;
-end;
-
-procedure TP3DGroupBox.SetAutoSize(AValue: Boolean);
-begin
-  if FAutoSize=AValue then Exit;
-  FAutoSize:=AValue;
-
-  UpdateAutoSize;
 end;
 
 procedure TP3DGroupBox.SetCanCollapse(AValue: Boolean);
@@ -915,9 +868,9 @@ begin
     Preset:= PresetNormal;
 
 
-  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
-  Canvas.RenderRectShadowInner( vec2( 0 ), vec2( Width, Height ), 2, 5, vec4( Primary900.xyz, 0.05 ));
-  Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+  Canvas.RenderRect( vec2( 0 ), Canvas.WidthHeight - 1, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+  Canvas.RenderRectShadowInner( vec2( 0 ), Canvas.WidthHeight, 2, 5, vec4( Primary900.xyz, 0.05 ));
+  Canvas.RenderLineRect( vec2( 0 ), WidthHeight - 1, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
 
   Canvas.Font.Color:= Preset.FontColor;
   Canvas.Font.Size:= Font.Size;
@@ -1037,12 +990,12 @@ end;
 
 procedure TP3DScrollBar.SetPageSize(AValue: Float);
 begin
-  FPageSize:= Math.Min( 1.0, Math.Max( 0.0001, AValue ));
+  FClientPageSize:= Math.Min( 1.0, Math.Max( 0.0001, AValue ));
 end;
 
 procedure TP3DScrollBar.SetPercentage(AValue: Float);
 begin
-  if ( PageSize = 1.0 ) then
+  if ( ClientPageSize = 1.0 ) then
     FPercentage:= 0.0
   else
     FPercentage:= Math.Min( 1.0, Math.Max( 0.0, AValue ));
@@ -1063,11 +1016,12 @@ begin
   Preset.OutlineColor:= accent50; //vec4( vec3( 0.2 ), 0.5 );
   Preset.FontColor:= accent900;// vec4( vec3( 0 ), 0.3 );
 
-  PageSize:= 0.5;
+  ClientPageSize:= 0.5;
   Percentage:= 0.0;
   Kind:= p3dsbVertical;
   FMax:= 1.0;
   FMin:= 0.0;
+  WidthHeight:= vec2( 10 );
 end;
 
 destructor TP3DScrollBar.Destroy;
@@ -1083,19 +1037,19 @@ const
   sb = 3;
 begin
   inherited Draw;
-  Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ), Preset.Color );
+  Canvas.RenderRect( vec2( 0 ), Canvas.WidthHeight, Preset.Color );
   case Kind of
     p3dsbHorizontal:
       begin
-        off:= Math.Max( Height, ( Width - 2*sb ) * PageSize );
-        tp:= ( Width - off ) * Percentage;
-        Canvas.RenderRoundRect( vec2( tp + sb, sb ), vec2( tp + off - sb, Height - sb ), Height / 6, 4, Preset.FontColor );
+        off:= Math.Max( WidthHeight.y, ( WidthHeight.x - 2*sb ) * ClientPageSize );
+        tp:= ( WidthHeight.x - off ) * Percentage;
+        Canvas.RenderRoundRect( vec2( tp + sb, sb ), vec2( tp + off - sb, WidthHeight.y - sb ), WidthHeight.y / 6, 4, Preset.FontColor );
       end;
     p3dsbVertical:
       begin
-        off:= Math.Max( Width, ( Height - 2*sb ) * PageSize );
-        tp:= ( Height - off ) * Percentage;
-        Canvas.RenderRoundRect( vec2( sb, tp + sb ), vec2( Width - sb, tp + off - sb ), Width / 6, 4, Preset.FontColor );
+        off:= Math.Max( WidthHeight.x, ( WidthHeight.y - 2*sb ) * ClientPageSize );
+        tp:= ( WidthHeight.y - off ) * Percentage;
+        Canvas.RenderRoundRect( vec2( sb, tp + sb ), vec2( WidthHeight.x - sb, tp + off - sb ), WidthHeight.x / 6, 4, Preset.FontColor );
       end;
   end;
 end;
@@ -1120,15 +1074,15 @@ begin
     case Kind of
       p3dsbHorizontal:
         begin
-          off:= Math.Max( Height, Width * PageSize );
-          tp:= ( Width - off );
+          off:= Math.Max( WidthHeight.y, WidthHeight.x * ClientPageSize );
+          tp:= ( WidthHeight.x - off );
           if ( tp > 0 ) then
             Percentage:= ( X - off / 2 ) / tp;
         end;
       p3dsbVertical:
         begin
-          off:= Math.Max( Width, Height * PageSize );
-          tp:= ( Height - off );
+          off:= Math.Max( WidthHeight.x, WidthHeight.y * ClientPageSize );
+          tp:= ( WidthHeight.y - off );
           if ( tp > 0 ) then
             Percentage:= ( Y - off / 2 ) / tp;
         end;
@@ -1288,9 +1242,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DVectorEdit.Realign(var ClientArea: TP3DRect);
+procedure TP3DVectorEdit.Realign();
 begin
-  inherited Realign( ClientArea );
+  inherited Realign();
   Update;
 end;
 
@@ -1298,6 +1252,7 @@ procedure TP3DVectorEdit.Update;
 var
   i: Integer;
 begin
+  P3DApplication.MainWindow.Title:= Editors[ 1 ].TopLeft.ToString() + ':' + Editors[ 1 ].WidthHeight.ToString();
   for i:= 0 to EdCount - 1 do
     begin
       Editors[ i ].FWidth:= ClientRect.Width / EdCount;
@@ -1305,6 +1260,7 @@ begin
       Editors[ i ].FHeight:= ClientRect.Height;
       Editors[ i ].HAlignment:= HAlignment;
       Editors[ i ].VAlignment:= VAlignment;
+      Editors[ i ].NeedsUpdate:= True;
     end;
 end;
 
@@ -1335,7 +1291,7 @@ begin
   inherited Create( AData, AParent );
   FDropDownMenu:= TP3DPopupMenu.Create( AData, nil );
   FDropDownMenu.OnItemClick:= @DropDownItemClick;
-  MarginBR.X:= 20;
+  Margin.X:= 20;
 end;
 
 destructor TP3DComboBox.Destroy;
@@ -1354,7 +1310,7 @@ begin
   inherited Draw;
 
   if ( Assigned( FDownSymbol )) then
-    P:= vec2( Width - FDownSymbol.Width, ( Height - FDownSymbol.Height ) / 2 )
+    P:= vec2( WidthHeight.x - FDownSymbol.Width, ( WidthHeight.y - FDownSymbol.Height ) / 2 )
   else
     P:= vec2( 0 );
 
@@ -1365,7 +1321,8 @@ end;
 
 procedure TP3DComboBox.DropDown;
 begin
-  FDropDownMenu.Width:= Width;
+  FDropDownMenu.WidthHeight.X:= WidthHeight.x;
+  FDropDownMenu.NeedsUpdate:= True;
   FDropDownMenu.PopUp( Canvas.Left, Canvas.Top + Canvas.Height );
 end;
 
@@ -1457,7 +1414,7 @@ begin
   if ( Focused ) then
     begin
       clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
-      Canvas.RenderLineRect( vec2( 4 ), vec2( Width, Height ) - 4, clf, clf, clf, clf );
+      Canvas.RenderLineRect( vec2( 4 ), WidthHeight - 4, clf, clf, clf, clf );
     end;
 
   CheckBoxWidth:= FCaptionTxt.Height;
@@ -1470,13 +1427,13 @@ begin
 
       case HAlignment of
         haLeft: P.x:= OffSet;
-        haRight: P.x:= Width - FCaptionTxt.Width - OffSet;
-        haCenter: P.x:= ( Width - FCaptionTxt.Width + OffSet ) / 2;
+        haRight: P.x:= WidthHeight.x - FCaptionTxt.Width - OffSet;
+        haCenter: P.x:= ( WidthHeight.x - FCaptionTxt.Width + OffSet ) / 2;
       end;
       case VAlignment of
         vaTop: P.y:= 0;
-        vaBottom: P.y:= Height - FCaptionTxt.Height;
-        vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
+        vaBottom: P.y:= WidthHeight.y - FCaptionTxt.Height;
+        vaCenter: P.y:= ( WidthHeight.y - FCaptionTxt.Height ) / 2;
       end;
     end;
 
@@ -1487,7 +1444,7 @@ begin
 
   case HAlignment of
     haLeft: R:= P3DRect( 5, P.Y, CheckBoxWidth, CheckBoxWidth );
-    haRight: R:= P3DRect( Width - CheckBoxWidth - 5, P.Y, CheckBoxWidth, CheckBoxWidth );
+    haRight: R:= P3DRect( WidthHeight.x - CheckBoxWidth - 5, P.Y, CheckBoxWidth, CheckBoxWidth );
     haCenter: R:= P3DRect( P.X - OffSet, P.Y, CheckBoxWidth, CheckBoxWidth );
   end;
 

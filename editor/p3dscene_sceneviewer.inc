@@ -177,7 +177,7 @@
       procedure MouseMove(X, Y: Integer); override;
       function Pick( x, y: Integer ): TP3DActor;
       function GetSelectionCenter: TVec3;
-      procedure UpdateCanvasArea; override;
+      procedure UpdateCanvasArea; //override;
       procedure UpdateCanvas3D;
 
       procedure BeforeDraw( Sender: TObject );
@@ -1336,7 +1336,7 @@ end;
 
 procedure TP3DScenePanel.UpdateCanvasArea;
 begin
-  inherited UpdateCanvasArea;
+//  inherited UpdateCanvasArea;
   UpdateCanvas3D;
 end;
 
@@ -1344,10 +1344,7 @@ procedure TP3DScenePanel.UpdateCanvas3D;
 begin
   if ( Assigned( Canvas3D )) then
     begin
-      Canvas3D.Left:= Canvas.Left + round( MarginTL.X );
-      Canvas3D.Top:= Canvas.Top + round( MarginTL.Y );
-      Canvas3D.Width:= Canvas.Width - round( MarginTL.X ) - round( MarginBR.X );
-      Canvas3D.Height:= Canvas.Height - round( MarginTL.Y ) - round( MarginBR.Y );
+      Canvas3D.Rect:= Canvas.Rect.Inset( Margin.XY, Margin.ZW );
     end;
 end;
 

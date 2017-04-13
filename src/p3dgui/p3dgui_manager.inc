@@ -127,6 +127,8 @@ end;
 
 procedure TP3DGUIManager.Input;
 begin
+  if ( Controls.NeedsUpdate ) then
+    Controls.CalculateDimensions( ScreenCanvas.Rect );
   Controls.Input;
 end;
 
@@ -217,7 +219,7 @@ begin
   ScreenCanvas.Width:= P3DViewports.Screen.Width;
   ScreenCanvas.Height:= P3DViewports.Screen.Height;
 
-  Controls.Realign;
+  Controls.CalculateDimensions( ScreenCanvas.Rect );
 end;
 
 {$ENDIF}

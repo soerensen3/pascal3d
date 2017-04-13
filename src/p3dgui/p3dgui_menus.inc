@@ -200,14 +200,14 @@ begin
   inherited MouseMove(X, Y);
 
 //  if ( Assigned( Selection ) and P3DRect( Selection.Left, Selection.Top, Selection.Width, Selection.Height ).PtInRect( vec2( X, Y ))) then
-  if ( Assigned( Selection ) and P3DRect( 0, Selection.Top, Width, Selection.Height ).PtInRect( vec2( X, Y ))) then
+  if ( Assigned( Selection ) and P3DRect( 0, Selection.Top, WidthHeight.x, Selection.Height ).PtInRect( vec2( X, Y ))) then
     exit;
 
   Selection:= nil;
 
   for Itm in Items do
 //    if ( P3DRect( Itm.Left, Itm.Top, Itm.Width, Itm.Height ).PtInRect( vec2( X, Y ))) then
-    if ( P3DRect( 0, Itm.Top, Width, Itm.Height ).PtInRect( vec2( X, Y ))) then
+    if ( P3DRect( 0, Itm.Top, WidthHeight.x, Itm.Height ).PtInRect( vec2( X, Y ))) then
       begin
         Selection:= Itm;
         break;
@@ -245,9 +245,10 @@ begin
           Line+= Itm.Height;
           MinSize:= Max( MinSize, Round( Itm.Width ));
         end;
-      Height:= Line;
+      WidthHeight.y:= Line;
     end;
-  Width:= MinSize;
+  WidthHeight.x:= MinSize;
+  FNeedsUpdate:= True;
 end;
 
 procedure TP3DPopupMenu.Draw;
@@ -255,7 +256,7 @@ procedure TP3DPopupMenu.Draw;
   var
     r: TP3DRect;
   begin
-    r:= P3DRect( 0, Itm.Top, Width, Itm.Height );
+    r:= P3DRect( 0, Itm.Top, WidthHeight.X, Itm.Height );
     Canvas.RenderRect( r.TopLeft, r.BottomRight, C1, C2, C3, C4 );
     Canvas.RenderLineRect( r.TopLeft, r.BottomRight, CE1, CE2, CE3, CE4 );
   end;
@@ -315,8 +316,7 @@ end;
 procedure TP3DCustomPopupMenu.PopUp(X, Y: Integer);
 begin
   BringToFront;
-  Left:= X;
-  Top:= Y;
+  TopLeft:= vec2( X, Y );
   Visible:= True;
   Focused:= True;
 end;
