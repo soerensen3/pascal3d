@@ -59,8 +59,10 @@ type
       property IsoZoom: Single read FIsoZoom write FIsoZoom;
   end;
 
-  TP3DPropertyAccessCamera = specialize gP3DPropertyAccessDataBlock < TP3DCamera >;
   TP3DCameraList = specialize gP3DCustomDatablockList < TP3DCamera >;
+
+  TP3DPropertyAccessCamera = specialize gP3DPropertyAccessDataBlock < TP3DCamera >;
+  TP3DPropertyAccessCameraList = specialize gP3DListPropertyAccess < TP3DCameraList, TP3DCamera, TP3DPropertyAccessCamera >;
 
 {$ENDIF}
 

@@ -13,7 +13,9 @@ type
 
   TP3DMouseDevice = class( TP3DInputDevice )
     private
-      FDX, FDY, FDZ: Integer;
+      FDWX: Integer;
+      FDWY: Integer;
+      FDX, FDY: Integer;
       FX, FY: Integer;
       FButtons: array [ 0..4 ] of Boolean;
       FDButtons: array [ 0..4 ] of Boolean;
@@ -30,8 +32,9 @@ type
       property DX: Integer read FDX write FDX;
       //Delta of cursor x position
       property DY: Integer read FDY write FDY;
-      //Delta of mouse wheel
-      property DZ: Integer read FDZ write FDZ;
+      //Delta of mouse wheel X
+      property DWX: Integer read FDWX write FDWX;
+      property DWY: Integer read FDWY write FDWY;
       //Cursor x position on screen, not window.
       property X: Integer read FX write FX;
       //Cursor y position on screen, not window.
@@ -263,7 +266,7 @@ end;
 
 procedure TP3DMouseDevice.FlushDelta;
 begin
-  DX:= 0; DY:= 0; DZ:= 0;
+  DX:= 0; DY:= 0; DWX:= 0; DWY:= 0;
   FillByte( FDButtons, SizeOf( FDButtons ), 0 );
 end;
 

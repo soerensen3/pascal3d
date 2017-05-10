@@ -1,26 +1,27 @@
 ---
 node: 00050_map_texcoord_transform_dynamic
-input: {name="TexCoordIndex", type="int"}
+input: {name="MapIndex", type="int"}
 ---
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
-uniform mat4 TexMat$TexCoordIndex$;
+uniform mat4 TexMat$MapIndex$;
 ```
 
 ```{restrict="vshader,main"}
-  vTexCoord$TexCoordIndex$ = TexMat$TexCoordIndex$ * vTexCoord$TexCoordIndex$;
+  vTexCoord$MapIndex$ = TexMat$MapIndex$ * vTexCoord$MapIndex$;
 
 ```
 ---
 node: 00050_map_texcoord_transform_fixed
 input: {name="TexCoordIndex", type="int"}
 input: {name="Transform", type="mat4"}
+input: {name="MapIndex", type="int"}
 ---
 ```{name="CODE", type="shader", restrict="vshader,declaration"}
-const mat4 TexMat$TexCoordIndex$ = $Transform$;
+const mat4 TexMat$MapIndex$ = $Transform$;
 ```
 
 ```{restrict="vshader,main"}
-  vTexCoord$TexCoordIndex$ = TexMat$TexCoordIndex$ * vTexCoord$TexCoordIndex$;
+  vTexCoord$MapIndex$ = TexMat$MapIndex$ * vTexCoord$MapIndex$;
 ```
 
 

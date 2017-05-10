@@ -979,7 +979,7 @@ begin
       //TODO: Repair
       //n:= FRenderList.Find( Selection );
       //if ( n >= 0 ) then
-      Editor.TransMat:= Selection.MatrixFinal; //FRenderList[ n ].Matrix;
+      Editor.TransMat:= Mat4Identity;//Selection.MatrixFinal; //FRenderList[ n ].Matrix;
       Editor.MousePosInitial:= vec2( -1 );
       Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
 
@@ -1064,17 +1064,19 @@ begin
       else
         EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
     end
-  else if ( AData is TP3DJoint ) then
+  {else if ( AData is TP3DJoint ) then
     begin
       if ( Assigned( Selection ) and ( Selection.Data = AData )) then
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
-          EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags - [ rlfMaterials ]);
+          EditorSceneJoint.AddToRenderList( AScene,
+                                            mat4lookatLH( vec3( 0 ), TP3DJoint( Selection.Data ).Tail - TP3DJoint( Selection.Data ).Position, vec3_Axis_PZ ) *
+                                            mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags - [ rlfMaterials ]);
         end
       else
         EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
-    end
+    end}
   else if ( AData is TP3DMesh ) then
     if ( Assigned( Selection ) and ( Selection.Data = AData ) and ( Assigned( TP3DMesh( AData ).Armature ))) then
       begin

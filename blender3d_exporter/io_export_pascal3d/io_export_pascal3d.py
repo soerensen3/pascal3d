@@ -26,6 +26,9 @@ PathModes = (
     
 Version = '0.1'
 
+#def legal_name ( name ):
+    
+
 ## P3DXMLFile ------------------------------------------------------------------
 
 class P3DXMLFile:
@@ -65,9 +68,10 @@ class P3DXMLFile:
     def tostring( self, element, level=0 ):
         indent = level * '  '
         result = indent + '<' + element.tag
+        import html       
         if ( len( element.attrib )):
             for attrib in element.attrib:
-                result += '\n%s   %s = "%s"'%( indent, attrib, element.attrib[ attrib ])
+                result += '\n%s   %s = "%s"'%( indent, attrib, html.escape( str( element.attrib[ attrib ])))
         #since text is unused there is no need to check if a full closing tag is required        
         if len( element ):
             result += '>' + '\n'
@@ -185,6 +189,12 @@ class P3DExporter( bpy.types.Operator ):
       name = 'Export scene camera',
       description = 'The exporter can set the scene''s camera to match the blender scene. This might however be undesired in most cases so this is disabled by default.This setting has no effect if Export Cameras is set to False.',
       default = False )
+      
+    SaveTextures = BoolProperty(
+      name = 'Copy textures',
+      description = 'Copies the textures to the target location.',
+      default = True )
+      
     ## -------------------------------------------------------------------------------
 
     def execute( self, context ):
@@ -590,13 +600,13 @@ class P3DExporter( bpy.types.Operator ):
     def ExportMesh( self, obj ):
         #armature = None
         if self.ApplyModifiers:
-          if self.ExportArmatures:
-            armature = obj.find_armature()
-            if ( not ( armature is None )):
-              armature.data.pose_position = 'REST'
-              armature.update_tag()
-              scene = bpy.context.scene
-              scene.frame_set(scene.frame_current)
+          #if self.ExportArmatures:
+          #  armature = obj.find_armature()
+          #  if ( not ( armature is None )):
+          #    armature.data.pose_position = 'REST'
+          #    armature.update_tag()
+          #    scene = bpy.context.scene
+          #    scene.frame_set(scene.frame_current)
           mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
         else:
           mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
@@ -679,7 +689,7 @@ class P3DExporter( bpy.types.Operator ):
 
         el = self.file.push( 'map' )
 
-        el.attrib[ 'Name' ] = map.name
+        #el.attrib[ 'Name' ] = map.name
         
         path = self.file.store( map, map.name )[1]
 
@@ -741,7 +751,7 @@ class P3DExporter( bpy.types.Operator ):
         el.attrib[ 'Name' ] = 'tex_' + map.texture.name
         
         path = self.file.store( map.texture, 'tex_' + map.texture.name )[1]
-   
+         
         if ( map.texture.use_interpolation ):
           el.attrib[ 'Filtering' ] = 'tfLinear'
           el.attrib[ 'FilteringMipMap' ] = 'tfLinear'
@@ -751,7 +761,14 @@ class P3DExporter( bpy.types.Operator ):
         if ( map.texture.use_mipmap ):
           el.attrib[ 'MipMap' ] = '1'
 
-        el.attrib[ 'File' ] = self.ExportPath( filepath )
+  
+        if ( self.SaveTextures ):
+            f = os.path.splitext( os.path.split( filepath )[ 1 ])[ 0 ] + '.png'
+
+            map.texture.image.save_render( os.path.split( self.file.fname )[ 0 ] + '/' + f )        
+        else:
+            f = self.ExportPath( filepath )
+        el.attrib[ 'File' ] = f
 
         self.file.pop()
 
@@ -787,12 +804,14 @@ class P3DExporter( bpy.types.Operator ):
             el.attrib[ 'TransparencyMode' ] = "p3dmMultiply"
         else:
           el.attrib[ 'TransparencyMode' ] = "p3dmtNone"
-        
-        
+              
         texlist = (map for map in material.texture_slots if ( not ( map is None )) and map.use and ( map.texture.type == 'IMAGE' ) and ( not ( map.texture.image is None )))
 
         for map in texlist:
             self.ExportMap( map )
+
+        if ( material.animation_data and material.animation_data.action ):
+            self.file.actions.add(( material.animation_data.action, material ))
 
         self.file.pop()
 
@@ -811,6 +830,9 @@ class P3DExporter( bpy.types.Operator ):
         el.attrib[ 'LightType' ] = 'lt' + lamp.type.capitalize()
         el.attrib[ 'Color' ] = str( '{:6f}, {:6f}, {:6f}'.format( *lamp.color ))
         el.attrib[ 'Energy' ] = str( lamp.energy )
+        
+        if ( lamp.animation_data and lamp.animation_data.action ):
+            self.file.actions.add(( lamp.animation_data.action, lamp ))      
 
         self.file.pop()
 
@@ -829,6 +851,9 @@ class P3DExporter( bpy.types.Operator ):
         el.attrib[ 'Near' ] = str( cam.clip_start )
         el.attrib[ 'Far' ] = str( cam.clip_end )
         el.attrib[ 'Fov' ] = str( cam.angle )
+        
+        if ( cam.animation_data and cam.animation_data.action ):
+            self.file.actions.add(( cam.animation_data.action, cam ))     
 
         self.file.pop()
   ##--------------------------------------------------------------------------------
@@ -860,9 +885,11 @@ class P3DExporter( bpy.types.Operator ):
         #bone_matrix *= bone_space
         #position, quat, scale = bone_matrix.decompose() 
         position = bone.head_local
+        tail = bone.tail_local
         quat = Vector(( 1.0, 0.0, 0.0, 0.0 ))
         #quat = bone_matrix.to_quaternion()
         el.attrib['Position'] = '{:9f},{:9f},{:9f}'.format( position[ 0 ], position[ 1 ], position[ 2 ])
+        el.attrib['Tail'] = '{:9f},{:9f},{:9f}'.format( tail[ 0 ], tail[ 1 ], tail[ 2 ])        
         length = ( bone.head_local - bone.tail_local ).length
         el.attrib['Length'] = '{:9f}'.format( length )
         #quat = ( bone_matrix ).to_quaternion()
@@ -997,7 +1024,7 @@ class P3DExporter( bpy.types.Operator ):
   ##--------------------------------------------------------------------------------
 
   ##EXPORTING ACTION ---------------------------------------------------------------
-
+    
     def ExportAction( self, action ):
         def fcurve_propname( data_path ):
             return data_path.rsplit( '.', 1 )
@@ -1010,8 +1037,27 @@ class P3DExporter( bpy.types.Operator ):
                         'rotation_euler': 'Rotation',
                         'scale': 'Scale',
                         'color': 'Color',
-                        'energy': 'Energy' }
+                        'energy': 'Energy',
+                        'offset': 'Position',
+                        'texture_slots': 'Maps',
+                        'pose.bones': 'Owner.Objects' }      
+                        
+        convertquatnormal  = { 0: 3,
+                               1: 0,
+                               2: 1,
+                               3: 2 }
+        convertquatjoint   = { 0: 3,
+                               1: 0,
+                               2: 2,
+                               3: 1 }
+        converteulernormal = { 0: 0,
+                               1: 1,
+                               2: 2 }
+        converteulerjoint  = { 0: 0,
+                               1: 2,
+                               2: 1 }
 
+        import re
         if ( self.Verbose ):
             self.report({ 'INFO' }, 'Exporting data ' + action[ 0 ].name )
 
@@ -1020,6 +1066,7 @@ class P3DExporter( bpy.types.Operator ):
         
         name = self.file.storednames.get( action[ 0 ])
         path = self.file.datapaths.get( name )
+        deg2rad = 0.017453292;    
         self.report({ 'INFO' }, 'Action path = ' + str( path ))
         if ( path is None ):
             el = self.file.push( 'action' )
@@ -1027,19 +1074,58 @@ class P3DExporter( bpy.types.Operator ):
             path = self.file.store( action[ 0 ], 'action_' + action[ 0 ].name )[ 1 ]
         
             for curve in action[ 0 ].fcurves:
+                convertquat = convertquatnormal
+                converteuler = converteulernormal            
                 elchannel = self.file.push( 'channel' )
-                prop = fcurve_propname( curve.data_path )
-                prop[ -1 ] = convertprop[ prop[ -1 ]]
+                prop = curve.data_path
+                pattern = re.compile(r'\b(' + '|'.join(convertprop.keys()) + r')\b')
+                
+                if ( 'pose.bones' in prop ):
+                    convertquat = convertquatjoint
+                    converteuler = converteulerjoint            
+                
+                prop = pattern.sub(lambda x: convertprop[x.group()], prop)
+                '''prop[ -1 ] = convertprop[ prop[ -1 ]]
                 if ( len( prop ) > 1 ):
-                    prop[ 0 ] = prop[ 0 ].split( '"' )[ 1 ]
-                    subel = self.file.elements[ prop[ 0 ]]
-                    subel.attrib[ 'Action' ] = path
-                elchannel.attrib[ 'PropStr' ] = ":".join( prop )
-                elchannel.attrib[ 'ArrayIndex' ] = curve.array_index
+                    if ( "\"" in prop[ 0 ]):
+                        prop[ 0 ] = prop[ 0 ].split( '"' )[ 1 ]
+                        subel = self.file.elements[ prop[ 0 ]]
+                        subel.attrib[ 'Action' ] = path
+                        convertquat = convertquatjoint
+                                    
+                elchannel.attrib[ 'PropStr' ] = prop[ -1 ]
+                if ( prop[ -1 ] == 'Quaternion' ):
+                    elchannel.attrib[ 'ArrayIndex' ] = convertquat[ curve.array_index ]
+                else: 
+                    elchannel.attrib[ 'ArrayIndex' ] = curve.array_index'''
+                    
+                if ( 'Maps' in prop ):
+                    if (( 'Quaternion' in prop ) or ( 'Position' in prop )):
+                      mapidx = int(( prop.partition('[')[-1]).partition(']')[0])
+                      self.report({ 'INFO' }, 'MapIndex = ' + str( mapidx ) + ' textureslotsname=' + action[ 1 ].texture_slots[ mapidx ].name )
+                      subel = self.file.elements[ action[ 1 ].texture_slots[ mapidx ].name ]
+                      subel.attrib[ 'TransformDynamic' ] = "1"                                                          
+                    
+                if ( 'Quaternion' in prop ):
+                    arridx = convertquat[ curve.array_index ]
+                else:
+                    arridx = converteuler[ curve.array_index ]
+                    
+                elchannel.attrib[ 'PropStr' ] = prop + '[' + str( arridx ) + ']'
+                if ( 'Quaternion' in prop ):
+                    elchannel.attrib[ 'ArrayIndex' ] = convertquat[ curve.array_index ]
+                else:
+                    elchannel.attrib[ 'ArrayIndex' ] = converteuler[ curve.array_index ]
+                elchannel.attrib[ 'InterpolationMode' ] = "imExtrapolate"
+                elchannel.attrib[ 'TimeMode' ] = "tmWrapAround"                
+                
                 for key in curve.keyframe_points:
                     elkey = self.file.push( 'key' )
                     elkey.attrib[ 'Time' ] = key.co[0]
-                    elkey.attrib[ 'Value' ] = key.co[1]
+                    if ( 'Rotation' in prop ): 
+                        elkey.attrib[ 'Value' ] = key.co[1] / deg2rad 
+                    else:
+                        elkey.attrib[ 'Value' ] = key.co[1]
                     self.file.pop()
                 self.file.pop()
             '''

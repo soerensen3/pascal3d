@@ -62,7 +62,6 @@ color_sub```
 ---
 
 node: 00100_map_pass_read_frag
-input: {name="TexCoordIndex", type="int"}
 input: {name="Index", type="int"}
 ---
 
@@ -71,12 +70,11 @@ uniform sampler2D tex$Index$;
 ```
 
 ```{restrict="fshader,main"}
-  vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$TexCoordIndex$.xy );
+  vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$Index$.xy );
 ```
 
 ---
 node: 00100_map_pass_read_vert
-input: {name="TexCoordIndex", type="int"}
 input: {name="Index", type="int"}
 ---
 
@@ -85,7 +83,7 @@ uniform sampler2D tex$Index$;
 ```
 
 ```{restrict="vshader,main"}
-  vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$TexCoordIndex$.xy );
+  vec4 val$Index$ = texture2D( tex$Index$, vTexCoord$Index$.xy );
 ```
 
 ---

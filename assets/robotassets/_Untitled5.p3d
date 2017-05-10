@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Cam = ""
+     Name = "NewScene1">
+    <object
+       Data = "/P3DTileGrid1"
+       Name = "P3DActor1"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "0.00000000, 0.00000000, 0.00000000"
+       Collision = "acDataBlock"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+  </scene>
+  <tilegrid
+     Name = "P3DTileGrid1"
+     Width = "32"
+     Height = "32"
+     GridWorldUnit = "2">
+    <property
+       Name = "Scenes">
+      <gridscene
+         Scene = "box.p3d$/Scene"
+         Instances = "Untitled5.P3DTileGrid1.p3dmesh:0" />
+      <gridscene
+         Scene = ""
+         Instances = "Untitled5.P3DTileGrid1.p3dmesh:536" />
+    </property>
+  </tilegrid>
+</p3dfile>

@@ -103,25 +103,54 @@ begin
 
   SceneMain:= TP3DSceneMain.Create();
   SceneMain.Align:= alClient;
-  DataView:= TP3DDataPanel.Create();
-  DataView.Parent:= SceneMain;
-  DataView.Align:= alLeft;
+
+
+  OIPanel:= TP3DOIPanel.Create();
+  OIPanel.Parent:= SceneMain;
+  OIPanel.Align:= alRight;
+  OIPanel.Width:= 200;
+  OIPanel.ObjectInspector.Obj:= P3DData;
+
+  with ( TP3DSplitter.Create()) do
+    begin
+      Parent:= SceneMain;
+      Align:= alRight;
+    end;
+
   AssetView:= TP3DSAssetPanel.Create();
   AssetView.Parent:= SceneMain;
   AssetView.Align:= alBottom;
+
+  with ( TP3DSplitter.Create()) do
+    begin
+      Parent:= SceneMain;
+      Align:= alBottom;
+    end;
+
   SceneView:= TP3DScenePanel.Create();
   SceneView.Parent:= SceneMain;
   SceneView.Align:= alClient;
-  DataView.BringToFront;
+
+  DataView:= TP3DDataPanel.Create();
+  DataView.Parent:= SceneMain;
+  DataView.Align:= alLeft;
+
+  with ( TP3DSplitter.Create()) do
+    begin
+      Parent:= SceneMain;
+      Align:= alLeft;
+    end;
+//  DataView.BringToFront;
   //DataView.ActorList:= TestScene.Objects;
 
   SceneMain.ActiveLibrary:= SceneMain.NewLibrary();
   SceneMain.ActiveScene:= SceneMain.NewScene();
   SceneMain.ViewMode:= dvmScene;
-  OIPanel:= TP3DOIPanel.Create();
-  OIPanel.Parent:= SceneMain;
-  OIPanel.Align:= alRight;
-  OIPanel.ObjectInspector.Obj:= OIPanel;
+  SceneMain.PropEd:= TP3DPropertyEditorString.Create();
+  SceneMain.PropEd.Align:= alBottom;
+  SceneMain.Edit:= TP3DEdit.Create();
+  SceneMain.Edit.OnKeyDown:= @SceneMain.OnEditKeyDown;
+  SceneMain.Edit.Align:= alBottom;
 
   {TestScene.AppendFile( 'armature_test/media/colorwheel.p3d' );
   with ( TP3DComboBoxDataBlock.Create()) do

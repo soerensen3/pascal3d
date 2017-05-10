@@ -2,21 +2,21 @@
 
 {$IFDEF INTERFACE}
 var
-  PrimaryText: TVec4 =                  ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 0.87 ));
-  SecondaryText: TVec4 =                ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 0.54 ));
-  DisabledText: TVec4 =                 ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 0.38 ));
+  PrimaryText: TP3DColorRGBA =                  ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 0.87 ));
+  SecondaryText: TP3DColorRGBA =                ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 0.54 ));
+  DisabledText: TP3DColorRGBA =                 ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 0.38 ));
   Primary50, Primary100, Primary200,
     Primary300, Primary400, Primary500,
     Primary600, Primary700, Primary800,
-    Primary900: TVec4;
+    Primary900: TP3DColorRGBA;
   Secondary50, Secondary100, Secondary200,
     Secondary300, Secondary400, Secondary500,
     Secondary600, Secondary700, Secondary800,
-    Secondary900: TVec4;
+    Secondary900: TP3DColorRGBA;
   Accent50, Accent100, Accent200,
     Accent300, Accent400, Accent500,
     Accent600, Accent700, Accent800,
-    Accent900: TVec4;
+    Accent900: TP3DColorRGBA;
 
 {$ENDIF}
 
@@ -57,7 +57,6 @@ begin
   Accent800:=                           BlueGrey800;
   Accent900:=                           BlueGrey900;
 end;
-
 
 
 

@@ -1,0 +1,92 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Scale = "100.000000,100.000000,100.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Plane"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Data = "/mesh_Plane"
+       Position = " 0.000000, 0.000000, 0.000000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Lamp"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570947"
+       Data = "/lamp_Lamp"
+       Position = " 4.076245, 1.005454, 5.903862" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Position = " 7.481132,-6.507640, 5.343665"
+       RotationOrder = "roXYZ"
+       Name = "Camera"
+       Quaternion = " 0.481707, 0.212922, 0.334251, 0.781600"
+       Collision = "acNone" />
+  </scene>
+  <mesh
+     Tangents = "floor.p3dbin:160"
+     Loops = "floor.p3dbin:104"
+     Normals = "floor.p3dbin:52"
+     Faces = "floor.p3dbin:264"
+     TexCoords0 = "floor.p3dbin:124"
+     Positions = "floor.p3dbin:0"
+     Cotangents = "floor.p3dbin:212"
+     Name = "mesh_Plane">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "0" />
+  </mesh>
+  <light
+     LightType = "ltSun"
+     Color = "0.45988, 0.45988, 0.45988"
+     Name = "lamp_Lamp"
+     Energy = "1.0" />
+  <materialbase
+     Instancing = "1"
+     Diff = "0.75, 0.75, 0.75"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_Material"
+     Spec_Hardness = "50.000000"
+     Unlit = "0"
+     Spec = "0.5, 0.34, 0.33">
+    <map
+       NormalFactor = "1.0"
+       Name = "Tex"
+       Mode = "mapMix"
+       DiffuseFactor = "0.0"
+       Data = "/tex_Tex">
+      <transform
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Scale = "50.000000,50.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000" />
+    </map>
+    <map
+       Mode = "mapMix"
+       Name = "Texture"
+       SpecularIntensity = "1.0"
+       DiffuseFactor = "0.0"
+       Data = "/tex_Texture">
+      <transform
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Scale = "50.000000,50.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000" />
+    </map>
+  </materialbase>
+  <texture
+     MipMap = "1"
+     File = "tile_normal.png"
+     Name = "tex_Tex"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "tile_displ.jpg"
+     Name = "tex_Texture"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+</p3dfile>

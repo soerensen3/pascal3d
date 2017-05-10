@@ -80,6 +80,7 @@ type
       procedure SetCount( AValue: Integer );
       function GetItems( Index: Integer ): TCustomItem;
       function MoveNext( var Index: Integer ): TCustomItem;
+      function MoveBack( var Index: Integer ): TCustomItem;
       procedure SetItems( Index: Integer ; AValue: TCustomItem);
       procedure DoUpdate;
 
@@ -93,6 +94,7 @@ type
       function IndexOf( Item: TCustomItem ): Integer; virtual;
       procedure Clear( const FreeObjects: Boolean = False ); virtual;
       function GetEnumerator(): TP3DCustomObjectListEnumerator;
+      function Reversed(): TP3DCustomObjectListEnumerator;
       procedure Insert( Index: Integer; Item: TCustomItem );
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
@@ -128,6 +130,7 @@ type
       procedure SetAsString( AValue: String ); override;
       function CheckSameContext: Boolean;
       function GetDefaultValue: TItem; override;
+      function GetChildPropByPath(APath: String): TP3DPropertyAccess; override;
 
     public
       function SaveToDOM( AParentNode: TDOMElement ): Boolean; override;
@@ -139,7 +142,7 @@ type
 
   { TP3DPropertyAccessDataBlockList }
 
-  TP3DPropertyAccessDataBlockList = specialize gP3DListPropertyAccess < TP3DDataBlockList, TP3DDataBlock >;
+  TP3DPropertyAccessDataBlockList = specialize gP3DListPropertyAccess < TP3DDataBlockList, TP3DDataBlock, TP3DPropertyAccessDataBlock >;
   {TP3DPropertyAccessDataBlockList = class( specialize gP3DPropertyAccess < TP3DDataBlockList >)
     private
       function GetCount: Integer;
@@ -244,6 +247,13 @@ end;
 function gP3DPropertyAccessDataBlock.GetDefaultValue: TItem;
 begin
   Result:= nil;
+end;
+
+function gP3DPropertyAccessDataBlock.GetChildPropByPath(APath: String
+  ): TP3DPropertyAccess;
+begin
+  if ( Assigned( Value )) then
+    Result:= Value.Properties.GetPropByPath( APath );
 end;
 
 function gP3DPropertyAccessDataBlock.SaveToDOM( AParentNode: TDOMElement ): Boolean;
@@ -391,7 +401,7 @@ begin
       end;
 end;
 
-function gP3DCustomDatablockList.GetByName(AName: String): TP3DDataBlock;
+function gP3DCustomDatablockList.GetByName(AName: String): TCustomItem;
 var
   idx: Integer;
 begin
@@ -466,13 +476,27 @@ end;
 
 function gP3DCustomDatablockList.GetEnumerator(): TP3DCustomObjectListEnumerator;
 begin
-  Result:= TP3DCustomObjectListEnumerator.Create( @MoveNext );
+  Result:= TP3DCustomObjectListEnumerator.Create( -1, @MoveNext );
+end;
+
+function gP3DCustomDatablockList.Reversed: TP3DCustomObjectListEnumerator;
+begin
+  Result:= TP3DCustomObjectListEnumerator.Create( Count, @MoveBack );
 end;
 
 function gP3DCustomDatablockList.MoveNext( var Index: Integer ): TCustomItem;
 begin
   Inc( Index );
   if ( Index < Count ) then
+    Result:= Items[ Index ]
+  else
+    Result:= nil;
+end;
+
+function gP3DCustomDatablockList.MoveBack(var Index: Integer): TCustomItem;
+begin
+  Dec( Index );
+  if ( Index > -1 ) then
     Result:= Items[ Index ]
   else
     Result:= nil;
@@ -517,7 +541,14 @@ end;
 procedure TP3DDataBlock.SetAction(AValue: TP3DAction);
 begin
   if FAction=AValue then Exit;
-  FAction:=AValue;
+
+  if ( Assigned( FAction )) then
+    FAction.RemoveUser( Self );
+
+  FAction:= AValue;
+
+  if ( Assigned( FAction )) then
+    FAction.AddUser( Self );
 end;
 
 constructor TP3DDataBlock.Create(const AData: TP3DLibrary);
@@ -533,6 +564,7 @@ begin
   FUsers:= TP3DDataBlockList.Create;
   P3DDataBlockCache.Add( Self );
   Properties.Add( TP3DPropertyAccessAction.CreateFieldSet( 'Action', @FAction, @SetAction, smAttribute ));
+  Properties.Add( TP3DPropertyAccessLibrary.CreateFieldSet( 'Owner', @FOwner, nil, smAttribute ));
 end;
 
 constructor TP3DDataBlock.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);
@@ -759,7 +791,8 @@ begin
   else
     WriteLn( '<main.' + Name + ':' + ClassName + '>.RemoveFromFields( ' + Block.Name + ' )' );
   {$ENDIF}
-  //Nothing to do
+  if ( Block = Action ) then
+    Action:= nil;
 end;
 
 function TP3DDataBlock.CastRay(Orig, Dir: TVec3; Actor: TP3DActor; out

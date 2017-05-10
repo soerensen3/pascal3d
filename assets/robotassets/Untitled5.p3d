@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Cam = ""
+     Name = "NewScene1">
+    <object
+       Data = "/P3DTileGrid1"
+       Name = "P3DActor1"
+       Scale = "1.00000000, 1.00000000, 1.00000000"
+       Visible = "1"
+       Position = "0.00000000, 0.00000000, 0.00000000"
+       Collision = "acDataBlock"
+       Quaternion = "0.00000000, 0.00000000, 0.00000000, 1.00000000"
+       RotationOrder = "roXYZ" />
+  </scene>
+  <tilegrid
+     Name = "P3DTileGrid1"
+     Width = "32"
+     Height = "32"
+     GridWorldUnit = "2">
+    <property
+       Name = "Scenes">
+      <gridscene
+         Scene = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/assets/robotassets/tileset_wall.p3d$/Wall_SE"
+         Instances = "Untitled5.P3DTileGrid1.p3dbin:0" />
+      <gridscene
+         Scene = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/assets/robotassets/tileset_wall.p3d$/Wall_NW"
+         Instances = "Untitled5.P3DTileGrid1.p3dbin:8" />
+      <gridscene
+         Scene = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/assets/robotassets/tileset_wall.p3d$/Wall_NS"
+         Instances = "Untitled5.P3DTileGrid1.p3dbin:16" />
+      <gridscene
+         Scene = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/assets/robotassets/tileset_wall.p3d$/Wall_NE"
+         Instances = "Untitled5.P3DTileGrid1.p3dbin:80" />
+      <gridscene
+         Scene = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/assets/robotassets/tileset_wall.p3d$/Wall_SW"
+         Instances = "Untitled5.P3DTileGrid1.p3dbin:88" />
+      <gridscene
+         Scene = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/assets/robotassets/tileset_wall.p3d$/Wall_WE"
+         Instances = "Untitled5.P3DTileGrid1.p3dbin:96" />
+      <gridscene
+         Scene = "/home/johannes/Documents/dev/Lazarus/p3d/pascal3d/assets/robotassets/box.p3d$/Scene"
+         Instances = "Untitled5.P3DTileGrid1.p3dbin:140" />
+    </property>
+  </tilegrid>
+</p3dfile>

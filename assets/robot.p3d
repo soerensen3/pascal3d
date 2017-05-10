@@ -1,174 +1,598 @@
 <?xml version="1.0" ?>
-<p3dfile>
+<p3dfile
+   version = "0.1">
   <scene
-    name = "RobotScene">
+     Name = "Scene">
     <object
-      data = "mesh_Arm_R"
-      name = "Arm_L"
-      type = "mesh">
-      <transform
-        quaternion = "-0.707107, 0.000000, 0.707107, 0.000000"
-        scale = " 0.073185, 0.073185, 1.000000"
-        position = "-0.504632, 0.000000, 2.913510">
-      </transform>
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       RotationOrder = "roXYZ"
+       Name = "Plane"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/mesh_Plane" />
+    <object
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       RotationOrder = "roQUATERNION"
+       Name = "Armature"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone">
+      <object
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         RotationOrder = "roXYZ"
+         Name = "robot"
+         Scale = " 1.000000, 1.000000, 1.000000"
+         Collision = "acNone"
+         Data = "/mesh_Cube">
+        <object
+           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+           Position = " 0.000000, 0.000000, 0.718324"
+           Data = "/armature_Armature/joint_Spine"
+           RotationOrder = "roQUATERNION"
+           Name = "Spine">
+          <object
+             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+             Position = " 0.000000,-0.000000, 0.695769"
+             RotationOrder = "roQUATERNION"
+             Name = "Arm.R"
+             Action = "/action_ArmatureAction"
+             Data = "/armature_Armature/joint_Arm.R" />
+          <object
+             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+             Position = " 0.000000,-0.000000, 0.695769"
+             RotationOrder = "roQUATERNION"
+             Name = "Head"
+             Action = "/action_ArmatureAction"
+             Data = "/armature_Armature/joint_Head" />
+          <object
+             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+             Position = " 0.000000,-0.000000, 0.695769"
+             RotationOrder = "roQUATERNION"
+             Name = "Arm.L"
+             Action = "/action_ArmatureAction"
+             Data = "/armature_Armature/joint_Arm.L" />
+        </object>
+        <object
+           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+           Position = " 0.000000, 0.000000, 0.718324"
+           RotationOrder = "roQUATERNION"
+           Name = "Leg.R"
+           Action = "/action_ArmatureAction"
+           Data = "/armature_Armature/joint_Leg.R" />
+        <object
+           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+           Position = " 0.000000, 0.000000, 0.718324"
+           RotationOrder = "roQUATERNION"
+           Name = "Leg.L"
+           Action = "/action_ArmatureAction"
+           Data = "/armature_Armature/joint_Leg.L" />
+      </object>
     </object>
     <object
-      data = "mesh_Arm_R"
-      name = "Arm_R"
-      type = "mesh">
-      <transform
-        quaternion = " 0.000000, 0.707107, 0.000000, 0.707107"
-        scale = " 0.073185, 0.073185, 1.000000"
-        position = " 0.504632, 0.000000, 2.913510">
-      </transform>
-    </object>
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
+       Position = " 4.076245, 1.005454, 5.903862"
+       RotationOrder = "roXYZ"
+       Name = "Lamp"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/lamp_Lamp" />
     <object
-      data = "mesh_Cube"
-      name = "robot"
-      type = "mesh">
-      <transform
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        scale = " 0.400000, 0.400000, 0.400000"
-        position = " 0.000000, 0.000000, 0.000000">
-      </transform>
-    </object>
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       Position = " 7.481132,-6.507640, 5.343665"
+       RotationOrder = "roXYZ"
+       Name = "Camera"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone" />
   </scene>
-  <scene
-    name = "ShadowScene">
-    <object
-      data = "mesh_RobotShadow"
-      name = "RobotShadow"
-      type = "mesh">
-      <transform
-        quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-        scale = " 1.000000, 1.000000, 1.000000"
-        position = " 0.000000, 0.000000, 0.178575">
-      </transform>
-    </object>
-  </scene>
   <mesh
-    cotangents = "1312"
-    binary = "robot.mesh_Arm_R.p3dmesh"
-    loops = "1312"
-    tangents = "1312"
-    name = "mesh_Arm_R"
-    texlayers = "1"
-    normals = "339"
-    vertices = "339"
-    faces = "328"
-    texcoords = "1312">
-    <material
-      end = "327"
-      name = "material_ArmMaterial"
-      start = "0">
-    </material>
+     Loops = "robot.p3dbin:104"
+     Faces = "robot.p3dbin:124"
+     Positions = "robot.p3dbin:0"
+     Normals = "robot.p3dbin:52"
+     Name = "mesh_Plane">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "0"
+       Material = "/material_Material.002" />
   </mesh>
   <mesh
-    cotangents = "2360"
-    binary = "robot.mesh_Cube.p3dmesh"
-    loops = "2360"
-    tangents = "2360"
-    name = "mesh_Cube"
-    texlayers = "1"
-    normals = "610"
-    vertices = "610"
-    faces = "590"
-    texcoords = "2360">
-    <material
-      end = "589"
-      name = "material_BodyMaterial"
-      start = "0">
-    </material>
+     Loops = "robot.p3dbin:8500"
+     VertexWeightIndices = "robot.p3dbin:2444"
+     Name = "mesh_Cube"
+     Faces = "robot.p3dbin:10008"
+     Positions = "robot.p3dbin:132"
+     Normals = "robot.p3dbin:3984"
+     VertexWeights = "robot.p3dbin:1288">
+    <modifier
+       Armature = "/armature_Armature"
+       Type = "TP3DMeshModifierArmature" />
+    <weightgroup
+       Index = "0"
+       Name = "Spine" />
+    <weightgroup
+       Index = "1"
+       Name = "Arm.R" />
+    <weightgroup
+       Index = "2"
+       Name = "Head" />
+    <weightgroup
+       Index = "3"
+       Name = "Arm.L" />
+    <weightgroup
+       Index = "4"
+       Name = "Leg.R" />
+    <weightgroup
+       Index = "5"
+       Name = "Leg.L" />
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "93"
+       Material = "/material_Material.001" />
   </mesh>
-  <mesh
-    cotangents = "4"
-    binary = "robot.mesh_RobotShadow.p3dmesh"
-    loops = "4"
-    tangents = "4"
-    name = "mesh_RobotShadow"
-    texlayers = "1"
-    normals = "4"
-    vertices = "4"
-    faces = "1"
-    texcoords = "4">
-    <material
-      end = "0"
-      name = "material_Material_Shadow.001"
-      start = "0">
-    </material>
-  </mesh>
-  <mesh
-    cotangents = "1312"
-    binary = "robot.mesh_Arm_R.p3dmesh"
-    loops = "1312"
-    tangents = "1312"
-    name = "mesh_Arm_R"
-    texlayers = "1"
-    normals = "339"
-    vertices = "339"
-    faces = "328"
-    texcoords = "1312">
-    <material
-      end = "327"
-      name = "material_ArmMaterial"
-      start = "0">
-    </material>
-  </mesh>
-  <material
-    diffuse = "0.800000, 0.800000, 0.800000"
-    name = "material_ArmMaterial"
-    specular = "50.000000, 1.000000, 1.000000, 1.000000">
-    <map
-      mode = "mix"
-      normal = "1.0"
-      name = "Texture"
-      data = "tex_Texture">
-    </map>
-  </material>
-  <material
-    diffuse = "0.800000, 0.800000, 0.800000"
-    name = "material_BodyMaterial"
-    specular = "13.000000, 1.000000, 1.000000, 1.000000">
-    <map
-      mode = "mix"
-      diffuse = "1.0"
-      name = "Tex.001"
-      data = "tex_Tex.001">
-    </map>
-    <map
-      mode = "mix"
-      normal = "1.0"
-      name = "Normal"
-      data = "tex_Normal">
-    </map>
-  </material>
-  <material
-    unlit = "yes"
-    diffuse = "0.800000, 0.800000, 0.800000"
-    name = "material_Material_Shadow.001"
-    specular = "50.000000, 0.000000, 0.000000, 0.000000">
-    <map
-      mode = "mix"
-      alpha = "1.0"
-      diffuse = "1.0"
-      name = "Texture.003"
-      data = "tex_Texture.003">
-    </map>
-  </material>
-  <texture
-    file = "robot_normal.png"
-    name = "tex_Texture">
-  </texture>
-  <texture
-    file = "floor_ambient.png"
-    name = "tex_Texture.003">
-  </texture>
-  <texture
-    file = "RobotBodyAO.png"
-    name = "tex_Tex.001">
-  </texture>
-  <texture
-    file = "RobotBodyNormal.png"
-    name = "tex_Normal">
-  </texture>
+  <light
+     Energy = "1.0"
+     Color = "1.000000, 1.000000, 1.000000"
+     LightType = "ltSun"
+     Name = "lamp_Lamp" />
+  <materialbase
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Name = "material_Material.002"
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0" />
+  <materialbase
+     Diff = "0.640000, 0.000000, 0.008006"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Name = "material_Material.001"
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0" />
+  <armature
+     Action = "/action_ArmatureAction"
+     Name = "armature_Armature">
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = " 0.000000, 0.000000, 1.414093"
+       Position = " 0.000000, 0.000000, 0.718324"
+       Length = " 0.695769"
+       Name = "joint_Spine" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = "-0.464798,-0.000000, 0.801404"
+       Position = " 0.000000, 0.000000, 1.414093"
+       Length = " 0.769041"
+       Name = "joint_Arm.R" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = " 0.000000, 0.000000, 1.697197"
+       Position = " 0.000000, 0.000000, 1.414093"
+       Length = " 0.283104"
+       Name = "joint_Head" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = " 0.464798,-0.000000, 0.801404"
+       Position = "-0.000000, 0.000000, 1.414093"
+       Length = " 0.769041"
+       Name = "joint_Arm.L" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = "-0.143665,-0.000000, 0.042254"
+       Position = "-0.000000, 0.000000, 0.718324"
+       Length = " 0.691165"
+       Name = "joint_Leg.R" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = " 0.143665,-0.000000, 0.042254"
+       Position = " 0.000000, 0.000000, 0.718324"
+       Length = " 0.691165"
+       Name = "joint_Leg.L" />
+  </armature>
+  <action
+     Name = "action_ArmatureAction">
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.R"
+       ArrayIndex = "3">
+      <key
+         Value = "1.0"
+         Time = "1.0" />
+      <key
+         Value = "0.9707600474357605"
+         Time = "20.0" />
+      <key
+         Value = "1.0"
+         Time = "39.0" />
+      <key
+         Value = "0.9875494241714478"
+         Time = "60.0" />
+      <key
+         Value = "1.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.R"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-0.08718504011631012"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "0.12654025852680206"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.R"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.20774482190608978"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.0387590229511261"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.R"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.08286173641681671"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.08503834158182144"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Head"
+       ArrayIndex = "3">
+      <key
+         Value = "1.0"
+         Time = "1.0" />
+      <key
+         Value = "0.957118034362793"
+         Time = "20.0" />
+      <key
+         Value = "1.0"
+         Time = "39.0" />
+      <key
+         Value = "0.9571179747581482"
+         Time = "60.0" />
+      <key
+         Value = "1.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Head"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-1.2242802461376844e-17"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-1.2242828931156445e-17"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Head"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.2896985113620758"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.2896985709667206"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Head"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "2.392628259790207e-16"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-2.392628789185799e-16"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.L"
+       ArrayIndex = "3">
+      <key
+         Value = "1.0"
+         Time = "1.0" />
+      <key
+         Value = "0.9875494241714478"
+         Time = "20.0" />
+      <key
+         Value = "1.0"
+         Time = "39.0" />
+      <key
+         Value = "0.9707598686218262"
+         Time = "60.0" />
+      <key
+         Value = "1.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.L"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.12654024362564087"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.08718504011631012"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.L"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.0387590155005455"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.2077448070049286"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Arm.L"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.08503834158182144"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.08286173641681671"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.R"
+       ArrayIndex = "3">
+      <key
+         Value = "1.0"
+         Time = "1.0" />
+      <key
+         Value = "0.9641597867012024"
+         Time = "20.0" />
+      <key
+         Value = "1.0"
+         Time = "39.0" />
+      <key
+         Value = "0.9736711978912354"
+         Time = "60.0" />
+      <key
+         Value = "1.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.R"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-0.20947560667991638"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "0.22124649584293365"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.R"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.15155138075351715"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "0.043045081198215485"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.R"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.05956648290157318"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.03408190608024597"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.L"
+       ArrayIndex = "3">
+      <key
+         Value = "1.0"
+         Time = "1.0" />
+      <key
+         Value = "0.9736711978912354"
+         Time = "20.0" />
+      <key
+         Value = "1.0"
+         Time = "39.0" />
+      <key
+         Value = "0.9641597270965576"
+         Time = "60.0" />
+      <key
+         Value = "1.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.L"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.22124649584293365"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.20947562158107758"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.L"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-0.04304508492350578"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.15155138075351715"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       Filter = "Leg.L"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.03408190608024597"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "-0.05956648290157318"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+    </channel>
+  </action>
 </p3dfile>

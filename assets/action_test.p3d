@@ -1,0 +1,724 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Quaternion = " 0.000000, 0.000000,-0.707106, 0.707107"
+       Position = "-4.819224, 0.000000, 0.000000"
+       RotationOrder = "roQUATERNION"
+       Name = "Suzanne"
+       Action = "/action_SuzanneAction"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/mesh_Suzanne" />
+    <object
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 2.473935, 7.601845, 1.623158"
+       RotationOrder = "roXYZ"
+       Name = "Cube.002"
+       Action = "/action_Cube.002Action"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/mesh_Cube.002" />
+    <object
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = "-4.370997,-4.896624, 4.056233"
+       RotationOrder = "roXYZ"
+       Name = "Cube.001"
+       Action = "/action_Cube.001Action"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/mesh_Cube.001" />
+    <object
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       RotationOrder = "roXYZ"
+       Name = "Cube"
+       Action = "/action_CubeAction"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/mesh_Cube" />
+    <object
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
+       Position = " 4.076245, 1.005454, 5.903862"
+       RotationOrder = "roXYZ"
+       Name = "Lamp"
+       Action = "/action_LampAction"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/lamp_Lamp" />
+    <object
+       Quaternion = " 0.481707, 0.212922, 0.334251, 0.781600"
+       Position = " 7.481132,-6.507640, 5.343665"
+       RotationOrder = "roXYZ"
+       Name = "Camera"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone" />
+  </scene>
+  <mesh
+     Loops = "action_test.p3dbin:473360"
+     Faces = "action_test.p3dbin:599316"
+     Positions = "action_test.p3dbin:0"
+     Normals = "action_test.p3dbin:95500"
+     Name = "mesh_Suzanne">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "7871"
+       Material = "/material_Material.003" />
+  </mesh>
+  <mesh
+     Loops = "action_test.p3dbin:631200"
+     Faces = "action_test.p3dbin:631300"
+     Positions = "action_test.p3dbin:630808"
+     Normals = "action_test.p3dbin:630908"
+     Name = "mesh_Cube.001">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "5"
+       Material = "/material_Material.002" />
+  </mesh>
+  <mesh
+     Loops = "action_test.p3dbin:631720"
+     Faces = "action_test.p3dbin:631820"
+     Positions = "action_test.p3dbin:631328"
+     Normals = "action_test.p3dbin:631428"
+     Name = "mesh_Cube.002">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "5"
+       Material = "/material_Material.001" />
+  </mesh>
+  <mesh
+     Loops = "action_test.p3dbin:632240"
+     Faces = "action_test.p3dbin:632340"
+     Positions = "action_test.p3dbin:631848"
+     Normals = "action_test.p3dbin:631948"
+     Name = "mesh_Cube">
+    <materialgroup
+       PolyStart = "0"
+       PolyEnd = "5"
+       Material = "/material_Material" />
+  </mesh>
+  <light
+     Energy = "1.0"
+     Color = "1.000000, 1.000000, 1.000000"
+     LightType = "ltPoint"
+     Name = "lamp_Lamp" />
+  <materialbase
+     Diff = "0.640000, 0.494612, 0.417064"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Name = "material_Material.003"
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0" />
+  <materialbase
+     Action = "/action_Material.001Action"
+     Diff = "0.279162, 0.640000, 0.041340"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Name = "material_Material.001"
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0" />
+  <materialbase
+     Diff = "0.026058, 0.238820, 0.640000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Name = "material_Material.002"
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0" />
+  <materialbase
+     Diff = "0.640000, 0.009777, 0.031067"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Name = "material_Material"
+     Instancing = "1"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Unlit = "0" />
+  <action
+     Name = "action_SuzanneAction">
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "0">
+      <key
+         Value = "-4.8192243576049805"
+         Time = "0.0" />
+      <key
+         Value = "-3.407705783843994"
+         Time = "20.0" />
+      <key
+         Value = "7.152557373046875e-07"
+         Time = "39.0" />
+      <key
+         Value = "3.4077069759368896"
+         Time = "60.0" />
+      <key
+         Value = "4.8192243576049805"
+         Time = "80.0" />
+      <key
+         Value = "3.4077045917510986"
+         Time = "90.0" />
+      <key
+         Value = "-2.6226043701171875e-06"
+         Time = "100.0" />
+      <key
+         Value = "-3.4077084064483643"
+         Time = "110.0" />
+      <key
+         Value = "-4.8192243576049805"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "0.0" />
+      <key
+         Value = "-3.4077064990997314"
+         Time = "20.0" />
+      <key
+         Value = "-4.8192243576049805"
+         Time = "39.0" />
+      <key
+         Value = "-3.407705307006836"
+         Time = "60.0" />
+      <key
+         Value = "1.6689300537109375e-06"
+         Time = "80.0" />
+      <key
+         Value = "3.407707691192627"
+         Time = "90.0" />
+      <key
+         Value = "4.8192243576049805"
+         Time = "100.0" />
+      <key
+         Value = "3.4077038764953613"
+         Time = "110.0" />
+      <key
+         Value = "-3.5762786865234375e-06"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "0.0" />
+      <key
+         Value = "0.0"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "0.0"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "90.0" />
+      <key
+         Value = "0.0"
+         Time = "100.0" />
+      <key
+         Value = "0.0"
+         Time = "110.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       ArrayIndex = "3">
+      <key
+         Value = "-0.7071073055267334"
+         Time = "0.0" />
+      <key
+         Value = "-0.9238798022270203"
+         Time = "20.0" />
+      <key
+         Value = "-0.9999999403953552"
+         Time = "39.0" />
+      <key
+         Value = "-0.9238791465759277"
+         Time = "60.0" />
+      <key
+         Value = "-0.7071061134338379"
+         Time = "80.0" />
+      <key
+         Value = "-0.38268259167671204"
+         Time = "90.0" />
+      <key
+         Value = "8.940696716308594e-07"
+         Time = "100.0" />
+      <key
+         Value = "0.38268423080444336"
+         Time = "110.0" />
+      <key
+         Value = "0.7071073055267334"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       ArrayIndex = "0">
+      <key
+         Value = "-0.0"
+         Time = "0.0" />
+      <key
+         Value = "0.0"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "0.0"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "90.0" />
+      <key
+         Value = "0.0"
+         Time = "100.0" />
+      <key
+         Value = "0.0"
+         Time = "110.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "0.0" />
+      <key
+         Value = "0.0"
+         Time = "20.0" />
+      <key
+         Value = "0.0"
+         Time = "39.0" />
+      <key
+         Value = "0.0"
+         Time = "60.0" />
+      <key
+         Value = "0.0"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "90.0" />
+      <key
+         Value = "0.0"
+         Time = "100.0" />
+      <key
+         Value = "0.0"
+         Time = "110.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Quaternion"
+       ArrayIndex = "2">
+      <key
+         Value = "0.7071062922477722"
+         Time = "0.0" />
+      <key
+         Value = "0.38268277049064636"
+         Time = "20.0" />
+      <key
+         Value = "-7.450580596923828e-07"
+         Time = "39.0" />
+      <key
+         Value = "-0.3826841115951538"
+         Time = "60.0" />
+      <key
+         Value = "-0.7071073055267334"
+         Time = "80.0" />
+      <key
+         Value = "-0.9238797426223755"
+         Time = "90.0" />
+      <key
+         Value = "-0.9999998211860657"
+         Time = "100.0" />
+      <key
+         Value = "-0.9238789677619934"
+         Time = "110.0" />
+      <key
+         Value = "-0.7071058750152588"
+         Time = "120.0" />
+    </channel>
+  </action>
+  <action
+     Name = "action_CubeAction">
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-5.429144382476807"
+         Time = "40.0" />
+      <key
+         Value = "4.112502574920654"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "3.7568912506103516"
+         Time = "40.0" />
+      <key
+         Value = "2.1144635677337646"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "1.3087282180786133"
+         Time = "40.0" />
+      <key
+         Value = "-0.5793519020080566"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "101.60203806300989"
+         Time = "40.0" />
+      <key
+         Value = "111.83021932905051"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-9.838920235908834"
+         Time = "40.0" />
+      <key
+         Value = "6.736393371029635"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "155.92419388637686"
+         Time = "40.0" />
+      <key
+         Value = "39.039627590755934"
+         Time = "80.0" />
+      <key
+         Value = "0.0"
+         Time = "120.0" />
+    </channel>
+  </action>
+  <action
+     Name = "action_LampAction">
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "0">
+      <key
+         Value = "4.076245307922363"
+         Time = "0.0" />
+      <key
+         Value = "-4.3163042068481445"
+         Time = "40.0" />
+      <key
+         Value = "1.5005717277526855"
+         Time = "80.0" />
+      <key
+         Value = "4.076245307922363"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "1">
+      <key
+         Value = "1.0054539442062378"
+         Time = "0.0" />
+      <key
+         Value = "-1.659429669380188"
+         Time = "40.0" />
+      <key
+         Value = "-5.303930282592773"
+         Time = "80.0" />
+      <key
+         Value = "1.0054539442062378"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "2">
+      <key
+         Value = "5.903861999511719"
+         Time = "0.0" />
+      <key
+         Value = "7.223219871520996"
+         Time = "40.0" />
+      <key
+         Value = "5.852646827697754"
+         Time = "80.0" />
+      <key
+         Value = "5.903861999511719"
+         Time = "120.0" />
+    </channel>
+  </action>
+  <action
+     Name = "action_Cube.001Action">
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "0">
+      <key
+         Value = "-4.370997428894043"
+         Time = "1.0" />
+      <key
+         Value = "5.805082321166992"
+         Time = "40.0" />
+      <key
+         Value = "-4.343610763549805"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "1">
+      <key
+         Value = "-4.8966240882873535"
+         Time = "1.0" />
+      <key
+         Value = "-1.169463872909546"
+         Time = "40.0" />
+      <key
+         Value = "-5.597762107849121"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "2">
+      <key
+         Value = "4.056232929229736"
+         Time = "1.0" />
+      <key
+         Value = "2.497687339782715"
+         Time = "40.0" />
+      <key
+         Value = "3.9929776191711426"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.0"
+         Time = "40.0" />
+      <key
+         Value = "13.74037563246542"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-0.0"
+         Time = "40.0" />
+      <key
+         Value = "13.909990578950916"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-192.23894474733729"
+         Time = "40.0" />
+      <key
+         Value = "-307.1588617111894"
+         Time = "80.0" />
+    </channel>
+  </action>
+  <action
+     Name = "action_Cube.002Action">
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "0">
+      <key
+         Value = "2.473935127258301"
+         Time = "1.0" />
+      <key
+         Value = "-3.051734447479248"
+         Time = "40.0" />
+      <key
+         Value = "-2.444687604904175"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "1">
+      <key
+         Value = "7.6018452644348145"
+         Time = "1.0" />
+      <key
+         Value = "-2.9905505180358887"
+         Time = "40.0" />
+      <key
+         Value = "3.0801758766174316"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "2">
+      <key
+         Value = "1.6231577396392822"
+         Time = "1.0" />
+      <key
+         Value = "1.757756233215332"
+         Time = "40.0" />
+      <key
+         Value = "2.150546073913574"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "0">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "49.560127301603096"
+         Time = "40.0" />
+      <key
+         Value = "33.22896692466983"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "1">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "-0.0"
+         Time = "40.0" />
+      <key
+         Value = "-10.722819311600261"
+         Time = "80.0" />
+    </channel>
+    <channel
+       PropStr = "Rotation"
+       ArrayIndex = "2">
+      <key
+         Value = "0.0"
+         Time = "1.0" />
+      <key
+         Value = "0.0"
+         Time = "40.0" />
+      <key
+         Value = "-115.06098769517213"
+         Time = "80.0" />
+    </channel>
+  </action>
+  <action
+     Name = "action_Material.001Action">
+    <channel
+       PropStr = "Diff"
+       ArrayIndex = "0">
+      <key
+         Value = "0.34895268082618713"
+         Time = "0.0" />
+      <key
+         Value = "0.07374698668718338"
+         Time = "40.0" />
+      <key
+         Value = "0.33918648958206177"
+         Time = "80.0" />
+      <key
+         Value = "0.8000000715255737"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Diff"
+       ArrayIndex = "1">
+      <key
+         Value = "0.8000000715255737"
+         Time = "0.0" />
+      <key
+         Value = "0.7325525283813477"
+         Time = "40.0" />
+      <key
+         Value = "0.029978007078170776"
+         Time = "80.0" />
+      <key
+         Value = "0.4497738480567932"
+         Time = "120.0" />
+    </channel>
+    <channel
+       PropStr = "Diff"
+       ArrayIndex = "2">
+      <key
+         Value = "0.05167441442608833"
+         Time = "0.0" />
+      <key
+         Value = "0.8000000715255737"
+         Time = "40.0" />
+      <key
+         Value = "0.8000000715255737"
+         Time = "80.0" />
+      <key
+         Value = "0.007987720891833305"
+         Time = "120.0" />
+    </channel>
+  </action>
+</p3dfile>

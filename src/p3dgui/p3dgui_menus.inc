@@ -30,7 +30,7 @@
     TP3DMenuItem = class( TP3DInterfacedPersistent )
       private
         FCaption: String;
-        FColor: TVec4;
+        FColor: TP3DColorRGBA;
         FEnabled: Boolean;
         FFont: TP3DCanvasFont;
         FIsSelectable: Boolean;
@@ -53,7 +53,7 @@
         property IsSelectable: Boolean read FIsSelectable write FIsSelectable;
         property Caption: String read FCaption write SetCaption;
         property Font: TP3DCanvasFont read FFont write FFont;
-        property Color: TVec4 read FColor write FColor;
+        property Color: TP3DColorRGBA read FColor write FColor;
         property Parent: TP3DPopupMenu read FParent write FParent;
         property Width: Float read GetWidth;
         property Height: Float read GetHeight;
@@ -70,7 +70,7 @@
 
         class function IsFocusControl: Boolean; override;
 
-        procedure Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
+        procedure Paint(); override;
         procedure Draw; override;
 
         procedure PopUp( X, Y: Integer ); virtual;
@@ -245,9 +245,9 @@ begin
           Line+= Itm.Height;
           MinSize:= Max( MinSize, Round( Itm.Width ));
         end;
-      WidthHeight.y:= Line;
+      Height:= Line;
     end;
-  WidthHeight.x:= MinSize;
+  Width:= MinSize;
   FNeedsUpdate:= True;
 end;
 
@@ -256,7 +256,7 @@ procedure TP3DPopupMenu.Draw;
   var
     r: TP3DRect;
   begin
-    r:= P3DRect( 0, Itm.Top, WidthHeight.X, Itm.Height );
+    r:= P3DRect( 0, Itm.Top, Canvas.Width, Itm.Height );
     Canvas.RenderRect( r.TopLeft, r.BottomRight, C1, C2, C3, C4 );
     Canvas.RenderLineRect( r.TopLeft, r.BottomRight, CE1, CE2, CE3, CE4 );
   end;
@@ -280,19 +280,12 @@ begin
     end;
 end;
 
-procedure TP3DCustomPopupMenu.Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
-var
-  p1: TVec2;
+procedure TP3DCustomPopupMenu.Paint();
 begin
   if (( not Focused ) and ( not Controls.ChildOf( P3DGUIManager.FocusedControl ))) then
     Visible:= False;
 
-  p1:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
-  {P3DGUIManager.ScreenCanvas.Lock;
-  P3DGUIManager.ScreenCanvas.RenderRectShadow( p1, p1 + vec2( Canvas.Width, Canvas.Height ), 5, vec4( 0, 0, 0, 0.1 ));
-  P3DGUIManager.ScreenCanvas.Unlock();}
-
-  inherited Paint(BaseColor, ScrollAcc, ClipRect);
+  inherited Paint();
 end;
 
 
@@ -310,7 +303,7 @@ end;
 procedure TP3DCustomPopupMenu.Draw;
 begin
   inherited Draw;
-  Canvas.RenderRect( vec2( 0 ), vec2( ClientRect.Right, ClientRect.Bottom ), vec4( Primary100.xyz, 0.8 ));
+  Canvas.RenderRect( vec2( 0 ), Canvas.WidthHeight, vec4( Primary100.xyz, 0.8 ));
 end;
 
 procedure TP3DCustomPopupMenu.PopUp(X, Y: Integer);

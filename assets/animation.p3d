@@ -1,0 +1,1193 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Position = "-0.999371,-0.564565, 1.810163"
+       Scale = " 0.100000, 0.100000, 0.100000"
+       Collision = "acNone"
+       Data = "/lamp_Lamp_right"
+       Quaternion = "-0.198174,-0.548465, 0.609947, 0.536543"
+       RotationOrder = "roXYZ"
+       Name = "Lamp_right" />
+    <object
+       Position = " 0.860940,-0.689545, 1.810163"
+       Scale = " 0.100000, 0.100000, 0.100000"
+       Collision = "acNone"
+       Data = "/lamp_Lamp_left"
+       Quaternion = "-0.350815, 0.465849,-0.782762, 0.217249"
+       RotationOrder = "roXYZ"
+       Name = "Lamp_left" />
+    <object
+       Position = " 0.475895, 1.112358, 2.016894"
+       Scale = " 0.100000, 0.100000, 0.100000"
+       Collision = "acNone"
+       Data = "/lamp_Lamp_back"
+       Quaternion = "-0.532799, 0.044148,-0.324497, 0.780307"
+       RotationOrder = "roXYZ"
+       Name = "Lamp_back" />
+    <object
+       Position = " 0.000000, 0.000000, 0.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Name = "human_skeleton">
+      <object
+         Position = " 0.000000, 0.000000, 0.000000"
+         Scale = " 1.000000, 1.000000, 1.000000"
+         Collision = "acNone"
+         Data = "/mesh_human_male"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         RotationOrder = "roXYZ"
+         Name = "human_male_base03">
+        <object
+           RotationOrder = "roQUATERNION"
+           Position = " 0.000000, 0.017583, 0.052756"
+           Name = "root"
+           Data = "/armature_human_skeleton/joint_root"
+           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+          <object
+             RotationOrder = "roQUATERNION"
+             Position = "-0.000000,-0.032440, 0.765774"
+             Name = "pelvis"
+             Data = "/armature_human_skeleton/joint_pelvis"
+             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+            <object
+               RotationOrder = "roQUATERNION"
+               Position = "-0.131046, 0.012071, 0.069252"
+               Name = "thigh_R"
+               Data = "/armature_human_skeleton/joint_thigh_R"
+               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+              <object
+                 RotationOrder = "roQUATERNION"
+                 Position = "-0.019964,-0.008772,-0.401459"
+                 Name = "calf_R"
+                 Data = "/armature_human_skeleton/joint_calf_R"
+                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                <object
+                   RotationOrder = "roQUATERNION"
+                   Position = "-0.038152, 0.005488,-0.384652"
+                   Name = "foot_R"
+                   Data = "/armature_human_skeleton/joint_foot_R"
+                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                  <object
+                     RotationOrder = "roQUATERNION"
+                     Position = "-0.010101,-0.144429,-0.080600"
+                     Name = "toes_R"
+                     Data = "/armature_human_skeleton/joint_toes_R"
+                     Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                </object>
+                <object
+                   RotationOrder = "roQUATERNION"
+                   Position = "-0.000000,-0.000000, 0.000002"
+                   Name = "calf_twist_R"
+                   Data = "/armature_human_skeleton/joint_calf_twist_R"
+                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+              </object>
+              <object
+                 RotationOrder = "roQUATERNION"
+                 Position = "-0.000000,-0.000000, 0.000002"
+                 Name = "thigh_twist_R"
+                 Data = "/armature_human_skeleton/joint_thigh_twist_R"
+                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+            </object>
+            <object
+               RotationOrder = "roQUATERNION"
+               Position = " 0.131046, 0.012071, 0.069252"
+               Name = "thigh_L"
+               Data = "/armature_human_skeleton/joint_thigh_L"
+               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+              <object
+                 RotationOrder = "roQUATERNION"
+                 Position = " 0.019964,-0.008772,-0.401459"
+                 Name = "calf_L"
+                 Data = "/armature_human_skeleton/joint_calf_L"
+                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                <object
+                   RotationOrder = "roQUATERNION"
+                   Position = " 0.038152, 0.005488,-0.384652"
+                   Name = "foot_L"
+                   Data = "/armature_human_skeleton/joint_foot_L"
+                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                  <object
+                     RotationOrder = "roQUATERNION"
+                     Position = " 0.010101,-0.144429,-0.080600"
+                     Name = "toes_L"
+                     Data = "/armature_human_skeleton/joint_toes_L"
+                     Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                </object>
+                <object
+                   RotationOrder = "roQUATERNION"
+                   Position = " 0.000000,-0.000000, 0.000002"
+                   Name = "calf_twist_L"
+                   Data = "/armature_human_skeleton/joint_calf_twist_L"
+                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+              </object>
+              <object
+                 RotationOrder = "roQUATERNION"
+                 Position = " 0.000000,-0.000000, 0.000002"
+                 Name = "thigh_twist_L"
+                 Data = "/armature_human_skeleton/joint_thigh_twist_L"
+                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+            </object>
+            <object
+               RotationOrder = "roQUATERNION"
+               Position = " 0.000000, 0.070464, 0.147969"
+               Name = "spine01"
+               Data = "/armature_human_skeleton/joint_spine01"
+               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+              <object
+                 RotationOrder = "roQUATERNION"
+                 Position = " 0.000000,-0.029520, 0.119828"
+                 Name = "spine02"
+                 Data = "/armature_human_skeleton/joint_spine02"
+                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                <object
+                   RotationOrder = "roQUATERNION"
+                   Position = "-0.000000, 0.024497, 0.139214"
+                   Name = "spine03"
+                   Data = "/armature_human_skeleton/joint_spine03"
+                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                  <object
+                     RotationOrder = "roQUATERNION"
+                     Position = " 0.034935,-0.031568, 0.192423"
+                     Name = "clavicle_L"
+                     Data = "/armature_human_skeleton/joint_clavicle_L"
+                     Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                    <object
+                       RotationOrder = "roQUATERNION"
+                       Position = " 0.136470,-0.009222,-0.040502"
+                       Name = "upperarm_L"
+                       Data = "/armature_human_skeleton/joint_upperarm_L"
+                       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                      <object
+                         RotationOrder = "roQUATERNION"
+                         Position = " 0.217217,-0.002507,-0.145852"
+                         Name = "lowerarm_L"
+                         Data = "/armature_human_skeleton/joint_lowerarm_L"
+                         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                        <object
+                           RotationOrder = "roQUATERNION"
+                           Position = " 0.250873,-0.038917,-0.125783"
+                           Name = "hand_L"
+                           Data = "/armature_human_skeleton/joint_hand_L"
+                           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = " 0.008888,-0.016829,-0.012764"
+                             Name = "thumb01_L"
+                             Data = "/armature_human_skeleton/joint_thumb01_L"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = " 0.006396,-0.035429,-0.021446"
+                               Name = "thumb02_L"
+                               Data = "/armature_human_skeleton/joint_thumb02_L"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = " 0.008325,-0.031797,-0.015570"
+                                 Name = "thumb03_L"
+                                 Data = "/armature_human_skeleton/joint_thumb03_L"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = " 0.029320,-0.004395,-0.021204"
+                             Name = "index00_L"
+                             Data = "/armature_human_skeleton/joint_index00_L"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = " 0.037182,-0.035237,-0.022280"
+                               Name = "index01_L"
+                               Data = "/armature_human_skeleton/joint_index01_L"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = " 0.022116,-0.003410,-0.028749"
+                                 Name = "index02_L"
+                                 Data = "/armature_human_skeleton/joint_index02_L"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = " 0.017308,-0.000906,-0.016319"
+                                   Name = "index03_L"
+                                   Data = "/armature_human_skeleton/joint_index03_L"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = " 0.029320,-0.004395,-0.021204"
+                             Name = "middle00_L"
+                             Data = "/armature_human_skeleton/joint_middle00_L"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = " 0.038611,-0.015602,-0.021629"
+                               Name = "middle01_L"
+                               Data = "/armature_human_skeleton/joint_middle01_L"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = " 0.024400,-0.002442,-0.031921"
+                                 Name = "middle02_L"
+                                 Data = "/armature_human_skeleton/joint_middle02_L"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = " 0.020581,-0.000849,-0.019822"
+                                   Name = "middle03_L"
+                                   Data = "/armature_human_skeleton/joint_middle03_L"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = " 0.029320,-0.004395,-0.021204"
+                             Name = "ring00_L"
+                             Data = "/armature_human_skeleton/joint_ring00_L"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = " 0.035323, 0.004980,-0.021610"
+                               Name = "ring01_L"
+                               Data = "/armature_human_skeleton/joint_ring01_L"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = " 0.025626,-0.001115,-0.029959"
+                                 Name = "ring02_L"
+                                 Data = "/armature_human_skeleton/joint_ring02_L"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = " 0.019807,-0.001793,-0.018397"
+                                   Name = "ring03_L"
+                                   Data = "/armature_human_skeleton/joint_ring03_L"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = " 0.029320,-0.004395,-0.021204"
+                             Name = "pinky00_L"
+                             Data = "/armature_human_skeleton/joint_pinky00_L"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = " 0.028947, 0.024662,-0.023906"
+                               Name = "pinky01_L"
+                               Data = "/armature_human_skeleton/joint_pinky01_L"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = " 0.021308, 0.000194,-0.024005"
+                                 Name = "pinky02_L"
+                                 Data = "/armature_human_skeleton/joint_pinky02_L"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = " 0.014580,-0.000490,-0.013167"
+                                   Name = "pinky03_L"
+                                   Data = "/armature_human_skeleton/joint_pinky03_L"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                        </object>
+                        <object
+                           RotationOrder = "roQUATERNION"
+                           Position = " 0.000000,-0.000000, 0.000001"
+                           Name = "lowerarm_twist_L"
+                           Data = "/armature_human_skeleton/joint_lowerarm_twist_L"
+                           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                      </object>
+                      <object
+                         RotationOrder = "roQUATERNION"
+                         Position = "-0.000000,-0.000000, 0.000001"
+                         Name = "upperarm_twist_L"
+                         Data = "/armature_human_skeleton/joint_upperarm_twist_L"
+                         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                    </object>
+                  </object>
+                  <object
+                     RotationOrder = "roQUATERNION"
+                     Position = "-0.034936,-0.031562, 0.192421"
+                     Name = "clavicle_R"
+                     Data = "/armature_human_skeleton/joint_clavicle_R"
+                     Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                    <object
+                       RotationOrder = "roQUATERNION"
+                       Position = "-0.136469,-0.009228,-0.040500"
+                       Name = "upperarm_R"
+                       Data = "/armature_human_skeleton/joint_upperarm_R"
+                       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                      <object
+                         RotationOrder = "roQUATERNION"
+                         Position = "-0.217217,-0.002507,-0.145852"
+                         Name = "lowerarm_R"
+                         Data = "/armature_human_skeleton/joint_lowerarm_R"
+                         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                        <object
+                           RotationOrder = "roQUATERNION"
+                           Position = "-0.250873,-0.038917,-0.125783"
+                           Name = "hand_R"
+                           Data = "/armature_human_skeleton/joint_hand_R"
+                           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = "-0.008888,-0.016829,-0.012764"
+                             Name = "thumb01_R"
+                             Data = "/armature_human_skeleton/joint_thumb01_R"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = "-0.006396,-0.035429,-0.021446"
+                               Name = "thumb02_R"
+                               Data = "/armature_human_skeleton/joint_thumb02_R"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = "-0.008325,-0.031797,-0.015570"
+                                 Name = "thumb03_R"
+                                 Data = "/armature_human_skeleton/joint_thumb03_R"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = "-0.029320,-0.004395,-0.021204"
+                             Name = "index00_R"
+                             Data = "/armature_human_skeleton/joint_index00_R"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = "-0.037182,-0.035237,-0.022280"
+                               Name = "index01_R"
+                               Data = "/armature_human_skeleton/joint_index01_R"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = "-0.022116,-0.003410,-0.028749"
+                                 Name = "index02_R"
+                                 Data = "/armature_human_skeleton/joint_index02_R"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = "-0.017308,-0.000906,-0.016319"
+                                   Name = "index03_R"
+                                   Data = "/armature_human_skeleton/joint_index03_R"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = "-0.029320,-0.004395,-0.021204"
+                             Name = "middle00_R"
+                             Data = "/armature_human_skeleton/joint_middle00_R"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = "-0.038611,-0.015602,-0.021629"
+                               Name = "middle01_R"
+                               Data = "/armature_human_skeleton/joint_middle01_R"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = "-0.024400,-0.002442,-0.031921"
+                                 Name = "middle02_R"
+                                 Data = "/armature_human_skeleton/joint_middle02_R"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = "-0.020581,-0.000849,-0.019822"
+                                   Name = "middle03_R"
+                                   Data = "/armature_human_skeleton/joint_middle03_R"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = "-0.029320,-0.004395,-0.021204"
+                             Name = "ring00_R"
+                             Data = "/armature_human_skeleton/joint_ring00_R"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = "-0.035323, 0.004980,-0.021610"
+                               Name = "ring01_R"
+                               Data = "/armature_human_skeleton/joint_ring01_R"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = "-0.025626,-0.001115,-0.029959"
+                                 Name = "ring02_R"
+                                 Data = "/armature_human_skeleton/joint_ring02_R"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = "-0.019807,-0.001793,-0.018397"
+                                   Name = "ring03_R"
+                                   Data = "/armature_human_skeleton/joint_ring03_R"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                          <object
+                             RotationOrder = "roQUATERNION"
+                             Position = "-0.029320,-0.004395,-0.021204"
+                             Name = "pinky00_R"
+                             Data = "/armature_human_skeleton/joint_pinky00_R"
+                             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                            <object
+                               RotationOrder = "roQUATERNION"
+                               Position = "-0.028947, 0.024662,-0.023906"
+                               Name = "pinky01_R"
+                               Data = "/armature_human_skeleton/joint_pinky01_R"
+                               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                              <object
+                                 RotationOrder = "roQUATERNION"
+                                 Position = "-0.021308, 0.000194,-0.024005"
+                                 Name = "pinky02_R"
+                                 Data = "/armature_human_skeleton/joint_pinky02_R"
+                                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                                <object
+                                   RotationOrder = "roQUATERNION"
+                                   Position = "-0.014580,-0.000490,-0.013167"
+                                   Name = "pinky03_R"
+                                   Data = "/armature_human_skeleton/joint_pinky03_R"
+                                   Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                              </object>
+                            </object>
+                          </object>
+                        </object>
+                        <object
+                           RotationOrder = "roQUATERNION"
+                           Position = "-0.000000,-0.000000, 0.000001"
+                           Name = "lowerarm_twist_R"
+                           Data = "/armature_human_skeleton/joint_lowerarm_twist_R"
+                           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                      </object>
+                      <object
+                         RotationOrder = "roQUATERNION"
+                         Position = "-0.000000,-0.000000, 0.000001"
+                         Name = "upperarm_twist_R"
+                         Data = "/armature_human_skeleton/joint_upperarm_twist_R"
+                         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                    </object>
+                  </object>
+                  <object
+                     RotationOrder = "roQUATERNION"
+                     Position = " 0.000000,-0.048861, 0.237586"
+                     Name = "neck"
+                     Data = "/armature_human_skeleton/joint_neck"
+                     Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000">
+                    <object
+                       RotationOrder = "roQUATERNION"
+                       Position = "-0.000001,-0.062168, 0.078800"
+                       Name = "head"
+                       Data = "/armature_human_skeleton/joint_head"
+                       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+                  </object>
+                </object>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+    </object>
+    <object
+       Position = " 4.076245, 1.005454, 5.903862"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Data = "/lamp_Lamp"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
+       RotationOrder = "roXYZ"
+       Name = "Lamp" />
+    <object
+       Position = " 7.481132,-6.507640, 5.343665"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       RotationOrder = "roXYZ"
+       Name = "Camera" />
+  </scene>
+  <mesh
+     Tangents = "animation.p3dbin:2358968"
+     Loops = "animation.p3dbin:1539408"
+     VertexWeights = "animation.p3dbin:215956"
+     Cotangents = "animation.p3dbin:3178524"
+     VertexWeightIndices = "animation.p3dbin:431912"
+     Faces = "animation.p3dbin:3998080"
+     TexCoords0 = "animation.p3dbin:1812596"
+     Positions = "animation.p3dbin:0"
+     Name = "mesh_human_male"
+     Normals = "animation.p3dbin:719852">
+    <modifier
+       Armature = "/armature_human_skeleton"
+       Type = "TP3DMeshModifierArmature" />
+    <weightgroup
+       Name = "calf_L"
+       Index = "9" />
+    <weightgroup
+       Name = "calf_R"
+       Index = "3" />
+    <weightgroup
+       Name = "calf_twist_L"
+       Index = "12" />
+    <weightgroup
+       Name = "calf_twist_R"
+       Index = "6" />
+    <weightgroup
+       Name = "clavicle_L"
+       Index = "17" />
+    <weightgroup
+       Name = "clavicle_R"
+       Index = "42" />
+    <weightgroup
+       Name = "foot_L"
+       Index = "10" />
+    <weightgroup
+       Name = "foot_R"
+       Index = "4" />
+    <weightgroup
+       Name = "hand_L"
+       Index = "20" />
+    <weightgroup
+       Name = "hand_R"
+       Index = "45" />
+    <weightgroup
+       Name = "head"
+       Index = "68" />
+    <weightgroup
+       Name = "index00_L"
+       Index = "24" />
+    <weightgroup
+       Name = "index00_R"
+       Index = "49" />
+    <weightgroup
+       Name = "index01_L"
+       Index = "25" />
+    <weightgroup
+       Name = "index01_R"
+       Index = "50" />
+    <weightgroup
+       Name = "index02_L"
+       Index = "26" />
+    <weightgroup
+       Name = "index02_R"
+       Index = "51" />
+    <weightgroup
+       Name = "index03_L"
+       Index = "27" />
+    <weightgroup
+       Name = "index03_R"
+       Index = "52" />
+    <weightgroup
+       Name = "lowerarm_L"
+       Index = "19" />
+    <weightgroup
+       Name = "lowerarm_R"
+       Index = "44" />
+    <weightgroup
+       Name = "lowerarm_twist_L"
+       Index = "40" />
+    <weightgroup
+       Name = "lowerarm_twist_R"
+       Index = "65" />
+    <weightgroup
+       Name = "middle00_L"
+       Index = "28" />
+    <weightgroup
+       Name = "middle00_R"
+       Index = "53" />
+    <weightgroup
+       Name = "middle01_L"
+       Index = "29" />
+    <weightgroup
+       Name = "middle01_R"
+       Index = "54" />
+    <weightgroup
+       Name = "middle02_L"
+       Index = "30" />
+    <weightgroup
+       Name = "middle02_R"
+       Index = "55" />
+    <weightgroup
+       Name = "middle03_L"
+       Index = "31" />
+    <weightgroup
+       Name = "middle03_R"
+       Index = "56" />
+    <weightgroup
+       Name = "neck"
+       Index = "67" />
+    <weightgroup
+       Name = "pelvis"
+       Index = "1" />
+    <weightgroup
+       Name = "pinky00_L"
+       Index = "36" />
+    <weightgroup
+       Name = "pinky00_R"
+       Index = "61" />
+    <weightgroup
+       Name = "pinky01_L"
+       Index = "37" />
+    <weightgroup
+       Name = "pinky01_R"
+       Index = "62" />
+    <weightgroup
+       Name = "pinky02_L"
+       Index = "38" />
+    <weightgroup
+       Name = "pinky02_R"
+       Index = "63" />
+    <weightgroup
+       Name = "pinky03_L"
+       Index = "39" />
+    <weightgroup
+       Name = "pinky03_R"
+       Index = "64" />
+    <weightgroup
+       Name = "ring00_L"
+       Index = "32" />
+    <weightgroup
+       Name = "ring00_R"
+       Index = "57" />
+    <weightgroup
+       Name = "ring01_L"
+       Index = "33" />
+    <weightgroup
+       Name = "ring01_R"
+       Index = "58" />
+    <weightgroup
+       Name = "ring02_L"
+       Index = "34" />
+    <weightgroup
+       Name = "ring02_R"
+       Index = "59" />
+    <weightgroup
+       Name = "ring03_L"
+       Index = "35" />
+    <weightgroup
+       Name = "ring03_R"
+       Index = "60" />
+    <weightgroup
+       Name = "spine01"
+       Index = "14" />
+    <weightgroup
+       Name = "spine02"
+       Index = "15" />
+    <weightgroup
+       Name = "spine03"
+       Index = "16" />
+    <weightgroup
+       Name = "thigh_L"
+       Index = "8" />
+    <weightgroup
+       Name = "thigh_R"
+       Index = "2" />
+    <weightgroup
+       Name = "thigh_twist_L"
+       Index = "13" />
+    <weightgroup
+       Name = "thigh_twist_R"
+       Index = "7" />
+    <weightgroup
+       Name = "thumb01_L"
+       Index = "21" />
+    <weightgroup
+       Name = "thumb01_R"
+       Index = "46" />
+    <weightgroup
+       Name = "thumb02_L"
+       Index = "22" />
+    <weightgroup
+       Name = "thumb02_R"
+       Index = "47" />
+    <weightgroup
+       Name = "thumb03_L"
+       Index = "23" />
+    <weightgroup
+       Name = "thumb03_R"
+       Index = "48" />
+    <weightgroup
+       Name = "toes_L"
+       Index = "11" />
+    <weightgroup
+       Name = "toes_R"
+       Index = "5" />
+    <weightgroup
+       Name = "upperarm_L"
+       Index = "18" />
+    <weightgroup
+       Name = "upperarm_R"
+       Index = "43" />
+    <weightgroup
+       Name = "upperarm_twist_L"
+       Index = "41" />
+    <weightgroup
+       Name = "upperarm_twist_R"
+       Index = "66" />
+    <materialgroup
+       PolyEnd = "17073"
+       Material = "/material_Material.001"
+       PolyStart = "0" />
+  </mesh>
+  <light
+     LightType = "ltSpot"
+     Name = "lamp_Lamp_right"
+     Color = "1.000000, 1.000000, 1.000000"
+     Energy = "1.0" />
+  <light
+     LightType = "ltSpot"
+     Name = "lamp_Lamp_back"
+     Color = "1.000000, 1.000000, 1.000000"
+     Energy = "1.0" />
+  <light
+     LightType = "ltSpot"
+     Name = "lamp_Lamp_left"
+     Color = "1.000000, 1.000000, 1.000000"
+     Energy = "1.0" />
+  <light
+     LightType = "ltPoint"
+     Name = "lamp_Lamp"
+     Color = "1.000000, 1.000000, 1.000000"
+     Energy = "1.0" />
+  <materialbase
+     Diff = "0.640000, 0.640000, 0.640000"
+     Unlit = "0"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Spec_Hardness = "50.000000"
+     Instancing = "1"
+     Name = "material_Material.001" />
+  <armature
+     Name = "armature_human_skeleton">
+    <joint
+       Position = " 0.000000, 0.017583, 0.052756"
+       Tail = " 0.000000,-0.218443, 0.011398"
+       Name = "joint_root"
+       Length = " 0.239622"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.000000,-0.014856, 0.818524"
+       Tail = " 0.000000, 0.055608, 0.966493"
+       Name = "joint_pelvis"
+       Length = " 0.163890"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.131046,-0.002785, 0.887777"
+       Tail = "-0.151010,-0.011557, 0.486317"
+       Name = "joint_thigh_R"
+       Length = " 0.402051"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.151010,-0.011557, 0.486317"
+       Tail = "-0.189162,-0.006070, 0.101665"
+       Name = "joint_calf_R"
+       Length = " 0.386579"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.189162,-0.006070, 0.101665"
+       Tail = "-0.199263,-0.150499, 0.021065"
+       Name = "joint_foot_R"
+       Length = " 0.165705"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.199263,-0.150499, 0.021065"
+       Tail = "-0.206564,-0.202781, 0.015676"
+       Name = "joint_toes_R"
+       Length = " 0.053063"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.151010,-0.011557, 0.486317"
+       Tail = "-0.168931,-0.006888, 0.357989"
+       Name = "joint_calf_twist_R"
+       Length = " 0.129658"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.131046,-0.002785, 0.887777"
+       Tail = "-0.133871,-0.018149, 0.742286"
+       Name = "joint_thigh_twist_R"
+       Length = " 0.146327"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.131046,-0.002785, 0.887777"
+       Tail = " 0.151010,-0.011557, 0.486317"
+       Name = "joint_thigh_L"
+       Length = " 0.402051"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.151010,-0.011557, 0.486317"
+       Tail = " 0.189162,-0.006070, 0.101665"
+       Name = "joint_calf_L"
+       Length = " 0.386579"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.189162,-0.006070, 0.101665"
+       Tail = " 0.199263,-0.150499, 0.021065"
+       Name = "joint_foot_L"
+       Length = " 0.165705"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.199263,-0.150499, 0.021065"
+       Tail = " 0.206564,-0.202781, 0.015676"
+       Name = "joint_toes_L"
+       Length = " 0.053063"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.151010,-0.011557, 0.486317"
+       Tail = " 0.168931,-0.006888, 0.357989"
+       Name = "joint_calf_twist_L"
+       Length = " 0.129658"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.131046,-0.002785, 0.887777"
+       Tail = " 0.133871,-0.018149, 0.742286"
+       Name = "joint_thigh_twist_L"
+       Length = " 0.146327"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.000000, 0.055608, 0.966493"
+       Tail = " 0.000000, 0.026088, 1.086321"
+       Name = "joint_spine01"
+       Length = " 0.123411"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.000000, 0.026088, 1.086321"
+       Tail = "-0.000000, 0.050585, 1.225535"
+       Name = "joint_spine02"
+       Length = " 0.141353"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.000000, 0.050585, 1.225535"
+       Tail = "-0.000000, 0.054954, 1.357074"
+       Name = "joint_spine03"
+       Length = " 0.131612"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.034935, 0.019017, 1.417958"
+       Tail = " 0.171405, 0.009795, 1.377456"
+       Name = "joint_clavicle_L"
+       Length = " 0.142652"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.171405, 0.009795, 1.377456"
+       Tail = " 0.388622, 0.007289, 1.231604"
+       Name = "joint_upperarm_L"
+       Length = " 0.261653"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.388622, 0.007289, 1.231604"
+       Tail = " 0.639495,-0.031628, 1.105820"
+       Name = "joint_lowerarm_L"
+       Length = " 0.283326"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.639495,-0.031628, 1.105820"
+       Tail = " 0.668815,-0.036023, 1.084616"
+       Name = "joint_hand_L"
+       Length = " 0.036450"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.648383,-0.048457, 1.093057"
+       Tail = " 0.654779,-0.083886, 1.071611"
+       Name = "joint_thumb01_L"
+       Length = " 0.041905"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.654779,-0.083886, 1.071611"
+       Tail = " 0.663103,-0.115683, 1.056041"
+       Name = "joint_thumb02_L"
+       Length = " 0.036370"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.663103,-0.115683, 1.056041"
+       Tail = " 0.673655,-0.135952, 1.032240"
+       Name = "joint_thumb03_L"
+       Length = " 0.032995"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.668815,-0.036023, 1.084616"
+       Tail = " 0.705997,-0.071260, 1.062336"
+       Name = "joint_index00_L"
+       Length = " 0.055862"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.705997,-0.071260, 1.062336"
+       Tail = " 0.728114,-0.074670, 1.033587"
+       Name = "joint_index01_L"
+       Length = " 0.036432"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.728114,-0.074670, 1.033587"
+       Tail = " 0.745421,-0.075576, 1.017268"
+       Name = "joint_index02_L"
+       Length = " 0.023805"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.745421,-0.075576, 1.017268"
+       Tail = " 0.759287,-0.076117, 0.998459"
+       Name = "joint_index03_L"
+       Length = " 0.023374"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.668815,-0.036023, 1.084616"
+       Tail = " 0.707426,-0.051626, 1.062987"
+       Name = "joint_middle00_L"
+       Length = " 0.046926"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.707426,-0.051626, 1.062987"
+       Tail = " 0.731826,-0.054067, 1.031067"
+       Name = "joint_middle01_L"
+       Length = " 0.040252"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.731826,-0.054067, 1.031067"
+       Tail = " 0.752407,-0.054917, 1.011245"
+       Name = "joint_middle02_L"
+       Length = " 0.028587"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.752407,-0.054917, 1.011245"
+       Tail = " 0.769848,-0.056327, 0.989544"
+       Name = "joint_middle03_L"
+       Length = " 0.027877"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.668815,-0.036023, 1.084616"
+       Tail = " 0.704138,-0.031043, 1.063006"
+       Name = "joint_ring00_L"
+       Length = " 0.041707"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.704138,-0.031043, 1.063006"
+       Tail = " 0.729764,-0.032158, 1.033048"
+       Name = "joint_ring01_L"
+       Length = " 0.039439"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.729764,-0.032158, 1.033048"
+       Tail = " 0.749571,-0.033951, 1.014651"
+       Name = "joint_ring02_L"
+       Length = " 0.027092"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.749571,-0.033951, 1.014651"
+       Tail = " 0.765738,-0.035505, 0.994696"
+       Name = "joint_ring03_L"
+       Length = " 0.025729"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.668815,-0.036023, 1.084616"
+       Tail = " 0.697762,-0.011361, 1.060710"
+       Name = "joint_pinky00_L"
+       Length = " 0.044918"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.697762,-0.011361, 1.060710"
+       Tail = " 0.719070,-0.011167, 1.036705"
+       Name = "joint_pinky01_L"
+       Length = " 0.032099"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.719070,-0.011167, 1.036705"
+       Tail = " 0.733651,-0.011657, 1.023538"
+       Name = "joint_pinky02_L"
+       Length = " 0.019652"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.733651,-0.011657, 1.023538"
+       Tail = " 0.744801,-0.012871, 1.009019"
+       Name = "joint_pinky03_L"
+       Length = " 0.018347"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.388622, 0.007289, 1.231604"
+       Tail = " 0.509304,-0.030957, 1.172559"
+       Name = "joint_lowerarm_twist_L"
+       Length = " 0.139689"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = " 0.171405, 0.009795, 1.377456"
+       Tail = " 0.277818,-0.009989, 1.310610"
+       Name = "joint_upperarm_twist_L"
+       Length = " 0.127215"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.034936, 0.019023, 1.417956"
+       Tail = "-0.171405, 0.009795, 1.377456"
+       Name = "joint_clavicle_R"
+       Length = " 0.142651"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.171405, 0.009795, 1.377456"
+       Tail = "-0.388622, 0.007289, 1.231604"
+       Name = "joint_upperarm_R"
+       Length = " 0.261653"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.388622, 0.007289, 1.231604"
+       Tail = "-0.639495,-0.031628, 1.105820"
+       Name = "joint_lowerarm_R"
+       Length = " 0.283326"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.639495,-0.031628, 1.105820"
+       Tail = "-0.668815,-0.036023, 1.084616"
+       Name = "joint_hand_R"
+       Length = " 0.036450"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.648383,-0.048457, 1.093057"
+       Tail = "-0.654779,-0.083886, 1.071611"
+       Name = "joint_thumb01_R"
+       Length = " 0.041905"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.654779,-0.083886, 1.071611"
+       Tail = "-0.663103,-0.115683, 1.056041"
+       Name = "joint_thumb02_R"
+       Length = " 0.036370"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.663103,-0.115683, 1.056041"
+       Tail = "-0.673655,-0.135952, 1.032240"
+       Name = "joint_thumb03_R"
+       Length = " 0.032995"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.668815,-0.036023, 1.084616"
+       Tail = "-0.705997,-0.071260, 1.062336"
+       Name = "joint_index00_R"
+       Length = " 0.055862"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.705997,-0.071260, 1.062336"
+       Tail = "-0.728114,-0.074670, 1.033587"
+       Name = "joint_index01_R"
+       Length = " 0.036432"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.728114,-0.074670, 1.033587"
+       Tail = "-0.745421,-0.075576, 1.017268"
+       Name = "joint_index02_R"
+       Length = " 0.023805"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.745421,-0.075576, 1.017268"
+       Tail = "-0.759287,-0.076117, 0.998459"
+       Name = "joint_index03_R"
+       Length = " 0.023374"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.668815,-0.036023, 1.084616"
+       Tail = "-0.707426,-0.051626, 1.062987"
+       Name = "joint_middle00_R"
+       Length = " 0.046926"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.707426,-0.051626, 1.062987"
+       Tail = "-0.731826,-0.054067, 1.031067"
+       Name = "joint_middle01_R"
+       Length = " 0.040252"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.731826,-0.054067, 1.031067"
+       Tail = "-0.752407,-0.054917, 1.011245"
+       Name = "joint_middle02_R"
+       Length = " 0.028587"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.752407,-0.054917, 1.011245"
+       Tail = "-0.769848,-0.056327, 0.989544"
+       Name = "joint_middle03_R"
+       Length = " 0.027877"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.668815,-0.036023, 1.084616"
+       Tail = "-0.704138,-0.031043, 1.063006"
+       Name = "joint_ring00_R"
+       Length = " 0.041707"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.704138,-0.031043, 1.063006"
+       Tail = "-0.729764,-0.032158, 1.033048"
+       Name = "joint_ring01_R"
+       Length = " 0.039439"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.729764,-0.032158, 1.033048"
+       Tail = "-0.749571,-0.033951, 1.014651"
+       Name = "joint_ring02_R"
+       Length = " 0.027092"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.749571,-0.033951, 1.014651"
+       Tail = "-0.765738,-0.035505, 0.994696"
+       Name = "joint_ring03_R"
+       Length = " 0.025729"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.668815,-0.036023, 1.084616"
+       Tail = "-0.697762,-0.011361, 1.060710"
+       Name = "joint_pinky00_R"
+       Length = " 0.044918"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.697762,-0.011361, 1.060710"
+       Tail = "-0.719070,-0.011167, 1.036705"
+       Name = "joint_pinky01_R"
+       Length = " 0.032099"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.719070,-0.011167, 1.036705"
+       Tail = "-0.733651,-0.011657, 1.023538"
+       Name = "joint_pinky02_R"
+       Length = " 0.019652"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.733651,-0.011657, 1.023538"
+       Tail = "-0.744801,-0.012871, 1.009019"
+       Name = "joint_pinky03_R"
+       Length = " 0.018347"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.388622, 0.007289, 1.231604"
+       Tail = "-0.509304,-0.030957, 1.172559"
+       Name = "joint_lowerarm_twist_R"
+       Length = " 0.139689"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.171405, 0.009795, 1.377456"
+       Tail = "-0.277770,-0.009960, 1.310599"
+       Name = "joint_upperarm_twist_R"
+       Length = " 0.127176"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.000000, 0.001724, 1.463121"
+       Tail = "-0.000001,-0.060443, 1.541921"
+       Name = "joint_neck"
+       Length = " 0.100371"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+    <joint
+       Position = "-0.000001,-0.060443, 1.541921"
+       Tail = " 0.000000,-0.078090, 1.705036"
+       Name = "joint_head"
+       Length = " 0.164067"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000" />
+  </armature>
+</p3dfile>

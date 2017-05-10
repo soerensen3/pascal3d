@@ -28,9 +28,9 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
-      procedure Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
+      procedure Paint(); override;
       procedure MouseMove(X, Y: Integer); override;
-      procedure MouseWheel(delta: Integer); override;
+      procedure MouseWheel( deltax, deltay: Integer); override;
       procedure KeyboardAction; override;
       destructor Destroy; override;
       procedure PushVPClientRect; virtual;
@@ -148,11 +148,11 @@ begin
                      Round( ClientRect.Width ), Round( ClientRect.Height ));
 end;
 
-procedure TP3DSceneViewer.Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
+procedure TP3DSceneViewer.Paint();
 var
   txt: TP3DTextBmp;
 begin
-  inherited Paint(BaseColor, ScrollAcc, ClipRect);
+  inherited Paint();
   //Canvas.Lock;
   PushVPClientRect;
 
@@ -218,14 +218,14 @@ begin
     end;
 end;
 
-procedure TP3DSceneViewer.MouseWheel(delta: Integer);
+procedure TP3DSceneViewer.MouseWheel(deltax, deltay: Integer);
 begin
-  inherited MouseWheel(delta);
+  inherited MouseWheel( deltax, deltay );
   if ( OrbitCamera and ( gcisMouseOver in InputState )) then
     if ( FCam.IsIsometric ) then
-      FCam.IsoZoom:= Max( 0.1, FCam.IsoZoom - delta * 0.1 )
+      FCam.IsoZoom:= Max( 0.1, FCam.IsoZoom - deltay * 0.1 )
     else
-      OrbitDistance:= Max( 0.1, OrbitDistance - delta * 1 );
+      OrbitDistance:= Max( 0.1, OrbitDistance - deltay * 1 );
 end;
 
 procedure TP3DSceneViewer.KeyboardAction;

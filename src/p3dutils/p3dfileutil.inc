@@ -72,10 +72,25 @@ type
       property BaseDir: String read FBaseDir write SetBaseDir;
   end;
 
+  { TP3DPropertyAccessFileWatch }
+
+  TP3DPropertyAccessFileWatch = class( specialize gP3DPropertyAccess < TP3DFileWatch >)
+    private
+      FAbsolutePaths: Boolean;
+
+    published
+      function GetAsString: String; override;
+      procedure SetAsString(AValue: String); override;
+      property AbsolutePaths: Boolean read FAbsolutePaths write FAbsolutePaths;
+      function GetDefaultValue: TP3DFileWatch; override;
+  end;
+
   function P3DListFolderFiles( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
   function P3DListFolderDirectories( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
   procedure P3DLoadConfig( FileName: String );
   function P3DMatchFileName( FileName: String; Mask: String ): Boolean;
+
+
 
 {$ENDIF}
 
@@ -658,6 +673,28 @@ procedure TP3DSearchPathContainer.SetBaseDir(AValue: String);
 begin
   if FBaseDir= AValue then Exit;
   FBaseDir:= AppendPathDelim( ExpandFileName( AValue ));
+end;
+
+{ TP3DPropertyAccessFileWatch }
+
+function TP3DPropertyAccessFileWatch.GetAsString: String;
+begin
+  if ( Assigned( Value )) then
+    if ( AbsolutePaths ) then
+      Result:= Value.FileName
+    else
+      Result:= ExtractRelativepath( AppendPathDelim( GetCurrentDir()), Value.FileName );
+end;
+
+procedure TP3DPropertyAccessFileWatch.SetAsString(AValue: String);
+begin
+  if ( Assigned( Value )) then
+    Value.FileName:= AValue;
+end;
+
+function TP3DPropertyAccessFileWatch.GetDefaultValue: TP3DFileWatch;
+begin
+  Result:= nil;
 end;
 
 

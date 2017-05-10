@@ -16,11 +16,13 @@ type
       FMatrixInv: TMat4;
       FQuaternion: TQuaternion;
       FPosition: TVec3;
+      FTail: TVec3;
 
       function GetDOMPath: String; override;
       procedure SetArmature(AValue: TP3DArmature);
       procedure SetQuaternion(AValue: TQuaternion);
       procedure SetPosition(AValue: TVec3);
+      procedure SetTail(AValue: TVec3);
       procedure UpdateMatrix;
 
     public
@@ -37,9 +39,10 @@ type
       property Position: TVec3 read FPosition write SetPosition;
       property Matrix: TMat4 read FMatrix;
       property MatrixInv: TMat4 read FMatrixInv;
+      property Tail: TVec3 read FTail write SetTail;
 
     published
-      property Length: Float read FLength write FLength;
+      property Length: Float read FLength;
   end;
 
   TP3DPropertyAccessJoint = specialize gP3DPropertyAccessDataBlock < TP3DJoint >;
@@ -57,7 +60,7 @@ type
       property Armature: TP3DArmature read FArmature write FArmature;
   end;
 
-  TP3DPropertyAccessJointList = specialize gP3DListPropertyAccess < TP3DJointList, TP3DJoint >;
+  TP3DPropertyAccessJointList = specialize gP3DListPropertyAccess < TP3DJointList, TP3DJoint, TP3DPropertyAccessJoint >;
 
   TP3DArmatureTransformMethod = ( atmMatrix, atmDualQuaternion );
 
@@ -98,6 +101,8 @@ type
 
   TP3DArmatureList = specialize gP3DCustomDatablockList < TP3DArmature >;
   TP3DPropertyAccessArmature = specialize gP3DPropertyAccessDataBlock < TP3DArmature >;
+  TP3DPropertyAccessArmatureList = specialize gP3DListPropertyAccess < TP3DArmatureList, TP3DArmature, TP3DPropertyAccessArmature >;
+
 
 
   { TP3DMaterialModifierArmature }
@@ -345,6 +350,13 @@ begin
   UpdateMatrix;
 end;
 
+procedure TP3DJoint.SetTail(AValue: TVec3);
+begin
+  if FTail=AValue then Exit;
+  FTail:=AValue;
+  FLength:= len( Tail - Position );
+end;
+
 procedure TP3DJoint.UpdateMatrix;
 begin
   FMatrix:= mat4( mat3( Quaternion )) * mat4translate( vec4( Position, 1 ));
@@ -358,6 +370,7 @@ begin
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Length', smAttribute ));
   Properties.Add( TP3DPropertyAccessVec3.CreateFieldSet( 'Position', @FPosition, @SetPosition, smAttribute ));
   Properties.Add( TP3DPropertyAccessQuat.CreateFieldSet( 'Quaternion', @Quaternion, @SetQuaternion, smAttribute ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateFieldSet( 'Tail', @FTail, @SetTail, smAttribute ));
 end;
 
 constructor TP3DJoint.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);

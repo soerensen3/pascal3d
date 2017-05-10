@@ -22,22 +22,26 @@
        = class ( TInterfacedPersistent, specialize IP3DEnumeratorClass < TCustomItem >)
       private type
         TMoveNext = function ( var Index: Integer ): TCustomItem of object;
+        TEnumClass = specialize gP3DCustomListEnumeratorClass < TCustomItem >;
 
       private
         FCurrent: TCustomItem;
         FCurrentIdx: Integer;
         FMoveNext: TMoveNext;
+        FStartIndex: Integer;
 
         function GetCurrent(): TCustomItem;
         procedure Reset();
 
       public
-        constructor Create( AMoveNext: TMoveNext );
+        constructor Create( AStartIndex: Integer; AMoveNext: TMoveNext );
 
         function MoveNext: Boolean;
+        function GetEnumerator: TEnumClass;
 
         property Current: TCustomItem read GetCurrent;
         property CurrentIdx: Integer read FCurrentIdx;
+        property StartIndex: Integer read FStartIndex;
     end;
 
     { gP3DCustomObjectList }
@@ -56,6 +60,7 @@
         procedure SetCount( AValue: Integer );
         function GetItem( Index: Integer ): TCustomItem;
         function MoveNext( var Index: Integer ): TCustomItem;
+        function MoveBack( var Index: Integer ): TCustomItem;
         procedure SetItem( Index: Integer ; AValue: TCustomItem);
         procedure DoChange; virtual;
 
@@ -69,6 +74,7 @@
         function IndexOf( Item: TCustomItem ): Integer; virtual;
         procedure Clear( const FreeObjects: Boolean = False ); virtual;
         function GetEnumerator: TP3DCustomObjectListEnumeratorClass;
+        function Reversed(): TP3DCustomObjectListEnumeratorClass;
         //IP3DEnumerator.GetEnumerator = GetEnumerator;
         procedure Insert( Index: Integer; Item: TCustomItem );
 
@@ -182,6 +188,8 @@ end;
 
 function gP3DCustomObjectList.GetItem(Index: Integer): TCustomItem;
 begin
+  if ( Index < 0 ) then
+    Index:= Count + Index;
   if (( Index < Count ) and ( Index > -1 )) then
     Result:= TCustomItem( FItems[ Index ])
   else
@@ -247,13 +255,27 @@ end;
 
 function gP3DCustomObjectList.GetEnumerator: TP3DCustomObjectListEnumeratorClass;
 begin
-  Result:= TP3DCustomObjectListEnumeratorClass.Create( @MoveNext );
+  Result:= TP3DCustomObjectListEnumeratorClass.Create( -1, @MoveNext );
+end;
+
+function gP3DCustomObjectList.Reversed: TP3DCustomObjectListEnumeratorClass;
+begin
+  Result:= TP3DCustomObjectListEnumeratorClass.Create( Count, @MoveBack );
 end;
 
 function gP3DCustomObjectList.MoveNext( var Index: Integer ): TCustomItem;
 begin
   Inc( Index );
   if ( Index < Count ) then
+    Result:= Items[ Index ]
+  else
+    Result:= nil;
+end;
+
+function gP3DCustomObjectList.MoveBack(var Index: Integer): TCustomItem;
+begin
+  Dec( Index );
+  if ( Index > -1 ) then
     Result:= Items[ Index ]
   else
     Result:= nil;
@@ -284,13 +306,15 @@ end;
 procedure gP3DCustomListEnumeratorClass.Reset;
 begin
   FCurrent:= nil;
-  FCurrentIdx:= -1;
+  FCurrentIdx:= StartIndex;
 end;
 
-constructor gP3DCustomListEnumeratorClass.Create( AMoveNext: TMoveNext );
+constructor gP3DCustomListEnumeratorClass.Create(AStartIndex: Integer;
+  AMoveNext: TMoveNext);
 begin
   inherited Create;
-  FCurrentIdx:= -1;
+  FStartIndex:= AStartIndex;
+  FCurrentIdx:= AStartIndex;
   FCurrent:= nil;
   FMoveNext:= AMoveNext;
 end;
@@ -299,6 +323,11 @@ function gP3DCustomListEnumeratorClass.MoveNext: Boolean;
 begin
   FCurrent:= FMoveNext( FCurrentIdx );
   Result:= FCurrent <> nil; //Assigned( FCurrent );
+end;
+
+function gP3DCustomListEnumeratorClass.GetEnumerator: TEnumClass;
+begin
+  Result:= Self;
 end;
 
 { gP3DCustomList }

@@ -42,40 +42,19 @@ type
 
   TP3DActorCollision = ( acNone, acBox, acSphere, acDataBlock );
 
-  TP3DActor = class ( TP3DDataBlock, IP3DTransform )
+  TP3DActor = class ( specialize gP3DTransform < TP3DDataBlock>, IP3DTransform )
     private
       FChildren: TP3DActorList;
       FCollision: TP3DActorCollision;
       FData: TP3DDataBlock;
       FMatrixFinal: TMat4;
       FParent: TP3DDataBlock;
-      FPosition: TVec3;
-      FQuaternion: TQuaternion;
-      FRotation: TVec3;
-      FScale: TVec3;
       FScene: TP3DScene;
       FVisible: Boolean;
-      FMatrix: TMat4;
-      FRotationOrder: TRotationOrder;
 
-      function GetDirection: TVec3;
-      function GetMatrix: TMat4;
-      function GetPosition: TVec3;
-      function GetQuaternion: TQuaternion;
-      function GetRotation: TVec3;
-      function GetRotationOrder: TRotationOrder;
-      function GetScale: TVec3;
       procedure SetData( AValue: TP3DDataBlock );
-      procedure SetMatrix( AValue: TMat4 );
-      procedure SetPosition( AValue: TVec3 );
-      procedure SetQuaternion( AValue: TQuaternion );
-      procedure SetRotation( AValue: TVec3 );
-      procedure SetRotationOrder( AValue: TRotationOrder );
-      procedure SetScale( AValue: TVec3 );
       procedure SetScene( AValue: TP3DScene );
       //property AABB;
-      procedure UpdateMatrix;
-      procedure UpdateEuler;
       function GetDOMPath: String; override;
       procedure OnObjChange( Sender: TPersistent; Item: TP3DActor; AAction: TP3DCustomListOnChangeAction );
 
@@ -90,15 +69,10 @@ type
       procedure Render( world: TMat4; Scene: TP3DScene ); reintroduce;
       procedure RenderCallbackOnly( world: TMat4; Scene: TP3DScene ); reintroduce;
       function  CalcAABB(): TP3DAABB; override;
-      function CalcSphere: TP3DSphere; override;
+      function  CalcSphere: TP3DSphere; override;
       procedure RemoveFromFields( Block: TP3DDataBlock ); override;
       function  CastRay( Orig, Dir: TVec3; out HitPos: TVec3 ): Boolean; reintroduce;
       procedure ClearFields(); override;
-
-      procedure MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
-      procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
-      procedure RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
-      procedure RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
 
       function CollideActor( SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor; out Intersect: TVec3; out N: TVec3 ): Boolean;
       function CollideSphere( Mat: TMat4; ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3 ): Boolean; override;
@@ -107,14 +81,6 @@ type
 
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags ); override;
       class function DOMNodeName: String; override;
-
-      property Position: TVec3 read FPosition write SetPosition;
-      property Direction: TVec3 read GetDirection;
-      property Rotation: TVec3 read FRotation write SetRotation;
-      property Scale: TVec3 read FScale write SetScale;
-      property Matrix: TMat4 read FMatrix write SetMatrix;
-      property MatrixFinal: TMat4 read FMatrixFinal;
-      property Quaternion: TQuaternion read FQuaternion write SetQuaternion;
 
     published
       property Children: TP3DActorList read FChildren;
@@ -149,24 +115,13 @@ type
       property Owner: TPersistent read FOwner write FOwner;
   end;
 
-  TP3DPropertyAccessActorList = specialize gP3DListPropertyAccess < TP3DActorList, TP3DActor >;
+  TP3DPropertyAccessActorList = specialize gP3DListPropertyAccess < TP3DActorList, TP3DActor, TP3DPropertyAccessActor >;
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
 { TP3DActor }
-
-procedure TP3DActor.UpdateMatrix;
-begin
-  FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
-  FAABB:= CalcAABB();
-end;
-
-procedure TP3DActor.UpdateEuler;
-begin
-  FRotation:= QuatToEuler( Quaternion, deg2rad * Rotation, RotationOrder ) / deg2rad;
-end;
 
 function TP3DActor.GetDOMPath: String;
 begin
@@ -199,89 +154,6 @@ begin
     FData.AddUser( Self );
 end;
 
-procedure TP3DActor.SetMatrix(AValue: TMat4);
-begin
-  if FMatrix= AValue then Exit;
-  FMatrix:= AValue;
-  FPosition:= vec3( Matrix._30, Matrix._31, Matrix._32 );
-  FRotation:= MatToEuler( mat3( AValue ), deg2rad * Rotation, RotationOrder ) / deg2rad;
-  FQuaternion:= EulerToQuat( Rotation * deg2rad, RotationOrder );
-  FScale:= mat3toScale( mat3( FMatrix ));
-end;
-
-
-function TP3DActor.GetDirection: TVec3;
-begin
-  Result:= Matrix.Row[ 2 ].xyz;//vec3( Matrix._20, Matrix._21, Matrix._22 );
-end;
-
-function TP3DActor.GetMatrix: TMat4;
-begin
-  Result:= FMatrix;
-end;
-
-function TP3DActor.GetPosition: TVec3;
-begin
-  Result:= FPosition;
-end;
-
-function TP3DActor.GetQuaternion: TQuaternion;
-begin
-  Result:= FQuaternion;
-end;
-
-function TP3DActor.GetRotation: TVec3;
-begin
-  Result:= FRotation;
-end;
-
-function TP3DActor.GetRotationOrder: TRotationOrder;
-begin
-  Result:= FRotationOrder;
-end;
-
-function TP3DActor.GetScale: TVec3;
-begin
-  Result:= FScale;
-end;
-
-procedure TP3DActor.SetPosition(AValue: TVec3);
-begin
-  if FPosition=AValue then Exit;
-  FPosition:= AValue;
-  UpdateMatrix;
-end;
-
-procedure TP3DActor.SetQuaternion(AValue: TQuaternion);
-begin
-  if ( FQuaternion = AValue ) then Exit;
-  FQuaternion:= AValue;
-  UpdateMatrix;
-  UpdateEuler;
-end;
-
-procedure TP3DActor.SetRotation(AValue: TVec3);
-begin
-  if FRotation=AValue then Exit;
-  FRotation:=AValue;
-  FQuaternion:= EulerToQuat( AValue * deg2rad, RotationOrder );
-  UpdateMatrix;
-end;
-
-procedure TP3DActor.SetRotationOrder(AValue: TRotationOrder);
-begin
-  FRotationOrder:= AValue;
-  FQuaternion:= EulerToQuat( Rotation * deg2rad, RotationOrder );
-  UpdateMatrix;
-end;
-
-procedure TP3DActor.SetScale(AValue: TVec3);
-begin
-  if ( FScale = AValue ) then Exit;
-  FScale:= AValue;
-  UpdateMatrix;
-end;
-
 procedure TP3DActor.SetScene( AValue: TP3DScene );
 begin
   if ( FScene = AValue ) then
@@ -305,6 +177,7 @@ begin
   FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
+
   Properties.Add([ TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ),
                    TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
                    TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ),
@@ -487,26 +360,6 @@ begin
   inherited ClearFields;
 end;
 
-
-procedure TP3DActor.MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
-begin
-  Position:= Position + AAxis * AValue;
-end;
-
-procedure TP3DActor.MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
-begin
-  Position:= Position + ( Quaternion * AAxis ) * AValue; //( Matrix[ 0 ].XYZ * AAxis.X + Matrix[ 1 ].XYZ * AAxis.Y + Matrix[ 2 ].XYZ * AAxis.Z ) * AValue;
-end;
-
-procedure TP3DActor.RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
-begin
-  Quaternion:= Quaternion * quatRotation( AAxis, AValue );
-end;
-
-procedure TP3DActor.RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
-begin
-  //TODO: TP3DActor.RotateAroundLocalAxis
-end;
 
 function TP3DActor.CollideActor(SelfMat: TMat4; ActMat: TMat4; AActor: TP3DActor; out Intersect: TVec3; out N: TVec3): Boolean;
 var

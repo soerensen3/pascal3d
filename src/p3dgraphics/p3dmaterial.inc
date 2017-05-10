@@ -35,6 +35,8 @@
          property Name: String read GetName;
      end;
 
+     TP3DPropertyAccessMaterialMap = specialize gP3DPropertyAccessInterfacedPersistent < TP3DMaterialMap >;
+
      TP3DMaterialMapClass = class of TP3DMaterialMap;
 
      TP3DMaterialBase = class;
@@ -45,7 +47,7 @@
 
      { TP3DMaterialMapBase }
 
-     TP3DMaterialMapBase = class ( TP3DMaterialMap )
+     TP3DMaterialMapBase = class ( specialize gP3DTransform < TP3DMaterialMap >)
        private
          FAlphaFactor: Single;
          FDiffuseFactor: Single;
@@ -53,7 +55,6 @@
          FMode: TP3DMapMode;
          FNormalFactor: Single;
          FSpecularFactor: Single;
-         FTransform: TMat4;
          FTransformDynamic: Boolean;
 
          procedure LoadTransformFromDOM(DOM: TDOMElement);
@@ -65,14 +66,12 @@
          procedure SetNormalFactor(AValue: Single);
          procedure SetSpecularFactor(AValue: Single);
          procedure SetTexChannel(AValue: Integer); override;
+         procedure SetTransformDynamic( AValue: Boolean );
 
        public
          constructor Create( AParentMaterial: TP3DMaterial ); override;
          constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary = nil );
          procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
-
-         property Transform: TMat4 read FTransform write FTransform;
-         property TransformDynamic: Boolean read FTransformDynamic write FTransformDynamic;
 
        published
          property DiffuseFactor: Single read FDiffuseFactor write SetDiffuseFactor;
@@ -81,26 +80,26 @@
          property SpecularFactor: Single read FSpecularFactor write SetSpecularFactor;
          property DisplaceFactor: Single read FDisplaceFactor write SetDisplaceFactor;
          property Mode: TP3DMapMode read FMode write SetMode;
+         property TransformDynamic: Boolean read FTransformDynamic write SetTransformDynamic;
      end;
 
      { TP3DMaterialMapList }
 
-     TP3DMaterialMapList = class( specialize gP3DCustomObjectList < TP3DMaterialMap >)
+     TP3DMaterialMapList = class( specialize gP3DInterfacedPersistentList < TP3DMaterialMap >)
        private
          FMapClass: TP3DMaterialMapClass;
          FParentMaterial: TP3DMaterial;
 
        public
          constructor Create( AParentMaterial: TP3DMaterial );
-         procedure SaveToDOM( AParent: TDOMElement );
-         procedure LoadFromDOM( ADOMNode: TDOMElement );
+         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
 
          property MapClass: TP3DMaterialMapClass read FMapClass write FMapClass;
          property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
          //needs map class
      end;
 
-     TP3DPropertyAccessMaterialMapList = specialize gP3DListPropertyAccess < TP3DMaterialMapList, TP3DMaterialMap >;
+     TP3DPropertyAccessMaterialMapList = specialize gP3DListPropertyAccess < TP3DMaterialMapList, TP3DMaterialMap, TP3DPropertyAccessMaterialMap >;
 
 
      TP3DMaterial = class ( TP3DDataBlock )
@@ -130,7 +129,10 @@
          property HasTransparency: Boolean read GetHasTransparency;
      end;
 
+     TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
+
      TP3DPropertyAccessMaterial = specialize gP3DPropertyAccessDataBlock < TP3DMaterial >;
+     TP3DPropertyAccessMaterialList = specialize gP3DListPropertyAccess < TP3DMaterialList, TP3DMaterial, TP3DPropertyAccessMaterial >;
 
      { TP3DMaterialShader }
 
@@ -247,10 +249,10 @@
        private
          FAlpha: Single;
          FAlphaThreshhold: Single;
-         FDiff: TVec3;
+         FDiff: TP3DColorRGB;
          FInstancing: Boolean;
          FModifiers: TP3DMaterialModifierList;
-         FSpec: TVec3;
+         FSpec: TP3DColorRGB;
          FSpec_Hardness: Single;
          FTransparencyMode: TP3DMapTransparencyMode;
          FUnlit: Boolean;
@@ -278,8 +280,8 @@
          procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
          class function DOMNodeName: String; override;
 
-         property Diff: TVec3 read FDiff write FDiff;
-         property Spec: TVec3 read FSpec write FSpec;
+         property Diff: TP3DColorRGB read FDiff write FDiff;
+         property Spec: TP3DColorRGB read FSpec write FSpec;
 
        published
          property Spec_Hardness: Single read FSpec_Hardness write SetSpec_Hardness;
@@ -292,7 +294,7 @@
          property AlphaThreshhold: Single read FAlphaThreshhold write SetAlphaThreshhold;
      end;
 
-     TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
+
 
   var
     P3DMaterialActive: TP3DMaterial = nil;
@@ -442,6 +444,14 @@ begin
   TP3DMaterialBase( ParentMaterial ).BuildShader();
 end;
 
+procedure TP3DMaterialMapBase.SetTransformDynamic( AValue: Boolean );
+begin
+  if ( FTransformDynamic = AValue ) then exit;
+  FTransformDynamic:= AValue;
+  TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
+
 constructor TP3DMaterialMapBase.Create( AParentMaterial: TP3DMaterial );
 begin
   inherited Create( AParentMaterial );
@@ -449,7 +459,8 @@ begin
   FNormalFactor:= 0.0;
   FSpecularFactor:= 0.0;
   FMode:= mapMix;
-  FTransform:= Mat4Identity;
+  FQuaternion:= quat( 0, 0, 0, 1 );
+  Matrix:= mat4Identity;
   Properties.Context:= AParentMaterial;
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DiffuseFactor', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'NormalFactor', smAttribute ));
@@ -457,29 +468,37 @@ begin
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DisplaceFactor', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaFactor', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Mode', smAttribute ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TransformDynamic', smAttribute ));
+  Properties.Add([ TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ),
+                   TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
+                   TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ),
+                   TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ),
+                   TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ),
+                   TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute )],
+                   'Transform' );
 end;
 
 procedure TP3DMaterialMapBase.LoadTransformFromDOM( DOM: TDOMElement );
-var
-  Position, Scale: TVec3;
-  Quaternion: TQuaternion;
+//var
+//  Position, Scale: TVec3;
+//  Quaternion: TQuaternion;
 begin
   Position.FromString( DOM.GetAttribute( 'position' ));
-  //Quaternion.FromString( DOM.GetAttribute( 'quaternion' ));
   //Quaternion:= quat( 1 );
+  Quaternion.FromString( DOM.GetAttribute( 'quaternion' ));
   Scale.FromString( DOM.GetAttribute( 'scale' ));
-  Transform:= mat4translate( vec4( Position, 1 )){ * mat4( mat3( Quaternion ))} * mat4scale( vec4( Scale, 1 ));
+//  Transform:= mat4translate( vec4( Position, 1 )){ * mat4( mat3( Quaternion ))} * mat4scale( vec4( Scale, 1 ));
 end;
 
 procedure TP3DMaterialMapBase.LoadTransformFromDOMNew(DOM: TDOMElement);
-var
-  Position, Scale: TVec3;
-  Quaternion: TQuaternion;
+//var
+  //Position, Scale: TVec3;
+  //Quaternion: TQuaternion;
 begin
   Position.FromString( DOM.GetAttribute( 'Position' ));
   Quaternion.FromString( DOM.GetAttribute( 'Quaternion' ));
   Scale.FromString( DOM.GetAttribute( 'Scale' ));
-  Transform:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
+  //Transform:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
 end;
 
 constructor TP3DMaterialMapBase.CreateFromDOM(AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary);
@@ -637,8 +656,8 @@ begin
   Modifiers.Add( TP3DMaterialModifierTransform.Create );
   Modifiers.Add( TP3DMaterialModifierCombine.Create );
 
-  Properties.Add( TP3DPropertyAccessVec3.CreateField( 'Diff', @FDiff, smAttribute ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateField( 'Spec', @FSpec, smAttribute ));
+  Properties.Add( TP3DPropertyAccessColorRGB.CreateField( 'Diff', @FDiff, smAttribute ));
+  Properties.Add( TP3DPropertyAccessColorRGB.CreateField( 'Spec', @FSpec, smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Unlit', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Alpha', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'AlphaThreshhold', smAttribute ));
@@ -891,10 +910,10 @@ begin
       if ( Maps[ i ] is TP3DMaterialMapBase ) then
         with ( Maps[ i ] as TP3DMaterialMapBase ) do
           if ( TransformDynamic ) then
-            ChangeSocketValueInt( ShaderTree.AddCopyEx( '00050_map_texcoord_transform_dynamic' ), 'TexCoordIndex', i )
+            ChangeSocketValueInt( ShaderTree.AddCopyEx( '00050_map_texcoord_transform_dynamic' ), 'MapIndex', i )
           else
-            ChangeSocketValueMat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00050_map_texcoord_transform_fixed' ), 'TexCoordIndex', i ),
-              'Transform', Transform );
+            ChangeSocketValueMat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00050_map_texcoord_transform_fixed' ), 'MapIndex', i ),
+              'Transform', Matrix );
 end;
 
 procedure TP3DMaterialModifierTexTransform.PassToShader(Material: TP3DMaterialBase);
@@ -908,7 +927,7 @@ begin
         begin
           if ( P3DShaderActive.Uniforms.FindByName( 'TexMat' + IntToStr( i ), decl )) then
             begin
-              decl.AsMat4:= TP3DMaterialMapBase( Maps[ i ]).FTransform;
+              decl.AsMat4:= TP3DMaterialMapBase( Maps[ i ]).Matrix;
             end;
         end;
 
@@ -1017,8 +1036,8 @@ begin
   with ( Material ) do
     for i:= 0 to Maps.Count - 1 do
       begin
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00100_map_pass_read_frag' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00100_map_pass_read_vert' ), 'Index', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
+        ChangeSocketValueInt( ShaderTree.AddCopyEx( '00100_map_pass_read_frag' ), 'Index', i );
+        ChangeSocketValueInt( ShaderTree.AddCopyEx( '00100_map_pass_read_vert' ), 'Index', i );
         if (( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor <> 0 ) or ( TP3DMaterialMapBase( Maps[ i ]).AlphaFactor <> 0 )) then
           ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
                          'Alpha', TP3DMaterialMapBase( Maps[ i ]).AlphaFactor ),
@@ -1353,14 +1372,6 @@ constructor TP3DMaterialMapList.Create(AParentMaterial: TP3DMaterial);
 begin
   inherited Create;
   ParentMaterial:= AParentMaterial;
-end;
-
-procedure TP3DMaterialMapList.SaveToDOM( AParent: TDOMElement );
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    Items[ i ].SaveToDOM( AParent );
 end;
 
 procedure TP3DMaterialMapList.LoadFromDOM(ADOMNode: TDOMElement);

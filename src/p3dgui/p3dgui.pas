@@ -8,7 +8,7 @@
 // ##################################
 {$mode objfpc}
 
-{.$DEFINE DEBUG_GUI}
+{$DEFINE DEBUG_GUI}
 
 unit p3dgui;
 
@@ -40,6 +40,8 @@ interface
 
 
     TP3DControlAlign = ( alNone, alLeft, alRight, alClient, alTop, alBottom );
+    TP3DPageMode = ( pmScroll, pmStretch, pmExpand );
+
 
   {$DEFINE INTERFACE}
   {$INCLUDE p3dgui_colors.inc}

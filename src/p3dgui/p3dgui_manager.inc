@@ -70,6 +70,7 @@ begin
   Controls:= TP3DControlList.Create( nil );
   ScreenCanvas:= TP3DCanvas2D.Create( nil );
   ScreenCanvas.Font.Size:= 48;
+  UpdateExtents;
   Cursor:= curArrow;
   CursorOverride:= curArrow;
 end;
@@ -128,7 +129,7 @@ end;
 procedure TP3DGUIManager.Input;
 begin
   if ( Controls.NeedsUpdate ) then
-    Controls.CalculateDimensions( ScreenCanvas.Rect );
+    Controls.UpdateControls;
   Controls.Input;
 end;
 
@@ -140,7 +141,7 @@ begin
   if (( ScreenCanvas.Width <> P3DViewports.Screen.Width ) or
       ( ScreenCanvas.Height <> P3DViewports.Screen.Height )) then
     UpdateExtents;
-  Controls.Render( vec4( 1 ), vec2( 0 ), P3DRect( ScreenCanvas.Left, ScreenCanvas.Top, ScreenCanvas.Width, ScreenCanvas.Height ));
+  Controls.Render();
 
   {$IFDEF DEBUG_GUI}
   if ( Assigned( DebugText )) then
@@ -219,7 +220,8 @@ begin
   ScreenCanvas.Width:= P3DViewports.Screen.Width;
   ScreenCanvas.Height:= P3DViewports.Screen.Height;
 
-  Controls.CalculateDimensions( ScreenCanvas.Rect );
+  Controls.ClipRect:= ScreenCanvas.Rect;
+  Controls.PageRect:= ScreenCanvas.Rect;
 end;
 
 {$ENDIF}

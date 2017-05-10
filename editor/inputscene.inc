@@ -118,6 +118,11 @@ begin
       for i:= 0 to P3DData.Libraries.Count - 1 do
         UpdateMaterials( P3DData.Libraries[ i ]);
     end;
+  if ( Event.keysym.scancode = SDL_SCANCODE_LALT ) then
+    begin
+      OIPanel.ObjectInspector.Obj:= P3DGUIManager.Controls.MouseRay( P3DInput.Mouse.X, P3DInput.Mouse.Y, True );
+    end;
+
 end;
 
 

@@ -1,0 +1,266 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Scale = " 4.000000, 4.000000, 4.000000"
+       Data = "/mesh_Grid"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Grid"
+       Position = " 0.000000, 0.000000, 0.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 4.000000, 4.000000, 4.000000"
+       Data = "/mesh_Plane.001"
+       Action = "/action_Action"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Plane.001"
+       Position = " 0.000000, 0.000000, 0.060920"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Data = "/lamp_Lamp"
+       Quaternion = " 0.417372,-0.114632, 0.795168, 0.424698"
+       Collision = "acNone"
+       Name = "Lamp"
+       Position = " 4.076245,-5.096421, 5.791896"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       Collision = "acNone"
+       Name = "Camera"
+       Position = " 7.481132,-6.507640, 5.343665" />
+  </scene>
+  <mesh
+     Tangents = "small world 2.p3dbin:1340920"
+     Positions = "small world 2.p3dbin:0"
+     VertexWeights = "small world 2.p3dbin:120004"
+     TexCoords0 = "small world 2.p3dbin:1027284"
+     Loops = "small world 2.p3dbin:870464"
+     Normals = "small world 2.p3dbin:400012"
+     Cotangents = "small world 2.p3dbin:1811372"
+     Name = "mesh_Grid"
+     VertexWeightIndices = "small world 2.p3dbin:240008"
+     Faces = "small world 2.p3dbin:2281824">
+    <weightgroup
+       Name = "Group"
+       Index = "0" />
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.005"
+       PolyEnd = "9800" />
+  </mesh>
+  <mesh
+     Tangents = "small world 2.p3dbin:2321192"
+     Positions = "small world 2.p3dbin:2321032"
+     TexCoords0 = "small world 2.p3dbin:2321156"
+     Loops = "small world 2.p3dbin:2321136"
+     Normals = "small world 2.p3dbin:2321084"
+     Cotangents = "small world 2.p3dbin:2321244"
+     Name = "mesh_Plane.001"
+     Faces = "small world 2.p3dbin:2321296">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "0" />
+  </mesh>
+  <light
+     Name = "lamp_Lamp"
+     LightType = "ltSun"
+     Energy = "5.0"
+     Color = "1.000000, 1.000000, 1.000000" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "4.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.026316, 0.026316, 0.026316"
+     Instancing = "1"
+     Name = "material_Material.005"
+     Diff = "0.800000, 0.800000, 0.800000">
+    <map
+       NormalFactor = "1.0"
+       Data = "/tex_Texture.005"
+       Mode = "mapMix"
+       DiffuseFactor = "0.0" />
+    <map
+       Data = "/tex_Diffuse Color"
+       Mode = "mapMix"
+       DiffuseFactor = "1.0" />
+    <map
+       NormalFactor = "0.2999997138977051"
+       Data = "/tex_Texture.006"
+       Mode = "mapMix"
+       DiffuseFactor = "0.0">
+      <transform
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Scale = "10.000000,10.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000" />
+    </map>
+  </materialbase>
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "511.000000"
+     TransparencyMode = "p3dmMultiply"
+     Action = "/action_MaterialAction"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material"
+     Diff = "0.586741, 0.599803, 0.640000">
+    <map
+       NormalFactor = "0.4000000059604645"
+       TexChannel = "0"
+       Data = "/tex_Texture.002"
+       Mode = "mapMix"
+       DiffuseFactor = "0.0">
+      <transform
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Scale = " 0.500000, 0.500000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000" />
+    </map>
+    <map
+       NormalFactor = "0.20000000298023224"
+       Data = "/tex_Texture.007"
+       Mode = "mapMix"
+       TransformDynamic = "1"
+       TexChannel = "0"
+       DiffuseFactor = "0.0">
+      <transform
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Scale = "15.000000,15.000000, 1.000000"
+         Position = " 0.700000, 0.400000, 0.000000" />
+    </map>
+    <map
+       Data = "/tex_Diffuse Color.001"
+       Mode = "mapMix"
+       DiffuseFactor = "1.0" />
+    <map
+       NormalFactor = "0.10000000149011612"
+       TransformDynamic = "1"
+       Data = "/tex_Texture.008"
+       Mode = "mapMix"
+       DiffuseFactor = "0.0">
+      <transform
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Scale = " 7.000000, 7.000000, 1.000000"
+         Position = " 0.500000, 0.200000, 0.000000" />
+    </map>
+  </materialbase>
+  <texture
+     File = "TexturesCom_SandwPebbles2_normalmap_M.png"
+     MipMap = "1"
+     Name = "tex_Texture.006"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "wavemap.png"
+     MipMap = "1"
+     Name = "tex_Texture.008"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "normal.png"
+     MipMap = "1"
+     Name = "tex_Texture.005"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "Water Diffuse Color.png"
+     MipMap = "1"
+     Name = "tex_Diffuse Color.001"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "IslandDiffuse.png"
+     MipMap = "1"
+     Name = "tex_Diffuse Color"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "wavemap.png"
+     MipMap = "1"
+     Name = "tex_Texture.007"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     File = "WaterNoise00Dot3.png"
+     MipMap = "1"
+     Name = "tex_Texture.002"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <action
+     Name = "action_MaterialAction">
+    <channel
+       PropStr = "Maps[3].Position"
+       ArrayIndex = "0"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "0.0"
+         Value = "0.0" />
+      <key
+         Time = "100.0"
+         Value = "0.5" />
+    </channel>
+    <channel
+       PropStr = "Maps[3].Position"
+       ArrayIndex = "1"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "0.0"
+         Value = "0.0" />
+      <key
+         Time = "100.0"
+         Value = "0.20000000298023224" />
+    </channel>
+    <channel
+       PropStr = "Maps[3].Position"
+       ArrayIndex = "2"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "0.0"
+         Value = "0.0" />
+      <key
+         Time = "100.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       PropStr = "Maps[1].Position"
+       ArrayIndex = "0"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "0.0"
+         Value = "0.0" />
+      <key
+         Time = "100.0"
+         Value = "0.699999988079071" />
+    </channel>
+    <channel
+       PropStr = "Maps[1].Position"
+       ArrayIndex = "1"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "0.0"
+         Value = "0.0" />
+      <key
+         Time = "100.0"
+         Value = "0.4000000059604645" />
+    </channel>
+    <channel
+       PropStr = "Maps[1].Position"
+       ArrayIndex = "2"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "0.0"
+         Value = "0.0" />
+      <key
+         Time = "100.0"
+         Value = "0.0" />
+    </channel>
+  </action>
+  <action
+     Name = "action_Action" />
+</p3dfile>

@@ -67,7 +67,7 @@ type
 
 { TP3DFontListBmp }
 
-TP3DFontListBmp = class ( specialize gP3DCustomObjectList < TP3DFontBmp >)
+TP3DFontBmpList = class ( specialize gP3DCustomObjectList < TP3DFontBmp >)
   procedure SaveToDOM( AParent: TDOMElement );
 end;
 
@@ -94,7 +94,7 @@ end;
 
 { TP3DFontManagerBmp }
 
-TP3DFontManagerBmp = class ( TP3DFontListBmp )
+TP3DFontManagerBmp = class ( TP3DFontBmpList )
   private
     FDefaultTexHeight: Integer;
     FDefaultTextMargin: Integer;
@@ -156,6 +156,10 @@ TP3DTextBmp = class ( TPersistent )
     property Indices: TP3DIntBufferGL read FIndices write FIndices;
     property LetterPosAndSize: TVec4List read FLetterPosAndSize write FLetterPosAndSize;
 end;
+
+TP3DPropertyAccessFontBmp = specialize gP3DPropertyAccessDataBlock < TP3DFontBmp >;
+TP3DPropertyAccessFontBmpList = specialize gP3DListPropertyAccess < TP3DFontBmpList, TP3DFontBmp, TP3DPropertyAccessFontBmp >;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}

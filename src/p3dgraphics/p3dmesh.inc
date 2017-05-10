@@ -214,6 +214,8 @@
 
       TP3DPropertyAccessMesh = specialize gP3DPropertyAccessDataBlock < TP3DMesh >;
       TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
+      TP3DPropertyAccessMeshList = specialize gP3DListPropertyAccess < TP3DMeshList, TP3DMesh, TP3DPropertyAccessMesh >;
+
 var
   P3DMeshModifierClassFactory: TP3DMeshModifierClassFactory;
 {$ENDIF}
@@ -568,55 +570,57 @@ begin
   S:= nil;
   inherited LoadFromDOMNew(ADOMNode);
   ClearVBO;
+  try
+    if ( SetupStream( 'Positions' )) then
+      PackedPositions.LoadFromStream( S );
 
-  if ( SetupStream( 'Positions' )) then
-    PackedPositions.LoadFromStream( S );
+    if ( SetupStream( 'Normals' )) then
+      PackedNormals.LoadFromStream( S );
 
-  if ( SetupStream( 'Normals' )) then
-    PackedNormals.LoadFromStream( S );
+    if ( SetupStream( 'Tangents' )) then
+      PackedTangents.LoadFromStream( S );
 
-  if ( SetupStream( 'Tangents' )) then
-    PackedTangents.LoadFromStream( S );
+    if ( SetupStream( 'Cotangents' )) then
+      PackedCotangents.LoadFromStream( S );
 
-  if ( SetupStream( 'Cotangents' )) then
-    PackedCotangents.LoadFromStream( S );
+    if ( SetupStream( 'Faces' )) then
+      PackedFaces.LoadFromStream( S );
 
-  if ( SetupStream( 'Faces' )) then
-    PackedFaces.LoadFromStream( S );
+    for i:= 0 to High( TexCoords ) do
+      TexCoords[ i ].Free;
 
-  for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].Free;
+    i:= 0;
+    while ( SetupStream( 'TexCoords' + IntToStr( i ))) do
+      begin
+        SetLength( TexCoords, i + 1 );
+        TexCoords[ i ]:= TP3DVec2BufferGL.Create( True );
+        TexCoords[ i ].LoadFromStream( S );
+        Inc( i );
+      end;
 
-  i:= 0;
-  while ( SetupStream( 'TexCoords' + IntToStr( i ))) do
-    begin
-      SetLength( TexCoords, i + 1 );
-      TexCoords[ i ]:= TP3DVec2BufferGL.Create( True );
-      TexCoords[ i ].LoadFromStream( S );
-      Inc( i );
-    end;
+    if ( SetupStream( 'Loops' )) then
+      Loops.LoadFromStream( S );
 
-  if ( SetupStream( 'Loops' )) then
-    Loops.LoadFromStream( S );
+    if ( SetupStream( 'VertexWeightIndices' )) then
+      PackedVertexWeightIndices.LoadFromStream( S );
 
-  if ( SetupStream( 'VertexWeightIndices' )) then
-    PackedVertexWeightIndices.LoadFromStream( S );
+    if ( SetupStream( 'VertexWeights' )) then
+      PackedVertexWeights.LoadFromStream( S );
 
-  if ( SetupStream( 'VertexWeights' )) then
-    PackedVertexWeights.LoadFromStream( S );
+    {if ( SetupStream( 'Indices' )) then
+      Indices.LoadFromStream( S )
+    else
+      BuildIndicesFromFaces;}
 
-  {if ( SetupStream( 'Indices' )) then
-    Indices.LoadFromStream( S )
-  else
-    BuildIndicesFromFaces;}
+    PackedMaterialGroups.LoadFromDOM( ADOMNode );
+    UnpackBuffers;
 
-  PackedMaterialGroups.LoadFromDOM( ADOMNode );
-  UnpackBuffers;
+    WeightGroups.LoadFromDOM( ADOMNode );
+    Modifiers.LoadFromDOM( ADOMNode );
+  finally
+    S.Free;
+  end;
 
-  WeightGroups.LoadFromDOM( ADOMNode );
-  Modifiers.LoadFromDOM( ADOMNode );
-
-  S.Free;
 end;
 
 function TP3DMesh.SaveToDOM(AParent: TDOMElement): TDOMElement;

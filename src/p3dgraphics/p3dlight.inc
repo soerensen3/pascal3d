@@ -44,6 +44,10 @@
     procedure PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
   end;
 
+  TP3DPropertyAccessLight = specialize gP3DPropertyAccessDataBlock < TP3DLight >;
+  TP3DPropertyAccessLightList = specialize gP3DListPropertyAccess < TP3DLightList, TP3DLight, TP3DPropertyAccessLight >;
+
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}

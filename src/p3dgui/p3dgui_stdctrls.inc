@@ -78,12 +78,12 @@
 
   TP3DGroupBox = class( TP3DGraphicControl )
     private
-      FBorderColor: TVec4;
+      FBorderColor: TP3DColorRGBA;
       FCanCollapse: Boolean;
       FCaption: String;
       FCaptionTxt: TP3DTextBmp;
       FCollapsed: Boolean;
-      FColor: TVec4;
+      FColor: TP3DColorRGBA;
       FFont: TP3DCanvasFont;
       FStoredHeight: Float;
       FCollapseSymbolTxt: TP3DTextBmp;
@@ -93,7 +93,6 @@
       procedure SetCaption(AValue: String);
       procedure SetCollapsed(AValue: Boolean);
       procedure SetHeight(AValue: Float); override;
-//      procedure UpdateAutoSize;
       procedure UpdateCollapsed;
       class function HasShadow: Boolean; override;
 
@@ -107,8 +106,8 @@
 
       property Caption: String read FCaption write SetCaption;
       property Font: TP3DCanvasFont read FFont write FFont;
-      property Color: TVec4 read FColor write FColor;
-      property BorderColor: TVec4 read FBorderColor write FBorderColor;
+      property Color: TP3DColorRGBA read FColor write FColor;
+      property BorderColor: TP3DColorRGBA read FBorderColor write FBorderColor;
       property CanCollapse: Boolean read FCanCollapse write SetCanCollapse;
       property Collapsed: Boolean read FCollapsed write SetCollapsed;
   end;
@@ -509,10 +508,10 @@ begin
         UpdateNameText( GetValueName );
       if ( GetValue <> FValueCached ) then
         UpdateValueText( GetValue );
-      tp:= vec2( 5, WidthHeight.y / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
+      tp:= vec2( 5, Canvas.WidthHeight.y / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
       Canvas.Font.Color:= Font.Color;
       Canvas.RenderText( FValueNameText, tp );
-      Canvas.RenderText( FValueText, tp + vec2( WidthHeight.x - 5 - FValueText.Width, 0 ));
+      Canvas.RenderText( FValueText, tp + vec2( Canvas.WidthHeight.x - 5 - FValueText.Width, 0 ));
     end;
 end;
 
@@ -948,6 +947,7 @@ procedure TP3DEdit.KeyboardAction;
   end;
 
 begin
+  inherited KeyboardAction();
   if ( Focused ) then
     begin
       if ( P3DInput.Keyboard.DKeysLayout[ P3DK_BACKSPACE ] = ksPressed ) then
@@ -1230,6 +1230,7 @@ begin
   FLabels[ 2 ]:= 'Z';
   FLabels[ 3 ]:= 'W';
   HAlignment:= haRight;
+  PageModeX:= pmStretch;
 end;
 
 destructor TP3DVectorEdit.Destroy;
@@ -1252,12 +1253,13 @@ procedure TP3DVectorEdit.Update;
 var
   i: Integer;
 begin
-  P3DApplication.MainWindow.Title:= Editors[ 1 ].TopLeft.ToString() + ':' + Editors[ 1 ].WidthHeight.ToString();
+  PageModeX:= pmStretch;
   for i:= 0 to EdCount - 1 do
     begin
-      Editors[ i ].FWidth:= ClientRect.Width / EdCount;
-      Editors[ i ].FLeft:= ( ClientRect.Width / EdCount ) * i;
-      Editors[ i ].FHeight:= ClientRect.Height;
+      Editors[ i ].Width:= 50;//ClientRect.Width / EdCount;
+      Editors[ i ].Align:= alLeft;
+      //Editors[ i ].Left:= //( ClientRect.Width / EdCount ) * i;
+      //Editors[ i ].Height:= ClientRect.Height;
       Editors[ i ].HAlignment:= HAlignment;
       Editors[ i ].VAlignment:= VAlignment;
       Editors[ i ].NeedsUpdate:= True;
@@ -1292,6 +1294,7 @@ begin
   FDropDownMenu:= TP3DPopupMenu.Create( AData, nil );
   FDropDownMenu.OnItemClick:= @DropDownItemClick;
   Margin.X:= 20;
+  Margin.Z:= 20;
 end;
 
 destructor TP3DComboBox.Destroy;
@@ -1310,7 +1313,7 @@ begin
   inherited Draw;
 
   if ( Assigned( FDownSymbol )) then
-    P:= vec2( WidthHeight.x - FDownSymbol.Width, ( WidthHeight.y - FDownSymbol.Height ) / 2 )
+    P:= vec2( Canvas.Width - FDownSymbol.Width, ( Canvas.Height - FDownSymbol.Height ) / 2 )
   else
     P:= vec2( 0 );
 
@@ -1321,8 +1324,7 @@ end;
 
 procedure TP3DComboBox.DropDown;
 begin
-  FDropDownMenu.WidthHeight.X:= WidthHeight.x;
-  FDropDownMenu.NeedsUpdate:= True;
+  FDropDownMenu.Width:= Width;
   FDropDownMenu.PopUp( Canvas.Left, Canvas.Top + Canvas.Height );
 end;
 

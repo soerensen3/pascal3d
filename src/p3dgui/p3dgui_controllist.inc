@@ -6,16 +6,31 @@ TP3DCustomControlList = specialize gP3DCustomObjectList < TP3DGraphicControl >;
 
 TP3DControlList = class( TP3DCustomControlList )
   private
+    FClipRect: TP3DRect;
+    FFinalScroll: TVec2;
     FOrigin: TVec2;
+    FPageModeX: TP3DPageMode;
+    FPageModeY: TP3DPageMode;
+    FPageRect: TP3DRect;
+    FPageScroll: TVec2;
+    FPageSize: TVec2;
     FParent: TP3DGraphicControl;
+    function GetPageScrollPixel: TVec2;
+    procedure SetPageModeX(AValue: TP3DPageMode);
+    procedure SetPageModeY(AValue: TP3DPageMode);
+    procedure SetPageRect(AValue: TP3DRect);
+    procedure SetPageScroll(AValue: TVec2);
 
   public
-    function CalculateDimensions(R: TP3DRect): TVec2;
-    function CalculatePageSize: TVec2;
+    procedure UpdateControls;
+    procedure UpdateControlRect( Control: TP3DGraphicControl; var TargetRect: TP3DRect );
+    procedure UpdateCanvasRect(Control: TP3DGraphicControl; TargetRect: TP3DRect);
+    function UpdatePageSize: TVec2;
     function NeedsUpdate: Boolean;
 
-    procedure Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
+    procedure Render();
     function Input: TP3DGraphicControl;
+
     function MouseRay(X, Y: Integer; const Recurse: Boolean): TP3DGraphicControl;
     procedure Clear( const FreeObjects: Boolean = False ); override;
     procedure Delete( Itm: TP3DGraphicControl ); overload;
@@ -31,7 +46,15 @@ TP3DControlList = class( TP3DCustomControlList )
     destructor Destroy; override;
 
     property Parent: TP3DGraphicControl read FParent;
-    property Origin: TVec2 read FOrigin;
+    property PageRect: TP3DRect read FPageRect write SetPageRect;
+    property ClipRect: TP3DRect read FClipRect write FClipRect;
+    property PageModeX: TP3DPageMode read FPageModeX write SetPageModeX;
+    property PageModeY: TP3DPageMode read FPageModeY write SetPageModeY;
+    property PageScroll: TVec2 read FPageScroll write SetPageScroll;
+    property PageScrollPixel: TVec2 read GetPageScrollPixel;
+    property FinalScroll: TVec2 read FFinalScroll;
+    property PageSize: TVec2 read FPageSize;
+    //property Origin: TVec2 read FOrigin;
 end;
 
 {$ENDIF}
@@ -128,32 +151,137 @@ begin
 end;
 }
 
-
-function TP3DControlList.CalculateDimensions(R: TP3DRect): TVec2;
-var
-  Control: TP3DGraphicControl;
-  FullRect: TP3DRect;
+procedure TP3DControlList.SetPageModeX(AValue: TP3DPageMode);
 begin
-  Result:= vec2( 0 );
-  FullRect:= R;
-
-  FOrigin:= R.TopLeft;
-
-  for Control in Self do
-    if (( Control.Visible ) and ( Control.Align <> alClient )) then
-      begin
-        if ( Control.Align = alNone ) then
-          Control.CalculateDimensions( Origin, FullRect )
-        else
-          Control.CalculateDimensions( Origin, R );
-        Result:= max( Result, Control.Rect.BottomRight );
-      end;
-  for Control in Self do
-    if (( Control.Visible ) and ( Control.Align = alClient )) then
-      Control.CalculateDimensions( Origin, R );
+  if ( FPageModeX = AValue ) then Exit;
+  FPageModeX:= AValue;
 end;
 
-function TP3DControlList.CalculatePageSize: TVec2;
+function TP3DControlList.GetPageScrollPixel: TVec2;
+begin
+  Result:= PageScroll * max( PageSize - PageRect.WidthHeight, 0 ); //* vec2( Ord( PageModeX = pmScroll ), Ord( PageModeY = pmScroll ));
+end;
+
+procedure TP3DControlList.SetPageModeY(AValue: TP3DPageMode);
+begin
+  if ( FPageModeY = AValue ) then Exit;
+  FPageModeY:= AValue;
+end;
+
+procedure TP3DControlList.SetPageRect(AValue: TP3DRect);
+begin
+  FPageRect:=AValue;
+  UpdateControls;
+end;
+
+procedure TP3DControlList.SetPageScroll(AValue: TVec2);
+begin
+  if FPageScroll=AValue then Exit;
+  FPageScroll:= clamp( AValue, vec2( 0.0 ), vec2( Ord( PageSize.x > PageRect.Width ), Ord( PageSize.y > PageRect.Height )));
+  //PageScroll:= PageScroll * vec2( Ord( PageModeX = pmScroll ), Ord( PageModeY = pmScroll ));
+end;
+
+procedure TP3DControlList.UpdateControls;
+var
+  Control: TP3DGraphicControl;
+  Rect: TP3DRect;
+begin
+  Rect:= PageRect;
+  Rect.TopLeft:= vec2( 0 );
+
+  for Control in Self do //alLeft, alTop
+    if (( Control.Visible ) and ( Control.Align in [ alLeft, alTop, alRight, alBottom, alNone ])) then
+      UpdateControlRect( Control, Rect );
+
+  {for Control in Self do //alLeft, alTop
+    if (( Control.Visible ) and ( Control.Align in [ alLeft, alTop ])) then
+      UpdateControlRect( Control, Rect );
+
+  for Control in Self.Reversed() do //alLeft, alBottom;
+    if (( Control.Visible ) and ( Control.Align in [ alRight, alBottom ])) then
+      UpdateControlRect( Control, Rect );}
+
+  for Control in Self do //alClient
+    if (( Control.Visible ) and ( Control.Align in [ alClient ])) then
+      UpdateControlRect( Control, Rect );
+  FPageSize:= UpdatePageSize;
+
+  for Control in Self do
+    if ( Control.Visible ) then
+      begin
+        UpdateCanvasRect( Control, ClipRect );
+        Control.Realign();
+      end;
+end;
+
+procedure TP3DControlList.UpdateControlRect(Control: TP3DGraphicControl;
+  var TargetRect: TP3DRect);
+var
+  Rect: TP3DRect;
+begin
+  Rect.TopLeft:= Control.TopLeft;// + FinalScroll;
+  Rect.WidthHeight:= Control.WidthHeight;
+
+  if ( Control.PageModeX = pmExpand ) then   // Autosize for x and y
+    Rect.Width:= Control.PageSize.X + Control.Margin.X + Control.Margin.Z;
+  if ( Control.PageModeY = pmExpand ) then
+    Rect.Height:= Control.PageSize.Y + Control.Margin.Y + Control.Margin.W;
+
+  if ( Control.Align in [ alTop, alBottom, alClient ]) then
+    Rect.Width:= TargetRect.Width; // change width to client rect's size
+
+  if ( Control.Align in [ alLeft, alRight, alClient ]) then
+    Rect.Height:= TargetRect.Height; // change height to client rect's size
+
+  if ( Control.Align in [ alLeft, alTop, alBottom, alClient ]) then
+    Rect.Left:= TargetRect.Left
+  else if ( Control.Align in [ alRight ]) then
+    Rect.Left:= TargetRect.Right - Rect.Width;
+
+  if ( Control.Align in [ alLeft, alTop, alRight, alClient ]) then
+    Rect.Top:= TargetRect.Top
+  else if ( Control.Align in [ alBottom ]) then
+    Rect.Top:= TargetRect.Bottom - Rect.Height;
+
+  Control.FRect:= Rect;
+
+  TargetRect:= TargetRect.Inset( vec2( Ord( Control.Align = alLeft ),  Ord( Control.Align = alTop ))    * Rect.WidthHeight,
+                                 vec2( Ord( Control.Align = alRight ), Ord( Control.Align = alBottom )) * Rect.WidthHeight ); //#1
+  Control.FClientRect:= P3DRect( 0, 0, Rect.Width, Rect.Height ).Inset( Control.Margin.XY, Control.Margin.ZW ); //#1
+end;
+
+procedure TP3DControlList.UpdateCanvasRect(Control: TP3DGraphicControl;
+  TargetRect: TP3DRect);
+var
+  ControlRect, CtrlPageRect: TP3DRect;
+  ratio: Double;
+  Origin: TVec2;
+begin
+  ControlRect:= Control.Rect;
+  if (( PageSize.X > 0 ) and ( PageModeX = pmStretch )) then
+    begin
+      ratio:= PageRect.Width / PageSize.X;
+      ControlRect.Left:= ControlRect.Left * ratio;
+      ControlRect.Width:= ControlRect.Width * ratio;
+    end;
+  if (( PageSize.Y > 0 ) and ( PageModeY = pmStretch )) then
+    begin
+      ratio:= PageRect.Height / PageSize.Y;
+      ControlRect.Top:= ControlRect.Top * ratio;
+      ControlRect.Height:= ControlRect.Height * ratio;
+    end;
+  ControlRect.TopLeft:= ControlRect.TopLeft - GetPageScrollPixel + PageRect.TopLeft;
+  Origin:= ControlRect.TopLeft;
+  CtrlPageRect:= P3DRectEx( Origin + Control.Margin.XY, ControlRect.BottomRight - Control.Margin.ZW );
+  ControlRect:= ControlRect.Clip( TargetRect );
+  Control.Canvas.Rect:= ControlRect;
+  Control.Controls.FFinalScroll:= Control.Canvas.TopLeft - Origin;
+  Control.Controls.PageRect:= CtrlPageRect;
+  Control.Controls.ClipRect:= CtrlPageRect.Clip( TargetRect );
+//  ControlRect.TopLeft:= CanvRect.TopLeft + Control.Margin.XY;
+end;
+
+function TP3DControlList.UpdatePageSize: TVec2;
 var
   Control: TP3DGraphicControl;
   P: TVec2;
@@ -183,21 +311,13 @@ begin
       end;
 end;
 
-procedure TP3DControlList.Render(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
-  procedure RenderIfInRect( Item: TP3DGraphicControl; Scroll: TVec2 );
-  begin
-    //if ( ClipRect.RectCollision( P3DRect( Item.Canvas.Left + Scroll.x, Item.Canvas.Top, Item.Canvas.Width, Item.Canvas.Height ))) then
-      Item.Paint( BaseColor, Scroll, ClipRect );
-  end;
-
+procedure TP3DControlList.Render();
 var
   i: Integer;
 begin
   for i:= 0 to Count - 1 do
     if ( Items[ i ].Visible ) then
-      RenderIfInRect( Items[ i ], vec2( Ord( Items[ i ].Align in [ alNone, alLeft, alRight ]),
-                                        Ord( Items[ i ].Align in [ alNone, alTop, alBottom ]))
-                                        * ScrollAcc );
+      Items[ i ].Paint;
 end;
 
 procedure TP3DControlList.BringToFront( Index: Integer );

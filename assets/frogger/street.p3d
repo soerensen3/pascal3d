@@ -1,0 +1,435 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Scale = " 3.000000, 3.000000, 3.000000"
+       Data = "/mesh_Plane.002"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Plane.002"
+       Position = "-5.000000, 0.000000, 0.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 3.000000, 3.000000, 3.000000"
+       Data = "/mesh_Plane.001"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Plane.001"
+       Position = " 4.000000, 0.000000, 0.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Data = "/mesh_Cube.004"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Cube.003"
+       Position = " 2.000000, 4.000000, 1.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Data = "/mesh_Cube.003"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Cube.002"
+       Position = " 2.000000,-1.000000, 1.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Data = "/mesh_Cube.002"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Cube.001"
+       Position = "-2.000000,-4.000000, 1.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Data = "/mesh_Cube.001"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Cube"
+       Position = "-2.000000, 0.000000, 1.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = "-1.000000,-8.000000,-1.000000"
+       Data = "/mesh_Plane"
+       Quaternion = "-0.000000, 1.000000,-0.000000, 0.000000"
+       Collision = "acNone"
+       Name = "Plane"
+       Position = " 0.000000, 0.000000, 0.000000"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Data = "/lamp_Lamp"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
+       Collision = "acNone"
+       Name = "Lamp"
+       Position = " 4.076245, 1.005454, 5.903862"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       Collision = "acNone"
+       Name = "Camera"
+       Position = " 7.481132,-6.507640, 5.343665" />
+    <object
+       Scale = " 0.170579, 0.170579, 0.170579"
+       RotationOrder = "roXYZ"
+       Action = "/action_CarAction"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Car"
+       Position = "-0.562641,-9.303185,-0.043805">
+      <object
+         Scale = " 0.226009, 0.226009, 1.000000"
+         Data = "/mesh_Cylinder.001"
+         Quaternion = " 0.000000,-0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Car.001"
+         Position = " 0.000000, 0.000004, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.226009, 0.226009, 1.000000"
+         Data = "/mesh_Cylinder.010"
+         Quaternion = " 0.000000,-0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Car.002"
+         Position = " 0.000000, 0.000004, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.226009, 0.226009, 1.000000"
+         Data = "/mesh_Cylinder.009"
+         Quaternion = " 0.000000,-0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Car.003"
+         Position = " 0.000000, 0.000004, 0.000000"
+         RotationOrder = "roXYZ" />
+    </object>
+    <object
+       Scale = " 0.170579, 0.170579, 0.170579"
+       RotationOrder = "roXYZ"
+       Action = "/action_TruckAction"
+       Quaternion = " 0.000000, 0.000000, 1.000000,-0.000000"
+       Collision = "acNone"
+       Name = "Truck"
+       Position = " 0.543910, 8.951714,-0.043805">
+      <object
+         Scale = " 0.289443, 0.289443, 1.280672"
+         Data = "/mesh_Cylinder.003"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Truck.001"
+         Position = "-0.000000,-0.000004, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.289443, 0.289443, 1.280672"
+         Data = "/mesh_Cylinder.012"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Truck.002"
+         Position = "-0.000000,-0.000004, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.289443, 0.289443, 1.280672"
+         Data = "/mesh_Cylinder.011"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Truck.003"
+         Position = "-0.000000,-0.000004, 0.000000"
+         RotationOrder = "roXYZ" />
+    </object>
+  </scene>
+  <mesh
+     Normals = "street.p3dbin:52"
+     Positions = "street.p3dbin:0"
+     Faces = "street.p3dbin:124"
+     Name = "mesh_Plane.002"
+     Loops = "street.p3dbin:104">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.002"
+       PolyEnd = "0" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:232"
+     Positions = "street.p3dbin:132"
+     Faces = "street.p3dbin:624"
+     Name = "mesh_Cube.003"
+     Loops = "street.p3dbin:524">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "5" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:752"
+     Positions = "street.p3dbin:652"
+     Faces = "street.p3dbin:1144"
+     Name = "mesh_Cube.002"
+     Loops = "street.p3dbin:1044">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "5" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:1272"
+     Positions = "street.p3dbin:1172"
+     Faces = "street.p3dbin:1664"
+     Name = "mesh_Cube.001"
+     Loops = "street.p3dbin:1564">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.006"
+       PolyEnd = "5" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:1792"
+     Positions = "street.p3dbin:1692"
+     Faces = "street.p3dbin:2184"
+     Name = "mesh_Cube.004"
+     Loops = "street.p3dbin:2084">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "5" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:2264"
+     Positions = "street.p3dbin:2212"
+     Faces = "street.p3dbin:2336"
+     Name = "mesh_Plane.001"
+     Loops = "street.p3dbin:2316">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.002"
+       PolyEnd = "0" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:2396"
+     Positions = "street.p3dbin:2344"
+     Faces = "street.p3dbin:2468"
+     Name = "mesh_Plane"
+     Loops = "street.p3dbin:2448">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.001"
+       PolyEnd = "0" />
+  </mesh>
+  <mesh
+     Positions = "street.p3dbin:2476"
+     VertexWeights = "street.p3dbin:20912"
+     Loops = "street.p3dbin:137660"
+     Normals = "street.p3dbin:63928"
+     Name = "mesh_Cylinder.001"
+     VertexWeightIndices = "street.p3dbin:39348"
+     Faces = "street.p3dbin:162240">
+    <weightgroup
+       Name = "Group"
+       Index = "0" />
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.003"
+       PolyEnd = "1539" />
+  </mesh>
+  <mesh
+     Positions = "street.p3dbin:168404"
+     VertexWeights = "street.p3dbin:168708"
+     Loops = "street.p3dbin:169720"
+     Normals = "street.p3dbin:169416"
+     Name = "mesh_Cylinder.010"
+     VertexWeightIndices = "street.p3dbin:169012"
+     Faces = "street.p3dbin:169824">
+    <weightgroup
+       Name = "Group"
+       Index = "0" />
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.004"
+       PolyEnd = "5" />
+  </mesh>
+  <mesh
+     Positions = "street.p3dbin:169852"
+     VertexWeights = "street.p3dbin:179468"
+     Loops = "street.p3dbin:238076"
+     Normals = "street.p3dbin:201904"
+     Name = "mesh_Cylinder.009"
+     VertexWeightIndices = "street.p3dbin:189084"
+     Faces = "street.p3dbin:250136">
+    <weightgroup
+       Name = "Group"
+       Index = "0" />
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.005"
+       PolyEnd = "748" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:253524"
+     Positions = "street.p3dbin:253136"
+     Faces = "street.p3dbin:254044"
+     Name = "mesh_Cylinder.003"
+     Loops = "street.p3dbin:253912">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.004"
+       PolyEnd = "7" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:273668"
+     Positions = "street.p3dbin:254080"
+     Faces = "street.p3dbin:378124"
+     Name = "mesh_Cylinder.012"
+     Loops = "street.p3dbin:352008">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.003"
+       PolyEnd = "1637" />
+  </mesh>
+  <mesh
+     Normals = "street.p3dbin:394764"
+     Positions = "street.p3dbin:384680"
+     Faces = "street.p3dbin:444436"
+     Name = "mesh_Cylinder.011"
+     Loops = "street.p3dbin:432016">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.005"
+       PolyEnd = "769" />
+  </mesh>
+  <light
+     Name = "lamp_Lamp"
+     LightType = "ltPoint"
+     Energy = "1.0"
+     Color = "1.000000, 1.000000, 1.000000" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material.002"
+     Diff = "0.469669, 0.640000, 0.115871" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material"
+     Diff = "0.640000, 0.640000, 0.640000" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "511.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "1.000000, 1.000000, 1.000000"
+     Instancing = "1"
+     Name = "material_Material.004"
+     Diff = "0.114809, 0.090053, 0.236554" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material.006"
+     Diff = "0.640000, 0.640000, 0.640000" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "4.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.055556, 0.055556, 0.055556"
+     Instancing = "1"
+     Name = "material_Material.001"
+     Diff = "0.046242, 0.046242, 0.046242" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material.003"
+     Diff = "0.236554, 0.236554, 0.236554" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material.005"
+     Diff = "0.640000, 0.041448, 0.122500" />
+  <action
+     Name = "action_CarAction">
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "0"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-0.5626407265663147" />
+      <key
+         Time = "250.0"
+         Value = "-0.5626407265663147" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "1"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "8.624526977539062" />
+      <key
+         Time = "250.0"
+         Value = "-9.375473022460938" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "2"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-0.04380485787987709" />
+      <key
+         Time = "250.0"
+         Value = "-0.04380485787987709" />
+    </channel>
+  </action>
+  <action
+     Name = "action_TruckAction">
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "0"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.5439103841781616" />
+      <key
+         Time = "250.0"
+         Value = "0.5439103841781616" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "1"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-9.047648429870605" />
+      <key
+         Time = "250.0"
+         Value = "8.952351570129395" />
+    </channel>
+    <channel
+       PropStr = "Position"
+       ArrayIndex = "2"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-0.04380485787987709" />
+      <key
+         Time = "250.0"
+         Value = "-0.04380485787987709" />
+    </channel>
+  </action>
+</p3dfile>

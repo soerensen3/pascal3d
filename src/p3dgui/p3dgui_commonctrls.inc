@@ -88,6 +88,8 @@ type
     private
       FAllowDrag: Boolean;
       FFont: TP3DCanvasFont;
+      FPageScrollX: Single;
+      FPageScrollY: Single;
       FPreset: TP3DButtonPreset;
       FScrollBarV: TP3DScrollBar;
       FScrollBarH: TP3DScrollBar;
@@ -95,6 +97,8 @@ type
       FShowSymbols: Boolean;
       FSymbolsFontName: String;
 
+      procedure SetPageScrollX(AValue: Single);
+      procedure SetPageScrollY(AValue: Single);
       procedure SetScrollBarWidth(AValue: Float);
 
     public
@@ -105,7 +109,7 @@ type
 
       procedure Draw; override;
       procedure OnScroll( Sender: TObject );
-      procedure MouseWheel(delta: Integer); override;
+      procedure MouseWheel( deltax, deltay: Integer); override;
       procedure MouseMove( X, Y: Integer ); override;
 
     published
@@ -117,6 +121,8 @@ type
       property SymbolsFontName: String read FSymbolsFontName write FSymbolsFontName;
       property ScrollBarWidth: Float read FScrollBarWidth write SetScrollBarWidth;
       property AllowDrag: Boolean read FAllowDrag write FAllowDrag;
+      property PageScrollX: Single read FPageScrollX write SetPageScrollX;
+      property PageScrollY: Single read FPageScrollY write SetPageScrollY;
   end;
 
   { TP3DTreeView }
@@ -277,6 +283,18 @@ begin
   ScrollBarH.WidthHeight:= vec2( ScrollBarWidth );
 end;
 
+procedure TP3DCustomItemView.SetPageScrollX(AValue: Single);
+begin
+  if FPageScrollX=AValue then Exit;
+  FPageScrollX:=AValue;
+end;
+
+procedure TP3DCustomItemView.SetPageScrollY(AValue: Single);
+begin
+  if FPageScrollY=AValue then Exit;
+  FPageScrollY:=AValue;
+end;
+
 constructor TP3DCustomItemView.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
@@ -317,27 +335,32 @@ end;
 procedure TP3DCustomItemView.Draw;
 begin
   inherited Draw;
-  Canvas.RenderRect( Scroll, Canvas.WidthHeight - 1 + Scroll, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
-  Canvas.RenderLineRect( Scroll, WidthHeight - 1 + Scroll, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
-  Canvas.RenderRectShadowInner( vec2( 0 ), Canvas.WidthHeight, 2, 5, vec4( Primary900.xyz, 0.05 ));
+  Canvas.RenderRect( Controls.PageScrollPixel, Canvas.WidthHeight - 1 + Controls.PageScrollPixel, Preset.Color, Preset.Color, Preset.Color, Preset.Color );
+  Canvas.RenderLineRect( Controls.PageScrollPixel, Canvas.WidthHeight - 1 + Controls.PageScrollPixel, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor, Preset.OutlineColor );
+  Canvas.RenderRectShadowInner( Controls.PageScrollPixel, Canvas.WidthHeight - 1 + Controls.PageScrollPixel, 2, 5, vec4( Primary900.xyz, 0.05 ));
 
   if ( Focused ) then
-    Canvas.RenderLineRect( vec2( 4 ) + Scroll, WidthHeight - 4 + Scroll, vec4( 0.5, 0.5, 0.5, 0.5 ));
+    Canvas.RenderLineRect( vec2( 4 ) + Controls.PageScrollPixel, Canvas.WidthHeight - 4 + Controls.PageScrollPixel, vec4( 0.5, 0.5, 0.5, 0.5 ));
 end;
 
 procedure TP3DCustomItemView.OnScroll(Sender: TObject);
 begin
-  if ( Sender = ScrollBarV ) then
+  {if ( Sender = ScrollBarV ) then
     Canvas.Scroll.Y:= Round( ScrollBarV.Position )
   else if ( Sender = ScrollBarH ) then
-    Canvas.Scroll.X:= Round( ScrollBarH.Position );
+    Canvas.Scroll.X:= Round( ScrollBarH.Position );}
+  PageScrollX:= ScrollBarH.Percentage;
+  PageScrollY:= ScrollBarV.Percentage;
 end;
 
-procedure TP3DCustomItemView.MouseWheel(delta: Integer);
+procedure TP3DCustomItemView.MouseWheel(deltax, deltay: Integer);
 begin
-  inherited MouseWheel( delta );
+  inherited MouseWheel( deltax, deltay );
   if ( gcisMouseOver in InputState ) then
-    ScrollBarV.Position:= ScrollBarV.Position + delta * P3DGUIManager.ScrollSpeed;
+    begin
+      ScrollBarH.Position:= ScrollBarH.Position + deltax * P3DGUIManager.ScrollSpeed;
+      ScrollBarV.Position:= ScrollBarV.Position + deltay * P3DGUIManager.ScrollSpeed
+    end;
 end;
 
 procedure TP3DCustomItemView.MouseMove(X, Y: Integer);
@@ -354,9 +377,10 @@ procedure TP3DTreeView.SetSelection(AValue: TP3DTreeNode);
 begin
   if FSelection=AValue then Exit;
 
+  FSelection:=AValue;
+
   if ( Assigned( OnSelectionChange )) then
     OnSelectionChange( AValue );
-  FSelection:=AValue;
 end;
 
 constructor TP3DTreeView.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
@@ -384,6 +408,7 @@ procedure TP3DTreeView.Draw;
   begin
     Result:= p;
     Node.FRenderPos:= p;
+    p-= vec2( ScrollBarH.Position, ScrollBarV.Position );
     if ( not Assigned( Node.Text )) then
       Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
     Canvas.Font.Color:= Accent900;
@@ -409,7 +434,7 @@ procedure TP3DTreeView.Draw;
 
     Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * ( 1.5 + Ord( ShowSymbols )));
 
-    MaxX:= Max( MaxX, p.x + Font.Size * ( 1 + Ord( ShowSymbols )) + Node.Text.Width );
+    MaxX:= Max( MaxX, Node.FRenderPos.x + Font.Size * ( 1 + Ord( ShowSymbols )) + Node.Text.Width );
     Result.y:= Result.y + Node.Text.Height;
     if ( Node.Children.Count > 0 ) then
       if ( Node.Expanded ) then
@@ -457,10 +482,10 @@ begin
   inherited MouseClick(mb1, mb2, mb3, X, Y);
   if ( mb1 ) then
     begin
-      Node:= NodeAtPos( vec2( X + Scroll.X, Y + Scroll.Y ));
+      Node:= NodeAtPos( vec2( X + ScrollBarH.Position, Y + ScrollBarV.Position ));
       if ( Assigned( Node )) then
         begin
-          if ( P3DRect( Node.FRenderPos.x, Node.FRenderPos.y, Font.Size, Node.Text.Height ).PtInRect( vec2( X + Scroll.X, Y + Scroll.Y ))) then
+          if ( P3DRect( Node.FRenderPos.x, Node.FRenderPos.y, Font.Size, Node.Text.Height ).PtInRect( vec2( X + ScrollBarH.Position, Y + ScrollBarV.Position ))) then
             Node.Expanded:= not Node.Expanded
           else
             Selection:= Node;
@@ -486,7 +511,7 @@ end;
 procedure TP3DTreeView.BeginDrag;
 begin
   inherited BeginDrag();
-  FDragItem:= NodeAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ) + Scroll );
+  FDragItem:= NodeAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ) + Canvas.Scroll );
 end;
 
 procedure TP3DTreeView.DragCancel(Sender: TP3DGraphicControl; X, Y: Integer);
@@ -1010,6 +1035,7 @@ procedure TP3DListView.Draw;
   begin
     Result:= p;
     Node.FRenderPos:= p;
+    p-= vec2( ScrollBarH.Position, ScrollBarV.Position );
     if ( not Assigned( Node.Text )) then
       Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
     Canvas.Font.Color:= Accent900;
@@ -1073,6 +1099,8 @@ end;
 function TP3DListView.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;
 begin
   Node.FRenderPos:= p;
+  p-= vec2( ScrollBarH.Position, ScrollBarV.Position );
+
   if ( not Assigned( Node.Text )) then
     Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
   Canvas.Font.Color:= Accent900;
@@ -1096,8 +1124,8 @@ begin
       Canvas.RenderText( Node.Symbol, p );
     end;
   Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * Ord( ShowSymbols ));
-  Result.x:= p.x + Font.Size * Ord( ShowSymbols ) + Node.Text.Width;
-  Result.y:= p.y + Node.Text.Height;
+  Result.x:= Node.FRenderPos.x + Font.Size * Ord( ShowSymbols ) + Node.Text.Width;
+  Result.y:= Node.FRenderPos.y + Node.Text.Height;
 end;
 
 procedure TP3DListView.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -1105,13 +1133,13 @@ begin
   inherited MouseClick( mb1, mb2, mb3, X, Y );
 
   if ( mb1 ) then
-    Selection:= ItemAtPos( vec2( X + Scroll.X, Y + Scroll.Y ));
+    Selection:= ItemAtPos( vec2( X + ScrollBarH.Position, Y + ScrollBarV.Position ));
 end;
 
 procedure TP3DListView.BeginDrag;
 begin
   inherited BeginDrag;
-  FDragItem:= ItemAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ) + Scroll );
+  FDragItem:= ItemAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) + vec2( ScrollBarH.Position - Canvas.Left, ScrollBarV.Position - Canvas.Top ) + Canvas.Scroll );
 end;
 
 procedure TP3DListView.DragCancel(Sender: TP3DGraphicControl; X, Y: Integer);
@@ -1406,7 +1434,7 @@ procedure TP3DTreeViewActors.Update;
         else
           Parent[ n ].SymbolText:= 'R';
         if ( Recurse ) then
-          AddList( Item.Children, Parent[ n ].Children );
+          AddList( Item.Children, Parent[ n ].Children, Recurse );
       end;
   end;
 
@@ -1580,7 +1608,7 @@ procedure TP3DTreeViewActors.Update;
   end;
 
 
-  procedure AddFontList( List: TP3DFontListBmp; Parent: TP3DTreeNodeList );
+  procedure AddFontList( List: TP3DFontBmpList; Parent: TP3DTreeNodeList );
   var
     Font: TP3DFontBmp;
     n: LongInt;
@@ -1653,6 +1681,7 @@ begin
     end
   else
     SelectionData:= nil;
+
   Children.Clear( True );
   if ( Assigned( Obj )) then
     begin

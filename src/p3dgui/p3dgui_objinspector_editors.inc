@@ -129,15 +129,15 @@ type
   TP3DOIEditorDataLight = class ( TP3DOIEditorGroup )
     private
       FLight: TP3DLight;
-      FLightColorCombo: TP3DColorComboBox;
+      FLightColorCombo: TP3DColorRGBAComboBox;
       FLightEnergyEdit: TP3DPropertyEditorFloat;
       FLightLinearAttenuationEdit: TP3DEventValueEdit;
       FLightQuadraticAttenuationEdit: TP3DEventValueEdit;
       FLightType: TP3DComboBox;
 
       procedure ComboChange( Sender: TP3DComboBox; var AValue: String );
-      function GetLightColor( Sender: TP3DColorPicker ): TVec4;
-      procedure SetLightColor( Sender: TP3DColorPicker; AValue: TVec4 );
+      function GetLightColor( Sender: TP3DColorRGBAPicker ): TP3DColorRGBA;
+      procedure SetLightColor( Sender: TP3DColorRGBAPicker; AValue: TP3DColorRGBA );
       function GetLightAttenuation(Sender: TP3DEventValueEdit): Float;
       procedure SetLightAttenuation(Sender: TP3DEventValueEdit; AValue: Float);
 
@@ -150,7 +150,7 @@ type
 
     published
       property LightTypeCombo: TP3DComboBox read FLightType write FLightType;
-      property LightColorCombo: TP3DColorComboBox read FLightColorCombo write FLightColorCombo;
+      property LightColorCombo: TP3DColorRGBAComboBox read FLightColorCombo write FLightColorCombo;
       property LightLinearAttenuationEdit: TP3DEventValueEdit read FLightLinearAttenuationEdit write FLightLinearAttenuationEdit;
       property LightQuadraticAttenuationEdit: TP3DEventValueEdit read FLightQuadraticAttenuationEdit write FLightQuadraticAttenuationEdit;
       property LightEnergyEdit: TP3DPropertyEditorFloat read FLightEnergyEdit write FLightEnergyEdit;
@@ -273,16 +273,16 @@ published
     private
       FAlphaEdit: TP3DEventValueEdit;
       FAlphaTreshHoldEdit: TP3DPropertyEditorFloat;
-      FDiffCombo: TP3DColorComboBox;
-      FSpecCombo: TP3DColorComboBox;
+      FDiffCombo: TP3DColorRGBAComboBox;
+      FSpecCombo: TP3DColorRGBAComboBox;
       FSpec_HardnessEdit: TP3DEventValueEdit;
       FTranspModeCombo: TP3DPropertyEditorEnum;
       FUnlitEdit: TP3DCheckBox;
       FUseVertexColorEdit: TP3DCheckBox;
 
       procedure CheckboxChange( Sender: TP3DGraphicControl );
-      function GetMatColorParam( Sender: TP3DColorPicker ): TVec4;
-      procedure SetMatColorParam( Sender: TP3DColorPicker; AValue: TVec4 );
+      function GetMatColorParam( Sender: TP3DColorRGBAPicker ): TP3DColorRGBA;
+      procedure SetMatColorParam( Sender: TP3DColorRGBAPicker; AValue: TP3DColorRGBA );
       function GetMatFloatParam(Sender: TP3DEventValueEdit): Float;
       procedure SetMatFloatParam(Sender: TP3DEventValueEdit; AValue: Float);
 
@@ -294,8 +294,8 @@ published
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
     published
-      property DiffCombo: TP3DColorComboBox read FDiffCombo write FDiffCombo;
-      property SpecCombo: TP3DColorComboBox read FSpecCombo write FSpecCombo;
+      property DiffCombo: TP3DColorRGBAComboBox read FDiffCombo write FDiffCombo;
+      property SpecCombo: TP3DColorRGBAComboBox read FSpecCombo write FSpecCombo;
       property Spec_HardnessEdit: TP3DEventValueEdit read FSpec_HardnessEdit write FSpec_HardnessEdit;
       property AlphaEdit: TP3DEventValueEdit read FAlphaEdit write FAlphaEdit;
       property UseVertexColorEdit: TP3DCheckBox read FUseVertexColorEdit write FUseVertexColorEdit;
@@ -350,11 +350,6 @@ published
   property Mode: TP3DMapMode read FMode write FMode;
   }
 
-  { TP3DOIEditorDataMaterialMaps }
-
-  TP3DPropertyEditorMaterialMapList = specialize gP3DPropertyEditorList < TP3DMaterialMapList, TP3DMaterialMap >;
-  TP3DPropertyEditorJointList = specialize gP3DPropertyEditorList < TP3DJointList, TP3DJoint >;
-
   TP3DOIEditorDataMaterialMaps = class ( TP3DOIEditorGroup )
     private
       FMapsListView: TP3DPropertyEditorMaterialMapList;
@@ -376,8 +371,6 @@ published
   end;
 
   { TP3DOIEditorDataMeshMaterial }
-
-  TP3DPropertyEditorMaterialList = specialize gP3DPropertyEditorList < TP3DMaterialList, TP3DMaterial >;
 
   TP3DOIEditorDataMeshMaterial = class ( TP3DOIEditorGroup )
     private
@@ -470,6 +463,16 @@ var
 {$IFDEF IMPLEMENTATION}
 
 { TP3DPropertyEditorBoolean }
+
+function TP3DPropertyEditorBoolean.GetObjInsp: TP3DObjectInspector;
+begin
+  Result:= FObjInsp;
+end;
+
+procedure TP3DPropertyEditorBoolean.SetObjInsp(AValue: TP3DObjectInspector);
+begin
+  FObjInsp:= AValue;
+end;
 
 procedure TP3DPropertyEditorBoolean.SetProp(AValue: TP3DPropertyAccess);
 begin
@@ -700,8 +703,6 @@ begin
   DataCombo.Height:= 20;
   DataCombo.Align:= alTop;
   DataCombo.OnDragDrop:= @DataDragDrop;
-
-  StretchY:= True;
 end;
 
 class function TP3DOIEditorDatablock.IsCompatible(AObj: TInterfacedPersistent ): Boolean;
@@ -813,7 +814,6 @@ begin
   ScaleEdit.Align:= alClient;
   ScaleEdit.GetValueEvent:= @EdGetValue;
   ScaleEdit.SetValueEvent:= @EdSetValue;
-  StretchY:= True;
 end;
 
 
@@ -921,7 +921,7 @@ begin
     end;
 end;
 
-function TP3DOIEditorDataLight.GetLightColor(Sender: TP3DColorPicker): TVec4;
+function TP3DOIEditorDataLight.GetLightColor(Sender: TP3DColorRGBAPicker): TP3DColorRGBA;
 begin
   if ( Assigned( Light )) then
     Result:= vec4( Light.Color, 1 )
@@ -929,10 +929,10 @@ begin
     Result:= vec4( 0 );
 end;
 
-procedure TP3DOIEditorDataLight.SetLightColor(Sender: TP3DColorPicker; AValue: TVec4);
+procedure TP3DOIEditorDataLight.SetLightColor(Sender: TP3DColorRGBAPicker; AValue: TP3DColorRGBA);
 begin
   if ( Assigned( Light )) then
-    Light.Color:= AValue.XYZ;
+    Light.Color:= AValue.RGB;
 end;
 
 function TP3DOIEditorDataLight.GetLightAttenuation( Sender: TP3DEventValueEdit ): Float;
@@ -997,7 +997,7 @@ begin
   LightTypeCombo.Items.Add( 'Spot' );
   LightTypeCombo.OnChange:= @ComboChange;
 
-  LightColorCombo:= TP3DColorComboBox.Create( nil, AddContainer( Self, 'Light color ' ));
+  LightColorCombo:= TP3DColorRGBAComboBox.Create( nil, AddContainer( Self, 'Light color ' ));
   LightColorCombo.GetValueEvent:= @GetLightColor;
   LightColorCombo.SetValueEvent:= @SetLightColor;
   LightColorCombo.Align:= alClient;
@@ -1014,8 +1014,6 @@ begin
 
   LightEnergyEdit:= TP3DPropertyEditorFloat.Create( nil, AddContainer( Self, 'Energy ' ));
   LightEnergyEdit.Align:= alClient;
-
-  StretchY:= True;
 end;
 
 { TP3DOIEditorDataCamera }
@@ -1149,8 +1147,6 @@ begin
   CamTypeCombo.Items.Add( 'Perspective' );
   CamTypeCombo.Items.Add( 'Isometric' );
   CamTypeCombo.OnChange:= @ComboChange;
-
-  StretchY:= True;
 end;
 
 { TP3DOIEditorDataTexture }
@@ -1253,8 +1249,6 @@ begin
   FileNameLbl:= TP3DLabel.Create( AData, AddContainer( Self, 'Filename ' ));
   FileNameLbl.Align:= alClient;
   FileNameLbl.HAlignment:= haRight;
-
-  StretchY:= True;
 end;
 
 { TP3DOIEditorDataMaterialBase }
@@ -1272,7 +1266,7 @@ begin
     end;
 end;
 
-function TP3DOIEditorDataMaterialBase.GetMatColorParam(Sender: TP3DColorPicker): TVec4;
+function TP3DOIEditorDataMaterialBase.GetMatColorParam(Sender: TP3DColorRGBAPicker): TP3DColorRGBA;
 begin
   if ( not IsCompatible( Obj )) then
     begin
@@ -1288,7 +1282,7 @@ begin
     end;
 end;
 
-procedure TP3DOIEditorDataMaterialBase.SetMatColorParam(Sender: TP3DColorPicker; AValue: TVec4);
+procedure TP3DOIEditorDataMaterialBase.SetMatColorParam(Sender: TP3DColorRGBAPicker; AValue: TP3DColorRGBA);
 begin
   if ( not IsCompatible( Obj )) then
     exit;
@@ -1368,12 +1362,12 @@ begin
   UnlitEdit.OnChange:= @CheckboxChange;
   UnlitEdit.Height:= 20;
 
-  DiffCombo:= TP3DColorComboBox.Create( AData, AddContainer( Self, 'Material Diffuse' ));
+  DiffCombo:= TP3DColorRGBAComboBox.Create( AData, AddContainer( Self, 'Material Diffuse' ));
   DiffCombo.GetValueEvent:= @GetMatColorParam;
   DiffCombo.SetValueEvent:= @SetMatColorParam;
   DiffCombo.Align:= alClient;
 
-  SpecCombo:= TP3DColorComboBox.Create( AData, AddContainer( Self, 'Material Specular' ));
+  SpecCombo:= TP3DColorRGBAComboBox.Create( AData, AddContainer( Self, 'Material Specular' ));
   SpecCombo.GetValueEvent:= @GetMatColorParam;
   SpecCombo.SetValueEvent:= @SetMatColorParam;
   SpecCombo.Align:= alClient;
@@ -1394,9 +1388,6 @@ begin
   AlphaTreshHoldEdit:= TP3DPropertyEditorFloat.Create( AData, Self );
   AlphaTreshHoldEdit.Height:= 20;
   AlphaTreshHoldEdit.Align:= alTop;
-
-
-  StretchY:= True;
 end;
 
 { TP3DOIEditorDataMaterialMaps }
@@ -1447,8 +1438,6 @@ begin
   MapsListView.Align:= alTop;
   MapsListView.Height:= 100;
   MapsListView.OnSelectionChange:= @SelectionChange;
-
-  StretchY:= True;
 end;
 
 class function TP3DOIEditorDataMaterialMaps.IsCompatible(AObj: TInterfacedPersistent): Boolean;
@@ -1592,8 +1581,6 @@ begin
   ModeCombo.Items.Add( 'subtract' );
   ModeCombo.Items.Add( 'multiply' );
   ModeCombo.Items.Add( 'mix' );
-
-  StretchY:= True;
 end;
 
 class function TP3DOIEditorDataMaterialMap.IsCompatible(AObj: TInterfacedPersistent): Boolean;
@@ -1642,8 +1629,6 @@ begin
   MatListView:= TP3DPropertyEditorMaterialList.Create( AData, Self );
   MatListView.Align:= alTop;
   MatListView.Height:= 100;
-
-  StretchY:= True;
 end;
 
 class function TP3DOIEditorDataMeshMaterial.IsCompatible(AObj: TInterfacedPersistent): Boolean;
@@ -1838,7 +1823,7 @@ procedure TP3DOIEditorPageProperties.Update;
         Cat:= TP3DOIEditorGroup.Create( Owner, Self );
         Cat.Align:= alTop;
         Cat.Caption:= Prop.Category;
-        Cat.StretchY:= True;
+        Cat.PageModeY:= pmExpand;
       end;
     Result:= Cat;
   end;

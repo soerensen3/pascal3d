@@ -136,6 +136,10 @@ type
   end;
   TP3DShaderList = specialize gP3DCustomDatablockList < TP3DShader >;
 
+  TP3DPropertyAccessShader = specialize gP3DPropertyAccessDataBlock < TP3DShader >;
+  TP3DPropertyAccessShaderList = specialize gP3DListPropertyAccess < TP3DShaderList, TP3DShader, TP3DPropertyAccessShader >;
+
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}

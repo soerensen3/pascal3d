@@ -290,7 +290,8 @@ end;
 
 procedure TP3DApplication.MouseWheel(Event: TSDL_MouseWheelEvent);
 begin
-  P3DInput.Mouse.DZ:= Event.y;
+  P3DInput.Mouse.DWX:= Event.x;
+  P3DInput.Mouse.DWY:= Event.y;
   if ( Assigned( FOnMouseWheel )) then
     FOnMouseWheel( Self, Event );
 end;

@@ -9,16 +9,16 @@
 
     TP3DButtonPreset = class
       private
-        FColor: TVec4;
-        FFontColor: TVec4;
-        FOutlineColor: TVec4;
+        FColor: TP3DColorRGBA;
+        FFontColor: TP3DColorRGBA;
+        FOutlineColor: TP3DColorRGBA;
 
       public
         procedure Assign( Preset: TP3DButtonPreset );
 
-        property Color: TVec4 read FColor write FColor;
-        property OutlineColor: TVec4 read FOutlineColor write FOutlineColor;
-        property FontColor: TVec4 read FFontColor write FFontColor;
+        property Color: TP3DColorRGBA read FColor write FColor;
+        property OutlineColor: TP3DColorRGBA read FOutlineColor write FOutlineColor;
+        property FontColor: TP3DColorRGBA read FFontColor write FFontColor;
     end;
 
     { TP3DButton }
@@ -83,6 +83,15 @@
 
         property Down: Boolean read FDown write SetDown;
         property Group: String read FGroup write SetGroup;
+    end;
+
+    { TP3DSplitter }
+
+    TP3DSplitter = class ( TP3DButton )
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      procedure MouseMove(X, Y: Integer); override;
+      procedure GetControls( out Ctrl1, Ctrl2: TP3DGraphicControl );
+      procedure SetAlign(const AValue: TP3DControlAlign); override;
     end;
 
 
@@ -151,17 +160,6 @@ begin
       if ( not Assigned( FCaptionTxt )) then
         FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 
-      {case HAlignment of
-        haLeft: P.x:= 0;
-        haRight: P.x:= Width - FCaptionTxt.Width;
-        haCenter: P.x:= ( Width - FCaptionTxt.Width ) / 2;
-      end;
-      case VAlignment of
-        vaTop: P.y:= 0;
-        vaBottom: P.y:= Height - FCaptionTxt.Height;
-        vaCenter: P.y:= ( Height - FCaptionTxt.Height ) / 2;
-      end;}
-
       P:= Canvas.CalcAlignedTextRect( FCaptionTxt, ClientRect, HAlignment, VAlignment );
 
       Canvas.Font.Color:= C * vec4( 1, 1, 1, 0.5 + 0.5 * Ord( Enabled ));
@@ -226,7 +224,7 @@ begin
   Font:= TP3DCanvasFont.Create;
   Caption:= Name;
 
-  PresetNormal.Color:= accent50;//vec4( vec3( 0.93 ), 1 );
+  PresetNormal.Color:= Accent50;//vec4( vec3( 0.93 ), 1 );
   PresetNormal.OutlineColor:= vec4( vec3( 0.4 ), 1 );
   PresetNormal.FontColor:= vec4( vec3( 0 ), 1 );
   PresetHover.Color:= Accent400;
@@ -306,6 +304,91 @@ begin
     Down:= True;
 end;
 
+
+{ TP3DSlider }
+
+constructor TP3DSplitter.Create(const AData: TP3DLibrary;
+  const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  WidthHeight:= vec2( 5 );
+  Caption:= '.';
+  Cursor:= curHResize;
+end;
+
+procedure TP3DSplitter.MouseMove(X, Y: Integer);
+var
+  Ctrl1, Ctrl2: TP3DGraphicControl;
+begin
+  inherited MouseMove(X, Y);
+
+  if ( not ( gcisMouseBtn1Down in InputState )) then
+    exit;
+
+  GetControls( Ctrl1, Ctrl2 );
+
+  if ( Assigned( Ctrl1 )) then
+    begin
+      if ( Align in [ alLeft, alRight ]) then
+        Ctrl1.Width:= P3DInput.Mouse.X - Ctrl1.Canvas.Rect.Left
+      else if ( Align in [ alTop, alBottom ]) then
+        Ctrl1.Height:= P3DInput.Mouse.Y - Ctrl1.Canvas.Rect.Top;
+    end;
+  if ( Assigned( Ctrl2 )) then
+    begin
+      if ( Align in [ alLeft, alRight ]) then
+        Ctrl2.Width:= Ctrl2.Canvas.Rect.Right - P3DInput.Mouse.X
+      else if ( Align in [ alTop, alBottom ]) then
+        Ctrl2.Height:= Ctrl2.Canvas.Rect.Bottom - P3DInput.Mouse.Y;
+    end;
+end;
+
+procedure TP3DSplitter.GetControls(out Ctrl1, Ctrl2: TP3DGraphicControl);
+  function FindNext( idx: Integer; incr: Integer ): TP3DGraphicControl;
+  var
+    n: Integer;
+  begin
+    n:= idx + incr;
+    Result:= ParentCtrl[ n ];
+    while ( Assigned( Result )) do
+      if ( Result.Align = Align ) then
+        break
+      else
+        begin
+          Inc( n, incr );
+          Result:= ParentCtrl[ n ];
+        end;
+  end;
+
+var
+  idx: Integer;
+begin
+  idx:= ParentCtrl.IndexOf( Self );
+
+  Ctrl1:= nil;
+  Ctrl2:= nil;
+  if ( Align in [ alLeft, alTop ]) then
+    begin
+      Ctrl1:= FindNext( idx, -1 );
+      Ctrl2:= FindNext( idx,  1 );
+    end
+  else if ( Align in [ alRight, alBottom ]) then
+    begin
+      Ctrl1:= FindNext( idx,  1 );
+      Ctrl2:= FindNext( idx, -1 );
+    end;
+end;
+
+procedure TP3DSplitter.SetAlign(const AValue: TP3DControlAlign);
+begin
+  if ( AValue = alClient ) then
+    exit;
+  inherited SetAlign(AValue);
+  if ( Align in [ alLeft, alRight ]) then
+    Cursor:= curHResize
+  else if ( Align in [ alTop, alBottom ]) then
+    Cursor:= curVResize;
+end;
 
 {$ENDIF}
  

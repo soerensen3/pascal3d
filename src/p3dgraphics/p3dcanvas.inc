@@ -8,12 +8,12 @@ type
 
   TP3DCanvasFont = class ( TPersistent )
     private
-      FFontColor: TVec4;
+      FFontColor: TP3DColorRGBA;
       FFontName: String;
       FFontSize: Integer;
       FOnChange: TNotifyEvent;
 
-      procedure SetFontColor(AValue: TVec4);
+      procedure SetFontColor(AValue: TP3DColorRGBA);
       procedure SetFontName(AValue: String);
       procedure SetFontSize(AValue: Integer);
 
@@ -21,7 +21,7 @@ type
       procedure Assign( Font: TP3DCanvasFont );
       constructor Create;
 
-      property Color: TVec4 read FFontColor write SetFontColor; //Object properties can't be published for some reason
+      property Color: TP3DColorRGBA read FFontColor write SetFontColor; //Object properties can't be published for some reason
 
     published
       property Name: String read FFontName write SetFontName;
@@ -162,7 +162,7 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DPen.Create(AColor: TVec4; AWidth: Single; AStyle: TP3DPenStyle);
+constructor TP3DPen.Create(AColor: TP3DColorRGBA; AWidth: Single; AStyle: TP3DPenStyle);
 begin
   inherited Create;
   Color:= AColor;
@@ -172,7 +172,7 @@ end;
 
 { TP3DBrush }
 
-constructor TP3DBrush.Create(AColor: TVec4);
+constructor TP3DBrush.Create(AColor: TP3DColorRGBA);
 begin
   inherited Create;
   Color:= AColor;
@@ -188,7 +188,7 @@ begin
     OnChange( Self );
 end;
 
-procedure TP3DCanvasFont.SetFontColor(AValue: TVec4);
+procedure TP3DCanvasFont.SetFontColor(AValue: TP3DColorRGBA);
 begin
   if FFontColor=AValue then Exit;
   FFontColor:=AValue;

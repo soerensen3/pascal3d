@@ -6,9 +6,11 @@ type
 
   { TP3DOIEditorGroup }
 
+  TP3DObjectInspector = class;
   TP3DOIEditorGroup = class ( TP3DGroupBox )
     private
       FObj: TInterfacedPersistent;
+      FObjInsp: TP3DObjectInspector;
 
       procedure SetObj(AValue: TInterfacedPersistent); virtual;
       function AddPropertyEditor( Prop: TP3DPropertyAccess ): TP3DGraphicControl;
@@ -23,6 +25,7 @@ type
 
     published
       property Obj: TInterfacedPersistent read FObj write SetObj;
+      property ObjInsp: TP3DObjectInspector read FObjInsp write FObjInsp;
   end;
 
 
@@ -36,6 +39,7 @@ type
       FButton: TP3DGroupButton;
       FGroups: TP3DOIEditorList;
       FObj: TInterfacedPersistent;
+      FObjInsp: TP3DObjectInspector;
 
       procedure SetButton(AValue: TP3DGroupButton);
       procedure SetObj(AValue: TInterfacedPersistent);
@@ -54,9 +58,12 @@ type
       property Groups: TP3DOIEditorList read FGroups write FGroups;
       property Button: TP3DGroupButton read FButton write SetButton;
       property Obj: TInterfacedPersistent read FObj write SetObj;
+      property ObjInsp: TP3DObjectInspector read FObjInsp write FObjInsp;
   end;
 
   TP3DOIPageList = specialize gP3DCustomObjectList < TP3DOIEditorPage >;
+
+  TP3DObjectInspectorSetObjEvent = procedure ( Sender: TP3DObjectInspector; AValue: TInterfacedPersistent ) of object;
 
   { TP3DObjectInspector }
 
@@ -65,6 +72,7 @@ type
       FActivePage: Integer;
       FContainer: TP3DGraphicControl;
       FObj: TInterfacedPersistent;
+      FOnSetObj: TP3DObjectInspectorSetObjEvent;
       FPages: TP3DOIPageList;
       FScrollbar: TP3DScrollBar;
       FToolbar: TP3DGraphicControl;
@@ -79,6 +87,7 @@ type
 
       function AddPage(Page: TP3DOIEditorPage): TP3DOIEditorPage;
       procedure ButtonMouseClick( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer );
+      procedure MouseWheel( deltax, deltay: Integer); override;
 
       procedure Update;
       procedure UpdateScrollBar;
@@ -91,6 +100,7 @@ type
       property ActivePage: Integer read FActivePage write SetActivePage;
       property Container: TP3DGraphicControl read FContainer write FContainer;
       property Scrollbar: TP3DScrollBar read FScrollbar write FScrollbar;
+      property OnSetObj: TP3DObjectInspectorSetObjEvent read FOnSetObj write FOnSetObj;
   end;
 
   {$INCLUDE p3dgui_propertyeditor.inc}
@@ -122,35 +132,72 @@ end;
 function GetPropEdForProp( AProp: TP3DPropertyAccess ): TP3DGraphicControlClass;
 begin
   if ( AProp is TP3DPropertyAccessActor ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessActorList ) then
+    Result:= TP3DPropertyEditorActorList
   else if ( AProp is TP3DPropertyAccessArmature ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessArmatureList ) then
+    Result:= TP3DPropertyEditorArmatureList
   else if ( AProp is TP3DPropertyAccessAction ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessActionList ) then
+    Result:= TP3DPropertyEditorActionList
+  else if ( AProp is TP3DPropertyAccessActionChannelList ) then
+    Result:= TP3DPropertyEditorActionChannelList
+  else if ( AProp is TP3DPropertyAccessActionKeyList ) then
+    Result:= TP3DPropertyEditorActionKeyList
   else if ( AProp is TP3DPropertyAccessCamera ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessCameraList ) then
+    Result:= TP3DPropertyEditorCameraList
   else if ( AProp is TP3DPropertyAccessDataBlock ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropertyAccessDataBlockList ) then
     Result:= TP3DPropertyEditorDataBlockList
+  else if ( AProp is TP3DPropertyAccessFontBmp ) then
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessFontBmpList ) then
+    Result:= TP3DPropertyEditorFontBmpList
   else if ( AProp is TP3DPropertyAccessJoint ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropertyAccessJointList ) then
     Result:= TP3DPropertyEditorJointList
+  else if ( AProp is TP3DPropertyAccessLibrary ) then
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessLibraryList ) then
+    Result:= TP3DPropertyEditorLibraryList
+  else if ( AProp is TP3DPropertyAccessLight ) then
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessLightList ) then
+    Result:= TP3DPropertyEditorLightList
   else if ( AProp is TP3DPropertyAccessMaterial ) then
-    Result:= TP3DPropertyEditorString
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessMaterialList ) then
+    Result:= TP3DPropertyEditorMaterialList
   else if ( AProp is TP3DPropertyAccessMaterialMapList ) then
     Result:= TP3DPropertyEditorMaterialMapList
   else if ( AProp is TP3DPropertyAccessMesh ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessMeshList ) then
+    Result:= TP3DPropertyEditorMeshList
   else if ( AProp is TP3DPropertyAccessScene ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropertyAccessSceneList ) then
-    Result:= TP3DPropertyEditorDataBlockList
+    Result:= TP3DPropertyEditorSceneList
+  else if ( AProp is TP3DPropertyAccessShader ) then
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessShaderList ) then
+    Result:= TP3DPropertyEditorShaderList
+
   else if ( AProp is TP3DPropertyAccessTexture ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessTextureList ) then
+    Result:= TP3DPropertyEditorTextureList
   else if ( AProp is TP3DPropertyAccessGraphicControl ) then
-    Result:= TP3DPropertyEditorDataBlock
+    Result:= TP3DPropertyEditorInterfacedPersistent
+  else if ( AProp is TP3DPropertyAccessGraphicControlList ) then
+    Result:= TP3DPropertyEditorGraphicControlList
   else if ( AProp is TP3DPropertyAccessFileWatch ) then
     Result:= TP3DPropertyEditorString
 
@@ -170,6 +217,10 @@ begin
     Result:= TP3DPropertyEditorVec3
   else if ( AProp is TP3DPropertyAccessVec4 ) then
     Result:= TP3DPropertyEditorVec4
+  else if ( AProp is TP3DPropertyAccessColorRGB ) then
+    Result:= TP3DPropertyEditorColorRGB
+  else if ( AProp is TP3DPropertyAccessColorRGBA ) then
+    Result:= TP3DPropertyEditorColorRGBA
   else
     Result:= TP3DPropertyEditorString
 end;
@@ -201,9 +252,21 @@ function TP3DOIEditorGroup.AddPropertyEditor(Prop: TP3DPropertyAccess): TP3DGrap
     Lbl.Caption:= Title + ' '; //One space for safety distance - looks better!
     Lbl.AutoSize:= True;
   end;
+
+  function FindObjInsp( Ctrl: TP3DGraphicControl ): TP3DObjectInspector;
+  begin
+    while Assigned( Ctrl ) and not ( Ctrl is TP3DObjectInspector ) do
+      Ctrl:= Ctrl.Parent;
+    if ( Ctrl is TP3DObjectInspector ) then
+      Result:= TP3DObjectInspector( Ctrl )
+    else
+      Result:= nil;
+  end;
+
 var
 //  Cnt: TP3DGraphicControl;
   Cl: TP3DGraphicControlClass;
+  OI: TP3DObjectInspector;
 begin
   if ( not Assigned( Prop )) then
     exit;
@@ -214,8 +277,12 @@ begin
 
   Result:= Cl.Create( Owner, Self );
 
+  OI:= FindObjInsp( Self );
   if ( Result is IP3DPropertyEditor ) then
-    ( Result as IP3DPropertyEditor ).Prop:= Prop;
+    begin
+      ( Result as IP3DPropertyEditor ).Prop:= Prop;
+      ( Result as IP3DPropertyEditor ).ObjInsp:= OI;
+    end;
   Result.Align:= alTop;
 end;
 
@@ -227,7 +294,7 @@ end;
 constructor TP3DOIEditorGroup.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
-  StretchY:= True;
+  PageModeY:= pmExpand;
   CanCollapse:= True;
 end;
 
@@ -262,7 +329,7 @@ end;
 constructor TP3DOIEditorPage.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
   inherited Create( AData, AParent );
-  StretchY:= True;
+  PageModeY:= pmExpand;
   Groups:= TP3DOIEditorList.Create();
 end;
 
@@ -311,13 +378,18 @@ end;
 procedure TP3DObjectInspector.SetObj(AValue: TInterfacedPersistent);
 begin
   if FObj=AValue then Exit;
+
+  if ( Assigned( OnSetObj )) then
+    OnSetObj( Self, AValue );
+
   FObj:=AValue;
+
   Update;
 end;
 
 procedure TP3DObjectInspector.ScrollBarChange(Sender: TObject);
 begin
-  Container.Scroll:= vec2( Scroll.x, Scrollbar.Position );
+  Container.Scroll:= vec2( Scroll.x, Scrollbar.Percentage );
 end;
 
 procedure TP3DObjectInspector.SetActivePage(AValue: Integer);
@@ -332,9 +404,6 @@ begin
 
   for i:= 0 to Pages.Count - 1 do
     Pages[ i ].Visible:= i = ActivePage;
-
-  //Container.Height:= 5000;
-  Container.Height:= Pages[ ActivePage ].Height;
 
   UpdateScrollBar;
 end;
@@ -356,7 +425,6 @@ begin
   Pages:= TP3DOIPageList.Create;
   Container:= TP3DGraphicControl.Create( nil, Self );
 
-  //Container.Align:= alTop;
   Container.Align:= alClient;
 
   AddPage( TP3DOIEditorPageObject.Create( nil, Container ));
@@ -410,6 +478,13 @@ begin
         Pages[ i ].Visible:= False;
 end;
 
+procedure TP3DObjectInspector.MouseWheel(deltax, deltay: Integer);
+begin
+  inherited MouseWheel( deltax, deltay );
+  if ( MouseRay( P3DInput.Mouse.X, P3DInput.Mouse.Y )) then
+    Scrollbar.Percentage:= Scrollbar.Percentage - deltay / 10;
+end;
+
 
 procedure TP3DObjectInspector.Update;
 var
@@ -434,7 +509,7 @@ begin
     begin
       if ( Container.PageSize.y > 0 ) then
         begin
-          Scrollbar.ClientPageSize:= Container.ClientRect.Height / Container.PageSize.y;
+          Scrollbar.ClientPageSize:= Container.Controls.PageRect.Height / Container.PageSize.y;
           Scrollbar.Max:= Container.PageSize.y
         end
       else

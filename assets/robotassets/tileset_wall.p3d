@@ -1,0 +1,329 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Wall_NE">
+    <object
+       Scale = " 0.125000, 1.000000, 1.000000"
+       Collision = "acBox"
+       RotationOrder = "roXYZ"
+       Name = "Wl_Corner_NE"
+       Quaternion = " 0.000000, 0.000000, 1.000000,-0.000000"
+       Data = "/mesh_Wall.002"
+       Position = " 0.000000, 0.000000, 1.000000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Shadow_Corner_NE"
+       Quaternion = " 0.000000, 0.000000, 1.000000,-0.000000"
+       Data = "/mesh_Shadow.002"
+       Position = " 0.000000, 0.000000, 0.000000" />
+  </scene>
+  <scene
+     Name = "Wall_NS">
+    <object
+       Scale = " 0.125000, 1.000000, 1.000000"
+       Collision = "acBox"
+       RotationOrder = "roXYZ"
+       Name = "Wl_NS"
+       Quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+       Data = "/mesh_Wall.001"
+       Position = " 0.000000, 0.000000, 1.000000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Wall_Shadow_NS"
+       Quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+       Data = "/mesh_Shadow.001"
+       Position = " 0.000000, 0.000000, 0.000000" />
+  </scene>
+  <scene
+     Name = "Wall_NW">
+    <object
+       Scale = " 0.125000, 1.000000, 1.000000"
+       Collision = "acBox"
+       RotationOrder = "roXYZ"
+       Name = "Wl_Corner_NW"
+       Quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+       Data = "/mesh_Wall.002"
+       Position = " 0.000000, 0.000000, 1.000000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Shadow_Corner_NW"
+       Quaternion = " 0.000000, 0.000000,-0.707107, 0.707107"
+       Data = "/mesh_Shadow.002"
+       Position = " 0.000000, 0.000000, 0.000000" />
+  </scene>
+  <scene
+     Name = "Wall_SE">
+    <object
+       Scale = " 0.125000, 1.000000, 1.000000"
+       Collision = "acBox"
+       RotationOrder = "roXYZ"
+       Name = "Wl_Corner_SE"
+       Quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+       Data = "/mesh_Wall.002"
+       Position = " 0.000000, 0.000000, 1.000000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Shadow_Corner_SE"
+       Quaternion = " 0.000000, 0.000000, 0.707107, 0.707107"
+       Data = "/mesh_Shadow.002"
+       Position = " 0.000000, 0.000000, 0.000000" />
+  </scene>
+  <scene
+     Name = "Wall_SW">
+    <object
+       Scale = " 0.125000, 1.000000, 1.000000"
+       Collision = "acBox"
+       RotationOrder = "roXYZ"
+       Name = "Wl_Corner_SW"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Data = "/mesh_Wall.002"
+       Position = " 0.000000, 0.000000, 1.000000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "Shadow_Corner_SW"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Data = "/mesh_Shadow.002"
+       Position = " 0.000000, 0.000000, 0.000000" />
+  </scene>
+  <scene
+     Name = "Wall_WE">
+    <object
+       Scale = " 0.125000, 1.000000, 1.000000"
+       Collision = "acBox"
+       RotationOrder = "roXYZ"
+       Name = "Wl_WE"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Data = "/mesh_Wall"
+       Position = " 0.000000, 0.000000, 1.000000" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "WallShadow_WE"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Data = "/mesh_Shadow"
+       Position = " 0.000000, 0.000000, 0.000000" />
+  </scene>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:1120"
+     Loops = "tileset_wall.p3dbin:632"
+     Normals = "tileset_wall.p3dbin:148"
+     Faces = "tileset_wall.p3dbin:2088"
+     TexCoords0 = "tileset_wall.p3dbin:796"
+     Positions = "tileset_wall.p3dbin:0"
+     Cotangents = "tileset_wall.p3dbin:1604"
+     Name = "mesh_Wall.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialWall"
+       PolyEnd = "9" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:2292"
+     Loops = "tileset_wall.p3dbin:2236"
+     Normals = "tileset_wall.p3dbin:2184"
+     Faces = "tileset_wall.p3dbin:2396"
+     TexCoords0 = "tileset_wall.p3dbin:2256"
+     Positions = "tileset_wall.p3dbin:2132"
+     Cotangents = "tileset_wall.p3dbin:2344"
+     Name = "mesh_Shadow.001">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialShadow"
+       PolyEnd = "0" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:3524"
+     Loops = "tileset_wall.p3dbin:3036"
+     Normals = "tileset_wall.p3dbin:2552"
+     Faces = "tileset_wall.p3dbin:4492"
+     TexCoords0 = "tileset_wall.p3dbin:3200"
+     Positions = "tileset_wall.p3dbin:2404"
+     Cotangents = "tileset_wall.p3dbin:4008"
+     Name = "mesh_Wall.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialWall"
+       PolyEnd = "9" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:4816"
+     Loops = "tileset_wall.p3dbin:4712"
+     Normals = "tileset_wall.p3dbin:4612"
+     Faces = "tileset_wall.p3dbin:5016"
+     TexCoords0 = "tileset_wall.p3dbin:4748"
+     Positions = "tileset_wall.p3dbin:4536"
+     Cotangents = "tileset_wall.p3dbin:4916"
+     Name = "mesh_Shadow.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialShadow"
+       PolyEnd = "1" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:5308"
+     Loops = "tileset_wall.p3dbin:5204"
+     Normals = "tileset_wall.p3dbin:5104"
+     Faces = "tileset_wall.p3dbin:5508"
+     TexCoords0 = "tileset_wall.p3dbin:5240"
+     Positions = "tileset_wall.p3dbin:5028"
+     Cotangents = "tileset_wall.p3dbin:5408"
+     Name = "mesh_Shadow.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialShadow"
+       PolyEnd = "1" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:6208"
+     Loops = "tileset_wall.p3dbin:5912"
+     Normals = "tileset_wall.p3dbin:5620"
+     Faces = "tileset_wall.p3dbin:6792"
+     TexCoords0 = "tileset_wall.p3dbin:6012"
+     Positions = "tileset_wall.p3dbin:5520"
+     Cotangents = "tileset_wall.p3dbin:6500"
+     Name = "mesh_Wall.001">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialWall"
+       PolyEnd = "5" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:7940"
+     Loops = "tileset_wall.p3dbin:7452"
+     Normals = "tileset_wall.p3dbin:6968"
+     Faces = "tileset_wall.p3dbin:8908"
+     TexCoords0 = "tileset_wall.p3dbin:7616"
+     Positions = "tileset_wall.p3dbin:6820"
+     Cotangents = "tileset_wall.p3dbin:8424"
+     Name = "mesh_Wall.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialWall"
+       PolyEnd = "9" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:9232"
+     Loops = "tileset_wall.p3dbin:9128"
+     Normals = "tileset_wall.p3dbin:9028"
+     Faces = "tileset_wall.p3dbin:9432"
+     TexCoords0 = "tileset_wall.p3dbin:9164"
+     Positions = "tileset_wall.p3dbin:8952"
+     Cotangents = "tileset_wall.p3dbin:9332"
+     Name = "mesh_Shadow.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialShadow"
+       PolyEnd = "1" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:10564"
+     Loops = "tileset_wall.p3dbin:10076"
+     Normals = "tileset_wall.p3dbin:9592"
+     Faces = "tileset_wall.p3dbin:11532"
+     TexCoords0 = "tileset_wall.p3dbin:10240"
+     Positions = "tileset_wall.p3dbin:9444"
+     Cotangents = "tileset_wall.p3dbin:11048"
+     Name = "mesh_Wall.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialWall"
+       PolyEnd = "9" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:11856"
+     Loops = "tileset_wall.p3dbin:11752"
+     Normals = "tileset_wall.p3dbin:11652"
+     Faces = "tileset_wall.p3dbin:12056"
+     TexCoords0 = "tileset_wall.p3dbin:11788"
+     Positions = "tileset_wall.p3dbin:11576"
+     Cotangents = "tileset_wall.p3dbin:11956"
+     Name = "mesh_Shadow.002">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialShadow"
+       PolyEnd = "1" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:12228"
+     Loops = "tileset_wall.p3dbin:12172"
+     Normals = "tileset_wall.p3dbin:12120"
+     Faces = "tileset_wall.p3dbin:12332"
+     TexCoords0 = "tileset_wall.p3dbin:12192"
+     Positions = "tileset_wall.p3dbin:12068"
+     Cotangents = "tileset_wall.p3dbin:12280"
+     Name = "mesh_Shadow">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialShadow"
+       PolyEnd = "0" />
+  </mesh>
+  <mesh
+     Tangents = "tileset_wall.p3dbin:13028"
+     Loops = "tileset_wall.p3dbin:12732"
+     Normals = "tileset_wall.p3dbin:12440"
+     Faces = "tileset_wall.p3dbin:13612"
+     TexCoords0 = "tileset_wall.p3dbin:12832"
+     Positions = "tileset_wall.p3dbin:12340"
+     Cotangents = "tileset_wall.p3dbin:13320"
+     Name = "mesh_Wall">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_MaterialWall"
+       PolyEnd = "5" />
+  </mesh>
+  <materialbase
+     Instancing = "1"
+     Diff = "0.640000, 0.640000, 0.640000"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_MaterialWall"
+     Spec_Hardness = "20.000000"
+     Unlit = "0"
+     Spec = "0.342978, 0.342978, 0.342978">
+    <map
+       SpecularIntensity = "1.0"
+       Name = "Tex.002"
+       Mode = "mapMultiply"
+       DiffuseFactor = "1.0"
+       Data = "/tex_Tex.002"
+       SpecularFactor = "0.7664233446121216" />
+  </materialbase>
+  <materialbase
+     Instancing = "1"
+     Diff = "0.000000, 0.000000, 0.000000"
+     TransparencyMode = "p3dmMultiply"
+     Name = "material_MaterialShadow"
+     Spec_Hardness = "50.000000"
+     Unlit = "0"
+     Spec = "0.500000, 0.500000, 0.500000">
+    <map
+       Name = "Texture.002"
+       Mode = "mapMix"
+       DiffuseFactor = "0.0"
+       Data = "/tex_Texture.002"
+       AlphaFactor = "1.0" />
+  </materialbase>
+  <texture
+     MipMap = "1"
+     File = "TexturesCom_ConcreteNew0049_1_seamless_S.png"
+     Name = "tex_Tex.002"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "floor_ambient.png"
+     Name = "tex_Texture.002"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+</p3dfile>

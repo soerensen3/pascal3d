@@ -174,7 +174,7 @@ type
   end;
   TP3DSceneList = specialize gP3DCustomDatablockList < TP3DScene >;
   TP3DPropertyAccessScene = specialize gP3DPropertyAccessDataBlock < TP3DScene >;
-  TP3DPropertyAccessSceneList = specialize gP3DListPropertyAccess < TP3DSceneList, TP3DScene >;
+  TP3DPropertyAccessSceneList = specialize gP3DListPropertyAccess < TP3DSceneList, TP3DScene, TP3DPropertyAccessScene >;
 
 {$ENDIF}
 
@@ -711,6 +711,7 @@ begin
   Lights:= TP3DLightList.Create;
   Owner.Scenes.Add( Self );
   Properties.Add( TP3DPropertyAccessActor.CreateFieldSet( 'Cam', @FCam, @SetCam, smAttribute ));
+  Properties.Add( TP3DPropertyAccessActorList.CreateFieldSet( 'Objects', @FObjects, nil, smAttribute ));
 end;
 
 constructor TP3DScene.Create(AFileName: String; const AWatchFileForChanges: Boolean; const AData: TP3DLibrary);

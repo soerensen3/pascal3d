@@ -4,8 +4,8 @@
 { TP3DBrush }
 
 TP3DBrush = class
-  Color: TVec4;
-  constructor Create(AColor: TVec4);
+  Color: TP3DColorRGBA;
+  constructor Create(AColor: TP3DColorRGBA);
 end;
 
 TP3DPenStyle = ( psSolid, psStippled1, psStippled2, psStippled3, psStippled4, psStippled5, psStippled6 );
@@ -25,7 +25,7 @@ TP3DVerticalAlignment = (
 
 TP3DPen = class
   private
-    FColor: TVec4;
+    FColor: TP3DColorRGBA;
     FOnChange: TNotifyEvent;
     FWidth: Single;
     FStyle: TP3DPenStyle;
@@ -34,10 +34,10 @@ TP3DPen = class
     procedure SetWidth(AValue: Single);
 
   public
-    constructor Create( AColor: TVec4; AWidth: Single; AStyle: TP3DPenStyle );
+    constructor Create( AColor: TP3DColorRGBA; AWidth: Single; AStyle: TP3DPenStyle );
 
     property Width: Single read FWidth write SetWidth;
-    property Color: TVec4 read FColor write FColor;
+    property Color: TP3DColorRGBA read FColor write FColor;
     property Style: TP3DPenStyle read FStyle write SetStyle;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
 end;
@@ -65,31 +65,31 @@ TP3DCanvas2D = class ( TP3DCanvas )
 
     function PrepareForDrawing: Boolean;
 
-    procedure RenderLine( p1, p2: TVec2; Color: TVec4 );
-    procedure RenderLine( p1, p2: TVec2; Color1, Color2: TVec4 );
-    procedure RenderLines( points: array of TVec2; Color: TVec4 );
-    procedure RenderLines( points: TVec2List; Color: TVec4 );
-    procedure RenderLineRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );
-    procedure RenderLineRect( p1, p2: TVec2; Color: TVec4 );
-    procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TVec4 );
-    procedure RenderRect( p1, p2: TVec2; Color: TVec4 );
-    procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
-    procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TVec4);
+    procedure RenderLine( p1, p2: TVec2; Color: TP3DColorRGBA );
+    procedure RenderLine( p1, p2: TVec2; Color1, Color2: TP3DColorRGBA );
+    procedure RenderLines( points: array of TVec2; Color: TP3DColorRGBA );
+    procedure RenderLines( points: TVec2List; Color: TP3DColorRGBA );
+    procedure RenderLineRect( p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
+    procedure RenderLineRect( p1, p2: TVec2; Color: TP3DColorRGBA );
+    procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
+    procedure RenderRect( p1, p2: TVec2; Color: TP3DColorRGBA );
+    procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TP3DColorRGBA );
+    procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TP3DColorRGBA);
     procedure RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
-      num_segments: Integer; Color: TVec4);
-    procedure RenderLineCircle( c: TVec2; r: Single; num_segments: Integer; Color: TVec4 );
-    procedure RenderQuad( p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TVec4 );
-    procedure RenderQuad( p1, p2, p3, p4: TVec2; Color: TVec4 );
+      num_segments: Integer; Color: TP3DColorRGBA);
+    procedure RenderLineCircle( c: TVec2; r: Single; num_segments: Integer; Color: TP3DColorRGBA );
+    procedure RenderQuad( p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
+    procedure RenderQuad( p1, p2, p3, p4: TVec2; Color: TP3DColorRGBA );
     procedure RenderText( Text: TP3DText; P: TVec2 );
     procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
     procedure RenderText( Text: TP3DTextBmp; P: TVec2 );
     procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DTextBmp );
-    procedure RenderTextShadow( Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TVec4 );
-    procedure RenderTextShadow( Text: String; P: TVec2; blur: Single; Color: TVec4; var CacheObj: TP3DTextBmp );
+    procedure RenderTextShadow( Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TP3DColorRGBA );
+    procedure RenderTextShadow( Text: String; P: TVec2; blur: Single; Color: TP3DColorRGBA; var CacheObj: TP3DTextBmp );
     procedure RenderLetter( Text: TP3DText; Idx: Integer; P: TVec2 );
-    procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TVec4 );
-    procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TVec4);
-    procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TVec4 );
+    procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TP3DColorRGBA );
+    procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TP3DColorRGBA);
+    procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TP3DColorRGBA );
     function GetValidText( Text: String; var CacheObj: TP3DText ): TP3DText; inline;
     function GetValidText( Text: String; var CacheObj: TP3DText; AFont: TP3DFont ): TP3DText;
     function GetValidText( Text: String; var CacheObj: TP3DTextBmp; AFont: TP3DFont ): TP3DTextBmp;
@@ -109,6 +109,7 @@ TP3DCanvas2D = class ( TP3DCanvas )
 end;
 
 function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
+function P3DRect(TopLeft, WidthHeight: TVec2): TP3DRect;
 function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;
 function P3DRectEx( TopLeft, BottomRight: TVec2 ): TP3DRect;
 
@@ -118,7 +119,7 @@ function P3DRectEx( TopLeft, BottomRight: TVec2 ): TP3DRect;
 
 { TP3DCanvas2D }
 
-procedure TP3DCanvas2D.RenderLine(p1, p2: TVec2; Color: TVec4);
+procedure TP3DCanvas2D.RenderLine(p1, p2: TVec2; Color: TP3DColorRGBA);
 var
   LineDir: TVec2;
 begin
@@ -134,7 +135,7 @@ begin
   glEnd(); cle( Self );
 end;
 
-procedure TP3DCanvas2D.RenderLine(p1, p2: TVec2; Color1, Color2: TVec4);
+procedure TP3DCanvas2D.RenderLine(p1, p2: TVec2; Color1, Color2: TP3DColorRGBA);
 var
   LineDir: TVec2;
 begin
@@ -152,7 +153,7 @@ begin
   glEnd(); cle( Self );
 end;
 
-procedure TP3DCanvas2D.RenderLines(points: array of TVec2; Color: TVec4);
+procedure TP3DCanvas2D.RenderLines(points: array of TVec2; Color: TP3DColorRGBA);
 var
   i: Integer;
 begin
@@ -167,7 +168,7 @@ begin
   glEnd(); cle( Self );
 end;
 
-procedure TP3DCanvas2D.RenderLines(points: TVec2List; Color: TVec4);
+procedure TP3DCanvas2D.RenderLines(points: TVec2List; Color: TP3DColorRGBA);
 var
   i: Integer;
 begin
@@ -182,18 +183,18 @@ begin
   glEnd(); cle( Self );
 end;
 
-procedure TP3DCanvas2D.RenderLineRect(p1, p2: TVec2; c1, c2, c3, c4: TVec4);
+procedure TP3DCanvas2D.RenderLineRect(p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA);
 begin
   PrepareForDrawing
   //TODO: Finish RenderLineRect function for Canvas
 end;
 
-procedure TP3DCanvas2D.RenderLineRect(p1, p2: TVec2; Color: TVec4);
+procedure TP3DCanvas2D.RenderLineRect(p1, p2: TVec2; Color: TP3DColorRGBA);
 begin
   RenderLines([ p1, vec2( p2.x, p1.y ), p2, vec2( p1.x, p2.y ), p1 ], Color );
 end;
 
-procedure TP3DCanvas2D.RenderRect(p1, p2: TVec2; c1, c2, c3, c4: TVec4);
+procedure TP3DCanvas2D.RenderRect(p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA);
 begin
   if ( not PrepareForDrawing ) then exit;
 
@@ -209,7 +210,7 @@ begin
   glEnd(); cle( Self );
 end;
 
-procedure TP3DCanvas2D.RenderRect(p1, p2: TVec2; Color: TVec4);
+procedure TP3DCanvas2D.RenderRect(p1, p2: TVec2; Color: TP3DColorRGBA);
 begin
   if ( not PrepareForDrawing ) then exit;
 
@@ -223,7 +224,7 @@ begin
 end;
 
 procedure TP3DCanvas2D.RenderCircle(c: TVec2; r: Single; num_segments: Integer;
-  Color: TVec4);
+  Color: TP3DColorRGBA);
 var
   theta, co, si, t: Single;
   p: TVec2;
@@ -251,7 +252,7 @@ begin
   glEnd(); cle( Self );
 end;
 
-procedure TP3DCanvas2D.RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TVec4);
+procedure TP3DCanvas2D.RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TP3DColorRGBA);
 begin
   RenderArc( p1 + r, r, 180, 270, num_segments, Color );
   RenderArc( vec2( p2.x - r, p1.y + r ), r, 270, 360, num_segments, Color );
@@ -263,7 +264,7 @@ begin
 end;
 
 procedure TP3DCanvas2D.RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
-  num_segments: Integer; Color: TVec4);
+  num_segments: Integer; Color: TP3DColorRGBA);
 var
   theta, co, si, t: Single;
   p: TVec2;
@@ -312,7 +313,7 @@ begin
 end;
 
 procedure TP3DCanvas2D.RenderLineCircle(c: TVec2; r: Single;
-  num_segments: Integer; Color: TVec4);
+  num_segments: Integer; Color: TP3DColorRGBA);
 var
   theta, co, si, t: Single;
   p: TVec2;
@@ -345,7 +346,7 @@ begin
   VBO.Free;
 end;
 
-procedure TP3DCanvas2D.RenderQuad(p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TVec4);
+procedure TP3DCanvas2D.RenderQuad(p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TP3DColorRGBA);
 begin
   if ( not PrepareForDrawing ) then exit;
 
@@ -362,7 +363,7 @@ begin
   cle( Self );
 end;
 
-procedure TP3DCanvas2D.RenderQuad(p1, p2, p3, p4: TVec2; Color: TVec4);
+procedure TP3DCanvas2D.RenderQuad(p1, p2, p3, p4: TVec2; Color: TP3DColorRGBA);
 begin
   if ( not PrepareForDrawing ) then exit;
 
@@ -412,7 +413,7 @@ begin
   RenderText( CacheObj, P );
 end;
 
-procedure TP3DCanvas2D.RenderTextShadow(Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TVec4);
+procedure TP3DCanvas2D.RenderTextShadow(Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TP3DColorRGBA);
 begin
   if ( not PrepareForDrawing ) then exit;
 
@@ -424,7 +425,7 @@ begin
     Text.Render( P, ScreenColor * Font.Color, World * Proj );
 end;
 
-procedure TP3DCanvas2D.RenderTextShadow(Text: String; P: TVec2; blur: Single; Color: TVec4; var CacheObj: TP3DTextBmp);
+procedure TP3DCanvas2D.RenderTextShadow(Text: String; P: TVec2; blur: Single; Color: TP3DColorRGBA; var CacheObj: TP3DTextBmp);
 begin
   if ( Text = '' ) then
     exit;
@@ -441,7 +442,7 @@ begin
 end;
 
 procedure TP3DCanvas2D.RenderBezier(p1, p2, p3, p4: TVec2;
-  num_segments: Integer; Color: TVec4);
+  num_segments: Integer; Color: TP3DColorRGBA);
   function bezier( t, P0, P1, P2, P3: Single ): Float;
   begin
     // Cubic bezier Curve
@@ -471,11 +472,11 @@ begin
 end;
 
 procedure TP3DCanvas2D.RenderRectShadow(p1, p2: TVec2; blur: Single;
-  AColor: TVec4);
+  AColor: TP3DColorRGBA);
 var
-  c0: TVec4;
+  c0: TP3DColorRGBA;
 begin
-  c0:= vec4( 0, 0, 0, 0 );
+  c0:= vec4( AColor.xyz, 0 );
 
   RenderQuad(
     vec2( p1.x - blur, p1.y - blur ),
@@ -506,9 +507,9 @@ begin
 end;
 
 procedure TP3DCanvas2D.RenderRectShadowInner(p1, p2: TVec2; off, blur: Single;
-  AColor: TVec4);
+  AColor: TP3DColorRGBA);
 var
-  c0: TVec4;
+  c0: TP3DColorRGBA;
 begin
   c0:= vec4( 0, 0, 0, 0 );
 
@@ -837,6 +838,12 @@ begin
   Result.Top:= Top;
   Result.Width:= Max( 0, Width );
   Result.Height:= Max( 0, Height );
+end;
+
+function P3DRect(TopLeft, WidthHeight: TVec2): TP3DRect;
+begin
+  Result.TopLeft:= TopLeft;
+  Result.WidthHeight:= WidthHeight;
 end;
 
 function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;

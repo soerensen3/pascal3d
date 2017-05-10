@@ -15,7 +15,7 @@ type
 
   { TP3DLibrary }
 
-  TP3DLibrary = class ( TPersistent )
+  TP3DLibrary = class ( TP3DInterfacedPersistent )
     private
       FActions: TP3DActionList;
       FArmatures: TP3DArmatureList;
@@ -24,7 +24,7 @@ type
       FDataBlocks: TP3DObjectList;
       FDOMFile: TXMLDocument;
       FFileWatch: TP3DFileWatch;
-      FFonts: TP3DFontListBmp;
+      FFonts: TP3DFontBmpList;
       FIsDesignerPackage: Boolean;
       FJoints: TP3DJointList;
       FLights: TP3DLightList;
@@ -77,6 +77,9 @@ type
       procedure ClearFields; virtual;
       function IsValid( Obj: TP3DObject ): Boolean; virtual;
       function CheckLastChange: Integer; virtual;
+      class function DOMNodeName: String; override;
+
+      procedure PerformActions( GlobalTime: Float ); virtual;
 
       property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
 
@@ -92,7 +95,7 @@ type
       property Textures: TP3DTextureList read FTextures write FTextures;
       property Armatures: TP3DArmatureList read FArmatures write FArmatures;
       property Actions: TP3DActionList read FActions write FActions;
-      property Fonts: TP3DFontListBmp read FFonts write FFonts;
+      property Fonts: TP3DFontBmpList read FFonts write FFonts;
 
       property FileWatch: TP3DFileWatch read FFileWatch write FFileWatch;
       property DOMFile: TXMLDocument read GetDOMFile write FDOMFile;
@@ -109,6 +112,7 @@ type
     public
       constructor Create;
       destructor Destroy; override;
+      procedure PerformActions(GlobalTime: Float); override;
 
       procedure ClearFields; override;
       function IsValid(Obj: TP3DObject): Boolean; override;
@@ -130,6 +134,10 @@ type
       function FindByFileName( AFileName: String ): Integer;
       property LastUpdate: Integer read FLastUpdate;
   end;
+
+  TP3DPropertyAccessLibrary = specialize gP3DPropertyAccessInterfacedPersistent < TP3DLibrary >;
+  TP3DPropertyAccessLibraryList = specialize gP3DListPropertyAccess < TP3DLibraryList, TP3DLibrary, TP3DPropertyAccessLibrary >;
+
 
   { TP3DDataBlockCacheEntry }
 
@@ -206,8 +214,21 @@ begin
   Textures:= TP3DTextureList.Create;
   Armatures:= TP3DArmatureList.Create;
   Actions:= TP3DActionList.Create;
-  Fonts:= TP3DFontListBmp.Create;
+  Fonts:= TP3DFontBmpList.Create;
   FileWatch:= TP3DFileWatch.Create( '', Self );
+
+  Properties.Add( TP3DPropertyAccessCameraList.CreateField( 'Cameras', @FCameras, smNode ));
+  Properties.Add( TP3DPropertyAccessJointList.CreateField( 'Joints', @FJoints, smNode ));
+  Properties.Add( TP3DPropertyAccessLightList.CreateField( 'Lights', @FLights, smNode ));
+  Properties.Add( TP3DPropertyAccessMaterialList.CreateField( 'Materials', @FMaterials, smNode ));
+  Properties.Add( TP3DPropertyAccessMeshList.CreateField( 'Meshes', @FMeshes, smNode ));
+  Properties.Add( TP3DPropertyAccessActorList.CreateField( 'Objects', @FObjects, smNode ));
+  Properties.Add( TP3DPropertyAccessSceneList.CreateField( 'Scenes', @FScenes, smNode ));
+  Properties.Add( TP3DPropertyAccessShaderList.CreateField( 'Shaders', @FShaders, smNode ));
+  Properties.Add( TP3DPropertyAccessTextureList.CreateField( 'Textures', @FTextures, smNode ));
+  Properties.Add( TP3DPropertyAccessArmatureList.CreateField( 'Armatures', @FArmatures, smNode ));
+  Properties.Add( TP3DPropertyAccessActionList.CreateField( 'Actions', @FActions, smNode ));
+  Properties.Add( TP3DPropertyAccessFontBmpList.CreateField( 'Fonts', @FFonts, smNode ));
 end;
 
 constructor TP3DLibrary.CreateFromDOM(ADOMNode: TDOMElement);
@@ -844,6 +865,21 @@ begin
   Result:= DataBlocks.LastUpdate;
 end;
 
+class function TP3DLibrary.DOMNodeName: String;
+begin
+  Result:= 'p3dfile';
+end;
+
+procedure TP3DLibrary.PerformActions(GlobalTime: Float);
+var
+  Action: TP3DAction;
+  Block: TP3DDataBlock;
+begin
+  for Action in Actions do
+    for Block in Action.Users do
+      Action.Perform( GlobalTime, Block );
+end;
+
 { TP3DDataList }
 
 procedure TP3DLibraryList.DoChange;
@@ -961,12 +997,22 @@ constructor TP3DData.Create;
 begin
   inherited Create;
   Libraries:= TP3DLibraryList.Create;
+  Properties.Add( TP3DPropertyAccessLibraryList.CreateFieldSet( 'Libraries', @FLibraries, Nil, smDoNotStore ));
 end;
 
 destructor TP3DData.Destroy;
 begin
   inherited Destroy;
   FreeAndNil( FLibraries );
+end;
+
+procedure TP3DData.PerformActions(GlobalTime: Float);
+var
+  lib: TP3DLibrary;
+begin
+  for lib in Libraries do
+    lib.PerformActions( GlobalTime );
+  inherited PerformActions(GlobalTime);
 end;
 
 procedure TP3DData.ClearFields;

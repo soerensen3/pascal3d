@@ -108,7 +108,7 @@ end;
 
 { TP3DFontListBmp }
 
-procedure TP3DFontListBmp.SaveToDOM(AParent: TDOMElement);
+procedure TP3DFontBmpList.SaveToDOM(AParent: TDOMElement);
 var
   i: Integer;
 begin

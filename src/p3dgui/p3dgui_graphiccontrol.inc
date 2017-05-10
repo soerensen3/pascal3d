@@ -30,15 +30,15 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FMargin: TVec4;
     FHideChildren: Boolean;
     FNeedsUpdate: Boolean;
-    FPageSize: TVec2;
     FPointerTag: Pointer;
     FRect: TP3DRect;
-    FStretchX: Boolean;
-    FStretchY: Boolean;
 
     function GetBottomRight: TVec2; virtual;
     function GetHeight: Single; virtual;
     function GetLeft: Single; virtual;
+    function GetPageModeX: TP3DPageMode;
+    function GetPageModeY: TP3DPageMode;
+    function GetPageSize: TVec2;
     function GetTop: Single; virtual;
     function GetTopLeft: TVec2; virtual;
     function GetWidth: Single; virtual;
@@ -46,8 +46,8 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure SetBottomRight(AValue: TVec2); virtual;
     procedure SetHeight(AValue: Single); virtual;
     procedure SetLeft(AValue: Single); virtual;
-    procedure SetStretchX(AValue: Boolean); virtual;
-    procedure SetStretchY(AValue: Boolean); virtual;
+    procedure SetPageModeX(AValue: TP3DPageMode);
+    procedure SetPageModeY(AValue: TP3DPageMode);
     procedure SetTop(AValue: Single); virtual;
     procedure SetMargin(AValue: TVec4); virtual;
     procedure SetTopLeft(AValue: TVec2); virtual;
@@ -62,7 +62,6 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FEnabled: Boolean;
     FInputState: TP3DGCInputFlags;
     FLastClick: Integer;
-    FLeft: Float;
     FManager: TP3DGUIManager;
     FNoMargin: Boolean;
     FOnDragDrop: TP3DGUIDragDrop;
@@ -78,11 +77,8 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FOnParentRealign: TNotifyEvent;
     FOwnerCtrlBuf: TP3DControlList;
     FTag: Integer;
-    FTop: Float;
     FVisible: Boolean;
-    FWidth: Float;
     FCursor: TP3DCursor;
-    FHeight: Float;
     FMaxHeight: Float;
     FMaxWidth: Float;
     FMinHeight: Float;
@@ -106,13 +102,13 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure DragCancel( Sender: TP3DGraphicControl; X, Y: Integer ); virtual; //Cancel dragging.
     procedure DragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean ); virtual; //This procedure is called internally when the mouse is released on the control during dragging. It can be overriden to make this control a drag target.
     procedure Realign(); virtual; //Realign the control. Is called from TP3DControlList when parent changes
-    procedure Paint( BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect ); virtual; //Prepare the canvas for drawing and call draw procedure.
+    procedure Paint(); virtual; //Prepare the canvas for drawing and call draw procedure.
 
-    procedure CalculateDimensions( Origin: TVec2; var R: TP3DRect );
+    {procedure CalculateDimensions( Origin: TVec2; var R: TP3DRect );
     function CalculatePosition( AMaxSize: TVec2 ): TVec2;
     function CalculatePageSize(): TVec2;
     function CalculateWidthHeight( AMaxSize: TVec2 ): TVec2;
-    function CalculateCanvasRect(): TP3DRect;
+    function CalculateCanvasRect(): TP3DRect;}
 
     property HideChildren: Boolean read FHideChildren write FHideChildren; //Do not call children's render procedure
 
@@ -133,7 +129,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure MouseLeave( X, Y: Integer ); virtual;
     procedure MouseMove( X, Y: Integer ); virtual;
     procedure MouseUp( mb1, mb2, mb3: Boolean; X, Y: Integer ); virtual;
-    procedure MouseWheel( delta: Integer ); virtual;
+    procedure MouseWheel( deltax: Integer; deltay: Integer ); virtual;
 
     procedure BringToFront; //Bring control to the front layer in control list
     procedure OneLayerDown; //Move control one layer down in control list.
@@ -150,9 +146,11 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property Width: Single read GetWidth write SetWidth;
     property Height: Single read GetHeight write SetHeight;
     property Left: Single read GetLeft write SetLeft;
-    property Top: Single read GetTop write SetLeft;
-    property PageSize: TVec2 read FPageSize;
+    property Top: Single read GetTop write SetTop;
+    property PageSize: TVec2 read GetPageSize;
 
+    property PageModeX: TP3DPageMode read GetPageModeX write SetPageModeX;
+    property PageModeY: TP3DPageMode read GetPageModeY write SetPageModeY;
     property Margin: TVec4 read FMargin write SetMargin;
     property Canvas: TP3DCanvas2D read FCanvas write FCanvas;
     property ClientRect: TP3DRect read FClientRect;
@@ -170,8 +168,6 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property Tag: Integer read FTag write FTag;
     property Visible: Boolean read FVisible write SetVisible;
     property Focused: Boolean read GetFocused write SetFocused;
-    property StretchX: Boolean read FStretchX write SetStretchX;
-    property StretchY: Boolean read FStretchY write SetStretchY;
 
     property MinWidth: Float read FMinWidth write FMinWidth;
     property MinHeight: Float read FMinHeight write FMinHeight;
@@ -194,6 +190,8 @@ TP3DGraphicControl = class ( TP3DDataBlock )
 end;
 
 TP3DPropertyAccessGraphicControl = specialize gP3DPropertyAccessDataBlock < TP3DGraphicControl >;
+TP3DPropertyAccessGraphicControlList = specialize gP3DListPropertyAccess < TP3DControlList, TP3DGraphicControl, TP3DPropertyAccessGraphicControl >;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -243,7 +241,8 @@ begin
                     TP3DPropertyAccessVec2.CreateGetSet( 'Scroll', @GetScroll, @SetScroll ),
                     TP3DPropertyAccessRTTI.Create( Self, 'Tag', smAttribute )],
                     'Other' );
-//  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'ClientRect', smAttribute )); //cannot be published
+  //Properties.Add( TP3DPropertyAccesslRTTI.Create( Self, 'ClientRect', smAttribute )); //cannot be published
+  Properties.Add( TP3DPropertyAccessGraphicControlList.CreateField( 'Controls', @FControls, smAttribute )); //cannot be published
   //property Controls: TP3DControlList read FControls write FControls;
 end;
 
@@ -289,6 +288,21 @@ begin
   Result:= Rect.Left;
 end;
 
+function TP3DGraphicControl.GetPageModeX: TP3DPageMode;
+begin
+  Result:= Controls.PageModeX;
+end;
+
+function TP3DGraphicControl.GetPageModeY: TP3DPageMode;
+begin
+  Result:= Controls.PageModeY;
+end;
+
+function TP3DGraphicControl.GetPageSize: TVec2;
+begin
+  Result:= Controls.PageSize;
+end;
+
 function TP3DGraphicControl.GetTop: Single;
 begin
   Result:= Rect.Top;
@@ -327,18 +341,14 @@ begin
   NeedsUpdate:= True;
 end;
 
-procedure TP3DGraphicControl.SetStretchX(AValue: Boolean);
+procedure TP3DGraphicControl.SetPageModeX(AValue: TP3DPageMode);
 begin
-  if FStretchX=AValue then Exit;
-  FStretchX:=AValue;
-  NeedsUpdate:= True;
+  Controls.PageModeX:= AValue;
 end;
 
-procedure TP3DGraphicControl.SetStretchY(AValue: Boolean);
+procedure TP3DGraphicControl.SetPageModeY(AValue: TP3DPageMode);
 begin
-  if FStretchY=AValue then Exit;
-  FStretchY:=AValue;
-  NeedsUpdate:= True;
+  Controls.PageModeY:= AValue;
 end;
 
 procedure TP3DGraphicControl.SetTopLeft(AValue: TVec2);
@@ -387,7 +397,7 @@ procedure TP3DGraphicControl.KeyDown;
 begin
   if ( Assigned( FOnKeyDown )) then
     FOnKeyDown( Self );
-  Controls.Input;
+  //Controls.Input;
 end;
 
 procedure TP3DGraphicControl.MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer );
@@ -438,8 +448,8 @@ begin
   cy:= Y - Canvas.Top;
   if (( P3DInput.Mouse.DX <> 0 ) or ( P3DInput.Mouse.DY <> 0 )) then
     MouseMove( cx, cy );
-  if ( P3DInput.Mouse.DZ <> 0 ) then
-    MouseWheel( P3DInput.Mouse.DZ );
+  if (( P3DInput.Mouse.DWX <> 0 ) or ( P3DInput.Mouse.DWY <> 0 )) then
+    MouseWheel( P3DInput.Mouse.DWX, P3DInput.Mouse.DWY );
   for Ctrl in Controls do
     Ctrl.MouseAction( X, Y, mb1, mb2, mb3, dmb1, dmb2, dmb3 );
 end;
@@ -464,7 +474,7 @@ begin
     MouseClick( mb1, mb2, mb3, X, Y );
 end;
 
-procedure TP3DGraphicControl.MouseWheel(delta: Integer);
+procedure TP3DGraphicControl.MouseWheel(deltax: Integer; deltay: Integer);
 begin
 
 end;
@@ -473,6 +483,7 @@ procedure TP3DGraphicControl.KeyboardAction;
 var
   Ctrl: TP3DGraphicControl;
 begin
+  KeyDown;
   for Ctrl in Controls do
     Ctrl.KeyboardAction();
 end;
@@ -510,7 +521,7 @@ end;
 
 function TP3DGraphicControl.GetScroll: TVec2;
 begin
-  Result:= Canvas.Scroll;
+  Result:= Controls.PageScroll;
 end;
 
 procedure TP3DGraphicControl.SetInputState(AValue: TP3DGCInputFlags);
@@ -568,7 +579,8 @@ end;
 
 procedure TP3DGraphicControl.SetScroll(AValue: TVec2);
 begin
-  Canvas.Scroll:= AValue;
+  Controls.PageScroll:= AValue;
+  Controls.UpdateControls;
 end;
 
 procedure TP3DGraphicControl.SetTop(AValue: Single);
@@ -579,7 +591,7 @@ end;
 
 
 
-procedure TP3DGraphicControl.Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
+procedure TP3DGraphicControl.Paint();
 var
   OldScroll: TVec2;
   {$IFDEF DEBUG_GUI}
@@ -587,23 +599,23 @@ var
   txt: TP3DTextBmp;
   {$ENDIF}
   p: TVec2;
-  R: TP3DRect;
 begin
-  R:= CalculateCanvasRect().Clip( ClipRect );
-  if ( R.Width * R.Height = 0 ) then
+  if ( Canvas.Width * Canvas.Height = 0 ) then
     exit;
 
   if ( HasShadow()) then
     begin
-      p:= vec2( Canvas.Left + 2, Canvas.Top + 2 );
+      p:= Canvas.TopLeft + 2;
       P3DGUIManager.ScreenCanvas.Lock;
-      P3DGUIManager.ScreenCanvas.RenderRectShadow( p, p + vec2( Canvas.Width, Canvas.Height ), 10, vec4( 0, 0, 0, 0.05 ));
+      P3DGUIManager.ScreenCanvas.RenderRectShadow( p, p + Canvas.WidthHeight, 10, vec4( 0, 0, 0, 0.05 ));
       P3DGUIManager.ScreenCanvas.Unlock();
     end;
 
   OldScroll:= Canvas.Scroll;
-  Canvas.Scroll:= Canvas.Scroll + ScrollAcc;
-  Canvas.Rect:= R;
+  //Canvas.Scroll:= Canvas.Scroll + ScrollAcc;
+  //Canvas.Rect:= R;
+//  Canvas.Scroll:= - Controls.Origin + Canvas.TopLeft + ClientRect.TopLeft;
+  Canvas.Scroll:= Controls.FinalScroll;
   Canvas.Lock;
 
   //Canvas.ScreenColor:= vec4( 1 * Ord( gcisMouseBtn1Down in InputState ), 1 * Ord( gcisMouseBtn2Down in InputState ), 1 * Ord( gcisMouseBtn3Down in InputState ), 0.25 + 0.75 * Ord( gcisMouseOver in InputState ) + 0.25 * Ord( gcisMouseOverOccl in InputState ));
@@ -613,64 +625,34 @@ begin
   Canvas.Unlock();
   Canvas.Scroll:= OldScroll;
   if ( not HideChildren ) then
-    Controls.Render( BaseColor, Scroll, R );
+    Controls.Render();
   {$IFDEF DEBUG_GUI}
+  P3DGUIManager.ScreenCanvas.Lock;
+  P3DGUIManager.ScreenCanvas.Font.Size:= 12;
+  P3DGUIManager.ScreenCanvas.Font.Color:= Red300;
+  P3DGUIManager.ScreenCanvas.GetValidText( IntToStr( ParentCtrl.IndexOf( Self )), P3DGUIManager.DebugText );
+  P3DGUIManager.ScreenCanvas.RenderText( P3DGUIManager.DebugText, vec2( Canvas.Left, Canvas.Top ));
+  P3DGUIManager.ScreenCanvas.Font.Color:= Black;
   if ( Self = P3DGUIManager.LastMouseOverCtrl ) then
     begin
-      P3DGUIManager.ScreenCanvas.Lock;
       //P3DGUIManager.ScreenCanvas.RenderRect( vec2( Canvas.Left + ClientRect.Left, Canvas.Top + ClientRect.Top ), vec2( Canvas.Left + ClientRect.Left + ClientRect.Right, Canvas.Top + ClientRect.Top + ClientRect.Bottom ), vec4( 1, 1, 1, 0.2 ));
       P3DGUIManager.ScreenCanvas.RenderRect( vec2( Canvas.Left, Canvas.Top ), vec2( Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), vec4( 0, 0, 0, 0.5 ));
 
       P3DGUIManager.ScreenCanvas.Font.Size:= 24;
       P3DGUIManager.ScreenCanvas.GetValidText( Format( '%s [%dx%d]', [ P3DGUIManager.LastMouseOverCtrl.Name, round( P3DGUIManager.LastMouseOverCtrl.Width ), round( P3DGUIManager.LastMouseOverCtrl.Height )]), P3DGUIManager.DebugText );
       P3DGUIManager.DebugTextPos:= vec2( Canvas.Left, Canvas.Top + Canvas.Height - 20 );
+      P3DGUIManager.ScreenCanvas.RenderLineRect( Controls.PageRect.TopLeft, Controls.PageRect.BottomRight, Red500.Fade( 0.5 ));
+
       //P3DGUIManager.ScreenCanvas.RenderText( txt, p );
       //txt.Free;
-      P3DGUIManager.ScreenCanvas.Unlock();
     end;
   for i:= 0 to 2 do
     if ( Self = P3DGUIManager.LastMouseDownCtrl[ i ]) then
       begin
-        P3DGUIManager.ScreenCanvas.Lock;
         P3DGUIManager.ScreenCanvas.RenderRect( vec2( Canvas.Left, Canvas.Top ), vec2( Canvas.Left + Canvas.Width, Canvas.Top + Canvas.Height ), vec4( Ord( i = 0 ), Ord( i = 1 ), Ord( i = 2 ), 0.2 ));
-        P3DGUIManager.ScreenCanvas.Unlock();
       end;
+  P3DGUIManager.ScreenCanvas.Unlock();
   {$ENDIF}
-end;
-
-procedure TP3DGraphicControl.CalculateDimensions(Origin: TVec2; var R: TP3DRect);
-var
-  TL: TVec2;
-begin
-  if ( HideChildren ) then
-    FPageSize:= vec2( 0 )
-  else
-    FPageSize:= CalculatePageSize(); // Calculate the required page size for child controls
-
-  if ( StretchX ) then   // Autosize for x and y
-    Rect.Width:= PageSize.X + Margin.X + Margin.Z;
-  if ( StretchY ) then
-    Rect.Height:= PageSize.Y + Margin.Y + Margin.W;
-
-  Canvas.WidthHeight:= CalculateWidthHeight( R.WidthHeight ); //Effective Width and Height
-
-  TL:= CalculatePosition( R.WidthHeight ); // Calculate the position relative to R.TopLeft
-
-  Canvas.TopLeft:= TL + R.TopLeft; // Effective Position in Screen Coordinates (inside SDL Window)
-  TopLeft:= Canvas.TopLeft - Origin; // Transform to the space of the parent's client rect
-  FBaseCanvasRect:= Canvas.Rect;
-
-  Canvas.Rect:= Canvas.Rect.Clip( R ); //# Clip canvas rect to the parent's client rect
-
-  R:= R.Inset( vec2( Ord( Align = alLeft ), Ord( Align = alTop )) * Canvas.WidthHeight,
-               vec2( Ord( Align = alRight ), Ord( Align = alBottom )) * Canvas.WidthHeight ); //#1 occupy space in the rect for aligned controls if control has align
-
-  FClientRect:= Canvas.Rect.Inset( Margin.XY, Margin.ZW );
-  Realign();
-
-  Controls.CalculateDimensions( ClientRect );
-  FClientRect.TopLeft:= FClientRect.TopLeft - Canvas.TopLeft;
-  NeedsUpdate:= False;
 end;
 
 {#1
@@ -694,47 +676,6 @@ case Align of
       R.Height:= R.Height - Canvas.Height;
     end;
 end;}
-
-function TP3DGraphicControl.CalculatePosition(AMaxSize: TVec2): TVec2;
-begin
-  Result:= TopLeft;
-  if ( Align in [ alLeft, alTop, alBottom, alClient ]) then
-    Result.x:= 0
-  else if ( Align in [ alRight ]) then
-    Result.x:= AMaxSize.x - Canvas.Width;
-
-  if ( Align in [ alLeft, alTop, alRight, alClient ]) then
-    Result.y:= 0
-  else if ( Align in [ alBottom ]) then
-    Result.y:= AMaxSize.y - Canvas.Height;
-end;
-
-function TP3DGraphicControl.CalculatePageSize: TVec2;
-begin
-  Result:= Controls.CalculatePageSize;
-end;
-
-function TP3DGraphicControl.CalculateWidthHeight(AMaxSize: TVec2): TVec2;
-begin
-  if ( Align in [ alTop, alBottom, alClient ]) then
-    begin
-      Result.X:= AMaxSize.x; // change width to client rect's size
-      Rect.Width:= Result.X;
-    end;
-  if ( Align in [ alLeft, alRight, alClient ]) then
-    begin
-      Result.Y:= AMaxSize.y; // change height to client rect's size
-      Rect.Height:= Result.Y;
-    end;
-  Result:= min( Rect.WidthHeight, AMaxSize ); // Clip to max size
-end;
-
-function TP3DGraphicControl.CalculateCanvasRect: TP3DRect;
-begin
-  Result:= FBaseCanvasRect;
-//  Result.TopLeft:= Result.TopLeft + BaseScroll;
-end;
-
 
 procedure TP3DGraphicControl.SetAlign( const AValue: TP3DControlAlign );
 begin
@@ -762,7 +703,7 @@ begin
   if ( FVisible <> Value ) then
     begin
       FVisible:= Value;
-      if ( Align <> alNone ) then
+      //if ( Align <> alNone ) then
         NeedsUpdate:= True;
     end;
 end;

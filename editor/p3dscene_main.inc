@@ -12,16 +12,23 @@ type
       FViewMode: TP3DDataViewerMode;
       FUpdating: Boolean;
 
+      PropEd: TP3DPropertyEditorString;
+      Edit: TP3DEdit;
+
       procedure SetActiveLibrary(AValue: TP3DLibrary);
       procedure SetActiveScene(AValue: TP3DScene);
       procedure SetViewMode(AValue: TP3DDataViewerMode);
       procedure BeginUpdate;
       procedure EndUpdate;
 
+      procedure OnEditKeyDown( Sender: TObject );
+
     public
+      constructor Create(const AData: TP3DLibrary=nil); override;
+
       function NewLibrary( const AFileName: String = 'Untitled%d.p3d' ): TP3DLibrary;
       function NewScene( const AName: String = 'NewScene%d' ): TP3DScene;
-      procedure Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect); override;
+      procedure Paint(); override;
       procedure CheckLastChange;
       procedure Update;
       function FindFirstLib: TP3DLibrary;
@@ -88,6 +95,20 @@ begin
   FUpdating:= False;
 end;
 
+procedure TP3DSceneMain.OnEditKeyDown(Sender: TObject);
+begin
+  if ( P3DInput.Keyboard.DKeys[ P3DK_RETURN ] = ksPressed ) then
+    if ( OIPanel.ObjectInspector.Obj is TP3DInterfacedPersistent ) then
+      PropEd.Prop:= TP3DInterfacedPersistent( OIPanel.ObjectInspector.Obj ).Properties.GetPropByPath( Edit.Text );
+end;
+
+constructor TP3DSceneMain.Create(const AData: TP3DLibrary);
+begin
+  inherited Create(AData);
+  PageModeX:= pmStretch;
+  PageModeY:= pmStretch;
+end;
+
 function TP3DSceneMain.NewLibrary(const AFileName: String): TP3DLibrary;
 var
   i: Integer;
@@ -134,9 +155,9 @@ begin
   Result.Name:= N;
 end;
 
-procedure TP3DSceneMain.Paint(BaseColor: TVec4; ScrollAcc: TVec2; ClipRect: TP3DRect);
+procedure TP3DSceneMain.Paint();
 begin
-  inherited Paint( BaseColor, ScrollAcc, ClipRect );
+  inherited Paint();
   if ( not Enabled ) then
     begin
       Canvas.Lock;

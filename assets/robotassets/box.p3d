@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acBox"
+       RotationOrder = "roXYZ"
+       Name = "box"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Data = "/mesh_box"
+       Position = " 0.000000, 0.000000, 1.000000" />
+    <object
+       Scale = " 2.574919, 2.574919, 2.574919"
+       Collision = "acNone"
+       RotationOrder = "roXYZ"
+       Name = "box_shadow"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Data = "/mesh_box_shadow"
+       Position = " 0.000000, 0.000000, 0.083803" />
+  </scene>
+  <mesh
+     Tangents = "box.p3dbin:5872"
+     Loops = "box.p3dbin:3272"
+     Normals = "box.p3dbin:676"
+     Faces = "box.p3dbin:11064"
+     TexCoords0 = "box.p3dbin:4140"
+     Positions = "box.p3dbin:0"
+     Cotangents = "box.p3dbin:8468"
+     Name = "mesh_box">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "53" />
+  </mesh>
+  <mesh
+     Tangents = "box.p3dbin:11444"
+     Loops = "box.p3dbin:11388"
+     Normals = "box.p3dbin:11336"
+     Faces = "box.p3dbin:11548"
+     TexCoords0 = "box.p3dbin:11408"
+     Positions = "box.p3dbin:11284"
+     Cotangents = "box.p3dbin:11496"
+     Name = "mesh_box_shadow">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.003"
+       PolyEnd = "0" />
+  </mesh>
+  <materialbase
+     Instancing = "1"
+     Diff = "0.640000, 0.640000, 0.640000"
+     TransparencyMode = "p3dmtNone"
+     Name = "material_Material"
+     Spec_Hardness = "50.000000"
+     Unlit = "0"
+     Spec = "0.500000, 0.500000, 0.500000">
+    <map
+       NormalFactor = "1.0"
+       Name = "Tex"
+       Mode = "mapMix"
+       DiffuseFactor = "0.0"
+       Data = "/tex_Tex" />
+    <map
+       Mode = "mapMix"
+       Name = "Texture"
+       SpecularIntensity = "1.0"
+       DiffuseFactor = "0.0"
+       Data = "/tex_Texture" />
+    <map
+       Name = "Texture.001"
+       Mode = "mapMix"
+       DiffuseFactor = "1.0"
+       Data = "/tex_Texture.001" />
+  </materialbase>
+  <materialbase
+     Instancing = "1"
+     Diff = "0.640000, 0.640000, 0.640000"
+     TransparencyMode = "p3dmMultiply"
+     Name = "material_Material.003"
+     Spec_Hardness = "50.000000"
+     Unlit = "1"
+     Spec = "0.500000, 0.500000, 0.500000">
+    <map
+       Name = "Texture.004"
+       Mode = "mapMix"
+       DiffuseFactor = "1.0"
+       Data = "/tex_Texture.004"
+       AlphaFactor = "1.0" />
+  </materialbase>
+  <texture
+     MipMap = "1"
+     File = "box_normal.png"
+     Name = "tex_Tex"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "floor_ambient.png"
+     Name = "tex_Texture.004"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "box_displ.png"
+     Name = "tex_Texture"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+  <texture
+     MipMap = "1"
+     File = "box_color.png"
+     Name = "tex_Texture.001"
+     Filtering = "tfLinear"
+     FilteringMipMap = "tfLinear" />
+</p3dfile>

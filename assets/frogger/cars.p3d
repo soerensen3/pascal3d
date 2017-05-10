@@ -1,0 +1,196 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Car"
+       Position = " 0.000000, 0.000000, 0.000000">
+      <object
+         Scale = " 0.226009, 0.226009, 1.000000"
+         Data = "/mesh_Cylinder.001"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Car.001"
+         Position = " 0.000000, 0.000000, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.226009, 0.226009, 1.000000"
+         Data = "/mesh_Cylinder.010"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Car.002"
+         Position = " 0.000000, 0.000000, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.226009, 0.226009, 1.000000"
+         Data = "/mesh_Cylinder.009"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Car.003"
+         Position = " 0.000000, 0.000000, 0.000000"
+         RotationOrder = "roXYZ" />
+    </object>
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Truck"
+       Position = "-3.000000, 0.000000, 0.000000">
+      <object
+         Scale = " 0.289443, 0.289443, 1.280672"
+         Data = "/mesh_Cylinder.003"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Truck.001"
+         Position = " 0.000000, 0.000000, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.289443, 0.289443, 1.280672"
+         Data = "/mesh_Cylinder.012"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Truck.002"
+         Position = " 0.000000, 0.000000, 0.000000"
+         RotationOrder = "roXYZ" />
+      <object
+         Scale = " 0.289443, 0.289443, 1.280672"
+         Data = "/mesh_Cylinder.011"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Truck.003"
+         Position = " 0.000000, 0.000000, 0.000000"
+         RotationOrder = "roXYZ" />
+    </object>
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Data = "/lamp_Lamp"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
+       Collision = "acNone"
+       Name = "Lamp"
+       Position = " 4.076245, 1.005454, 5.903862"
+       RotationOrder = "roXYZ" />
+    <object
+       Scale = " 1.000000, 1.000000, 1.000000"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       Collision = "acNone"
+       Name = "Camera"
+       Position = " 7.481132,-6.507640, 5.343665" />
+  </scene>
+  <mesh
+     Positions = "cars.p3dbin:0"
+     VertexWeights = "cars.p3dbin:18436"
+     Loops = "cars.p3dbin:135184"
+     Normals = "cars.p3dbin:61452"
+     Name = "mesh_Cylinder.001"
+     VertexWeightIndices = "cars.p3dbin:36872"
+     Faces = "cars.p3dbin:159764">
+    <weightgroup
+       Name = "Group"
+       Index = "0" />
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.001"
+       PolyEnd = "1539" />
+  </mesh>
+  <mesh
+     Positions = "cars.p3dbin:165928"
+     VertexWeights = "cars.p3dbin:175544"
+     Loops = "cars.p3dbin:234152"
+     Normals = "cars.p3dbin:197980"
+     Name = "mesh_Cylinder.009"
+     VertexWeightIndices = "cars.p3dbin:185160"
+     Faces = "cars.p3dbin:246212">
+    <weightgroup
+       Name = "Group"
+       Index = "0" />
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "748" />
+  </mesh>
+  <mesh
+     Positions = "cars.p3dbin:249212"
+     VertexWeights = "cars.p3dbin:249516"
+     Loops = "cars.p3dbin:250528"
+     Normals = "cars.p3dbin:250224"
+     Name = "mesh_Cylinder.010"
+     VertexWeightIndices = "cars.p3dbin:249820"
+     Faces = "cars.p3dbin:250632">
+    <weightgroup
+       Name = "Group"
+       Index = "0" />
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.002"
+       PolyEnd = "5" />
+  </mesh>
+  <mesh
+     Normals = "cars.p3dbin:260744"
+     Positions = "cars.p3dbin:250660"
+     Faces = "cars.p3dbin:310416"
+     Name = "mesh_Cylinder.011"
+     Loops = "cars.p3dbin:297996">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material"
+       PolyEnd = "769" />
+  </mesh>
+  <mesh
+     Normals = "cars.p3dbin:333088"
+     Positions = "cars.p3dbin:313500"
+     Faces = "cars.p3dbin:437544"
+     Name = "mesh_Cylinder.012"
+     Loops = "cars.p3dbin:411428">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.001"
+       PolyEnd = "1637" />
+  </mesh>
+  <mesh
+     Normals = "cars.p3dbin:444488"
+     Positions = "cars.p3dbin:444100"
+     Faces = "cars.p3dbin:445008"
+     Name = "mesh_Cylinder.003"
+     Loops = "cars.p3dbin:444876">
+    <materialgroup
+       PolyStart = "0"
+       Material = "/material_Material.002"
+       PolyEnd = "7" />
+  </mesh>
+  <light
+     Name = "lamp_Lamp"
+     LightType = "ltPoint"
+     Energy = "1.0"
+     Color = "1.000000, 1.000000, 1.000000" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material.001"
+     Diff = "0.236554, 0.236554, 0.236554" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "511.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "1.000000, 1.000000, 1.000000"
+     Instancing = "1"
+     Name = "material_Material.002"
+     Diff = "0.114809, 0.090053, 0.236554" />
+  <materialbase
+     Unlit = "0"
+     Spec_Hardness = "50.000000"
+     TransparencyMode = "p3dmtNone"
+     Spec = "0.500000, 0.500000, 0.500000"
+     Instancing = "1"
+     Name = "material_Material"
+     Diff = "0.640000, 0.041448, 0.122500" />
+</p3dfile>

@@ -317,26 +317,6 @@ begin
     end;
 end;
 
-operator*(a, b: TP3DColor)c: TP3DColor;
-begin
-  c:= TP3DColor( TVec4( a ) * TVec4( b ));
-end;
-
-operator*(a: TP3DColor; b: TVec4)c: TP3DColor;
-begin
-  c:= TP3DColor( TVec4( a ) * b );
-end;
-
-operator*(a: TVec4; b: TP3DColor)c: TP3DColor;
-begin
-  c:= TP3DColor( a * TVec4( b ));
-end;
-
-operator:=(a: TVec4)b: TP3DColor;
-begin
-  b:= TP3DColor( TVec4( a ));
-end;
-
 
 function P3DCollideAABBwithAABB(a: TP3DAABB; b: TP3DAABB): Boolean;
 var
