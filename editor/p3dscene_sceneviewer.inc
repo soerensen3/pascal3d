@@ -152,6 +152,7 @@
       function GetCam: TP3DCamera;
       function GetCamObject: TP3DActor;
       function GetScene: TP3DScene;
+      function GetSelection: TP3DActor;
       procedure Push3DMode;
 
       function GetEditor: TP3DSceneEditModeDefault;
@@ -187,7 +188,7 @@
       property SelectionMaterial: TP3DMaterialBase read FSelectionMaterial write FSelectionMaterial;
       property EditMode: TEditMode read FEditMode write SetEditMode;
       property Editor: TP3DSceneEditModeDefault read GetEditor;
-      property Selection: TP3DActor read FSelection write SetSelection;
+      property Selection: TP3DActor read GetSelection write SetSelection;
       property Viewer: TP3DSceneViewer read FViewer write FViewer;
       property ToolBar: TP3DScenePanelToolbar read FToolbar write FToolBar;
       property Cam: TP3DCamera read GetCam write SetCam;
@@ -668,7 +669,7 @@ begin
         FinishEditing;
     end;
 
-  if ( P3DInput.Mouse.Buttons[ 2 ] and ( gcisMouseOver in ScenePanel.InputState )) then
+  if ( P3DInput.Mouse.Buttons[ 2 ] and ( gcisMouseOver in ScenePanel.Viewer.InputState )) then
     if ( ScenePanel.EditMode = emDefault ) then
       ScenePanel.Selection:= PickPixel( MousePos )
     else
@@ -933,6 +934,14 @@ begin
   Result:= Viewer.Scene;
 end;
 
+function TP3DScenePanel.GetSelection: TP3DActor;
+begin
+  if ( SceneMain.ActiveDataBlock is TP3DActor ) then
+    Result:= TP3DActor( SceneMain.ActiveDataBlock )
+  else
+    Result:= nil;
+end;
+
 function TP3DScenePanel.GetCam: TP3DCamera;
 begin
   Result:= Viewer.Cam;
@@ -999,10 +1008,11 @@ begin
   if ( FSelection = AValue ) then Exit;
   FSelection:= AValue;
 
-  if ( Assigned( Selection )) then
+  {if ( Assigned( Selection )) then
     DataView.Viewer.Selection:= DataView.Viewer.Children.FindByData( Pointer( Selection ), True )
   else
-    DataView.Viewer.Selection:= nil;
+    DataView.Viewer.Selection:= nil;}
+  SceneMain.ActiveDataBlock:= AValue;
 
   if ( Assigned( Editor ) and Assigned( Selection )) then
     Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
@@ -1064,19 +1074,20 @@ begin
       else
         EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
     end
-  {else if ( AData is TP3DJoint ) then
+  else if ( AData is TP3DJoint ) then
     begin
-      if ( Assigned( Selection ) and ( Selection.Data = AData )) then
+      {if ( Assigned( Selection ) and ( Selection.Data = AData )) then
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
           EditorSceneJoint.AddToRenderList( AScene,
-                                            mat4lookatLH( vec3( 0 ), TP3DJoint( Selection.Data ).Tail - TP3DJoint( Selection.Data ).Position, vec3_Axis_PZ ) *
-                                            mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags - [ rlfMaterials ]);
+                                            Selection.Matrix {*
+                                            //mat4lookatLH( vec3( 0 ), TP3DJoint( Selection.Data ).Tail - TP3DJoint( Selection.Data ).Position, vec3_Axis_PZ ) *
+                                            mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 ))}, Viewer.RenderList, AFlags - [ rlfMaterials ]);
         end
       else
-        EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
-    end}
+        EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );}
+    end
   else if ( AData is TP3DMesh ) then
     if ( Assigned( Selection ) and ( Selection.Data = AData ) and ( Assigned( TP3DMesh( AData ).Armature ))) then
       begin
@@ -1296,6 +1307,7 @@ begin
   Cam.PassToShader;
   Cam.UpdateMatrices( CamObject );
   glEnable( GL_DEPTH_TEST );
+  SceneView.Viewer.RenderList.Render( CamObject, [ rlfIndexColors ]);
   {EditorSceneLamp.MakeRenderList( Nil, Mat4Identity, LRenderList );
   for Obj in FRenderList do
     begin

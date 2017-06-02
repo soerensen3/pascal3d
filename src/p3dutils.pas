@@ -41,10 +41,10 @@ implementation
 
 { gP3DListPropertyAccessObject }
 
-function gP3DListPropertyAccessObject.GetCount: Integer;
+function gP3DListPropertyAccessObject.GetArrayCount: Integer;
 begin
   if ( Assigned( Value )) then
-    Result:= Value.Count
+    Result:= inherited GetArrayCount
   else
     Result:= 0;
 end;
@@ -57,7 +57,7 @@ begin
     Result:= nil;
 end;
 
-procedure gP3DListPropertyAccessObject.SetCount(AValue: Integer);
+procedure gP3DListPropertyAccessObject.SetArrayCount(AValue: Integer);
 begin
   if ( Assigned( Value )) then
     Value.Count:= AValue;

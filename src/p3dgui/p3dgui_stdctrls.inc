@@ -8,15 +8,20 @@
   TP3DEdit = class ( TP3DButton )
     private
       FCursorRight: Boolean;
+      FPageScrollX: Single;
       FSel1,
       FSel2: Integer;
       FTPos: TVec2;
+      function GetPageScrollXPixel: Integer;
       function GetSelLength(): Integer;
       function GetSelStart(): Integer;
+      procedure SetPageScrollX(AValue: Single);
       procedure SetSel1(AValue: Integer);
       procedure SetSel2(AValue: Integer);
       procedure SetSelLength(AValue: Integer);
       procedure SetSelStart(AValue: Integer);
+      procedure UpdateScroll;
+      function GetPixelScrollPosition( X: Integer ): Float;
 
     protected
       procedure SetCaption(AValue: String); override;
@@ -43,6 +48,8 @@
       property Sel1: Integer read FSel1 write SetSel1;
       property Sel2: Integer read FSel2 write SetSel2;
       property CursorRight: Boolean read FCursorRight write FCursorRight;
+      property PageScrollX: Single read FPageScrollX write SetPageScrollX;
+      property PageScrollXPixel: Integer read GetPageScrollXPixel;
   end;
 
   { TP3DLabel }
@@ -780,9 +787,21 @@ begin
   Result:= abs( FSel2 - FSel1 );
 end;
 
+function TP3DEdit.GetPageScrollXPixel: Integer;
+begin
+  if ( Assigned( FCaptionTxt )) then
+    Result:= round(( max( 0, FCaptionTxt.Width - Canvas.Width )) * ( 1 - PageScrollX ));
+end;
+
 function TP3DEdit.GetSelStart(): Integer;
 begin
   Result:= Min( FSel1, FSel2 );
+end;
+
+procedure TP3DEdit.SetPageScrollX(AValue: Single);
+begin
+  if FPageScrollX=AValue then Exit;
+  FPageScrollX:= clamp( AValue, 0, 1 );
 end;
 
 procedure TP3DEdit.SetCaption(AValue: String);
@@ -795,6 +814,7 @@ end;
 procedure TP3DEdit.SetSel1( AValue: Integer );
 begin
   FSel1:= Max( 0, Min( AValue, Length( FCaption )));
+  UpdateScroll;
 end;
 
 procedure TP3DEdit.SetSel2( AValue: Integer );
@@ -805,9 +825,33 @@ end;
 procedure TP3DEdit.SetSelStart(AValue: Integer);
 begin
   if ( Sel1 < Sel2 ) then
-    FSel1:= Max( 0, Min( AValue, Length( FCaption )))
+    Sel1:= AValue
   else
     FSel2:= Max( 0, Min( AValue, Length( FCaption )));
+  UpdateScroll;
+end;
+
+procedure TP3DEdit.UpdateScroll;
+var
+  p: TVec4;
+  t, page: Float;
+begin
+  if ( not Assigned( FCaptionTxt )) then
+    exit;
+  p:= FCaptionTxt.WidthFromTo( 0, Sel1 );
+  t:= GetPixelScrollPosition( round( p.z ));
+  page:= GetPixelScrollPosition( round( FCaptionTxt.Width - Canvas.Width )) / 2;
+
+  if ( not InRange( t, PageScrollX - page, PageScrollX + page )) then
+    if ( PageScrollX > t ) then
+      PageScrollX:= t - page
+    else
+      PageScrollX:= t + page;
+end;
+
+function TP3DEdit.GetPixelScrollPosition(X: Integer): Float;
+begin
+  Result:= X / max( 1, FCaptionTxt.Width - Canvas.Width );
 end;
 
 procedure TP3DEdit.SetFocused(AValue: Boolean);
@@ -855,8 +899,6 @@ end;
 procedure TP3DEdit.Draw;
 var
   Preset: TP3DButtonPreset;
-  s: TVec2; //Cursor Position
-  soff: TVec4; //Offset to the beginning of the selection
   swidth: TVec4; //Length of the selection
 begin
   if ( gcisMouseBtn1Down in InputState ) then
@@ -874,19 +916,16 @@ begin
   Canvas.Font.Color:= Preset.FontColor;
   Canvas.Font.Size:= Font.Size;
   Canvas.Font.Name:= Font.Name;
-  FTPos:= RenderButtonText( Preset.FontColor );
+  //PageScrollX:= ( 1 + sin( SDL_GetTicks / 1000 )) / 2;
+  FTPos:= RenderButtonText( ClientRect + vec2( PageScrollXPixel, 0 ), Preset.FontColor );
   if (( Focused ) and ( Assigned( FCaptionTxt ))) then
     begin
       if ( Sel1 <> Sel2 ) then
         begin
-          swidth:= FCaptionTxt.WidthFromTo( Min( Sel1, Sel2 ), Max( Sel1, Sel2 ));
-
-          //s:= tp;
-          //if ( Sel1 > Sel2 ) then
-          //  s.x:= s.x - swidth.x;
+          swidth:= FCaptionTxt.WidthFromTo( Min( Sel1, Sel2 ), Max( Sel1, Sel2 )); //Selection Rect
           Canvas.RenderRect( FTPos + vec2( swidth[ 0 ], swidth[ 1 ]), FTPos + vec2( swidth[ 0 ], swidth[ 1 ]) + vec2( swidth[ 2 ], swidth[ 3 ]), vec4( accent900.xyz, 0.5 ), vec4( accent400.xyz, 0.5), vec4( accent600.xyz, 0.5 ), vec4( accent900.xyz, 0.5 ));
         end;
-      swidth:= FCaptionTxt.WidthFromTo( 0, Sel1 );
+      swidth:= FCaptionTxt.WidthFromTo( 0, Sel1 ); //Cursor
       Canvas.RenderRect( FTPos + vec2( swidth[ 2 ] - 1, swidth[ 1 ]), FTPos + vec2( swidth[ 2 ] + 1, swidth[ 3 ]), Preset.FontColor );
     end;
 

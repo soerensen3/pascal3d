@@ -4,9 +4,9 @@ var
 begin
   inherited Render;
 
-  GlobalTime:= SDL_GetTicks / 100;
-  P3DData.PerformActions( GlobalTime );
-  MainWindow.Title:= FloatToStr( GlobalTime );
+  //GlobalTime:= SDL_GetTicks / 100;
+  //P3DData.PerformActions( GlobalTime );
+  //MainWindow.Title:= FloatToStr( GlobalTime );
 
   SceneMain.CheckLastChange;
   if ( SceneMain.NeedsUpdate ) then

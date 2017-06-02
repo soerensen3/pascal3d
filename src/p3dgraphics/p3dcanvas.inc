@@ -125,6 +125,8 @@ type
       property OffScreenCanvas: Boolean read FOffScreenCanvas write FOffScreenCanvas;
   end;
 
+  operator + ( R: TP3DRect; v: TVec2 ): TP3DRect;
+
   {$INCLUDE p3dcanvas_2d.inc}
   {$INCLUDE p3dcanvas_3d.inc}
 

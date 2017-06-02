@@ -161,7 +161,7 @@
         procedure BuildIndicesFromFaces;
 
       public
-        VertexWeights: TP3DVec3BufferGL;
+        VertexWeights: TP3DVec4BufferGL;
         VertexWeightIndices: TP3DVec4BufferGL; //Must be float because passing ivec attributes is not allowed in GLSL (though some vendors support it)
         Positions: TP3DVec3BufferGL;
         Normals: TP3DVec3BufferGL;
@@ -214,7 +214,7 @@
 
       TP3DPropertyAccessMesh = specialize gP3DPropertyAccessDataBlock < TP3DMesh >;
       TP3DMeshList = specialize gP3DCustomDatablockList < TP3DMesh >;
-      TP3DPropertyAccessMeshList = specialize gP3DListPropertyAccess < TP3DMeshList, TP3DMesh, TP3DPropertyAccessMesh >;
+      TP3DPropertyAccessMeshList = specialize gP3DListPropertyAccessObject < TP3DMeshList, TP3DMesh, TP3DPropertyAccessMesh >;
 
 var
   P3DMeshModifierClassFactory: TP3DMeshModifierClassFactory;
@@ -390,7 +390,7 @@ begin
   Loops:= TIntList.Create;
   VertexWeightIndices:= TP3DVec4BufferGL.Create( True );
   PackedVertexWeightIndices:= TIVec4List.Create;
-  VertexWeights:= TP3DVec3BufferGL.Create( True );
+  VertexWeights:= TP3DVec4BufferGL.Create( True );
   PackedVertexWeights:= TVec3List.Create;
   VBArray:= TP3DVertexBufferArray.Create;
   Faces:= TP3DFaceList.Create;
@@ -403,6 +403,9 @@ begin
 
   Owner.Meshes.Add( Self );
   FileWatch:= TP3DFileWatch.Create( '' );
+  Properties.Add( TP3DPropertyAccessFileWatch.CreateField( 'FileWatch', @FFileWatch, smDoNotStore ));
+  Properties.Add( TP3DPropertyAccessVec4List.CreateField( 'VertexWeightIndices', @VertexWeightIndices, smDoNotStore ));
+  Properties.Add( TP3DPropertyAccessVec4List.CreateField( 'VertexWeights', @VertexWeights, smDoNotStore ));
 end;
 
 procedure TP3DMesh.FastDestroy;
@@ -711,6 +714,7 @@ end;
 procedure TP3DMesh.RenderSimple;
 var
   i: Integer;
+  decl: TP3DShaderDecl;
 begin
   if ( Positions.Count > 0 ) then
     Positions.SetAttribArray( P3DAttribPosition );
@@ -721,7 +725,8 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+    if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
+      decl.AsVec2List:= TexCoords[ i ];
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
@@ -760,7 +765,8 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
+    if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
+      decl.AsVec2List:= TexCoords[ i ];
   decl:= Material.Shader.Attributes.Names[ 'fjointID' ];
   if ( Assigned( decl )) and ( VertexWeightIndices.Count > 0 ) then
     VertexWeightIndices.SetAttribArray( decl.Addr );
@@ -848,8 +854,8 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
-
+    if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
+      decl.AsVec2List:= TexCoords[ i ];
   mat:= Mat4Identity;
   {for Modifier in Modifiers do
     Modifier.PassToShader( MaterialGroups[ Idx ].Material, mat );
@@ -887,8 +893,12 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
-//  VBArray.Bind;
+    begin
+      decl:= P3DShaderActive.Attributes.GetNames( 'TexCoord' + IntToStr( i ));
+      if ( Assigned( decl )) then
+        decl.AsVec2List:= TexCoords[ i ];
+    end;
+  //  VBArray.Bind;
 
   decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
   if ( Assigned( decl )) and ( VertexWeightIndices.Count > 0 ) then
@@ -946,8 +956,9 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
-//  VBArray.Bind;
+    if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
+      decl.AsVec2List:= TexCoords[ i ];
+  //  VBArray.Bind;
 
   decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
   if ( Assigned( decl )) and ( VertexWeightIndices.Count > 0 ) then
@@ -997,8 +1008,8 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to High( TexCoords ) do
-    TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
-
+    if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
+      decl.AsVec2List:= TexCoords[ i ];
   Edges.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
   glDrawElements( GL_LINES, Edges.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
@@ -1090,6 +1101,7 @@ var
 
   vidx, LastVertex: Integer;
   vindices: TIVec4;
+  Weight: TVec3;
 
 begin
   ClearVBO;
@@ -1123,7 +1135,10 @@ begin
           Tangents.Add( PackedTangents[ vidx ]);
           Cotangents.Add( PackedCotangents[ vidx ]);
           if ( PackedVertexWeights.Count > 0 ) then
-            VertexWeights.Add( PackedVertexWeights[ Loops[ vidx ]]);
+            begin
+              Weight:= PackedVertexWeights[ Loops[ vidx ]];
+              VertexWeights.Add( vec4( Weight, 1 - Weight.GetDistManh ));
+            end;
           if ( PackedVertexWeightIndices.Count > 0 ) then
             begin
               vindices:= PackedVertexWeightIndices[ Loops[ vidx ]];
@@ -1164,6 +1179,7 @@ end;
 procedure TP3DMesh.CreateVBO;
 var
   i: Integer;
+  decl: TP3DShaderDecl;
 begin
   VBArray.Bind;
   if ( Positions.Count > 0 ) then
@@ -1198,10 +1214,7 @@ begin
     end;
   for i:= 0 to high( TexCoords ) do
     if ( TexCoords[ i ].Count > 0 ) then
-      begin
-        TexCoords[ i ].PushData;
-        TexCoords[ i ].SetAttribArray( P3DAttribTexCoord0 + i );
-      end;
+      TexCoords[ i ].PushData;
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   Indices.PushData;

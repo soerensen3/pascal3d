@@ -18,12 +18,22 @@ TP3DInterfacedPersistent = class ( TInterfacedPersistent )
     property Properties: TP3DPropertyAccessList read FProperties write FProperties;
 end;
 
+
+IP3DPropertyAccessInterfacedPersistent = interface
+  ['{CCCF4A09-B5A9-4EF6-AC58-D9C453D6055B}']
+  function GetProperties: TP3DPropertyAccessList;
+  function GetObjectValue: TP3DInterfacedPersistent;
+  property Properties: TP3DPropertyAccessList read GetProperties;
+end;
+
 { gP3DPropertyAccessInterfacedPersistent }
 
-generic gP3DPropertyAccessInterfacedPersistent < TItem: TP3DInterfacedPersistent > = class( specialize gP3DPropertyAccess < TItem >)
+generic gP3DPropertyAccessInterfacedPersistent < TItem: TP3DInterfacedPersistent > = class( specialize gP3DPropertyAccess < TItem >, IP3DPropertyAccessInterfacedPersistent )
   protected
+    function GetProperties: TP3DPropertyAccessList;
     function GetDefaultValue: TItem; override;
     function GetChildPropByPath(APath: String): TP3DPropertyAccess; override;
+    function GetObjectValue: TP3DInterfacedPersistent;
 
   public
     function SaveToDOM( AParentNode: TDOMElement ): Boolean; override;
@@ -31,6 +41,7 @@ generic gP3DPropertyAccessInterfacedPersistent < TItem: TP3DInterfacedPersistent
 
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
+    property Properties: TP3DPropertyAccessList read GetProperties;
 end;
 
 { gP3DInterfacedPersistentList }
@@ -46,7 +57,7 @@ TP3DInterfacedPersistentList = specialize gP3DInterfacedPersistentList < TP3DInt
 
 TP3DPropertyAccessInterfacedPersistent = specialize gP3DPropertyAccessInterfacedPersistent < TP3DInterfacedPersistent >;
 
-TP3DPropertyAccessInterfacedPersistentList = specialize gP3DListPropertyAccess < TP3DInterfacedPersistentList, TP3DInterfacedPersistent, TP3DPropertyAccessInterfacedPersistent >;
+TP3DPropertyAccessInterfacedPersistentList = specialize gP3DListPropertyAccessObject < TP3DInterfacedPersistentList, TP3DInterfacedPersistent, TP3DPropertyAccessInterfacedPersistent >;
 
 { gP3DTransformPersistent }
 
@@ -97,17 +108,26 @@ var
 begin
   for i:= 0 to ADOMNode.Attributes.Length - 1 do
     begin
-      WriteLn( ADOMNode.Attributes[ i ].NodeName, ' = ', ADOMNode.Attributes[ i ].NodeValue );
+      //WriteLn( ADOMNode.Attributes[ i ].NodeName, ' = ', ADOMNode.Attributes[ i ].NodeValue );
       propI:= Properties.FindByName( ADOMNode.Attributes[ i ].NodeName );
       if ( propI > -1 ) then
         begin
-          Properties[ propI ].AsString:= ADOMNode.Attributes[ i ].NodeValue;
-          WriteLn( 'Set to : ', Properties[ propI ].AsString );
+          if ( Properties[ propI ].StoreMode = smAttribute ) then
+            Properties[ propI ].AsString:= ADOMNode.Attributes[ i ].NodeValue;
+          //WriteLn( 'Set to : ', Properties[ propI ].AsString );
         end;
     end;
 end;
 
 { gP3DPropertyAccessInterfacedPersistent }
+
+function gP3DPropertyAccessInterfacedPersistent.GetProperties: TP3DPropertyAccessList;
+begin
+  if ( Assigned( Value )) then
+    Result:= Value.Properties
+  else
+    Result:= nil;
+end;
 
 function gP3DPropertyAccessInterfacedPersistent.GetDefaultValue: TItem;
 begin
@@ -120,11 +140,13 @@ begin
     Result:= Value.Properties.GetPropByPath( APath );
 end;
 
+function gP3DPropertyAccessInterfacedPersistent.GetObjectValue: TP3DInterfacedPersistent;
+begin
+  Result:= Value;
+end;
+
 function gP3DPropertyAccessInterfacedPersistent.SaveToDOM(
   AParentNode: TDOMElement): Boolean;
-var
-  root: TDOMElement;
-  Path: String;
 begin
   Result:= inherited SaveToDOM( AParentNode );
   if (( Result ) and ( Assigned( Value ))) then
@@ -138,11 +160,19 @@ begin
 end;
 
 function gP3DPropertyAccessInterfacedPersistent.GetAsString: String;
+var
+  Prop: TP3DPropertyAccess;
 begin
   if ( Assigned( Value )) then
-    Result:= '<' + Value.ClassName + '>'
+    begin
+      Prop:= Value.Properties.GetPropByName( 'Name' );
+      if ( Assigned( Prop )) then
+        Result:= Prop.AsString + ':' + Value.ClassName + ' = <' + Value.Properties.ToStr() + '>'
+      else
+        Result:= Value.ClassName + ' = <' + Value.Properties.ToStr() + '>';
+    end
   else
-    Result:= '<empty>';
+    Result:= Prop.AsString + ':' + Value.ClassName + ' = <None>';
 end;
 
 procedure gP3DPropertyAccessInterfacedPersistent.SetAsString(AValue: String);

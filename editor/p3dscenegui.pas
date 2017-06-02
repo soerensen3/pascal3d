@@ -26,6 +26,7 @@ type
     {$INCLUDE p3dscene_assetviewer.inc}
     {$INCLUDE p3dscene_objectinspector.inc}
     {$INCLUDE p3dscene_main.inc}
+    {$INCLUDE p3dscene_actioneditor.inc}
   {$UNDEF INTERFACE}
 
 
@@ -60,11 +61,10 @@ var
   AssetView: TP3DSAssetPanel;
   DataView: TP3DDataPanel;
   SceneView: TP3DScenePanel;
+  ActionEditor: TP3DActionEditor;
   OIPanel: TP3DOIPanel;
 
 implementation
-
-{ TP3DSceneApplication }
 
 
 {$DEFINE IMPLEMENTATION}
@@ -73,6 +73,7 @@ implementation
   {$INCLUDE p3dscene_dataviewer.inc}
   {$INCLUDE p3dscene_assetviewer.inc}
   {$INCLUDE p3dscene_objectinspector.inc}
+  {$INCLUDE p3dscene_actioneditor.inc}
 {$UNDEF IMPLEMENTATION}
 
 {$INCLUDE initscene.inc}
@@ -142,6 +143,16 @@ begin
     end;
 //  DataView.BringToFront;
   //DataView.ActorList:= TestScene.Objects;
+
+  ActionEditor:= TP3DActionEditor.Create();
+  ActionEditor.Parent:= SceneMain;
+  ActionEditor.Align:= alBottom;
+
+  with ( TP3DSplitter.Create()) do
+    begin
+      Parent:= SceneMain;
+      Align:= alBottom;
+    end;
 
   SceneMain.ActiveLibrary:= SceneMain.NewLibrary();
   SceneMain.ActiveScene:= SceneMain.NewScene();

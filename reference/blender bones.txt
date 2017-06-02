@@ -1,0 +1,8 @@
+bone.matrix = rotation of edit bone relative to it's parent = bone_space - The Bone is pointing along the Y-Axis - only for display purposese
+bone.location_head = position of edit bone in object space
+bone.location_tail = position of the tail in object space - only for display purposes
+bone.matrix_local = combination of bone.matrix and bone.location_head
+
+pose_bone.rotation_quaternion/rotation_euler = rotation of the pose_bone relative to the rest pose
+pose_bone.location = position of the pose_bone relative to the rest pose
+pose_bone.matrix_basis = matrix of the pose_bone before animation is applied

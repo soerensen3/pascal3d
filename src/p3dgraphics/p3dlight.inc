@@ -45,7 +45,7 @@
   end;
 
   TP3DPropertyAccessLight = specialize gP3DPropertyAccessDataBlock < TP3DLight >;
-  TP3DPropertyAccessLightList = specialize gP3DListPropertyAccess < TP3DLightList, TP3DLight, TP3DPropertyAccessLight >;
+  TP3DPropertyAccessLightList = specialize gP3DListPropertyAccessObject < TP3DLightList, TP3DLight, TP3DPropertyAccessLight >;
 
 
 {$ENDIF}

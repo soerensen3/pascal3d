@@ -44,7 +44,7 @@
         <PackageName Value="pascal3d"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="12">
       <Unit0>
         <Filename Value="p3dscene.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -89,6 +89,10 @@
         <Filename Value="bin/settings_default.xml"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="p3dscene_actioneditor.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

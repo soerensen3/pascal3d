@@ -1,0 +1,444 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       Data = "/mesh_Suzanne.001"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = "-0.593605, 0.324059, 0.380572"
+       Scale = " 0.184833, 0.184833, 0.184833"
+       Collision = "acNone"
+       Name = "Suzanne.002" />
+    <object
+       Data = "/mesh_Suzanne"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.000000, 0.000000,-0.707910, 0.706302"
+       Position = " 0.312463, 0.606985, 0.270621"
+       Scale = " 0.184833, 0.184833, 0.184833"
+       Collision = "acNone"
+       Name = "Suzanne" />
+    <object
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Armature">
+      <object
+         Data = "/mesh_Cylinder"
+         RotationOrder = "roXYZ"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Scale = " 1.000000, 1.000000, 1.000000"
+         Collision = "acNone"
+         Name = "Cylinder">
+        <object
+           Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+           Position = " 0.000000, 0.000000, 0.000000"
+           RotationOrder = "roXYZ"
+           Name = "Bone"
+           Data = "/armature_Armature/joint_Bone">
+          <object
+             Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+             Position = " 0.000000, 0.000000, 0.800000"
+             RotationOrder = "roXYZ"
+             Name = "Bone_001"
+             Data = "/armature_Armature/joint_Bone_001">
+            <object
+               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+               Position = " 0.009652,-0.067532, 0.995245"
+               RotationOrder = "roXYZ"
+               Name = "Bone_002"
+               Data = "/armature_Armature/joint_Bone_002">
+              <object
+                 Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+                 Position = "-0.019304,-0.000000, 1.293348"
+                 RotationOrder = "roXYZ"
+                 Name = "Bone_003"
+                 Data = "/armature_Armature/joint_Bone_003" />
+            </object>
+          </object>
+        </object>
+      </object>
+    </object>
+    <object
+       Data = "/lamp_Lamp"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
+       Position = " 4.076245, 1.005454, 5.903862"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Lamp" />
+    <object
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       Position = " 7.481132,-6.507640, 5.343665"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Camera" />
+  </scene>
+  <mesh
+     Faces = "armature_pose_test2.p3dbin:37584"
+     Loops = "armature_pose_test2.p3dbin:29708"
+     Positions = "armature_pose_test2.p3dbin:0"
+     Name = "mesh_Suzanne.001"
+     Normals = "armature_pose_test2.p3dbin:6088">
+    <materialgroup
+       PolyEnd = "499"
+       PolyStart = "0"
+       Material = "/material_Material.002" />
+  </mesh>
+  <mesh
+     VertexWeightIndices = "armature_pose_test2.p3dbin:193244"
+     Name = "mesh_Cylinder"
+     Normals = "armature_pose_test2.p3dbin:295680"
+     Faces = "armature_pose_test2.p3dbin:705288"
+     VertexWeights = "armature_pose_test2.p3dbin:116416"
+     Loops = "armature_pose_test2.p3dbin:602884"
+     Positions = "armature_pose_test2.p3dbin:39588">
+    <modifier
+       Armature = "/armature_Armature"
+       Type = "TP3DMeshModifierArmature" />
+    <weightgroup
+       Index = "0"
+       Name = "Bone" />
+    <weightgroup
+       Index = "1"
+       Name = "Bone_001" />
+    <weightgroup
+       Index = "2"
+       Name = "Bone_002" />
+    <weightgroup
+       Index = "3"
+       Name = "Bone_003" />
+    <materialgroup
+       PolyEnd = "6399"
+       PolyStart = "0"
+       Material = "/material_Material.001" />
+  </mesh>
+  <mesh
+     Faces = "armature_pose_test2.p3dbin:768476"
+     Loops = "armature_pose_test2.p3dbin:760600"
+     Positions = "armature_pose_test2.p3dbin:730892"
+     Name = "mesh_Suzanne"
+     Normals = "armature_pose_test2.p3dbin:736980">
+    <materialgroup
+       PolyEnd = "499"
+       PolyStart = "0"
+       Material = "/material_Material.003" />
+  </mesh>
+  <light
+     Color = "1.000000, 1.000000, 1.000000"
+     LightType = "ltPoint"
+     Energy = "1.0"
+     Name = "lamp_Lamp" />
+  <materialbase
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Spec_Hardness = "50.000000"
+     Instancing = "1"
+     Name = "material_Material.002"
+     Unlit = "0" />
+  <materialbase
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Spec_Hardness = "50.000000"
+     Instancing = "1"
+     Name = "material_Material.003"
+     Unlit = "0" />
+  <materialbase
+     Diff = "0.640000, 0.640000, 0.640000"
+     Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Spec_Hardness = "50.000000"
+     Instancing = "1"
+     Name = "material_Material.001"
+     Unlit = "0" />
+  <armature
+     Action = "/action_ArmatureAction"
+     Name = "armature_Armature">
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Length = " 0.800000"
+       Tail = " 0.000000, 0.000000, 0.800000"
+       Name = "joint_Bone" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.800000"
+       Length = " 0.997580"
+       Tail = " 0.009652,-0.067532, 1.795245"
+       Name = "joint_Bone_001" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.009652,-0.067532, 1.795245"
+       Length = " 1.293492"
+       Tail = "-0.009652,-0.067532, 3.088593"
+       Name = "joint_Bone_002" />
+    <joint
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = "-0.009652,-0.067532, 3.088593"
+       Length = " 0.868667"
+       Tail = "-0.009652,-0.067533, 3.957260"
+       Name = "joint_Bone_003" />
+  </armature>
+  <action
+     Name = "action_ArmatureAction">
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "0"
+       PropStr = "Owner.Objects[&quot;Bone&quot;].Rotation[0]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "0.0" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "0.0" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "2"
+       PropStr = "Owner.Objects[&quot;Bone&quot;].Rotation[2]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "89.99999835543903" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "0.0" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "1"
+       PropStr = "Owner.Objects[&quot;Bone&quot;].Rotation[1]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-0.0" />
+      <key
+         Time = "40.0"
+         Value = "-0.0" />
+      <key
+         Time = "82.0"
+         Value = "-0.0" />
+      <key
+         Time = "121.0"
+         Value = "-0.0" />
+      <key
+         Time = "161.0"
+         Value = "-0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "0"
+       PropStr = "Owner.Objects[&quot;Bone_001&quot;].Rotation[0]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "3.327087269779719" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "3.327087269779719" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "2"
+       PropStr = "Owner.Objects[&quot;Bone_001&quot;].Rotation[2]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "-4.436202021664685" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "-4.436202021664685" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "1"
+       PropStr = "Owner.Objects[&quot;Bone_001&quot;].Rotation[1]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-0.0" />
+      <key
+         Time = "40.0"
+         Value = "89.99461616621272" />
+      <key
+         Time = "82.0"
+         Value = "-0.0" />
+      <key
+         Time = "121.0"
+         Value = "89.99461616621272" />
+      <key
+         Time = "161.0"
+         Value = "-0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "0"
+       PropStr = "Owner.Objects[&quot;Bone_002&quot;].Rotation[0]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "-89.98723956168935" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "-89.98723956168935" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "2"
+       PropStr = "Owner.Objects[&quot;Bone_002&quot;].Rotation[2]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "0.0002920439565710878" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "0.0002920439565710878" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "1"
+       PropStr = "Owner.Objects[&quot;Bone_002&quot;].Rotation[1]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-0.0" />
+      <key
+         Time = "40.0"
+         Value = "1.7101089845521582" />
+      <key
+         Time = "82.0"
+         Value = "-0.0" />
+      <key
+         Time = "121.0"
+         Value = "1.7101089845521582" />
+      <key
+         Time = "161.0"
+         Value = "-0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "0"
+       PropStr = "Owner.Objects[&quot;Bone_003&quot;].Rotation[0]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "2.3163615053033967e-05" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "2.3163615053033967e-05" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "2"
+       PropStr = "Owner.Objects[&quot;Bone_003&quot;].Rotation[2]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "0.0" />
+      <key
+         Time = "40.0"
+         Value = "2.3590500260432918e-05" />
+      <key
+         Time = "82.0"
+         Value = "0.0" />
+      <key
+         Time = "121.0"
+         Value = "2.3590500260432918e-05" />
+      <key
+         Time = "161.0"
+         Value = "0.0" />
+    </channel>
+    <channel
+       TimeMode = "tmWrapAround"
+       ArrayIndex = "1"
+       PropStr = "Owner.Objects[&quot;Bone_003&quot;].Rotation[1]"
+       InterpolationMode = "imExtrapolate">
+      <key
+         Time = "1.0"
+         Value = "-0.0" />
+      <key
+         Time = "40.0"
+         Value = "-89.99999835543903" />
+      <key
+         Time = "82.0"
+         Value = "-0.0" />
+      <key
+         Time = "121.0"
+         Value = "-89.99999835543903" />
+      <key
+         Time = "161.0"
+         Value = "-0.0" />
+    </channel>
+  </action>
+</p3dfile>

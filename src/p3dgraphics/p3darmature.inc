@@ -60,7 +60,7 @@ type
       property Armature: TP3DArmature read FArmature write FArmature;
   end;
 
-  TP3DPropertyAccessJointList = specialize gP3DListPropertyAccess < TP3DJointList, TP3DJoint, TP3DPropertyAccessJoint >;
+  TP3DPropertyAccessJointList = specialize gP3DListPropertyAccessObject < TP3DJointList, TP3DJoint, TP3DPropertyAccessJoint >;
 
   TP3DArmatureTransformMethod = ( atmMatrix, atmDualQuaternion );
 
@@ -101,7 +101,7 @@ type
 
   TP3DArmatureList = specialize gP3DCustomDatablockList < TP3DArmature >;
   TP3DPropertyAccessArmature = specialize gP3DPropertyAccessDataBlock < TP3DArmature >;
-  TP3DPropertyAccessArmatureList = specialize gP3DListPropertyAccess < TP3DArmatureList, TP3DArmature, TP3DPropertyAccessArmature >;
+  TP3DPropertyAccessArmatureList = specialize gP3DListPropertyAccessObject < TP3DArmatureList, TP3DArmature, TP3DPropertyAccessArmature >;
 
 
 
@@ -479,7 +479,7 @@ begin
 
                 Buffer.Add([ m.Row[ 0 ], m.Row[ 1 ], m.Row[ 2 ], m.Row[ 3 ]]);
               end;
-            atmDualQuaternion:
+            atmDualQuaternion: //only half implemented
               begin
                 if ( n > -1 ) then
                   q:= -Joints[ j ].Quaternion * quat( rlist[ n ].Rotations[ 0 ])
@@ -490,9 +490,10 @@ begin
               end;
           end;
         end;
-  FJointTex:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr );
+  FJointTex:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr, Owner );
   OwnsJointTex:= True;
   FJointTex.AddUser( Self );
+  //FJointTex.SaveToFile( '/tmp/jointtex' + FJointTex.Name + '.png' );
   Buffer.Free;
   rlist.Free;
 end;
@@ -707,7 +708,7 @@ begin
     begin
       ChangeSocketValueInt( ShaderTree.AddCopyEx( '00025_pass_armature_matrix' ), 'numJoints', TP3DMeshModifierArmature( MeshModifier ).Armature.Joints.Count );
       //ChangeSocketValueInt( ShaderTree.AddCopyEx( '00025_pass_armature' ), 'numJoints', TP3DMeshModifierArmature( MeshModifier ).Armature.Joints.Count );
-      //ShaderTree.AddCopyEx( '01050_pass_armature_debug' );
+      ShaderTree.AddCopyEx( '01050_pass_armature_debug' );
     end;
 end;
 

@@ -455,6 +455,77 @@ published
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
   end;
 
+  { TP3DOIEditorActionKey }
+
+  TP3DOIEditorActionKey = class ( TP3DOIEditorGroup )
+    private
+      FKey: TP3DActionKey;
+      FTime: TP3DPropertyEditorFloat;
+      FValue: TP3DPropertyEditorFloat;
+      procedure SetKey(AValue: TP3DActionKey);
+
+    public
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+
+      property Time: TP3DPropertyEditorFloat read FTime write FTime;
+      property Value: TP3DPropertyEditorFloat read FValue write FValue;
+      property Key: TP3DActionKey read FKey write SetKey;
+  end;
+
+  { TP3DOIEditorActionChannel }
+
+  TP3DOIEditorActionChannel = class ( TP3DOIEditorGroup )
+    private
+      FChannel: TP3DActionChannel;
+      FKeys: TP3DPropertyEditorActionKeyList;
+      FPropStr: TP3DPropertyEditorString;
+      FTime: TP3DPropertyEditorFloat;
+
+      procedure SetChannel(AValue: TP3DActionChannel);
+
+    public
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+
+      property Time: TP3DPropertyEditorFloat read FTime write FTime;
+      property Keys: TP3DPropertyEditorActionKeyList read FKeys write FKeys;
+      property PropStr: TP3DPropertyEditorString read FPropStr write FPropStr;
+      property Channel: TP3DActionChannel read FChannel write SetChannel;
+  end;
+
+
+  { TP3DOIEditorPageAction }
+
+  TP3DOIEditorPageAction = class ( TP3DOIEditorPage )
+    private
+      FAction: TP3DAction;
+      FChannel: TP3DOIEditorActionChannel;
+      FChannels: TP3DPropertyEditorActionChannelList;
+      FEditorKey: TP3DOIEditorActionKey;
+
+      procedure ChannelSelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
+      procedure KeysSelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
+
+    public
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
+      property Channels: TP3DPropertyEditorActionChannelList read FChannels write FChannels;
+      property Channel: TP3DOIEditorActionChannel read FChannel write FChannel;
+      property Action: TP3DAction read FAction write FAction;
+      property EditorKey: TP3DOIEditorActionKey read FEditorKey write FEditorKey;
+  end;
+
 var
   TileGridSelIndex: Integer = 0;
 
@@ -514,7 +585,7 @@ begin
   {if ( Assigned( Prop )) then
     Result:= Prop.Name
   else
-    Result:= '<empty>';}
+    Result:= '<None>';}
   Result:= ''; //We want the caption to align left
 end;
 
@@ -636,10 +707,10 @@ begin
           end
         else
           begin
-            DataCombo.Caption:= '<empty>';
-            NameLbl.Caption:= '<empty>';
-            TypeLbl.Caption:= '<empty>';
-            FileNameLbl.Caption:= '<empty>';
+            DataCombo.Caption:= '<None>';
+            NameLbl.Caption:= '<None>';
+            TypeLbl.Caption:= '<None>';
+            FileNameLbl.Caption:= '<None>';
           end;
       end
   else if ( Obj is TP3DDataBlock ) then
@@ -1701,9 +1772,9 @@ procedure TP3DOIEditorPageMaps.SelectionChange(Sender: TP3DListView;
 begin
   if ( Assigned( NewSelection )) then
     begin
-      MapSelectedEditor.Obj:= TP3DMaterialMap( NewSelection.Data );
-      if ( Assigned( NewSelection.Data )) then
-        TextureEditor.Obj:= TP3DMaterialMap( NewSelection.Data ).Map
+      MapSelectedEditor.Obj:= TP3DMaterialMap( MapsEditor.MapsListView.LProp.Values[ Integer( NewSelection.Data )]);
+      if ( Assigned( MapSelectedEditor.Obj )) then
+        TextureEditor.Obj:= TP3DMaterialMap( MapSelectedEditor.Obj ).Map
       else
         TextureEditor.Obj:= nil;
     end
@@ -1857,5 +1928,137 @@ begin
 end;
 
 
+{ TP3DOIEditorActionKey }
+
+procedure TP3DOIEditorActionKey.SetKey(AValue: TP3DActionKey);
+begin
+  if FKey=AValue then Exit;
+  FKey:=AValue;
+
+  if ( Assigned( Key )) then
+    begin
+     Time.Prop:= AValue.Properties.GetPropByName( 'Time' );
+     Value.Prop:= AValue.Properties.GetPropByName( 'Value' );
+    end;
+  Visible:= Assigned( Key );
+end;
+
+constructor TP3DOIEditorActionKey.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  Time:= TP3DPropertyEditorFloat.Create( Owner, Self );
+  Time.Align:= alTop;
+  Value:= TP3DPropertyEditorFloat.Create( Owner, Self );
+  Value.Align:= alTop;
+end;
+
+procedure TP3DOIEditorActionKey.Update;
+begin
+  if ( Obj is TP3DActionKey ) then
+    Key:= TP3DActionKey( Obj )
+  else
+    Key:= nil;
+end;
+
+class function TP3DOIEditorActionKey.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= TP3DOIEditorPageAction.IsCompatible( AObj );
+end;
+
+{ TP3DOIEditorActionChannel }
+
+procedure TP3DOIEditorActionChannel.SetChannel(AValue: TP3DActionChannel);
+begin
+  FChannel:= AValue;
+  if ( Assigned( Channel )) then
+    begin
+      PropStr.Prop:= AValue.Properties.GetPropByName( 'PropStr' );
+      Keys.Prop:= AValue.Properties.GetPropByName( 'Keys' );
+    end;
+  Visible:= Assigned( Channel );
+end;
+
+constructor TP3DOIEditorActionChannel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  PropStr:= TP3DPropertyEditorString.Create( Owner, Self );
+  PropStr.Align:= alTop;
+  Keys:= TP3DPropertyEditorActionKeyList.Create( Owner, Self );
+  Keys.Align:= alTop;
+  Keys.Height:= 100;
+end;
+
+procedure TP3DOIEditorActionChannel.Update;
+begin
+  if ( Obj is TP3DActionChannel ) then
+    Channel:= TP3DActionChannel( Obj )
+  else
+    Channel:= nil;
+end;
+
+class function TP3DOIEditorActionChannel.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= TP3DOIEditorPageAction.IsCompatible( AObj );
+end;
+
+
+{ TP3DOIEditorPageAction }
+
+procedure TP3DOIEditorPageAction.ChannelSelectionChange(Sender: TP3DListView; var NewSelection: TP3DListItem);
+begin
+  if ( Assigned( Action ) and Assigned( NewSelection )) then
+    Channel.Channel:= Action.Channels[ Integer( NewSelection.Data )]
+  else
+    Channel:= nil;
+end;
+
+procedure TP3DOIEditorPageAction.KeysSelectionChange(Sender: TP3DListView; var NewSelection: TP3DListItem);
+begin
+  if ( Assigned( Action ) and Assigned( NewSelection )) then
+    EditorKey.Key:= Action.Channels[ Integer( Channels.Selection.Data )].Keys[ Integer( NewSelection.Data )]
+  else
+    EditorKey.Key:= nil;
+end;
+
+constructor TP3DOIEditorPageAction.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  Channels:= TP3DPropertyEditorActionChannelList.Create( Owner, Self );
+  Channels.Align:= alTop;
+  Channels.Height:= 100;
+  Channels.OnSelectionChange:= @ChannelSelectionChange;
+  Channel:= TP3DOIEditorActionChannel.Create( Owner, Self );
+  Channel.Align:= alTop;
+  Channel.Keys.OnSelectionChange:= @KeysSelectionChange;
+  EditorKey:= TP3DOIEditorActionKey.Create( Owner, Self );
+  EditorKey.Align:= alTop;
+  Channel.Visible:= False;
+  EditorKey.Visible:= False;
+end;
+
+procedure TP3DOIEditorPageAction.Update;
+begin
+  inherited Update;
+
+  if ( Obj is TP3DAction ) then
+    FAction:= TP3DAction( Obj )
+  else if ( Obj is TP3DDataBlock ) then
+    FAction:= TP3DDataBlock( Obj ).Action
+  else
+    FAction:= nil;
+  if ( Assigned( Action )) then
+    Channels.Prop:= Action.Properties.GetPropByName( 'Channels' );
+end;
+
+class function TP3DOIEditorPageAction.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= AObj is TP3DDataBlock;
+end;
+
+function TP3DOIEditorPageAction.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
+begin
+  Result:= inherited CreateButton(AParent, AMouseClick);
+  Result.Caption:= P3DSymbolArmature;
+end;
 
 {$ENDIF}

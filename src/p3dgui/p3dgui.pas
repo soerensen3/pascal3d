@@ -8,7 +8,7 @@
 // ##################################
 {$mode objfpc}
 
-{$DEFINE DEBUG_GUI}
+{.$DEFINE DEBUG_GUI}
 
 unit p3dgui;
 

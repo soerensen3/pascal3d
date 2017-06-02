@@ -4,6 +4,7 @@
 
 function Split( S: String; Delim: Char ): TStringList;
 function Enclosed( var S: String; sStart: Char; sEnd: Char; const TrimStr: Boolean = True ): Boolean;
+function FloatToStr( AValue: Float; const Precision: Integer = 2 ): String;
 
 
 {$ENDIF}
@@ -24,6 +25,14 @@ begin
   Result:= ( Length( S ) > 1 ) and ( S[ 1 ] = sStart ) and ( S[ Length( S )] = sEnd );
   if ( Result ) then
     S:= Copy( S, 2, Length( S ) - 2 );
+end;
+
+function FloatToStr(AValue: Float; const Precision: Integer): String;
+var
+  d: String;
+begin
+  d:= '%.' + IntToStr( Precision ) + 'f';
+  Result:= Format( d, [ AValue ]);
 end;
 
 

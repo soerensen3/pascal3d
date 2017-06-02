@@ -2,116 +2,116 @@
 
 
 { TP3DBrush }
+type
+  TP3DBrush = class
+    Color: TP3DColorRGBA;
+    constructor Create(AColor: TP3DColorRGBA);
+  end;
 
-TP3DBrush = class
-  Color: TP3DColorRGBA;
-  constructor Create(AColor: TP3DColorRGBA);
-end;
+  TP3DPenStyle = ( psSolid, psStippled1, psStippled2, psStippled3, psStippled4, psStippled5, psStippled6 );
 
-TP3DPenStyle = ( psSolid, psStippled1, psStippled2, psStippled3, psStippled4, psStippled5, psStippled6 );
+  TP3DHorizontalAlignment = (
+    haLeft,
+    haCenter,
+    haRight);
 
-TP3DHorizontalAlignment = (
-  haLeft,
-  haCenter,
-  haRight);
-
-TP3DVerticalAlignment = (
-  vaTop,
-  vaCenter,
-  vaBottom);
+  TP3DVerticalAlignment = (
+    vaTop,
+    vaCenter,
+    vaBottom);
 
 
-{ TP3DPen }
+  { TP3DPen }
 
-TP3DPen = class
-  private
-    FColor: TP3DColorRGBA;
-    FOnChange: TNotifyEvent;
-    FWidth: Single;
-    FStyle: TP3DPenStyle;
+  TP3DPen = class
+    private
+      FColor: TP3DColorRGBA;
+      FOnChange: TNotifyEvent;
+      FWidth: Single;
+      FStyle: TP3DPenStyle;
 
-    procedure SetStyle(AValue: TP3DPenStyle);
-    procedure SetWidth(AValue: Single);
+      procedure SetStyle(AValue: TP3DPenStyle);
+      procedure SetWidth(AValue: Single);
 
-  public
-    constructor Create( AColor: TP3DColorRGBA; AWidth: Single; AStyle: TP3DPenStyle );
+    public
+      constructor Create( AColor: TP3DColorRGBA; AWidth: Single; AStyle: TP3DPenStyle );
 
-    property Width: Single read FWidth write SetWidth;
-    property Color: TP3DColorRGBA read FColor write FColor;
-    property Style: TP3DPenStyle read FStyle write SetStyle;
-    property OnChange: TNotifyEvent read FOnChange write FOnChange;
-end;
-{ TP3DCanvas2D }
+      property Width: Single read FWidth write SetWidth;
+      property Color: TP3DColorRGBA read FColor write FColor;
+      property Style: TP3DPenStyle read FStyle write SetStyle;
+      property OnChange: TNotifyEvent read FOnChange write FOnChange;
+  end;
+  { TP3DCanvas2D }
 
-TP3DCanvas2D = class ( TP3DCanvas )
-  private
-    FBrush: TP3DBrush;
-    FPen: TP3DPen;
-    FProj: TMat4;
-    FScreenAligned: Boolean;
-    FScroll: TVec2;
-    FWorld: TMat4;
+  TP3DCanvas2D = class ( TP3DCanvas )
+    private
+      FBrush: TP3DBrush;
+      FPen: TP3DPen;
+      FProj: TMat4;
+      FScreenAligned: Boolean;
+      FScroll: TVec2;
+      FWorld: TMat4;
 
-    procedure SetScreenAligned(AValue: Boolean);
-    procedure SetScroll(AValue: TVec2);
-    procedure UpdateLockedArea; override;
-    procedure UpdateProj;
-    procedure UpdateParams;
-    procedure PenChange( Sender: TObject );
+      procedure SetScreenAligned(AValue: Boolean);
+      procedure SetScroll(AValue: TVec2);
+      procedure UpdateLockedArea; override;
+      procedure UpdateProj;
+      procedure UpdateParams;
+      procedure PenChange( Sender: TObject );
 
-  public
-    constructor Create(AOwner: TPersistent);
-    destructor Destroy; override;
+    public
+      constructor Create(AOwner: TPersistent);
+      destructor Destroy; override;
 
-    function PrepareForDrawing: Boolean;
+      function PrepareForDrawing: Boolean;
 
-    procedure RenderLine( p1, p2: TVec2; Color: TP3DColorRGBA );
-    procedure RenderLine( p1, p2: TVec2; Color1, Color2: TP3DColorRGBA );
-    procedure RenderLines( points: array of TVec2; Color: TP3DColorRGBA );
-    procedure RenderLines( points: TVec2List; Color: TP3DColorRGBA );
-    procedure RenderLineRect( p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
-    procedure RenderLineRect( p1, p2: TVec2; Color: TP3DColorRGBA );
-    procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
-    procedure RenderRect( p1, p2: TVec2; Color: TP3DColorRGBA );
-    procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TP3DColorRGBA );
-    procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TP3DColorRGBA);
-    procedure RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
-      num_segments: Integer; Color: TP3DColorRGBA);
-    procedure RenderLineCircle( c: TVec2; r: Single; num_segments: Integer; Color: TP3DColorRGBA );
-    procedure RenderQuad( p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
-    procedure RenderQuad( p1, p2, p3, p4: TVec2; Color: TP3DColorRGBA );
-    procedure RenderText( Text: TP3DText; P: TVec2 );
-    procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
-    procedure RenderText( Text: TP3DTextBmp; P: TVec2 );
-    procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DTextBmp );
-    procedure RenderTextShadow( Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TP3DColorRGBA );
-    procedure RenderTextShadow( Text: String; P: TVec2; blur: Single; Color: TP3DColorRGBA; var CacheObj: TP3DTextBmp );
-    procedure RenderLetter( Text: TP3DText; Idx: Integer; P: TVec2 );
-    procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TP3DColorRGBA );
-    procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TP3DColorRGBA);
-    procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TP3DColorRGBA );
-    function GetValidText( Text: String; var CacheObj: TP3DText ): TP3DText; inline;
-    function GetValidText( Text: String; var CacheObj: TP3DText; AFont: TP3DFont ): TP3DText;
-    function GetValidText( Text: String; var CacheObj: TP3DTextBmp; AFont: TP3DFont ): TP3DTextBmp;
-    function GetValidText( Text: String; var CacheObj: TP3DTextBmp ): TP3DTextBmp; inline;
-    function CalcAlignedTextRect( Text: TP3DText; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment ): TVec2;
-    function CalcAlignedTextRect( Text: TP3DTextBmp; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment ): TVec2;
-    procedure PassToShader;
+      procedure RenderLine( p1, p2: TVec2; Color: TP3DColorRGBA );
+      procedure RenderLine( p1, p2: TVec2; Color1, Color2: TP3DColorRGBA );
+      procedure RenderLines( points: array of TVec2; Color: TP3DColorRGBA );
+      procedure RenderLines( points: TVec2List; Color: TP3DColorRGBA );
+      procedure RenderLineRect( p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
+      procedure RenderLineRect( p1, p2: TVec2; Color: TP3DColorRGBA );
+      procedure RenderRect( p1, p2: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
+      procedure RenderRect( p1, p2: TVec2; Color: TP3DColorRGBA );
+      procedure RenderCircle(c: TVec2; r: Single; num_segments: Integer; Color: TP3DColorRGBA );
+      procedure RenderRoundRect(p1, p2: TVec2; r: Float; num_segments: Integer; Color: TP3DColorRGBA);
+      procedure RenderArc(c: TVec2; r: Single; startangle, endangle: Float;
+        num_segments: Integer; Color: TP3DColorRGBA);
+      procedure RenderLineCircle( c: TVec2; r: Single; num_segments: Integer; Color: TP3DColorRGBA );
+      procedure RenderQuad( p1, p2, p3, p4: TVec2; c1, c2, c3, c4: TP3DColorRGBA );
+      procedure RenderQuad( p1, p2, p3, p4: TVec2; Color: TP3DColorRGBA );
+      procedure RenderText( Text: TP3DText; P: TVec2 );
+      procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DText );
+      procedure RenderText( Text: TP3DTextBmp; P: TVec2 );
+      procedure RenderText( Text: String; P: TVec2; var CacheObj: TP3DTextBmp );
+      procedure RenderTextShadow( Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TP3DColorRGBA );
+      procedure RenderTextShadow( Text: String; P: TVec2; blur: Single; Color: TP3DColorRGBA; var CacheObj: TP3DTextBmp );
+      procedure RenderLetter( Text: TP3DText; Idx: Integer; P: TVec2 );
+      procedure RenderBezier( p1, p2, p3, p4: TVec2; num_segments: Integer; Color: TP3DColorRGBA );
+      procedure RenderRectShadow(p1, p2: TVec2; blur: Single; AColor: TP3DColorRGBA);
+      procedure RenderRectShadowInner( p1, p2: TVec2; off, blur: Single; AColor: TP3DColorRGBA );
+      function GetValidText( Text: String; var CacheObj: TP3DText ): TP3DText; inline;
+      function GetValidText( Text: String; var CacheObj: TP3DText; AFont: TP3DFont ): TP3DText;
+      function GetValidText( Text: String; var CacheObj: TP3DTextBmp; AFont: TP3DFont ): TP3DTextBmp;
+      function GetValidText( Text: String; var CacheObj: TP3DTextBmp ): TP3DTextBmp; inline;
+      function CalcAlignedTextRect( Text: TP3DText; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment ): TVec2;
+      function CalcAlignedTextRect( Text: TP3DTextBmp; R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment ): TVec2;
+      procedure PassToShader;
 
-    function Lock: Integer; override;
+      function Lock: Integer; override;
 
-    property Proj: TMat4 read FProj write FProj;
-    property Scroll: TVec2 read FScroll write SetScroll;
-    property ScreenAligned: Boolean read FScreenAligned write SetScreenAligned;
-    property Brush: TP3DBrush read FBrush;
-    property Pen: TP3DPen read FPen;
-    property World: TMat4 read FWorld write FWorld;
-end;
+      property Proj: TMat4 read FProj write FProj;
+      property Scroll: TVec2 read FScroll write SetScroll;
+      property ScreenAligned: Boolean read FScreenAligned write SetScreenAligned;
+      property Brush: TP3DBrush read FBrush;
+      property Pen: TP3DPen read FPen;
+      property World: TMat4 read FWorld write FWorld;
+  end;
 
-function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
-function P3DRect(TopLeft, WidthHeight: TVec2): TP3DRect;
-function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;
-function P3DRectEx( TopLeft, BottomRight: TVec2 ): TP3DRect;
+  function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
+  function P3DRect(TopLeft, WidthHeight: TVec2): TP3DRect;
+  function P3DRectEx(Left, Top, Right, Bottom: Float): TP3DRect;
+  function P3DRectEx( TopLeft, BottomRight: TVec2 ): TP3DRect;
 
 {$ENDIF}
 
@@ -422,7 +422,7 @@ begin
   P3DFontManagerBmp.TextModifier.TextBias:= -0.05;
   P3DFontManagerBmp.TextModifier.TextAlpha:= ScreenColor.a * Color.a;
   if ( Assigned( Text )) then
-    Text.Render( P, ScreenColor * Font.Color, World * Proj );
+    Text.Render( P, ScreenColor * Color, World * Proj );
 end;
 
 procedure TP3DCanvas2D.RenderTextShadow(Text: String; P: TVec2; blur: Single; Color: TP3DColorRGBA; var CacheObj: TP3DTextBmp);
@@ -830,6 +830,11 @@ end;
 function TP3DRect.ToString: String;
 begin
   Result:= TopLeft.ToString() + ', ' + BottomRight.ToString();
+end;
+
+operator+(R: TP3DRect; v: TVec2): TP3DRect;
+begin
+  Result:= P3DRect( R.TopLeft + v, R.WidthHeight );
 end;
 
 function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;

@@ -8,6 +8,7 @@ type
       FHeight: Integer;
       FRBO: GLint;
       FWidth: Integer;
+
     public
       constructor Create(AWidth, AHeight: Integer);
       destructor Destroy; override;

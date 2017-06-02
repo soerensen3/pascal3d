@@ -83,7 +83,7 @@ type
 
   TP3DPropertyAccessTexture = specialize gP3DPropertyAccessDataBlock < TP3DTexture >;
   TP3DTextureList = specialize gP3DCustomDatablockList < TP3DTexture >;
-  TP3DPropertyAccessTextureList = specialize gP3DListPropertyAccess < TP3DTextureList, TP3DTexture, TP3DPropertyAccessTexture >;
+  TP3DPropertyAccessTextureList = specialize gP3DListPropertyAccessObject < TP3DTextureList, TP3DTexture, TP3DPropertyAccessTexture >;
 
 {$ENDIF}
 

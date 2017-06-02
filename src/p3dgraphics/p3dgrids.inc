@@ -428,8 +428,6 @@ begin
               Break;
             end;
       end;
-
-  P3DApplication.MainWindow.Title:= gridpos.ToString();
 end;
 
 function TP3DTileGrid.OnGridDataSet(Sender: TPersistent; ItemIndex: Integer; AValue: TP3DGridScene): Boolean;

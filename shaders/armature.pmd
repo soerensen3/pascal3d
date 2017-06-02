@@ -91,18 +91,8 @@ void getTransform( out vec4 quat, out vec4 trans )
   
 }
 ```
----
-node: 01050_pass_armature_debug
----
-```{name="CODE", type="shader", restrict="vshader,declaration"}
-OUT vec3 vjointWeight;
-OUT vec4 vjointID;
-OUT vec4 vjointQuat;
-OUT vec4 vjointTrans;
-```
 
 ```{restrict="vshader,main"}
-
   vec4 quat;
   vec4 trans;
   getTransform( quat, trans );
@@ -110,25 +100,38 @@ OUT vec4 vjointTrans;
   vTangent.xyz = transformNormal( vTangent.xyz, quat );
   vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
   vPosition.xyz = transformPosition( vPosition.xyz, quat, trans );
+```
+---
+node: 01050_pass_armature_debug
+---
+```{name="CODE", type="shader", restrict="vshader,declaration"}
+OUT vec4 vjointWeight;
+OUT vec4 vjointID;
+//OUT vec4 vjointQuat;
+//OUT vec4 vjointTrans;
+```
+
+```{restrict="vshader,main"}
   vjointWeight = jointWeight;
   vjointID = fjointID;
-  vjointQuat = quat;
-  vjointTrans = trans;
+//  vjointQuat = quat;
+//  vjointTrans = trans;
 ```
 ```{restrict="fshader,declaration"}
-IN vec3 vjointWeight;
+IN vec4 vjointWeight;
 IN vec4 vjointID;
-IN vec4 vjointQuat;
-IN vec4 vjointTrans;
-
-
+//IN vec4 vjointQuat;
+//IN vec4 vjointTrans;
 ```
+
 ```{restrict="fshader,main"}
   //shadow = vec3( 1 );
   //spec = vec3( 0 );
   //Color = vec4( vec3( vjointWeight[ int( floor( time * 3 ))]) / 3, 1 );
   //Color = vec4( vjointWeight.xyz, 1 );
   //Color = vec4( vec3( vjointID[ 0 ] / 3 ) * vjointTrans.xyz, 1 );
+  //Color.rgb = vec3( vjointWeight[ int( floor( time * 4 ))]);//vec3( vjointWeight[ 0 ] +  vjointWeight[ 1 ] +  vjointWeight[ 2 ] +  vjointWeight[ 3 ]);
+  //Color.a = 1;
 ```
 
 ---
@@ -146,17 +149,17 @@ mat4 getJointTransform( const in float i ) {
 
   float j = i * 4.0;
   float x = mod( j, float( jointTexWidth ) );
-  float y = floor( j / float( jointTexHeight ) );
+  float y = 0.5;//floor( j / float( jointTexHeight ) );
 
   float dx = 1.0 / float( jointTexWidth );
   float dy = 1.0 / float( jointTexHeight );
 
   y = time;//dy * ( y + 0.5 );
 
-  vec4 v1 = texture2D( jointTex, vec2( dx * ( x + 0.5 ), y ) );
-  vec4 v2 = texture2D( jointTex, vec2( dx * ( x + 1.5 ), y ) );
-  vec4 v3 = texture2D( jointTex, vec2( dx * ( x + 2.5 ), y ) );
-  vec4 v4 = texture2D( jointTex, vec2( dx * ( x + 3.5 ), y ) );
+  vec4 v1 = texture2D( jointTex, vec2( dx * ( x + 0.5 ), y ));
+  vec4 v2 = texture2D( jointTex, vec2( dx * ( x + 1.5 ), y ));
+  vec4 v3 = texture2D( jointTex, vec2( dx * ( x + 2.5 ), y ));
+  vec4 v4 = texture2D( jointTex, vec2( dx * ( x + 3.5 ), y ));
 
   mat4 bone = mat4( v1, v2, v3, v4 );
 
@@ -164,37 +167,36 @@ mat4 getJointTransform( const in float i ) {
 
 }
 
-IN vec3 jointWeight;
+IN vec4 jointWeight;
 IN vec4 fjointID;
 
 mat4 boneMatX;
 mat4 boneMatY;
 mat4 boneMatZ;
 mat4 boneMatW;
-float jointWeight3;
 mat4 skinMatrix;
 
 void getTransform()
 {
-  jointWeight3 = 1-( jointWeight[ 0 ] + jointWeight[ 1 ] + jointWeight[ 2 ]);
   boneMatX = getJointTransform( fjointID[ 0 ]);
   boneMatY = getJointTransform( fjointID[ 1 ]);
   boneMatZ = getJointTransform( fjointID[ 2 ]);
   boneMatW = getJointTransform( fjointID[ 3 ]);
   
+  //skinMatrix = mat4( 1 );
   skinMatrix = mat4( 0.0 );
   skinMatrix += jointWeight[ 0 ] * boneMatX;
   skinMatrix += jointWeight[ 1 ] * boneMatY;
   skinMatrix += jointWeight[ 2 ] * boneMatZ; 
-  skinMatrix += jointWeight3 * boneMatW;
+  skinMatrix += jointWeight[ 3 ] * boneMatW;
 }
 
 vec3 transformPosition( in vec3 v ) {
   vec4 skinned = vec4( 0.0 );
-  skinned += boneMatX * vec4( v, 1 ) * jointWeight[ 0 ];
+  skinned += boneMatX * vec4( v, 1 )* jointWeight[ 0 ];
   skinned += boneMatY * vec4( v, 1 ) * jointWeight[ 1 ]; 
   skinned += boneMatZ * vec4( v, 1 ) * jointWeight[ 2 ];
-  skinned += boneMatW * vec4( v, 1 ) * jointWeight3;
+  skinned += boneMatW * vec4( v, 1 ) * jointWeight[ 3 ];
   return skinned.xyz;
 }
 

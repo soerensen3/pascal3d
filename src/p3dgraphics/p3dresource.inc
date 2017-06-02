@@ -38,6 +38,7 @@ type
       function GetBinFile: TFileStream;
       function GetDOMFile: TXMLDocument;
       function GetName: String; virtual;
+      procedure PerformActions(GlobalTime: Float);
 //      function LoadDataBlockByPathNoCheck( LocalPath: String ): TP3DDataBlock;
 
     protected
@@ -79,8 +80,6 @@ type
       function CheckLastChange: Integer; virtual;
       class function DOMNodeName: String; override;
 
-      procedure PerformActions( GlobalTime: Float ); virtual;
-
       property DataBlocks: TP3DObjectList read FDataBlocks write FDataBlocks;
 
     published
@@ -112,7 +111,7 @@ type
     public
       constructor Create;
       destructor Destroy; override;
-      procedure PerformActions(GlobalTime: Float); override;
+//      procedure PerformActions(GlobalTime: Float); override;
 
       procedure ClearFields; override;
       function IsValid(Obj: TP3DObject): Boolean; override;
@@ -136,7 +135,7 @@ type
   end;
 
   TP3DPropertyAccessLibrary = specialize gP3DPropertyAccessInterfacedPersistent < TP3DLibrary >;
-  TP3DPropertyAccessLibraryList = specialize gP3DListPropertyAccess < TP3DLibraryList, TP3DLibrary, TP3DPropertyAccessLibrary >;
+  TP3DPropertyAccessLibraryList = specialize gP3DListPropertyAccessObject < TP3DLibraryList, TP3DLibrary, TP3DPropertyAccessLibrary >;
 
 
   { TP3DDataBlockCacheEntry }
@@ -217,6 +216,9 @@ begin
   Fonts:= TP3DFontBmpList.Create;
   FileWatch:= TP3DFileWatch.Create( '', Self );
 
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smDoNotStore ));
+  Properties.Add( TP3DPropertyAccessFileWatch.CreateFieldSet( 'FileWatch', @FileWatch, nil, smDoNotStore ));
+
   Properties.Add( TP3DPropertyAccessCameraList.CreateField( 'Cameras', @FCameras, smNode ));
   Properties.Add( TP3DPropertyAccessJointList.CreateField( 'Joints', @FJoints, smNode ));
   Properties.Add( TP3DPropertyAccessLightList.CreateField( 'Lights', @FLights, smNode ));
@@ -229,7 +231,9 @@ begin
   Properties.Add( TP3DPropertyAccessArmatureList.CreateField( 'Armatures', @FArmatures, smNode ));
   Properties.Add( TP3DPropertyAccessActionList.CreateField( 'Actions', @FActions, smNode ));
   Properties.Add( TP3DPropertyAccessFontBmpList.CreateField( 'Fonts', @FFonts, smNode ));
+
 end;
+
 
 constructor TP3DLibrary.CreateFromDOM(ADOMNode: TDOMElement);
 begin
@@ -871,13 +875,8 @@ begin
 end;
 
 procedure TP3DLibrary.PerformActions(GlobalTime: Float);
-var
-  Action: TP3DAction;
-  Block: TP3DDataBlock;
 begin
-  for Action in Actions do
-    for Block in Action.Users do
-      Action.Perform( GlobalTime, Block );
+  Actions.PerformActions( GlobalTime );
 end;
 
 { TP3DDataList }
@@ -1005,7 +1004,7 @@ begin
   inherited Destroy;
   FreeAndNil( FLibraries );
 end;
-
+{
 procedure TP3DData.PerformActions(GlobalTime: Float);
 var
   lib: TP3DLibrary;
@@ -1014,6 +1013,7 @@ begin
     lib.PerformActions( GlobalTime );
   inherited PerformActions(GlobalTime);
 end;
+}
 
 procedure TP3DData.ClearFields;
 var

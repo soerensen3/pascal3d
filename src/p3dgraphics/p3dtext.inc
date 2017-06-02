@@ -141,6 +141,7 @@ function p3dTextSimple( AText: String; AFont: TP3DFont ): TP3DText;
 var
   cl: TSDL_Color;
   surface: PSDL_Surface;
+  decl: TP3DShaderDecl;
 begin
   Result:= nil;
   cl.a:= 255; cl.r:= 255; cl.g:= 255; cl.b:= 255;
@@ -167,8 +168,10 @@ begin
       Vertices.PushData;
       Vertices.SetAttribArray( P3DAttribPosition );
       TexCoords.Add([ vec2( 0, 0 ), vec2( 1, 0 ), vec2( 1, 1 ), vec2( 0, 1 )]);
-      TexCoords.SetAttribArray( P3DAttribTexCoord0 );
+      if ( P3DShaderActive.Attributes.FindByName( 'TexCoord0', decl )) then
+        decl.AsVec2List:= TexCoords;
       TexCoords.PushData;
+
       Indices:= TP3DIntBufferGL.Create( True );
       Indices.Add([ 0, 1, 2, 0, 2, 3 ]);
       Indices.PushData;
@@ -213,9 +216,11 @@ begin
 end;
 
 procedure TP3DText.Render;
+var
+  decl: TP3DShaderDecl;
 begin
-  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
-
+  if ( P3DShaderActive.Attributes.FindByName( 'TexCoord0', decl )) then
+    decl.AsVec2List:= TexCoords;
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
 end;
@@ -250,7 +255,7 @@ end;
 procedure TP3DText.RenderLetter(p: TVec2; Idx: Integer; Color: TVec4);
 var
   Shader: TP3DShader;
-  Uniform: TP3DShaderDecl;
+  Uniform, decl: TP3DShaderDecl;
 begin
   ApplyShader;
 
@@ -270,8 +275,8 @@ begin
   glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
   Vertices.SetAttribArray( P3DAttribPosition );
 
-  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
-
+  if ( P3DShaderActive.Attributes.FindByName( 'TexCoord0', decl )) then
+    decl.AsVec2List:= TexCoords;
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
 //  glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, Pointer( Idx * 6 )); cle( Self );
@@ -412,7 +417,6 @@ begin
   FFileWatch:= TP3DFileWatch.Create( FileName );
   FFontName:= ExtractFileNameOnly( FileName );
   Font:= TTF_OpenFont( PChar( FileName ), Size );
-  WriteLn( AFileName + ' height: ', TTF_FontHeight( Font ), ' ascent: ', TTF_FontAscent( Font ), ' descent: ', TTF_FontDescent( Font ), ' line skip: ', TTF_FontLineSkip( Font ));
 end;
 
 destructor TP3DFont.Destroy;

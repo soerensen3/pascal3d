@@ -8,13 +8,14 @@ TP3DControlList = class( TP3DCustomControlList )
   private
     FClipRect: TP3DRect;
     FFinalScroll: TVec2;
-    FOrigin: TVec2;
     FPageModeX: TP3DPageMode;
     FPageModeY: TP3DPageMode;
     FPageRect: TP3DRect;
     FPageScroll: TVec2;
     FPageSize: TVec2;
     FParent: TP3DGraphicControl;
+    function GetCanScrollX: Boolean;
+    function GetCanScrollY: Boolean;
     function GetPageScrollPixel: TVec2;
     procedure SetPageModeX(AValue: TP3DPageMode);
     procedure SetPageModeY(AValue: TP3DPageMode);
@@ -54,6 +55,8 @@ TP3DControlList = class( TP3DCustomControlList )
     property PageScrollPixel: TVec2 read GetPageScrollPixel;
     property FinalScroll: TVec2 read FFinalScroll;
     property PageSize: TVec2 read FPageSize;
+    property CanScrollX: Boolean read GetCanScrollX;
+    property CanScrollY: Boolean read GetCanScrollY;
     //property Origin: TVec2 read FOrigin;
 end;
 
@@ -162,6 +165,16 @@ begin
   Result:= PageScroll * max( PageSize - PageRect.WidthHeight, 0 ); //* vec2( Ord( PageModeX = pmScroll ), Ord( PageModeY = pmScroll ));
 end;
 
+function TP3DControlList.GetCanScrollX: Boolean;
+begin
+  Result:= PageSize.x > PageRect.Width;
+end;
+
+function TP3DControlList.GetCanScrollY: Boolean;
+begin
+  Result:= PageSize.y > PageRect.Height;
+end;
+
 procedure TP3DControlList.SetPageModeY(AValue: TP3DPageMode);
 begin
   if ( FPageModeY = AValue ) then Exit;
@@ -177,7 +190,8 @@ end;
 procedure TP3DControlList.SetPageScroll(AValue: TVec2);
 begin
   if FPageScroll=AValue then Exit;
-  FPageScroll:= clamp( AValue, vec2( 0.0 ), vec2( Ord( PageSize.x > PageRect.Width ), Ord( PageSize.y > PageRect.Height )));
+  FPageScroll:= clamp( AValue, vec2( 0.0 ), vec2( Ord( CanScrollX ), Ord( CanScrollY )));
+  UpdateControls;
   //PageScroll:= PageScroll * vec2( Ord( PageModeX = pmScroll ), Ord( PageModeY = pmScroll ));
 end;
 
@@ -188,6 +202,8 @@ var
 begin
   Rect:= PageRect;
   Rect.TopLeft:= vec2( 0 );
+
+  FPageSize:= UpdatePageSize; //workaround
 
   for Control in Self do //alLeft, alTop
     if (( Control.Visible ) and ( Control.Align in [ alLeft, alTop, alRight, alBottom, alNone ])) then
@@ -211,6 +227,7 @@ begin
       begin
         UpdateCanvasRect( Control, ClipRect );
         Control.Realign();
+        Control.FNeedsUpdate:= False;
       end;
 end;
 
@@ -219,6 +236,7 @@ procedure TP3DControlList.UpdateControlRect(Control: TP3DGraphicControl;
 var
   Rect: TP3DRect;
 begin
+  Control.Controls.FPageSize:= Control.Controls.UpdatePageSize;
   Rect.TopLeft:= Control.TopLeft;// + FinalScroll;
   Rect.WidthHeight:= Control.WidthHeight;
 
@@ -270,15 +288,15 @@ begin
       ControlRect.Top:= ControlRect.Top * ratio;
       ControlRect.Height:= ControlRect.Height * ratio;
     end;
-  ControlRect.TopLeft:= ControlRect.TopLeft - GetPageScrollPixel + PageRect.TopLeft;
+  ControlRect.TopLeft:= ControlRect.TopLeft + PageRect.TopLeft - GetPageScrollPixel;
   Origin:= ControlRect.TopLeft;
   CtrlPageRect:= P3DRectEx( Origin + Control.Margin.XY, ControlRect.BottomRight - Control.Margin.ZW );
   ControlRect:= ControlRect.Clip( TargetRect );
   Control.Canvas.Rect:= ControlRect;
   Control.Controls.FFinalScroll:= Control.Canvas.TopLeft - Origin;
-  Control.Controls.PageRect:= CtrlPageRect;
   Control.Controls.ClipRect:= CtrlPageRect.Clip( TargetRect );
-//  ControlRect.TopLeft:= CanvRect.TopLeft + Control.Margin.XY;
+  Control.Controls.PageRect:= CtrlPageRect;
+  //ControlRect.TopLeft:= CanvRect.TopLeft + Control.Margin.XY;
 end;
 
 function TP3DControlList.UpdatePageSize: TVec2;

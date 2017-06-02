@@ -24,6 +24,7 @@ type
       destructor Destroy; override;
 
       property Data: Pointer read FData write FData;
+      property RenderPos: TVec2 read FRenderPos;
 
     published
       property Caption: String read FCaption write SetCaption;
@@ -270,6 +271,28 @@ type
     published
       property Obj: TPersistent read FObj write SetObj;
       property ShowDesignerPackages: Boolean read FShowDesignerPackages write FShowDesignerPackages;
+  end;
+
+  { TP3DTreeViewProperty }
+
+  { TP3DTreeViewProperties }
+
+  TP3DTreeViewProperties = class ( TP3DTreeView )
+    private
+      FMaxDepth: Integer;
+      FObj: TP3DInterfacedPersistent;
+
+      procedure SetMaxDepth(AValue: Integer);
+      procedure SetObj(AValue: TP3DInterfacedPersistent);
+
+    public
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+
+      procedure Update;
+
+    published
+      property Obj: TP3DInterfacedPersistent read FObj write SetObj;
+      property MaxDepth: Integer read FMaxDepth write SetMaxDepth;
   end;
 
 {$ENDIF}
@@ -1697,6 +1720,69 @@ begin
 
   if ( Assigned( SelectionData )) then
     Selection:= Children.FindByData( SelectionData, True );
+end;
+
+{ TP3DTreeViewProperty }
+
+procedure TP3DTreeViewProperties.SetObj(AValue: TP3DInterfacedPersistent);
+begin
+  if FObj=AValue then Exit;
+  FObj:=AValue;
+  Update;
+end;
+
+constructor TP3DTreeViewProperties.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  FMaxDepth:= 5;
+end;
+
+procedure TP3DTreeViewProperties.SetMaxDepth(AValue: Integer);
+begin
+  if FMaxDepth=AValue then Exit;
+  FMaxDepth:=AValue;
+  Update;
+end;
+
+procedure TP3DTreeViewProperties.Update;
+  procedure AddProps( Props: TP3DPropertyAccessList; NodeLst: TP3DTreeNodeList; Level: Integer ); forward;
+  procedure AddProp( Prop: TP3DPropertyAccess; NodeLst: TP3DTreeNodeList; Level: Integer );
+  var
+    n, i: Integer;
+  begin
+    if (( MaxDepth < Level ) or ( not Assigned( Prop ))) then
+      exit;
+    n:= NodeLst.Add( Prop.Name + ': ' + Prop.ClassName, nil );
+    if (( Prop is IP3DPropertyAccessInterfacedPersistent ) and ( Assigned(( Prop as IP3DPropertyAccessInterfacedPersistent ).GetObjectValue ))) then
+      AddProps(( Prop as IP3DPropertyAccessInterfacedPersistent ).Properties, NodeLst[ n ].Children, Level + 1 )
+    else if ( Prop.IsArray ) then
+      for i:= 0 to Prop.ArrayCount - 1 do
+        AddProp( Prop.ArrayAsProp[ i ], NodeLst[ n ].Children, Level + 1 )
+    else
+      WriteLn( Prop.ClassName );
+  end;
+
+  procedure AddProps( Props: TP3DPropertyAccessList; NodeLst: TP3DTreeNodeList; Level: Integer );
+  var
+    Prop: TP3DPropertyAccess;
+  begin
+    if (( MaxDepth < Level ) or ( not Assigned( Prop ))) then
+      exit;
+    if ( not Assigned( Props )) then
+      WriteLn( 'Error' )
+    else if ( not Assigned( NodeLst )) then
+      WriteLn( 'Error 2' )
+    else
+      for Prop in Props do
+        AddProp( Prop, NodeLst, Level + 1 );
+  end;
+
+begin
+  Children.Clear( True );
+  if ( Assigned( Obj )) then
+    AddProps( Obj.Properties, Children, 1 )
+  else
+    Children.Add( '<None:TP3DInterfacedPersistent>', nil );
 end;
 
 {$ENDIF}

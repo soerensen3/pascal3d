@@ -42,8 +42,9 @@
 
         function GetCaption: String; virtual;
         procedure SetCaption( AValue: String ); virtual;
-        procedure RenderButton( C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4 );//APreset: TP3DButtonPreset );
-        function RenderButtonText( C: TVec4 ): TVec2;
+        procedure RenderButton( C1, C2, C3, C4, CE1, CE2, CE3, CE4: TP3DColorRGBA );//APreset: TP3DButtonPreset );
+        function RenderButtonText(C: TP3DColorRGBA): TVec2; inline;
+        function RenderButtonText( R: TP3DRect; C: TP3DColorRGBA ): TVec2;
 
       public
         constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
@@ -137,7 +138,7 @@ begin
     FCaptionTxt:= TP3DTextBmp.CreateSimple( ' ', P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 end;
 
-procedure TP3DButton.RenderButton(C1, C2, C3, C4, CE1, CE2, CE3, CE4: TVec4);
+procedure TP3DButton.RenderButton(C1, C2, C3, C4, CE1, CE2, CE3, CE4: TP3DColorRGBA);
 var
   clf: TVec4;
 begin
@@ -151,7 +152,12 @@ begin
     end;
 end;
 
-function TP3DButton.RenderButtonText(C: TVec4): TVec2;
+function TP3DButton.RenderButtonText(C: TP3DColorRGBA): TVec2;
+begin
+  RenderButtonText( ClientRect, C );
+end;
+
+function TP3DButton.RenderButtonText(R: TP3DRect; C: TP3DColorRGBA): TVec2;
 var
   P: TVec2;
 begin
@@ -160,9 +166,9 @@ begin
       if ( not Assigned( FCaptionTxt )) then
         FCaptionTxt:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Font.Name ], Font.Size );
 
-      P:= Canvas.CalcAlignedTextRect( FCaptionTxt, ClientRect, HAlignment, VAlignment );
+      P:= Canvas.CalcAlignedTextRect( FCaptionTxt, R, HAlignment, VAlignment );
 
-      Canvas.Font.Color:= C * vec4( 1, 1, 1, 0.5 + 0.5 * Ord( Enabled ));
+      Canvas.Font.Color:= C.Fade( 0.5 + 0.5 * Ord( Enabled ));
       Canvas.Font.Size:= Font.Size;
       Canvas.Font.Name:= Font.Name;
       Canvas.RenderText( Caption, P, FCaptionTxt );

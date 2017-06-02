@@ -5,6 +5,7 @@ type
 
   TP3DSceneMain = class( TP3DGraphicControl )
     private
+      FActiveDataBlock: TP3DDataBlock;
       FActiveLibrary: TP3DLibrary;
       FActiveScene: TP3DScene;
       FLastUpdate: Integer;
@@ -15,6 +16,7 @@ type
       PropEd: TP3DPropertyEditorString;
       Edit: TP3DEdit;
 
+      procedure SetActiveDataBlock(AValue: TP3DDataBlock);
       procedure SetActiveLibrary(AValue: TP3DLibrary);
       procedure SetActiveScene(AValue: TP3DScene);
       procedure SetViewMode(AValue: TP3DDataViewerMode);
@@ -37,6 +39,7 @@ type
     published
       property ActiveScene: TP3DScene read FActiveScene write SetActiveScene;
       property ActiveLibrary: TP3DLibrary read FActiveLibrary write SetActiveLibrary;
+      property ActiveDataBlock: TP3DDataBlock read FActiveDataBlock write SetActiveDataBlock;
       property ViewMode: TP3DDataViewerMode read FViewMode write SetViewMode;
       property LastUpdate: Integer read FLastUpdate;
       property NeedsUpdate: Boolean read FNeedsUpdate;
@@ -57,8 +60,20 @@ begin
   else if ( Assigned( SceneView )) then
     SceneView.ToolBar.UpdateButtonsFast;
 
+  if ( Assigned( AValue ) and ( AValue.Actions.Count > 0 )) then
+    begin
+      ActionEditor.EditAction:= AValue.Actions[ 0 ];
+      ActionEditor.UpdateList;
+    end;
+
   if ( Assigned( DataView )) then
     DataView.UpdateButtons;
+end;
+
+procedure TP3DSceneMain.SetActiveDataBlock(AValue: TP3DDataBlock);
+begin
+  if FActiveDataBlock=AValue then Exit;
+  FActiveDataBlock:=AValue;
 end;
 
 procedure TP3DSceneMain.SetActiveScene(AValue: TP3DScene);

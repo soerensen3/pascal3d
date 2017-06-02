@@ -1,0 +1,341 @@
+<?xml version="1.0" ?>
+<p3dfile
+   version = "0.1">
+  <scene
+     Name = "Scene">
+    <object
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Position = " 0.000000, 0.000000, 0.000000"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Armature.001">
+      <object
+         Data = "/mesh_Grid"
+         RotationOrder = "roXYZ"
+         Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Position = " 0.000000, 0.000000, 0.000000"
+         Scale = " 1.000000, 1.000000, 1.000000"
+         Collision = "acNone"
+         Name = "frog">
+        <object
+           Quaternion = " 0.000000, 0.000000,-0.311814, 0.950143"
+           Position = " 0.000000,-0.130000, 0.140000"
+           RotationOrder = "roXYZ"
+           Name = "lower_body"
+           Data = "/armature_Armature.001/joint_lower_body">
+          <object
+             Quaternion = " 0.000000, 0.000000,-0.475111, 0.879926"
+             Position = "-0.000000,-0.092792, 0.190584"
+             RotationOrder = "roXYZ"
+             Name = "body"
+             Data = "/armature_Armature.001/joint_body">
+            <object
+               Quaternion = "-0.000750,-0.000750,-0.584474, 0.811412"
+               Position = "-0.000000, 0.046636, 0.282055"
+               RotationOrder = "roQUATERNION"
+               Name = "head"
+               Data = "/armature_Armature.001/joint_head" />
+            <object
+               Quaternion = "-0.324906,-0.324906,-0.870307, 0.177308"
+               Position = "-0.000000, 0.046636, 0.282055"
+               RotationOrder = "roQUATERNION"
+               Name = "upper_front_leg_r"
+               Data = "/armature_Armature.001/joint_upper_front_leg_r">
+              <object
+                 Quaternion = "-0.012468,-0.012468,-0.997308, 0.071173"
+                 Position = " 0.124416, 0.064454, 0.149370"
+                 RotationOrder = "roXYZ"
+                 Name = "front_leg_r"
+                 Data = "/armature_Armature.001/joint_front_leg_r">
+                <object
+                   Quaternion = "-0.004171,-0.004171,-0.722146, 0.691715"
+                   Position = " 0.127768, 0.082273, 0.024893"
+                   RotationOrder = "roXYZ"
+                   Name = "front_foot_r"
+                   Data = "/armature_Armature.001/joint_front_foot_r" />
+              </object>
+            </object>
+            <object
+               Quaternion = "-0.322296,-0.322296,-0.852219,-0.256853"
+               Position = "-0.000000, 0.046636, 0.282055"
+               RotationOrder = "roXYZ"
+               Name = "body_to_rear_leg_r"
+               Data = "/armature_Armature.001/joint_body_to_rear_leg_r">
+              <object
+                 Quaternion = "-0.271867,-0.271868,-0.856108, 0.345333"
+                 Position = " 0.085140,-0.096580, 0.135564"
+                 RotationOrder = "roXYZ"
+                 Name = "upper_rear_leg_r"
+                 Data = "/armature_Armature.001/joint_upper_rear_leg_r">
+                <object
+                   Quaternion = " 0.318484, 0.318484,-0.768080,-0.455180"
+                   Position = " 0.147262,-0.054409, 0.077209"
+                   RotationOrder = "roXYZ"
+                   Name = "lower_rear_leg_r"
+                   Data = "/armature_Armature.001/joint_lower_rear_leg_r">
+                  <object
+                     Quaternion = "-0.001948,-0.001948,-0.751299, 0.659956"
+                     Position = " 0.122638,-0.165858, 0.029921"
+                     RotationOrder = "roXYZ"
+                     Name = "foot_rear_leg_r"
+                     Data = "/armature_Armature.001/joint_foot_rear_leg_r" />
+                </object>
+              </object>
+            </object>
+            <object
+               Quaternion = " 0.324299, 0.324299,-0.870857, 0.176830"
+               Position = "-0.000000, 0.046636, 0.282055"
+               RotationOrder = "roXYZ"
+               Name = "upper_front_leg_l"
+               Data = "/armature_Armature.001/joint_upper_front_leg_l">
+              <object
+                 Quaternion = " 0.014878, 0.014878,-0.997238, 0.071234"
+                 Position = "-0.124000, 0.064454, 0.149370"
+                 RotationOrder = "roXYZ"
+                 Name = "front_leg_l"
+                 Data = "/armature_Armature.001/joint_front_leg_l">
+                <object
+                   Quaternion = " 0.004778, 0.004778,-0.722142, 0.691712"
+                   Position = "-0.128000, 0.082273, 0.024893"
+                   RotationOrder = "roXYZ"
+                   Name = "front_foot_l"
+                   Data = "/armature_Armature.001/joint_front_foot_l" />
+              </object>
+            </object>
+            <object
+               Quaternion = " 0.321914, 0.321914,-0.852411,-0.257176"
+               Position = " 0.000000, 0.046636, 0.282055"
+               RotationOrder = "roXYZ"
+               Name = "body_to_rear_leg_l"
+               Data = "/armature_Armature.001/joint_body_to_rear_leg_l">
+              <object
+                 Quaternion = " 0.271529, 0.271528,-0.856365, 0.345230"
+                 Position = "-0.085000,-0.096580, 0.135564"
+                 RotationOrder = "roXYZ"
+                 Name = "upper_rear_leg_l"
+                 Data = "/armature_Armature.001/joint_upper_rear_leg_l">
+                <object
+                   Quaternion = "-0.312164,-0.312163,-0.770794,-0.459330"
+                   Position = "-0.147000,-0.054409, 0.077209"
+                   RotationOrder = "roXYZ"
+                   Name = "lower_rear_leg_l"
+                   Data = "/armature_Armature.001/joint_lower_rear_leg_l">
+                  <object
+                     Quaternion = " 0.001899, 0.001899,-0.751299, 0.659956"
+                     Position = "-0.123000,-0.165858, 0.029921"
+                     RotationOrder = "roXYZ"
+                     Name = "foot_rear_leg_l"
+                     Data = "/armature_Armature.001/joint_foot_rear_leg_l" />
+                </object>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+    </object>
+    <object
+       Data = "/lamp_Lamp"
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.169076, 0.272171, 0.755880, 0.570948"
+       Position = " 4.076245, 1.005454, 5.903862"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Lamp" />
+    <object
+       RotationOrder = "roXYZ"
+       Quaternion = " 0.483536, 0.208704, 0.336872, 0.780483"
+       Position = " 7.481132,-6.507640, 5.343665"
+       Scale = " 1.000000, 1.000000, 1.000000"
+       Collision = "acNone"
+       Name = "Camera" />
+  </scene>
+  <mesh
+     VertexWeightIndices = "frog.p3dbin:17024"
+     TexCoords0 = "frog.p3dbin:75996"
+     Name = "mesh_Grid"
+     Tangents = "frog.p3dbin:99808"
+     Normals = "frog.p3dbin:28372"
+     Faces = "frog.p3dbin:171240"
+     VertexWeights = "frog.p3dbin:8512"
+     Loops = "frog.p3dbin:64088"
+     Cotangents = "frog.p3dbin:135524"
+     Positions = "frog.p3dbin:0">
+    <modifier
+       Armature = "/armature_Armature.001"
+       Type = "TP3DMeshModifierArmature" />
+    <weightgroup
+       Index = "0"
+       Name = "lower_body" />
+    <weightgroup
+       Index = "1"
+       Name = "body" />
+    <weightgroup
+       Index = "2"
+       Name = "head" />
+    <weightgroup
+       Index = "3"
+       Name = "upper_front_leg_r" />
+    <weightgroup
+       Index = "4"
+       Name = "front_leg_r" />
+    <weightgroup
+       Index = "5"
+       Name = "front_foot_r" />
+    <weightgroup
+       Index = "6"
+       Name = "body_to_rear_leg_r" />
+    <weightgroup
+       Index = "7"
+       Name = "upper_rear_leg_r" />
+    <weightgroup
+       Index = "8"
+       Name = "lower_rear_leg_r" />
+    <weightgroup
+       Index = "9"
+       Name = "foot_rear_leg_r" />
+    <weightgroup
+       Index = "10"
+       Name = "upper_front_leg_l" />
+    <weightgroup
+       Index = "11"
+       Name = "front_leg_l" />
+    <weightgroup
+       Index = "12"
+       Name = "front_foot_l" />
+    <weightgroup
+       Index = "13"
+       Name = "body_to_rear_leg_l" />
+    <weightgroup
+       Index = "14"
+       Name = "upper_rear_leg_l" />
+    <weightgroup
+       Index = "15"
+       Name = "lower_rear_leg_l" />
+    <weightgroup
+       Index = "16"
+       Name = "foot_rear_leg_l" />
+    <materialgroup
+       PolyEnd = "783"
+       PolyStart = "0"
+       Material = "/material_Material" />
+  </mesh>
+  <light
+     Color = "1.000000, 1.000000, 1.000000"
+     LightType = "ltPoint"
+     Energy = "1.0"
+     Name = "lamp_Lamp" />
+  <materialbase
+     Diff = "0.246840, 0.381592, 0.011917"
+     Spec = "0.500000, 0.500000, 0.500000"
+     TransparencyMode = "p3dmtNone"
+     Spec_Hardness = "50.000000"
+     Instancing = "1"
+     Name = "material_Material"
+     Unlit = "0" />
+  <armature
+     Name = "armature_Armature.001">
+    <joint
+       Quaternion = "-0.311814, 0.000000, 0.000000, 0.950143"
+       Position = " 0.000000,-0.130000, 0.140000"
+       Length = " 0.062794"
+       Tail = "-0.000000,-0.092792, 0.190584"
+       Name = "joint_lower_body" />
+    <joint
+       Quaternion = "-0.475111, 0.000000, 0.000000, 0.879926"
+       Position = "-0.000000,-0.092792, 0.190584"
+       Length = " 0.166755"
+       Tail = "-0.000000, 0.046636, 0.282055"
+       Name = "joint_body" />
+    <joint
+       Quaternion = "-0.584474,-0.000750,-0.000750, 0.811412"
+       Position = "-0.000000, 0.046636, 0.282055"
+       Length = " 0.168375"
+       Tail = " 0.000352, 0.206338, 0.335393"
+       Name = "joint_head" />
+    <joint
+       Quaternion = "-0.870307,-0.324906,-0.324906, 0.177308"
+       Position = "-0.000000, 0.046636, 0.282055"
+       Length = " 0.182763"
+       Tail = " 0.124416, 0.064454, 0.149370"
+       Name = "joint_upper_front_leg_r" />
+    <joint
+       Quaternion = "-0.997308,-0.012469,-0.012468, 0.071173"
+       Position = " 0.124416, 0.064454, 0.149370"
+       Length = " 0.125791"
+       Tail = " 0.127768, 0.082273, 0.024893"
+       Name = "joint_front_leg_r" />
+    <joint
+       Quaternion = "-0.722146,-0.004171,-0.004171, 0.691715"
+       Position = " 0.127768, 0.082273, 0.024893"
+       Length = " 0.148019"
+       Tail = " 0.129514, 0.230144, 0.018524"
+       Name = "joint_front_foot_r" />
+    <joint
+       Quaternion = " 0.852219, 0.322296, 0.322296, 0.256853"
+       Position = "-0.000000, 0.046636, 0.282055"
+       Length = " 0.221854"
+       Tail = " 0.085140,-0.096580, 0.135564"
+       Name = "joint_body_to_rear_leg_r" />
+    <joint
+       Quaternion = "-0.856108,-0.271868,-0.271867, 0.345333"
+       Position = " 0.085140,-0.096580, 0.135564"
+       Length = " 0.095093"
+       Tail = " 0.147262,-0.054409, 0.077209"
+       Name = "joint_upper_rear_leg_r" />
+    <joint
+       Quaternion = " 0.768080,-0.318484,-0.318484, 0.455180"
+       Position = " 0.147262,-0.054409, 0.077209"
+       Length = " 0.123545"
+       Tail = " 0.122638,-0.165858, 0.029921"
+       Name = "joint_lower_rear_leg_r" />
+    <joint
+       Quaternion = "-0.751299,-0.001948,-0.001948, 0.659956"
+       Position = " 0.122638,-0.165858, 0.029921"
+       Length = " 0.186607"
+       Tail = " 0.123664, 0.019189, 0.005866"
+       Name = "joint_foot_rear_leg_r" />
+    <joint
+       Quaternion = "-0.870857, 0.324299, 0.324299, 0.176830"
+       Position = "-0.000000, 0.046636, 0.282055"
+       Length = " 0.182480"
+       Tail = "-0.124000, 0.064454, 0.149370"
+       Name = "joint_upper_front_leg_l" />
+    <joint
+       Quaternion = "-0.997238, 0.014878, 0.014879, 0.071233"
+       Position = "-0.124000, 0.064454, 0.149370"
+       Length = " 0.125810"
+       Tail = "-0.128000, 0.082273, 0.024893"
+       Name = "joint_front_leg_l" />
+    <joint
+       Quaternion = "-0.722142, 0.004778, 0.004778, 0.691712"
+       Position = "-0.128000, 0.082273, 0.024893"
+       Length = " 0.148022"
+       Tail = "-0.130000, 0.230144, 0.018524"
+       Name = "joint_front_foot_l" />
+    <joint
+       Quaternion = " 0.852411,-0.321914,-0.321914, 0.257176"
+       Position = " 0.000000, 0.046636, 0.282055"
+       Length = " 0.221800"
+       Tail = "-0.085000,-0.096580, 0.135564"
+       Name = "joint_body_to_rear_leg_l" />
+    <joint
+       Quaternion = "-0.856365, 0.271528, 0.271529, 0.345230"
+       Position = "-0.085000,-0.096580, 0.135564"
+       Length = " 0.095014"
+       Tail = "-0.147000,-0.054409, 0.077209"
+       Name = "joint_upper_rear_leg_l" />
+    <joint
+       Quaternion = " 0.770794, 0.312163, 0.312163, 0.459331"
+       Position = "-0.147000,-0.054409, 0.077209"
+       Length = " 0.123422"
+       Tail = "-0.123000,-0.165858, 0.029921"
+       Name = "joint_lower_rear_leg_l" />
+    <joint
+       Quaternion = "-0.751299, 0.001899, 0.001899, 0.659956"
+       Position = "-0.123000,-0.165858, 0.029921"
+       Length = " 0.186607"
+       Tail = "-0.124000, 0.019189, 0.005866"
+       Name = "joint_foot_rear_leg_l" />
+  </armature>
+</p3dfile>

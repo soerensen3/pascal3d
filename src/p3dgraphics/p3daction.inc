@@ -32,7 +32,7 @@
   end;
 
   TP3DPropertyAccessActionKey = specialize gP3DPropertyAccessInterfacedPersistent < TP3DActionKey >;
-  TP3DPropertyAccessActionKeyList = specialize gP3DListPropertyAccess < TP3DActionKeyList, TP3DActionKey, TP3DPropertyAccessActionKey >;
+  TP3DPropertyAccessActionKeyList = specialize gP3DListPropertyAccessObject < TP3DActionKeyList, TP3DActionKey, TP3DPropertyAccessActionKey >;
 
 
   { TP3DActionChannel }
@@ -85,7 +85,7 @@
   end;
 
   TP3DPropertyAccessActionChannel = specialize gP3DPropertyAccessInterfacedPersistent < TP3DActionChannel >;
-  TP3DPropertyAccessActionChannelList = specialize gP3DListPropertyAccess < TP3DActionChannelList, TP3DActionChannel, TP3DPropertyAccessActionChannel >;
+  TP3DPropertyAccessActionChannelList = specialize gP3DListPropertyAccessObject < TP3DActionChannelList, TP3DActionChannel, TP3DPropertyAccessActionChannel >;
 
   TP3DAction = class ( TP3DDataBlock )
     private
@@ -102,9 +102,21 @@
       property Channels: TP3DActionChannelList read FChannels write FChannels;
   end;
 
-  TP3DActionList = specialize gP3DCustomDatablockList < TP3DAction >;
+  { TP3DActionList }
+
+  TP3DActionList = class( specialize gP3DCustomDatablockList < TP3DAction >)
+    private
+      FGlobalTime: Float;
+      procedure SetGlobalTime(AValue: Float);
+
+    public
+      procedure PerformActions( GlobalTime: Float );
+
+    published
+      property GlobalTime: Float read FGlobalTime write SetGlobalTime;
+  end;
   TP3DPropertyAccessAction = specialize gP3DPropertyAccessDataBlock < TP3DAction >;
-  TP3DPropertyAccessActionList = specialize gP3DListPropertyAccess < TP3DActionList, TP3DAction, TP3DPropertyAccessAction >;
+  TP3DPropertyAccessActionList = specialize gP3DListPropertyAccessObject < TP3DActionList, TP3DAction, TP3DPropertyAccessAction >;
 
 {$ENDIF}
 
@@ -153,7 +165,7 @@ begin
       begin
         Items[ i ]:= TP3DActionKey.Create();
         Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
-        WriteLn( 'Key Time=', Items[ i ].Time, ' Value=', Items[ i ].Value );
+        //WriteLn( 'Key Time=', Items[ i ].Time, ' Value=', Items[ i ].Value );
       end;
 
   finally
@@ -273,6 +285,7 @@ begin
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PropStr', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TimeMode', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'InterpolationMode', smAttribute ));
+  Properties.Add( TP3DPropertyAccessActionKeyList.CreateFieldSet( 'Keys', @FKeys, nil, smNode ));
 end;
 
 destructor TP3DActionChannel.Destroy;

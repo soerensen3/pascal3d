@@ -105,6 +105,25 @@ begin
     end;
 end;
 
+{ TP3DActionList }
+
+procedure TP3DActionList.SetGlobalTime(AValue: Float);
+begin
+  if FGlobalTime=AValue then Exit;
+  FGlobalTime:=AValue;
+  PerformActions( AValue );
+end;
+
+procedure TP3DActionList.PerformActions(GlobalTime: Float);
+var
+  Action: TP3DAction;
+  Block: TP3DDataBlock;
+begin
+  for Action in Self do
+    for Block in Action.Users do
+      Action.Perform( GlobalTime, Block );
+end;
+
 
 { TP3DFontListBmp }
 

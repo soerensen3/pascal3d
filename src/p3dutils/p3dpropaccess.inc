@@ -55,6 +55,8 @@ type
       FCategory: String;
       FName: String;
 
+      function GetArrayCount: Integer; virtual;
+      procedure SetArrayCount(AValue: Integer); virtual;
       function GetArrayAsProp( ArrayIndex: Integer ): TP3DPropertyAccess; virtual;
       function GetArrayAsString( ArrayIndex: Integer ): String;
       class function GetIsArray: Boolean; static; virtual;
@@ -80,6 +82,7 @@ type
       procedure LoadFromDOM( AParentNode: TDOMElement ); virtual;
       property ArrayAsProp[ ArrayIndex: Integer ]: TP3DPropertyAccess read GetArrayAsProp;
       property ArrayAsString[ ArrayIndex: Integer ]: String read GetArrayAsString write SetArrayAsString;
+      property ArrayCount: Integer read GetArrayCount write SetArrayCount;
 
       class property IsArray: Boolean read GetIsArray;
 
@@ -104,6 +107,7 @@ type
       function FindByName( AName: String ): Integer;
       function GetPropByName( AName: String ): TP3DPropertyAccess;
       function GetPropByPath( APropPath: String ): TP3DPropertyAccess; virtual;
+      function ToStr(): String;
       procedure Sort;
 
       constructor Create( AContext: TInterfacedPersistent );
@@ -145,17 +149,18 @@ type
   { gP3DListPropertyAccess }
 
   generic gP3DListPropertyAccess < TListProp, TListData, TPropType > = class( specialize gP3DPropertyAccess < TListProp >)
-    private
+    protected
       FFakeProp: TPropType;
       FFakePropIdx: Integer;
 
-      function GetCount: Integer; virtual;
+      function GetArrayCount: Integer; override;
       function GetValues( idx: Integer ): TListData; virtual;
-      procedure SetCount( AValue: Integer ); virtual;
+      procedure SetArrayCount( AValue: Integer ); override;
       procedure SetValues( idx: Integer ; AValue: TListData ); virtual;
       function GetFakeProp: TListData;
       procedure SetFakeProp( AValue: TListData );
       function GetArrayIdxByString(StringIndex: String): Integer; override;
+      class function GetIsArray: Boolean; static; override;
 
     public
       function GetArrayAsProp(ArrayIndex: Integer): TP3DPropertyAccess; override;
@@ -169,19 +174,16 @@ type
     published
       function GetAsString: String; override;
       procedure SetAsString( AValue: String ); override;
-      property Count: Integer read GetCount write SetCount;
   end;
 
   { gP3DListPropertyAccessObject }
 
   generic gP3DListPropertyAccessObject < TListProp, TListData, TPropType > = class( specialize gP3DListPropertyAccess < TListProp, TListData, TPropType >)
     private
-      function GetCount: Integer; override;
+      function GetArrayCount: Integer; override;
       function GetValues(idx: Integer): TListData; override;
-      procedure SetCount(AValue: Integer); override;
+      procedure SetArrayCount(AValue: Integer); override;
       procedure SetValues(idx: Integer; AValue: TListData); override;
-
-
   end;
 
   TCardinalSet = set of 0..SizeOf(Cardinal) * 8 - 1;
@@ -264,15 +266,19 @@ type
     procedure SetAsString(AValue: String); override;
     procedure SetArrayAsString(ArrayIndex: Integer; AValue: String); override;
     function GetDefaultValue: TVec; override;
+    procedure SetValues(idx: Integer; AValue: TListData); override;
     class function GetIsArray: Boolean; static; override;
   end;
-
-  { TP3DPropertyAccessVec2 }
 
   TP3DPropertyAccessVec2   = specialize gP3DPropertyAccessVec < TVec2 >;
   TP3DPropertyAccessVec3   = specialize gP3DPropertyAccessVec < TVec3 >;
   TP3DPropertyAccessVec4   = specialize gP3DPropertyAccessVec < TVec4 >;
   TP3DPropertyAccessQuat   = specialize gP3DPropertyAccessVec < TQuaternion >;
+
+  TP3DPropertyAccessVec2List = specialize gP3DListPropertyAccess < TVec2List, TVec2, TP3DPropertyAccessVec2 >;
+  TP3DPropertyAccessVec3List = specialize gP3DListPropertyAccess < TVec3List, TVec3, TP3DPropertyAccessVec3 >;
+  TP3DPropertyAccessVec4List = specialize gP3DListPropertyAccess < TVec4List, TVec4, TP3DPropertyAccessVec4 >;
+  TP3DPropertyAccessQuatList = specialize gP3DListPropertyAccess < TQuaternionList, TQuaternion, TP3DPropertyAccessQuat >;
 
 {  { TP3DPropertyAccessVec3 }
 
@@ -435,6 +441,19 @@ begin
     Result:= Result.GetChildPropByPath( APropPath );
 end;
 
+function TP3DPropertyAccessList.ToStr: String;
+var
+  i: Integer;
+begin
+  Result:= '';
+  for i:= 0 to Count - 1 do
+    begin
+      Result += Items[ i ].Name + ' = "' + Items[ i ].AsString + '"';
+      if ( i < Count - 1 ) then
+        Result += ', ';
+    end;
+end;
+
 procedure TP3DPropertyAccessList.Sort;
 begin
 
@@ -447,6 +466,16 @@ begin
 end;
 
 { TP3DPropertyAccess }
+
+function TP3DPropertyAccess.GetArrayCount: Integer;
+begin
+  Result:= 0;
+end;
+
+procedure TP3DPropertyAccess.SetArrayCount(AValue: Integer);
+begin
+
+end;
 
 function TP3DPropertyAccess.GetArrayAsProp( ArrayIndex: Integer ): TP3DPropertyAccess;
 begin
@@ -867,7 +896,13 @@ end;
 
 procedure gP3DPropertyAccessVec.SetArrayAsString(ArrayIndex: Integer; AValue: String);
 begin
-  inherited SetArrayAsString(ArrayIndex, AValue);
+  if ( InRange( ArrayIndex, 0, Value.Count - 1 )) then
+    try
+      Value[ ArrayIndex ]:= StrToFloat( AValue );
+    except
+      On E: Exception do
+        WriteLn( 'Error while setting property ' + Name + '[' + IntToStr( ArrayIndex ) + ']: "' + AValue + '" is not a valid integer!' );
+    end;
 end;
 
 function gP3DPropertyAccessVec.GetDefaultValue: TVec;
@@ -878,16 +913,25 @@ begin
     Result[ i ]:= 0;
 end;
 
+procedure gP3DPropertyAccessVec.SetValues(idx: Integer; AValue: TListData);
+var
+  Val: TItem;
+begin
+  Val:= Value;
+  Val[ idx ]:= AValue;
+  Value:= Val;
+end;
+
 class function gP3DPropertyAccessVec.GetIsArray: Boolean;
 begin
-  Result:=inherited GetIsArray;
+  Result:= True;
 end;
 
 { gP3DListPropertyAccess }
 
-function gP3DListPropertyAccess.GetCount: Integer;
+function gP3DListPropertyAccess.GetArrayCount: Integer;
 begin
-  Result:= Value.Count;
+  Result:= Value.Count
 end;
 
 function gP3DListPropertyAccess.GetValues(idx: Integer): TListData;
@@ -895,7 +939,7 @@ begin
   Result:= Value[ idx ]
 end;
 
-procedure gP3DListPropertyAccess.SetCount(AValue: Integer);
+procedure gP3DListPropertyAccess.SetArrayCount(AValue: Integer);
 begin
 
 end;
@@ -921,7 +965,7 @@ var
   Prop, NameProp: TP3DPropertyAccess;
 begin
   Result:= -1;
-  for i:= 0 to Count -1 do
+  for i:= 0 to ArrayCount -1 do
     begin
       Prop:= GetArrayAsProp( i );
       NameProp:= Prop.GetChildPropByPath( 'Name' );
@@ -933,13 +977,18 @@ begin
     end;
 end;
 
+class function gP3DListPropertyAccess.GetIsArray: Boolean;
+begin
+  Result:= True;
+end;
+
 function gP3DListPropertyAccess.GetArrayAsProp( ArrayIndex: Integer ): TP3DPropertyAccess;
 var
   FakePropName: String;
 begin
   FakePropName:= Name + '[' + IntToStr( ArrayIndex ) + ']';
   FFakePropIdx:= ArrayIndex;
-  WriteLn( FakePropName, ':', FFakePropIdx );
+  //WriteLn( FakePropName, ':', FFakePropIdx );
   if ( not Assigned( FFakeProp )) then
     FFakeProp:= TPropType.CreateGetSet( FakePropName, @GetFakeProp, @SetFakeProp, smDoNotStore )
   else
@@ -967,7 +1016,7 @@ begin
         Node:= AParentNode.OwnerDocument.CreateElement( Name );
         AParentNode.AppendChild( Node );
 
-        for i:= 0 to Count - 1 do
+        for i:= 0 to ArrayCount - 1 do
           begin
             Prop:= GetArrayAsProp( i );
             Prop.SaveToDOM( Node );
@@ -990,7 +1039,7 @@ var
   i: Integer;
 begin
   Result:= '';
-  for i:= 0 to Count - 1 do
+  for i:= 0 to ArrayCount - 1 do
     Result+= ', ' + Values[ i ].ToString;
   Result:= '[' + Copy( Result, 3, Length( Result ) - 2 ) + ']';
 end;

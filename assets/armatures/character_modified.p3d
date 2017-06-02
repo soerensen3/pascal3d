@@ -4,166 +4,166 @@
   <scene
      Name = "Scene">
     <object
-       Name = "Sun"
-       Data = "/lamp_Sun.001"
-       Scale = " 1.000000, 1.000000, 1.000000"
        Quaternion = " 0.355511, 0.225748,-0.814079, 0.399907"
+       Data = "/lamp_Sun_001"
        RotationOrder = "roXYZ"
        Position = " 0.337519,-0.449766, 4.134500"
+       Name = "Sun"
+       Scale = " 1.000000, 1.000000, 1.000000"
        Collision = "acNone" />
     <object
-       Name = "Armature"
-       Scale = " 1.000000, 1.000000, 1.000000"
        Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
        RotationOrder = "roXYZ"
        Position = " 0.000000, 0.000000, 0.000000"
+       Name = "Armature"
+       Scale = " 1.000000, 1.000000, 1.000000"
        Collision = "acNone">
       <object
-         Name = "Cube"
-         Data = "/mesh_Cube"
-         Scale = " 1.000000, 1.000000, 1.000000"
          Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+         Data = "/mesh_Cube"
          RotationOrder = "roXYZ"
          Position = " 0.000000, 0.000000, 0.000000"
+         Name = "Cube"
+         Scale = " 1.000000, 1.000000, 1.000000"
          Collision = "acNone">
         <object
+           Position = "-0.000478, 0.004688, 4.057834"
+           Quaternion = " 0.087353, 0.000000, 0.000000, 0.996177"
            Name = "spine"
-           RotationOrder = "roQUATERNION"
            Data = "/armature_Armature/joint_spine"
-           Quaternion = " 0.000000, 0.000000, 0.093532, 0.995597"
-           Position = "-0.000478, 0.004688, 4.057834">
+           RotationOrder = "roXYZ">
           <object
+             Position = " 0.000000,-0.057119, 0.537532"
+             Quaternion = "-0.087130, 0.000000, 0.000000, 0.996197"
              Name = "ribs"
-             RotationOrder = "roQUATERNION"
              Data = "/armature_Armature/joint_ribs"
-             Quaternion = " 0.000000, 0.000000,-0.087130, 0.996197"
-             Position = "-0.000478,-0.052432, 4.595366">
+             RotationOrder = "roXYZ">
             <object
+               Position = " 0.000000, 0.037399, 1.075744"
+               Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
                Name = "neck"
-               RotationOrder = "roQUATERNION"
                Data = "/armature_Armature/joint_neck"
-               Quaternion = "-0.000000, 0.000000, 0.000000, 1.000000"
-               Position = "-0.000478,-0.015032, 5.671110" />
+               RotationOrder = "roXYZ" />
             <object
-               Name = "shoulder.L"
-               RotationOrder = "roYXZ"
-               Data = "/armature_Armature/joint_shoulder.L"
+               Position = " 0.000000, 0.037399, 1.075744"
                Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-               Position = "-0.000478,-0.015032, 5.671110">
+               Name = "shoulder_L"
+               Data = "/armature_Armature/joint_shoulder_L"
+               RotationOrder = "roYXZ">
               <object
-                 Name = "upper_arm.L"
-                 RotationOrder = "roQUATERNION"
-                 Data = "/armature_Armature/joint_upper_arm.L"
-                 Quaternion = "-0.047682, 0.162129,-0.264705, 0.949197"
-                 Position = " 0.575473, 0.015907, 5.490233">
+                 Position = " 0.575952, 0.030940,-0.180877"
+                 Quaternion = "-0.279398, 0.169577,-0.013614, 0.944984"
+                 Name = "upper_arm_L"
+                 Data = "/armature_Armature/joint_upper_arm_L"
+                 RotationOrder = "roXYZ">
                 <object
-                   Name = "forearm.L"
-                   RotationOrder = "roQUATERNION"
-                   Data = "/armature_Armature/joint_forearm.L"
-                   Quaternion = "-0.003432, 0.025419,-0.035411, 0.996135"
-                   Position = " 1.192385, 0.168677, 4.624430">
+                   Position = " 0.616911, 0.152770,-0.865803"
+                   Quaternion = " 0.087062,-0.062496, 0.008438, 0.994205"
+                   Name = "forearm_L"
+                   Data = "/armature_Armature/joint_forearm_L"
+                   RotationOrder = "roXYZ">
                   <object
-                     Name = "hand.L"
-                     RotationOrder = "roQUATERNION"
-                     Data = "/armature_Armature/joint_hand.L"
-                     Quaternion = "-0.099388, 0.084759, 0.010501, 0.988398"
-                     Position = " 1.662821, 0.113486, 3.968319" />
+                     Position = " 0.470436,-0.055191,-0.656111"
+                     Quaternion = "-0.013483,-0.108825, 0.127609, 0.985744"
+                     Name = "hand_L"
+                     Data = "/armature_Armature/joint_hand_L"
+                     RotationOrder = "roXYZ" />
                 </object>
               </object>
             </object>
             <object
-               Name = "shoulder.R"
-               RotationOrder = "roYXZ"
-               Data = "/armature_Armature/joint_shoulder.R"
+               Position = " 0.000000, 0.037399, 1.075744"
                Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-               Position = "-0.000478,-0.015032, 5.671110">
+               Name = "shoulder_R"
+               Data = "/armature_Armature/joint_shoulder_R"
+               RotationOrder = "roYXZ">
               <object
-                 Name = "upper_arm.R"
-                 RotationOrder = "roQUATERNION"
-                 Data = "/armature_Armature/joint_upper_arm.R"
-                 Quaternion = "-0.023934,-0.131038,-0.215488, 0.956137"
-                 Position = "-0.576429, 0.015907, 5.490233">
+                 Position = "-0.575951, 0.030940,-0.180877"
+                 Quaternion = "-0.247126,-0.015424, 0.041762, 0.967960"
+                 Name = "upper_arm_R"
+                 Data = "/armature_Armature/joint_upper_arm_R"
+                 RotationOrder = "roXYZ">
                 <object
-                   Name = "forearm.R"
-                   RotationOrder = "roQUATERNION"
-                   Data = "/armature_Armature/joint_forearm.R"
-                   Quaternion = "-0.009549, 0.045462, 0.089995, 0.994649"
-                   Position = "-1.193341, 0.168677, 4.624430">
+                   Position = "-0.616911, 0.152770,-0.865803"
+                   Quaternion = " 0.104164, 0.048860,-0.011040, 0.993298"
+                   Name = "forearm_R"
+                   Data = "/armature_Armature/joint_forearm_R"
+                   RotationOrder = "roXYZ">
                   <object
-                     Name = "hand.R"
-                     RotationOrder = "roQUATERNION"
-                     Data = "/armature_Armature/joint_hand.R"
-                     Quaternion = " 0.038751,-0.141267,-0.024528, 0.987207"
-                     Position = "-1.663777, 0.113486, 3.968319" />
+                     Position = "-0.470436,-0.055191,-0.656111"
+                     Quaternion = " 0.001585,-0.148060, 0.110610, 0.982772"
+                     Name = "hand_R"
+                     Data = "/armature_Armature/joint_hand_R"
+                     RotationOrder = "roXYZ" />
                 </object>
               </object>
             </object>
           </object>
         </object>
         <object
-           Name = "hip.L"
-           RotationOrder = "roQUATERNION"
-           Data = "/armature_Armature/joint_hip.L"
+           Position = "-0.000478, 0.004688, 4.057834"
            Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-           Position = "-0.000478, 0.004688, 4.057834">
+           Name = "hip_L"
+           Data = "/armature_Armature/joint_hip_L"
+           RotationOrder = "roQUATERNION">
           <object
-             Name = "thigh.L"
-             RotationOrder = "roQUATERNION"
-             Data = "/armature_Armature/joint_thigh.L"
-             Quaternion = " 0.000041,-0.003809,-0.269479, 0.962036"
-             Position = " 0.332717,-0.011632, 3.678060">
+             Position = " 0.333195,-0.016320,-0.379774"
+             Quaternion = "-0.174420,-0.002465, 0.000026, 0.984668"
+             Name = "thigh_L"
+             Data = "/armature_Armature/joint_thigh_L"
+             RotationOrder = "roXYZ">
             <object
-               Name = "shin.L"
-               RotationOrder = "roQUATERNION"
-               Data = "/armature_Armature/joint_shin.L"
-               Quaternion = " 0.000333,-0.001978, 0.075334, 0.990694"
-               Position = " 0.361691,-0.124787, 1.631469">
+               Position = " 0.028974,-0.113155,-2.046590"
+               Quaternion = " 0.623700,-0.016388, 0.002761, 0.781487"
+               Name = "shin_L"
+               Data = "/armature_Armature/joint_shin_L"
+               RotationOrder = "roXYZ">
               <object
-                 Name = "foot.L"
-                 RotationOrder = "roQUATERNION"
-                 Data = "/armature_Armature/joint_foot.L"
-                 Quaternion = " 0.000021, 0.000524, 0.151518, 0.988454"
-                 Position = " 0.326539, 0.245024, 0.345824">
+                 Position = "-0.035151, 0.369811,-1.285645"
+                 Quaternion = " 0.151518, 0.000524, 0.000021, 0.988454"
+                 Name = "foot_L"
+                 Data = "/armature_Armature/joint_foot_L"
+                 RotationOrder = "roXYZ">
                 <object
-                   Name = "toe.L"
-                   RotationOrder = "roQUATERNION"
-                   Data = "/armature_Armature/joint_toe.L"
-                   Quaternion = "-0.000033,-0.001762, 0.153566, 0.988137"
-                   Position = " 0.328349,-0.219358, 0.105316" />
+                   Position = " 0.001809,-0.464382,-0.240508"
+                   Quaternion = " 0.153566,-0.001762,-0.000033, 0.988137"
+                   Name = "toe_L"
+                   Data = "/armature_Armature/joint_toe_L"
+                   RotationOrder = "roXYZ" />
               </object>
             </object>
           </object>
         </object>
         <object
-           Name = "hip.R"
-           RotationOrder = "roQUATERNION"
-           Data = "/armature_Armature/joint_hip.R"
+           Position = "-0.000478, 0.004688, 4.057834"
            Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-           Position = "-0.000478, 0.004688, 4.057834">
+           Name = "hip_R"
+           Data = "/armature_Armature/joint_hip_R"
+           RotationOrder = "roQUATERNION">
           <object
-             Name = "thigh.R"
-             RotationOrder = "roQUATERNION"
-             Data = "/armature_Armature/joint_thigh.R"
-             Quaternion = " 0.000030,-0.002826, 0.199905, 0.980015"
-             Position = "-0.333673,-0.011632, 3.678060">
+             Position = "-0.333195,-0.016320,-0.379774"
+             Quaternion = " 0.032585,-0.000461, 0.000005, 0.999469"
+             Name = "thigh_R"
+             Data = "/armature_Armature/joint_thigh_R"
+             RotationOrder = "roXYZ">
             <object
-               Name = "shin.R"
-               RotationOrder = "roQUATERNION"
-               Data = "/armature_Armature/joint_shin.R"
-               Quaternion = "-0.000360, 0.002137, 0.081326, 0.986126"
-               Position = "-0.362647,-0.124787, 1.631469">
+               Position = "-0.028974,-0.113155,-2.046590"
+               Quaternion = "-0.036449,-0.000958, 0.000161, 0.999335"
+               Name = "shin_R"
+               Data = "/armature_Armature/joint_shin_R"
+               RotationOrder = "roXYZ">
               <object
-                 Name = "foot.R"
-                 RotationOrder = "roQUATERNION"
-                 Data = "/armature_Armature/joint_foot.R"
-                 Quaternion = "-0.000016,-0.000381, 0.110232, 0.993551"
-                 Position = "-0.327496, 0.245024, 0.345824">
+                 Position = " 0.035151, 0.369811,-1.285645"
+                 Quaternion = " 0.040591,-0.000140,-0.000006, 0.999176"
+                 Name = "foot_R"
+                 Data = "/armature_Armature/joint_foot_R"
+                 RotationOrder = "roXYZ">
                 <object
-                   Name = "toe.R"
-                   RotationOrder = "roQUATERNION"
-                   Data = "/armature_Armature/joint_toe.R"
-                   Quaternion = " 0.000101, 0.005444, 0.474394, 0.874107"
-                   Position = "-0.329305,-0.219358, 0.105316" />
+                   Position = "-0.001809,-0.464382,-0.240508"
+                   Quaternion = " 0.240485, 0.002759, 0.000051, 0.970649"
+                   Name = "toe_R"
+                   Data = "/armature_Armature/joint_toe_R"
+                   RotationOrder = "roXYZ" />
               </object>
             </object>
           </object>
@@ -172,198 +172,1782 @@
     </object>
   </scene>
   <mesh
-     Name = "mesh_Cube"
-     Positions = "character_modified.p3dbin:0"
-     TexCoords0 = "character_modified.p3dbin:71772"
-     Normals = "character_modified.p3dbin:21172"
-     VertexWeights = "character_modified.p3dbin:6352"
      Tangents = "character_modified.p3dbin:97072"
-     Faces = "character_modified.p3dbin:172968"
+     Positions = "character_modified.p3dbin:0"
      VertexWeightIndices = "character_modified.p3dbin:12704"
+     Faces = "character_modified.p3dbin:172968"
      Loops = "character_modified.p3dbin:59120"
-     Cotangents = "character_modified.p3dbin:135020">
+     TexCoords0 = "character_modified.p3dbin:71772"
+     Cotangents = "character_modified.p3dbin:135020"
+     Name = "mesh_Cube"
+     VertexWeights = "character_modified.p3dbin:6352"
+     Normals = "character_modified.p3dbin:21172">
+    <modifier
+       Type = "TP3DMeshModifierArmature"
+       Armature = "/armature_Armature" />
     <weightgroup
+       Index = "0"
        Name = "spine" />
     <weightgroup
+       Index = "1"
        Name = "ribs" />
     <weightgroup
+       Index = "2"
        Name = "neck" />
     <weightgroup
-       Name = "shoulder.L" />
+       Index = "3"
+       Name = "shoulder_L" />
     <weightgroup
-       Name = "upper_arm.L" />
+       Index = "4"
+       Name = "upper_arm_L" />
     <weightgroup
-       Name = "forearm.L" />
+       Index = "5"
+       Name = "forearm_L" />
     <weightgroup
-       Name = "hand.L" />
+       Index = "6"
+       Name = "hand_L" />
     <weightgroup
-       Name = "shoulder.R" />
+       Index = "7"
+       Name = "shoulder_R" />
     <weightgroup
-       Name = "upper_arm.R" />
+       Index = "8"
+       Name = "upper_arm_R" />
     <weightgroup
-       Name = "forearm.R" />
+       Index = "9"
+       Name = "forearm_R" />
     <weightgroup
-       Name = "hand.R" />
+       Index = "10"
+       Name = "hand_R" />
     <weightgroup
-       Name = "hip.L" />
+       Index = "11"
+       Name = "hip_L" />
     <weightgroup
-       Name = "thigh.L" />
+       Index = "12"
+       Name = "thigh_L" />
     <weightgroup
-       Name = "shin.L" />
+       Index = "13"
+       Name = "shin_L" />
     <weightgroup
-       Name = "foot.L" />
+       Index = "14"
+       Name = "foot_L" />
     <weightgroup
-       Name = "toe.L" />
+       Index = "15"
+       Name = "toe_L" />
     <weightgroup
-       Name = "hip.R" />
+       Index = "16"
+       Name = "hip_R" />
     <weightgroup
-       Name = "thigh.R" />
+       Index = "17"
+       Name = "thigh_R" />
     <weightgroup
-       Name = "shin.R" />
+       Index = "18"
+       Name = "shin_R" />
     <weightgroup
-       Name = "foot.R" />
+       Index = "19"
+       Name = "foot_R" />
     <weightgroup
-       Name = "toe.R" />
+       Index = "20"
+       Name = "toe_R" />
     <materialgroup
-       PolyStart = "0"
        Material = "/material_Body"
-       PolyEnd = "1053" />
-    <modifier
-       Armature = "/armature_Armature"
-       Type = "TP3DMeshModifierArmature" />
+       PolyEnd = "1053"
+       PolyStart = "0" />
   </mesh>
   <light
-     Name = "lamp_Sun.001"
-     LightType = "ltSun"
+     Color = "1.000000, 1.000000, 1.000000"
      Energy = "1.0"
-     Color = "1.000000, 1.000000, 1.000000" />
+     LightType = "ltSun"
+     Name = "lamp_Sun_001" />
   <materialbase
-     Name = "material_Body"
+     TransparencyMode = "p3dmtNone"
      Unlit = "0"
      Instancing = "1"
-     TransparencyMode = "p3dmtNone"
      Spec_Hardness = "10.000000"
      Diff = "0.640000, 0.640000, 0.640000"
+     Name = "material_Body"
      Spec = "0.000000, 0.000000, 0.000000">
     <map
-       Name = "Texture"
-       Data = "/tex_Texture"
        DiffuseFactor = "1.0"
-       Mode = "mapMix"
-       NormalFactor = "0.10000000149011612" />
+       NormalFactor = "0.10000000149011612"
+       Data = "/tex_Texture"
+       Mode = "mapMix" />
   </materialbase>
   <texture
-     Name = "tex_Texture"
      File = "character_bk3.png"
      Filtering = "tfLinear"
-     FilteringMipMap = "tfLinear"
-     MipMap = "1" />
+     MipMap = "1"
+     Name = "tex_Texture"
+     FilteringMipMap = "tfLinear" />
   <armature
+     
      Name = "armature_Armature">
     <joint
+       Position = "-0.000478, 0.004688, 4.057834"
+       Quaternion = " 0.087353, 0.000000, 0.000000, 0.996177"
+       Tail = "-0.000478,-0.052432, 4.595366"
        Name = "joint_spine"
-       Quaternion = " 0.052908, 0.000000, 0.000000, 0.998599"
-       Length = " 0.540559"
-       Position = "-0.000478, 0.004688, 4.057834" />
+       Length = " 0.540559" />
     <joint
+       Position = "-0.000478,-0.052432, 4.595366"
+       Quaternion = "-0.087130, 0.000000, 0.000000, 0.996197"
+       Tail = "-0.000478,-0.015032, 5.671110"
        Name = "joint_ribs"
-       Quaternion = "-0.070250, 0.000000, 0.000000, 0.997529"
-       Length = " 1.076394"
-       Position = "-0.000478,-0.052432, 4.595366" />
+       Length = " 1.076394" />
     <joint
+       Position = "-0.000478,-0.015032, 5.671110"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = "-0.000478,-0.123511, 6.025476"
        Name = "joint_neck"
-       Quaternion = " 0.165147, 0.000000, 0.000000, 0.986269"
-       Length = " 0.370598"
-       Position = "-0.000478,-0.015032, 5.671110" />
+       Length = " 0.370598" />
     <joint
-       Name = "joint_shoulder.L"
-       Quaternion = "-0.652092,-0.456517,-0.472664, 0.378097"
-       Length = " 0.604478"
-       Position = "-0.000478,-0.015032, 5.671110" />
+       Position = "-0.000478,-0.015032, 5.671110"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = " 0.575473, 0.015907, 5.490233"
+       Name = "joint_shoulder_L"
+       Length = " 0.604478" />
     <joint
-       Name = "joint_upper_arm.L"
-       Quaternion = "-0.230705,-0.272052, 0.221099, 0.907678"
-       Length = " 1.074026"
-       Position = " 0.575473, 0.015907, 5.490233" />
+       Position = " 0.575473, 0.015907, 5.490233"
+       Quaternion = "-0.279398, 0.169577,-0.013614, 0.944984"
+       Tail = " 1.192385, 0.168677, 4.624430"
+       Name = "joint_upper_arm_L"
+       Length = " 1.074026" />
     <joint
-       Name = "joint_forearm.L"
-       Quaternion = "-0.084802, 0.001418,-0.062433, 0.994439"
-       Length = " 0.809221"
-       Position = " 1.192385, 0.168677, 4.624430" />
+       Position = " 1.192385, 0.168677, 4.624430"
+       Quaternion = " 0.087062,-0.062496, 0.008438, 0.994205"
+       Tail = " 1.662821, 0.113486, 3.968319"
+       Name = "joint_forearm_L"
+       Length = " 0.809221" />
     <joint
-       Name = "joint_hand.L"
-       Quaternion = " 0.017495, 0.045685,-0.039959, 0.998003"
-       Length = " 0.302598"
-       Position = " 1.662821, 0.113486, 3.968319" />
+       Position = " 1.662821, 0.113486, 3.968319"
+       Quaternion = "-0.013483,-0.108825, 0.127609, 0.985744"
+       Tail = " 1.858541, 0.086287, 3.739148"
+       Name = "joint_hand_L"
+       Length = " 0.302598" />
     <joint
-       Name = "joint_shoulder.R"
-       Quaternion = "-0.652092, 0.456517, 0.472664, 0.378097"
-       Length = " 0.604478"
-       Position = "-0.000478,-0.015032, 5.671110" />
+       Position = "-0.000478,-0.015032, 5.671110"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = "-0.576429, 0.015907, 5.490233"
+       Name = "joint_shoulder_R"
+       Length = " 0.604478" />
     <joint
-       Name = "joint_upper_arm.R"
-       Quaternion = "-0.230705, 0.272052,-0.221098, 0.907678"
-       Length = " 1.074026"
-       Position = "-0.576429, 0.015907, 5.490233" />
+       Position = "-0.576429, 0.015907, 5.490233"
+       Quaternion = "-0.247126,-0.015424, 0.041762, 0.967960"
+       Tail = "-1.193341, 0.168677, 4.624430"
+       Name = "joint_upper_arm_R"
+       Length = " 1.074026" />
     <joint
-       Name = "joint_forearm.R"
-       Quaternion = "-0.084802,-0.001418, 0.062433, 0.994439"
-       Length = " 0.809221"
-       Position = "-1.193341, 0.168677, 4.624430" />
+       Position = "-1.193341, 0.168677, 4.624430"
+       Quaternion = " 0.104164, 0.048860,-0.011040, 0.993298"
+       Tail = "-1.663777, 0.113486, 3.968319"
+       Name = "joint_forearm_R"
+       Length = " 0.809221" />
     <joint
-       Name = "joint_hand.R"
-       Quaternion = " 0.017495,-0.045685, 0.039959, 0.998003"
-       Length = " 0.302599"
-       Position = "-1.663777, 0.113486, 3.968319" />
+       Position = "-1.663777, 0.113486, 3.968319"
+       Quaternion = " 0.001585,-0.148060, 0.110610, 0.982772"
+       Tail = "-1.859497, 0.086287, 3.739148"
+       Name = "joint_hand_R"
+       Length = " 0.302599" />
     <joint
-       Name = "joint_hip.L"
-       Quaternion = "-0.873732,-0.335033,-0.335033, 0.109993"
-       Length = " 0.505484"
-       Position = "-0.000478, 0.004688, 4.057834" />
+       Position = "-0.000478, 0.004688, 4.057834"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = " 0.332717,-0.011632, 3.678060"
+       Name = "joint_hip_L"
+       Length = " 0.505484" />
     <joint
-       Name = "joint_thigh.L"
-       Quaternion = "-0.134025,-0.338569, 0.318503, 0.875194"
-       Length = " 2.049921"
-       Position = " 0.332717,-0.011632, 3.678060" />
+       Position = " 0.332717,-0.011632, 3.678060"
+       Quaternion = "-0.174420,-0.002465, 0.000026, 0.984668"
+       Tail = " 0.361691,-0.124787, 1.631469"
+       Name = "joint_thigh_L"
+       Length = " 2.049921" />
     <joint
-       Name = "joint_shin.L"
-       Quaternion = " 0.166919,-0.018123, 0.019513, 0.985611"
-       Length = " 1.338237"
-       Position = " 0.361691,-0.124787, 1.631469" />
+       Position = " 0.361691,-0.124787, 1.631469"
+       Quaternion = " 0.623700,-0.016388, 0.002761, 0.781487"
+       Tail = " 0.326539, 0.245024, 0.345824"
+       Name = "joint_shin_L"
+       Length = " 1.338237" />
     <joint
-       Name = "joint_foot.L"
-       Quaternion = "-0.633825, 0.020367,-0.009729, 0.773147"
-       Length = " 0.522970"
-       Position = " 0.326539, 0.245024, 0.345824" />
+       Position = " 0.326539, 0.245024, 0.345824"
+       Quaternion = " 0.151518, 0.000524, 0.000021, 0.988454"
+       Tail = " 0.328349,-0.219358, 0.105316"
+       Name = "joint_foot_L"
+       Length = " 0.522970" />
     <joint
-       Name = "joint_toe.L"
-       Quaternion = "-0.207237, 0.260892,-0.065113, 0.940611"
-       Length = " 0.380795"
-       Position = " 0.328349,-0.219358, 0.105316" />
+       Position = " 0.328349,-0.219358, 0.105316"
+       Quaternion = " 0.153566,-0.001762,-0.000033, 0.988137"
+       Tail = " 0.332717,-0.599823, 0.090093"
+       Name = "joint_toe_L"
+       Length = " 0.380795" />
     <joint
-       Name = "joint_hip.R"
-       Quaternion = "-0.873732, 0.335033, 0.335033, 0.109993"
-       Length = " 0.505484"
-       Position = "-0.000478, 0.004688, 4.057834" />
+       Position = "-0.000478, 0.004688, 4.057834"
+       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
+       Tail = "-0.333673,-0.011632, 3.678060"
+       Name = "joint_hip_R"
+       Length = " 0.505484" />
     <joint
-       Name = "joint_thigh.R"
-       Quaternion = "-0.134025, 0.338569,-0.318503, 0.875194"
-       Length = " 2.049921"
-       Position = "-0.333673,-0.011632, 3.678060" />
+       Position = "-0.333673,-0.011632, 3.678060"
+       Quaternion = " 0.032585,-0.000461, 0.000005, 0.999469"
+       Tail = "-0.362647,-0.124787, 1.631469"
+       Name = "joint_thigh_R"
+       Length = " 2.049921" />
     <joint
-       Name = "joint_shin.R"
-       Quaternion = " 0.166919, 0.018123,-0.019513, 0.985611"
-       Length = " 1.338237"
-       Position = "-0.362647,-0.124787, 1.631469" />
+       Position = "-0.362647,-0.124787, 1.631469"
+       Quaternion = "-0.036449,-0.000958, 0.000161, 0.999335"
+       Tail = "-0.327496, 0.245024, 0.345824"
+       Name = "joint_shin_R"
+       Length = " 1.338237" />
     <joint
-       Name = "joint_foot.R"
-       Quaternion = "-0.633825,-0.020367, 0.009730, 0.773147"
-       Length = " 0.522970"
-       Position = "-0.327496, 0.245024, 0.345824" />
+       Position = "-0.327496, 0.245024, 0.345824"
+       Quaternion = " 0.040591,-0.000140,-0.000006, 0.999176"
+       Tail = "-0.329305,-0.219358, 0.105316"
+       Name = "joint_foot_R"
+       Length = " 0.522970" />
     <joint
-       Name = "joint_toe.R"
-       Quaternion = "-0.207237,-0.260892, 0.065113, 0.940611"
-       Length = " 0.380795"
-       Position = "-0.329305,-0.219358, 0.105316" />
+       Position = "-0.329305,-0.219358, 0.105316"
+       Quaternion = " 0.240485, 0.002759, 0.000051, 0.970649"
+       Tail = "-0.333673,-0.599823, 0.090093"
+       Name = "joint_toe_R"
+       Length = " 0.380795" />
   </armature>
+  <action
+     Name = "action_Walk">
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;forearm_L&quot;].Rotation[0]">
+      <key
+         Value = "9.987674076500355"
+         Time = "0.0" />
+      <key
+         Value = "13.648471165576781"
+         Time = "2.0" />
+      <key
+         Value = "-6.940117856359494"
+         Time = "6.0" />
+      <key
+         Value = "9.987674076500355"
+         Time = "8.0" />
+      <key
+         Value = "11.939407520163895"
+         Time = "10.0" />
+      <key
+         Value = "11.073043248141554"
+         Time = "12.0" />
+      <key
+         Value = "9.856057181046916"
+         Time = "14.0" />
+      <key
+         Value = "9.987674076500355"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;forearm_L&quot;].Rotation[2]">
+      <key
+         Value = "-7.223284701179227"
+         Time = "0.0" />
+      <key
+         Value = "-9.846651156505951"
+         Time = "2.0" />
+      <key
+         Value = "4.896676313751805"
+         Time = "6.0" />
+      <key
+         Value = "-7.223284701179227"
+         Time = "8.0" />
+      <key
+         Value = "-5.702566942834955"
+         Time = "10.0" />
+      <key
+         Value = "-5.4792650003264995"
+         Time = "12.0" />
+      <key
+         Value = "-5.175355297266321"
+         Time = "14.0" />
+      <key
+         Value = "-7.223284701179227"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;forearm_L&quot;].Rotation[1]">
+      <key
+         Value = "-0.34055105436707267"
+         Time = "0.0" />
+      <key
+         Value = "-0.149091401356964"
+         Time = "2.0" />
+      <key
+         Value = "0.9665410587376524"
+         Time = "6.0" />
+      <key
+         Value = "-0.34055105436707267"
+         Time = "8.0" />
+      <key
+         Value = "-0.6767263052233368"
+         Time = "10.0" />
+      <key
+         Value = "-0.6417624590987432"
+         Time = "12.0" />
+      <key
+         Value = "-0.5863367529933965"
+         Time = "14.0" />
+      <key
+         Value = "-0.34055105436707267"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;hand_L&quot;].Rotation[0]">
+      <key
+         Value = "-3.187812451378092"
+         Time = "0.0" />
+      <key
+         Value = "0.09283668101641017"
+         Time = "6.0" />
+      <key
+         Value = "-3.187812451378092"
+         Time = "8.0" />
+      <key
+         Value = "-1.7755086881335584"
+         Time = "10.0" />
+      <key
+         Value = "-2.514688110553889"
+         Time = "12.0" />
+      <key
+         Value = "-3.818647888139762"
+         Time = "14.0" />
+      <key
+         Value = "-3.187812451378092"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;hand_L&quot;].Rotation[2]">
+      <key
+         Value = "-12.187170932139825"
+         Time = "0.0" />
+      <key
+         Value = "11.27636774050623"
+         Time = "6.0" />
+      <key
+         Value = "-12.187170932139825"
+         Time = "8.0" />
+      <key
+         Value = "16.93991978786615"
+         Time = "10.0" />
+      <key
+         Value = "16.489450015663845"
+         Time = "12.0" />
+      <key
+         Value = "15.16170730523607"
+         Time = "14.0" />
+      <key
+         Value = "-12.187170932139825"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;hand_L&quot;].Rotation[1]">
+      <key
+         Value = "-15.092701901995722"
+         Time = "0.0" />
+      <key
+         Value = "13.18530236378182"
+         Time = "6.0" />
+      <key
+         Value = "-15.092701901995722"
+         Time = "8.0" />
+      <key
+         Value = "13.10754492663302"
+         Time = "10.0" />
+      <key
+         Value = "7.832476121589986"
+         Time = "12.0" />
+      <key
+         Value = "0.6541419105339177"
+         Time = "14.0" />
+      <key
+         Value = "-15.092701901995722"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;thigh_L&quot;].Rotation[0]">
+      <key
+         Value = "-20.0900202023922"
+         Time = "0.0" />
+      <key
+         Value = "-35.48829453167371"
+         Time = "2.0" />
+      <key
+         Value = "-25.41638970604583"
+         Time = "4.0" />
+      <key
+         Value = "-37.182348835938356"
+         Time = "6.0" />
+      <key
+         Value = "3.73457295270732"
+         Time = "8.0" />
+      <key
+         Value = "14.382915452492233"
+         Time = "10.0" />
+      <key
+         Value = "20.63468682379162"
+         Time = "12.0" />
+      <key
+         Value = "24.066175672579277"
+         Time = "14.0" />
+      <key
+         Value = "-20.0900202023922"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;thigh_L&quot;].Rotation[2]">
+      <key
+         Value = "-0.277670543406118"
+         Time = "0.0" />
+      <key
+         Value = "-0.4685645446783075"
+         Time = "2.0" />
+      <key
+         Value = "-0.3467579889602298"
+         Time = "4.0" />
+      <key
+         Value = "-0.4877017214465854"
+         Time = "6.0" />
+      <key
+         Value = "0.05277058004316567"
+         Time = "8.0" />
+      <key
+         Value = "0.20144893837097091"
+         Time = "10.0" />
+      <key
+         Value = "0.28597768119034095"
+         Time = "12.0" />
+      <key
+         Value = "0.33101517618673015"
+         Time = "14.0" />
+      <key
+         Value = "-0.277670543406118"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;thigh_L&quot;].Rotation[1]">
+      <key
+         Value = "-0.05223825882897627"
+         Time = "0.0" />
+      <key
+         Value = "-0.15545068118966257"
+         Time = "2.0" />
+      <key
+         Value = "-0.0820842820756241"
+         Time = "4.0" />
+      <key
+         Value = "-0.16984299743733203"
+         Time = "6.0" />
+      <key
+         Value = "-0.0011585982824480565"
+         Time = "8.0" />
+      <key
+         Value = "-0.023243979874017474"
+         Time = "10.0" />
+      <key
+         Value = "-0.0489229989659117"
+         Time = "12.0" />
+      <key
+         Value = "-0.06688605017263073"
+         Time = "14.0" />
+      <key
+         Value = "-0.05223825882897627"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shin_L&quot;].Rotation[0]">
+      <key
+         Value = "77.19978633740281"
+         Time = "0.0" />
+      <key
+         Value = "47.897761660936744"
+         Time = "2.0" />
+      <key
+         Value = "-6.339834710439107"
+         Time = "4.0" />
+      <key
+         Value = "23.80111992865702"
+         Time = "6.0" />
+      <key
+         Value = "-4.177709235956677"
+         Time = "8.0" />
+      <key
+         Value = "-11.225362447586036"
+         Time = "10.0" />
+      <key
+         Value = "-2.7217111504643072"
+         Time = "12.0" />
+      <key
+         Value = "24.882241576281583"
+         Time = "14.0" />
+      <key
+         Value = "77.19978633740281"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shin_L&quot;].Rotation[2]">
+      <key
+         Value = "-1.6651809593487354"
+         Time = "0.0" />
+      <key
+         Value = "-1.200477072492083"
+         Time = "2.0" />
+      <key
+         Value = "0.16490947961570818"
+         Time = "4.0" />
+      <key
+         Value = "-0.6291284763876974"
+         Time = "6.0" />
+      <key
+         Value = "0.10900185162322877"
+         Time = "8.0" />
+      <key
+         Value = "0.28821656924220124"
+         Time = "10.0" />
+      <key
+         Value = "0.07225207773013845"
+         Time = "12.0" />
+      <key
+         Value = "-0.6569813483225273"
+         Time = "14.0" />
+      <key
+         Value = "-1.6651809593487354"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shin_L&quot;].Rotation[1]">
+      <key
+         Value = "0.9244575939648695"
+         Time = "0.0" />
+      <key
+         Value = "0.3079169164686651"
+         Time = "2.0" />
+      <key
+         Value = "0.03735005682556729"
+         Time = "4.0" />
+      <key
+         Value = "0.02567746328948078"
+         Time = "6.0" />
+      <key
+         Value = "0.02247840168962733"
+         Time = "8.0" />
+      <key
+         Value = "0.07817768722836824"
+         Time = "10.0" />
+      <key
+         Value = "0.01394558834535663"
+         Time = "12.0" />
+      <key
+         Value = "0.033025993333284216"
+         Time = "14.0" />
+      <key
+         Value = "0.9244575939648695"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;spine&quot;].Rotation[0]">
+      <key
+         Value = "10.02272404704408"
+         Time = "0.0" />
+      <key
+         Value = "11.444929130280865"
+         Time = "2.0" />
+      <key
+         Value = "10.02272404704408"
+         Time = "8.0" />
+      <key
+         Value = "11.444929130280865"
+         Time = "10.0" />
+      <key
+         Value = "11.101397071778246"
+         Time = "12.0" />
+      <key
+         Value = "10.366260374415058"
+         Time = "14.0" />
+      <key
+         Value = "10.02272404704408"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;spine&quot;].Rotation[2]">
+      <key
+         Value = "-0.0"
+         Time = "0.0" />
+      <key
+         Value = "-0.0"
+         Time = "2.0" />
+      <key
+         Value = "-0.0"
+         Time = "8.0" />
+      <key
+         Value = "-0.0"
+         Time = "10.0" />
+      <key
+         Value = "-0.0"
+         Time = "12.0" />
+      <key
+         Value = "-0.0"
+         Time = "14.0" />
+      <key
+         Value = "-0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;spine&quot;].Rotation[1]">
+      <key
+         Value = "-0.0"
+         Time = "0.0" />
+      <key
+         Value = "-0.0"
+         Time = "2.0" />
+      <key
+         Value = "-0.0"
+         Time = "8.0" />
+      <key
+         Value = "-0.0"
+         Time = "10.0" />
+      <key
+         Value = "-0.0"
+         Time = "12.0" />
+      <key
+         Value = "-0.0"
+         Time = "14.0" />
+      <key
+         Value = "-0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;ribs&quot;].Rotation[0]">
+      <key
+         Value = "-9.99702460575266"
+         Time = "0.0" />
+      <key
+         Value = "-9.99702460575266"
+         Time = "8.0" />
+      <key
+         Value = "-9.99702460575266"
+         Time = "10.0" />
+      <key
+         Value = "-9.99702460575266"
+         Time = "12.0" />
+      <key
+         Value = "-9.99702460575266"
+         Time = "14.0" />
+      <key
+         Value = "-9.99702460575266"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;ribs&quot;].Rotation[2]">
+      <key
+         Value = "0.0"
+         Time = "0.0" />
+      <key
+         Value = "0.0"
+         Time = "8.0" />
+      <key
+         Value = "0.0"
+         Time = "10.0" />
+      <key
+         Value = "0.0"
+         Time = "12.0" />
+      <key
+         Value = "0.0"
+         Time = "14.0" />
+      <key
+         Value = "0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;ribs&quot;].Rotation[1]">
+      <key
+         Value = "-0.0"
+         Time = "0.0" />
+      <key
+         Value = "-0.0"
+         Time = "8.0" />
+      <key
+         Value = "-0.0"
+         Time = "10.0" />
+      <key
+         Value = "-0.0"
+         Time = "12.0" />
+      <key
+         Value = "-0.0"
+         Time = "14.0" />
+      <key
+         Value = "-0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;thigh_R&quot;].Rotation[0]">
+      <key
+         Value = "3.73457295270732"
+         Time = "0.0" />
+      <key
+         Value = "14.382915452492233"
+         Time = "2.0" />
+      <key
+         Value = "20.63468682379162"
+         Time = "4.0" />
+      <key
+         Value = "24.066175672579277"
+         Time = "6.0" />
+      <key
+         Value = "-20.0900202023922"
+         Time = "8.0" />
+      <key
+         Value = "-35.48829453167371"
+         Time = "10.0" />
+      <key
+         Value = "-25.41638970604583"
+         Time = "12.0" />
+      <key
+         Value = "-37.182348835938356"
+         Time = "14.0" />
+      <key
+         Value = "3.73457295270732"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;thigh_R&quot;].Rotation[2]">
+      <key
+         Value = "-0.05277058004316567"
+         Time = "0.0" />
+      <key
+         Value = "-0.20144893837097091"
+         Time = "2.0" />
+      <key
+         Value = "-0.28597768119034095"
+         Time = "4.0" />
+      <key
+         Value = "-0.33101517618673015"
+         Time = "6.0" />
+      <key
+         Value = "0.277670543406118"
+         Time = "8.0" />
+      <key
+         Value = "0.4685645446783075"
+         Time = "10.0" />
+      <key
+         Value = "0.3467579889602298"
+         Time = "12.0" />
+      <key
+         Value = "0.4877017214465854"
+         Time = "14.0" />
+      <key
+         Value = "-0.05277058004316567"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;thigh_R&quot;].Rotation[1]">
+      <key
+         Value = "0.0011585982824480565"
+         Time = "0.0" />
+      <key
+         Value = "0.023243979874017474"
+         Time = "2.0" />
+      <key
+         Value = "0.0489229989659117"
+         Time = "4.0" />
+      <key
+         Value = "0.06688605017263073"
+         Time = "6.0" />
+      <key
+         Value = "0.05223825882897627"
+         Time = "8.0" />
+      <key
+         Value = "0.15545068118966257"
+         Time = "10.0" />
+      <key
+         Value = "0.0820842820756241"
+         Time = "12.0" />
+      <key
+         Value = "0.16984299743733203"
+         Time = "14.0" />
+      <key
+         Value = "0.0011585982824480565"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shin_R&quot;].Rotation[0]">
+      <key
+         Value = "-4.177709235956677"
+         Time = "0.0" />
+      <key
+         Value = "-11.225362447586036"
+         Time = "2.0" />
+      <key
+         Value = "24.882241576281583"
+         Time = "6.0" />
+      <key
+         Value = "77.19978633740281"
+         Time = "8.0" />
+      <key
+         Value = "47.897761660936744"
+         Time = "10.0" />
+      <key
+         Value = "-6.339834710439107"
+         Time = "12.0" />
+      <key
+         Value = "23.80111992865702"
+         Time = "14.0" />
+      <key
+         Value = "-4.177709235956677"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shin_R&quot;].Rotation[2]">
+      <key
+         Value = "-0.10900185162322877"
+         Time = "0.0" />
+      <key
+         Value = "-0.28821656924220124"
+         Time = "2.0" />
+      <key
+         Value = "0.6569813483225273"
+         Time = "6.0" />
+      <key
+         Value = "1.6651809593487354"
+         Time = "8.0" />
+      <key
+         Value = "1.200477072492083"
+         Time = "10.0" />
+      <key
+         Value = "-0.16490947961570818"
+         Time = "12.0" />
+      <key
+         Value = "0.6291284763876974"
+         Time = "14.0" />
+      <key
+         Value = "-0.10900185162322877"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shin_R&quot;].Rotation[1]">
+      <key
+         Value = "-0.02247840168962733"
+         Time = "0.0" />
+      <key
+         Value = "-0.07817768722836824"
+         Time = "2.0" />
+      <key
+         Value = "-0.033025993333284216"
+         Time = "6.0" />
+      <key
+         Value = "-0.9244575939648695"
+         Time = "8.0" />
+      <key
+         Value = "-0.3079169164686651"
+         Time = "10.0" />
+      <key
+         Value = "-0.03735005682556729"
+         Time = "12.0" />
+      <key
+         Value = "-0.02567746328948078"
+         Time = "14.0" />
+      <key
+         Value = "-0.02247840168962733"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;upper_arm_R&quot;].Rotation[0]">
+      <key
+         Value = "-28.667428366680628"
+         Time = "0.0" />
+      <key
+         Value = "-24.61685456817471"
+         Time = "2.0" />
+      <key
+         Value = "-26.771787853246856"
+         Time = "4.0" />
+      <key
+         Value = "-24.260527003654534"
+         Time = "6.0" />
+      <key
+         Value = "-34.11314859944658"
+         Time = "8.0" />
+      <key
+         Value = "-33.34459861566829"
+         Time = "10.0" />
+      <key
+         Value = "-32.73753138415269"
+         Time = "12.0" />
+      <key
+         Value = "-32.695153474184885"
+         Time = "14.0" />
+      <key
+         Value = "-28.667428366680628"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;upper_arm_R&quot;].Rotation[2]">
+      <key
+         Value = "-0.5281892697835694"
+         Time = "0.0" />
+      <key
+         Value = "-14.498854502012504"
+         Time = "2.0" />
+      <key
+         Value = "-15.32909134111745"
+         Time = "4.0" />
+      <key
+         Value = "-15.477695771316426"
+         Time = "6.0" />
+      <key
+         Value = "-18.233349334428866"
+         Time = "8.0" />
+      <key
+         Value = "-15.647043486642685"
+         Time = "10.0" />
+      <key
+         Value = "-16.16848404907756"
+         Time = "12.0" />
+      <key
+         Value = "-16.56578591964929"
+         Time = "14.0" />
+      <key
+         Value = "-0.5281892697835694"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;upper_arm_R&quot;].Rotation[1]">
+      <key
+         Value = "-5.075912008856695"
+         Time = "0.0" />
+      <key
+         Value = "-2.89705150319213"
+         Time = "2.0" />
+      <key
+         Value = "-1.9780971208715306"
+         Time = "4.0" />
+      <key
+         Value = "0.22087642486804934"
+         Time = "6.0" />
+      <key
+         Value = "-7.28807929267082"
+         Time = "8.0" />
+      <key
+         Value = "-13.240071944820476"
+         Time = "10.0" />
+      <key
+         Value = "-11.45999225917042"
+         Time = "12.0" />
+      <key
+         Value = "-10.081596864348858"
+         Time = "14.0" />
+      <key
+         Value = "-5.075912008856695"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;hand_R&quot;].Rotation[0]">
+      <key
+         Value = "-1.7755086881335584"
+         Time = "2.0" />
+      <key
+         Value = "-2.514688110553889"
+         Time = "4.0" />
+      <key
+         Value = "-3.818647888139762"
+         Time = "6.0" />
+      <key
+         Value = "-3.187812451378092"
+         Time = "8.0" />
+      <key
+         Value = "-3.187812451378092"
+         Time = "10.0" />
+      <key
+         Value = "0.5740637564629104"
+         Time = "12.0" />
+      <key
+         Value = "0.09283668101641017"
+         Time = "14.0" />
+      <key
+         Value = "-1.7755086881335584"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;hand_R&quot;].Rotation[2]">
+      <key
+         Value = "-16.93991978786615"
+         Time = "2.0" />
+      <key
+         Value = "-16.489450015663845"
+         Time = "4.0" />
+      <key
+         Value = "-15.16170730523607"
+         Time = "6.0" />
+      <key
+         Value = "12.187170932139825"
+         Time = "8.0" />
+      <key
+         Value = "12.187170932139825"
+         Time = "10.0" />
+      <key
+         Value = "-1.9634638670256686"
+         Time = "12.0" />
+      <key
+         Value = "-11.27636774050623"
+         Time = "14.0" />
+      <key
+         Value = "-16.93991978786615"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;hand_R&quot;].Rotation[1]">
+      <key
+         Value = "-13.10754492663302"
+         Time = "2.0" />
+      <key
+         Value = "-7.832476121589986"
+         Time = "4.0" />
+      <key
+         Value = "-0.6541419105339177"
+         Time = "6.0" />
+      <key
+         Value = "15.092701901995722"
+         Time = "8.0" />
+      <key
+         Value = "15.092701901995722"
+         Time = "10.0" />
+      <key
+         Value = "-6.467790624388358"
+         Time = "12.0" />
+      <key
+         Value = "-13.18530236378182"
+         Time = "14.0" />
+      <key
+         Value = "-13.10754492663302"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;foot_R&quot;].Rotation[0]">
+      <key
+         Value = "4.6526148644163055"
+         Time = "0.0" />
+      <key
+         Value = "22.965818504131633"
+         Time = "2.0" />
+      <key
+         Value = "16.275301380689537"
+         Time = "4.0" />
+      <key
+         Value = "4.6526148644163055"
+         Time = "8.0" />
+      <key
+         Value = "17.429854394268467"
+         Time = "10.0" />
+      <key
+         Value = "17.429854394268467"
+         Time = "12.0" />
+      <key
+         Value = "17.42985097917378"
+         Time = "14.0" />
+      <key
+         Value = "4.6526148644163055"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;foot_R&quot;].Rotation[2]">
+      <key
+         Value = "-0.01605188718028347"
+         Time = "0.0" />
+      <key
+         Value = "-0.07670516109844826"
+         Time = "2.0" />
+      <key
+         Value = "-0.05516395110380006"
+         Time = "4.0" />
+      <key
+         Value = "-0.01605188718028347"
+         Time = "8.0" />
+      <key
+         Value = "-0.05900529229613324"
+         Time = "10.0" />
+      <key
+         Value = "-0.05900529229613324"
+         Time = "12.0" />
+      <key
+         Value = "-0.05900528562602642"
+         Time = "14.0" />
+      <key
+         Value = "-0.01605188718028347"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;foot_R&quot;].Rotation[1]">
+      <key
+         Value = "0.0013036734182278304"
+         Time = "0.0" />
+      <key
+         Value = "0.01884020527030094"
+         Time = "2.0" />
+      <key
+         Value = "0.010224529189129028"
+         Time = "4.0" />
+      <key
+         Value = "0.0013036734182278304"
+         Time = "8.0" />
+      <key
+         Value = "0.011503533008879062"
+         Time = "10.0" />
+      <key
+         Value = "0.011503533008879062"
+         Time = "12.0" />
+      <key
+         Value = "0.011503532175115712"
+         Time = "14.0" />
+      <key
+         Value = "0.0013036734182278304"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;toe_R&quot;].Rotation[0]">
+      <key
+         Value = "27.830622592945726"
+         Time = "2.0" />
+      <key
+         Value = "57.51983192197405"
+         Time = "4.0" />
+      <key
+         Value = "53.227600900792105"
+         Time = "6.0" />
+      <key
+         Value = "17.667312758027144"
+         Time = "8.0" />
+      <key
+         Value = "17.667312758027144"
+         Time = "10.0" />
+      <key
+         Value = "17.667312758027144"
+         Time = "12.0" />
+      <key
+         Value = "17.66730934293246"
+         Time = "14.0" />
+      <key
+         Value = "27.830622592945726"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;toe_R&quot;].Rotation[2]">
+      <key
+         Value = "0.30545479328208613"
+         Time = "2.0" />
+      <key
+         Value = "0.5489742830990557"
+         Time = "4.0" />
+      <key
+         Value = "0.521595629077993"
+         Time = "6.0" />
+      <key
+         Value = "0.198909948873513"
+         Time = "8.0" />
+      <key
+         Value = "0.198909948873513"
+         Time = "10.0" />
+      <key
+         Value = "0.198909948873513"
+         Time = "12.0" />
+      <key
+         Value = "0.1989098821724449"
+         Time = "14.0" />
+      <key
+         Value = "0.30545479328208613"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;toe_R&quot;].Rotation[1]">
+      <key
+         Value = "-0.08174221898808447"
+         Time = "2.0" />
+      <key
+         Value = "-0.3147389149509902"
+         Time = "4.0" />
+      <key
+         Value = "-0.27361562539372714"
+         Time = "6.0" />
+      <key
+         Value = "-0.03471566479040527"
+         Time = "8.0" />
+      <key
+         Value = "-0.03471566479040527"
+         Time = "10.0" />
+      <key
+         Value = "-0.03471566479040527"
+         Time = "12.0" />
+      <key
+         Value = "-0.03471565145019165"
+         Time = "14.0" />
+      <key
+         Value = "-0.08174221898808447"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;upper_arm_L&quot;].Rotation[0]">
+      <key
+         Value = "-34.11314859944658"
+         Time = "0.0" />
+      <key
+         Value = "-33.34459861566829"
+         Time = "2.0" />
+      <key
+         Value = "-32.73753138415269"
+         Time = "4.0" />
+      <key
+         Value = "-32.695153474184885"
+         Time = "6.0" />
+      <key
+         Value = "-28.667428366680628"
+         Time = "8.0" />
+      <key
+         Value = "-24.61685456817471"
+         Time = "10.0" />
+      <key
+         Value = "-26.771787853246856"
+         Time = "12.0" />
+      <key
+         Value = "-24.260527003654534"
+         Time = "14.0" />
+      <key
+         Value = "-34.11314859944658"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;upper_arm_L&quot;].Rotation[2]">
+      <key
+         Value = "18.233349334428866"
+         Time = "0.0" />
+      <key
+         Value = "15.647043486642685"
+         Time = "2.0" />
+      <key
+         Value = "16.16848404907756"
+         Time = "4.0" />
+      <key
+         Value = "16.56578591964929"
+         Time = "6.0" />
+      <key
+         Value = "0.5281892697835694"
+         Time = "8.0" />
+      <key
+         Value = "14.498854502012504"
+         Time = "10.0" />
+      <key
+         Value = "15.32909134111745"
+         Time = "12.0" />
+      <key
+         Value = "15.477695771316426"
+         Time = "14.0" />
+      <key
+         Value = "18.233349334428866"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;upper_arm_L&quot;].Rotation[1]">
+      <key
+         Value = "7.28807929267082"
+         Time = "0.0" />
+      <key
+         Value = "13.240071944820476"
+         Time = "2.0" />
+      <key
+         Value = "11.45999225917042"
+         Time = "4.0" />
+      <key
+         Value = "10.081596864348858"
+         Time = "6.0" />
+      <key
+         Value = "5.075912008856695"
+         Time = "8.0" />
+      <key
+         Value = "2.89705150319213"
+         Time = "10.0" />
+      <key
+         Value = "1.9780971208715306"
+         Time = "12.0" />
+      <key
+         Value = "-0.22087642486804934"
+         Time = "14.0" />
+      <key
+         Value = "7.28807929267082"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;foot_L&quot;].Rotation[0]">
+      <key
+         Value = "17.42985097917378"
+         Time = "6.0" />
+      <key
+         Value = "4.6526148644163055"
+         Time = "8.0" />
+      <key
+         Value = "22.965818504131633"
+         Time = "10.0" />
+      <key
+         Value = "16.275301380689537"
+         Time = "12.0" />
+      <key
+         Value = "16.85260264691548"
+         Time = "14.0" />
+      <key
+         Value = "17.42985097917378"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;foot_L&quot;].Rotation[2]">
+      <key
+         Value = "0.05900528562602642"
+         Time = "6.0" />
+      <key
+         Value = "0.01605188718028347"
+         Time = "8.0" />
+      <key
+         Value = "0.07670516109844826"
+         Time = "10.0" />
+      <key
+         Value = "0.05516395110380006"
+         Time = "12.0" />
+      <key
+         Value = "0.0570878433615559"
+         Time = "14.0" />
+      <key
+         Value = "0.05900528562602642"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;foot_L&quot;].Rotation[1]">
+      <key
+         Value = "-0.011503532175115712"
+         Time = "6.0" />
+      <key
+         Value = "-0.0013036734182278304"
+         Time = "8.0" />
+      <key
+         Value = "-0.01884020527030094"
+         Time = "10.0" />
+      <key
+         Value = "-0.010224529189129028"
+         Time = "12.0" />
+      <key
+         Value = "-0.010854366531117963"
+         Time = "14.0" />
+      <key
+         Value = "-0.011503532175115712"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;forearm_R&quot;].Rotation[0]">
+      <key
+         Value = "11.939407520163895"
+         Time = "2.0" />
+      <key
+         Value = "11.073043248141554"
+         Time = "4.0" />
+      <key
+         Value = "9.856057181046916"
+         Time = "6.0" />
+      <key
+         Value = "9.987674076500355"
+         Time = "8.0" />
+      <key
+         Value = "13.648471165576781"
+         Time = "10.0" />
+      <key
+         Value = "3.362045032766902"
+         Time = "12.0" />
+      <key
+         Value = "-6.940117856359494"
+         Time = "14.0" />
+      <key
+         Value = "11.939407520163895"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;forearm_R&quot;].Rotation[2]">
+      <key
+         Value = "5.702566942834955"
+         Time = "2.0" />
+      <key
+         Value = "5.4792650003264995"
+         Time = "4.0" />
+      <key
+         Value = "5.175355297266321"
+         Time = "6.0" />
+      <key
+         Value = "7.223284701179227"
+         Time = "8.0" />
+      <key
+         Value = "9.846651156505951"
+         Time = "10.0" />
+      <key
+         Value = "2.4247268325420084"
+         Time = "12.0" />
+      <key
+         Value = "-4.896676313751805"
+         Time = "14.0" />
+      <key
+         Value = "5.702566942834955"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;forearm_R&quot;].Rotation[1]">
+      <key
+         Value = "0.6767263052233368"
+         Time = "2.0" />
+      <key
+         Value = "0.6417624590987432"
+         Time = "4.0" />
+      <key
+         Value = "0.5863367529933965"
+         Time = "6.0" />
+      <key
+         Value = "0.34055105436707267"
+         Time = "8.0" />
+      <key
+         Value = "0.149091401356964"
+         Time = "10.0" />
+      <key
+         Value = "0.25527059051021034"
+         Time = "12.0" />
+      <key
+         Value = "-0.9665410587376524"
+         Time = "14.0" />
+      <key
+         Value = "0.6767263052233368"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;neck&quot;].Rotation[0]">
+      <key
+         Value = "0.0"
+         Time = "8.0" />
+      <key
+         Value = "0.0"
+         Time = "10.0" />
+      <key
+         Value = "0.0"
+         Time = "12.0" />
+      <key
+         Value = "0.0"
+         Time = "14.0" />
+      <key
+         Value = "0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;neck&quot;].Rotation[2]">
+      <key
+         Value = "-0.0"
+         Time = "8.0" />
+      <key
+         Value = "-0.0"
+         Time = "10.0" />
+      <key
+         Value = "-0.0"
+         Time = "12.0" />
+      <key
+         Value = "-0.0"
+         Time = "14.0" />
+      <key
+         Value = "-0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;neck&quot;].Rotation[1]">
+      <key
+         Value = "-0.0"
+         Time = "8.0" />
+      <key
+         Value = "-0.0"
+         Time = "10.0" />
+      <key
+         Value = "-0.0"
+         Time = "12.0" />
+      <key
+         Value = "-0.0"
+         Time = "14.0" />
+      <key
+         Value = "-0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shoulder_L&quot;].Rotation[0]">
+      <key
+         Value = "0.0"
+         Time = "8.0" />
+      <key
+         Value = "0.0"
+         Time = "10.0" />
+      <key
+         Value = "0.0"
+         Time = "12.0" />
+      <key
+         Value = "0.0"
+         Time = "14.0" />
+      <key
+         Value = "0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shoulder_L&quot;].Rotation[2]">
+      <key
+         Value = "0.0"
+         Time = "8.0" />
+      <key
+         Value = "0.0"
+         Time = "10.0" />
+      <key
+         Value = "0.0"
+         Time = "12.0" />
+      <key
+         Value = "0.0"
+         Time = "14.0" />
+      <key
+         Value = "0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;shoulder_L&quot;].Rotation[1]">
+      <key
+         Value = "-0.0"
+         Time = "8.0" />
+      <key
+         Value = "-0.0"
+         Time = "10.0" />
+      <key
+         Value = "-0.0"
+         Time = "12.0" />
+      <key
+         Value = "-0.0"
+         Time = "14.0" />
+      <key
+         Value = "-0.0"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "0"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;toe_L&quot;].Rotation[0]">
+      <key
+         Value = "17.66730934293246"
+         Time = "6.0" />
+      <key
+         Value = "27.830626008040415"
+         Time = "8.0" />
+      <key
+         Value = "27.830622592945726"
+         Time = "10.0" />
+      <key
+         Value = "57.51983192197405"
+         Time = "12.0" />
+      <key
+         Value = "53.227600900792105"
+         Time = "14.0" />
+      <key
+         Value = "17.66730934293246"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "2"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;toe_L&quot;].Rotation[2]">
+      <key
+         Value = "-0.1989098821724449"
+         Time = "6.0" />
+      <key
+         Value = "-0.3054547666016589"
+         Time = "8.0" />
+      <key
+         Value = "-0.30545479328208613"
+         Time = "10.0" />
+      <key
+         Value = "-0.5489742830990557"
+         Time = "12.0" />
+      <key
+         Value = "-0.521595629077993"
+         Time = "14.0" />
+      <key
+         Value = "-0.1989098821724449"
+         Time = "16.0" />
+    </channel>
+    <channel
+       InterpolationMode = "imExtrapolate"
+       ArrayIndex = "1"
+       TimeMode = "tmWrapAround"
+       PropStr = "Owner.Objects[&quot;toe_L&quot;].Rotation[1]">
+      <key
+         Value = "0.03471565145019165"
+         Time = "6.0" />
+      <key
+         Value = "0.08174220564787084"
+         Time = "8.0" />
+      <key
+         Value = "0.08174221898808447"
+         Time = "10.0" />
+      <key
+         Value = "0.3147389149509902"
+         Time = "12.0" />
+      <key
+         Value = "0.27361562539372714"
+         Time = "14.0" />
+      <key
+         Value = "0.03471565145019165"
+         Time = "16.0" />
+    </channel>
+  </action>
 </p3dfile>

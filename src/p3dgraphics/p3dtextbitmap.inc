@@ -158,7 +158,7 @@ TP3DTextBmp = class ( TPersistent )
 end;
 
 TP3DPropertyAccessFontBmp = specialize gP3DPropertyAccessDataBlock < TP3DFontBmp >;
-TP3DPropertyAccessFontBmpList = specialize gP3DListPropertyAccess < TP3DFontBmpList, TP3DFontBmp, TP3DPropertyAccessFontBmp >;
+TP3DPropertyAccessFontBmpList = specialize gP3DListPropertyAccessObject < TP3DFontBmpList, TP3DFontBmp, TP3DPropertyAccessFontBmp >;
 
 {$ENDIF}
 
@@ -201,7 +201,6 @@ begin
   Vertices:= TP3DVec2BufferGL.Create( True );
   Vertices.SetAttribArray( P3DAttribPosition );
   TexCoords:= TP3DVec2BufferGL.Create( True );
-  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
   Indices:= TP3DIntBufferGL.Create( True );
   LetterPosAndSize:= TVec4List.Create;
 end;
@@ -244,7 +243,7 @@ end;
 procedure TP3DTextBmp.Render( p: TVec2; Color: TVec4; proj: TMat4 );
 var
   Shader: TP3DShader;
-  Uniform: TP3DShaderDecl;
+  Uniform, decl: TP3DShaderDecl;
   mt, m: TMat4;
 begin
   Font.ApplyShader;
@@ -262,7 +261,9 @@ begin
   glVertexAttrib4f( P3DAttribColor, Color.X, Color.Y, Color.Z, Color.A );
 
   Vertices.SetAttribArray( P3DAttribPosition );
-  TexCoords.SetAttribArray( P3DAttribTexCoord0 );
+  if ( P3DShaderActive.Attributes.FindByName( 'TexCoord0', decl )) then
+    decl.AsVec2List:= TexCoords;
+
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 ));
 end;

@@ -99,7 +99,7 @@
          //needs map class
      end;
 
-     TP3DPropertyAccessMaterialMapList = specialize gP3DListPropertyAccess < TP3DMaterialMapList, TP3DMaterialMap, TP3DPropertyAccessMaterialMap >;
+     TP3DPropertyAccessMaterialMapList = specialize gP3DListPropertyAccessObject < TP3DMaterialMapList, TP3DMaterialMap, TP3DPropertyAccessMaterialMap >;
 
 
      TP3DMaterial = class ( TP3DDataBlock )
@@ -132,7 +132,7 @@
      TP3DMaterialList = specialize gP3DCustomDatablockList < TP3DMaterial >;
 
      TP3DPropertyAccessMaterial = specialize gP3DPropertyAccessDataBlock < TP3DMaterial >;
-     TP3DPropertyAccessMaterialList = specialize gP3DListPropertyAccess < TP3DMaterialList, TP3DMaterial, TP3DPropertyAccessMaterial >;
+     TP3DPropertyAccessMaterialList = specialize gP3DListPropertyAccessObject < TP3DMaterialList, TP3DMaterial, TP3DPropertyAccessMaterial >;
 
      { TP3DMaterialShader }
 
@@ -329,7 +329,7 @@ begin
   if ( Assigned( Map )) then
     Result:= Map.Name
   else
-    Result:= '<empty>';
+    Result:= '<None>';
 end;
 
 constructor TP3DMaterialMap.Create( AParentMaterial: TP3DMaterial );
@@ -714,7 +714,6 @@ var
             '</code></pre></details>' );
           Compiled.Buffers.Add( Buffer );
         end;
-    WriteLn( Compiled.Buffers.Count, ' buffers created' );
   end;
 
 begin

@@ -190,7 +190,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
 end;
 
 TP3DPropertyAccessGraphicControl = specialize gP3DPropertyAccessDataBlock < TP3DGraphicControl >;
-TP3DPropertyAccessGraphicControlList = specialize gP3DListPropertyAccess < TP3DControlList, TP3DGraphicControl, TP3DPropertyAccessGraphicControl >;
+TP3DPropertyAccessGraphicControlList = specialize gP3DListPropertyAccessObject < TP3DControlList, TP3DGraphicControl, TP3DPropertyAccessGraphicControl >;
 
 {$ENDIF}
 
@@ -580,7 +580,6 @@ end;
 procedure TP3DGraphicControl.SetScroll(AValue: TVec2);
 begin
   Controls.PageScroll:= AValue;
-  Controls.UpdateControls;
 end;
 
 procedure TP3DGraphicControl.SetTop(AValue: Single);

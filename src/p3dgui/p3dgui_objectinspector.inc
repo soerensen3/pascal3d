@@ -207,16 +207,24 @@ begin
     Result:= TP3DPropertyEditorInt
   else if ( AProp is TP3DPropertyAccessQuat ) then
     Result:= TP3DPropertyEditorVec4
+  else if ( AProp is TP3DPropertyAccessQuatList ) then
+    Result:= TP3DPropertyEditorQuatList
   else if ( AProp is TP3DPropertyAccessRTTI ) then
     Result:= GetPropEdForPropRTTI( TP3DPropertyAccessRTTI( AProp ))
   else if ( AProp is TP3DPropertyAccessString ) then
     Result:= TP3DPropertyEditorString
   else if ( AProp is TP3DPropertyAccessVec2 ) then
     Result:= TP3DPropertyEditorVec2
+  else if ( AProp is TP3DPropertyAccessVec2List ) then
+    Result:= TP3DPropertyEditorVec2List
   else if ( AProp is TP3DPropertyAccessVec3 ) then
     Result:= TP3DPropertyEditorVec3
+  else if ( AProp is TP3DPropertyAccessVec3List ) then
+    Result:= TP3DPropertyEditorVec3List
   else if ( AProp is TP3DPropertyAccessVec4 ) then
     Result:= TP3DPropertyEditorVec4
+  else if ( AProp is TP3DPropertyAccessVec4List ) then
+    Result:= TP3DPropertyEditorVec4List
   else if ( AProp is TP3DPropertyAccessColorRGB ) then
     Result:= TP3DPropertyEditorColorRGB
   else if ( AProp is TP3DPropertyAccessColorRGBA ) then
@@ -433,6 +441,7 @@ begin
   with ( AddPage( TP3DOIEditorPageMaterial.Create( nil, Self )) as TP3DOIEditorPageMaterial ) do
     EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( nil, Container )));
   AddPage( TP3DOIEditorPageGrid.Create( nil, Container ));
+  AddPage( TP3DOIEditorPageAction.Create( nil, Container ));
   AddPage( TP3DOIEditorPageProperties.Create( nil, Container ));
 end;
 
@@ -481,8 +490,11 @@ end;
 procedure TP3DObjectInspector.MouseWheel(deltax, deltay: Integer);
 begin
   inherited MouseWheel( deltax, deltay );
-  if ( MouseRay( P3DInput.Mouse.X, P3DInput.Mouse.Y )) then
-    Scrollbar.Percentage:= Scrollbar.Percentage - deltay / 10;
+  if (( P3DGUIManager.LastMouseOverCtrl = Self ) or
+     ( Assigned( P3DGUIManager.LastMouseOverCtrl ) and ( not P3DGUIManager.LastMouseOverCtrl.Controls.CanScrollY ) and
+     ( Self.Controls.ChildOf( P3DGUIManager.LastMouseOverCtrl )))) then
+    if ( MouseRay( P3DInput.Mouse.X, P3DInput.Mouse.Y )) then
+      Scrollbar.Percentage:= Scrollbar.Percentage - deltay / 10;
 end;
 
 

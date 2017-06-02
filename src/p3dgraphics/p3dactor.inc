@@ -115,7 +115,7 @@ type
       property Owner: TPersistent read FOwner write FOwner;
   end;
 
-  TP3DPropertyAccessActorList = specialize gP3DListPropertyAccess < TP3DActorList, TP3DActor, TP3DPropertyAccessActor >;
+  TP3DPropertyAccessActorList = specialize gP3DListPropertyAccessObject < TP3DActorList, TP3DActor, TP3DPropertyAccessActor >;
 
 {$ENDIF}
 
@@ -522,7 +522,6 @@ end;
 procedure TP3DActorList.MakeRenderList(ARootScene: TP3DScene; world: TMat4; var ARenderList: TP3DRenderList; const AFlags: TP3DRenderListFlags);
 var
   Actor: TP3DActor;
-  mat: TMat4;
 begin
   if ( not Assigned( ARenderList )) then
     ARenderList:= TP3DRenderList.Create;

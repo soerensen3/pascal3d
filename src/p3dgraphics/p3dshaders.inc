@@ -137,7 +137,7 @@ type
   TP3DShaderList = specialize gP3DCustomDatablockList < TP3DShader >;
 
   TP3DPropertyAccessShader = specialize gP3DPropertyAccessDataBlock < TP3DShader >;
-  TP3DPropertyAccessShaderList = specialize gP3DListPropertyAccess < TP3DShaderList, TP3DShader, TP3DPropertyAccessShader >;
+  TP3DPropertyAccessShaderList = specialize gP3DListPropertyAccessObject < TP3DShaderList, TP3DShader, TP3DPropertyAccessShader >;
 
 
 {$ENDIF}
@@ -502,6 +502,9 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform2fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+    sdtAttribute:
+      if ( AValue is TP3DVec2BufferGL ) then
+        TP3DVec2BufferGL( AValue ).SetAttribArray( Addr );
   end;
 end;
 
@@ -521,6 +524,9 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform3fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+    sdtAttribute:
+      if ( AValue is TP3DVec3BufferGL ) then
+        TP3DVec3BufferGL( AValue ).SetAttribArray( Addr );
   end;
 end;
 
@@ -540,6 +546,9 @@ begin
     exit;
   case DeclType of
     sdtUniform: begin glUniform4fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+    sdtAttribute:
+      if ( AValue is TP3DVec4BufferGL ) then
+        TP3DVec4BufferGL( AValue ).SetAttribArray( Addr );
   end;
 end;
 
@@ -758,7 +767,6 @@ end;
 procedure ShaderSetParameteri( shader: GLHandleARB; const Name: String; Value: GLint );
 var
   p: PGLcharARB;
-  l: GLint;
 begin
   p := PGLCharArb(Name);
   glUniform1iARB(glGetUniformLocationARB( shader, p), Value); cle( nil );
@@ -767,7 +775,6 @@ end;
 procedure ShaderSetParameterf( shader: GLHandleARB; const Name: String; Value: GLfloat );
 var
   p: PGLcharARB;
-  l: GLint;
 begin
   p := PGLCharARB(Name);
   glUniform1fARB(glGetUniformLocationARB( shader, p), Value); cle( nil );
@@ -777,7 +784,6 @@ procedure ShaderSetParameter2f(shader: GLHandleARB; const Name: String;
   Vec2: TVec2);
 var
   p: PGLcharARB;
-  l: GLint;
 begin
   p := PGLCharARB(Name);
   glUniform2f( glGetUniformLocationARB( shader, p), Vec2.x, Vec2.y ); cle( nil );
@@ -786,7 +792,6 @@ end;
 procedure ShaderSetParameter3f( shader: GLHandleARB; const Name: String; Vec3: TVec3 );
 var
   p: PGLcharARB;
-  l: GLint;
 begin
   p := PGLCharARB(Name);
   glUniform3f( glGetUniformLocationARB( shader, p), Vec3.x, Vec3.y, Vec3.z ); cle( nil );
@@ -795,7 +800,6 @@ end;
 procedure ShaderSetParameter4f( shader: GLHandleARB; const Name: String; Vec4: TVec4 );
 var
   p: PGLcharARB;
-  l: GLint;
 begin
   p := PGLCharARB(Name);
   glUniform4f( glGetUniformLocationARB( shader, p), Vec4.x, Vec4.y, Vec4.z, Vec4.w ); cle( nil );
@@ -806,7 +810,6 @@ procedure ShaderSetParameter4fv(shader: GLHandleARB; const Name: String;
   Value: TMat4);
 var
   p: PGLcharARB;
-  l: GLint;
 begin
   p := PGLCharARB(Name);
   glUniformMatrix4fvARB( glGetUniformLocationARB( shader, p), 1, False, @Value ); cle( nil );
@@ -1124,14 +1127,14 @@ begin
   glBindAttribLocation( ProgramObj, P3DAttribColor,     'Color'     );
   glBindAttribLocation( ProgramObj, P3DAttribCotangent, 'Cotangent' );
   glBindAttribLocation( ProgramObj, P3DAttribTangent,   'Tangent'   );
-  glBindAttribLocation( ProgramObj, P3DAttribTexCoord0, 'TexCoord0' );
+{  glBindAttribLocation( ProgramObj, P3DAttribTexCoord0, 'TexCoord0' );
   glBindAttribLocation( ProgramObj, P3DAttribTexCoord1, 'TexCoord1' );
   glBindAttribLocation( ProgramObj, P3DAttribTexCoord2, 'TexCoord2' );
   glBindAttribLocation( ProgramObj, P3DAttribTexCoord3, 'TexCoord3' );
   glBindAttribLocation( ProgramObj, P3DAttribTexCoord4, 'TexCoord4' );
   glBindAttribLocation( ProgramObj, P3DAttribTexCoord5, 'TexCoord5' );
   glBindAttribLocation( ProgramObj, P3DAttribTexCoord6, 'TexCoord6' );
-  glBindAttribLocation( ProgramObj, P3DAttribTexCoord7, 'TexCoord7' );
+  glBindAttribLocation( ProgramObj, P3DAttribTexCoord7, 'TexCoord7' );}
 end;
 
 function TP3DShader.DumpUniforms: String;

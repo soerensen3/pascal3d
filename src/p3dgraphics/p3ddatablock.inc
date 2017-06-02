@@ -124,7 +124,7 @@ type
 
   { gP3DPropertyAccessDataBlock }
 
-  generic gP3DPropertyAccessDataBlock < TItem: TP3DDataBlock > = class( specialize gP3DPropertyAccess < TItem >)
+  generic gP3DPropertyAccessDataBlock < TItem: TP3DDataBlock > = class( specialize gP3DPropertyAccessInterfacedPersistent < TItem >)
     protected
       function GetAsString: String; override;
       procedure SetAsString( AValue: String ); override;
@@ -142,7 +142,7 @@ type
 
   { TP3DPropertyAccessDataBlockList }
 
-  TP3DPropertyAccessDataBlockList = specialize gP3DListPropertyAccess < TP3DDataBlockList, TP3DDataBlock, TP3DPropertyAccessDataBlock >;
+  TP3DPropertyAccessDataBlockList = specialize gP3DListPropertyAccessObject < TP3DDataBlockList, TP3DDataBlock, TP3DPropertyAccessDataBlock >;
   {TP3DPropertyAccessDataBlockList = class( specialize gP3DPropertyAccess < TP3DDataBlockList >)
     private
       function GetCount: Integer;
@@ -201,7 +201,7 @@ function gP3DPropertyAccessDataBlock.GetAsString: String;
 begin
   if ( not Assigned( Value )) then
     begin
-      Result:= '';
+      Result:= '<None:' + TItem.ClassName + '>';
       exit;
     end;
   Result:= Value.DOMPath; //Value.Owner.Name + '.' + Value.Name;
@@ -224,19 +224,17 @@ var
   FN: String;
 begin
   if (( Context is TP3DDataBlock ) and ( AValue > '' )) then
-    begin
-      Owner:= TP3DDataBlock( Context ).Owner.GetOwnerFromPath( AValue, True );
-      if ( not Assigned( Owner )) then
-        raise Exception.Create( 'Could not find resource: ' + AValue );
-      Path:= P3DXMLExtractRelativePath( AValue, FN );
-      n:= Owner.AppendFromPath( Path{, TItem} ); // No need to check if already loaded, this is done in appendfrompath
-      Value:= TItem( Owner.DataBlocks[ n ]);
-      Write( TP3DDataBlock( Context ).Name, ' > ', Name );
-      if ( Assigned( Value )) then
-        WriteLn( ' = ', Owner.Name, '.', Value.Name )
-      else
-        WriteLn();
-    end;
+    if (( AValue = '<None>' ) or ( AValue = '<None:' + TItem.ClassName + '>' )) then
+      Value:= nil
+    else
+      begin
+        Owner:= TP3DDataBlock( Context ).Owner.GetOwnerFromPath( AValue, True );
+        if ( not Assigned( Owner )) then
+          raise Exception.Create( 'Could not find resource: ' + AValue );
+        Path:= P3DXMLExtractRelativePath( AValue, FN );
+        n:= Owner.AppendFromPath( Path{, TItem} ); // No need to check if already loaded, this is done in appendfrompath
+        Value:= TItem( Owner.DataBlocks[ n ]);
+      end;
 end;
 
 function gP3DPropertyAccessDataBlock.CheckSameContext: Boolean;
@@ -558,7 +556,7 @@ begin
   else
     FOwner:= AData;
   inherited Create( Owner.DataBlocks );
-  //FileWatch:= TP3DFileWatch.Create( '<empty>', Self );
+  //FileWatch:= TP3DFileWatch.Create( '<None>', Self );
   //DOMPath:= '';
   AABB:= P3DInvalidAABB;
   FUsers:= TP3DDataBlockList.Create;

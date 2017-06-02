@@ -7,7 +7,7 @@ type
   { TP3DShaderNodeSocketShader }
 
   TP3DShaderNodeSocketShader = class ( TP3DShaderNodeSocket )
-    private
+    protected
       FValue: String;
       class function GetSocketType: String; static; override;
 
@@ -20,7 +20,7 @@ type
   { TP3DShaderNodeSocketInt }
 
   TP3DShaderNodeSocketInt = class ( TP3DShaderNodeSocket )
-    private
+    protected
       FValue: Integer;
 
       class function GetSocketType: String; static; override;
@@ -39,7 +39,7 @@ type
   { TP3DShaderNodeSocketFloat }
 
   TP3DShaderNodeSocketFloat = class ( TP3DShaderNodeSocket )
-    private
+    protected
       FValue: Single;
 
       class function GetSocketType: String; static; override;
@@ -59,7 +59,7 @@ type
   { TP3DShaderNodeSocketVector }
 
   TP3DShaderNodeSocketVector = class ( TP3DShaderNodeSocket )
-    private
+    protected
       FNumFields: Integer;
       FValue: TVec4;
 
@@ -79,7 +79,7 @@ type
   { TP3DShaderNodeSocketMatrix }
 
   TP3DShaderNodeSocketMatrix = class ( TP3DShaderNodeSocket )
-    private
+    protected
       FNumFields: Integer;
       FValue: TMat4;
 
@@ -166,7 +166,7 @@ begin
   if (( Direction = nsdOutput ) or Assigned( Connected )) then
     Result:= inherited GetOutput(Buffer)
   else
-    Result:= FloatToStr( Value );
+    Result:= FloatToStr( Value ) + 'f';
 end;
 
 { TP3DShaderNodeSocketInt }

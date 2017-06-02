@@ -275,7 +275,6 @@ type
   generic gP3DPropertyEditorList < TListProp > = class ( TP3DListView, IP3DPropertyEditor )
     private
       FNameProp: String;
-      FOptionsPopup: TP3DPopupMenu;
 
       function GetObjInsp: TP3DObjectInspector;
       procedure SetNameProp(AValue: String);
@@ -299,7 +298,6 @@ type
 
     public
       procedure MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
-      procedure PopupClick( Sender: TP3DMenuItem );
       function DrawListItem(p: TVec2; Node: TP3DListItem): TVec2; override;
       procedure Draw; override;
       procedure MouseMove(X, Y: Integer); override;
@@ -313,27 +311,45 @@ type
       property ObjInsp: TP3DObjectInspector read GetObjInsp write SetObjInsp;
       property Prop: TP3DPropertyAccess read GetProp write SetProp;
       property NameProp: String read FNameProp write SetNameProp;
+  end;
+
+  { gP3DPropertyEditorInterfacedPersistentList }
+
+  generic gP3DPropertyEditorInterfacedPersistentList < TListProp > = class ( specialize gP3DPropertyEditorList < TListProp> )
+    private
+      FOptionsPopup: TP3DPopupMenu;
+
+    public
+      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      procedure FastDestroy; override;
+
+      procedure MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
+      procedure PopupClick( Sender: TP3DMenuItem );
       property OptionsPopup: TP3DPopupMenu read FOptionsPopup write FOptionsPopup;
   end;
 
-  TP3DPropertyEditorLibraryList = specialize gP3DPropertyEditorList < TP3DPropertyAccessLibraryList >;
-  TP3DPropertyEditorDataBlockList = specialize gP3DPropertyEditorList < TP3DPropertyAccessDataBlockList >;
-  TP3DPropertyEditorCameraList = specialize gP3DPropertyEditorList < TP3DPropertyAccessCameraList >;
-  TP3DPropertyEditorJointList = specialize gP3DPropertyEditorList < TP3DPropertyAccessJointList >;
-  TP3DPropertyEditorLightList = specialize gP3DPropertyEditorList < TP3DPropertyAccessLightList >;
-  TP3DPropertyEditorMaterialList = specialize gP3DPropertyEditorList < TP3DPropertyAccessMaterialList >;
-  TP3DPropertyEditorMaterialMapList = specialize gP3DPropertyEditorList < TP3DPropertyAccessMaterialMapList >;
-  TP3DPropertyEditorMeshList = specialize gP3DPropertyEditorList < TP3DPropertyAccessMeshList >;
-  TP3DPropertyEditorSceneList = specialize gP3DPropertyEditorList < TP3DPropertyAccessSceneList >;
-  TP3DPropertyEditorShaderList = specialize gP3DPropertyEditorList < TP3DPropertyAccessShaderList >;
-  TP3DPropertyEditorTextureList = specialize gP3DPropertyEditorList < TP3DPropertyAccessTextureList >;
-  TP3DPropertyEditorArmatureList = specialize gP3DPropertyEditorList < TP3DPropertyAccessArmatureList >;
-  TP3DPropertyEditorFontBmpList = specialize gP3DPropertyEditorList < TP3DPropertyAccessFontBmpList >;
-  TP3DPropertyEditorGraphicControlList = specialize gP3DPropertyEditorList < TP3DPropertyAccessGraphicControlList >;
-  TP3DPropertyEditorActorList = specialize gP3DPropertyEditorList < TP3DPropertyAccessActorList >;
-  TP3DPropertyEditorActionList = specialize gP3DPropertyEditorList < TP3DPropertyAccessActionList >;
-  TP3DPropertyEditorActionChannelList = specialize gP3DPropertyEditorList < TP3DPropertyAccessActionChannelList >;
-  TP3DPropertyEditorActionKeyList = specialize gP3DPropertyEditorList < TP3DPropertyAccessActionKeyList >;
+  TP3DPropertyEditorLibraryList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessLibraryList >;
+  TP3DPropertyEditorDataBlockList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessDataBlockList >;
+  TP3DPropertyEditorCameraList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessCameraList >;
+  TP3DPropertyEditorJointList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessJointList >;
+  TP3DPropertyEditorLightList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessLightList >;
+  TP3DPropertyEditorMaterialList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessMaterialList >;
+  TP3DPropertyEditorMaterialMapList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessMaterialMapList >;
+  TP3DPropertyEditorMeshList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessMeshList >;
+  TP3DPropertyEditorSceneList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessSceneList >;
+  TP3DPropertyEditorShaderList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessShaderList >;
+  TP3DPropertyEditorTextureList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessTextureList >;
+  TP3DPropertyEditorArmatureList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessArmatureList >;
+  TP3DPropertyEditorFontBmpList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessFontBmpList >;
+  TP3DPropertyEditorGraphicControlList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessGraphicControlList >;
+  TP3DPropertyEditorActorList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActorList >;
+  TP3DPropertyEditorActionList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActionList >;
+  TP3DPropertyEditorActionChannelList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActionChannelList >;
+  TP3DPropertyEditorActionKeyList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActionKeyList >;
+  TP3DPropertyEditorVec2List = specialize gP3DPropertyEditorList < TP3DPropertyAccessVec2List >;
+  TP3DPropertyEditorVec3List = specialize gP3DPropertyEditorList < TP3DPropertyAccessVec3List >;
+  TP3DPropertyEditorVec4List = specialize gP3DPropertyEditorList < TP3DPropertyAccessVec4List >;
+  TP3DPropertyEditorQuatList = specialize gP3DPropertyEditorList < TP3DPropertyAccessQuatList >;
 
 {$ENDIF}
 
@@ -541,7 +557,7 @@ end;
 function TP3DPropertyEditorInt.GetValue: Single;
 begin
   if ( Assigned( Prop )) then
-    Result:= StrToInt( Prop.AsString );
+    Result:= StrToIntDef( Prop.AsString, 0 );
 end;
 
 procedure TP3DPropertyEditorInt.SetValue(AValue: Single);
@@ -627,11 +643,6 @@ begin
   ScrollBarH.Visible:= True;
   NameProp:= 'Name';
   SetProp( nil );
-  OptionsPopup:= TP3DPopupMenu.Create();
-  OptionsPopup.Items.Add( 'Select' );
-  OptionsPopup.Items.Add( 'Delete' );
-  OptionsPopup.Items.Add( 'Clear' );
-  OptionsPopup.OnItemClick:= @PopupClick;
 end;
 
 procedure gP3DPropertyEditorList.FastDestroy;
@@ -641,8 +652,6 @@ begin
   FOptionsSymbol.Free;
   FPlusSymbol.Free;
   FLabel.Free;
-  if ( P3DData.IsValid( OptionsPopup )) then
-    OptionsPopup.Free;
   inherited FastDestroy;
 end;
 
@@ -708,10 +717,10 @@ var
 begin
   Children.Clear();
   if ( Assigned( LProp )) then
-    for i:= 0 to LProp.Count - 1 do
+    for i:= 0 to LProp.ArrayCount - 1 do
       begin
         Item:= LProp.ArrayAsProp[ i ];
-        WriteLn( LProp.ClassName, '=', Item.AsString );
+        //WriteLn( LProp.ClassName, '=', Item.AsString );
         if ( Assigned( Item )) then
           begin
             {NProp:= Item.Value.Properties.GetPropByName( NameProp );
@@ -723,7 +732,7 @@ begin
             Children.Add( Item.AsString, Pointer( i ))
           end
         else
-          Children.Add( '<empty>', Item );
+          Children.Add( '<None>', Item );
       end;
 end;
 
@@ -742,7 +751,7 @@ procedure gP3DPropertyEditorList.MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer);
   end;}
 
 begin
-  Canvas.GetValidText( P3DSymbolPlus, FPlusSymbol, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
+  (*Canvas.GetValidText( P3DSymbolPlus, FPlusSymbol, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
   Canvas.GetValidText( P3DSymbolClose, FDeleteSymbol, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
   Canvas.GetValidText( P3DSymbolClear, FClearSymbol, P3DFontManager.Fonts[ 'Pascal3D-Symbols', Canvas.Font.Size ]);
 
@@ -767,7 +776,7 @@ begin
         begin // Clear
           LProp.Values[ Children.IndexOf( Selection )]:= nil;
           Selection.Data:= nil;
-          Selection.Caption:= '<empty>';
+          Selection.Caption:= '<None>';
         end}
       if ( P3DRect( Canvas.Width - FOptionsSymbol.Width - ScrollBarV.Width, Selection.FRenderPos.Y - ScrollBarV.Position,
                           FOptionsSymbol.Width, FOptionsSymbol.Height ).PtInRect( vec2( X, Y ))) then
@@ -779,19 +788,7 @@ begin
         inherited MouseUp(mb1, mb2, mb3, X, Y);
     end
   else
-    inherited MouseUp(mb1, mb2, mb3, X, Y);
-end;
-
-procedure gP3DPropertyEditorList.PopupClick(Sender: TP3DMenuItem);
-begin
-  OptionsPopup.Hide;
-  if (( Sender.Caption = 'Select' ) and ( Assigned( ObjInsp ))) then
-    begin
-      //WriteLn( Prop.Name, ' = ', TP3DPropertyAccessDataBlock( Prop ).Value.Name );
-      ObjInsp.Obj:= LProp.Values[ Integer( Selection.Data )];
-    end
-  else if ( Sender.Caption = 'Browse' ) then
-    ;
+    inherited MouseUp(mb1, mb2, mb3, X, Y);*)
 end;
 
 function gP3DPropertyEditorList.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;
@@ -811,8 +808,6 @@ begin
 end;
 
 procedure gP3DPropertyEditorList.Draw;
-var
-  s: TVec2;
 begin
   inherited Draw;
   if ( FDrawInsertion > -1 ) then
@@ -846,6 +841,55 @@ begin
         FDrawInsertion:= itm.FRenderPos.y + itm.Text.Height;
     end;
 end;
+
+
+{ gP3DPropertyEditorInterfacedPersistentList }
+
+constructor gP3DPropertyEditorInterfacedPersistentList.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+  OptionsPopup:= TP3DPopupMenu.Create();
+  OptionsPopup.Items.Add( 'Select' );
+  OptionsPopup.Items.Add( 'Delete' );
+  OptionsPopup.Items.Add( 'Clear' );
+  OptionsPopup.OnItemClick:= @PopupClick;
+end;
+
+procedure gP3DPropertyEditorInterfacedPersistentList.FastDestroy;
+begin
+  if ( P3DData.IsValid( OptionsPopup )) then
+    OptionsPopup.Free;
+
+  inherited FastDestroy;
+end;
+
+procedure gP3DPropertyEditorInterfacedPersistentList.MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer);
+begin
+  if ( Assigned( Selection )) then
+    begin
+      if ( P3DRect( Canvas.Width - FOptionsSymbol.Width - ScrollBarV.Width, Selection.FRenderPos.Y - ScrollBarV.Position,
+                          FOptionsSymbol.Width, FOptionsSymbol.Height ).PtInRect( vec2( X, Y ))) then
+        begin // Options
+          OptionsPopup.Width:= Canvas.Width;
+          OptionsPopup.PopUp( Canvas.Left, round( Canvas.Top + Selection.FRenderPos.Y - ScrollBarV.Position + FOptionsSymbol.Height ));
+        end
+      else
+        inherited MouseUp(mb1, mb2, mb3, X, Y);
+    end
+end;
+
+procedure gP3DPropertyEditorInterfacedPersistentList.PopupClick(Sender: TP3DMenuItem);
+begin
+  OptionsPopup.Hide;
+  if (( Sender.Caption = 'Select' ) and ( Assigned( ObjInsp ))) then
+    begin
+      //WriteLn( Prop.Name, ' = ', TP3DPropertyAccessDataBlock( Prop ).Value.Name );
+      ObjInsp.Obj:= LProp.Values[ Integer( Selection.Data )];
+    end
+  else if ( Sender.Caption = 'Browse' ) then
+    ;
+end;
+
 
 { TP3DPropertyEditorEnum }
 
@@ -887,7 +931,7 @@ begin
     end
   else
     begin
-      inherited SetCaption( '<empty>' );
+      inherited SetCaption( '<None>' );
       Canvas.GetValidText( '<noprop>', FLabel );
     end;
 end;
@@ -965,6 +1009,7 @@ begin
   Popup:= TP3DPopupMenu.Create();
   Popup.Items.Add( 'Select' );
   Popup.Items.Add( 'Browse' );
+  Popup.Items.Add( 'Clear' );
   Popup.OnItemClick:= @PopupClick;
 end;
 
@@ -993,7 +1038,9 @@ begin
       ObjInsp.Obj:= TP3DPropertyAccessInterfacedPersistent( Prop ).Value
     end
   else if ( Sender.Caption = 'Browse' ) then
-    ;
+
+  else if ( Sender.Caption = 'Clear' ) then
+    TP3DPropertyAccessInterfacedPersistent( Prop ).Value:= nil;
 end;
 
 

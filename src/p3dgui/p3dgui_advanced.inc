@@ -592,7 +592,7 @@ procedure TP3DImage.Draw;
 var
   c, p1, p2: TVec2;
   Shader: TP3DShader;
-  Uniform: TP3DShaderDecl;
+  Uniform, decl: TP3DShaderDecl;
   n: Integer;
   scale: Single;
 begin
@@ -634,24 +634,28 @@ begin
       if ( Shader.Uniforms.FindByName( 'proj', Uniform )) then
         Uniform.AsMat4:= Canvas.Proj;
 
-      glBegin( GL_TRIANGLE_FAN );
-      glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
-      glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
-      glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
-//      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
+      if ( P3DShaderActive.Attributes.FindByName( 'TexCoord0', decl )) then
+        begin
+          glBegin( GL_TRIANGLE_FAN );
 
-      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
-      glVertexAttrib2f( P3DAttribPosition, p2.X, p1.Y );
-//      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
+          glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A );
+          decl.AsVec2:= vec2( 0 );
+          glVertexAttrib2f( P3DAttribPosition, p1.X, p1.Y );
+    //      glVertexAttrib2f( P3DAttribTexCoord0, 1, 0 );
 
-      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
-      glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
-//      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
+          decl.AsVec2:= vec2( 1, 0 );
+          glVertexAttrib2f( P3DAttribPosition, p2.X, p1.Y );
+    //      glVertexAttrib2f( P3DAttribTexCoord0, 1, 1 );
 
-      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
-      glVertexAttrib2f( P3DAttribPosition, p1.X, p2.Y );
-      //glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
-      glEnd();
+          decl.AsVec2:= vec2( 1, 1 );
+          glVertexAttrib2f( P3DAttribPosition, p2.X, p2.Y );
+    //      glVertexAttrib2f( P3DAttribTexCoord0, 0, 1 );
+
+          decl.AsVec2:= vec2( 0, 1 );
+          glVertexAttrib2f( P3DAttribPosition, p1.X, p2.Y );
+          //glVertexAttrib2f( P3DAttribTexCoord0, 0, 0 );
+          glEnd();
+        end;
     end;
 end;
 

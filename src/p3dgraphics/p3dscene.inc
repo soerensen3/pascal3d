@@ -174,7 +174,7 @@ type
   end;
   TP3DSceneList = specialize gP3DCustomDatablockList < TP3DScene >;
   TP3DPropertyAccessScene = specialize gP3DPropertyAccessDataBlock < TP3DScene >;
-  TP3DPropertyAccessSceneList = specialize gP3DListPropertyAccess < TP3DSceneList, TP3DScene, TP3DPropertyAccessScene >;
+  TP3DPropertyAccessSceneList = specialize gP3DListPropertyAccessObject < TP3DSceneList, TP3DScene, TP3DPropertyAccessScene >;
 
 {$ENDIF}
 
@@ -378,11 +378,11 @@ procedure TP3DRenderList.Render(Camera: TP3DActor; const AFlags: TP3DRenderListF
     function nextPowerOfTwo( Value: Integer ): Integer;
     begin
       Dec( Value );
-      value:= value or value shr 1;
-      value:= value or value shr 2;
-      value:= value or value shr 4;
-      value:= value or value shr 8;
-      value:= value or value shr 16;
+      Value:= Value or Value shr 1;
+      Value:= Value or Value shr 2;
+      Value:= Value or Value shr 4;
+      Value:= Value or Value shr 8;
+      Value:= Value or Value shr 16;
       Inc( Value );
       Result:= Value;
     end;

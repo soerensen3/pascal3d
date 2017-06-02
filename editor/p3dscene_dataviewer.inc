@@ -322,7 +322,7 @@ begin
           if ( P3DMatchFileName( DragItem.Caption, '*.p3d' )) then
             begin
               try
-                P3DData.OpenLibrary( AppendPathDelim( Directory ) + DragItem.Caption );
+                SceneMain.ActiveLibrary:= P3DData.Libraries[ P3DData.OpenLibrary( AppendPathDelim( Directory ) + DragItem.Caption )];
               except
                 on E: Exception do
                   SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + DragItem.Caption ), PChar( E.Message ), Nil );
@@ -336,7 +336,7 @@ begin
           if ( P3DMatchFileName( DragItem.Caption, '*.p3d' )) then
             begin
               try
-                P3DData.OpenLibrary( AppendPathDelim( Directory ) + DragItem.Caption );
+                SceneMain.ActiveLibrary:= P3DData.Libraries[ P3DData.OpenLibrary( AppendPathDelim( Directory ) + DragItem.Caption )];
               except
                 on E: Exception do
                   SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_ERROR, PChar( 'Error loading file ' + DragItem.Caption ), PChar( E.Message ), Nil );

@@ -7,14 +7,14 @@
     P3DAttribColor              = 3;
     P3DAttribCotangent          = 6;
     P3DAttribTangent            = 7;
-    P3DAttribTexCoord0          = 8;
+{    P3DAttribTexCoord0          = 8;
     P3DAttribTexCoord1          = 9;
     P3DAttribTexCoord2          = 10;
     P3DAttribTexCoord3          = 11;
     P3DAttribTexCoord4          = 12;
     P3DAttribTexCoord5          = 13;
     P3DAttribTexCoord6          = 14;
-    P3DAttribTexCoord7          = 15;
+    P3DAttribTexCoord7          = 15;}
 
 
   type
