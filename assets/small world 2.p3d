@@ -1,0 +1,455 @@
+{
+    "Objects": [
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Cameras[\"Camera\"]",
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"Camera\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                7.481131553649902,
+                -6.5076398849487305,
+                5.34366512298584
+            ],
+            "Name": "Camera",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"Ground\"]",
+            "Scale": [
+                4.0,
+                4.0,
+                4.0
+            ],
+            "DataPath": "Objects[\"Grid\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "Grid",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"Water\"]",
+            "Action": "Actions[\"Action\"]",
+            "Scale": [
+                4.0,
+                4.0,
+                4.0
+            ],
+            "DataPath": "Objects[\"Plane\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.060920000076293945
+            ],
+            "Name": "Plane",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Lights[\"Lamp\"]",
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"Lamp\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                4.076245307922363,
+                -5.096420764923096,
+                5.791895866394043
+            ],
+            "Name": "Lamp",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "None",
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"Empty\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                1.0282871723175049,
+                -1.49763822555542,
+                0.17928816378116608
+            ],
+            "Name": "Empty",
+            "Children": []
+        }
+    ],
+    "Materials": [
+        {
+            "Spec": [
+                0.026315778493881226,
+                0.026315778493881226,
+                0.026315778493881226
+            ],
+            "TransparencyMode": "tmNone",
+            "Diff": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+            ],
+            "Maps": [
+                {
+                    "DiffuseFactor": 0.0,
+                    "Data": "Textures[\"Texture.005\"]",
+                    "ClassName": "TP3DMaterialMapBase",
+                    "Mode": "tex_slotMix",
+                    "NormalFactor": 1.0
+                },
+                {
+                    "DiffuseFactor": 1.0,
+                    "Data": "Textures[\"Diffuse Color\"]",
+                    "ClassName": "TP3DMaterialMapBase",
+                    "Mode": "tex_slotMix"
+                },
+                {
+                    "DiffuseFactor": 0.0,
+                    "Data": "Textures[\"Texture.006\"]",
+                    "Scale": [
+                        10.0,
+                        10.0,
+                        1.0
+                    ],
+                    "Quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "ClassName": "TP3DMaterialMapBase",
+                    "Mode": "tex_slotMix",
+                    "NormalFactor": 0.2999997138977051
+                }
+            ],
+            "DataPath": "Materials[\"Material.005\"]",
+            "Unlit": false,
+            "ClassName": "TP3DMaterialBase",
+            "Name": "Material.005",
+            "Instancing": 1,
+            "Spec_Hardness": 4
+        },
+        {
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "TransparencyMode": "tmMultiply",
+            "Diff": [
+                0.08500436693429947,
+                0.1928277462720871,
+                0.800000011920929
+            ],
+            "Action": "Actions[\"MaterialAction\"]",
+            "Maps": [
+                {
+                    "DiffuseFactor": 0.0,
+                    "TexChannel": 0,
+                    "Data": "Textures[\"Texture.002\"]",
+                    "Scale": [
+                        0.5,
+                        0.5,
+                        1.0
+                    ],
+                    "Quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "ClassName": "TP3DMaterialMapBase",
+                    "Mode": "tex_slotMix",
+                    "NormalFactor": 0.10000000149011612
+                },
+                {
+                    "DiffuseFactor": 0.0,
+                    "TexChannel": 0,
+                    "Data": "Textures[\"Texture.007\"]",
+                    "Scale": [
+                        15.0,
+                        15.0,
+                        1.0
+                    ],
+                    "Quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "Position": [
+                        0.699999988079071,
+                        0.4000000059604645,
+                        0.0
+                    ],
+                    "ClassName": "TP3DMaterialMapBase",
+                    "Mode": "tex_slotMix",
+                    "NormalFactor": 0.10000000149011612
+                },
+                {
+                    "DiffuseFactor": 1.0,
+                    "Data": "Textures[\"Diffuse Color.001\"]",
+                    "ClassName": "TP3DMaterialMapBase",
+                    "Mode": "tex_slotMix"
+                },
+                {
+                    "DiffuseFactor": 0.0,
+                    "Data": "Textures[\"Texture.008\"]",
+                    "Scale": [
+                        7.0,
+                        7.0,
+                        1.0
+                    ],
+                    "Quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "Position": [
+                        0.5,
+                        0.20000000298023224,
+                        0.0
+                    ],
+                    "ClassName": "TP3DMaterialMapBase",
+                    "Mode": "tex_slotMix",
+                    "NormalFactor": 0.10000000149011612
+                }
+            ],
+            "DataPath": "Materials[\"Material\"]",
+            "Unlit": false,
+            "ClassName": "TP3DMaterialBase",
+            "Name": "Material",
+            "Instancing": 1,
+            "Spec_Hardness": 511
+        }
+    ],
+    "Joints": [],
+    "Textures": [
+        {
+            "Filtering": "tfLinear",
+            "File": "normal.png",
+            "FilteringMipMap": "tfLinear",
+            "DataPath": "Textures[\"Texture.005\"]",
+            "MipMap": 1,
+            "ClassName": "TP3DTexture",
+            "Name": "Texture.005"
+        },
+        {
+            "Filtering": "tfLinear",
+            "File": "Water Diffuse Color.png",
+            "FilteringMipMap": "tfLinear",
+            "DataPath": "Textures[\"Diffuse Color.001\"]",
+            "MipMap": 1,
+            "ClassName": "TP3DTexture",
+            "Name": "Diffuse Color.001"
+        },
+        {
+            "Filtering": "tfLinear",
+            "File": "wavemap.png",
+            "FilteringMipMap": "tfLinear",
+            "DataPath": "Textures[\"Texture.008\"]",
+            "MipMap": 1,
+            "ClassName": "TP3DTexture",
+            "Name": "Texture.008"
+        },
+        {
+            "Filtering": "tfLinear",
+            "File": "wavemap.png",
+            "FilteringMipMap": "tfLinear",
+            "DataPath": "Textures[\"Texture.007\"]",
+            "MipMap": 1,
+            "ClassName": "TP3DTexture",
+            "Name": "Texture.007"
+        },
+        {
+            "Filtering": "tfLinear",
+            "File": "IslandDiffuse.png",
+            "FilteringMipMap": "tfLinear",
+            "DataPath": "Textures[\"Diffuse Color\"]",
+            "MipMap": 1,
+            "ClassName": "TP3DTexture",
+            "Name": "Diffuse Color"
+        },
+        {
+            "Filtering": "tfLinear",
+            "File": "TexturesCom_SandwPebbles2_normalmap_M.png",
+            "FilteringMipMap": "tfLinear",
+            "DataPath": "Textures[\"Texture.006\"]",
+            "MipMap": 1,
+            "ClassName": "TP3DTexture",
+            "Name": "Texture.006"
+        },
+        {
+            "Filtering": "tfLinear",
+            "File": "WaterNoise00Dot3.png",
+            "FilteringMipMap": "tfLinear",
+            "DataPath": "Textures[\"Texture.002\"]",
+            "MipMap": 1,
+            "ClassName": "TP3DTexture",
+            "Name": "Texture.002"
+        }
+    ],
+    "Armatures": [],
+    "Cameras": [
+        {
+            "FOV": 0.8575560450553894,
+            "DataPath": "Cameras[\"Camera\"]",
+            "Far": 100.0,
+            "ClassName": "TP3DCamera",
+            "Near": 0.10000000149011612,
+            "Name": "Camera"
+        }
+    ],
+    "Scenes": [
+        {
+            "Objects": [
+                "Objects[\"Grid\"]",
+                "Objects[\"Plane\"]",
+                "Objects[\"Empty\"]",
+                "Objects[\"Lamp\"]",
+                "Objects[\"Camera\"]"
+            ],
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "Objects[\"Camera\"]",
+            "Name": "Scene"
+        }
+    ],
+    "Actions": [
+        {
+            "Name": "Action",
+            "ClassName": "TP3DAction",
+            "DataPath": "Actions[\"Action\"]"
+        },
+        {
+            "Name": "MaterialAction",
+            "ClassName": "TP3DAction",
+            "DataPath": "Actions[\"MaterialAction\"]"
+        }
+    ],
+    "Meshes": [
+        {
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"Material.005\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 9800
+                }
+            ],
+            "PackedPositions": "@0",
+            "Loops": "@590456",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@1060912",
+            "Name": "Ground",
+            "PackedVertexWeightIndices": "@2474664",
+            "TexCoords": [
+                "@2041024"
+            ],
+            "Edges": "@747276",
+            "PackedCotangents": "@1570572",
+            "WeightGroups": [
+                {
+                    "Name": "Group",
+                    "Index": 0
+                }
+            ],
+            "DataPath": "Meshes[\"Ground\"]",
+            "PackedTangents": "@1100120",
+            "PackedNormals": "@120004",
+            "PackedVertexWeights": "@2354660"
+        },
+        {
+            "PackedPositions": "@2634668",
+            "Loops": "@2634772",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@2634828",
+            "Name": "Water",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"Material\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 0
+                }
+            ],
+            "TexCoords": [
+                "@2634940"
+            ],
+            "Edges": "@2634792",
+            "PackedCotangents": "@2634888",
+            "DataPath": "Meshes[\"Water\"]",
+            "PackedTangents": "@2634836",
+            "PackedNormals": "@2634720"
+        }
+    ],
+    "Lights": [
+        {
+            "LightType": "ltSun",
+            "DataPath": "Lights[\"Lamp\"]",
+            "Energy": 5.0,
+            "ClassName": "TP3DLight",
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "Lamp"
+        }
+    ]
+}
