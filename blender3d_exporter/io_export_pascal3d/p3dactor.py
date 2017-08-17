@@ -1,9 +1,12 @@
 from . import p3ddatablock, p3dexporthelper
 import bpy
 
-class P3DActor( p3ddatablock.P3DDataBlock ):
+class P3DObject( p3ddatablock.P3DDataBlock ):
     def __init__( self, block, root = None, path='', obj = None ):
-        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Objects', block.name ))
+        self.Name = block.name
+        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Objects', self.Name ))
+
+        self.ClassName = 'TP3DObject'
         self.Data = p3dexporthelper.export_data_path( block.data, root, block )
         self.Position = list( block.location )
         self.Quaternion = list( block.rotation_quaternion )
@@ -18,4 +21,4 @@ class P3DActor( p3ddatablock.P3DDataBlock ):
     def find_storage( root ):
         return root.Objects
 
-p3dexporthelper.dict_export_class[ bpy.types.Object ] = P3DActor
+p3dexporthelper.dict_export_class[ bpy.types.Object ] = P3DObject

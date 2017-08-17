@@ -4,8 +4,9 @@ import bpy
 class P3DJoint( p3ddatablock.P3DDataBlock ):
 
     def __init__( self, block, root = None, path='', obj = None ):
-        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Joints', block.name ))
-
+        self.Name = block.name
+        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Joints', self.Name ), obj )
+        self.ClassName = 'TP3DJoint'
         matrix = obj.convert_space(block, block.matrix_basis, 'POSE', 'WORLD')
         self.Tail = list( block.bone.tail_local )
         self.Quaternion = list( matrix.to_quaternion())

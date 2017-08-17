@@ -105,7 +105,9 @@ class P3DAction( p3ddatablock.P3DDataBlock ):
                 self.file.pop()'''
 
     def __init__( self, block, root = None, path='', obj = None ):
-        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Actions', block.name ))
+        self.Name = 'action.' + block.name
+        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Actions', self.Name ))
+        self.ClassName = 'TP3DAction'
 
     @staticmethod
     def find_storage( root ):

@@ -3,7 +3,10 @@ from . import p3dexporthelper
 class P3DDataBlock( object ):
     def __init__( self, block, root = None, path='', obj = None ):
         super().__init__()
-        self.Name = block.name
+        #if ( obj ):
+        #  self.Name = obj.type.capitalize() + '.' + block.name
+        #else:
+        #  self.Name = block.name
         self.DataPath = path
 
         if hasattr( block, 'animation_data'):

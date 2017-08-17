@@ -36,7 +36,7 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
         pos = root.BinFile.getposition()
         root.BinFile.writeint( len( block.loops ))
         for l in block.loops:
-            root.BinFile.writeint( l.edge_index )
+            root.BinFile.writeint( l.vertex_index ) #l.edge_index )
         return pos
 
     def ExportEdges( self, block, root ):
@@ -88,8 +88,8 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
             if ( lenManh ):
                 vec[:] = [ n / lenManh for n in vec ] #scale vector by 1/manhattan distance
 
-            if ( len( vgrps ) > 4 ):
-                self.report({ 'INFO' }, 'vertexweights: [{:2f},{:2f},{:2f},{:2f}]'.format( *vec ) + ' indices: [{:d},{:d},{:d},{:d}]'.format( *idx ))
+            #if ( len( vgrps ) > 4 ):
+            #    self.report({ 'INFO' }, 'vertexweights: [{:2f},{:2f},{:2f},{:2f}]'.format( *vec ) + ' indices: [{:d},{:d},{:d},{:d}]'.format( *idx ))
             root.BinFile.writevec(( vec[ 0 ], vec[ 1 ], vec[ 2 ])) # we only need the first 3 weights as the last can be calculated as 1-other weights
             bin += struct.pack( '4i', *idx ) #write indices separately from weights
 
@@ -99,9 +99,21 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
 
         return '@' + str( weightpos ), '@' + str( indexpos )
 
-    def __init__( self, block, root = None, path='', obj = None ):
-        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Meshes', block.name ))
+    def ExportFaces( self, block, root ):
+        totno = 0
+        mesh = block
+        pos = root.BinFile.getposition()
+        root.BinFile.writeint( len( block.polygons ))
+        for polygon in block.polygons:
+            bin = struct.pack( 'i', polygon.loop_start )
+            root.BinFile.file.write( bin )
+            totno += 1
+        return pos
 
+    def __init__( self, block, root = None, path='', obj = None ):
+        self.Name = 'mesh.' + block.name
+        super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Meshes', self.Name ), obj )
+        self.ClassName = 'TP3DMesh'
         if ( block.materials ):
             root.createBinFile()
             print( repr( root.BinFile ))
@@ -111,13 +123,14 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
             else:
               mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
 
-            self.Positions = '@' + str( self.ExportPositions( mesh, root ))
-            self.Normals = '@' + str( self.ExportNormals( mesh, root ))
+            self.PackedPositions = '@' + str( self.ExportPositions( mesh, root ))
+            self.PackedNormals = '@' + str( self.ExportNormals( mesh, root ))
             self.Loops = '@' + str( self.ExportLoops( mesh, root ))
             self.Edges = '@' + str( self.ExportEdges( mesh, root ))
+            self.PackedFaces = '@' + str( self.ExportFaces( mesh, root ))
             if ( mesh.uv_layers ):
-                self.Tangents = '@' + str( self.ExportTangents( mesh, root ))
-                self.Cotangents = '@' + str( self.ExportCotangents( mesh, root ))
+                self.PackedTangents = '@' + str( self.ExportTangents( mesh, root ))
+                self.PackedCotangents = '@' + str( self.ExportCotangents( mesh, root ))
                 self.TexCoords = []
                 index = 0
                 for uv in mesh.uv_layers:
@@ -126,12 +139,12 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
             if ( obj ):
                 grps = self.ExportVertexGroups( obj )
                 if ( grps ):
-                    self.VertexGroups = grps
-                    self.VertexWeights, self.VertexWeightIndices = self.ExportWeights( mesh, root, self.VertexGroups )
-            bpy.data.meshes.remove( mesh )
+                    self.WeightGroups = grps
+                    self.PackedVertexWeights, self.PackedVertexWeightIndices = self.ExportWeights( mesh, root, self.WeightGroups )
             if ( len( block.materials ) > 1 ):
                 root.Exporter.report({ 'WARNING' }, 'Mesh "{}" has multiple materials. This is not supported by the exporter yet. Only the first material is exported for the whole mesh. Please separate the mesh by materials'.format( block.name ))
-            self.Materials = [ p3dexporthelper.export_data_path( block.materials[ 0 ], root, block )]
+            self.PackedMaterialGroups = [ { "PolyStart": 0, "PolyEnd": len( mesh.polygons ) - 1,  "Material": p3dexporthelper.export_data_path( block.materials[ 0 ], root, block )}]
+            bpy.data.meshes.remove( mesh )
         else:
             root.Exporter.report({ 'ERROR' }, 'Mesh "{}" does not have a material'.format( block.name ))
 
