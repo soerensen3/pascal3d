@@ -3,7 +3,7 @@ import bpy
 
 class P3DScene( p3ddatablock.P3DDataBlock ):
     def __init__( self, block, root = None, path='', obj = None ):
-        self.Name = 'scene.' + block.name
+        self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Scenes', self.Name ))
         self.ClassName = 'TP3DScene'
         self.Cam = p3dexporthelper.export_data_path( block.camera, root )

@@ -3,7 +3,7 @@ import bpy
 
 class P3DLight( p3ddatablock.P3DDataBlock ):
     def __init__( self, block, root = None, path='', obj = None ):
-        self.Name = 'light.' + block.name
+        self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Lights', self.Name ), obj )
         self.ClassName = 'TP3DLight'
         self.LightType = 'lt' + block.type.capitalize()

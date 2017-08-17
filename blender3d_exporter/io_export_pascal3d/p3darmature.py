@@ -4,7 +4,7 @@ import bpy
 class P3DArmature( p3ddatablock.P3DDataBlock ):
 
     def __init__( self, block, root = None, path='', obj = None ):
-        self.Name = 'armature.' + block.name
+        self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Armatures', self.Name ), obj )
         self.ClassName = 'TP3DArmature'
         self.Joints = []

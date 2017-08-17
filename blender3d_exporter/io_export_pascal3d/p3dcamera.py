@@ -3,7 +3,7 @@ import bpy
 
 class P3DCamera( p3ddatablock.P3DDataBlock ):
     def __init__( self, block, root = None, path='', obj = None ):
-        self.Name = 'camera.' + block.name        
+        self.Name = block.name        
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Cameras', self.Name ), obj )
         self.ClassName = 'TP3DCamera'
         self.Near = block.clip_start

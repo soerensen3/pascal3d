@@ -4,7 +4,7 @@ import bpy, os
 class P3DTexture( p3ddatablock.P3DDataBlock ):
 
     def __init__( self, block, root = None, path='', obj = None ):
-        self.Name = 'texture.' + block.name
+        self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Textures', self.Name ))
         self.ClassName = 'TP3DTexture'
         filepath = block.image.filepath

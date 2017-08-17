@@ -45,7 +45,7 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
         return mapobj
 
     def __init__( self, block, root = None, path='', obj = None ):
-        self.Name = 'material.' + block.name
+        self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Materials', self.Name ))
         self.ClassName = 'TP3DMaterialBase'
         self.Diff = list( block.diffuse_color * block.diffuse_intensity )

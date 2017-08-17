@@ -1,5 +1,8 @@
 from . import p3ddata, p3ddatablock
 
+def swap_quat( quat ):
+    return [ quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ]]
+
 indexedprop = "{}[\"{}\"]" #name["index"]
 dict_export_class = {}
 

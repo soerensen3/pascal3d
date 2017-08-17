@@ -111,7 +111,7 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
         return pos
 
     def __init__( self, block, root = None, path='', obj = None ):
-        self.Name = 'mesh.' + block.name
+        self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Meshes', self.Name ), obj )
         self.ClassName = 'TP3DMesh'
         if ( block.materials ):

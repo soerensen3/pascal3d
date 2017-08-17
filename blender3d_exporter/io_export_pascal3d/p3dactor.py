@@ -9,7 +9,7 @@ class P3DObject( p3ddatablock.P3DDataBlock ):
         self.ClassName = 'TP3DObject'
         self.Data = p3dexporthelper.export_data_path( block.data, root, block )
         self.Position = list( block.location )
-        self.Quaternion = list( block.rotation_quaternion )
+        self.Quaternion = p3dexporthelper.swap_quat( list( block.rotation_quaternion ))
         self.Scale = list( block.scale )
         self.RotationOrder = 'ro' + block.rotation_mode
         # self.Visible = block.is_visible( scene )
