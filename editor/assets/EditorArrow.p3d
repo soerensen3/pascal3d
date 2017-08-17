@@ -1,34 +1,86 @@
-<?xml version="1.0" ?>
-<p3dfile
-   version = "0.1">
-  <scene
-     Name = "Scene">
-    <object
-       Data = "/mesh_ArrowX"
-       Scale = " 1.000000, 1.000000, 1.000000"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Position = " 0.000000, 0.000000, 0.000000"
-       Collision = "acNone"
-       RotationOrder = "roXYZ"
-       Name = "ArrowX" />
-  </scene>
-  <mesh
-     Loops = "EditorArrow.p3dbin:1100"
-     Positions = "EditorArrow.p3dbin:0"
-     Faces = "EditorArrow.p3dbin:1392"
-     Normals = "EditorArrow.p3dbin:232"
-     Name = "mesh_ArrowX">
-    <materialgroup
-       PolyEnd = "18"
-       PolyStart = "0"
-       Material = "/material_MaterialX" />
-  </mesh>
-  <materialbase
-     Unlit = "1"
-     Spec = "0.500000, 0.500000, 0.500000"
-     Diff = "0.800000, 0.800000, 0.800000"
-     Spec_Hardness = "50.000000"
-     TransparencyMode = "p3dmtNone"
-     Instancing = "1"
-     Name = "material_MaterialX" />
-</p3dfile>
+{
+    "Objects": [
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"ArrowX\"]",
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"ArrowX\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ArrowX",
+            "Children": []
+        }
+    ],
+    "Materials": [
+        {
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "TransparencyMode": "tmNone",
+            "Diff": [
+                0.800000011920929,
+                0.0,
+                0.0
+            ],
+            "Maps": [],
+            "DataPath": "Materials[\"MaterialX\"]",
+            "Unlit": true,
+            "ClassName": "TP3DMaterialBase",
+            "Name": "MaterialX",
+            "Instancing": 1,
+            "Spec_Hardness": 50
+        }
+    ],
+    "Joints": [],
+    "Textures": [],
+    "Armatures": [],
+    "Cameras": [],
+    "Scenes": [
+        {
+            "Objects": [
+                "Objects[\"ArrowX\"]"
+            ],
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "None",
+            "Name": "Scene"
+        }
+    ],
+    "Actions": [],
+    "Meshes": [
+        {
+            "Edges": "@1392",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"MaterialX\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 18
+                }
+            ],
+            "PackedPositions": "@0",
+            "DataPath": "Meshes[\"ArrowX\"]",
+            "Loops": "@1100",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@1972",
+            "Name": "ArrowX",
+            "PackedNormals": "@232"
+        }
+    ],
+    "Lights": []
+}

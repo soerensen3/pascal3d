@@ -1,88 +1,210 @@
-<?xml version="1.0" ?>
-<p3dfile
-   version = "0.1">
-  <scene
-     Name = "Scene">
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_ArrowX"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 1.000000, 1.000000, 1.000000"
-       Collision = "acNone"
-       Name = "ArrowX" />
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_ArrowY"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 1.000000, 1.000000, 1.000000"
-       Collision = "acNone"
-       Name = "ArrowY" />
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_ArrowZ"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 1.000000, 1.000000, 1.000000"
-       Collision = "acNone"
-       Name = "ArrowZ" />
-  </scene>
-  <mesh
-     Loops = "EditorArrows.p3dbin:1100"
-     Faces = "EditorArrows.p3dbin:1392"
-     Positions = "EditorArrows.p3dbin:0"
-     Normals = "EditorArrows.p3dbin:232"
-     Name = "mesh_ArrowX">
-    <materialgroup
-       PolyEnd = "18"
-       Material = "/material_MaterialX"
-       PolyStart = "0" />
-  </mesh>
-  <mesh
-     Loops = "EditorArrows.p3dbin:2572"
-     Faces = "EditorArrows.p3dbin:2864"
-     Positions = "EditorArrows.p3dbin:1472"
-     Normals = "EditorArrows.p3dbin:1704"
-     Name = "mesh_ArrowY">
-    <materialgroup
-       PolyEnd = "18"
-       Material = "/material_MaterialY"
-       PolyStart = "0" />
-  </mesh>
-  <mesh
-     Loops = "EditorArrows.p3dbin:4044"
-     Faces = "EditorArrows.p3dbin:4336"
-     Positions = "EditorArrows.p3dbin:2944"
-     Normals = "EditorArrows.p3dbin:3176"
-     Name = "mesh_ArrowZ">
-    <materialgroup
-       PolyEnd = "18"
-       Material = "/material_MaterialZ"
-       PolyStart = "0" />
-  </mesh>
-  <materialbase
-     Diff = "0.800000, 0.000000, 0.000000"
-     Spec = "0.500000, 0.500000, 0.500000"
-     TransparencyMode = "p3dmtNone"
-     Instancing = "1"
-     Unlit = "1"
-     Spec_Hardness = "50.000000"
-     Name = "material_MaterialX" />
-  <materialbase
-     Diff = "0.000000, 0.000000, 1.000000"
-     Spec = "0.500000, 0.500000, 0.500000"
-     TransparencyMode = "p3dmtNone"
-     Instancing = "1"
-     Unlit = "1"
-     Spec_Hardness = "50.000000"
-     Name = "material_MaterialZ" />
-  <materialbase
-     Diff = "0.000000, 0.800000, 0.000000"
-     Spec = "0.500000, 0.500000, 0.500000"
-     TransparencyMode = "p3dmtNone"
-     Instancing = "1"
-     Unlit = "1"
-     Spec_Hardness = "50.000000"
-     Name = "material_MaterialY" />
-</p3dfile>
+{
+    "Objects": [
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"ArrowX\"]",
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"ArrowX\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ArrowX",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"ArrowY\"]",
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"ArrowY\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ArrowY",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"ArrowZ\"]",
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"ArrowZ\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ArrowZ",
+            "Children": []
+        }
+    ],
+    "Materials": [
+        {
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "TransparencyMode": "tmNone",
+            "Diff": [
+                0.800000011920929,
+                0.0,
+                0.0
+            ],
+            "Maps": [],
+            "DataPath": "Materials[\"MaterialX\"]",
+            "Unlit": true,
+            "ClassName": "TP3DMaterialBase",
+            "Name": "MaterialX",
+            "Instancing": 1,
+            "Spec_Hardness": 50
+        },
+        {
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "TransparencyMode": "tmNone",
+            "Diff": [
+                0.0,
+                0.800000011920929,
+                0.0
+            ],
+            "Maps": [],
+            "DataPath": "Materials[\"MaterialY\"]",
+            "Unlit": true,
+            "ClassName": "TP3DMaterialBase",
+            "Name": "MaterialY",
+            "Instancing": 1,
+            "Spec_Hardness": 50
+        },
+        {
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "TransparencyMode": "tmNone",
+            "Diff": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Maps": [],
+            "DataPath": "Materials[\"MaterialZ\"]",
+            "Unlit": true,
+            "ClassName": "TP3DMaterialBase",
+            "Name": "MaterialZ",
+            "Instancing": 1,
+            "Spec_Hardness": 50
+        }
+    ],
+    "Joints": [],
+    "Textures": [],
+    "Armatures": [],
+    "Cameras": [],
+    "Scenes": [
+        {
+            "Objects": [
+                "Objects[\"ArrowX\"]",
+                "Objects[\"ArrowY\"]",
+                "Objects[\"ArrowZ\"]"
+            ],
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "None",
+            "Name": "Scene"
+        }
+    ],
+    "Actions": [],
+    "Meshes": [
+        {
+            "Edges": "@1392",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"MaterialX\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 18
+                }
+            ],
+            "PackedPositions": "@0",
+            "DataPath": "Meshes[\"ArrowX\"]",
+            "Loops": "@1100",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@1972",
+            "Name": "ArrowX",
+            "PackedNormals": "@232"
+        },
+        {
+            "Edges": "@3444",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"MaterialY\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 18
+                }
+            ],
+            "PackedPositions": "@2052",
+            "DataPath": "Meshes[\"ArrowY\"]",
+            "Loops": "@3152",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@4024",
+            "Name": "ArrowY",
+            "PackedNormals": "@2284"
+        },
+        {
+            "Edges": "@5496",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"MaterialZ\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 18
+                }
+            ],
+            "PackedPositions": "@4104",
+            "DataPath": "Meshes[\"ArrowZ\"]",
+            "Loops": "@5204",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@6076",
+            "Name": "ArrowZ",
+            "PackedNormals": "@4336"
+        }
+    ],
+    "Lights": []
+}

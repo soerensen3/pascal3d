@@ -244,18 +244,18 @@ procedure CreateEditorScenes;
 var
   n: Integer;
 begin
-  //n:= P3DData.OpenLibrary( 'EditorArrow.p3d' );
+  n:= P3DData.OpenLibrary( 'EditorArrow.p3d' );
   //P3DData.Libraries[ n ].IsDesignerPackage:= True;
-  //EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
-{  n:= P3DData.OpenLibrary( 'EditorArrows.p3d' );
-  P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
+  n:= P3DData.OpenLibrary( 'EditorArrows.p3d' );
+  //P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrows:= P3DData.Libraries[ n ].Scenes[ 0 ];
   n:= P3DData.OpenLibrary( 'EditorLamp.p3d' );
-  P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  //P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneLamp:= P3DData.Libraries[ n ].Scenes[ 0 ];
   n:= P3DData.OpenLibrary( 'EditorJoint.p3d' );
-  P3DData.Libraries[ n ].IsDesignerPackage:= True;
-  EditorSceneJoint:= P3DData.Libraries[ n ].Scenes[ 0 ];}
+  //P3DData.Libraries[ n ].IsDesignerPackage:= True;
+  EditorSceneJoint:= P3DData.Libraries[ n ].Scenes[ 0 ];
   EditorSceneLampMaterial:= TP3DMaterialBase.Create();//TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]); //Error
 end;
 
@@ -1065,18 +1065,18 @@ begin
   Accept:= True;
   if ( AData is TP3DLight ) then
     begin
-      {if ( Assigned( Selection ) and ( Selection.Data = AData )) then
+      if ( Assigned( Selection ) and ( Selection.Data = AData )) then
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
           EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials ]);
         end
       else
-        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );}
+        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
     end
   else if ( AData is TP3DJoint ) then
     begin
-      {if ( Assigned( Selection ) and ( Selection.Data = AData )) then
+      if ( Assigned( Selection ) and ( Selection.Data = AData )) then
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
@@ -1086,13 +1086,13 @@ begin
                                             mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 ))}, Viewer.RenderList, AFlags - [ rlfMaterials ]);
         end
       else
-        EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );}
+        EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
     end
   else if ( AData is TP3DMesh ) then
     if ( Assigned( Selection ) and ( Selection.Data = AData ) and ( Assigned( TP3DMesh( AData ).Armature ))) then
       begin
-//        SelectionMaterial.Alpha:= 1;
-//        SelectionMaterial.PassToShader();
+        SelectionMaterial.Alpha:= 1;
+        SelectionMaterial.PassToShader();
         {with ( TP3DMesh( AData ).Armature ) do
           begin
             CurrentAction.UpdateFrameSample;

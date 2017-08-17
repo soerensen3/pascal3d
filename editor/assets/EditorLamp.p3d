@@ -1,110 +1,254 @@
-<?xml version="1.0" ?>
-<p3dfile
-   version = "0.1">
-  <scene
-     Name = "Scene">
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_ring_top2"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 0.164580, 0.164580, 0.164580"
-       Collision = "acNone"
-       Name = "ring_top2" />
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_ring_center"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 0.164580, 0.164580, 0.164580"
-       Collision = "acNone"
-       Name = "ring_center" />
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_ring_bottom"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 0.164580, 0.164580, 0.164580"
-       Collision = "acNone"
-       Name = "ring_bottom" />
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_ring_top1"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 0.164580, 0.164580, 0.164580"
-       Collision = "acNone"
-       Name = "ring_top1" />
-    <object
-       Position = " 0.000000, 0.000000, 0.000000"
-       Data = "/mesh_bulb"
-       RotationOrder = "roXYZ"
-       Quaternion = " 0.000000, 0.000000, 0.000000, 1.000000"
-       Scale = " 0.164580, 0.164580, 0.164580"
-       Collision = "acNone"
-       Name = "bulb" />
-  </scene>
-  <mesh
-     Loops = "EditorLamp.p3dbin:776"
-     Faces = "EditorLamp.p3dbin:908"
-     Positions = "EditorLamp.p3dbin:0"
-     Normals = "EditorLamp.p3dbin:388"
-     Name = "mesh_ring_top2">
-    <materialgroup
-       PolyEnd = "7"
-       Material = "/material_Material.001"
-       PolyStart = "0" />
-  </mesh>
-  <mesh
-     Loops = "EditorLamp.p3dbin:1720"
-     Faces = "EditorLamp.p3dbin:1852"
-     Positions = "EditorLamp.p3dbin:944"
-     Normals = "EditorLamp.p3dbin:1332"
-     Name = "mesh_ring_center">
-    <materialgroup
-       PolyEnd = "7"
-       Material = "/material_Material.001"
-       PolyStart = "0" />
-  </mesh>
-  <mesh
-     Loops = "EditorLamp.p3dbin:10944"
-     Faces = "EditorLamp.p3dbin:13380"
-     Positions = "EditorLamp.p3dbin:1888"
-     Normals = "EditorLamp.p3dbin:3644"
-     Name = "mesh_bulb">
-    <materialgroup
-       PolyEnd = "159"
-       Material = "/material_Material.001"
-       PolyStart = "0" />
-  </mesh>
-  <mesh
-     Loops = "EditorLamp.p3dbin:14800"
-     Faces = "EditorLamp.p3dbin:14932"
-     Positions = "EditorLamp.p3dbin:14024"
-     Normals = "EditorLamp.p3dbin:14412"
-     Name = "mesh_ring_top1">
-    <materialgroup
-       PolyEnd = "7"
-       Material = "/material_Material.001"
-       PolyStart = "0" />
-  </mesh>
-  <mesh
-     Loops = "EditorLamp.p3dbin:15744"
-     Faces = "EditorLamp.p3dbin:15876"
-     Positions = "EditorLamp.p3dbin:14968"
-     Normals = "EditorLamp.p3dbin:15356"
-     Name = "mesh_ring_bottom">
-    <materialgroup
-       PolyEnd = "7"
-       Material = "/material_Material.001"
-       PolyStart = "0" />
-  </mesh>
-  <materialbase
-     Diff = "0.640000, 0.212805, 0.069932"
-     Spec = "0.500000, 0.500000, 0.500000"
-     TransparencyMode = "p3dmtNone"
-     Instancing = "1"
-     Unlit = "1"
-     Spec_Hardness = "50.000000"
-     Name = "material_Material.001" />
-</p3dfile>
+{
+    "Objects": [
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"ring_top2\"]",
+            "Scale": [
+                0.16458018124103546,
+                0.16458018124103546,
+                0.16458018124103546
+            ],
+            "DataPath": "Objects[\"ring_top2\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ring_top2",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"ring_center\"]",
+            "Scale": [
+                0.16458018124103546,
+                0.16458018124103546,
+                0.16458018124103546
+            ],
+            "DataPath": "Objects[\"ring_center\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ring_center",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"ring_top1\"]",
+            "Scale": [
+                0.16458018124103546,
+                0.16458018124103546,
+                0.16458018124103546
+            ],
+            "DataPath": "Objects[\"ring_top1\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ring_top1",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roXYZ",
+            "Data": "Meshes[\"bulb\"]",
+            "Scale": [
+                0.16458018124103546,
+                0.16458018124103546,
+                0.16458018124103546
+            ],
+            "DataPath": "Objects[\"bulb\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "bulb",
+            "Children": []
+        },
+        {
+            "RotationOrder": "roQUATERNION",
+            "Data": "Meshes[\"ring_bottom\"]",
+            "Scale": [
+                0.16458018124103546,
+                0.16458018124103546,
+                0.16458018124103546
+            ],
+            "DataPath": "Objects[\"ring_bottom\"]",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Name": "ring_bottom",
+            "Children": []
+        }
+    ],
+    "Materials": [
+        {
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "TransparencyMode": "tmNone",
+            "Diff": [
+                0.64000004529953,
+                0.21280506253242493,
+                0.06993202120065689
+            ],
+            "Maps": [],
+            "DataPath": "Materials[\"Material.001\"]",
+            "Unlit": true,
+            "ClassName": "TP3DMaterialBase",
+            "Name": "Material.001",
+            "Instancing": 1,
+            "Spec_Hardness": 50
+        }
+    ],
+    "Joints": [],
+    "Textures": [],
+    "Scenes": [
+        {
+            "Objects": [
+                "Objects[\"ring_top2\"]",
+                "Objects[\"ring_center\"]",
+                "Objects[\"ring_bottom\"]",
+                "Objects[\"ring_top1\"]",
+                "Objects[\"bulb\"]"
+            ],
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "None",
+            "Name": "Scene"
+        }
+    ],
+    "Cameras": [],
+    "Actions": [],
+    "Armatures": [],
+    "Meshes": [
+        {
+            "Edges": "@908",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"Material.001\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 7
+                }
+            ],
+            "PackedPositions": "@0",
+            "DataPath": "Meshes[\"ring_top2\"]",
+            "Loops": "@776",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@1168",
+            "Name": "ring_top2",
+            "PackedNormals": "@388"
+        },
+        {
+            "Edges": "@2112",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"Material.001\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 7
+                }
+            ],
+            "PackedPositions": "@1204",
+            "DataPath": "Meshes[\"ring_center\"]",
+            "Loops": "@1980",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@2372",
+            "Name": "ring_center",
+            "PackedNormals": "@1592"
+        },
+        {
+            "Edges": "@3316",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"Material.001\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 7
+                }
+            ],
+            "PackedPositions": "@2408",
+            "DataPath": "Meshes[\"ring_bottom\"]",
+            "Loops": "@3184",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@3576",
+            "Name": "ring_bottom",
+            "PackedNormals": "@2796"
+        },
+        {
+            "Edges": "@4520",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"Material.001\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 7
+                }
+            ],
+            "PackedPositions": "@3612",
+            "DataPath": "Meshes[\"ring_top1\"]",
+            "Loops": "@4388",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@4780",
+            "Name": "ring_top1",
+            "PackedNormals": "@4000"
+        },
+        {
+            "Edges": "@16308",
+            "PackedMaterialGroups": [
+                {
+                    "Material": "Materials[\"Material.001\"]",
+                    "PolyStart": 0,
+                    "PolyEnd": 159
+                }
+            ],
+            "PackedPositions": "@4816",
+            "DataPath": "Meshes[\"bulb\"]",
+            "Loops": "@13872",
+            "ClassName": "TP3DMesh",
+            "PackedFaces": "@21176",
+            "Name": "bulb",
+            "PackedNormals": "@6572"
+        }
+    ],
+    "Lights": []
+}
