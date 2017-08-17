@@ -1,49 +1,141 @@
-<?xml version="1.0" encoding="utf-8"?>
-<p3dfile
-   version = "0.1">
-  <font
-     Name = "Pascal3D-Cursors"
-     Margin = "0.0234375"
-     Texture = "/P3DTexture1"
-     SizeFactor = "0.05761719"
-     MipMapLoadBias = "0">
-    <char
-       uv1 = "0.02343750,0.02343750"
-       uv2 = "0.07031250,0.08105469"
-       Letter = "A" />
-    <char
-       uv1 = "0.09375000,0.02343750"
-       uv2 = "0.14062500,0.08105469"
-       Letter = "B" />
-    <char
-       uv1 = "0.16406250,0.02343750"
-       uv2 = "0.21093750,0.08105469"
-       Letter = "C" />
-    <char
-       uv1 = "0.23437500,0.02343750"
-       uv2 = "0.28125000,0.08105469"
-       Letter = "D" />
-    <char
-       uv1 = "0.30468750,0.02343750"
-       uv2 = "0.35156250,0.08105469"
-       Letter = "E" />
-    <char
-       uv1 = "0.37500000,0.02343750"
-       uv2 = "0.42187500,0.08105469"
-       Letter = "F" />
-    <char
-       uv1 = "0.44531250,0.02343750"
-       uv2 = "0.49218750,0.08105469"
-       Letter = "G" />
-    <char
-       uv1 = "0.51562500,0.02343750"
-       uv2 = "0.58349609,0.08105469"
-       Letter = "H" />
-  </font>
-  <texture
-     File = "Pascal3D-Cursors.png"
-     Name = "P3DTexture1"
-     MipMap = "1"
-     Filtering = "tfLinear"
-     FilteringMipMap = "tfLinear" />
-</p3dfile>
+{
+  "ClassName" : "TP3DLibrary",
+  "Cameras" : [
+  ],
+  "Joints" : [
+  ],
+  "Lights" : [
+  ],
+  "Materials" : [
+  ],
+  "Meshes" : [
+  ],
+  "Objects" : [
+  ],
+  "Scenes" : [
+  ],
+  "Shaders" : [
+  ],
+  "Textures" : [
+    {
+      "ClassName" : "TP3DTexture",
+      "Name" : "P3DTexture1",
+      "Filtering" : "tfLinear",
+      "FilteringMipMap" : "tfLinear",
+      "MipMap" : 1,
+      "File" : "../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../assets/../../fonts/Pascal3D-Cursors.png"
+    }
+  ],
+  "Armatures" : [
+  ],
+  "Actions" : [
+  ],
+  "Fonts" : [
+    {
+      "ClassName" : "TP3DFontBmp",
+      "Name" : "Pascal3D-Cursors",
+      "SizeFactor" : 5.7617189999999999E-002,
+      "MipMapLoadBias" : 0,
+      "Texture" : "Textures[ \"P3DTexture1\" ]",
+      "Margin" : 2.3437500000000000E-002,
+      "Letters" : [
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "A",
+          "uv1" : [
+            2.3437500000000000E-002,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            7.0312500000000000E-002,
+            8.1054689999999999E-002
+          ]
+        },
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "B",
+          "uv1" : [
+            9.3750000000000000E-002,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            1.4062500000000000E-001,
+            8.1054689999999999E-002
+          ]
+        },
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "C",
+          "uv1" : [
+            1.6406250000000000E-001,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            2.1093750000000000E-001,
+            8.1054689999999999E-002
+          ]
+        },
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "D",
+          "uv1" : [
+            2.3437500000000000E-001,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            2.8125000000000000E-001,
+            8.1054689999999999E-002
+          ]
+        },
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "E",
+          "uv1" : [
+            3.0468750000000000E-001,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            3.5156250000000000E-001,
+            8.1054689999999999E-002
+          ]
+        },
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "F",
+          "uv1" : [
+            3.7500000000000000E-001,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            4.2187500000000000E-001,
+            8.1054689999999999E-002
+          ]
+        },
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "G",
+          "uv1" : [
+            4.4531250000000000E-001,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            4.9218750000000000E-001,
+            8.1054689999999999E-002
+          ]
+        },
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "H",
+          "uv1" : [
+            5.1562500000000000E-001,
+            2.3437500000000000E-002
+          ],
+          "uv2" : [
+            5.8349609000000002E-001,
+            8.1054689999999999E-002
+          ]
+        }
+      ]
+    }
+  ]
+}
