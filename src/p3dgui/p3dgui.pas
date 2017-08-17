@@ -23,10 +23,10 @@ interface
     SDL2,
     LazFileUtils,
     dglOpenGL,
-    p3dutils,
-    p3devents,
-    p3dgraphics,
     p3dMath,
+    pascal3d.utils,
+    pascal3d.events,
+    pascal3d.core,
     typinfo;
 
   type
@@ -44,10 +44,11 @@ interface
 
 
   {$DEFINE INTERFACE}
-  {$INCLUDE p3dgui_colors.inc}
-  {$INCLUDE p3dgui_manager.inc}
-  {$INCLUDE p3dgui_controllist.inc}
   {$INCLUDE p3dgui_graphiccontrol.inc}
+  {$INCLUDE p3dgui_controllist.inc}
+  {$INCLUDE p3dgui_manager.inc}
+
+  {$INCLUDE p3dgui_colors.inc}
 
   {$INCLUDE p3dgui_buttons.inc}
   {$INCLUDE p3dgui_menus.inc}

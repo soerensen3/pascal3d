@@ -197,7 +197,7 @@ begin
   BeginUpdate;
   if ( Assigned( ActiveLibrary ) and ( P3DData.Libraries.IndexOf( ActiveLibrary ) < 0 )) then
     FActiveLibrary:= FindFirstLib;
-  if ( Assigned( ActiveScene ) and ( not P3DData.IsValid( ActiveScene ))) then
+  if ( Assigned( ActiveScene ) and ( not P3DDataBlockCache.IsValid( ActiveScene ))) then
     begin
       FActiveScene:= FindFirstScene;
       SceneView.Scene:= ActiveScene;

@@ -1,13 +1,11 @@
 {$IFDEF INTERFACE}
 type
 
-TP3DCursor = ( curArrow = 'A', curHourGlass = 'B', curHResize = 'C', curVResize = 'D', curMoveLeftRight = 'E', curMoveTopBottom = 'F', curNodeEdit = 'G', curDragDrop = 'H' );
-
 { TP3DGUIManager }
-
-TP3DGUIManager = class
+TP3DGUIManager = class ( TP3DInterfacedPersistent )
   private
     FCanvas: TP3DCanvas2D;
+    FControlContainer: TP3DControlContainer;
     FControls: TP3DControlList;
     FCursor: TP3DCursor;
     FFocusedControl: TP3DGraphicControl;
@@ -46,6 +44,7 @@ TP3DGUIManager = class
     procedure UpdateExtents;
 
   published
+    property ControlContainer: TP3DControlContainer read FControlContainer write FControlContainer;
     property MouseX: Integer read GetMouseX write SetMouseX;
     property MouseY: Integer read GetMouseY write SetMouseY;
     property ScrollSpeed: Single read FScrollSpeed write FScrollSpeed;
@@ -73,11 +72,13 @@ begin
   UpdateExtents;
   Cursor:= curArrow;
   CursorOverride:= curArrow;
+  ControlContainer:= TP3DControlContainer.Create( Self );
 end;
 
 destructor TP3DGUIManager.Destroy;
 begin
   Controls.Clear( True );
+  ControlContainer.Free;
   Controls.Free;
   ScreenCanvas.Free;
   FCursorTxt.Free;
@@ -122,7 +123,7 @@ begin
   OldCtrl:= FFocusedControl; //Delayed event handler prevents deadlock
   FFocusedControl:= AValue;
 
-  If ( Assigned( OldCtrl ) and P3DData.IsValid( OldCtrl )) then
+  If ( Assigned( OldCtrl ) and P3DDataBlockCache.IsValid( OldCtrl )) then
     OldCtrl.SetFocused( False );
 end;
 

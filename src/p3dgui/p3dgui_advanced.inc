@@ -583,7 +583,7 @@ end;
 
 destructor TP3DImage.Destroy;
 begin
-  if ( Assigned( Material ) and P3DData.IsValid( Material )) then
+  if ( Assigned( Material ) and P3DDataBlockCache.IsValid( Material )) then
     Material.Free;
   inherited Destroy;
 end;

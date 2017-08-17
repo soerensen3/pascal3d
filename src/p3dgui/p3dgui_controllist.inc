@@ -1,10 +1,8 @@
 {$IFDEF INTERFACE}
 
-TP3DCustomControlList = specialize gP3DCustomObjectList < TP3DGraphicControl >;
-
 { TP3DControlList }
 
-TP3DControlList = class( TP3DCustomControlList )
+TP3DControlList = class( specialize gP3DInterfacedPersistentList < TP3DGraphicControl > )
   private
     FClipRect: TP3DRect;
     FFinalScroll: TVec2;
@@ -101,7 +99,7 @@ end;
 
 procedure TP3DControlList.MoveTo(Index: Integer; Controls: TP3DControlList);
 begin
-  Controls.Add( GetItem( Index ));
+  Controls.Add( Items[ Index ]);
   inherited Delete( Index );
 end;
 
@@ -139,7 +137,7 @@ begin
       R:= P3DRect( 0, 0, Width, Height );
   FPageSize:= vec2( 0 );
   for Control in Self do
-    if ( P3DData.IsValid( Control ) and ( Control.Visible ) and ( Control.Align <> alClient )) then
+    if ( P3DDataBlockCache.IsValid( Control ) and ( Control.Visible ) and ( Control.Align <> alClient )) then
       begin
         Control.Realign( R );
         Control.Controls.Realign;
@@ -459,19 +457,19 @@ begin
         if ( Buttons[ i ]) then //pushed
           begin
             P3DGUIManager.LastMouseDownCtrl[ i ]:= P3DGUIManager.LastMouseOverCtrl;
-            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DData.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
+            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
               P3DGUIManager.LastMouseDownCtrl[ i ].InputState:= P3DGUIManager.LastMouseDownCtrl[ i ].InputState + BtnInpState( i );
             P3DGUIManager.FocusedControl:= P3DGUIManager.LastMouseOverCtrl;
           end
         else                    //released
           begin
-            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DData.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
+            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
               P3DGUIManager.LastMouseDownCtrl[ i ].InputState:= P3DGUIManager.LastMouseDownCtrl[ i ].InputState - BtnInpState( i );
             // Drag and Drop release
             if (( DragDropSrc <> nil )) then
               begin
                 Accept:= False;
-                if ( Assigned( P3DGUIManager.LastMouseOverCtrl ) and P3DData.IsValid( P3DGUIManager.LastMouseOverCtrl )) then
+                if ( Assigned( P3DGUIManager.LastMouseOverCtrl ) and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseOverCtrl )) then
                   P3DGUIManager.LastMouseOverCtrl.DragDrop( P3DGUIManager.LastMouseOverCtrl, DragDropSrc, X, Y, Accept );
                 if ( not Accept ) then
                   DragDropSrc.DragCancel( DragDropSrc, X, Y );

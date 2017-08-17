@@ -131,10 +131,10 @@ end;
 
 function GetPropEdForProp( AProp: TP3DPropertyAccess ): TP3DGraphicControlClass;
 begin
-  if ( AProp is TP3DPropertyAccessActor ) then
+  if ( AProp is TP3DPropertyAccessObject ) then
     Result:= TP3DPropertyEditorInterfacedPersistent
-  else if ( AProp is TP3DPropertyAccessActorList ) then
-    Result:= TP3DPropertyEditorActorList
+  else if ( AProp is TP3DPropertyAccessObjectList ) then
+    Result:= TP3DPropertyEditorObjectList
   else if ( AProp is TP3DPropertyAccessArmature ) then
     Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropertyAccessArmatureList ) then
@@ -198,7 +198,7 @@ begin
     Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropertyAccessGraphicControlList ) then
     Result:= TP3DPropertyEditorGraphicControlList
-  else if ( AProp is TP3DPropertyAccessFileWatch ) then
+  else if ( AProp is TP3DPropertyAccessFilePointer ) then
     Result:= TP3DPropertyEditorString
 
   else if ( AProp is TP3DPropertyAccessFloat ) then
@@ -345,7 +345,7 @@ procedure TP3DOIEditorPage.FastDestroy;
 begin
   Groups.Clear( True );
   Groups.Free;
-  if ( P3DData.IsValid( Button )) then
+  if ( P3DDataBlockCache.IsValid( Button )) then
     Button.Free;
   inherited FastDestroy;
 end;
@@ -450,11 +450,11 @@ begin
   //Pages.Clear( True );
   Pages.Free;
   //Toolbar.Controls.Clear( True );
-  if ( P3DData.IsValid( Toolbar )) then
+  if ( P3DDataBlockCache.IsValid( Toolbar )) then
     Toolbar.Free;
-  if ( P3DData.IsValid( Container )) then
+  if ( P3DDataBlockCache.IsValid( Container )) then
     Container.Free;
-  if ( P3DData.IsValid( Scrollbar )) then
+  if ( P3DDataBlockCache.IsValid( Scrollbar )) then
     Scrollbar.Free;
   inherited FastDestroy;
 end;

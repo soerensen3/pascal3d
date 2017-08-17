@@ -256,9 +256,9 @@ type
       property AllowOpenP3D: Boolean read FAllowOpenP3D write FAllowOpenP3D;
   end;
 
-  { TP3DTreeViewActors }
+  { TP3DTreeViewObjects }
 
-  TP3DTreeViewActors = class ( TP3DTreeView )
+  TP3DTreeViewObjects = class ( TP3DTreeView )
     private
       FObj: TPersistent;
       FShowDesignerPackages: Boolean;
@@ -343,9 +343,9 @@ destructor TP3DCustomItemView.Destroy;
 begin
   Font.Free;
   Preset.Free;
-  if ( P3DData.IsValid( ScrollBarV )) then
+  if ( P3DDataBlockCache.IsValid( ScrollBarV )) then
     ScrollBarV.Free;
-  if ( P3DData.IsValid( ScrollBarH )) then
+  if ( P3DDataBlockCache.IsValid( ScrollBarH )) then
     ScrollBarH.Free;
   inherited Destroy;
 end;
@@ -1401,25 +1401,25 @@ begin
     end;
 end;
 
-{ TP3DTreeViewActors }
+{ TP3DTreeViewObjects }
 
-procedure TP3DTreeViewActors.SetObj(AValue: TPersistent);
+procedure TP3DTreeViewObjects.SetObj(AValue: TPersistent);
 begin
   if FObj=AValue then Exit;
   FObj:=AValue;
   Update;
 end;
 
-procedure TP3DTreeViewActors.Update;
+procedure TP3DTreeViewObjects.Update;
 
-  procedure AddList( List: TP3DActorList; Parent: TP3DTreeNodeList; const Recurse: Boolean = False );
+  procedure AddObjectList( List: TP3DObjectList; Parent: TP3DTreeNodeList; const Recurse: Boolean = False );
   var
-    Item: TP3DActor;
+    Item: TP3DObject;
     n: Integer;
   begin
     for Item in List do
       begin
-        if ( P3DData.IsValid( Item )) then
+        if ( P3DDataBlockCache.IsValid( Item )) then
           n:= Parent.Add( Item.Name, Item )
         else
           begin
@@ -1457,34 +1457,85 @@ procedure TP3DTreeViewActors.Update;
         else
           Parent[ n ].SymbolText:= 'R';
         if ( Recurse ) then
-          AddList( Item.Children, Parent[ n ].Children, Recurse );
+          AddObjectList( Item.Children, Parent[ n ].Children, Recurse );
       end;
   end;
 
-  procedure AddSceneList( SceneList: TP3DSceneList; Parent: TP3DTreeNodeList );
+  procedure AddObjects( List: TP3DObjectContainer; Parent: TP3DTreeNodeList; const Recurse: Boolean = False );
+  var
+    Item: TP3DObject;
+    n: Integer;
+  begin
+    for Item in List do
+      begin
+        if ( P3DDataBlockCache.IsValid( Item )) then
+          n:= Parent.Add( Item.Name, Item )
+        else
+          begin
+            Parent.Add( 'Error: Orphaned datablock', nil );
+            break;
+          end;
+        if ( Assigned( Item.Data )) then
+          begin
+            if ( Item.Data is TP3DMesh ) then
+              Parent[ n ].SymbolText:= P3DSymbolMesh
+//            else if ( Item.Data is TP3DFont ) then
+//              Parent[ n ].SymbolText:= 'U'
+            else if ( Item.Data is TP3DCamera ) then
+              Parent[ n ].SymbolText:= P3DSymbolCamera
+            else if ( Item.Data is TP3DMaterialBase ) then
+              Parent[ n ].SymbolText:= P3DSymbolMaterial
+            else if ( Item.Data is TP3DScene ) then
+              Parent[ n ].SymbolText:= P3DSymbolScene
+            else if ( Item.Data is TP3DLight ) then
+              Parent[ n ].SymbolText:= P3DSymbolLight
+            else if ( Item.Data is TP3DShader ) then
+              Parent[ n ].SymbolText:= P3DSymbolShader
+            else if ( Item.Data is TP3DTexture ) then
+              Parent[ n ].SymbolText:= P3DSymbolTexture
+            else if ( Item.Data is TP3DArmature ) then
+              Parent[ n ].SymbolText:= P3DSymbolArmature
+            else if ( Item.Data is TP3DTileGrid ) then
+              Parent[ n ].SymbolText:= P3DSymbolGrid
+            else if ( Item.Data is TP3DJoint) then
+              Parent[ n ].SymbolText:= P3DSymbolArmature
+            //else if ( Item.Data is TP3DData ) then
+            //  Parent[ n ].SymbolText:= TP3DSymbolLibrary
+            else;
+          end
+        else
+          Parent[ n ].SymbolText:= 'R';
+        if ( Recurse ) then
+          AddObjectList( Item.Children, Parent[ n ].Children, Recurse );
+      end;
+  end;
+
+  procedure AddSceneList( SceneList: TP3DSceneContainer; Parent: TP3DTreeNodeList );
   var
     Scene: TP3DScene;
     n: Integer;
   begin
     for Scene in SceneList do
       begin
-        if ( P3DData.IsValid( Scene )) then
+        //WriteLn( Scene.Owner.Scenes = P3DDataBlockCache[ P3DDataBlockCache.FindBlock( Scene )].Datablock.GetContainer( Scene.Owner ));
+        //WriteLn( Scene.Owner.Scenes.DumpObjectList );
+        if ( P3DDataBlockCache.IsValid( Scene )) then
           n:= Parent.Add( Scene.Name, Scene )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
         Parent[ n ].SymbolText:= P3DSymbolScene;
-        AddList( Scene.Objects, Parent[ n ].Children, True );
+        AddObjectList( Scene.Objects, Parent[ n ].Children, True );
       end;
   end;
 
-  procedure AddCameraList( List: TP3DCameraList; Parent: TP3DTreeNodeList );
+  procedure AddCameraList( List: TP3DCameraContainer; Parent: TP3DTreeNodeList );
   var
     Cam: TP3DCamera;
     n: LongInt;
   begin
     for Cam in List do
       begin
-        if ( P3DData.IsValid( Cam )) then
+        if ( P3DDataBlockCache.IsValid( Cam )) then
           n:= Parent.Add( Cam.Name, Cam )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1492,14 +1543,14 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddJointList( List: TP3DJointList; Parent: TP3DTreeNodeList );
+  procedure AddJointList( List: TP3DJointContainer; Parent: TP3DTreeNodeList );
   var
     Joint: TP3DJoint;
     n: LongInt;
   begin
     for Joint in List do
       begin
-        if ( P3DData.IsValid( Joint )) then
+        if ( P3DDataBlockCache.IsValid( Joint )) then
           n:= Parent.Add( Joint.Name, Joint )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1525,14 +1576,14 @@ procedure TP3DTreeViewActors.Update;
   end;
 
 
-  procedure AddLightList( List: TP3DLightList; Parent: TP3DTreeNodeList );
+  procedure AddLightList( List: TP3DLightContainer; Parent: TP3DTreeNodeList );
   var
     Light: TP3DLight;
     n: LongInt;
   begin
     for Light in List do
       begin
-        if ( P3DData.IsValid( Light )) then
+        if ( P3DDataBlockCache.IsValid( Light )) then
           n:= Parent.Add( Light.Name, Light )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1540,14 +1591,14 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddMaterialList( List: TP3DMaterialList; Parent: TP3DTreeNodeList );
+  procedure AddMaterialList( List: TP3DMaterialContainer; Parent: TP3DTreeNodeList );
   var
     Mat: TP3DMaterial;
     n: LongInt;
   begin
     for Mat in List do
       begin
-        if ( P3DData.IsValid( Mat )) then
+        if ( P3DDataBlockCache.IsValid( Mat )) then
           n:= Parent.Add( Mat.Name, Mat )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1555,14 +1606,14 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddMeshList( List: TP3DMeshList; Parent: TP3DTreeNodeList );
+  procedure AddMeshList( List: TP3DMeshContainer; Parent: TP3DTreeNodeList );
   var
     Mesh: TP3DMesh;
     n: LongInt;
   begin
     for Mesh in List do
       begin
-        if ( P3DData.IsValid( Mesh )) then
+        if ( P3DDataBlockCache.IsValid( Mesh )) then
           n:= Parent.Add( Mesh.Name, Mesh )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1570,14 +1621,14 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddShaderList( List: TP3DShaderList; Parent: TP3DTreeNodeList );
+  procedure AddShaderList( List: TP3DShaderContainer; Parent: TP3DTreeNodeList );
   var
     Shader: TP3DShader;
     n: LongInt;
   begin
     for Shader in List do
       begin
-        if ( P3DData.IsValid( Shader )) then
+        if ( P3DDataBlockCache.IsValid( Shader )) then
           n:= Parent.Add( Shader.Name, Shader )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1585,14 +1636,14 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddTextureList( List: TP3DTextureList; Parent: TP3DTreeNodeList );
+  procedure AddTextureList( List: TP3DTextureContainer; Parent: TP3DTreeNodeList );
   var
     Tex: TP3DTexture;
     n: LongInt;
   begin
     for Tex in List do
       begin
-        if ( P3DData.IsValid( Tex )) then
+        if ( P3DDataBlockCache.IsValid( Tex )) then
           n:= Parent.Add( Tex.Name, Tex )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1600,14 +1651,14 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddArmatureList( List: TP3DArmatureList; Parent: TP3DTreeNodeList );
+  procedure AddArmatureList( List: TP3DArmatureContainer; Parent: TP3DTreeNodeList );
   var
     Armature: TP3DArmature;
     n: LongInt;
   begin
     for Armature in List do
       begin
-        if ( P3DData.IsValid( Armature )) then
+        if ( P3DDataBlockCache.IsValid( Armature )) then
           n:= Parent.Add( Armature.Name, Armature )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1615,14 +1666,14 @@ procedure TP3DTreeViewActors.Update;
       end;
   end;
 
-  procedure AddActionList( List: TP3DActionList; Parent: TP3DTreeNodeList );
+  procedure AddActionList( List: TP3DActionContainer; Parent: TP3DTreeNodeList );
   var
     Action: TP3DAction;
     n: LongInt;
   begin
     for Action in List do
       begin
-        if ( P3DData.IsValid( Action )) then
+        if ( P3DDataBlockCache.IsValid( Action )) then
           n:= Parent.Add( Action.Name, Action )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1631,14 +1682,14 @@ procedure TP3DTreeViewActors.Update;
   end;
 
 
-  procedure AddFontList( List: TP3DFontBmpList; Parent: TP3DTreeNodeList );
+  procedure AddFontList( List: TP3DFontContainer; Parent: TP3DTreeNodeList );
   var
     Font: TP3DFontBmp;
     n: LongInt;
   begin
     for Font in List do
       begin
-        if ( P3DData.IsValid( Font )) then
+        if ( P3DDataBlockCache.IsValid( Font )) then
           n:= Parent.Add( Font.Name, Font )
         else
           Parent.Add( 'Error: Orphaned datablock', nil );
@@ -1671,8 +1722,8 @@ procedure TP3DTreeViewActors.Update;
     Node:= Parent[ Parent.Add( 'Meshes', Data.Meshes, False, P3DSymbolMesh )].Children;
     AddMeshList( Data.Meshes, Node );
 
-    Node:= Parent[ Parent.Add( 'Objects', Data.Objects, False, P3DSymbolActor )].Children;
-    AddList( Data.Objects, Node );
+    Node:= Parent[ Parent.Add( 'Objects', Data.Objects, False, P3DSymbolObject )].Children;
+    AddObjects( Data.Objects, Node );
 
     Node:= Parent[ Parent.Add( 'Scenes', Data.Scenes, False, P3DSymbolScene )].Children;
     AddSceneList( Data.Scenes, Node );
@@ -1711,9 +1762,9 @@ begin
       if ( Obj is TP3DLibrary ) then
         AddDataList( TP3DLibrary( Obj ), Children )
       else if ( Obj is TP3DScene ) then
-        AddList( TP3DScene( Obj ).Objects, Children )
-      else if ( Obj is TP3DActor ) then
-        AddList( TP3DActor( Obj ).Children, Children );
+        AddObjectList( TP3DScene( Obj ).Objects, Children )
+      else if ( Obj is TP3DObject ) then
+        AddObjectList( TP3DObject( Obj ).Children, Children );
     end
   else
     AddDataList( P3DData, Children );
@@ -1745,7 +1796,7 @@ begin
 end;
 
 procedure TP3DTreeViewProperties.Update;
-  procedure AddProps( Props: TP3DPropertyAccessList; NodeLst: TP3DTreeNodeList; Level: Integer ); forward;
+  procedure AddProps( Props: TP3DPropertyList; NodeLst: TP3DTreeNodeList; Level: Integer ); forward;
   procedure AddProp( Prop: TP3DPropertyAccess; NodeLst: TP3DTreeNodeList; Level: Integer );
   var
     n, i: Integer;
@@ -1762,7 +1813,7 @@ procedure TP3DTreeViewProperties.Update;
       WriteLn( Prop.ClassName );
   end;
 
-  procedure AddProps( Props: TP3DPropertyAccessList; NodeLst: TP3DTreeNodeList; Level: Integer );
+  procedure AddProps( Props: TP3DPropertyList; NodeLst: TP3DTreeNodeList; Level: Integer );
   var
     Prop: TP3DPropertyAccess;
   begin

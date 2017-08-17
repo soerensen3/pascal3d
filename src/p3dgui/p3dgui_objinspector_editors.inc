@@ -636,12 +636,12 @@ end;
 procedure TP3DOIEditorObject.Update;
 begin
   inherited;
-  if ( Obj is IP3DObject ) then
-    with ( Obj as IP3DObject ) do
+  if ( Obj is IP3DNamedObject ) then
+    with ( Obj as IP3DNamedObject ) do
       begin
-        NameEdit.Prop:= TP3DObject( Obj ).Properties.GetPropByName( 'Name' );
-        TypeLbl.Caption:= Obj.ClassName;
-        if ( Obj is TP3DActor ) then
+        NameEdit.Prop:= Properties.GetPropByName( 'Name' );
+        TypeLbl.Caption:= ClassName;
+        if ( Obj is TP3DObject ) then
           begin
             CollisionEdit.Prop:= TP3DObject( Obj ).Properties.GetPropByName( 'Collision' );
             CollisionEdit.Parent.Visible:= True;
@@ -682,7 +682,7 @@ end;
 
 class function TP3DOIEditorObject.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
 begin
-  Result:= AObj is IP3DObject;
+  Result:= AObj is IP3DNamedObject;
 end;
 
 { TP3DOIEditorDatablock }
@@ -690,8 +690,8 @@ end;
 procedure TP3DOIEditorDatablock.Update;
 begin
   inherited;
-  if ( Obj is TP3DActor ) then
-    with ( Obj as TP3DActor ) do
+  if ( Obj is TP3DObject ) then
+    with ( Obj as TP3DObject ) do
       begin
         if ( Assigned( Data )) then
           begin
@@ -702,7 +702,7 @@ begin
             else
               NameLbl.Caption:= Data.Owner.Name + '.' + Data.Name;
             TypeLbl.Caption:= Data.ClassName;
-            FileNameLbl.Caption:= ExtractFileNameOnly( Owner.FileWatch.FileName ) + '/' + Data.DOMPath;
+            FileNameLbl.Caption:= ExtractFileNameOnly( Owner.FileWatch.FileName ) + '/' + Data.DataPath;
             //FileNameLbl.Caption:= ExtractFileName( Data.FileWatch.FileName );
           end
         else
@@ -719,7 +719,7 @@ begin
         DataCombo.Caption:= Name;
         NameLbl.Caption:= Name;
         TypeLbl.Caption:= ClassName;
-        FileNameLbl.Caption:= Owner.FileWatch.FileName + '/' + DOMPath;
+        FileNameLbl.Caption:= Owner.FileWatch.FileName + '/' + DataPath;
         //FileNameLbl.Caption:= ExtractFileName( FileWatch.FileName );
       end
 end;
@@ -742,11 +742,11 @@ begin
               end;
             end;}
       end
-  else if ( Source is TP3DTreeViewActors ) then
-    with ( TP3DTreeViewActors( Source )) do
-      if (( TPersistent( DragItem.Data ) is TP3DDataBlock ) and ( Self.Obj is TP3DActor )) then
+  else if ( Source is TP3DTreeViewObjects ) then
+    with ( TP3DTreeViewObjects( Source )) do
+      if (( TPersistent( DragItem.Data ) is TP3DDataBlock ) and ( Self.Obj is TP3DObject )) then
         begin
-          TP3DActor( Self.Obj ).Data:= TP3DDataBlock( DragItem.Data );
+          TP3DObject( Self.Obj ).Data:= TP3DDataBlock( DragItem.Data );
           Update; //TODO: Update whole Object Inspector from here
         end;
   Accept:= False;
@@ -778,7 +778,7 @@ end;
 
 class function TP3DOIEditorDatablock.IsCompatible(AObj: TInterfacedPersistent ): Boolean;
 begin
-  Result:= ( AObj is TP3DActor ) or ( AObj is TP3DDataBlock );
+  Result:= ( AObj is TP3DObject ) or ( AObj is TP3DDataBlock );
 end;
 
 
@@ -888,7 +888,7 @@ begin
 end;
 
 
-{ TP3DOIEditorPageActor }
+{ TP3DOIEditorPageObject }
 
 constructor TP3DOIEditorPageObject.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
@@ -919,7 +919,7 @@ end;
 function TP3DOIEditorPageObject.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
 begin
   Result:= inherited CreateButton(AParent, AMouseClick);
-  Result.Caption:= P3DSymbolActor;
+  Result.Caption:= P3DSymbolObject;
 end;
 
 { TP3DOIEditorPageGrid }
@@ -946,8 +946,8 @@ begin
   inherited Update;
   if ( Obj is TP3DTileGrid ) then
     Grid:= TP3DTileGrid( Obj )
-  else if ( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DTileGrid ) then
-    Grid:= TP3DTileGrid( TP3DActor( Obj ).Data )
+  else if ( Obj is TP3DObject ) and ( TP3DObject( Obj ).Data is TP3DTileGrid ) then
+    Grid:= TP3DTileGrid( TP3DObject( Obj ).Data )
   else
     begin
       //MeshList.Prop:= nil;
@@ -964,7 +964,7 @@ end;
 
 class function TP3DOIEditorPageGrid.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
-  Result:= ( AObj is TP3DTileGrid ) or (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DTileGrid ));
+  Result:= ( AObj is TP3DTileGrid ) or (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DTileGrid ));
 end;
 
 function TP3DOIEditorPageGrid.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
@@ -1033,8 +1033,8 @@ procedure TP3DOIEditorDataLight.Update;
 begin
   inherited;
 
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DLight )) then
-    Light:= TP3DLight( TP3DActor( Obj ).Data )
+  if (( Obj is TP3DObject ) and ( TP3DObject( Obj ).Data is TP3DLight )) then
+    Light:= TP3DLight( TP3DObject( Obj ).Data )
   else if ( Obj is TP3DLight ) then
     Light:= TP3DLight( Obj )
   else
@@ -1053,7 +1053,7 @@ end;
 
 class function TP3DOIEditorDataLight.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
 begin
-  Result:= (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DLight )) or ( AObj is TP3DLight );
+  Result:= (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DLight )) or ( AObj is TP3DLight );
 end;
 
 constructor TP3DOIEditorDataLight.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
@@ -1162,8 +1162,8 @@ end;
 procedure TP3DOIEditorDataCamera.Update;
 begin
   inherited Update;
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DCamera )) then
-    Camera:= TP3DCamera( TP3DActor( Obj ).Data )
+  if (( Obj is TP3DObject ) and ( TP3DObject( Obj ).Data is TP3DCamera )) then
+    Camera:= TP3DCamera( TP3DObject( Obj ).Data )
   else if ( Obj is TP3DCamera ) then
     Camera:= TP3DCamera( Obj )
   else
@@ -1184,7 +1184,7 @@ end;
 
 class function TP3DOIEditorDataCamera.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
-  Result:= ( AObj is TP3DCamera ) or (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DCamera ));
+  Result:= ( AObj is TP3DCamera ) or (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DCamera ));
 end;
 
 constructor TP3DOIEditorDataCamera.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
@@ -1678,8 +1678,8 @@ var
 begin
   inherited;
 
-  if (( Obj is TP3DActor ) and ( TP3DActor( Obj ).Data is TP3DMesh )) then
-    Mesh:= TP3DMesh( TP3DActor( Obj ).Data )
+  if (( Obj is TP3DObject ) and ( TP3DObject( Obj ).Data is TP3DMesh )) then
+    Mesh:= TP3DMesh( TP3DObject( Obj ).Data )
   else if ( Obj is TP3DMesh ) then
     Mesh:= TP3DMesh( Obj )
   else
@@ -1704,7 +1704,7 @@ end;
 
 class function TP3DOIEditorDataMeshMaterial.IsCompatible(AObj: TInterfacedPersistent): Boolean;
 begin
-  Result:= (( AObj is TP3DActor ) and ( TP3DActor( AObj ).Data is TP3DMesh )) or ( AObj is TP3DMesh );
+  Result:= (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DMesh )) or ( AObj is TP3DMesh );
 end;
 
 
@@ -2043,7 +2043,7 @@ begin
   if ( Obj is TP3DAction ) then
     FAction:= TP3DAction( Obj )
   else if ( Obj is TP3DDataBlock ) then
-    FAction:= TP3DDataBlock( Obj ).Action
+    //FAction:= TP3DDataBlock( Obj ).Action
   else
     FAction:= nil;
   if ( Assigned( Action )) then

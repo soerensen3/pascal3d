@@ -11,12 +11,12 @@ uses
   sysutils,
   dglOpenGL,
   SDL2,
-  p3devents,
-  p3dutils,
-  p3dgraphics,
+  p3dMath,
+  pascal3d.events,
+  pascal3d.utils,
+  pascal3d.core,
   p3dgui,
-  p3dscenegui,
-  p3dMath;
+  p3dscenegui;
 
 procedure DumpSearchPaths;
 var
@@ -32,7 +32,7 @@ begin
   SetHeapTraceOutput( 'heap.trc' );
   P3DEventsInit;
   P3DUtilsInit;
-  P3DGraphicsInit;
+  P3DCoreInit;
   P3DApplication:= TP3DSceneApplication.Create;
   P3DApplication.LoadConfig( 'settings_default.xml' );
 
@@ -43,7 +43,7 @@ begin
   //DumpSearchPaths;
 
   P3DGUIFinish;
-  P3DGraphicsFinish;
+  P3DCoreFinish;
   P3DUtilsFinish;
   P3DEventsFinish;
 end.

@@ -342,7 +342,7 @@ type
   TP3DPropertyEditorArmatureList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessArmatureList >;
   TP3DPropertyEditorFontBmpList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessFontBmpList >;
   TP3DPropertyEditorGraphicControlList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessGraphicControlList >;
-  TP3DPropertyEditorActorList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActorList >;
+  TP3DPropertyEditorObjectList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessObjectList >;
   TP3DPropertyEditorActionList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActionList >;
   TP3DPropertyEditorActionChannelList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActionChannelList >;
   TP3DPropertyEditorActionKeyList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActionKeyList >;
@@ -857,7 +857,7 @@ end;
 
 procedure gP3DPropertyEditorInterfacedPersistentList.FastDestroy;
 begin
-  if ( P3DData.IsValid( OptionsPopup )) then
+  if ( P3DDataBlockCache.IsValid( OptionsPopup )) then
     OptionsPopup.Free;
 
   inherited FastDestroy;
@@ -1015,11 +1015,11 @@ end;
 
 procedure TP3DPropertyEditorInterfacedPersistent.FastDestroy;
 begin
-  if ( P3DData.IsValid( Edit )) then
+  if ( P3DDataBlockCache.IsValid( Edit )) then
     Edit.Free;
-  if ( P3DData.IsValid( Button )) then
+  if ( P3DDataBlockCache.IsValid( Button )) then
     Button.Free;
-  if ( P3DData.IsValid( Popup )) then
+  if ( P3DDataBlockCache.IsValid( Popup )) then
     Popup.Free;
   inherited FastDestroy;
 end;

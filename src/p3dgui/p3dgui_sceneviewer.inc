@@ -19,7 +19,7 @@ type
       FOrbitDistance: Single;
       FScene: TP3DScene;
       FCam: TP3DCamera;
-      FCamObject: TP3DActor;
+      FCamObject: TP3DObject;
 
       procedure SetOrbitCamera(AValue: Boolean);
       procedure SetOrbitDistance(AValue: Single);
@@ -28,11 +28,12 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      procedure FastDestroy; override;
+
       procedure Paint(); override;
       procedure MouseMove(X, Y: Integer); override;
       procedure MouseWheel( deltax, deltay: Integer); override;
       procedure KeyboardAction; override;
-      destructor Destroy; override;
       procedure PushVPClientRect; virtual;
 
       property Scene: TP3DScene read FScene write FScene;
@@ -44,7 +45,7 @@ type
       property AfterRender: TNotifyEvent read FAfterRender write FAfterRender;
       property RenderList: TP3DRenderList read FRenderList write FRenderList;
       property Cam: TP3DCamera read FCam write FCam;
-      property CamObject: TP3DActor read FCamObject write FCamObject;
+      property CamObject: TP3DObject read FCamObject write FCamObject;
       property RenderFlags: TP3DRenderListFlags read FRenderFlags write FRenderFlags;
       property OverrideMaterial: TP3DMaterial read FOverrideMaterial write FOverrideMaterial;
   end;
@@ -102,7 +103,7 @@ begin
   if ( AValue ) then
     begin
       FCam:= TP3DCamera.Create();
-      FCamObject:= TP3DActor.Create();
+      FCamObject:= TP3DObject.Create();
       FCamObject.Data:= FCam;
       FCamObject.RotationOrder:= roXZY;
       ResetOrbit;
@@ -249,11 +250,11 @@ begin
     end;
 end;
 
-destructor TP3DSceneViewer.Destroy;
+procedure TP3DSceneViewer.FastDestroy;
 begin
   if ( Assigned( RenderList )) then
     RenderList.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 {

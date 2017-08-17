@@ -30,7 +30,7 @@
       procedure BeforeRender; virtual;
       procedure AfterRender; virtual;
       procedure CheckInput; virtual;
-      function PickPixel( P: TVec2 ): TP3DActor;
+      function PickPixel( P: TVec2 ): TP3DObject;
 
       procedure FinishEditing;
       procedure CancelTransform;
@@ -134,13 +134,13 @@
 
   TP3DScenePanel = class( TP3DGraphicControl )
     private
-      FActorList: TP3DRenderList;
+      FObjectList: TP3DRenderList;
       FSelectionRenderList: TP3DRenderList;
       FEditMode: TEditMode;
       FEditor: TP3DSceneEditModeDefault;
       FEditorLight: TP3DLight;
-      FEditorLightObj: TP3DActor;
-      FSelection: TP3DActor;
+      FEditorLightObj: TP3DObject;
+      FSelection: TP3DObject;
       FSelectionMaterial: TP3DMaterialBase;
       FPickMaterial: TP3DMaterialBase;
       FInfoText: TP3DText;
@@ -150,33 +150,33 @@
       FViewer: TP3DSceneViewer;
 
       function GetCam: TP3DCamera;
-      function GetCamObject: TP3DActor;
+      function GetCamObject: TP3DObject;
       function GetScene: TP3DScene;
-      function GetSelection: TP3DActor;
+      function GetSelection: TP3DObject;
       procedure Push3DMode;
 
       function GetEditor: TP3DSceneEditModeDefault;
       procedure SceneDragDrop( Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean );
       procedure SetCam(AValue: TP3DCamera);
-      procedure SetCamObject(AValue: TP3DActor);
+      procedure SetCamObject(AValue: TP3DObject);
       procedure SetEditMode(AValue: TEditMode);
       procedure SetScene(AValue: TP3DScene);
-      procedure SetSelection(AValue: TP3DActor);
-      procedure RenderCallback( world: TMat4; AActor: TP3DActor );
-      procedure DrawArmature( ArmatureObject: TP3DActor ); // TEMP
+      procedure SetSelection(AValue: TP3DObject);
+      procedure RenderCallback( world: TMat4; AObject: TP3DObject );
+      procedure DrawArmature( ArmatureObject: TP3DObject ); // TEMP
       procedure RenderListOnAdd( AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; AFlags: TP3DRenderListFlags; var Accept: Boolean );
 
       property SelectionRenderList: TP3DRenderList read FSelectionRenderList write FSelectionRenderList;
-      property ActorList: TP3DRenderList read FActorList write FActorList;
+      property ObjectList: TP3DRenderList read FObjectList write FObjectList;
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure KeyboardAction; override;
       procedure MouseMove(X, Y: Integer); override;
-      function Pick( x, y: Integer ): TP3DActor;
+      function Pick( x, y: Integer ): TP3DObject;
       function GetSelectionCenter: TVec3;
       procedure UpdateCanvasArea; //override;
       procedure UpdateCanvas3D;
@@ -188,16 +188,16 @@
       property SelectionMaterial: TP3DMaterialBase read FSelectionMaterial write FSelectionMaterial;
       property EditMode: TEditMode read FEditMode write SetEditMode;
       property Editor: TP3DSceneEditModeDefault read GetEditor;
-      property Selection: TP3DActor read GetSelection write SetSelection;
+      property Selection: TP3DObject read GetSelection write SetSelection;
       property Viewer: TP3DSceneViewer read FViewer write FViewer;
       property ToolBar: TP3DScenePanelToolbar read FToolbar write FToolBar;
       property Cam: TP3DCamera read GetCam write SetCam;
-      property CamObject: TP3DActor read GetCamObject write SetCamObject;
+      property CamObject: TP3DObject read GetCamObject write SetCamObject;
       property Scene: TP3DScene read GetScene write SetScene;
       property Canvas3D: TP3DCanvas3D read FCanvas3D write FCanvas3D;
       property ShowEditorLight: Boolean read FShowEditorLight write FShowEditorLight;
       property EditorLight: TP3DLight read FEditorLight write FEditorLight;
-      property EditorLightObj: TP3DActor read FEditorLightObj write FEditorLightObj;
+      property EditorLightObj: TP3DObject read FEditorLightObj write FEditorLightObj;
   end;
 
 
@@ -247,7 +247,7 @@ begin
   //n:= P3DData.OpenLibrary( 'EditorArrow.p3d' );
   //P3DData.Libraries[ n ].IsDesignerPackage:= True;
   //EditorSceneArrow:= P3DData.Libraries[ n ].Scenes[ 0 ];
-  n:= P3DData.OpenLibrary( 'EditorArrows.p3d' );
+{  n:= P3DData.OpenLibrary( 'EditorArrows.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneArrows:= P3DData.Libraries[ n ].Scenes[ 0 ];
   n:= P3DData.OpenLibrary( 'EditorLamp.p3d' );
@@ -255,7 +255,7 @@ begin
   EditorSceneLamp:= P3DData.Libraries[ n ].Scenes[ 0 ];
   n:= P3DData.OpenLibrary( 'EditorJoint.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
-  EditorSceneJoint:= P3DData.Libraries[ n ].Scenes[ 0 ];
+  EditorSceneJoint:= P3DData.Libraries[ n ].Scenes[ 0 ];}
   EditorSceneLampMaterial:= TP3DMaterialBase.Create();//TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]); //Error
 end;
 
@@ -643,9 +643,9 @@ end;
 
 procedure TP3DSceneEditModeDefault.AfterRender;
 begin
-  SceneView.ActorList.Clear;
+  SceneView.ObjectList.Clear;
   SceneView.Viewer.OverrideMaterial.PassToShader();
-  SceneView.Scene.MakeRenderList( nil, Mat4Identity, SceneView.FActorList, [ rlfActors, rlfScenes, rlfTileGrids ]);
+  SceneView.Scene.MakeRenderList( nil, Mat4Identity, SceneView.FObjectList, [ rlfObjects, rlfScenes, rlfTileGrids ]);
 
   glDisable( GL_DEPTH_TEST );
   ScenePanel.Push3DMode;
@@ -676,7 +676,7 @@ begin
       CancelTransform;
 end;
 
-function TP3DSceneEditModeDefault.PickPixel(P: TVec2): TP3DActor;
+function TP3DSceneEditModeDefault.PickPixel(P: TVec2): TP3DObject;
 begin
   Result:= ScenePanel.Pick( round( P.X ), round( P.Y ));
 end;
@@ -719,13 +719,13 @@ begin
         FreeAndNil( FSelectionRenderList );
         FSelectionRenderList:= TP3DRenderList.Create;
         FSelectionRenderList.OnAdd:= @ScenePanel.RenderListOnAdd;
-        n:= ActorList.Find( Selection, ScenePanel.Viewer.OverrideMaterial );
+        n:= ObjectList.Find( Selection, ScenePanel.Viewer.OverrideMaterial );
 
         if ( n >= 0 ) then
           begin
-            FSelectionRenderList.Add( ActorList[ n ].Data, {ActorList[ n ].Matrices[ 0 ]}Mat4Identity, Selection.Scene, RenderFlags );
+            FSelectionRenderList.Add( ObjectList[ n ].Data, {ObjectList[ n ].Matrices[ 0 ]}Mat4Identity, Selection.Scene, RenderFlags );
         //FSelectionRenderList.Add( Selection.Data, Selection.MatrixFinal, Selection.Scene, RenderFlags );
-            mat4decompose( ActorList[ n ].Matrices[ 0 ], loc, rot, scale );
+            mat4decompose( ObjectList[ n ].Matrices[ 0 ], loc, rot, scale );
             Viewer.Caption:= 'Location: (' + loc.ToString( 1 ) + ') Rotation: (' + quat( rot ).ToString( 1 ) + ') Scale: (' + scale.ToString( 1 ) + ')';
           end;
         //Selection.Scene.MakeRenderList( nil, Selection.MatrixFinal, FSelectionRenderList, RenderFlags );
@@ -919,7 +919,7 @@ begin
   Viewer.Cam:= AValue;
 end;
 
-procedure TP3DScenePanel.SetCamObject(AValue: TP3DActor);
+procedure TP3DScenePanel.SetCamObject(AValue: TP3DObject);
 begin
   Viewer.CamObject:= AValue;
 end;
@@ -934,10 +934,10 @@ begin
   Result:= Viewer.Scene;
 end;
 
-function TP3DScenePanel.GetSelection: TP3DActor;
+function TP3DScenePanel.GetSelection: TP3DObject;
 begin
-  if ( SceneMain.ActiveDataBlock is TP3DActor ) then
-    Result:= TP3DActor( SceneMain.ActiveDataBlock )
+  if ( SceneMain.ActiveDataBlock is TP3DObject ) then
+    Result:= TP3DObject( SceneMain.ActiveDataBlock )
   else
     Result:= nil;
 end;
@@ -947,7 +947,7 @@ begin
   Result:= Viewer.Cam;
 end;
 
-function TP3DScenePanel.GetCamObject: TP3DActor;
+function TP3DScenePanel.GetCamObject: TP3DObject;
 begin
   Result:= Viewer.CamObject;
 end;
@@ -980,7 +980,7 @@ begin
         emTileGrid:
           begin
             FEditor:= EditModeTileGrid;
-            if ( Selection is TP3DActor ) and ( Selection.Data is TP3DTileGrid ) then
+            if ( Selection is TP3DObject ) and ( Selection.Data is TP3DTileGrid ) then
               EditModeTileGrid.Grid:= TP3DTileGrid( Selection.Data );
           end;
       end;
@@ -1003,7 +1003,7 @@ begin
     Viewer.Scene.OnRenderCallback:= @RenderCallback;
 end;
 
-procedure TP3DScenePanel.SetSelection( AValue: TP3DActor );
+procedure TP3DScenePanel.SetSelection( AValue: TP3DObject );
 begin
   if ( FSelection = AValue ) then Exit;
   FSelection:= AValue;
@@ -1018,13 +1018,13 @@ begin
     Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
 end;
 
-procedure TP3DScenePanel.RenderCallback( world: TMat4; AActor: TP3DActor );
+procedure TP3DScenePanel.RenderCallback( world: TMat4; AObject: TP3DObject );
 begin
-  if ( AActor = Selection ) then
+  if ( AObject = Selection ) then
     Editor.RenderSelection( world );
 end;
 
-procedure TP3DScenePanel.DrawArmature(ArmatureObject: TP3DActor);
+procedure TP3DScenePanel.DrawArmature(ArmatureObject: TP3DObject);
 {
 var
   matrix_joint: TMat4;
@@ -1065,14 +1065,14 @@ begin
   Accept:= True;
   if ( AData is TP3DLight ) then
     begin
-      if ( Assigned( Selection ) and ( Selection.Data = AData )) then
+      {if ( Assigned( Selection ) and ( Selection.Data = AData )) then
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
           EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials ]);
         end
       else
-        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
+        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );}
     end
   else if ( AData is TP3DJoint ) then
     begin
@@ -1135,13 +1135,13 @@ begin
   Viewer.BeforeRender:= @BeforeDraw;
   Viewer.RenderList.OnAdd:= @RenderListOnAdd;
 
-  ActorList:= TP3DRenderList.Create;
+  ObjectList:= TP3DRenderList.Create;
 
   FEditor:= EditModeDefault;
 
   EditorLight:= TP3DLight.Create( AData );
   EditorLight.LightType:= ltSun;
-  EditorLightObj:= TP3DActor.Create( AData );
+  EditorLightObj:= TP3DObject.Create( AData );
   EditorLightObj.Data:= EditorLight;
   EditorLightObj.Quaternion:= quat( 0.571, 0.169, 0.272, 0.756 );
 
@@ -1151,11 +1151,11 @@ begin
   UpdateCanvas3D;
 end;
 
-destructor TP3DScenePanel.Destroy;
+procedure TP3DScenePanel.FastDestroy;
 begin
   FCanvas3D.Free;
 
-  ActorList.Free;
+  ObjectList.Free;
   SelectionRenderList.Free;
   Viewer.Free;
   ToolBar.Free;
@@ -1164,7 +1164,7 @@ begin
   //FRenderList.Free;
   EditorLightObj.Free;
   EditorLight.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 procedure TP3DScenePanel.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -1192,7 +1192,7 @@ begin
         EditMode:= emDefault;
       if ( P3DInput.Keyboard.DKeysLayout[ P3DK_TAB ] = ksPressed ) then
         begin
-          if ( Selection is TP3DActor ) and ( TP3DActor( Selection ).Data is TP3DTileGrid ) then
+          if ( Selection is TP3DObject ) and ( TP3DObject( Selection ).Data is TP3DTileGrid ) then
             EditMode:= emTileGrid;
 
         end;
@@ -1280,7 +1280,7 @@ begin
     end;}
 end;
 
-function TP3DScenePanel.Pick(x, y: Integer): TP3DActor;
+function TP3DScenePanel.Pick(x, y: Integer): TP3DObject;
 var
   LRenderList: TP3DRenderList = nil;
   {procedure RenderLight( world: TMat4 );
@@ -1289,11 +1289,11 @@ var
     decl: TP3DShaderDecl;
   begin
     for Obj in LRenderList do
-      if ( Obj.Actor.Data is TP3DMesh ) then
+      if ( Obj.Object.Data is TP3DMesh ) then
         begin
           if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
             decl.AsMat4:= world * Obj.Matrix;
-          TP3DMesh( Obj.Actor.Data ).RenderSimple;
+          TP3DMesh( Obj.Object.Data ).RenderSimple;
         end;
   end;}
 
@@ -1311,17 +1311,17 @@ begin
   {EditorSceneLamp.MakeRenderList( Nil, Mat4Identity, LRenderList );
   for Obj in FRenderList do
     begin
-      if ( Obj.Actor.Data is TP3DLight ) then
+      if ( Obj.Object.Data is TP3DLight ) then
         begin
-          P3DSelectPush( Obj.Actor );
-          RenderLight( mat4translate( vec4( Obj.Actor.Position, 1 )));
+          P3DSelectPush( Obj.Object );
+          RenderLight( mat4translate( vec4( Obj.Object.Position, 1 )));
         end;
-      if ( Obj.Actor.Data is TP3DMesh ) then
+      if ( Obj.Object.Data is TP3DMesh ) then
         begin
-          P3DSelectPush( Obj.Actor );
+          P3DSelectPush( Obj.Object );
           if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
             decl.AsMat4:= Obj.Matrix;
-          TP3DMesh( Obj.Actor.Data ).RenderSimple;
+          TP3DMesh( Obj.Object.Data ).RenderSimple;
         end;
     end;
   LRenderList.Free;}
@@ -1330,7 +1330,7 @@ begin
   glDisable( GL_DEPTH_TEST );
   //Pick first object from selection (should be only one with one pixel)
   if ( P3DSelectionSize > 0 ) then
-    Result:= TP3DActor( P3DSelection[ 0 ])
+    Result:= TP3DObject( P3DSelection[ 0 ])
   else
     Result:= nil;
 end;
@@ -1371,7 +1371,7 @@ end;
 
 procedure TP3DScenePanel.AfterDraw(Sender: TObject);
 var
-  Obj: TP3DActor;
+  Obj: TP3DObject;
   AData: TP3DLibrary;
 begin
   {glScissor( P3DInput.Mouse.X - 50, P3DViewports[ 0 ].Height - P3DInput.Mouse.Y - 50, 100, 100 );

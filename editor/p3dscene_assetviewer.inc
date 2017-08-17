@@ -9,7 +9,7 @@
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
     published
       property DirectoryView: TP3DTreeViewDirectory read FDirectoryView write FDirectoryView;
@@ -45,11 +45,11 @@ begin
   FAssetView.AllowOpenP3D:= True;
 end;
 
-destructor TP3DSAssetPanel.Destroy;
+procedure TP3DSAssetPanel.FastDestroy;
 begin
   FDirectoryView.Free;
   FAssetView.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 {$ENDIF}

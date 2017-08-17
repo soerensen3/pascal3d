@@ -7,6 +7,8 @@ TP3DGraphicControlClass = class of TP3DGraphicControl;
                             // 1                  2                4               8              16
 TP3DGCInputState = ( gcisEmpty, gcisMouseBtn1Down, gcisMouseBtn2Down, gcisMouseBtn3Down, gcisMouseOver {, gcisMouseOverOccl} );
 TP3DGCInputFlags = set of TP3DGCInputState;
+TP3DCursor = ( curArrow = 'A', curHourGlass = 'B', curHResize = 'C', curVResize = 'D', curMoveLeftRight = 'E', curMoveTopBottom = 'F', curNodeEdit = 'G', curDragDrop = 'H' );
+
 // 1 = M1
 // 2 = M2
 // 3 = M1 + M2
@@ -53,6 +55,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure SetTopLeft(AValue: TVec2); virtual;
     procedure SetWidth(AValue: Single); virtual;
     procedure SetWidthHeight(AValue: TVec2); virtual;
+    class function GetContainer( ALib: TP3DLibrary ): TP3DNamedInterfacedPersistentList; override;
 
   protected
     FAlign: TP3DControlAlign;
@@ -62,7 +65,6 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FEnabled: Boolean;
     FInputState: TP3DGCInputFlags;
     FLastClick: Integer;
-    FManager: TP3DGUIManager;
     FNoMargin: Boolean;
     FOnDragDrop: TP3DGUIDragDrop;
     FOnDragDropCancel: TP3DGUIMouseEvent;
@@ -189,8 +191,11 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property NeedsUpdate: Boolean read FNeedsUpdate write FNeedsUpdate;
 end;
 
+TP3DControlContainer = specialize gP3DDatablockContainer < TP3DGraphicControl >;
+
+
 TP3DPropertyAccessGraphicControl = specialize gP3DPropertyAccessDataBlock < TP3DGraphicControl >;
-TP3DPropertyAccessGraphicControlList = specialize gP3DListPropertyAccessObject < TP3DControlList, TP3DGraphicControl, TP3DPropertyAccessGraphicControl >;
+TP3DPropertyAccessGraphicControlList = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DControlList, TP3DGraphicControl, TP3DPropertyAccessGraphicControl >;
 
 {$ENDIF}
 
@@ -367,6 +372,11 @@ procedure TP3DGraphicControl.SetWidthHeight(AValue: TVec2);
 begin
   Rect.WidthHeight:= AValue;
   NeedsUpdate:= True;
+end;
+
+class function TP3DGraphicControl.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+begin
+  Result:= P3DGUIManager.ControlContainer;
 end;
 
 function TP3DGraphicControl.GetFocused: Boolean;

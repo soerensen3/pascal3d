@@ -6,14 +6,12 @@
   type
     TP3DMenuItem = class;
 
-    TP3DCustomMenuItemList = specialize gP3DCustomObjectList < TP3DMenuItem >;
-
     TP3DPopupItemClick = procedure ( Sender: TP3DMenuItem ) of object;
     TP3DPopupMenu = class;
 
     { TP3DMenuItemList }
 
-    TP3DMenuItemList = class( TP3DCustomMenuItemList )
+    TP3DMenuItemList = class( specialize gP3DCustomObjectList < TP3DMenuItem > )
       private
         FParent: TP3DPopupMenu;
 
@@ -86,7 +84,7 @@
         FSelectedPreset: TP3DButtonPreset;
         FSelection: TP3DMenuItem;
 
-        procedure ItemsChange( Sender: TObject );
+        procedure ItemsChange( Sender: TPersistent; Item: TP3DMenuItem; Action: TP3DCustomListOnChangeAction );
         class function HasShadow: Boolean; override;
 
       public
@@ -176,9 +174,10 @@ end;
 
 { TP3DPopupMenu }
 
-procedure TP3DPopupMenu.ItemsChange(Sender: TObject);
+procedure TP3DPopupMenu.ItemsChange(Sender: TPersistent; Item: TP3DMenuItem; Action: TP3DCustomListOnChangeAction);
 begin
-  Update;
+  if ( Action <> actClear ) then
+    Update;
 end;
 
 class function TP3DPopupMenu.HasShadow: Boolean;

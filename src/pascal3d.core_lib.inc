@@ -1,0 +1,31 @@
+{$INCLUDE p3ddebug.inc}
+{$INCLUDE p3dnodes.inc}
+{$INCLUDE p3dcollision.inc}
+{$INCLUDE p3dcolors.inc}
+{$INCLUDE p3dbuffers.inc}
+{$INCLUDE p3dviewport.inc}
+{$INCLUDE p3dshadernodes.inc}
+{$INCLUDE p3dnamedinterfacedpersistent.inc}
+{$IFDEF INTERFACE}TP3DLibrary = class;{$ENDIF}
+{$INCLUDE p3ddatablock.inc}
+{$INCLUDE p3dshaders.inc}
+{$INCLUDE p3dtexture.inc}
+{$INCLUDE p3drendertarget.inc}
+{$INCLUDE p3dmaterial.inc}
+{$INCLUDE p3drenderable.inc}
+{$INCLUDE p3dcollidable.inc}
+{$INCLUDE p3dcamera.inc}
+{$INCLUDE p3dlight.inc}
+{$INCLUDE p3dobject.inc}
+{$INCLUDE p3dscene.inc}
+{$INCLUDE p3dtext.inc}
+{$INCLUDE p3dtextbitmap.inc}
+{$INCLUDE p3dcanvas.inc}
+{$INCLUDE p3dselection.inc}
+{$INCLUDE p3dmesh.inc}
+{$INCLUDE p3darmature.inc}
+{$INCLUDE p3daction.inc}
+{$INCLUDE p3dterrain.inc}
+{$INCLUDE p3dgrids.inc}
+{$INCLUDE p3dlibrary.inc}
+

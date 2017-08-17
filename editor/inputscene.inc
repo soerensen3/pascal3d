@@ -28,6 +28,11 @@ var
   i: Integer;
   Tex: TP3DTexture;
   FrameBuffer: TP3DFrameBuffer;
+  S: TFileStream;
+  P, json: TJSONParser;
+  D, json_str: TJSONData;
+  lib: TP3DLibrary;
+  Loader: TP3DJSONLoader;
 
 begin
   inherited Keyboard(Event);
@@ -99,6 +104,43 @@ begin
       DataView.Update;
       DataView.Children.ExpandAll();
     end;}
+  if (( Event.keysym.scancode = SDL_SCANCODE_F3 ) and ( Event._repeat = 0 ) and ( Event.type_ = SDL_KEYDOWN )) then
+    //if ( FileExists( '/tmp/frog.p3d' )) then
+      begin
+        try
+          SetCurrentDir( '/tmp/' );
+          SceneMain.ActiveLibrary.SaveToFile( 'test.p3d' );
+          {with TStringList.Create do
+            begin
+              Text:= SceneMain.ActiveLibrary.Serialize;
+              json:= TJSONParser.Create( Text );
+              json_str:= json.Parse;
+              Text:= json_str.FormatJSON();
+              json_str.Free;
+              json.Free;
+              SaveToFile( 'test.p3d' );
+              Free;
+            end;}
+          {Loader:= TP3DJSONLoader.Create( '/tmp/frog.p3d' );
+          lib:= SceneMain.NewLibrary( '/tmp/frog.p3d' );
+          Loader.Root:= lib;
+          lib.LoadFromJSONContext( P3DJSONContext( Loader, Loader.JSON, lib, nil ));}
+
+        finally
+//          Loader.Free;
+        end;
+{        S:= TFileStream.Create( '/tmp/frog.p3d', fmOpenRead );
+        try
+          P:= TJSONParser.Create( S );
+          P.Strict:= False;
+          D:= P.Parse;
+          lib:= SceneMain.NewLibrary( '/tmp/frog.p3d' );
+          lib.LoadFromJSONContext( P3DJSONContext( D, lib, nil ));
+        finally
+          P.Free;
+        end;
+        S.Free;}
+      end;
   if (( Event.keysym.scancode = SDL_SCANCODE_F4 ) and ( Event._repeat = 0 ) and ( Event.type_ = SDL_KEYDOWN )) then
     with ( TP3DModalWindow.Create()) do
       begin

@@ -105,7 +105,7 @@
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure Draw(); override;
@@ -704,12 +704,12 @@ begin
   FCollapseSymbol:= P3DSymbolTriangleDown;
 end;
 
-destructor TP3DGroupBox.Destroy;
+procedure TP3DGroupBox.FastDestroy;
 begin
   Font.Free;
   FCaptionTxt.Free;
   FCollapseSymbolTxt.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 procedure TP3DGroupBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -1277,7 +1277,7 @@ var
   i: Integer;
 begin
   for i:= 0 to EdCount - 1 do
-    if ( P3DData.IsValid( Editors[ i ])) then
+    if ( P3DDataBlockCache.IsValid( Editors[ i ])) then
       Editors[ i ].Free;
   inherited Destroy;
 end;
@@ -1358,7 +1358,7 @@ begin
 
   Canvas.Font.Name:= 'Pascal3D-Symbols';
   Canvas.RenderText( P3DSymbolTriangleDown, P, FDownSymbol );
-  Canvas.Font.Name:= 'OpenSans-Semibold';//'RobotoCondensed-Light';
+  Canvas.Font.Name:= 'Cabin-Regular';//'OpenSans-Semibold';//'RobotoCondensed-Light';
 end;
 
 procedure TP3DComboBox.DropDown;
@@ -1525,7 +1525,7 @@ begin
 end;
 
 procedure TP3DComboBoxDataBlock.Update;
-  procedure AddLibrary( Lib: TP3DLibrary );
+{  procedure AddLibrary( Lib: TP3DLibrary );
   var
     HeaderAdded: Boolean;
     i: Integer;
@@ -1552,7 +1552,7 @@ procedure TP3DComboBoxDataBlock.Update;
               end;
           with ( Items[ Items.Add( '  ' + Lib.DataBlocks[ i ].Name )]) do
         end;
-  end;
+  end;}
 
 var
   i: Integer;
@@ -1564,11 +1564,11 @@ begin
       UserData:= nil;
     end;
 
-  AddLibrary( P3DData );
+  //AddLibrary( P3DData );
 
-  for i:= 0 to P3DData.Libraries.Count - 1 do
-    if ( not P3DData.Libraries[ i ].IsDesignerPackage ) then
-      AddLibrary( P3DData.Libraries[ i ]);
+  //for i:= 0 to P3DData.Libraries.Count - 1 do
+  //  if ( not P3DData.Libraries[ i ].IsDesignerPackage ) then
+  //    AddLibrary( P3DData.Libraries[ i ]);
 end;
 
 

@@ -9,7 +9,7 @@
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
     published
       property ObjectInspector: TP3DObjectInspector read FObjectInspector write FObjectInspector;
@@ -39,8 +39,8 @@ begin
   ObjectInspector.OnSetObj:= @SetObj;
 end;
 
-destructor TP3DOIPanel.Destroy;
+procedure TP3DOIPanel.FastDestroy;
 begin
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 {$ENDIF}

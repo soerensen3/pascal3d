@@ -10,7 +10,7 @@ type
       FLibraryPopup: TP3DPopupMenu;
       FSceneButton: TP3DGroupButton;
       FToolBar: TP3DGraphicControl;
-      FViewer: TP3DTreeViewActors;
+      FViewer: TP3DTreeViewObjects;
       FSelectionParent: TPersistent;
 
       procedure SetEmptyParent;
@@ -20,7 +20,7 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       procedure ButtonMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
       procedure DataMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -34,7 +34,7 @@ type
       property DataButton: TP3DGroupButton read FDataButton write FDataButton;
       property LibraryButton: TP3DGroupButton read FLibraryButton write FLibraryButton;
       property SceneButton: TP3DGroupButton read FSceneButton write FSceneButton;
-      property Viewer: TP3DTreeViewActors read FViewer write FViewer;
+      property Viewer: TP3DTreeViewObjects read FViewer write FViewer;
   end;
 {$ENDIF}
 
@@ -155,7 +155,7 @@ begin
   ToolBar.Height:= 32;
   ToolBar.Align:= alTop;
 
-  Viewer:= TP3DTreeViewActors.Create( Owner, Self );
+  Viewer:= TP3DTreeViewObjects.Create( Owner, Self );
   Viewer.Align:= alClient;
   Viewer.ShowSymbols:= True;
   Width:= 200;
@@ -175,19 +175,19 @@ begin
   UpdateViewMode( SceneMain.ViewMode );
 end;
 
-destructor TP3DDataPanel.Destroy;
+procedure TP3DDataPanel.FastDestroy;
 begin
-  if (( Assigned( ToolBar )) and ( P3DData.IsValid( ToolBar ))) then
+  if (( Assigned( ToolBar )) and ( P3DDataBlockCache.IsValid( ToolBar ))) then
     ToolBar.Free;
-  if (( Assigned( Viewer )) and ( P3DData.IsValid( Viewer ))) then
+  if (( Assigned( Viewer )) and ( P3DDataBlockCache.IsValid( Viewer ))) then
     Viewer.Free;
-  if (( Assigned( LibraryPopup )) and ( P3DData.IsValid( LibraryPopup ))) then
+  if (( Assigned( LibraryPopup )) and ( P3DDataBlockCache.IsValid( LibraryPopup ))) then
     LibraryPopup.Free;
-  if (( Assigned( LibraryButton )) and ( P3DData.IsValid( LibraryButton ))) then
+  if (( Assigned( LibraryButton )) and ( P3DDataBlockCache.IsValid( LibraryButton ))) then
     LibraryButton.Free;
-  if (( Assigned( SceneButton )) and ( P3DData.IsValid( SceneButton ))) then
+  if (( Assigned( SceneButton )) and ( P3DDataBlockCache.IsValid( SceneButton ))) then
     SceneButton.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 procedure TP3DDataPanel.ButtonMouseClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -213,12 +213,12 @@ procedure TP3DDataPanel.PopupMouseClick(Sender: TP3DMenuItem);
 
   procedure AddToParent( TP: TP3DDataBlockType );
   var
-    Obj: TP3DActor;
+    Obj: TP3DObject;
   begin
-    if ( FSelectionParent is TP3DActorList ) then
+    if ( FSelectionParent is TP3DObjectList ) then
       begin
         Obj:= SceneMain.ActiveLibrary.Objects[ SceneMain.ActiveLibrary.CreateNew( TP )];
-        TP3DActorList( FSelectionParent ).Add( Obj );
+        TP3DObjectList( FSelectionParent ).Add( Obj );
       end
     else if ( FSelectionParent is TP3DLibrary ) then
       TP3DLibrary( FSelectionParent ).CreateNew( TP, False );
@@ -274,10 +274,10 @@ begin
       if ( TInterfacedPersistent( NewSelection.Data ) is TP3DDataBlock ) then
         SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).Owner;
 
-      if ( Sel is TP3DActor ) then
+      if ( Sel is TP3DObject ) then
         begin
-          SceneView.FSelection:= TP3DActor( Sel );
-          SceneMain.ActiveScene:= TP3DActor( Sel ).Scene;
+          SceneView.FSelection:= TP3DObject( Sel );
+          SceneMain.ActiveScene:= TP3DObject( Sel ).Scene;
           FSelectionParent:= SceneView.FSelection.Children;
         end
       else if ( Sel is TP3DLibrary ) then

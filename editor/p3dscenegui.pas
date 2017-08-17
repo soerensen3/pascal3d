@@ -7,13 +7,15 @@ interface
 uses
   Classes,
   SysUtils,
+  fpjson,
+  jsonparser,
   LazFileUtils,
   SDL2,
   Math,
   dglOpenGL,
-  p3devents,
-  p3dutils,
-  p3dgraphics,
+  pascal3d.events,
+  pascal3d.utils,
+  pascal3d.core,
   p3dMath,
   p3dgui;
 
@@ -54,8 +56,8 @@ type
   procedure P3DSceneGUIFinish;
 
 var
-  MeshArrows: TP3DActor;
-  MeshGrid: TP3DActor;
+  MeshArrows: TP3DObject;
+  MeshGrid: TP3DObject;
 
   SceneMain: TP3DSceneMain;
   AssetView: TP3DSAssetPanel;
@@ -142,7 +144,7 @@ begin
       Align:= alLeft;
     end;
 //  DataView.BringToFront;
-  //DataView.ActorList:= TestScene.Objects;
+  //DataView.ObjectList:= TestScene.Objects;
 
   ActionEditor:= TP3DActionEditor.Create();
   ActionEditor.Parent:= SceneMain;
@@ -172,9 +174,9 @@ begin
 
   {n:= 1;
   for i:= 0 to ( Random( 10 ) + 5 ) do
-    with ( TestScene.Objects[ TestScene.Objects.Add( TP3DActor.Create())]) do
+    with ( TestScene.Objects[ TestScene.Objects.Add( TP3DObject.Create())]) do
       begin
-        Name:= 'TestActor' + IntToStr( n );
+        Name:= 'TestObject' + IntToStr( n );
         Inc( n );
         case random( 3 ) of
           0: Data:= TP3DMesh.Create();
@@ -182,14 +184,14 @@ begin
           2: Data:= TP3DScene.Create();
         end;;
         for j:= 0 to Random( 5 ) do
-          with ( Children[ Children.Add( TP3DActor.Create())]) do
+          with ( Children[ Children.Add( TP3DObject.Create())]) do
             begin
-              Name:= 'TestActor' + IntToStr( n );
+              Name:= 'TestObject' + IntToStr( n );
               Inc( n );
             end;
       end;}
 
-  //ActorList.ActorList:= TestScene.Objects;
+  //ObjectList.ObjectList:= TestScene.Objects;
 {  SceneTree:= TP3DTreeViewDirectory.Create();
   SceneTree.Width:= 200;
   SceneTree.Align:= alLeft;
@@ -282,19 +284,19 @@ begin
   DestroyEditModes;
   if ( Assigned( P3DData )) then
     begin
-      if ( P3DData.IsValid( DataView )) then
+      if ( P3DDataBlockCache.IsValid( DataView )) then
         DataView.Free;
       DataView:= nil;
-      if ( P3DData.IsValid( AssetView )) then
+      if ( P3DDataBlockCache.IsValid( AssetView )) then
         AssetView.Free;
       AssetView:= nil;
-      if ( P3DData.IsValid( SceneView )) then
+      if ( P3DDataBlockCache.IsValid( SceneView )) then
         SceneView.Free;
       SceneView:= nil;
-      if ( P3DData.IsValid( OIPanel )) then
+      if ( P3DDataBlockCache.IsValid( OIPanel )) then
         OIPanel.Free;
       OIPanel:= nil;
-      if ( P3DData.IsValid( SceneMain )) then
+      if ( P3DDataBlockCache.IsValid( SceneMain )) then
         SceneMain.Free;
       SceneMain:= nil;
     end;
