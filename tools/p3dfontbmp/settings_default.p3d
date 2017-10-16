@@ -1,0 +1,29 @@
+{
+  "ClassName" : "TP3DConfig",
+  "Config" : [
+    {
+      "ClassName" : "TP3DFontBitmap",
+      "Windows" : [
+        {
+          "ClassName" : "TP3DWindow",
+          "Width" : 800,
+          "Height" : 600,
+          "Visible" : 1,
+          "Left" : 100,
+          "Height" : 600,
+          "ShowBorder" : 0,
+          "FullScreen" : 0,
+          "Title" : "p3dfontbmp"
+        }
+      ]
+    },
+    {
+      "ClassName" : "TP3DLogger",
+      "FileName" : "\/home\/johannes\/Documents\/dev\/Lazarus\/p3d\/p3dfontbmp\/p3dfontbmp.html"
+    },
+    {
+      "ClassName" : "TP3DSearchPathContainer",
+      "BaseDir" : "\/home\/johannes\/Documents\/dev\/Lazarus\/p3d\/p3dfontbmp\/"
+    }
+  ]
+}

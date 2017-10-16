@@ -1,0 +1,21 @@
+<p3dsettings>
+  <paths
+    BaseDir=".">
+    <path
+      value="../pascal3d/assets"/>
+    <path
+      value="../pascal3d/fonts" />
+  </paths>
+  <window
+    Title="p3dfontbmp"
+    Width="800"
+    Height="600"
+    Fullscreen="0"
+    />
+  <logging
+    FileName="p3dfontbmp.html" />
+  <shadernodelibrary>
+    <path
+      value="../pascal3d/shaders" />
+  </shadernodelibrary>
+</p3dsettings>
