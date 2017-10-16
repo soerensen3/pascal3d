@@ -1,7 +1,45 @@
 from . import p3ddata, p3ddatablock
+from mathutils import Matrix, Vector
 
 def swap_quat( quat ):
     return [ quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ]]
+
+def swap_quat_bone( quat ):
+    from mathutils import Quaternion
+    return Quaternion(( quat[ 0 ], quat[ 1 ], -quat[ 3 ], quat[ 2 ]))
+
+def bone_quat_local( bone ):
+    updir = Vector(( 0.0, 0.0, 1.0 ))
+    forw = ( bone.tail_local - bone.head_local ).normalized()
+    left = updir.cross( forw )
+    up = forw.cross( left )
+    m = Matrix().to_3x3()
+    m.col[ 0 ] = left
+    m.col[ 1 ] = up
+    m.col[ 2 ] = forw
+    return m.to_quaternion()
+
+def bone_quat( bone ):
+    updir = Vector(( 0.0, 0.0, 1.0 ))
+    forw = ( bone.tail - bone.head ).normalized()
+    left = updir.cross( forw )
+    up = forw.cross( left )
+    m = Matrix().to_3x3()
+    m.col[ 0 ] = left
+    m.col[ 1 ] = up
+    m.col[ 2 ] = forw
+    return m.to_quaternion()
+
+def lookat_quat( lookat ):
+    updir = Vector(( 0.0, 0.0, 1.0 ))
+    forw = lookat.normalized()
+    left = updir.cross( forw )
+    up = forw.cross( left )
+    m = Matrix().to_3x3()
+    m.col[ 0 ] = left
+    m.col[ 1 ] = up
+    m.col[ 2 ] = forw
+    return m.to_quaternion()
 
 indexedprop = "{}[\"{}\"]" #name["index"]
 dict_export_class = {}

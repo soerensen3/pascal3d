@@ -1,0 +1,686 @@
+{
+    "Textures": [
+        {
+            "MipMap": 1,
+            "Filtering": "tfLinear",
+            "File": "untitledbody_derm.png",
+            "DataPath": "Textures[\"Texture.001\"]",
+            "Name": "Texture.001",
+            "FilteringMipMap": "tfLinear",
+            "ClassName": "TP3DTexture"
+        },
+        {
+            "MipMap": 1,
+            "Filtering": "tfLinear",
+            "File": "hair.png",
+            "DataPath": "Textures[\"Tex\"]",
+            "Name": "Tex",
+            "FilteringMipMap": "tfLinear",
+            "ClassName": "TP3DTexture"
+        }
+    ],
+    "Cameras": [
+        {
+            "DataPath": "Cameras[\"Camera\"]",
+            "Near": 0.10000000149011612,
+            "Name": "Camera",
+            "Far": 100.0,
+            "ClassName": "TP3DCamera",
+            "FOV": 0.8575560450553894
+        }
+    ],
+    "Meshes": [
+        {
+            "PackedFaces": "@11446336",
+            "TexCoords": [
+                "@21846348"
+            ],
+            "Name": "Mesh",
+            "PackedTangents": "@11862340",
+            "PackedPositions": "@0",
+            "DataPath": "Meshes[\"Mesh\"]",
+            "Loops": "@6454328",
+            "Edges": "@8118332",
+            "PackedMaterialGroups": [
+                {
+                    "PolyEnd": 103999,
+                    "Material": "Materials[\"Material\"]",
+                    "PolyStart": 0
+                }
+            ],
+            "PackedCotangents": "@16854344",
+            "PackedNormals": "@1462324",
+            "ClassName": "TP3DMesh"
+        },
+        {
+            "PackedVertexWeights": "@29334568",
+            "PackedFaces": "@27052536",
+            "TexCoords": [
+                "@28781348"
+            ],
+            "Name": "human_female",
+            "PackedTangents": "@27121692",
+            "PackedPositions": "@25174352",
+            "DataPath": "Meshes[\"human_female\"]",
+            "Loops": "@26222704",
+            "Edges": "@26499316",
+            "PackedMaterialGroups": [
+                {
+                    "PolyEnd": 17287,
+                    "Material": "Materials[\"MBlab_human_skin1498351922.2479086\"]",
+                    "PolyStart": 0
+                }
+            ],
+            "PackedCotangents": "@27951520",
+            "PackedVertexWeightIndices": "@29553092",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "breast_L"
+                },
+                {
+                    "Index": 1,
+                    "Name": "breast_R"
+                },
+                {
+                    "Index": 2,
+                    "Name": "calf_L"
+                },
+                {
+                    "Index": 3,
+                    "Name": "calf_R"
+                },
+                {
+                    "Index": 4,
+                    "Name": "calf_twist_L"
+                },
+                {
+                    "Index": 5,
+                    "Name": "calf_twist_R"
+                },
+                {
+                    "Index": 6,
+                    "Name": "clavicle_L"
+                },
+                {
+                    "Index": 7,
+                    "Name": "clavicle_R"
+                },
+                {
+                    "Index": 8,
+                    "Name": "foot_L"
+                },
+                {
+                    "Index": 9,
+                    "Name": "foot_R"
+                },
+                {
+                    "Index": 10,
+                    "Name": "hand_L"
+                },
+                {
+                    "Index": 11,
+                    "Name": "hand_R"
+                },
+                {
+                    "Index": 12,
+                    "Name": "head"
+                },
+                {
+                    "Index": 13,
+                    "Name": "index00_L"
+                },
+                {
+                    "Index": 14,
+                    "Name": "index00_R"
+                },
+                {
+                    "Index": 15,
+                    "Name": "index01_L"
+                },
+                {
+                    "Index": 16,
+                    "Name": "index01_R"
+                },
+                {
+                    "Index": 17,
+                    "Name": "index02_L"
+                },
+                {
+                    "Index": 18,
+                    "Name": "index02_R"
+                },
+                {
+                    "Index": 19,
+                    "Name": "index03_L"
+                },
+                {
+                    "Index": 20,
+                    "Name": "index03_R"
+                },
+                {
+                    "Index": 21,
+                    "Name": "lowerarm_L"
+                },
+                {
+                    "Index": 22,
+                    "Name": "lowerarm_R"
+                },
+                {
+                    "Index": 23,
+                    "Name": "lowerarm_twist_L"
+                },
+                {
+                    "Index": 24,
+                    "Name": "lowerarm_twist_R"
+                },
+                {
+                    "Index": 25,
+                    "Name": "middle00_L"
+                },
+                {
+                    "Index": 26,
+                    "Name": "middle00_R"
+                },
+                {
+                    "Index": 27,
+                    "Name": "middle01_L"
+                },
+                {
+                    "Index": 28,
+                    "Name": "middle01_R"
+                },
+                {
+                    "Index": 29,
+                    "Name": "middle02_L"
+                },
+                {
+                    "Index": 30,
+                    "Name": "middle02_R"
+                },
+                {
+                    "Index": 31,
+                    "Name": "middle03_L"
+                },
+                {
+                    "Index": 32,
+                    "Name": "middle03_R"
+                },
+                {
+                    "Index": 33,
+                    "Name": "neck"
+                },
+                {
+                    "Index": 34,
+                    "Name": "pelvis"
+                },
+                {
+                    "Index": 35,
+                    "Name": "pinky00_L"
+                },
+                {
+                    "Index": 36,
+                    "Name": "pinky00_R"
+                },
+                {
+                    "Index": 37,
+                    "Name": "pinky01_L"
+                },
+                {
+                    "Index": 38,
+                    "Name": "pinky01_R"
+                },
+                {
+                    "Index": 39,
+                    "Name": "pinky02_L"
+                },
+                {
+                    "Index": 40,
+                    "Name": "pinky02_R"
+                },
+                {
+                    "Index": 41,
+                    "Name": "pinky03_L"
+                },
+                {
+                    "Index": 42,
+                    "Name": "pinky03_R"
+                },
+                {
+                    "Index": 43,
+                    "Name": "ring00_L"
+                },
+                {
+                    "Index": 44,
+                    "Name": "ring00_R"
+                },
+                {
+                    "Index": 45,
+                    "Name": "ring01_L"
+                },
+                {
+                    "Index": 46,
+                    "Name": "ring01_R"
+                },
+                {
+                    "Index": 47,
+                    "Name": "ring02_L"
+                },
+                {
+                    "Index": 48,
+                    "Name": "ring02_R"
+                },
+                {
+                    "Index": 49,
+                    "Name": "ring03_L"
+                },
+                {
+                    "Index": 50,
+                    "Name": "ring03_R"
+                },
+                {
+                    "Index": 51,
+                    "Name": "spine01"
+                },
+                {
+                    "Index": 52,
+                    "Name": "spine02"
+                },
+                {
+                    "Index": 53,
+                    "Name": "spine03"
+                },
+                {
+                    "Index": 54,
+                    "Name": "thigh_L"
+                },
+                {
+                    "Index": 55,
+                    "Name": "thigh_R"
+                },
+                {
+                    "Index": 56,
+                    "Name": "thigh_twist_L"
+                },
+                {
+                    "Index": 57,
+                    "Name": "thigh_twist_R"
+                },
+                {
+                    "Index": 58,
+                    "Name": "thumb01_L"
+                },
+                {
+                    "Index": 59,
+                    "Name": "thumb01_R"
+                },
+                {
+                    "Index": 60,
+                    "Name": "thumb02_L"
+                },
+                {
+                    "Index": 61,
+                    "Name": "thumb02_R"
+                },
+                {
+                    "Index": 62,
+                    "Name": "thumb03_L"
+                },
+                {
+                    "Index": 63,
+                    "Name": "thumb03_R"
+                },
+                {
+                    "Index": 64,
+                    "Name": "toes_L"
+                },
+                {
+                    "Index": 65,
+                    "Name": "toes_R"
+                },
+                {
+                    "Index": 66,
+                    "Name": "upperarm_L"
+                },
+                {
+                    "Index": 67,
+                    "Name": "upperarm_R"
+                },
+                {
+                    "Index": 68,
+                    "Name": "upperarm_twist_L"
+                },
+                {
+                    "Index": 69,
+                    "Name": "upperarm_twist_R"
+                }
+            ],
+            "PackedNormals": "@25392876",
+            "ClassName": "TP3DMesh"
+        },
+        {
+            "PackedVertexWeights": "@30215168",
+            "PackedFaces": "@30011608",
+            "TexCoords": [
+                "@30165820"
+            ],
+            "Name": "Plane",
+            "PackedTangents": "@30017780",
+            "PackedPositions": "@29844456",
+            "DataPath": "Meshes[\"Plane\"]",
+            "Loops": "@29937584",
+            "Edges": "@29962260",
+            "PackedMaterialGroups": [
+                {
+                    "PolyEnd": 1541,
+                    "Material": "Materials[\"Material.001\"]",
+                    "PolyStart": 0
+                }
+            ],
+            "PackedCotangents": "@30091800",
+            "PackedVertexWeightIndices": "@30234276",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Seam"
+                }
+            ],
+            "PackedNormals": "@29863564",
+            "ClassName": "TP3DMesh"
+        }
+    ],
+    "Actions": [],
+    "Scenes": [
+        {
+            "Cam": "Objects[\"Camera\"]",
+            "DataPath": "Scenes[\"Scene\"]",
+            "Name": "Scene",
+            "ClassName": "TP3DScene",
+            "Objects": [
+                "Objects[\"Hair\"]",
+                "Objects[\"Lamp.001\"]",
+                "Objects[\"BezierCurve\"]",
+                "Objects[\"Lamp\"]",
+                "Objects[\"Camera\"]",
+                "Objects[\"1498351922.2479277\"]",
+                "Objects[\"Robe\"]"
+            ]
+        }
+    ],
+    "Materials": [
+        {
+            "Instancing": 1,
+            "Diff": [
+                0.055958449840545654,
+                0.02823786437511444,
+                0.0020075482316315174
+            ],
+            "Spec": [
+                0.018248185515403748,
+                0.018248185515403748,
+                0.018248185515403748
+            ],
+            "Maps": [
+                {
+                    "Data": "Textures[\"Tex\"]",
+                    "DiffuseFactor": 1.0,
+                    "Mode": "tex_slotMix",
+                    "TexChannel": 0,
+                    "ClassName": "TP3DMaterialMapBase",
+                    "NormalFactor": 0.7435898780822754
+                }
+            ],
+            "DataPath": "Materials[\"Material\"]",
+            "Spec_Hardness": 1,
+            "Unlit": false,
+            "Name": "Material",
+            "TransparencyMode": "tmNone",
+            "ClassName": "TP3DMaterialBase"
+        },
+        {
+            "Instancing": 1,
+            "Diff": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+            ],
+            "Spec": [
+                0.18173891305923462,
+                0.18173891305923462,
+                0.18173891305923462
+            ],
+            "Maps": [
+                {
+                    "Data": "Textures[\"Texture.001\"]",
+                    "DiffuseFactor": 1.0,
+                    "Mode": "tex_slotMix",
+                    "ClassName": "TP3DMaterialMapBase"
+                }
+            ],
+            "DataPath": "Materials[\"MBlab_human_skin1498351922.2479086\"]",
+            "Spec_Hardness": 2,
+            "Unlit": false,
+            "Name": "MBlab_human_skin1498351922.2479086",
+            "TransparencyMode": "tmNone",
+            "ClassName": "TP3DMaterialBase"
+        },
+        {
+            "Instancing": 1,
+            "Diff": [
+                0.1409464031457901,
+                0.1739286184310913,
+                0.64000004529953
+            ],
+            "Spec": [
+                0.047445252537727356,
+                0.047445252537727356,
+                0.047445252537727356
+            ],
+            "Maps": [],
+            "DataPath": "Materials[\"Material.001\"]",
+            "Spec_Hardness": 27,
+            "Unlit": false,
+            "Name": "Material.001",
+            "TransparencyMode": "tmNone",
+            "ClassName": "TP3DMaterialBase"
+        }
+    ],
+    "Lights": [
+        {
+            "DataPath": "Lights[\"Lamp.001\"]",
+            "LightType": "ltSun",
+            "Energy": 0.059999942779541016,
+            "Name": "Lamp.001",
+            "ClassName": "TP3DLight",
+            "Color": [
+                0.4718892276287079,
+                0.6130492687225342,
+                1.0
+            ]
+        },
+        {
+            "DataPath": "Lights[\"Lamp\"]",
+            "LightType": "ltSun",
+            "Energy": 1.159999966621399,
+            "Name": "Lamp",
+            "ClassName": "TP3DLight",
+            "Color": [
+                1.0,
+                0.9281452298164368,
+                0.5423764586448669
+            ]
+        }
+    ],
+    "Objects": [
+        {
+            "Scale": [
+                0.9999999403953552,
+                0.9999998807907104,
+                0.9999998807907104
+            ],
+            "Data": "Cameras[\"Camera\"]",
+            "RotationOrder": "roXYZ",
+            "Quaternion": [
+                0.7535388469696045,
+                -0.063470758497715,
+                -0.05491851270198822,
+                0.6520235538482666
+            ],
+            "DataPath": "Objects[\"Camera\"]",
+            "Name": "Camera",
+            "Children": [],
+            "ClassName": "TP3DObject",
+            "Position": [
+                -0.08392322063446045,
+                -0.5984423160552979,
+                1.399285912513733
+            ]
+        },
+        {
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Data": "Meshes[\"Mesh\"]",
+            "RotationOrder": "roXYZ",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"Hair\"]",
+            "Name": "Hair",
+            "Children": [],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Data": "Meshes[\"Plane\"]",
+            "RotationOrder": "roXYZ",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"Robe\"]",
+            "Name": "Robe",
+            "Children": [],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Data": "Lights[\"Lamp.001\"]",
+            "RotationOrder": "roQUATERNION",
+            "Quaternion": [
+                -0.9226105809211731,
+                0.19773249328136444,
+                0.3158292770385742,
+                0.09971719235181808
+            ],
+            "DataPath": "Objects[\"Lamp.001\"]",
+            "Name": "Lamp.001",
+            "Children": [],
+            "ClassName": "TP3DObject",
+            "Position": [
+                -3.8028721809387207,
+                2.0492734909057617,
+                -1.3640912771224976
+            ]
+        },
+        {
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Data": "Lights[\"Lamp\"]",
+            "RotationOrder": "roXYZ",
+            "Quaternion": [
+                0.2816179394721985,
+                0.15282413363456726,
+                0.3742491900920868,
+                0.8702147006988525
+            ],
+            "DataPath": "Objects[\"Lamp\"]",
+            "Name": "Lamp",
+            "Children": [],
+            "ClassName": "TP3DObject",
+            "Position": [
+                3.0158581733703613,
+                -3.0474114418029785,
+                5.903861999511719
+            ]
+        },
+        {
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Data": "Meshes[\"human_female\"]",
+            "RotationOrder": "roXYZ",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"1498351922.2479277\"]",
+            "Name": "1498351922.2479277",
+            "Children": [],
+            "ClassName": "TP3DObject",
+            "Position": [
+                3.746742294197247e-08,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Data": "None",
+            "RotationOrder": "roXYZ",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "DataPath": "Objects[\"BezierCurve\"]",
+            "Name": "BezierCurve",
+            "Children": [],
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "Armatures": [],
+    "Joints": []
+}

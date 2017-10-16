@@ -108,8 +108,15 @@ begin
     //if ( FileExists( '/tmp/frog.p3d' )) then
       begin
         try
-          SetCurrentDir( '/tmp/' );
-          SceneMain.ActiveLibrary.SaveToFile( 'test.p3d' );
+          if ( Assigned( SceneMain.ActiveDataBlock )) then
+            with ( TStringList.Create ) do
+              begin
+                Text:= SceneMain.ActiveDataBlock.Serialize();
+                SaveToFile( '/tmp/tmp.json' );
+                Free;
+              end;
+          //SetCurrentDir( '/tmp/' );
+          //SceneMain.ActiveLibrary.SaveToFile( 'test.p3d' );
           {with TStringList.Create do
             begin
               Text:= SceneMain.ActiveLibrary.Serialize;

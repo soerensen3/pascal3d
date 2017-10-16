@@ -45,7 +45,6 @@ type
       FSizeFactor: Single;
       FTexture: TP3DTexture;
 
-      procedure ApplyShader;
       procedure SetFileName(AValue: String);
       procedure SetMipMapLodBias(AValue: Single);
 
@@ -55,9 +54,10 @@ type
 
     public
       constructor Create( const AData: TP3DLibrary = nil ); override;
-      constructor CreateByFont( Font: TP3DFont; Width, Height, Margin: Integer; const AData: TP3DLibrary = nil );
+      constructor CreateByFont( AFont: TP3DFont; AWidth, AHeight, AMargin: Integer; const AData: TP3DLibrary = nil );
 
       procedure FastDestroy; override;
+      procedure ApplyShader;
 
       function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
       procedure LoadFromDOMNew( ADOMNode: TDOMElement ); override;
@@ -378,7 +378,7 @@ begin
   Properties.Add( TP3DPropertyAccessTexture.CreateField( 'Texture', @FTexture, smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Margin', smAttribute ));
   Properties.Add( TP3DPropertyAccessFontLetterList.CreateField( 'Letters', @Letters, smAttribute ));
-  //Owner.Fonts.Add( Self );
+  Owner.Fonts.Add( Self );
 
   {property Letters: TP3DFontLetterList read FLetters write FLetters;
   property Texture: TP3DTexture read FTexture write FTexture;
@@ -388,14 +388,14 @@ begin
   property MipMapLoadBias: Single read FMipMapLoadBias write SetMipMapLodBias;}
 end;
 
-constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height, Margin: Integer; const AData: TP3DLibrary);
+constructor TP3DFontBmp.CreateByFont(AFont: TP3DFont; AWidth, AHeight, AMargin: Integer; const AData: TP3DLibrary);
 
-  procedure DrawText( ASurface: PSDL_Surface; Font: TP3DFont );
+  procedure DrawText( ASurface: PSDL_Surface );
   var
     i, e: Integer;
     sz, oldsz: TPoint;
-    low: Integer = Integer( ' ' );
-    high: Integer = 255;
+    low: Integer = 32;
+    high: Integer = 126;
     cl: TSDL_Color;
 //    minx, maxx, miny, maxy, advance, e: Integer;
     fnt: PTTF_Font;
@@ -406,10 +406,10 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height, Margin: Inte
     {if ( Font.Size <> P3DFontManagerBmp.DefaultTextSize ) then
       Font:= P3DFontManager.Fonts[ Font.FontName, round( P3DFontManagerBmp.DefaultTextSize )];}
 //    FFontName:= Font.FontName;
-    fnt:= TTF_OpenFont( PChar( Font.FileWatch.FileName ), round( P3DFontManagerBmp.DefaultTextSize ));
+    fnt:= TTF_OpenFont( PChar( AFont.FileWatch.FileName ), round( P3DFontManagerBmp.DefaultTextSize ));
     SizeFactor:= TTF_FontHeight( fnt ) / ASurface^.h;
-    FMargin:= Margin / ASurface^.h;
-    WriteLn( Font.FontName + ' Font Size: ', TTF_FontHeight( fnt ), ' Pt', Font.Size );
+    FMargin:= AMargin / ASurface^.h;
+    WriteLn( AFont.FontName + ' Font Size: ', TTF_FontHeight( fnt ), ' Pt', Font.Size );
 
     cl.r:= 0;
     cl.g:= 0;
@@ -417,26 +417,29 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height, Margin: Inte
     cl.a:= 255;
 
     sz:= Point( 0, 0 );
-    oldsz:= Point( Margin, Margin );
+    oldsz:= Point( AMargin, AMargin );
 
     SDL_FillRect( ASurface, nil, SDL_MapRGBA( ASurface^.format, 255, 255, 0, 0 )); //Initialize pixels for distance fields
     for i:= low to high do
-      if ( Boolean( TTF_GlyphIsProvided( fnt, i ))) then
+      //if ( Boolean( TTF_GlyphIsProvided( fnt, i ))) then
         begin
           e:= TTF_SizeText( fnt, PAnsiChar( AnsiString( AnsiChar( i ))), @sz.X, @sz.Y );
           if ( e <> 0 ) then
-            continue;
-          if ( oldsz.Y + sz.Y + Margin > ASurface^.h ) then
+            begin
+              WriteLn( 'Glyph Error: ', i );
+              continue;
+            end;
+          if ( oldsz.Y + sz.Y + AMargin > ASurface^.h ) then
             break;
 
-          if ( oldsz.X + sz.X + Margin * 2 > ASurface^.w ) then
-            oldsz:= Point( 0, oldsz.y + sz.Y + Margin ); //Skip Line
+          if ( oldsz.X + sz.X + AMargin * 2 > ASurface^.w ) then
+            oldsz:= Point( AMargin, oldsz.y + sz.Y + AMargin ); //Skip Line
 
           text_surf:= TTF_RenderText_Solid( fnt, PAnsiChar( AnsiString( AnsiChar( i ))), cl );
           //SDL_SetSurfaceBlendMode( text_surf, SDL_BLENDMODE_BLEND );
           //SDL_SetSurfaceBlendMode( ASurface, SDL_BLENDMODE_BLEND );
           r1:= Rect( 0, 0, text_surf^.w, text_surf^.h );
-          r2:= Rect( oldsz.X, oldsz.Y, text_surf^.w + oldsz.X + Margin, oldsz.Y + text_surf^.h );
+          r2:= Rect( oldsz.X, oldsz.Y, text_surf^.w + oldsz.X + AMargin, oldsz.Y + text_surf^.h );
 
           SDL_BlitSurface( text_surf, PSDL_Rect( @r1 ), ASurface, PSDL_Rect( @r2 ));
           SDL_FreeSurface( text_surf );
@@ -449,9 +452,11 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height, Margin: Inte
           letter.uv1:= vec2( oldsz.X / ASurface^.w, oldsz.Y / ASurface^.h );
           letter.uv2:= vec2(( oldsz.X + sz.X ) / ASurface^.w, ( oldsz.Y + sz.Y ) / ASurface^.h );
           Letters.Add( letter );
-          oldsz.x:= oldsz.x + sz.x + Margin;
-        end;
-    TTF_CloseFont( fnt );
+          oldsz.x:= oldsz.x + sz.x + AMargin;
+        end
+    //else
+    //  WriteLn( 'Glyph not provided: ', i );
+    ;TTF_CloseFont( fnt );
   end;
 
   const
@@ -531,7 +536,7 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height, Margin: Inte
     x, y: Integer;
     px: TIVec2;
   begin
-    Result:= SDL_CreateRGBSurface( SDL_SWSURFACE, Width, Height, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+    Result:= SDL_CreateRGBSurface( SDL_SWSURFACE, AWidth, AHeight, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
 
     SDL_LockSurface( Result );
     SDL_LockSurface( ASurface );
@@ -622,7 +627,7 @@ constructor TP3DFontBmp.CreateByFont(Font: TP3DFont; Width, Height, Margin: Inte
     idist1, idist2, y, x: Integer;
     dist, sy, sx: Integer;
   begin
-    Result:= SDL_CreateRGBSurface( SDL_SWSURFACE, Width div Downscale, Height div Downscale, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+    Result:= SDL_CreateRGBSurface( SDL_SWSURFACE, AWidth div Downscale, AHeight div Downscale, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
 
     SDL_LockSurface( Result );
     SDL_LockSurface( dist1 );
@@ -657,14 +662,14 @@ var
   FN: String;
 begin
   Create( AData );
-  FN:= P3DSearchPaths.FindFile( Font.FontName + '.p3d' );
-  if (( FN > '' ) and ( FileAge( Font.FileWatch.FileName ) < FileAge( FN ))) then
-    LoadFromFile( FN + '?Fonts["' + Font.FontName + '"]' )
+  FN:= P3DSearchPaths.FindFile( AFont.FontName + '.p3d' );
+  if (( FN > '' ) and ( FileAge( AFont.FileWatch.FileName ) < FileAge( FN ))) then
+    LoadFromFile( FN + '?Fonts["' + AFont.FontName + '"]' )
   else
     begin
-      Name:= Font.FontName;
-      Surface:= SDL_CreateRGBSurface( SDL_SWSURFACE, Width, Height, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
-      DrawText( Surface, Font );
+      Name:= AFont.FontName;
+      Surface:= SDL_CreateRGBSurface( SDL_SWSURFACE, AWidth, AHeight, 32, $000000FF, $0000FF00, $00FF0000, $FF000000 );
+      DrawText( Surface );
 
       dist1:= CalculateSignedDistanceField( Surface, 0 );
       dist2:= CalculateSignedDistanceField( Surface, 1 );
@@ -681,8 +686,8 @@ begin
 
       Texture.MipMap:= False;
 
-      Texture.SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.png' );
-      Texture.FileWatch.FileName:= Font.FontName + '.png';
+      Texture.SaveToFile( ExtractFilePath( AFont.FileWatch.FileName ) + AFont.FontName + '.png' );
+      Texture.FileWatch.FileName:= AFont.FontName + '.png';
       //SaveToFile( ExtractFilePath( Font.FileWatch.FileName ) + Font.FontName + '.p3d' );
 
       MipMapLoadBias:= FMipMapLoadBias;
@@ -693,7 +698,9 @@ procedure TP3DFontBmp.FastDestroy;
 begin
   Letters.Clear( True );
   Letters.Free;
-  //Owner.Fonts.Remove( Self );
+  if ( Assigned( P3DFontManagerBmp )) then
+    P3DFontManagerBmp.Remove( Self );
+  Owner.Fonts.Remove( Self );
   inherited FastDestroy;
 end;
 
@@ -927,7 +934,7 @@ end;
 destructor TP3DFontManagerBmp.Destroy;
 begin
   Material.Free;
-  Clear( True );
+  Clear( False );
   inherited Destroy;
 end;
 
@@ -942,15 +949,16 @@ begin
     begin
       OldSize:= Font.Size;
       Font.Size:= round( DefaultTextSize );
-      Lib:= P3DData.Libraries[ P3DData.Libraries.Add( TP3DLibrary.Create )];
+      Lib:= TP3DLibrary.Create;
+      //P3DData.Libraries.Add( Lib );
       Lib.FileWatch.FileName:= ChangeFileExt( Font.FileWatch.FileName, '.p3d' );
-      Lib.IsDesignerPackage:= True;
+      //Lib.IsDesignerPackage:= True;
       Fnt:= TP3DFontBmp.CreateByFont( Font, DefaultTexWidth, DefaultTexHeight, DefaultTextMargin, Lib );
       {Lib.CreateDOMFile();
       Lib.SaveToDOM();
       Lib.Fonts.SaveToDOM( Lib.DOMFile.DocumentElement );
       Lib.SaveDOMFile();}
-      Lib.SaveToFile();
+      //Lib.SaveToFile();
       Result:= Add( Fnt );
       Font.Size:= OldSize;
     end;

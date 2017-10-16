@@ -74,6 +74,9 @@ procedure TP3DSceneMain.SetActiveDataBlock(AValue: TP3DDataBlock);
 begin
   if FActiveDataBlock=AValue then Exit;
   FActiveDataBlock:=AValue;
+
+  if ( AValue is TP3DObject ) then;
+    SceneView.Selection:= TP3DObject( AValue );
 end;
 
 procedure TP3DSceneMain.SetActiveScene(AValue: TP3DScene);

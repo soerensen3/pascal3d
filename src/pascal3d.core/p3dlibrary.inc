@@ -255,6 +255,8 @@ begin
   Properties.Add( TP3DPropertyAccessArmatureContainer.CreateField( 'Armatures', @FArmatures, smAttribute ));
   Properties.Add( TP3DPropertyAccessActionContainer.CreateField( 'Actions', @FActions, smAttribute ));
   Properties.Add( TP3DPropertyAccessFontContainer.CreateField( 'Fonts', @FFonts, smAttribute ));
+  if ( not ( Self is TP3DData )) then
+    P3DData.Libraries.Add( Self );
 end;
 
 
@@ -300,6 +302,9 @@ begin
   FreeAndNil( FActions );
   FreeAndNil( FFonts );
   FreeAndNil( FFileWatch );
+
+  if ( Self <> P3DData ) then
+    P3DData.Libraries.Remove( Self );
 
   inherited Destroy;
 end;
@@ -906,6 +911,7 @@ begin
   Textures.Clear();
   Actions.Clear();
   Armatures.Clear();
+  Fonts.Clear();
 end;
 
 {
@@ -1116,7 +1122,7 @@ begin
   for i:= Libraries.Count - 1 downto 0 do
     begin
       Libraries[ i ].Free;
-      Libraries.Delete( i );
+      //Libraries.Delete( i );
     end;
 
   inherited ClearFields;
@@ -1148,7 +1154,8 @@ begin
   if ( Result = -1 ) then
     begin
       F:= TP3DLibrary.CreateFromFile( FName );
-      Result:= Libraries.Add( F );
+      Result:= Libraries.Count - 1;
+      //Result:= Libraries.Add( F );
     end;
 end;
 

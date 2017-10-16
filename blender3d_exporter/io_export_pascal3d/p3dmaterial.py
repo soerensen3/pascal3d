@@ -23,11 +23,13 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
         if ( tex_slot.use_map_normal ):
             mapobj.NormalFactor = tex_slot.normal_factor
 
-        if ( tex_slot.use_map_color_spec ):
-            mapobj.SpecularFactor = tex_slot.specular_color_factor
+        #if ( tex_slot.use_map_color_spec ):
+        #    mapobj.SpecularFactor = tex_slot.specular_color_factor
 
         if ( tex_slot.use_map_specular ):
-            mapobj.SpecularIntensity = tex_slot.specular_factor
+            mapobj.SpecularFactor = tex_slot.specular_factor
+        #if ( tex_slot.use_map_specular ):
+        #    mapobj.SpecularIntensity = tex_slot.specular_factor
 
         if ( tex_slot.use_map_alpha ):
             mapobj.AlphaFactor = tex_slot.alpha_factor

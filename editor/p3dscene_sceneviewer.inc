@@ -204,6 +204,7 @@
 var
   EditorSceneArrow: TP3DScene;
   EditorSceneArrows: TP3DScene;
+  EditorSceneArrowsRL: TP3DRenderList;
   EditorSceneJoint: TP3DScene;
   EditorSceneLamp: TP3DScene;
   EditorSceneLampMaterial: TP3DMaterialBase;
@@ -719,15 +720,16 @@ begin
         FreeAndNil( FSelectionRenderList );
         FSelectionRenderList:= TP3DRenderList.Create;
         FSelectionRenderList.OnAdd:= @ScenePanel.RenderListOnAdd;
-        n:= ObjectList.Find( Selection, ScenePanel.Viewer.OverrideMaterial );
+        //n:= ObjectList.Find( Selection, ScenePanel.Viewer.OverrideMaterial );
 
-        if ( n >= 0 ) then
+        FSelectionRenderList.Add( Selection, Selection.CalculateParentMatrix, Selection.Scene, RenderFlags );
+        {if ( n >= 0 ) then
           begin
             FSelectionRenderList.Add( ObjectList[ n ].Data, {ObjectList[ n ].Matrices[ 0 ]}Mat4Identity, Selection.Scene, RenderFlags );
         //FSelectionRenderList.Add( Selection.Data, Selection.MatrixFinal, Selection.Scene, RenderFlags );
             mat4decompose( ObjectList[ n ].Matrices[ 0 ], loc, rot, scale );
             Viewer.Caption:= 'Location: (' + loc.ToString( 1 ) + ') Rotation: (' + quat( rot ).ToString( 1 ) + ') Scale: (' + scale.ToString( 1 ) + ')';
-          end;
+          end;}
         //Selection.Scene.MakeRenderList( nil, Selection.MatrixFinal, FSelectionRenderList, RenderFlags );
         {n:= .SelectionRenderList.Find( .Selection.Data, .SelectionMaterial );
         if ( n > -1 ) then
@@ -750,7 +752,16 @@ begin
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
         glLineWidth( 1 );
       end;
+  //if ( ScenePanel.Selection is TP3DArmature ) then
+  //  ScenePanel.DrawArmature( ScenePanel.Selection )
 
+  if ( ScenePanel.Selection.Data is TP3DArmature ) then
+    begin
+      ScenePanel.Cam.PassToShader;
+      ScenePanel.Canvas3D.View:= ScenePanel.Cam.View;
+      ScenePanel.Canvas3D.Proj:= ScenePanel.Cam.Proj;
+      ScenePanel.DrawArmature( ScenePanel.Selection );
+    end;
   {ScenePanel.Cam.PassToShader;
   if ( Assigned( ScenePanel.Selection )) then
     begin
@@ -831,8 +842,11 @@ end;
 
 procedure TP3DSceneEditModeDefault.RenderSelectionAxis;
 begin
+  if ( Assigned( EditorSceneArrowsRL )) then
+    EditorSceneArrowsRL.Clear;
+  EditorSceneArrows.MakeRenderList( nil, mat4translate( vec4( TransCenter, 1 )), EditorSceneArrowsRL );
   if ( Assigned( ScenePanel.Selection )) then
-    EditorSceneArrows.RenderFromCamera( ScenePanel.CamObject, mat4translate( vec4( TransCenter, 1 )));
+    EditorSceneArrowsRL.Render( ScenePanel.CamObject );
 end;
 
 procedure TP3DSceneEditModeDefault.RenderEditorAxis;
@@ -988,9 +1002,9 @@ begin
       //TODO: Repair
       //n:= FRenderList.Find( Selection );
       //if ( n >= 0 ) then
-      Editor.TransMat:= Mat4Identity;//Selection.MatrixFinal; //FRenderList[ n ].Matrix;
       Editor.MousePosInitial:= vec2( -1 );
       Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
+      Editor.TransMat:= Selection.Matrix; //FRenderList[ n ].Matrix;
 
       FEditMode:= AValue;
     end;
@@ -1012,7 +1026,7 @@ begin
     DataView.Viewer.Selection:= DataView.Viewer.Children.FindByData( Pointer( Selection ), True )
   else
     DataView.Viewer.Selection:= nil;}
-  SceneMain.ActiveDataBlock:= AValue;
+  //SceneMain.ActiveDataBlock:= AValue;
 
   if ( Assigned( Editor ) and Assigned( Selection )) then
     Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
@@ -1025,7 +1039,7 @@ begin
 end;
 
 procedure TP3DScenePanel.DrawArmature(ArmatureObject: TP3DObject);
-{
+
 var
   matrix_joint: TMat4;
 
@@ -1035,15 +1049,15 @@ var
   begin
     p:= Joint.Position;
     //p2:= p + vec3( 0, 0, 10 );
-    p2:= p + Joint.Quaternion * vec3( 0, 0, 1 );
+    p2:= Joint.Tail;//p + Joint.Quaternion * vec3( 0, 0, 1 );
     Canvas3D.RenderLine( p, p2, vec4( 1, 0, 0, 1 ), vec4( 0, 1, 0, 1 ));
   end;
 
 var
   Joint: TP3DJoint;
-}
+
 begin
-{  matrix_joint:= mat4( 1,0,0,0,
+  matrix_joint:= mat4( 1,0,0,0,
                        0,0,1,0,
                        0,-1,0,0,
                        0,0,0,1 );
@@ -1055,7 +1069,7 @@ begin
         RenderBone( Joint );
     end;
   glEnable( GL_DEPTH_TEST );
-  Canvas3D.Unlock();}
+  Canvas3D.Unlock();
 end;
 
 procedure TP3DScenePanel.RenderListOnAdd(AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; AFlags: TP3DRenderListFlags; var Accept: Boolean);
@@ -1069,10 +1083,13 @@ begin
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
-          EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials ]);
+          if ( TP3DLight( AData ).LightType in [ ltSun, ltSpot ]) then
+            EditorSceneArrow.AddToRenderList( AScene, Selection.Matrix, Viewer.RenderList, AFlags - [ rlfMaterials, rlfLighting ]);
+
+          EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials, rlfLighting ]);
         end
       else
-        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
+        EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials, rlfLighting ]);
     end
   else if ( AData is TP3DJoint ) then
     begin
@@ -1080,13 +1097,13 @@ begin
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
-          EditorSceneJoint.AddToRenderList( AScene,
-                                            Selection.Matrix {*
+          //EditorSceneJoint.AddToRenderList( AScene,
+          //                                  AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )) {*
                                             //mat4lookatLH( vec3( 0 ), TP3DJoint( Selection.Data ).Tail - TP3DJoint( Selection.Data ).Position, vec3_Axis_PZ ) *
-                                            mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 ))}, Viewer.RenderList, AFlags - [ rlfMaterials ]);
+          //                                  mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 ))}, Viewer.RenderList, AFlags - [ rlfMaterials ]);
         end
       else
-        EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
+        //EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
     end
   else if ( AData is TP3DMesh ) then
     if ( Assigned( Selection ) and ( Selection.Data = AData ) and ( Assigned( TP3DMesh( AData ).Armature ))) then
@@ -1164,6 +1181,8 @@ begin
   //FRenderList.Free;
   EditorLightObj.Free;
   EditorLight.Free;
+
+  FreeAndNil( EditorSceneArrowsRL );
   inherited FastDestroy;
 end;
 
@@ -1339,12 +1358,12 @@ function TP3DScenePanel.GetSelectionCenter: TVec3;
 var
   n: Integer;
 begin
-  Result:= vec3( 0 );
-  {n:= RenderList.Find( Selection );
-  if ( n >= 0 ) then
-    Result:= RenderList[ n ].Matrix.Row[ 3 ].xyz
+  WriteLn( 'Selection = ', Selection.Name );
+  WriteLn( Selection.Matrix.ToString );
+  if ( Assigned( Selection )) then
+    Result:= ( Selection.CalculateParentMatrix * Selection.Matrix ).Row[ 3 ].xyz
   else
-    Result:= vec3( 0 );}
+    Result:= vec3( 0 );
   //TODO: FIX THIS!
 end;
 

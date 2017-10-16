@@ -55,7 +55,7 @@ void util_PointLight( in int i, in float shininess,
     // diffuse
 
     float cosineTerm = saturate( dot( N, lightDir ) );
-
+    cosineTerm = ( smoothstep( 0.2, 0.35, cosineTerm ) + smoothstep( 0.4, 0.8, cosineTerm )) / 2;
     diffuse += ( LightSource[ i ].color.rgb ) * attenuation * LightSource[ i ].color.a * cosineTerm;
 
     // specular
@@ -101,7 +101,7 @@ void util_directionalLight( in int i,
     // diffuse
 
     float cosineTerm = saturate( dot( N, LightSource[ i ].direction.xyz ));
-
+    cosineTerm = ( smoothstep( 0.3, 0.35, cosineTerm ) + smoothstep( 0.7, 0.75, cosineTerm )) / 2;
     diffuse += ( LightSource[ i ].color.rgb ) * LightSource[ i ].color.a * cosineTerm;
 
     // specular
@@ -125,6 +125,7 @@ node: 01000_light_pass_calc_lighting
     if ( LightSource[ i ].type == p3dltSun )
       util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec );
   }
+  //shadow *= vec3( smoothstep( 0.28, 0.3, dot( Normal.xyz, viewDir )));
   //shadow = vec3( 1 );
   //spec = vec3( 0 );
   //Color = vec4(( Normal.xyz + 1 )/2, 1 );

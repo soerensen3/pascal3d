@@ -58,22 +58,23 @@ type
 
   TP3DOIEditorDatablock = class ( TP3DOIEditorGroup )
     private
-      FDataCombo: TP3DComboBoxDataBlock;
-      FFileNameLbl: TP3DLabel;
-      FNameLbl: TP3DLabel;
+      FDataEd: TP3DPropertyEditorInterfacedPersistent;
+      FNameEd: TP3DLabel;
       FTypeLbl: TP3DLabel;
+      FDataProp: TP3DPropertyAccessDataBlock;
 
     public
       procedure Update; override;
       procedure DataDragDrop(Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean);
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      destructor Destroy; override;
+
       class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
 
     published
-      property NameLbl: TP3DLabel read FNameLbl write FNameLbl;
+      property NameEd: TP3DLabel read FNameEd write FNameEd;
       property TypeLbl: TP3DLabel read FTypeLbl write FTypeLbl;
-      property FileNameLbl: TP3DLabel read FFileNameLbl write FFileNameLbl;
-      property DataCombo: TP3DComboBoxDataBlock read FDataCombo write FDataCombo;
+      property DataEd: TP3DPropertyEditorInterfacedPersistent read FDataEd write FDataEd;
   end;
 
   { TP3DOIEditorPageObject }
@@ -663,14 +664,15 @@ begin
   inherited Create( AData, AParent );
   Caption:= 'Object';
 
-  NameEdit:= TP3DPropertyEditorString.Create( AData, AddContainer( Self, 'Name ' ));
-  NameEdit.Align:= alClient;
+  NameEdit:= TP3DPropertyEditorString.Create( AData, Self );
+  NameEdit.Height:= 20;
+  NameEdit.Align:= alTop;
 
   TypeLbl:= TP3DLabel.Create( AData, AddContainer( Self, 'Type ' ));
   TypeLbl.Height:= 20;
   TypeLbl.Align:= alTop;
 
-  CollisionEdit:= TP3DPropertyEditorEnum.Create( AData, AddContainer( Self, 'Collision ' ));
+  CollisionEdit:= TP3DPropertyEditorEnum.Create( AData, Self );
   CollisionEdit.Height:= 20;
   CollisionEdit.Align:= alClient;
 
@@ -693,33 +695,34 @@ begin
   if ( Obj is TP3DObject ) then
     with ( Obj as TP3DObject ) do
       begin
+        FDataProp.Field:= @Data;
+        DataEd.Prop:= FDataProp;
         if ( Assigned( Data )) then
           begin
-            DataCombo.Caption:= Data.Name;
-            DataCombo.TypeFilter:= TP3DDataBlock;
+            //DataCombo.Caption:= Data.Name;
+            //DataCombo.TypeFilter:= TP3DDataBlock;
             if ( Data.Owner = Owner ) then
-              NameLbl.Caption:= Data.Name
+              NameEd.Caption:= Data.Name
             else
-              NameLbl.Caption:= Data.Owner.Name + '.' + Data.Name;
+              NameEd.Caption:= Data.Owner.Name + '.' + Data.Name;
             TypeLbl.Caption:= Data.ClassName;
-            FileNameLbl.Caption:= ExtractFileNameOnly( Owner.FileWatch.FileName ) + '/' + Data.DataPath;
-            //FileNameLbl.Caption:= ExtractFileName( Data.FileWatch.FileName );
           end
         else
           begin
-            DataCombo.Caption:= '<None>';
-            NameLbl.Caption:= '<None>';
+            //DataCombo.Caption:= '<None>';
+            NameEd.Caption:= '<None>';
             TypeLbl.Caption:= '<None>';
-            FileNameLbl.Caption:= '<None>';
           end;
       end
   else if ( Obj is TP3DDataBlock ) then
     with ( Obj as TP3DDataBlock ) do
       begin
-        DataCombo.Caption:= Name;
-        NameLbl.Caption:= Name;
+        FDataProp.Field:= @Obj;
+        DataEd.Prop:= FDataProp;
+        //DataCombo.Caption:= Name;
+        NameEd.Caption:= Name;
         TypeLbl.Caption:= ClassName;
-        FileNameLbl.Caption:= Owner.FileWatch.FileName + '/' + DataPath;
+        //FileNameLbl.Caption:= Owner.FileWatch.FileName + '/' + DataPath;
         //FileNameLbl.Caption:= ExtractFileName( FileWatch.FileName );
       end
 end;
@@ -758,22 +761,25 @@ begin
   Caption:= 'Data';
   Height:= 60;
 
-  NameLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Name ' ));
-  NameLbl.Height:= 20;
-  NameLbl.Align:= alTop;
+  NameEd:= TP3DLabel.Create( nil, AddContainer( Self, 'Name ' ));
+  NameEd.Height:= 20;
+  NameEd.Align:= alTop;
 
   TypeLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'Type ' ));
   TypeLbl.Height:= 20;
   TypeLbl.Align:= alTop;
 
-  FileNameLbl:= TP3DLabel.Create( nil, AddContainer( Self, 'FileName ' ));
-  FileNameLbl.Height:= 20;
-  FileNameLbl.Align:= alTop;
+  DataEd:= TP3DPropertyEditorInterfacedPersistent.Create( nil, Self );
+  DataEd.Height:= 20;
+  DataEd.Align:= alTop;
+  FDataProp:= TP3DPropertyAccessDataBlock.Create( 'Data', smDoNotStore );
+  //DataCombo.OnDragDrop:= @DataDragDrop;
+end;
 
-  DataCombo:= TP3DComboBoxDataBlock.Create( nil, AddContainer( Self, 'Data' ));
-  DataCombo.Height:= 20;
-  DataCombo.Align:= alTop;
-  DataCombo.OnDragDrop:= @DataDragDrop;
+destructor TP3DOIEditorDatablock.Destroy;
+begin
+  FDataProp.Free;
+  inherited Destroy;
 end;
 
 class function TP3DOIEditorDatablock.IsCompatible(AObj: TInterfacedPersistent ): Boolean;
@@ -878,8 +884,8 @@ begin
   RotationMethodCombo.Items.Add( 'XYZ Euler' );
   //RotationMethodCombo.Items.Add( 'Quaternion XYZW' );
 
-  QuaternionEdit:= TP3DPropertyEditorVec4.Create( nil, AddContainer( Self, 'Quat ' ));
-  QuaternionEdit.Align:= alClient;
+  QuaternionEdit:= TP3DPropertyEditorVec4.Create( nil, Self );
+  QuaternionEdit.Align:= alTop;
 
   ScaleEdit:= TP3DVectorEdit.Create( nil, AddContainer( Self, 'Scale ' ));
   ScaleEdit.Align:= alClient;

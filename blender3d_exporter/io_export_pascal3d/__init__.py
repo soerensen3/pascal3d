@@ -86,6 +86,11 @@ class P3DExporter( bpy.types.Operator ):
       description = 'The exporter can set the scene''s camera to match the blender scene. This might however be undesired in most cases so this is disabled by default.This setting has no effect if Export Cameras is set to False.',
       default = False )
 
+    ExportVisibleOnly = BoolProperty(
+      name = 'Export visible only',
+      description = 'Only visible objects will be exported.',
+      default = True )
+
     SaveTextures = BoolProperty(
       name = 'Copy textures',
       description = 'Copies the textures to the target location.',
@@ -109,8 +114,8 @@ class P3DExporter( bpy.types.Operator ):
             return os.path.relpath( path, os.path.dirname( self.filepath ))
         if ( self.PathMode == '2' ):
             return os.path.basename( path )
-        return os.path.abspath( path )
 
+            return os.path.abspath( path )
     # EXPORTING FILE -----------------------------------------------------------------
 
     def ExportFile( self ):

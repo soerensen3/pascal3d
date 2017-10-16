@@ -83,6 +83,7 @@ type
       function GetJointTex: TP3DTexture;
       procedure SetJointTex(AValue: TP3DTexture);
       procedure UpdateJointTex( Root: TP3DObject );
+      function CalculateJointMatrixFromObj( AObj: TP3DObject ): TMat4;
 
     public
       procedure ClearFields; override;
@@ -137,15 +138,21 @@ type
   TP3DMeshModifierArmature = class ( TP3DMeshModifier )
     private
       FArmature: TP3DArmature;
+      FInitialized: Boolean;
       procedure SetArmature(AValue: TP3DArmature);
+      procedure SetMesh(AValue: TP3DMesh); override;
 
     public
       constructor Create( AMesh: TP3DMesh ); override;
       destructor Destroy; override;
 
+      procedure UpdateMaterials;
+
       procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
       procedure LoadFromDOM(ADOMNode: TDOMElement); override;
       procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
+
+      property Initialized: Boolean read FInitialized;
 
     published
       property Armature: TP3DArmature read FArmature write SetArmature;
@@ -351,6 +358,7 @@ begin
   if FPosition=AValue then Exit;
   FPosition:=AValue;
   UpdateMatrix;
+  FLength:= len( Tail - Position );
 end;
 
 procedure TP3DJoint.SetTail(AValue: TVec3);
@@ -362,7 +370,7 @@ end;
 
 procedure TP3DJoint.UpdateMatrix;
 begin
-  FMatrix:= mat4( mat3( Quaternion )) * mat4translate( vec4( Position, 1 ));
+  FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion ));
   FMatrixInv:= -FMatrix
 end;
 
@@ -469,6 +477,9 @@ var
   q: TQuaternion;
   t: TVec4;
   rlist: TP3DRenderList;
+  Capt: String;
+  Joint: TP3DJoint;
+  JointObj: TP3DObject;
 
   function getNextPower2( AValue: Integer ): Integer;
   begin
@@ -499,11 +510,23 @@ begin
         begin
           n:= rlist.Find( Joints.NamedItems[ j ], nil );
 
+          Capt:= '';
+          Joint:= Joints.NamedItems[ j ];
+          JointObj:= TP3DObject( Joint.Users[ 0 ]);
           case TransformMethod of
             atmMatrix:
               begin
-                if ( n > -1 ) then
-                  m:= rlist[ n ].Matrices[ 0 ] * Joints.NamedItems[ j ].MatrixInv
+                //Capt += '[{ ' + Joints.NamedItems[ j ].MatrixInv.ToString + '}, {' + rlist[ n ].Matrices[ 0 ].ToString + '}]';
+                if ( Assigned( JointObj )) then
+                  //m:= Joints.NamedItems[ j ].MatrixInv * rlist[ n ].Matrices[ 0 ]
+                  //m:= Joint.MatrixInv * JointObj.CalculateParentMatrix * ( mat4translate( vec4( JointObj.Position, 1 )) * mat4( mat3( JointObj.Quaternion )))
+                  {begin
+                    m:= mat4( mat3( JointObj.Quaternion ));
+                    m:= m * mat4translate( vec4( JointObj.Position, 1 ));
+                    m:= JointObj.CalculateParentMatrix * m;
+                    m:= Joint.MatrixInv * m;
+                  end}
+                  m:= CalculateJointMatrixFromObj( JointObj )
                 else
                   m:= Mat4Identity;
 
@@ -519,6 +542,7 @@ begin
                 Buffer.Add([ q, t ]);
               end;
           end;
+          //P3DApplication.MainWindow.Title:= Capt
         end;
   FJointTex:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr, Owner );
   OwnsJointTex:= True;
@@ -526,6 +550,25 @@ begin
   //FJointTex.SaveToFile( '/tmp/jointtex' + FJointTex.Name + '.png' );
   Buffer.Free;
   rlist.Free;
+end;
+
+function TP3DArmature.CalculateJointMatrixFromObj(AObj: TP3DObject): TMat4;
+var
+  Obj: TP3DObject;
+begin
+  Result:= Mat4Identity;
+  Obj:= AObj;
+  while Assigned( Obj ) do
+    begin
+      //Result:= Result * ( mat4translate( vec4( Obj.Position, 1 )) * mat4( mat3( Obj.Quaternion )));
+      Result:= ( mat4translate( vec4( Obj.Position, 1 )) * mat4( mat3( Obj.Quaternion ))) * Result;
+      if ( Obj.Parent is TP3DObject ) then
+        Obj:= TP3DObject( Obj.Parent )
+      else
+        Obj:= nil;
+    end;
+  if ( Assigned( AObj ) and ( AObj.Data is TP3DJoint )) then
+    Result:= Result * TP3DJoint( AObj.Data ).MatrixInv;
 end;
 
 procedure TP3DArmature.ClearFields;
@@ -612,7 +655,21 @@ procedure TP3DMeshModifierArmature.SetArmature(AValue: TP3DArmature);
 begin
   if FArmature=AValue then Exit;
   FArmature:=AValue;
-  Mesh.FArmature:= AValue;
+  if ( Assigned( Mesh )) then
+    begin
+      Mesh.FArmature:= AValue;
+      //UpdateMaterials;
+    end;
+end;
+
+procedure TP3DMeshModifierArmature.SetMesh(AValue: TP3DMesh);
+begin
+  inherited SetMesh(AValue);
+  if ( Assigned( Mesh )) then
+    begin
+      Mesh.FArmature:= Armature;
+      //UpdateMaterials;
+    end;
 end;
 
 constructor TP3DMeshModifierArmature.Create( AMesh: TP3DMesh );
@@ -620,11 +677,28 @@ begin
   inherited Create( AMesh );
 
   Properties.Add( TP3DPropertyAccessArmature.CreateFieldSet( 'Armature', @FArmature, @SetArmature, smAttribute ));
+  FInitialized:= False;
 end;
 
 destructor TP3DMeshModifierArmature.Destroy;
 begin
   inherited Destroy;
+end;
+
+procedure TP3DMeshModifierArmature.UpdateMaterials;
+var
+  i: Integer;
+begin
+  if ( Assigned( Mesh )) then
+    begin
+      for i:= 0 to Mesh.MaterialGroups.Count -1 do
+        if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
+          begin
+            TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierArmature.Create( Self ));
+            TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
+          end;
+      FInitialized:= True;
+    end;
 end;
 
 procedure TP3DMeshModifierArmature.PassToShader( Material: TP3DMaterial; var world: TMat4 );
@@ -640,6 +714,8 @@ var
   i: Integer;
   quat: TQuaternion;
 begin
+  if ( not Initialized ) then
+    UpdateMaterials;
   if ( Assigned( Armature ) {and Assigned( Armature.CurrentAction )}) then
     begin
       {Armature.CurrentAction.UpdateFrameSample;
@@ -668,7 +744,7 @@ begin
       //for i:= 0 to quatList.Count - 1 do
       //  WriteLn( quatList[ i ].ToString());
       //quatList.Free;}
-      Armature.UpdateJointTex( TP3DObject( Mesh.Users.Items[ 0 ]));
+      Armature.UpdateJointTex( TP3DObject( Armature.Users.Items[ 0 ]) );
       i:= Material.Maps.Count;
       glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
       glBindTexture( GL_TEXTURE_2D, Armature.JointTex.GLTexture ); cle( Self );
@@ -719,6 +795,7 @@ begin
         TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
       end;
 end;
+
 
 { TP3DMaterialModifierArmature }
 

@@ -988,6 +988,7 @@ var
   Res, maxLength: Integer;
   _vshader, _fshader: GLHandle;
   isLinked: GLint = 0;
+  F: TStringList;
 begin
   if ( ProgramObj > -1 ) then
     DeleteProgram( ProgramObj );
@@ -1016,6 +1017,12 @@ begin
 
   //ScanDeclarations2; // show attributes and uniforms
   Disable;
+  F:= TStringList.Create;
+  F.Text:= VShader;
+  F.SaveToFile( '/tmp/' + Name + '.vert' );
+  F.Text:= FShader;
+  F.SaveToFile( '/tmp/' + Name + '.frag' );
+  F.Free;
 end;
 
 class function TP3DShader.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;

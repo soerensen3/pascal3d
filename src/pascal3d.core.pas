@@ -108,7 +108,8 @@ begin
                              TP3DMaterialBase, TP3DMaterialShader,
                              TP3DMesh, TP3DScene, TP3DTexture,
                              TP3DMaterialMapBase, TP3DMaterialMap,
-                             TP3DFontLetter ]);
+                             TP3DFontLetter,
+                             TP3DMeshModifierArmature, TP3DMeshModifierTerrain ]);
   if ( not Assigned( P3DShaderNodeLib )) then
     P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create;
 
@@ -118,9 +119,9 @@ begin
     P3DFontManager:= TP3DFontManager.Create;
   if ( not Assigned( P3DFontManagerBmp )) then
     P3DFontManagerBmp:= TP3DFontManagerBmp.Create;
-  if ( not Assigned( P3DMeshModifierClassFactory )) then
-    P3DMeshModifierClassFactory:= TP3DMeshModifierClassFactory.Create;
-  P3DMeshModifierClassFactory.Add( TP3DMeshModifierArmature );
+  //if ( not Assigned( P3DMeshModifierClassFactory )) then
+  //  P3DMeshModifierClassFactory:= TP3DMeshModifierClassFactory.Create;
+  //P3DMeshModifierClassFactory.Add( TP3DMeshModifierArmature );
   (*{$DEFINE INITIALIZATION}
   {$INCLUDE pascal3d.core_lib.inc}
   {$UNDEF INITIALIZATION}*)
@@ -150,8 +151,8 @@ begin
     FreeAndNil( P3DDataBlockCache );
   if ( Assigned( P3DAttributes )) then
     FreeAndNil( P3DAttributes );
-  if ( Assigned( P3DMeshModifierClassFactory )) then
-    FreeAndNil( P3DMeshModifierClassFactory );
+//  if ( Assigned( P3DMeshModifierClassFactory )) then
+//    FreeAndNil( P3DMeshModifierClassFactory );
 end;
 
 initialization

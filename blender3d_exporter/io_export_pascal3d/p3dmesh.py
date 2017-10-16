@@ -110,6 +110,12 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
             totno += 1
         return pos
 
+    def ExportModifiers( self, block, root, obj ):
+        if root.Exporter.ExportArmatures:
+            armature = obj.find_armature()
+            if ( armature ):
+                self.Modifiers = [{ "ClassName" : "TP3DMeshModifierArmature", "Armature": "Armatures[\"" + armature.data.name + "\"]" }]
+
     def __init__( self, block, root = None, path='', obj = None ):
         self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Meshes', self.Name ), obj )
@@ -144,6 +150,7 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
             if ( len( block.materials ) > 1 ):
                 root.Exporter.report({ 'WARNING' }, 'Mesh "{}" has multiple materials. This is not supported by the exporter yet. Only the first material is exported for the whole mesh. Please separate the mesh by materials'.format( block.name ))
             self.PackedMaterialGroups = [ { "PolyStart": 0, "PolyEnd": len( mesh.polygons ) - 1,  "Material": p3dexporthelper.export_data_path( block.materials[ 0 ], root, block )}]
+            self.ExportModifiers( block, root, obj )
             bpy.data.meshes.remove( mesh )
         else:
             root.Exporter.report({ 'ERROR' }, 'Mesh "{}" does not have a material'.format( block.name ))

@@ -9,6 +9,7 @@ type
 
   TP3DSceneViewer = class ( TP3DGroupBox )
     private
+      FCamSpeed: Single;
       FOverrideMaterial: TP3DMaterial;
       FRenderFlags: TP3DRenderListFlags;
       FRenderList: TP3DRenderList;
@@ -20,6 +21,7 @@ type
       FScene: TP3DScene;
       FCam: TP3DCamera;
       FCamObject: TP3DObject;
+      FZoomSpeed: Single;
 
       procedure SetOrbitCamera(AValue: Boolean);
       procedure SetOrbitDistance(AValue: Single);
@@ -48,6 +50,8 @@ type
       property CamObject: TP3DObject read FCamObject write FCamObject;
       property RenderFlags: TP3DRenderListFlags read FRenderFlags write FRenderFlags;
       property OverrideMaterial: TP3DMaterial read FOverrideMaterial write FOverrideMaterial;
+      property CamSpeed: Single read FCamSpeed write FCamSpeed;
+      property ZoomSpeed: Single read FZoomSpeed write FZoomSpeed;
   end;
 
 //  procedure InitTriangle;
@@ -141,6 +145,10 @@ begin
   inherited Create(AData, AParent);
   RenderFlags:= P3DRenderListFlagsDefault;
   RenderList:= TP3DRenderList.Create;
+  //CamSpeed:= 0.2;
+  CamSpeed:= 0.1;
+  ZoomSpeed:= 0.2;
+  //ZoomSpeed:= 1;
 end;
 
 procedure TP3DSceneViewer.PushVPClientRect;
@@ -210,9 +218,9 @@ begin
             m:= FCam.View;
             mat4inverse( m, m );
             if ( P3DInput.Keyboard.Keys[ P3DK_LSHIFT ]) then
-              OrbitCenter:= OrbitCenter - ( m.Row[ 0 ].xyz * P3DInput.Mouse.DX - m.Row[ 1 ].xyz * P3DInput.Mouse.DY ) * 0.2;
+              OrbitCenter:= OrbitCenter - ( m.Row[ 0 ].xyz * P3DInput.Mouse.DX - m.Row[ 1 ].xyz * P3DInput.Mouse.DY ) * CamSpeed;
             if ( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]) then
-              OrbitCenter:= OrbitCenter + m.Row[ 2 ].xyz * P3DInput.Mouse.DY * 0.2;
+              OrbitCenter:= OrbitCenter + m.Row[ 2 ].xyz * P3DInput.Mouse.DY * CamSpeed;
           end
         else
           FCamObject.Rotation:= FCamObject.Rotation - vec3( P3DInput.Mouse.DY, 0, P3DInput.Mouse.DX ) * 2.5;
@@ -224,9 +232,9 @@ begin
   inherited MouseWheel( deltax, deltay );
   if ( OrbitCamera and ( gcisMouseOver in InputState )) then
     if ( FCam.IsIsometric ) then
-      FCam.IsoZoom:= Max( 0.1, FCam.IsoZoom - deltay * 0.1 )
+      FCam.IsoZoom:= Max( 0.1, FCam.IsoZoom - deltay * ZoomSpeed / 10 )
     else
-      OrbitDistance:= Max( 0.1, OrbitDistance - deltay * 1 );
+      OrbitDistance:= Max( 0.1, OrbitDistance - deltay * ZoomSpeed );
 end;
 
 procedure TP3DSceneViewer.KeyboardAction;

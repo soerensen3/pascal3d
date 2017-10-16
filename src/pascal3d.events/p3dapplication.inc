@@ -26,7 +26,7 @@ type
 
   { TP3DApplication }
 
-  TP3DApplication = class ( TPersistent )
+  TP3DApplication = class ( TP3DInterfacedPersistent )
     private
       FActiveWindow: TP3DWindow;
       FMainWindow: TP3DWindow;
@@ -39,6 +39,7 @@ type
       FOnMouseWheel: TSDLEventMouseWheel;
       FRunning: Boolean;
       FSDLInitialized: Boolean;
+      FWindows: TP3DWindowList;
       ReadingTextInput: Boolean;
 
       procedure SetActiveWindow(AValue: TP3DWindow);
@@ -65,6 +66,7 @@ type
       procedure Initialize; virtual; //calls InitSDL
       procedure Finalize; virtual;
       procedure Run;
+
       procedure LoadConfig( FileName: String );
       procedure LoadConfig( XML: TXMLDocument );
       procedure LoadConfigSection( FileName, NodeName: String );
@@ -81,6 +83,7 @@ type
       property ActiveWindow: TP3DWindow read FActiveWindow write SetActiveWindow;
       property SDLInitialized: Boolean read FSDLInitialized write FSDLInitialized;
       property Running: Boolean read FRunning write FRunning;
+      property Windows: TP3DWindowList read FWindows write FWindows;
   end;
 
 const
@@ -102,12 +105,13 @@ end;
 
 procedure TP3DApplication.InitializeWindow(Sender: TP3DWindow);
 begin
-
+  Windows.Add( Sender );
 end;
 
 
 procedure TP3DApplication.FinalizeWindow(Sender: TP3DWindow);
 begin
+  Windows.Remove( Sender );
   if ( Sender = MainWindow ) then
     Running:= False;
 end;
@@ -336,6 +340,8 @@ begin
   P3DUtilsInit;
   P3DEventsInit;
   MainWindow:= nil;
+  Windows:= TP3DWindowList.Create;
+  Properties.Add( TP3DPropertyAccessWindowList.CreateField( 'Windows', @FWindows, smAttribute ));
 end;
 
 destructor TP3DApplication.Destroy;
@@ -344,6 +350,7 @@ begin
   SDL_Quit();
   if ( Assigned( MainWindow )) then
     MainWindow.Free;
+  Windows.Free;
   inherited Destroy;
 end;
 

@@ -434,6 +434,15 @@ type
 
 {$IFDEF IMPLEMENTATION}
 
+{$IF FPC_FULLVERSION < 30004}
+function StringToJSONString( S: TJSONStringType; B: Boolean ): TJSONStringType;
+begin
+  Result:= fpjson.StringToJSONString( S );
+end;
+
+{$ENDIF}
+
+
 { gP3DOIEditorPropertyAccess }
 
 function gP3DPropertyAccess.GetValue: TItem;
@@ -603,8 +612,9 @@ begin
         n:= FindByName( KeyS );
         if ( n < 0 ) then
           raise Exception.CreateFmt( 'Failed to load object from JSON Data: The specified property "%s" was not found in the object of type "%s"', [ KeyS, Context.ClassName ])
-        else
-          WriteLn( 'Property "', KeyS, '" found: ', n );
+        //else
+        //  WriteLn( 'Property "', KeyS, '" found: ', n );
+        ;
         Items[ n ].LoadFromJSONContext( P3DJSONContext( AContext.JSONLoader, Item.Value, AContext.Owner, AContext.Data ));
         if ( Item.Value.JSONType in [ jtArray, jtObject ]) then
           WriteLn( KeyS )
@@ -648,7 +658,7 @@ begin
         if ( Result > '' ) then
           Result += ', ';
         //WriteLn( Items[ i ].Name + ': ' + ClassName + ' < ' + Items[ i ].ClassName + ' >' );
-        Result += '"' + StringToJSONString( Items[ i ].Name ) + '" : ' + Items[ i ].Serialize;
+        Result += '"' + StringToJSONString( Items[ i ].Name, False ) + '" : ' + Items[ i ].Serialize;
       except
         on E: Exception do
           WriteLn( ClassName + ' < ' + Items[ i ].ClassName + ' >' );
@@ -990,7 +1000,7 @@ begin
       tkString: SetStringValue( AContext.Data.AsString );
       tkSet: SetSetValue( AContext.Data.AsString );
       tkClass: SetClassValue( AContext.Data.AsString );
-      tkBool: SetIntValue( AContext.Data.AsString )
+      tkBool: SetIntValue( AContext.Data.AsString );
     else
       Exit;
     end;

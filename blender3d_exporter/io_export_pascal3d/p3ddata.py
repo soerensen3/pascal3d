@@ -20,11 +20,14 @@ class P3DData( object ):
         self.Meshes = P3DDataBlockList()
         self.Objects = P3DDataBlockList()
         self.Scenes = P3DDataBlockList()
-        self.Textures = P3DDataBlockList()        
+        self.Textures = P3DDataBlockList()
         self.ExportDict = self.__dict__.copy()
         self.FileName = filename
         self.BinFile = None
         self.Exporter = None
+        self.ActiveScene = None
+        self.ActiveSceneObj = None
+        self.ActiveObj = None
 
     def createBinFile( self ):
         if ( self.BinFile is None ):

@@ -22,7 +22,7 @@ const
   P3DSymbolExpand                = 'O';
   P3DSymbolFolder                = 'P';
   P3DSymbolFile                  = 'Q';
-  P3DSymbolObject                 = 'R';
+  P3DSymbolObject                = 'R';
   P3DSymbolMesh                  = 'S';
   P3DSymbolScene                 = 'T';
   P3DSymbolFont                  = 'U';

@@ -141,7 +141,7 @@ end;
 
 function TP3DInterfacedPersistent.Serialize: String;
 begin
-  Result:= '{ "ClassName" : "' + ClassName + '", ' + Properties.Serialize() + '}'
+  Result:= '{ "ClassName" : "' + ClassName + '"' + ifthen( Properties.Count > 0, ', ' + Properties.Serialize(), '' ) + ' }'
 end;
 
 { gP3DPropertyAccessInterfacedPersistent }
@@ -225,7 +225,7 @@ begin
       end;
     end
   else
-    raise Exception.CreateFmt( P3DERROR_JSON_WRONG_TYPE, [ JSONTypeName( jtObject )  + ' or as JSON path (' + JSONTypeName( jtString ) + ')', JSONTypeName( AContext.Data.JSONType )]);
+    raise Exception.CreateFmt( P3DERROR_JSON_WRONG_TYPE + ': ' + AContext.Data.AsJSON, [ JSONTypeName( jtObject )  + ' or as JSON path (' + JSONTypeName( jtString ) + ')', JSONTypeName( AContext.Data.JSONType )]);
 end;
 
 procedure gP3DPropertyAccessInterfacedPersistent.CreateValueFromJSONContext(AClass: TP3DInterfacedPersistentType; AContext: TP3DJSONContext);

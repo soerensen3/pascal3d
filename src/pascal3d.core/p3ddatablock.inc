@@ -134,10 +134,10 @@ type
 
   generic gP3DDatablockContainer < TListItem: TP3DDataBlock > = class ( specialize gP3DNamedInterfacedPersistentList < TListItem >)
     private
-      procedure Clear(const FreeObjects: Boolean=True); override;
       function FindInsertPos(AName: String): Integer;
 
     public
+      procedure Clear(const FreeObjects: Boolean=True); override;
       function UpdateItemIndex( Index: Integer ): Integer;
   end;
 

@@ -98,6 +98,10 @@ type
       property ShowBorder: Boolean read FShowBorder write SetShowBorder;
   end;
 
+  TP3DPropertyAccessWindow = specialize gP3DPropertyAccessInterfacedPersistent < TP3DWindow >;
+  TP3DWindowList = specialize gP3DInterfacedPersistentList < TP3DWindow >;
+  TP3DPropertyAccessWindowList = specialize gP3DListPropertyAccessObject < TP3DWindowList, TP3DWindow, TP3DPropertyAccessWindow >;
+
   function P3DClientToScreen( Window: TP3DWindow; X, Y: Integer ): TPoint;
   function P3DScreenToClient( Window: TP3DWindow; X, Y: Integer ): TPoint;
 
@@ -288,7 +292,7 @@ begin                                             //incomplete
   raise Exception.Create( 'Not implemented due to unfixed bug in SDL2' );
   fWindow:= SDL_CreateWindowFrom( Wnd );
 
-  // Fenster korrekt erstellt?
+  // Window created successfully
   if ( window = nil ) then
     raise Exception.Create('Could not create an SDL Window: ' + SDL_GetError);
 

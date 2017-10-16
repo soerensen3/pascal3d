@@ -276,25 +276,25 @@ begin
 
       if ( Sel is TP3DObject ) then
         begin
-          SceneView.FSelection:= TP3DObject( Sel );
+          //SceneView.FSelection:= TP3DObject( Sel );
           SceneMain.ActiveScene:= TP3DObject( Sel ).Scene;
-          FSelectionParent:= SceneView.FSelection.Children;
+          FSelectionParent:= TP3DObject( Sel ).Children;
         end
       else if ( Sel is TP3DLibrary ) then
         begin
-          SceneView.FSelection:= nil;
+          //SceneView.FSelection:= nil;
           SceneMain.ActiveLibrary:= TP3DLibrary( NewSelection.Data );
           FSelectionParent:= SceneMain.ActiveLibrary;
         end
       else if ( Sel is TP3DScene) then
         begin
-          SceneView.FSelection:= nil;
+          //SceneView.FSelection:= nil;
           SceneMain.ActiveScene:= TP3DScene( Sel );
           FSelectionParent:= SceneMain.ActiveScene.Objects;
         end
       else if ( Sel is TP3DDataBlock ) then
         begin
-          SceneView.FSelection:= nil;
+          //SceneView.FSelection:= nil;
           SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).Owner;
           FSelectionParent:= SceneMain.ActiveLibrary;
         end
@@ -302,7 +302,9 @@ begin
         begin
           SetEmptyParent;
           SceneView.FSelection:= nil;
+          exit;
         end;
+      SceneMain.ActiveDataBlock:= TP3DDataBlock( Sel );
     end
   else
     begin

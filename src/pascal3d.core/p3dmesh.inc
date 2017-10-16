@@ -73,6 +73,8 @@
       private
         FMesh: TP3DMesh;
 
+        procedure SetMesh( AValue: TP3DMesh ); virtual;
+
       public
         constructor Create( AMesh: TP3DMesh ); virtual;
         constructor CreateFromDOM( ADOMNode: TDOMElement; AMesh: TP3DMesh );
@@ -85,7 +87,7 @@
         procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
 
       published
-        property Mesh: TP3DMesh read FMesh write FMesh;
+        property Mesh: TP3DMesh read FMesh write SetMesh;
     end;
 
     { TP3DMeshModifierList }
@@ -99,9 +101,14 @@
 
         procedure SaveToDOM( AParent: TDOMElement );
         procedure LoadFromDOM( ADOMNode: TDOMElement );
+        function Add(Item: TCustomItem): Integer; override;
+        procedure SetItem(Index: Integer; AValue: TCustomItem); override;
 
         property ParentMesh: TP3DMesh read FParentMesh;
     end;
+
+    TP3DPropertyAccessMeshModifier = specialize gP3DPropertyAccessInterfacedPersistent < TP3DMeshModifier >;
+    TP3DPropertyAccessMeshModifierList = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DMeshModifierList, TP3DMeshModifier, TP3DPropertyAccessMeshModifier >;
 
     TP3DMeshModifierClass = class of TP3DMeshModifier;
 
@@ -260,8 +267,8 @@
     TP3DPropertyAccessMesh = specialize gP3DPropertyAccessDataBlock < TP3DMesh >;
     TP3DMeshList = specialize gP3DNamedInterfacedPersistentList < TP3DMesh >;
     TP3DPropertyAccessMeshList = specialize gP3DPropertyAccessDataBlockList < TP3DMeshList, TP3DMesh, TP3DPropertyAccessMesh >;
-var
-  P3DMeshModifierClassFactory: TP3DMeshModifierClassFactory = nil;
+//var
+  //P3DMeshModifierClassFactory: TP3DMeshModifierClassFactory = nil;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -473,6 +480,7 @@ begin
   Properties.Add( TP3DPropertyAccessVec2BufferGLList.CreateField( 'TexCoords', @TexCoords, smNode ));
   Properties.Add( TP3DPropertyAccessMeshWeightGroupList.CreateField( 'WeightGroups', @WeightGroups, smNode ));
   Properties.Add( TP3DPropertyAccessMeshMaterialGroupList.CreateField( 'PackedMaterialGroups', @PackedMaterialGroups, smNode ));
+  Properties.Add( TP3DPropertyAccessMeshModifierList.CreateField( 'Modifiers', @Modifiers, smNode ));
 
   Properties.Add( TP3DPropertyAccessIntList.CreateField( 'Indices', @Indices, smDoNotStore ));
   Properties.Add( TP3DPropertyAccessMeshMaterialGroupList.CreateField( 'MaterialGroups', @MaterialGroups, smDoNotStore ));
@@ -483,6 +491,7 @@ begin
   Properties.Add( TP3DPropertyAccessIVec2List.CreateField( 'Faces', @Faces, smDoNotStore ));
   Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'VertexWeights', @VertexWeights, smDoNotStore ));
   Properties.Add( TP3DPropertyAccessIVec4List.CreateField( 'VertexWeightIndices', @VertexWeightIndices, smDoNotStore ));
+
 end;
 
 procedure TP3DMesh.FastDestroy;
@@ -972,6 +981,8 @@ var
   offset, count: Integer;
   mat: TMat4;
 begin
+  if ( not Assigned( P3DShaderActive )) then
+    exit;
   if ( Positions.Count > 0 ) then
     Positions.SetAttribArray( P3DAttribPosition );
   if ( Normals.Count > 0 ) then
@@ -1218,7 +1229,7 @@ begin
   Normals.Clear;
   Tangents.Clear;
   Cotangents.Clear;
-  //Edges.Clear;
+  Edges.Clear;
   VertexWeights.Clear;
   VertexWeightIndices.Clear;
   Faces.Clear;
@@ -1255,14 +1266,14 @@ begin
         end;
       for j:= 1 to LastVertex do
         begin
-          //Edges.Add([ vbase + j -1, vbase + j ]);
+          Edges.Add([ vbase + j -1, vbase + j ]);
           if ( j > 1 ) then
             Indices.Add([ vbase,
                           vbase + j - 1,
                           vbase + j ]);
         end;
-      //if ( LastVertex > 0 ) then
-      //  Edges.Add([ vbase + LastVertex, vbase ]);
+      if ( LastVertex > 0 ) then
+        Edges.Add([ vbase + LastVertex, vbase ]);
       Faces[ i ]:= ivec2( Idx, Indices.Count - Idx );
     end;
   for i:= 0 to PackedMaterialGroups.Count - 1 do
@@ -1574,13 +1585,19 @@ end;
 
 { TP3DMeshModifier }
 
+procedure TP3DMeshModifier.SetMesh(AValue: TP3DMesh);
+begin
+  if FMesh=AValue then Exit;
+  FMesh:=AValue;
+end;
+
 constructor TP3DMeshModifier.Create(AMesh: TP3DMesh);
 begin
   inherited Create;
   Mesh:= AMesh;
   Properties.Context:= Mesh;
-  Properties.Add( TP3DPropertyAccessMesh.CreateField( 'Mesh', @FMesh, smAttribute ));
-  Properties.Add( TP3DPropertyAccessString.CreateGetSet( 'Type', @GetType, nil, smAttribute ));
+  Properties.Add( TP3DPropertyAccessMesh.CreateField( 'Mesh', @FMesh, smDoNotStore ));
+  Properties.Add( TP3DPropertyAccessString.CreateGetSet( 'Type', @GetType, nil, smDoNotStore ));
 end;
 
 constructor TP3DMeshModifier.CreateFromDOM(ADOMNode: TDOMElement; AMesh: TP3DMesh);
@@ -1591,10 +1608,11 @@ end;
 
 constructor TP3DMeshModifier.CreateFromJSONContext(AContext: TP3DJSONContext);
 begin
-  if ( AContext.Owner is TP3DMesh ) then
+  {if ( AContext.Owner is TP3DMesh ) then
     Create( TP3DMesh( AContext.Owner ))
   else
-    raise Exception.Create( 'Cannot create TP3DMesh from JSON context. Owner is empty or no mesh.' );
+    raise Exception.Create( 'Cannot create TP3DMesh from JSON context. Owner is empty or no mesh.' );}
+  Create( nil );
   LoadFromJSONContext( AContext );
 end;
 
@@ -1737,7 +1755,7 @@ var
   ClName: DOMString;
   Tp: TP3DMeshModifierClass;
 begin
-  Clear();
+  {Clear();
   lst:= ADOMNode.GetElementsByTagName( TP3DMeshModifier.DOMNodeName );
   try
     Count:= lst.Count;
@@ -1756,7 +1774,19 @@ begin
 
   finally
     lst.Free;
-  end;
+  end;}
+end;
+
+function TP3DMeshModifierList.Add(Item: TCustomItem): Integer;
+begin
+  Result:=inherited Add(Item);
+  Item.Mesh:= ParentMesh;
+end;
+
+procedure TP3DMeshModifierList.SetItem(Index: Integer; AValue: TCustomItem);
+begin
+  inherited SetItem(Index, AValue);
+  AValue.Mesh:= ParentMesh;
 end;
 
 constructor TP3DMeshModifierList.Create(AParentMesh: TP3DMesh);

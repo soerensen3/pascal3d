@@ -22,7 +22,7 @@ type
       destructor Destroy; override;
 
       function FindFile( FName: String ): String; // Utilty function to recursively find a file in scope. The full path to the file name will be
-                                                  // returnedif the file was found. An empty file name is returned if no file with the given name
+                                                  // returned if the file was found. An empty file name is returned if no file with the given name
                                                   // exists. If there is more than one file with the given name only the first is returned.
       function FindFileEx( FName: String; PreferedPath: String ): String; // Like FindFile but with the option to define a prefered path
                                                                           // which is checked before the search paths. The path does not have
@@ -468,9 +468,9 @@ begin
   Result:= '';
   if ( InRange( Index, 0, Paths.Count - 1 )) then
     begin
-      Result:= AppendPathDelim( Paths[ Index ]);
+      Result:= AppendPathDelim( TrimFilename( Paths[ Index ]));
       if ( not FilenameIsAbsolute( Result )) then
-        Result:= AppendPathDelim( BaseDir + Result );
+        Result:= AppendPathDelim( TrimFilename( BaseDir + Result ));
     end;
 end;
 

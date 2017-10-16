@@ -121,7 +121,7 @@ type
       property Owner: TPersistent read FOwner write FOwner;
       property Font: TP3DCanvasFont read FFont write FFont; //TODO: OnChange event for font should fire redraw of texts in components
       property ScreenColor: TVec4 read FScreenColor write FScreenColor;
-      property Material: TP3DMaterialBase read FMaterial;
+      property Material: TP3DMaterialBase read FMaterial write FMaterial;
       property OffScreenCanvas: Boolean read FOffScreenCanvas write FOffScreenCanvas;
   end;
 

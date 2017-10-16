@@ -1,0 +1,1047 @@
+{
+    "Armatures": [
+        {
+            "Name": "Armature.001",
+            "DataPath": "Armatures[\"Armature.001\"]",
+            "ClassName": "TP3DArmature",
+            "Joints": [
+                "Joints[\"lower_body\"]",
+                "Joints[\"body\"]",
+                "Joints[\"head\"]",
+                "Joints[\"upper_front_leg_r\"]",
+                "Joints[\"front_leg_r\"]",
+                "Joints[\"front_foot_r\"]",
+                "Joints[\"body_to_rear_leg_r\"]",
+                "Joints[\"upper_rear_leg_r\"]",
+                "Joints[\"lower_rear_leg_r\"]",
+                "Joints[\"foot_rear_leg_r\"]",
+                "Joints[\"upper_front_leg_l\"]",
+                "Joints[\"front_leg_l\"]",
+                "Joints[\"front_foot_l\"]",
+                "Joints[\"body_to_rear_leg_l\"]",
+                "Joints[\"upper_rear_leg_l\"]",
+                "Joints[\"lower_rear_leg_l\"]",
+                "Joints[\"foot_rear_leg_l\"]"
+            ]
+        }
+    ],
+    "Actions": [
+        {
+            "Name": "Action.001",
+            "DataPath": "Actions[\"Action.001\"]",
+            "ClassName": "TP3DAction"
+        }
+    ],
+    "Cameras": [
+        {
+            "Name": "Camera",
+            "DataPath": "Cameras[\"Camera\"]",
+            "ClassName": "TP3DCamera",
+            "Near": 0.10000000149011612,
+            "Far": 100.0,
+            "FOV": 0.8575560450553894
+        }
+    ],
+    "Joints": [
+        {
+            "Name": "lower_body",
+            "DataPath": "Joints[\"lower_body\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.0,
+                0.31181418895721436,
+                0.9501432180404663,
+                0.0
+            ],
+            "Position": [
+                0.00048700874322094023,
+                -0.1341002732515335,
+                0.14273975789546967
+            ],
+            "Length": 0.06279445738384962
+        },
+        {
+            "Name": "body",
+            "DataPath": "Joints[\"body\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                -0.0015672241570428014,
+                0.4940274953842163,
+                0.869440495967865,
+                -0.002758162561804056
+            ],
+            "Position": [
+                0.00048700874322094023,
+                -0.09689228981733322,
+                0.19332344830036163
+            ],
+            "Length": 0.16675469593291026
+        },
+        {
+            "Name": "head",
+            "DataPath": "Joints[\"head\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                -0.0009188905823975801,
+                0.6018816828727722,
+                0.7985838651657104,
+                -0.0012191950809210539
+            ],
+            "Position": [
+                -0.0004218764661345631,
+                0.04635772854089737,
+                0.2786799669265747
+            ],
+            "Length": 0.16837457513101328
+        },
+        {
+            "Name": "upper_front_leg_r",
+            "DataPath": "Joints[\"upper_front_leg_r\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.623258113861084,
+                0.6892656087875366,
+                0.2740011513233185,
+                0.24776144325733185
+            ],
+            "Position": [
+                -0.0004218764661345631,
+                0.04635772854089737,
+                0.2786799669265747
+            ],
+            "Length": 0.18276287397997262
+        },
+        {
+            "Name": "front_leg_r",
+            "DataPath": "Joints[\"front_leg_r\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.14932306110858917,
+                0.98745197057724,
+                0.050814948976039886,
+                0.007684264797717333
+            ],
+            "Position": [
+                0.12442228943109512,
+                0.058946527540683746,
+                0.14579758048057556
+            ],
+            "Length": 0.12579079487556744
+        },
+        {
+            "Name": "front_foot_r",
+            "DataPath": "Joints[\"front_foot_r\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.0029635403770953417,
+                0.7371957898139954,
+                0.6756672263145447,
+                0.002716194372624159
+            ],
+            "Position": [
+                0.1282402127981186,
+                0.0712815448641777,
+                0.02067124843597412
+            ],
+            "Length": 0.14801871736483427
+        },
+        {
+            "Name": "body_to_rear_leg_r",
+            "DataPath": "Joints[\"body_to_rear_leg_r\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.8719894886016846,
+                0.2341529130935669,
+                0.11148808151483536,
+                0.4151833951473236
+            ],
+            "Position": [
+                -0.0004218764661345631,
+                0.04635772854089737,
+                0.2786799669265747
+            ],
+            "Length": 0.22185380017552886
+        },
+        {
+            "Name": "upper_rear_leg_r",
+            "DataPath": "Joints[\"upper_rear_leg_r\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.4283774495124817,
+                0.7929970622062683,
+                0.3811291456222534,
+                0.20588622987270355
+            ],
+            "Position": [
+                0.08584944158792496,
+                -0.10269711166620255,
+                0.13882635533809662
+            ],
+            "Length": 0.09509318049273943
+        },
+        {
+            "Name": "lower_rear_leg_r",
+            "DataPath": "Joints[\"lower_rear_leg_r\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.8328018188476562,
+                -0.14918184280395508,
+                -0.09399768710136414,
+                0.5247384309768677
+            ],
+            "Position": [
+                0.14795179665088654,
+                -0.06199013814330101,
+                0.07942137122154236
+            ],
+            "Length": 0.12354454303594721
+        },
+        {
+            "Name": "foot_rear_leg_r",
+            "DataPath": "Joints[\"foot_rear_leg_r\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.037694498896598816,
+                0.7600757479667664,
+                0.6479440331459045,
+                0.03213401511311531
+            ],
+            "Position": [
+                0.10926681756973267,
+                -0.16650396585464478,
+                0.026096098124980927
+            ],
+            "Length": 0.18660669767576463
+        },
+        {
+            "Name": "upper_front_leg_l",
+            "DataPath": "Joints[\"upper_front_leg_l\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.6268718242645264,
+                -0.688175618648529,
+                -0.27005624771118164,
+                0.245999276638031
+            ],
+            "Position": [
+                -0.0004218764661345631,
+                0.04635772854089737,
+                0.2786799669265747
+            ],
+            "Length": 0.1824796441226291
+        },
+        {
+            "Name": "front_leg_l",
+            "DataPath": "Joints[\"front_leg_l\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                -0.144165500998497,
+                0.9882338643074036,
+                0.05055426433682442,
+                -0.007374956272542477
+            ],
+            "Position": [
+                -0.12399029731750488,
+                0.05790363624691963,
+                0.14490269124507904
+            ],
+            "Length": 0.12580974097987993
+        },
+        {
+            "Name": "front_foot_l",
+            "DataPath": "Joints[\"front_foot_l\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                -0.0064630950801074505,
+                0.737204372882843,
+                0.6756129860877991,
+                -0.00592312216758728
+            ],
+            "Position": [
+                -0.12765799462795258,
+                0.07020688056945801,
+                0.019749686121940613
+            ],
+            "Length": 0.14802193214305673
+        },
+        {
+            "Name": "body_to_rear_leg_l",
+            "DataPath": "Joints[\"body_to_rear_leg_l\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.8744121789932251,
+                -0.22815530002117157,
+                -0.10810630023479462,
+                0.4143207371234894
+            ],
+            "Position": [
+                -0.0004218764661345631,
+                0.04635772854089737,
+                0.2786799669265747
+            ],
+            "Length": 0.2217999459813573
+        },
+        {
+            "Name": "upper_rear_leg_l",
+            "DataPath": "Joints[\"upper_rear_leg_l\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.43078669905662537,
+                -0.7933400273323059,
+                -0.378021240234375,
+                0.20526699721813202
+            ],
+            "Position": [
+                -0.08428838104009628,
+                -0.10341136902570724,
+                0.13821342587471008
+            ],
+            "Length": 0.09501412276786131
+        },
+        {
+            "Name": "lower_rear_leg_l",
+            "DataPath": "Joints[\"lower_rear_leg_l\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.8326547741889954,
+                0.15110427141189575,
+                0.09513120353221893,
+                0.5242172479629517
+            ],
+            "Position": [
+                -0.14617924392223358,
+                -0.06322550773620605,
+                0.07836107909679413
+            ],
+            "Length": 0.12342181443722909
+        },
+        {
+            "Name": "foot_rear_leg_l",
+            "DataPath": "Joints[\"foot_rear_leg_l\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.039773158729076385,
+                -0.759440541267395,
+                -0.6484711170196533,
+                0.03396055847406387
+            ],
+            "Position": [
+                -0.10707354545593262,
+                -0.16742248833179474,
+                0.025006715208292007
+            ],
+            "Length": 0.18660655664390444
+        }
+    ],
+    "Lights": [
+        {
+            "Name": "Lamp",
+            "DataPath": "Lights[\"Lamp\"]",
+            "ClassName": "TP3DLight",
+            "LightType": "ltPoint",
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Energy": 1.0
+        }
+    ],
+    "Materials": [
+        {
+            "Name": "Material",
+            "DataPath": "Materials[\"Material\"]",
+            "ClassName": "TP3DMaterialBase",
+            "Diff": [
+                0.2468399852514267,
+                0.3815915286540985,
+                0.011917182244360447
+            ],
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Spec_Hardness": 50,
+            "Unlit": false,
+            "Instancing": 1,
+            "TransparencyMode": "tmNone",
+            "Maps": []
+        }
+    ],
+    "Meshes": [
+        {
+            "Name": "Grid",
+            "DataPath": "Meshes[\"Grid\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@0",
+            "PackedNormals": "@8512",
+            "Loops": "@44228",
+            "Edges": "@56136",
+            "PackedFaces": "@79948",
+            "PackedTangents": "@83088",
+            "PackedCotangents": "@118804",
+            "TexCoords": [
+                "@154520"
+            ],
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "lower_body"
+                },
+                {
+                    "Index": 1,
+                    "Name": "body"
+                },
+                {
+                    "Index": 2,
+                    "Name": "head"
+                },
+                {
+                    "Index": 3,
+                    "Name": "upper_front_leg_r"
+                },
+                {
+                    "Index": 4,
+                    "Name": "front_leg_r"
+                },
+                {
+                    "Index": 5,
+                    "Name": "front_foot_r"
+                },
+                {
+                    "Index": 6,
+                    "Name": "body_to_rear_leg_r"
+                },
+                {
+                    "Index": 7,
+                    "Name": "upper_rear_leg_r"
+                },
+                {
+                    "Index": 8,
+                    "Name": "lower_rear_leg_r"
+                },
+                {
+                    "Index": 9,
+                    "Name": "foot_rear_leg_r"
+                },
+                {
+                    "Index": 10,
+                    "Name": "upper_front_leg_l"
+                },
+                {
+                    "Index": 11,
+                    "Name": "front_leg_l"
+                },
+                {
+                    "Index": 12,
+                    "Name": "front_foot_l"
+                },
+                {
+                    "Index": 13,
+                    "Name": "body_to_rear_leg_l"
+                },
+                {
+                    "Index": 14,
+                    "Name": "upper_rear_leg_l"
+                },
+                {
+                    "Index": 15,
+                    "Name": "lower_rear_leg_l"
+                },
+                {
+                    "Index": 16,
+                    "Name": "foot_rear_leg_l"
+                }
+            ],
+            "PackedVertexWeights": "@178332",
+            "PackedVertexWeightIndices": "@186844",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 783,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ],
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DMeshModifierArmature",
+                    "Armature": "Armatures[\"Armature.001\"]"
+                }
+            ]
+        }
+    ],
+    "Objects": [
+        {
+            "Name": "Camera",
+            "DataPath": "Objects[\"Camera\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                7.481131553649902,
+                -6.5076398849487305,
+                5.34366512298584
+            ],
+            "Quaternion": [
+                0.483536034822464,
+                0.20870360732078552,
+                0.33687159419059753,
+                0.7804827094078064
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Cameras[\"Camera\"]"
+        },
+        {
+            "Name": "head",
+            "DataPath": "Objects[\"head\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -4.3655745685100555e-11,
+                -7.450580596923828e-09,
+                0.16675469279289246
+            ],
+            "Quaternion": [
+                0.12877851724624634,
+                -0.0015104108024388552,
+                -0.0006532802945002913,
+                0.9916720390319824
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"head\"]"
+        },
+        {
+            "Name": "front_foot_r",
+            "DataPath": "Objects[\"front_foot_r\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                2.3283064365386963e-10,
+                -1.3969838619232178e-09,
+                0.1257908046245575
+            ],
+            "Quaternion": [
+                -0.6301112174987793,
+                0.10372481495141983,
+                -0.10209999233484268,
+                0.762742817401886
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"front_foot_r\"]"
+        },
+        {
+            "Name": "front_leg_r",
+            "DataPath": "Objects[\"front_leg_r\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                7.450580596923828e-09,
+                -7.450580596923828e-09,
+                0.18276289105415344
+            ],
+            "Quaternion": [
+                0.26774516701698303,
+                0.23011215031147003,
+                -0.5020296573638916,
+                0.7895108461380005
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"front_foot_r\"]"
+            ],
+            "Data": "Joints[\"front_leg_r\"]"
+        },
+        {
+            "Name": "upper_front_leg_r",
+            "DataPath": "Objects[\"upper_front_leg_r\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -4.3655745685100555e-11,
+                -7.450580596923828e-09,
+                0.16675469279289246
+            ],
+            "Quaternion": [
+                0.4625805914402008,
+                -0.6666173934936523,
+                0.09281732141971588,
+                0.5770836472511292
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"front_leg_r\"]"
+            ],
+            "Data": "Joints[\"upper_front_leg_r\"]"
+        },
+        {
+            "Name": "foot_rear_leg_r",
+            "DataPath": "Objects[\"foot_rear_leg_r\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -9.313225746154785e-10,
+                1.2922100722789764e-08,
+                0.12354451417922974
+            ],
+            "Quaternion": [
+                -0.01823454350233078,
+                -0.9467868804931641,
+                0.29559412598609924,
+                0.12604068219661713
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"foot_rear_leg_r\"]"
+        },
+        {
+            "Name": "lower_rear_leg_r",
+            "DataPath": "Objects[\"lower_rear_leg_r\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                1.1175870895385742e-08,
+                1.862645149230957e-09,
+                0.09509316086769104
+            ],
+            "Quaternion": [
+                -0.03564131259918213,
+                -0.8045018911361694,
+                0.5049694776535034,
+                0.3106640875339508
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"foot_rear_leg_r\"]"
+            ],
+            "Data": "Joints[\"lower_rear_leg_r\"]"
+        },
+        {
+            "Name": "upper_rear_leg_r",
+            "DataPath": "Objects[\"upper_rear_leg_r\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -1.4901161193847656e-08,
+                3.259629011154175e-09,
+                0.22185377776622772
+            ],
+            "Quaternion": [
+                -0.0025082139763981104,
+                0.5656118988990784,
+                -0.4558945894241333,
+                0.6871950626373291
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"lower_rear_leg_r\"]"
+            ],
+            "Data": "Joints[\"upper_rear_leg_r\"]"
+        },
+        {
+            "Name": "body_to_rear_leg_r",
+            "DataPath": "Objects[\"body_to_rear_leg_r\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -4.3655745685100555e-11,
+                -7.450580596923828e-09,
+                0.16675469279289246
+            ],
+            "Quaternion": [
+                0.14674943685531616,
+                -0.96407550573349,
+                0.06986897438764572,
+                0.21009838581085205
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"upper_rear_leg_r\"]"
+            ],
+            "Data": "Joints[\"body_to_rear_leg_r\"]"
+        },
+        {
+            "Name": "front_foot_l",
+            "DataPath": "Objects[\"front_foot_l\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -1.7462298274040222e-10,
+                4.656612873077393e-10,
+                0.12580975890159607
+            ],
+            "Quaternion": [
+                -0.6312011480331421,
+                -0.09665678441524506,
+                0.09520923346281052,
+                0.7636607885360718
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"front_foot_l\"]"
+        },
+        {
+            "Name": "front_leg_l",
+            "DataPath": "Objects[\"front_leg_l\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -1.1175870895385742e-08,
+                1.4901161193847656e-08,
+                0.1824796497821808
+            ],
+            "Quaternion": [
+                0.2629300057888031,
+                -0.23078781366348267,
+                0.509840190410614,
+                0.7859184741973877
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"front_foot_l\"]"
+            ],
+            "Data": "Joints[\"front_leg_l\"]"
+        },
+        {
+            "Name": "upper_front_leg_l",
+            "DataPath": "Objects[\"upper_front_leg_l\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -4.3655745685100555e-11,
+                -7.450580596923828e-09,
+                0.16675469279289246
+            ],
+            "Quaternion": [
+                0.4662560522556305,
+                0.664236843585968,
+                -0.09547647833824158,
+                0.576436460018158
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"front_leg_l\"]"
+            ],
+            "Data": "Joints[\"upper_front_leg_l\"]"
+        },
+        {
+            "Name": "foot_rear_leg_l",
+            "DataPath": "Objects[\"foot_rear_leg_l\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -9.313225746154785e-10,
+                6.6356733441352844e-09,
+                0.12342184036970139
+            ],
+            "Quaternion": [
+                -0.018312379717826843,
+                0.9469796419143677,
+                -0.2951911687850952,
+                0.12552492320537567
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"foot_rear_leg_l\"]"
+        },
+        {
+            "Name": "lower_rear_leg_l",
+            "DataPath": "Objects[\"lower_rear_leg_l\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -9.313225746154785e-09,
+                -1.1175870895385742e-08,
+                0.09501411020755768
+            ],
+            "Quaternion": [
+                -0.03655833750963211,
+                0.8026415109634399,
+                -0.5079793930053711,
+                0.31046274304389954
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"foot_rear_leg_l\"]"
+            ],
+            "Data": "Joints[\"lower_rear_leg_l\"]"
+        },
+        {
+            "Name": "upper_rear_leg_l",
+            "DataPath": "Objects[\"upper_rear_leg_l\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                9.313225746154785e-09,
+                -2.1886080503463745e-08,
+                0.22179993987083435
+            ],
+            "Quaternion": [
+                -0.0014866010751575232,
+                -0.5658400058746338,
+                0.46098849177360535,
+                0.6836025714874268
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"lower_rear_leg_l\"]"
+            ],
+            "Data": "Joints[\"upper_rear_leg_l\"]"
+        },
+        {
+            "Name": "body_to_rear_leg_l",
+            "DataPath": "Objects[\"body_to_rear_leg_l\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -4.3655745685100555e-11,
+                -7.450580596923828e-09,
+                0.16675469279289246
+            ],
+            "Quaternion": [
+                0.14672237634658813,
+                0.96413654088974,
+                -0.07169712334871292,
+                0.20921993255615234
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"upper_rear_leg_l\"]"
+            ],
+            "Data": "Joints[\"body_to_rear_leg_l\"]"
+        },
+        {
+            "Name": "body",
+            "DataPath": "Objects[\"body\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                3.725290298461914e-09,
+                0.06279443949460983
+            ],
+            "Quaternion": [
+                0.19829292595386505,
+                0.0023491205647587776,
+                0.0021319659426808357,
+                0.9801377058029175
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"head\"]",
+                "Objects[\"upper_front_leg_r\"]",
+                "Objects[\"body_to_rear_leg_r\"]",
+                "Objects[\"upper_front_leg_l\"]",
+                "Objects[\"body_to_rear_leg_l\"]"
+            ],
+            "Data": "Joints[\"body\"]"
+        },
+        {
+            "Name": "lower_body",
+            "DataPath": "Objects[\"lower_body\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.00048700874322094023,
+                -0.1341002732515335,
+                0.14273975789546967
+            ],
+            "Quaternion": [
+                0.0,
+                0.31181418895721436,
+                0.9501432180404663,
+                0.0
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"body\"]"
+            ],
+            "Data": "Joints[\"lower_body\"]"
+        },
+        {
+            "Name": "frog",
+            "DataPath": "Objects[\"frog\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Grid\"]"
+        },
+        {
+            "Name": "Armature",
+            "DataPath": "Objects[\"Armature\"]",
+            "Action": "Actions[\"Action.001\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"lower_body\"]",
+                "Objects[\"frog\"]"
+            ],
+            "Data": "Armatures[\"Armature.001\"]"
+        },
+        {
+            "Name": "Lamp",
+            "DataPath": "Objects[\"Lamp\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                4.076245307922363,
+                1.0054539442062378,
+                5.903861999511719
+            ],
+            "Quaternion": [
+                0.16907578706741333,
+                0.27217134833335876,
+                0.7558802962303162,
+                0.5709474682807922
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Lights[\"Lamp\"]"
+        }
+    ],
+    "Scenes": [
+        {
+            "Name": "Scene",
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "Objects[\"Camera\"]",
+            "Objects": [
+                "Objects[\"Armature\"]",
+                "Objects[\"Lamp\"]",
+                "Objects[\"Camera\"]"
+            ]
+        }
+    ],
+    "Textures": []
+}

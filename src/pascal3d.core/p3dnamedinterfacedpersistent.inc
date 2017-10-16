@@ -241,8 +241,18 @@ begin
 end;
 
 procedure gP3DNamedInterfacedPersistentList.SetNamedItems( Index: Integer ; AValue: TListItem);
+var
+  OldVal: TListItem;
 begin
+  OldVal:= TListItem( FItems[ Index ]);
+  if ( OldVal = AValue ) then
+    exit;
+  if ( Assigned( OnChange ) and Assigned( OldVal )) then
+    OnChange( Self, OldVal, actDelete );
   FItems[ Index ]:= AValue;
+
+  if ( Assigned( OnChange ) and Assigned( AValue )) then
+    OnChange( Self, AValue, actAdd );
 end;
 
 procedure gP3DNamedInterfacedPersistentList.SetOnChanged(AValue: TP3DNamedInterfacedPersistentListOnChangeEvent);

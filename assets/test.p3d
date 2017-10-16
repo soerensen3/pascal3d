@@ -1,0 +1,757 @@
+{
+    "Armatures": [
+        {
+            "Name": "Cube_Blue_Armature",
+            "DataPath": "Armatures[\"Cube_Blue_Armature\"]",
+            "ClassName": "TP3DArmature",
+            "Joints": [
+                "Joints[\"Bone_2_1\"]",
+                "Joints[\"Bone_2_2\"]",
+                "Joints[\"Bone_2_3\"]"
+            ]
+        },
+        {
+            "Name": "Cube_Red_Armature",
+            "DataPath": "Armatures[\"Cube_Red_Armature\"]",
+            "ClassName": "TP3DArmature",
+            "Joints": [
+                "Joints[\"Bone_1\"]",
+                "Joints[\"Bone_2\"]",
+                "Joints[\"Bone_3\"]"
+            ]
+        }
+    ],
+    "Actions": [],
+    "Cameras": [
+        {
+            "Name": "Camera",
+            "DataPath": "Cameras[\"Camera\"]",
+            "ClassName": "TP3DCamera",
+            "Near": 0.10000000149011612,
+            "Far": 100.0,
+            "FOV": 0.8575560450553894
+        }
+    ],
+    "Joints": [
+        {
+            "Name": "Bone_2_1",
+            "DataPath": "Joints[\"Bone_2_1\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.5,
+                0.5,
+                0.4999999701976776,
+                0.4999999701976776
+            ],
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Length": 3.999999761581421
+        },
+        {
+            "Name": "Bone_2_2",
+            "DataPath": "Joints[\"Bone_2_2\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                2.107342567114756e-08,
+                2.107342567114756e-08,
+                0.7071068286895752,
+                0.7071068286895752
+            ],
+            "Position": [
+                3.999999761581421,
+                0.0,
+                -2.384185791015625e-07
+            ],
+            "Length": 4.000000000000007
+        },
+        {
+            "Name": "Bone_2_3",
+            "DataPath": "Joints[\"Bone_2_3\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.7071068286895752,
+                0.0,
+                0.0,
+                0.7071068286895752
+            ],
+            "Position": [
+                4.0,
+                0.0,
+                4.0
+            ],
+            "Length": 4.0
+        },
+        {
+            "Name": "Bone_1",
+            "DataPath": "Joints[\"Bone_1\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                0.9999999403953552
+            ],
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Length": 3.999999761581414
+        },
+        {
+            "Name": "Bone_2",
+            "DataPath": "Joints[\"Bone_2\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                0.9999999403953552
+            ],
+            "Position": [
+                0.0,
+                0.0,
+                3.999999761581421
+            ],
+            "Length": 4.0
+        },
+        {
+            "Name": "Bone_3",
+            "DataPath": "Joints[\"Bone_3\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                0.9999999403953552
+            ],
+            "Position": [
+                0.0,
+                0.0,
+                8.0
+            ],
+            "Length": 4.0
+        }
+    ],
+    "Lights": [
+        {
+            "Name": "Lamp",
+            "DataPath": "Lights[\"Lamp\"]",
+            "ClassName": "TP3DLight",
+            "LightType": "ltPoint",
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Energy": 1.0
+        }
+    ],
+    "Materials": [
+        {
+            "Name": "Material_Blue",
+            "DataPath": "Materials[\"Material_Blue\"]",
+            "ClassName": "TP3DMaterialBase",
+            "Diff": [
+                0.004764770623296499,
+                0.003282364457845688,
+                0.64000004529953
+            ],
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Spec_Hardness": 2,
+            "Unlit": false,
+            "Instancing": 1,
+            "TransparencyMode": "tmNone",
+            "Maps": []
+        },
+        {
+            "Name": "Material_Red",
+            "DataPath": "Materials[\"Material_Red\"]",
+            "ClassName": "TP3DMaterialBase",
+            "Diff": [
+                0.64000004529953,
+                0.14159207046031952,
+                0.16565768420696259
+            ],
+            "Spec": [
+                0.29041916131973267,
+                0.29041916131973267,
+                0.29041916131973267
+            ],
+            "Spec_Hardness": 3,
+            "Unlit": false,
+            "Instancing": 1,
+            "TransparencyMode": "tmNone",
+            "Maps": []
+        },
+        {
+            "Name": "Material_Green",
+            "DataPath": "Materials[\"Material_Green\"]",
+            "ClassName": "TP3DMaterialBase",
+            "Diff": [
+                0.3199404776096344,
+                0.64000004529953,
+                0.2662409842014313
+            ],
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Spec_Hardness": 2,
+            "Unlit": false,
+            "Instancing": 1,
+            "TransparencyMode": "tmNone",
+            "Maps": []
+        }
+    ],
+    "Meshes": [
+        {
+            "Name": "Cube_Blue",
+            "DataPath": "Meshes[\"Cube_Blue\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@0",
+            "PackedNormals": "@2164",
+            "Loops": "@10520",
+            "Edges": "@13308",
+            "PackedFaces": "@18880",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone_2_1"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone_2_2"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone_2_3"
+                }
+            ],
+            "PackedVertexWeights": "@19580",
+            "PackedVertexWeightIndices": "@21744",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 173,
+                    "Material": "Materials[\"Material_Blue\"]"
+                }
+            ],
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DMeshModifierArmature",
+                    "Armature": "Armatures[\"Cube_Blue_Armature\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube_Red",
+            "DataPath": "Meshes[\"Cube_Red\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@24628",
+            "PackedNormals": "@26792",
+            "Loops": "@35148",
+            "Edges": "@37936",
+            "PackedFaces": "@43508",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone_1"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone_2"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone_3"
+                }
+            ],
+            "PackedVertexWeights": "@44208",
+            "PackedVertexWeightIndices": "@46372",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 173,
+                    "Material": "Materials[\"Material_Red\"]"
+                }
+            ],
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DMeshModifierArmature",
+                    "Armature": "Armatures[\"Cube_Red_Armature\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube_Green_1",
+            "DataPath": "Meshes[\"Cube_Green_1\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@49256",
+            "PackedNormals": "@49980",
+            "Loops": "@52768",
+            "Edges": "@53700",
+            "PackedFaces": "@55560",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 57,
+                    "Material": "Materials[\"Material_Green\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube_Green_2",
+            "DataPath": "Meshes[\"Cube_Green_2\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@55796",
+            "PackedNormals": "@56520",
+            "Loops": "@59308",
+            "Edges": "@60240",
+            "PackedFaces": "@62100",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 57,
+                    "Material": "Materials[\"Material_Green\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube_Green_3",
+            "DataPath": "Meshes[\"Cube_Green_3\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@62336",
+            "PackedNormals": "@63060",
+            "Loops": "@65848",
+            "Edges": "@66780",
+            "PackedFaces": "@68640",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 57,
+                    "Material": "Materials[\"Material_Green\"]"
+                }
+            ]
+        }
+    ],
+    "Objects": [
+        {
+            "Name": "Camera",
+            "DataPath": "Objects[\"Camera\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                7.481131553649902,
+                -6.5076398849487305,
+                5.34366512298584
+            ],
+            "Quaternion": [
+                0.483536034822464,
+                0.20870360732078552,
+                0.33687159419059753,
+                0.7804827094078064
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Cameras[\"Camera\"]"
+        },
+        {
+            "Name": "Bone_2_3",
+            "DataPath": "Objects[\"Bone_2_3\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                3.999999761581421
+            ],
+            "Quaternion": [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"Bone_2_3\"]"
+        },
+        {
+            "Name": "Bone_2_2",
+            "DataPath": "Objects[\"Bone_2_2\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                3.999999523162842
+            ],
+            "Quaternion": [
+                -0.7071068286895752,
+                0.0,
+                0.0,
+                0.7071067094802856
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Bone_2_3\"]"
+            ],
+            "Data": "Joints[\"Bone_2_2\"]"
+        },
+        {
+            "Name": "Bone_2_1",
+            "DataPath": "Objects[\"Bone_2_1\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.5,
+                0.5,
+                0.4999999701976776,
+                0.5
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Bone_2_2\"]"
+            ],
+            "Data": "Joints[\"Bone_2_1\"]"
+        },
+        {
+            "Name": "Cube_Blue",
+            "DataPath": "Objects[\"Cube_Blue\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roQUATERNION",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube_Blue\"]"
+        },
+        {
+            "Name": "Cube_Blue_Armature",
+            "DataPath": "Objects[\"Cube_Blue_Armature\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                -8.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Bone_2_1\"]",
+                "Objects[\"Cube_Blue\"]"
+            ],
+            "Data": "Armatures[\"Cube_Blue_Armature\"]"
+        },
+        {
+            "Name": "Bone_3",
+            "DataPath": "Objects[\"Bone_3\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"Bone_3\"]"
+        },
+        {
+            "Name": "Bone_2",
+            "DataPath": "Objects[\"Bone_2\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                3.999999761581421
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Bone_3\"]"
+            ],
+            "Data": "Joints[\"Bone_2\"]"
+        },
+        {
+            "Name": "Bone_1",
+            "DataPath": "Objects[\"Bone_1\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Bone_2\"]"
+            ],
+            "Data": "Joints[\"Bone_1\"]"
+        },
+        {
+            "Name": "Cube_Red",
+            "DataPath": "Objects[\"Cube_Red\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                -2.1855694143368964e-08,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube_Red\"]"
+        },
+        {
+            "Name": "Cube_Red_Armature",
+            "DataPath": "Objects[\"Cube_Red_Armature\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Bone_1\"]",
+                "Objects[\"Cube_Red\"]"
+            ],
+            "Data": "Armatures[\"Cube_Red_Armature\"]"
+        },
+        {
+            "Name": "Cube_Green_3",
+            "DataPath": "Objects[\"Cube_Green_3\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                3.999999761581421
+            ],
+            "Quaternion": [
+                0.5,
+                -0.5,
+                -0.5,
+                0.5
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roQUATERNION",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube_Green_3\"]"
+        },
+        {
+            "Name": "Cube_Green_2",
+            "DataPath": "Objects[\"Cube_Green_2\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                3.999999523162842
+            ],
+            "Quaternion": [
+                -0.7071068286895752,
+                0.0,
+                0.0,
+                0.7071067094802856
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roQUATERNION",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Cube_Green_3\"]"
+            ],
+            "Data": "Meshes[\"Cube_Green_2\"]"
+        },
+        {
+            "Name": "Cube_Green_1",
+            "DataPath": "Objects[\"Cube_Green_1\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.5,
+                0.5,
+                0.4999999701976776,
+                0.5
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roQUATERNION",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Cube_Green_2\"]"
+            ],
+            "Data": "Meshes[\"Cube_Green_1\"]"
+        },
+        {
+            "Name": "Lamp",
+            "DataPath": "Objects[\"Lamp\"]",
+            "ClassName": "TP3DObject",
+            "Position": [
+                4.076245307922363,
+                1.0054539442062378,
+                5.903861999511719
+            ],
+            "Quaternion": [
+                0.16907578706741333,
+                0.27217134833335876,
+                0.7558802962303162,
+                0.5709474682807922
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Lights[\"Lamp\"]"
+        }
+    ],
+    "Scenes": [
+        {
+            "Name": "Scene",
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "Objects[\"Camera\"]",
+            "Objects": [
+                "Objects[\"Cube_Blue_Armature\"]",
+                "Objects[\"Cube_Red_Armature\"]",
+                "Objects[\"Cube_Green_1\"]",
+                "Objects[\"Lamp\"]",
+                "Objects[\"Camera\"]"
+            ]
+        }
+    ],
+    "Textures": []
+}

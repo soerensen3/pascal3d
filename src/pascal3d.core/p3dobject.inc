@@ -106,6 +106,7 @@ type
 
     public
       procedure ClearFields(); override;
+      function CalculateParentMatrix: TMat4;
 
       class function DOMNodeName: String; override;
 
@@ -393,6 +394,13 @@ begin
   inherited ClearFields;
 end;
 
+function TP3DObject.CalculateParentMatrix: TMat4;
+begin
+  if ( Parent is TP3DObject ) then
+    Result:= TP3DObject( Parent ).CalculateParentMatrix * TP3DObject( Parent ).Matrix
+  else
+    Result:= Mat4Identity;
+end;
 
 function TP3DObject.CollideObject(SelfMat: TMat4; ActMat: TMat4; AObject: TP3DObject; out Intersect: TVec3; out N: TVec3): Boolean;
 var
@@ -505,6 +513,8 @@ procedure TP3DObject.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList
 var
   mat: TMat4;
 begin
+  if ( not Visible ) then
+    exit;
   mat:= AWorld * Matrix;
   FMatrixFinal:= mat;
   if ( rlfObjects in AFlags ) then

@@ -64,9 +64,14 @@ type
       function DoFindPathObject( ARoot: TJSONObject; APath: String; out ARestPath: String ): TJSONData;
 
     public
-      constructor Create(AFileName: String; AUserPointer: Pointer=nil); // Create a new JSON Loader with the given file name. The file does
-                                                                        // not need to exist, but the path should be valid when saved. You
-                                                                        // can pass an optional user pointer.
+      constructor Create( AFileName: String; AUserPointer: Pointer=nil ); // Create a new JSON Loader with the given file name. The file does
+                                                                          // not need to exist, but the path should be valid when saved. You
+                                                                          // can pass an optional user pointer.
+      constructor Create( AFileName: String; ARoot: TP3DInterfacedPersistent;
+                          AUserPointer: Pointer=nil );                    // Create a new JSON Loader with the given file name and the given
+                                                                          // root object. The file does not need to exist, but the path should
+                                                                          // be valid when saved. You can pass an optional user pointer.
+
 
       function FindPath( APath: String ): TJSONData; // Utility function to find a path in JSON. The difference to TJSONData.FindPath is that
                                                      // supports string indices on arrays (E.g. `Objects[ "Object1" ]` for finding the
@@ -75,8 +80,8 @@ type
                                                      // itself is deleted from the array).
       destructor Destroy; override;
 
-      procedure ReadFile; // Starts reading a object's properties from a JSON File by traversing the JSON's tree
-      procedure WriteFile; // Starts writing a object's properties to a JSON File by traversing the object's tree
+      procedure ReadFile; // Starts reading an object's properties from a JSON File by traversing the JSON's tree
+      procedure WriteFile; // Starts writing an object's properties to a JSON File by traversing the object's tree
 
       procedure Reload; override;  // Tries to reopen the JSON file and checks if a binary file exists and is newer than the possibly loaded one.
       //function LoadFromPath( ):
@@ -286,6 +291,12 @@ begin
   OpenFiles;
 end;
 
+constructor TP3DJSONLoader.Create(AFileName: String; ARoot: TP3DInterfacedPersistent; AUserPointer: Pointer);
+begin
+  Create( AFileName, AUserPointer );
+  Root:= ARoot;
+end;
+
 function TP3DJSONLoader.FindPath(APath: String): TJSONData;
 var
   RestPath: String;
@@ -301,12 +312,27 @@ end;
 
 procedure TP3DJSONLoader.ReadFile;
 begin
-
+  if ( Assigned( Root )) then
+    Root.LoadFromJSONContext( P3DJSONContext( Self, JSON, Root, nil ));
 end;
 
 procedure TP3DJSONLoader.WriteFile;
+var
+  F: TStringListUTF8;
 begin
+  if ( Assigned( Root )) then
+    begin
+      JSON.Free;
+      WriteLn( Root.Serialize );
+      JSON:= GetJSON( Root.Serialize );
 
+      F:= TStringListUTF8.Create;
+
+      DeleteFile( FileName );
+      F.Text:= JSON.FormatJSON();
+      F.SaveToFile( FileName );
+      F.Free;
+    end;
 end;
 
 procedure TP3DJSONLoader.Reload;

@@ -65,7 +65,7 @@
         function GetItem( Index: Integer ): TCustomItem;
         function MoveNext( var Index: Integer ): TCustomItem;
         function MoveBack( var Index: Integer ): TCustomItem;
-        procedure SetItem( Index: Integer ; AValue: TCustomItem);
+        procedure SetItem( Index: Integer ; AValue: TCustomItem); virtual;
 
       public
         constructor Create;

@@ -19,6 +19,7 @@ uses
   typinfo,
   fgl,
   SDL2,
+  LazUTF8Classes,
   p3dMath;
 
 

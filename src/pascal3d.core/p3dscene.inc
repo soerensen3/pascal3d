@@ -239,7 +239,7 @@ begin
               //position in viewspace
               pos:= matView * vec4( Items[ i ].Positions[ j ], 1 );
               glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
-              pos:= vec4( normalize( mat3( matView ) * {mat3( matWorld ) * }Items[ i ].Matrices[ i ].Row[ 2 ].XYZ ), 0 );
+              pos:= vec4( normalize( mat3( matView ) * Items[ i ].Matrices[ j ].Row[ 2 ].XYZ ), 0 );
               glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
               pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
               glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );

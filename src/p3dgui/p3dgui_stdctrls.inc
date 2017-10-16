@@ -962,6 +962,10 @@ var
 begin
   tp:= round( FTPos.x );
   nx:= X - tp;
+
+  Canvas.GetValidText( Caption, FCaptionTxt,
+    P3DFontManager[ Canvas.Font.Name, Canvas.Font.Size ]);
+
   Result:= Length( FCaption );
   if ( Result > 0 ) then
     for i:= Length( FCaption ) downto 0 do
