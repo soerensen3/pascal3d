@@ -1,11 +1,11 @@
-unit SDL2;
+unit sdl2;
 
 {
   Simple DirectMedia Layer
   Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
 
   Pascal-Header-Conversion
-  Copyright (C) 2012-2014 Tim Blume aka End/EV1313
+  Copyright (C) 2012-2017 Tim Blume aka End/EV1313
 
   SDL.pas is based on the files:
   "sdl.h",
@@ -55,6 +55,8 @@ unit SDL2;
   cause there's a much better OpenGL-Header avaible at delphigl.com:
 
   the dglopengl.pas
+
+  You'll find it nowadays here: https://github.com/SaschaWillems/dglOpenGL
 
   Parts of the SDL.pas are from the SDL-1.2-Headerconversion from the JEDI-Team,
   written by Domenique Louis and others.
@@ -136,17 +138,13 @@ interface
       Windows;
   {$ENDIF}
 
-  {$IFDEF LINUX}
+  {$IFDEF UNIX}
     uses
+      {$IFDEF DARWIN}
+      CocoaAll,
+      {$ENDIF}
       X,
       XLib;
-  {$ENDIF}
-  
-  {$IFDEF DARWIN}
-    uses
-      X,
-      XLib,
-      CocoaAll;
   {$ENDIF}
 
 const
@@ -255,17 +253,17 @@ end;
 {$ENDIF}
 
 //from "sdl_rect.h"
-function SDL_RectEmpty(X: TSDL_Rect): Boolean;
+function SDL_RectEmpty(const r: PSDL_Rect): Boolean;
 begin
-  Result := (X.w <= 0) or (X.h <= 0);
+  Result := (r^.w <= 0) or (r^.h <= 0);
 end;
 
-function SDL_RectEquals(A: TSDL_Rect; B: TSDL_Rect): Boolean;
+function SDL_RectEquals(const a, b: PSDL_Rect): Boolean;
 begin
-  Result := (A.x = B.x) and (A.y = B.y) and (A.w = B.w) and (A.h = B.h);
+  Result := (a^.x = b^.x) and (a^.y = b^.y) and (a^.w = b^.w) and (a^.h = b^.h);
 end;
 
-function SDL_PointInRect(const p: PSDL_Point; const r: PSDL_Rect): Boolean; Inline;
+function SDL_PointInRect(const p: PSDL_Point; const r: PSDL_Rect): Boolean;
 begin
   Result := 
     (p^.x >= r^.x) and (p^.x < (r^.x + r^.w)) 

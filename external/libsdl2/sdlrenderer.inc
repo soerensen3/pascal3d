@@ -55,13 +55,12 @@ type
   {**
    *  Flip constants for SDL_RenderCopyEx
    *}
-type
-  PSDL_RendererFlip = ^TSDL_RendererFlip;
-  TSDL_RendererFlip = (SDL_FLIP_NONE,       {**< Do not flip *}
-                       SDL_FLIP_HORIZONTAL, {**< flip horizontally *}
-                       SDL_FLIP_VERTICAL    {**< flip vertically *}
-                       );
+const
+  SDL_FLIP_NONE       = $0; {**< Do not flip *}
+  SDL_FLIP_HORIZONTAL = $1; {**< flip horizontally *}
+  SDL_FLIP_VERTICAL   = $2; {**< flip vertically *}
 
+type
   {**
    *  A structure representing rendering state
    *}
@@ -670,7 +669,7 @@ function SDL_RenderCopy(renderer: PSDL_Renderer; texture: PSDL_Texture; srcrect:
    *
    *   0 on success, or -1 on error
    *}
-function SDL_RenderCopyEx(renderer: PSDL_Renderer; texture: PSDL_Texture; const srcrect: PSDL_Rect; dstrect: PSDL_Rect; angle: Double; center: PSDL_Point; flip: TSDL_RendererFlip): SInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderCopyEx' {$ENDIF} {$ENDIF};
+function SDL_RenderCopyEx(renderer: PSDL_Renderer; texture: PSDL_Texture; const srcrect: PSDL_Rect; dstrect: PSDL_Rect; angle: Double; center: PSDL_Point; flip: Integer): SInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderCopyEx' {$ENDIF} {$ENDIF};
 
   {**
    *  Read pixels from the current rendering target.

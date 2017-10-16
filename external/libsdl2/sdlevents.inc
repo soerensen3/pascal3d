@@ -90,6 +90,9 @@ const
 
   { Drag and drop events }
   SDL_DROPFILE        = $1000; // The system requests a file open
+  SDL_DROPTEXT        = $1001; // text/plain drag-and-drop event
+  SDL_DROPBEGIN       = $1002; // A new set of drops is beginning (NULL filename)
+  SDL_DROPCOMPLETE    = $1003; // Current set of drops is now complete (NULL filename)
 
   { Audio hotplug events }
   SDL_AUDIODEVICEADDED     = $1100; // A new audio device is available
@@ -141,7 +144,7 @@ type
   {**
    *  Keyboard button event structure (event.key.*)
    *}
-  TSDL_KeyboardEvent = packed record
+  TSDL_KeyboardEvent = record
     type_: UInt32;        // SDL_KEYDOWN or SDL_KEYUP
     timestamp: UInt32;
     windowID: UInt32;     // The window with keyboard focus, if any
