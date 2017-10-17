@@ -18,8 +18,8 @@ class P3DFakeBone:
             self.location = bone.head
         #self.matrix_local = ( p3dexporthelper.bone_quat( bone ) * bone.rotation_quaternion ).to_matrix()
 
-        if bone.parent:
-            self.matrix_local = ( p3dexporthelper.bone_quat( bone.parent ).inverted() * p3dexporthelper.bone_quat( bone )).to_matrix()
+        if bone.parent: # We want to get the rotation relative to the parent bone or to the armature in case there is no parent
+            self.matrix_local = ( p3dexporthelper.bone_quat( bone.parent ).inverted() * p3dexporthelper.bone_quat( bone )).to_matrix() 
         else:
             self.matrix_local = p3dexporthelper.bone_quat( bone ).to_matrix()
 
@@ -46,7 +46,7 @@ class P3DArmature( p3ddatablock.P3DDataBlock ):
     def __init__( self, block, root = None, path='', obj = None ):
         self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Armatures', self.Name ), obj )
-        block.pose_position = 'REST'
+        #block.pose_position = 'REST'
         self.ClassName = 'TP3DArmature'
         self.Joints = []
         rootbones = []

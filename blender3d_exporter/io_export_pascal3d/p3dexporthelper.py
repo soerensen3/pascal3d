@@ -8,31 +8,12 @@ def swap_quat_bone( quat ):
     from mathutils import Quaternion
     return Quaternion(( quat[ 0 ], quat[ 1 ], -quat[ 3 ], quat[ 2 ]))
 
-def bone_quat_local( bone ):
-    updir = Vector(( 0.0, 0.0, 1.0 ))
-    forw = ( bone.tail_local - bone.head_local ).normalized()
-    left = updir.cross( forw )
-    up = forw.cross( left )
-    m = Matrix().to_3x3()
-    m.col[ 0 ] = left
-    m.col[ 1 ] = up
-    m.col[ 2 ] = forw
-    return m.to_quaternion()
-
+# Generating a 3x3 "lookat" matrix pointing at the direction of the bone
+# It would be possible to apply the roll of the bone as well but I don't
+# know of any method on how to get the amount of roll.
 def bone_quat( bone ):
     updir = Vector(( 0.0, 0.0, 1.0 ))
     forw = ( bone.tail - bone.head ).normalized()
-    left = updir.cross( forw )
-    up = forw.cross( left )
-    m = Matrix().to_3x3()
-    m.col[ 0 ] = left
-    m.col[ 1 ] = up
-    m.col[ 2 ] = forw
-    return m.to_quaternion()
-
-def lookat_quat( lookat ):
-    updir = Vector(( 0.0, 0.0, 1.0 ))
-    forw = lookat.normalized()
     left = updir.cross( forw )
     up = forw.cross( left )
     m = Matrix().to_3x3()

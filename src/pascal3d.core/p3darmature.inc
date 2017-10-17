@@ -83,7 +83,7 @@ type
       function GetJointTex: TP3DTexture;
       procedure SetJointTex(AValue: TP3DTexture);
       procedure UpdateJointTex( Root: TP3DObject );
-      function CalculateJointMatrixFromObj( AObj: TP3DObject ): TMat4;
+      function CalculateJointMatrixFromObj( AObj: TP3DObject; InvMatrix: TMat4 ): TMat4;
 
     public
       procedure ClearFields; override;
@@ -526,7 +526,7 @@ begin
                     m:= JointObj.CalculateParentMatrix * m;
                     m:= Joint.MatrixInv * m;
                   end}
-                  m:= CalculateJointMatrixFromObj( JointObj )
+                  m:= CalculateJointMatrixFromObj( JointObj, -( Root.CalculateParentMatrix * Root.Matrix ))
                 else
                   m:= Mat4Identity;
 
@@ -552,7 +552,7 @@ begin
   rlist.Free;
 end;
 
-function TP3DArmature.CalculateJointMatrixFromObj(AObj: TP3DObject): TMat4;
+function TP3DArmature.CalculateJointMatrixFromObj(AObj: TP3DObject; InvMatrix: TMat4 ): TMat4;
 var
   Obj: TP3DObject;
 begin
@@ -567,6 +567,7 @@ begin
       else
         Obj:= nil;
     end;
+  Result:= InvMatrix * Result;
   if ( Assigned( AObj ) and ( AObj.Data is TP3DJoint )) then
     Result:= Result * TP3DJoint( AObj.Data ).MatrixInv;
 end;
