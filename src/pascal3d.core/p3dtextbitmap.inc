@@ -6,8 +6,10 @@ type
   TP3DFontLetter = class ( TP3DInterfacedPersistent )
     private
       Fuv1, Fuv2: TVec2;
+      Fuv1_metrics: TVec2;
       FTexture: TP3DTexture;
       FLetter: WideChar; //UNICODE
+      Fuv2_metrics: TVec2;
 
     public
       constructor Create;
@@ -18,6 +20,8 @@ type
       property Texture: TP3DTexture read FTexture write FTexture;
       property uv1: TVec2 read Fuv1 write Fuv1;
       property uv2: TVec2 read Fuv2 write Fuv2;
+      property uv1_metrics: TVec2 read Fuv1_metrics write Fuv1_metrics;
+      property uv2_metrics: TVec2 read Fuv2_metrics write Fuv2_metrics;
 
     published
       property Letter: WideChar read FLetter write FLetter;
@@ -175,7 +179,7 @@ TP3DPropertyAccessFontBmpList = specialize gP3DListPropertyAccessInterfacedPersi
 function TP3DTextBmp.AppendLetter( L: WideChar; fs: Single; p: TVec2 ): TVec2;
 var
   v1,v2,v3,v4: TVec2;
-  tc1, tc2, tc3, tc4: TVec2;
+  tc1, tc2, tc3, tc4, v3_skip: TVec2;
   n: Integer;
   letter: TP3DFontLetter;
 begin
@@ -190,6 +194,7 @@ begin
   v1:= p;
   letter:= Font.Letters[ n ];
   v3:= p + ( letter.uv2 - letter.uv1 ) / Font.SizeFactor * fs;
+  v3_skip:= p + ( letter.uv2_metrics - letter.uv1 ) / Font.SizeFactor * fs;
   v2:= vec2( v3.x, v1.y );
   v4:= vec2( v1.x, v3.y );
   tc1:= letter.uv1;
@@ -198,10 +203,12 @@ begin
   tc4:= vec2( tc1.x, tc3.y );
 
   n:= Vertices.Add([ v1 - Font.Margin, v2 - Font.Margin, v3 + Font.Margin, v4 + Font.Margin ]);
+
   TexCoords.Add([ tc1, tc2, tc3, tc4 ]);
   Indices.Add([ n + 0, n + 1, n + 2, n + 0, n + 2, n + 3 ]);
   LetterPosAndSize.Add( vec4( v1, v3 - v1 ));
-  Result:= v3;
+  Result:= v3_skip;
+  //v3;
 end;
 
 constructor TP3DTextBmp.Create;
@@ -397,7 +404,7 @@ constructor TP3DFontBmp.CreateByFont(AFont: TP3DFont; AWidth, AHeight, AMargin: 
     low: Integer = 32;
     high: Integer = 126;
     cl: TSDL_Color;
-//    minx, maxx, miny, maxy, advance, e: Integer;
+    minx, maxx, miny, maxy, advance: Integer;
     fnt: PTTF_Font;
     text_surf: PSDL_Surface;
     r1, r2: Classes.TRect;
@@ -421,7 +428,7 @@ constructor TP3DFontBmp.CreateByFont(AFont: TP3DFont; AWidth, AHeight, AMargin: 
 
     SDL_FillRect( ASurface, nil, SDL_MapRGBA( ASurface^.format, 255, 255, 0, 0 )); //Initialize pixels for distance fields
     for i:= low to high do
-      //if ( Boolean( TTF_GlyphIsProvided( fnt, i ))) then
+      if ( Boolean( TTF_GlyphIsProvided( fnt, i ))) then
         begin
           e:= TTF_SizeText( fnt, PAnsiChar( AnsiString( AnsiChar( i ))), @sz.X, @sz.Y );
           if ( e <> 0 ) then
@@ -444,18 +451,21 @@ constructor TP3DFontBmp.CreateByFont(AFont: TP3DFont; AWidth, AHeight, AMargin: 
           SDL_BlitSurface( text_surf, PSDL_Rect( @r1 ), ASurface, PSDL_Rect( @r2 ));
           SDL_FreeSurface( text_surf );
 
-          //TTF_GlyphMetrics( P3DFontManager.Fonts[ canvas.Font.Name, canvas.Font.Size ].Font, i,
-          //                  @minx, @maxx, @miny, @maxy, @advance );
+          TTF_GlyphMetrics( fnt, i,
+                            @minx, @maxx, @miny, @maxy, @advance );
 
           letter:= TP3DFontLetter.Create;
           letter.Letter:= WideChar( i );
           letter.uv1:= vec2( oldsz.X / ASurface^.w, oldsz.Y / ASurface^.h );
           letter.uv2:= vec2(( oldsz.X + sz.X ) / ASurface^.w, ( oldsz.Y + sz.Y ) / ASurface^.h );
+          letter.uv1_metrics:= vec2(( oldsz.X + minx ) / ASurface^.w, ( oldsz.Y - maxy + TTF_FontAscent( fnt )) / ASurface^.h );
+          letter.uv2_metrics:= vec2(( oldsz.X + advance ) / ASurface^.w, ( oldsz.Y - miny + TTF_FontAscent( fnt )) / ASurface^.h );
+
           Letters.Add( letter );
           oldsz.x:= oldsz.x + sz.x + AMargin;
         end
-    //else
-    //  WriteLn( 'Glyph not provided: ', i );
+    else
+      WriteLn( 'Glyph not provided: ', i );
     ;TTF_CloseFont( fnt );
   end;
 
@@ -1009,6 +1019,8 @@ begin
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Letter', smAttribute ));
   Properties.Add( TP3DPropertyAccessVec2.CreateField( 'uv1', @Fuv1, smAttribute ));
   Properties.Add( TP3DPropertyAccessVec2.CreateField( 'uv2', @Fuv2, smAttribute ));
+  Properties.Add( TP3DPropertyAccessVec2.CreateField( 'uv1_metrics', @Fuv1_metrics, smAttribute ));
+  Properties.Add( TP3DPropertyAccessVec2.CreateField( 'uv2_metrics', @Fuv2_metrics, smAttribute ));
 end;
 
 destructor TP3DFontLetter.Destroy;
