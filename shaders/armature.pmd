@@ -144,6 +144,7 @@ uniform sampler2D jointTex;
 uniform int jointTexWidth;
 uniform int jointTexHeight;
 uniform float time;
+uniform mat4 to_arm;
 
 mat4 getJointTransform( const in float i ) {
 
@@ -193,7 +194,7 @@ void getTransform()
 
 vec3 transformPosition( in vec3 v ) {
   vec4 skinned = vec4( 0.0 );
-  skinned += boneMatX * vec4( v, 1 )* jointWeight[ 0 ];
+  skinned += boneMatX * vec4( v, 1 ) * jointWeight[ 0 ];
   skinned += boneMatY * vec4( v, 1 ) * jointWeight[ 1 ]; 
   skinned += boneMatZ * vec4( v, 1 ) * jointWeight[ 2 ];
   skinned += boneMatW * vec4( v, 1 ) * jointWeight[ 3 ];
@@ -207,8 +208,8 @@ vec3 transformNormal( in vec3 n ) {
 
 ```{restrict="vshader,main"}
   getTransform();
-  vNormal.xyz = transformNormal( vNormal.xyz );
-  vTangent.xyz = transformNormal( vTangent.xyz );
-  vCotangent.xyz = transformNormal( vCotangent.xyz );
-  vPosition.xyz = transformPosition( vPosition.xyz );
+  vNormal.xyz = transformNormal( /*mat3( to_arm ) * */vNormal.xyz );
+  vTangent.xyz = transformNormal( /*mat3( to_arm ) * */vTangent.xyz );
+  vCotangent.xyz = transformNormal( /*mat3( to_arm ) * */vCotangent.xyz );
+  vPosition.xyz = transformPosition(/*( to_arm **/ ( vPosition ).xyz );
 ```

@@ -510,22 +510,12 @@ begin
         begin
           n:= rlist.Find( Joints.NamedItems[ j ], nil );
 
-          Capt:= '';
           Joint:= Joints.NamedItems[ j ];
           JointObj:= TP3DObject( Joint.Users[ 0 ]);
           case TransformMethod of
             atmMatrix:
               begin
-                //Capt += '[{ ' + Joints.NamedItems[ j ].MatrixInv.ToString + '}, {' + rlist[ n ].Matrices[ 0 ].ToString + '}]';
                 if ( Assigned( JointObj )) then
-                  //m:= Joints.NamedItems[ j ].MatrixInv * rlist[ n ].Matrices[ 0 ]
-                  //m:= Joint.MatrixInv * JointObj.CalculateParentMatrix * ( mat4translate( vec4( JointObj.Position, 1 )) * mat4( mat3( JointObj.Quaternion )))
-                  {begin
-                    m:= mat4( mat3( JointObj.Quaternion ));
-                    m:= m * mat4translate( vec4( JointObj.Position, 1 ));
-                    m:= JointObj.CalculateParentMatrix * m;
-                    m:= Joint.MatrixInv * m;
-                  end}
                   m:= CalculateJointMatrixFromObj( JointObj, -( Root.CalculateParentMatrix * Root.Matrix ))
                 else
                   m:= Mat4Identity;
@@ -542,7 +532,6 @@ begin
                 Buffer.Add([ q, t ]);
               end;
           end;
-          //P3DApplication.MainWindow.Title:= Capt
         end;
   FJointTex:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr, Owner );
   OwnsJointTex:= True;
@@ -560,8 +549,10 @@ begin
   Obj:= AObj;
   while Assigned( Obj ) do
     begin
-      //Result:= Result * ( mat4translate( vec4( Obj.Position, 1 )) * mat4( mat3( Obj.Quaternion )));
+      //Result:= ( Result * mat4( mat3( Obj.Quaternion ))) * mat4translate( vec4( Obj.Position, 1 ));
       Result:= ( mat4translate( vec4( Obj.Position, 1 )) * mat4( mat3( Obj.Quaternion ))) * Result;
+      //Result:= mat4( mat3( Obj.Quaternion )) * mat4translate( vec4( Obj.Position, 1 )) * Result;
+
       if ( Obj.Parent is TP3DObject ) then
         Obj:= TP3DObject( Obj.Parent )
       else
@@ -745,7 +736,8 @@ begin
       //for i:= 0 to quatList.Count - 1 do
       //  WriteLn( quatList[ i ].ToString());
       //quatList.Free;}
-      Armature.UpdateJointTex( TP3DObject( Armature.Users.Items[ 0 ]) );
+      //Material.PassToShader();
+      Armature.UpdateJointTex( TP3DObject( Armature.Users.Items[ 0 ]));
       i:= Material.Maps.Count;
       glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
       glBindTexture( GL_TEXTURE_2D, Armature.JointTex.GLTexture ); cle( Self );
@@ -759,7 +751,9 @@ begin
       decl:= Material.Shader.Uniforms.Names[ 'jointTexHeight' ];
       if ( Assigned( decl )) then
         decl.AsInt:= Armature.JointTex.Height;
-
+      decl:= Material.Shader.Uniforms.Names[ 'to_arm' ];
+      if ( Assigned( decl )) then
+        decl.AsMat4:= Mat4Identity;
       //Armature.CurrentAction.CurrentFrame:= SDL_GetTicks() / 100;
       //P3DApplication.MainWindow.Title:= FloatToStr( Armature.CurrentAction.CurrentFrame ) + ':' + FloatToStr( frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count ));
       decl:= Material.Shader.Uniforms.Names[ 'time' ];

@@ -1,0 +1,395 @@
+{
+    "Armatures": [],
+    "Actions": [
+        {
+            "Name": "SuzanneAction",
+            "DataPath": "Actions[\"SuzanneAction\"]",
+            "ClassName": "TP3DAction",
+            "Channels": [
+                {
+                    "PropStr": "Position[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 1.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": -4.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -1.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 5.0
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Position[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 1.0,
+                            "Value": 11.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 1.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -7.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 11.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Position[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 1.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": -1.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -2.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 1.0
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 1.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 1.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 1.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 90.00000518562841
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 180.00002403163555
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 270.0000360474533
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Cameras": [
+        {
+            "Name": "Camera",
+            "DataPath": "Cameras[\"Camera\"]",
+            "ClassName": "TP3DCamera",
+            "Near": 0.10000000149011612,
+            "Far": 100.0,
+            "FOV": 0.8575560450553894
+        }
+    ],
+    "Joints": [],
+    "Lights": [
+        {
+            "Name": "Lamp",
+            "DataPath": "Lights[\"Lamp\"]",
+            "ClassName": "TP3DLight",
+            "LightType": "ltPoint",
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Energy": 1.0
+        }
+    ],
+    "Materials": [
+        {
+            "Name": "Material.001",
+            "DataPath": "Materials[\"Material.001\"]",
+            "ClassName": "TP3DMaterialBase",
+            "Diff": [
+                0.64000004529953,
+                0.15287701785564423,
+                0.05804452300071716
+            ],
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Spec_Hardness": 50,
+            "Unlit": false,
+            "Instancing": 1,
+            "TransparencyMode": "tmNone",
+            "Maps": []
+        },
+        {
+            "Name": "Material",
+            "DataPath": "Materials[\"Material\"]",
+            "ClassName": "TP3DMaterialBase",
+            "Diff": [
+                0.64000004529953,
+                0.64000004529953,
+                0.64000004529953
+            ],
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Spec_Hardness": 50,
+            "Unlit": false,
+            "Instancing": 1,
+            "TransparencyMode": "tmNone",
+            "Maps": []
+        }
+    ],
+    "Meshes": [
+        {
+            "Name": "Suzanne",
+            "DataPath": "Meshes[\"Suzanne\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@0",
+            "PackedNormals": "@6088",
+            "Loops": "@29708",
+            "Edges": "@37584",
+            "PackedFaces": "@53332",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 499,
+                    "Material": "Materials[\"Material.001\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube",
+            "DataPath": "Meshes[\"Cube\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@55336",
+            "PackedNormals": "@55436",
+            "Loops": "@55728",
+            "Edges": "@55828",
+            "PackedFaces": "@56024",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 5,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ]
+        }
+    ],
+    "Objects": [
+        {
+            "Name": "Camera",
+            "ClassName": "TP3DObject",
+            "Position": [
+                7.481131553649902,
+                -6.5076398849487305,
+                5.34366512298584
+            ],
+            "Quaternion": [
+                0.483536034822464,
+                0.20870360732078552,
+                0.33687159419059753,
+                0.7804827094078064
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Cameras[\"Camera\"]",
+            "DataPath": "Objects[\"Camera\"]"
+        },
+        {
+            "Name": "Suzanne",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                11.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Suzanne\"]",
+            "DataPath": "Objects[\"Suzanne\"]",
+            "Action": "Actions[\"SuzanneAction\"]"
+        },
+        {
+            "Name": "Cube",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                3.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube\"]",
+            "DataPath": "Objects[\"Cube\"]"
+        },
+        {
+            "Name": "Lamp",
+            "ClassName": "TP3DObject",
+            "Position": [
+                4.076245307922363,
+                1.0054539442062378,
+                5.903861999511719
+            ],
+            "Quaternion": [
+                0.16907578706741333,
+                0.27217134833335876,
+                0.7558802962303162,
+                0.5709474682807922
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Lights[\"Lamp\"]",
+            "DataPath": "Objects[\"Lamp\"]"
+        }
+    ],
+    "Scenes": [
+        {
+            "Name": "Scene",
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "Objects[\"Camera\"]",
+            "Objects": [
+                "Objects[\"Suzanne\"]",
+                "Objects[\"Cube\"]",
+                "Objects[\"Lamp\"]",
+                "Objects[\"Camera\"]"
+            ]
+        }
+    ],
+    "Textures": []
+}

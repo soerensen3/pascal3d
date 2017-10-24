@@ -54,7 +54,7 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
         self.Spec = list( block.specular_color * block.specular_intensity )
         self.Spec_Hardness = block.specular_hardness
 
-        self.Unlit = block.use_shadeless
+        self.Unlit = int( block.use_shadeless )
         self.Instancing = 1
 
         if ( block.use_transparency ):

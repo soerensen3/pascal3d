@@ -29,7 +29,2123 @@
         {
             "Name": "Action.001",
             "DataPath": "Actions[\"Action.001\"]",
-            "ClassName": "TP3DAction"
+            "ClassName": "TP3DAction",
+            "Channels": [
+                {
+                    "PropStr": "Owner.Objects[\"lower_body\"].Position[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.00045242783380672336
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 0.0006469455547630787
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 0.0006921283202245831
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 0.0006469455547630787
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.000841463275719434
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.00045242783380672336
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_body\"].Position[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -0.13008759915828705
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.14063499867916107
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.14048239588737488
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.14063499867916107
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.1752302199602127
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.13008759915828705
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_body\"].Position[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.14137716591358185
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 0.13849712908267975
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 0.32845351099967957
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 0.13849712908267975
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.15670636296272278
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.14137716591358185
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_body\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 53.66281715257607
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 53.66281715257607
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 53.66281715257607
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 53.66281715257607
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 53.66281715257607
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 53.66281715257607
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 53.66281715257607
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_body\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.0
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_body\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -22.65873489744696
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -38.97346354629495
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -47.33289816955992
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -45.7548204808571
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -47.33289816955992
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -29.544462248278027
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -22.65873489744696
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 0.6366878951985141
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 1.3326725063297993
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 1.6343555676542219
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 1.3326725063297993
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 2.321132283097228
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 0.6080472569689905
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 1.0986701116723951
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 1.3856286720897943
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 1.0986701116723951
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 2.6139243588481307
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"head\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -14.798544428700374
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -14.797835796552876
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -14.796713937948281
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -14.795643305763987
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -14.796713937948281
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -14.787880795541017
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -14.798544428700374
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"head\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -0.04713354271091235
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 0.06191309200943907
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 0.16773916570816155
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 0.20511529598124933
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 0.16773916570816155
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.247749751597183
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.04713354271091235
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"head\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -0.11157355799458997
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -0.21024254038506418
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.3138628631225587
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.3802474479951033
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.3138628631225587
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.6501837090702725
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.11157355799458997
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"head\"].Quaternion[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -0.12877564132213593
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.12876254320144653
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.12875111401081085
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.12876254320144653
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.128676176071167
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.12878330051898956
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"head\"].Quaternion[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": 0.0007720623980276287
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 0.0018042965093627572
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 0.0022023124620318413
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 0.0018042965093627572
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.0028741860296577215
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.00028250119066797197
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"head\"].Quaternion[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -0.0017498573288321495
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.0025276727974414825
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.003060181625187397
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.0025276727974414825
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.00534847192466259
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.0010185253340750933
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"head\"].Quaternion[3]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": 0.9916720390319824
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 0.9916706085205078
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 0.9916698932647705
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 0.9916706085205078
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.9916681051254272
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.991672158241272
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -85.24486832494237
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -71.52970462900184
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -63.7417792713741
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -64.20349324283251
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -63.7417792713741
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -73.77973293317372
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -85.24486832494237
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -48.487439230307444
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -46.12801178294041
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -43.18306976662582
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -43.65974868300154
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -43.18306976662582
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -48.24239252615482
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -48.487439230307444
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -31.288974576539317
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -49.71270007182807
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -60.535476643588304
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -59.66776938558041
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -60.535476643588304
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -45.63245763823106
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -31.288974576539317
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -0.6215488910675049
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.5815473198890686
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.5846458673477173
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.5815473198890686
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.631740152835846
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.6760480403900146
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -0.06239777430891991
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.022445350885391235
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.027832750231027603
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.022445350885391235
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.08882518857717514
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.12444866448640823
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -0.521571159362793
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -0.565828800201416
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -0.5626267790794373
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -0.565828800201416
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -0.5091794729232788
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.44868525862693787
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[3]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": 0.5811603665351868
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 0.5840691328048706
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 0.5838371515274048
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 0.5840691328048706
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.5777116417884827
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.5710982084274292
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_leg_r\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -27.623070213358865
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -25.272913040519
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -54.43818708044378
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -18.44723329956495
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -54.43818708044378
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -35.77622116471309
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -27.623070213358865
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_leg_r\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -27.184894782028838
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 16.886241329579907
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 76.77922425691968
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -8.38514687116146
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 76.77922425691968
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -27.323945484841648
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -27.184894782028838
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_leg_r\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 47.99059759490119
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -52.58361308061811
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -112.66531926298937
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -10.53480468871626
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -112.66531926298937
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 39.05781638505753
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 47.99059759490119
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_foot_r\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 79.35273032981993
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -14.418225824005823
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -49.076679667558246
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 29.733095003300328
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -49.076679667558246
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 77.5856373954899
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 79.35273032981993
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_foot_r\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -0.7077011073103954
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -48.846102719593354
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 20.751324260175327
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -45.38812810396265
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 20.751324260175327
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -10.143492894225078
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -0.7077011073103954
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_foot_r\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 1.4297529761030336
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 132.14561358265235
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 151.2170595966077
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 53.08426937678946
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 151.2170595966077
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 9.287985208211897
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 1.4297529761030336
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 62.960924701439474
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 56.26597990773601
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 37.55592945881597
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 42.036926423713
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 37.55592945881597
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 61.049946997767535
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 62.960924701439474
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -2.1957347019551845
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -22.350333064213203
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -31.864814182239332
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -13.707943331999084
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -31.864814182239332
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -15.091762750956867
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -2.1957347019551845
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 31.530408110513367
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 50.2325526152336
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 68.77969963250128
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 54.34240733485937
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 68.77969963250128
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 43.55331384199448
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 31.530408110513367
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -95.7411618446499
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -99.44206580572744
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -104.07720306931066
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -91.15673873716482
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -104.07720306931066
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -117.81281635223542
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -95.7411618446499
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 20.03561774403237
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 17.917632368376104
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 15.627724295999775
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 20.767482780685658
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 15.627724295999775
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 3.702036491853039
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 20.03561774403237
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 106.22289340061313
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 92.89562981957172
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 82.78677879207531
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 124.75018505737208
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 82.78677879207531
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 60.8483129772728
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 106.22289340061313
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 104.14476047240383
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 119.09288946347827
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 125.42555418262256
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -6.341810342715388
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 125.42555418262256
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 136.6413398509333
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 104.14476047240383
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 69.43670237852645
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 58.02857174726893
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 48.201397729535145
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 72.4328469094794
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 48.201397729535145
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 22.578195011902135
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 69.43670237852645
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -42.74937664707215
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -26.241601233319233
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -19.105562809875924
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -94.83881186613966
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -19.105562809875924
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -9.653078467019274
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -42.74937664707215
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -85.41269973822772
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -74.38325529640449
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -69.02825705399188
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -71.10397892535234
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -69.02825705399188
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -86.57159845979552
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -85.41269973822772
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 48.42084488391594
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 46.3588482781015
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 44.32213020315834
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 44.867889654857514
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 44.32213020315834
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 46.911092994610804
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 48.42084488391594
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 31.14580356198695
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 46.24216473793952
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 53.98073856224912
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 51.1969480340126
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 53.98073856224912
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 30.391071051311226
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 31.14580356198695
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_leg_l\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -27.298166642598762
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -26.705347186116253
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 105.39109927833104
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -19.580798848746497
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 105.39109927833104
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -32.26861497799994
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -27.298166642598762
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_leg_l\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 27.06949360992173
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -15.592408801844156
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -105.12319193034534
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 9.977223032985247
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -105.12319193034534
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 29.614075538372614
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 27.06949360992173
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_leg_l\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -47.429565839762894
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 52.00030466283818
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -47.190741438129514
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 8.216513764398403
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -47.190741438129514
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -42.33915205820578
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -47.429565839762894
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_foot_l\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 79.33789515850071
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -10.833376171894223
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -48.89749989462885
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 39.722035226155796
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -48.89749989462885
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 79.30092334342203
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 79.33789515850071
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_foot_l\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.8763417379539348
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 51.93562276947125
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -20.042601612666758
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 43.444426963002336
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -20.042601612666758
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 0.6137301879711503
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 0.8763417379539348
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"front_foot_l\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -1.710859878496406
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -129.51175595644793
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -152.8851830869159
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -44.58333030517926
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -152.8851830869159
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -3.9483514767949535
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -1.710859878496406
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -159.1229354945262
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -126.0274851117293
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -48.94767788086118
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -70.69045193992389
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -48.94767788086118
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -158.479080863045
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -159.1229354945262
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 56.239277282380364
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 75.69608599588258
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 74.48507292939506
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 77.5699962618246
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 74.48507292939506
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 55.151409115202135
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 56.239277282380364
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -5.421864515718544
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 30.144689045136083
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 109.1966212500423
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 86.86688803697953
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 109.1966212500423
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -4.747871673626818
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -5.421864515718544
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 62.9994333091272
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 60.46302882490372
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 48.36055480231616
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 51.91526197494888
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 48.36055480231616
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 72.64885847860532
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 62.9994333091272
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 2.2103244133437907
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 20.11174874233661
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 29.9265020606947
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 9.033936314465015
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 29.9265020606947
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 5.2025283519150705
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 2.2103244133437907
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -31.50233603218833
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -47.59420413951613
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -61.729427897020855
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -49.84035972631324
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -61.729427897020855
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -35.328843760749635
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -31.50233603218833
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -113.94866403494214
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -97.03355661752252
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -99.01920195142543
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -86.53209947464865
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -99.01920195142543
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -107.87395507786637
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -96.54588792644486
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 8.443477542184718
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -17.994944989441958
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -17.209334900156037
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -17.947850833711758
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -17.209334900156037
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -14.707228211871529
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -19.583986839636573
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -54.681666256135195
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -97.15981266809145
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -92.64464768085354
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -133.14978802434254
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -92.64464768085354
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -83.3994126279303
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -104.70972641662125
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 142.12968388048452
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 114.89560148968249
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 118.62711152934264
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -23.01980944358171
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 118.62711152934264
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 127.31889633733216
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 107.53095662790855
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -10.066318584494038
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": -61.69068023270506
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -57.28050208632704
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -67.52730927878916
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -57.28050208632704
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -48.49796796722668
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -68.4819306965747
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 9.267519399527913
+                        },
+                        {
+                            "Time": 21.0,
+                            "Value": 30.086885152468255
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": 25.115458392439326
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": 110.21426482517701
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": 25.115458392439326
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": 18.163047902754897
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 39.47320118199557
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Rotation[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -106.44783885743959
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -29.34420109584736
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -33.51763121816155
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -29.34420109584736
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -140.6998383766598
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -159.08680379274045
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Rotation[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -78.19456926870446
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -66.64214405674262
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -69.55872371168381
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -66.64214405674262
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -72.90218337227861
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": -56.311807063337426
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Rotation[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 21.0,
+                            "Value": -50.118584075347584
+                        },
+                        {
+                            "Time": 42.0,
+                            "Value": -129.55066071511934
+                        },
+                        {
+                            "Time": 52.0,
+                            "Value": -124.98618176060484
+                        },
+                        {
+                            "Time": 80.0,
+                            "Value": -129.55066071511934
+                        },
+                        {
+                            "Time": 90.0,
+                            "Value": -14.673888349992191
+                        },
+                        {
+                            "Time": 100.0,
+                            "Value": 5.4106659933538745
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "Cameras": [
@@ -48,15 +2164,15 @@
             "DataPath": "Joints[\"lower_body\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
+                0.45136675238609314,
                 0.0,
-                0.31181418895721436,
-                0.9501432180404663,
-                0.0
+                0.0,
+                0.8923385143280029
             ],
             "Position": [
-                0.00048700874322094023,
-                -0.1341002732515335,
-                0.14273975789546967
+                0.00045242783380672336,
+                -0.13008759915828705,
+                0.14137716591358185
             ],
             "Length": 0.06279445738384962
         },
@@ -65,15 +2181,15 @@
             "DataPath": "Joints[\"body\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.011842909269034863,
-                -0.6602089405059814,
-                -0.7508678436279297,
-                0.013470950536429882
+                0.2672727406024933,
+                0.0,
+                0.0,
+                0.9636209011077881
             ],
             "Position": [
-                0.00048700874322094023,
-                -0.09689228981733322,
-                0.19332344830036163
+                0.00045242783380672336,
+                -0.09287961572408676,
+                0.19196085631847382
             ],
             "Length": 0.16675469593291026
         },
@@ -82,15 +2198,15 @@
             "DataPath": "Joints[\"head\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.011253421194851398,
-                0.7514274716377258,
-                0.6596457958221436,
-                -0.009878894314169884
+                0.14094866812229156,
+                0.0,
+                -0.001056977198459208,
+                0.9900163412094116
             ],
             "Position": [
-                -0.005445090122520924,
-                0.06838498264551163,
-                0.21466270089149475
+                0.00045242783380672336,
+                0.050050921738147736,
+                0.27785608172416687
             ],
             "Length": 0.16837457513101328
         },
@@ -99,15 +2215,15 @@
             "DataPath": "Joints[\"upper_front_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.7352540493011475,
-                0.549696147441864,
-                0.23743531107902527,
-                0.31758493185043335
+                -0.49881505966186523,
+                0.0,
+                -0.46562424302101135,
+                0.7310113906860352
             ],
             "Position": [
-                -0.005445090122520924,
-                0.06838498264551163,
-                0.21466270089149475
+                0.00045242783380672336,
+                0.050050921738147736,
+                0.27785608172416687
             ],
             "Length": 0.18276287397997262
         },
@@ -116,15 +2232,15 @@
             "DataPath": "Joints[\"front_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.7905323505401611,
-                0.2860769033432007,
-                0.18426214158535004,
-                0.5091819167137146
+                -0.669658362865448,
+                0.0,
+                -0.01794338785111904,
+                0.7424525022506714
             ],
             "Position": [
-                0.12217840552330017,
-                0.030740078538656235,
-                0.08937354385852814
+                0.12486883997917175,
+                0.06261686235666275,
+                0.1445709615945816
             ],
             "Length": 0.12579079487556744
         },
@@ -133,15 +2249,15 @@
             "DataPath": "Joints[\"front_foot_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.016563815996050835,
-                0.9426982402801514,
-                0.33318403363227844,
-                0.0058542583137750626
+                -0.04125358536839485,
+                0.0,
+                -0.005902790930122137,
+                0.9991312623023987
             ],
             "Position": [
-                0.19547176361083984,
-                -0.05726608261466026,
-                0.03735119476914406
+                0.12822043895721436,
+                0.07550686597824097,
+                0.01948721706867218
             ],
             "Length": 0.14801871736483427
         },
@@ -150,15 +2266,15 @@
             "DataPath": "Joints[\"body_to_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.7873803377151489,
-                0.18192081153392792,
-                0.13259592652320862,
-                0.5738949179649353
+                -0.7820832133293152,
+                0.0,
+                -0.47317981719970703,
+                0.4055202305316925
             ],
             "Position": [
-                -0.005445090122520924,
-                0.06838498264551163,
-                0.21466270089149475
+                0.00045242783380672336,
+                0.050050921738147736,
+                0.27785608172416687
             ],
             "Length": 0.22185380017552886
         },
@@ -167,15 +2283,15 @@
             "DataPath": "Joints[\"upper_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.4724787473678589,
-                0.7369991540908813,
-                0.4068843126296997,
-                0.26084721088409424
+                -0.37439656257629395,
+                0.0,
+                -0.38779371976852417,
+                0.8422845005989075
             ],
             "Position": [
-                0.08720410615205765,
-                -0.12141167372465134,
-                0.14674749970436096
+                0.08559286594390869,
+                -0.09883660823106766,
+                0.1371338814496994
             ],
             "Length": 0.09509318049273943
         },
@@ -184,15 +2300,15 @@
             "DataPath": "Joints[\"lower_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.8503158688545227,
-                -0.2016414999961853,
-                -0.11216431111097336,
-                0.4729933440685272
+                -0.7570330500602722,
+                0.0,
+                0.5889471769332886,
+                0.28291741013526917
             ],
             "Position": [
-                0.16032853722572327,
-                -0.08781932294368744,
-                0.09608111530542374
+                0.14771394431591034,
+                -0.059003375470638275,
+                0.07715891301631927
             ],
             "Length": 0.12354454303594721
         },
@@ -201,15 +2317,15 @@
             "DataPath": "Joints[\"foot_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.14995914697647095,
-                0.9023580551147461,
-                0.39859065413475037,
-                0.06623988598585129
+                -0.07813096791505814,
+                0.0,
+                -0.05770089477300644,
+                0.9952719211578369
             ],
             "Position": [
-                0.1131962388753891,
-                -0.18160861730575562,
-                0.030924618244171143
+                0.10654312372207642,
+                -0.1627703309059143,
+                0.02423791214823723
             ],
             "Length": 0.18660669767576463
         },
@@ -218,15 +2334,15 @@
             "DataPath": "Joints[\"upper_front_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.7608643770217896,
-                -0.5238152742385864,
-                -0.2171938270330429,
-                0.315483421087265
+                -0.4995642900466919,
+                0.0,
+                0.4647628366947174,
+                0.7310478091239929
             ],
             "Position": [
-                -0.005445090122520924,
-                0.06838498264551163,
-                0.21466270089149475
+                0.00045242783380672336,
+                0.050050921738147736,
+                0.27785608172416687
             ],
             "Length": 0.1824796441226291
         },
@@ -235,15 +2351,15 @@
             "DataPath": "Joints[\"front_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.8048639893531799,
-                -0.2557562291622162,
-                -0.1621779054403305,
-                0.5103733539581299
+                -0.6695621013641357,
+                0.0,
+                0.021411685273051262,
+                0.7424474358558655
             ],
             "Position": [
-                -0.12606781721115112,
-                0.0223013237118721,
-                0.0857236385345459
+                -0.12354756891727448,
+                0.06261686235666275,
+                0.1445709615945816
             ],
             "Length": 0.12580974097987993
         },
@@ -252,15 +2368,15 @@
             "DataPath": "Joints[\"front_foot_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.03504420071840286,
-                -0.9426161646842957,
-                -0.33180513978004456,
-                0.01233407948166132
+                -0.04125286638736725,
+                0.0,
+                0.006761646829545498,
+                0.9991258382797241
             ],
             "Position": [
-                -0.19175618886947632,
-                -0.07062255591154099,
-                0.032073985785245895
+                -0.12754757702350616,
+                0.07550686597824097,
+                0.01948721706867218
             ],
             "Length": 0.14802193214305673
         },
@@ -269,15 +2385,15 @@
             "DataPath": "Joints[\"body_to_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.7972690463066101,
-                -0.1519785374403,
-                -0.10938867181539536,
-                0.5738455653190613
+                -0.7824668884277344,
+                0.0,
+                0.4726310968399048,
+                0.4054199755191803
             ],
             "Position": [
-                -0.005445090122520924,
-                0.06838498264551163,
-                0.21466270089149475
+                0.00045242783380672336,
+                0.050050921738147736,
+                0.27785608172416687
             ],
             "Length": 0.2217999459813573
         },
@@ -286,15 +2402,15 @@
             "DataPath": "Joints[\"upper_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.4981227517127991,
-                -0.7280261516571045,
-                -0.38872918486595154,
-                0.265972375869751
+                -0.3746620714664459,
+                0.0,
+                0.38731229305267334,
+                0.8423879742622375
             ],
             "Position": [
-                -0.08281974494457245,
-                -0.12719136476516724,
-                0.14424769580364227
+                -0.08454756438732147,
+                -0.09883657842874527,
+                0.1371338963508606
             ],
             "Length": 0.09501412276786131
         },
@@ -303,15 +2419,15 @@
             "DataPath": "Joints[\"lower_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.8408231735229492,
-                0.23150114715099335,
-                0.12988689541816711,
-                0.47175535559654236
+                -0.9642142057418823,
+                0.0,
+                -0.12335890531539917,
+                0.23467740416526794
             ],
             "Position": [
-                -0.15641194581985474,
-                -0.09858868271112442,
-                0.0913916528224945
+                -0.14654755592346191,
+                -0.05900333449244499,
+                0.07715892046689987
             ],
             "Length": 0.12342181443722909
         },
@@ -320,15 +2436,15 @@
             "DataPath": "Joints[\"foot_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.1665249913930893,
-                -0.9001681804656982,
-                -0.3957365155220032,
-                0.07320835441350937
+                -0.07736729830503464,
+                0.0,
+                -0.05941418930888176,
+                0.9952307343482971
             ],
             "Position": [
-                -0.10249540954828262,
-                -0.18908005952835083,
-                0.027070045471191406
+                -0.13940154016017914,
+                -0.16883061826229095,
+                0.02130328118801117
             ],
             "Length": 0.18660655664390444
         }
@@ -363,7 +2479,7 @@
                 0.5
             ],
             "Spec_Hardness": 50,
-            "Unlit": false,
+            "Unlit": 0,
             "Instancing": 1,
             "TransparencyMode": "tmNone",
             "Maps": []
@@ -474,7 +2590,6 @@
     "Objects": [
         {
             "Name": "Camera",
-            "DataPath": "Objects[\"Camera\"]",
             "ClassName": "TP3DObject",
             "Position": [
                 7.481131553649902,
@@ -495,22 +2610,22 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Cameras[\"Camera\"]"
+            "Data": "Cameras[\"Camera\"]",
+            "DataPath": "Objects[\"Camera\"]"
         },
         {
             "Name": "head",
-            "DataPath": "Objects[\"head\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                2.675224095582962e-07,
-                1.4901161193847656e-08,
-                0.16675467789173126
+                0.0,
+                0.16675469279289246,
+                1.4901161193847656e-08
             ],
             "Quaternion": [
-                0.12875321507453918,
-                -0.0029625999741256237,
-                1.1655210983008146e-06,
-                0.9916722774505615
+                -0.12878330051898956,
+                -0.00028250119066797197,
+                -0.0010185253340750933,
+                0.9916722178459167
             ],
             "Scale": [
                 1,
@@ -520,22 +2635,22 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Joints[\"head\"]"
+            "Data": "Joints[\"head\"]",
+            "DataPath": "Objects[\"head\"]"
         },
         {
             "Name": "front_foot_r",
-            "DataPath": "Objects[\"front_foot_r\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                -1.862645149230957e-09,
-                7.916241884231567e-09,
-                0.1257907748222351
+                -6.984919309616089e-10,
+                0.1257908046245575,
+                4.470348358154297e-08
             ],
             "Quaternion": [
-                0.08219326287508011,
-                0.7386707067489624,
-                -0.5719223618507385,
-                0.3471522629261017
+                0.6384478211402893,
+                0.003212623530998826,
+                0.013545258902013302,
+                0.7695392370223999
             ],
             "Scale": [
                 1,
@@ -545,22 +2660,22 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Joints[\"front_foot_r\"]"
+            "Data": "Joints[\"front_foot_r\"]",
+            "DataPath": "Objects[\"front_foot_r\"]"
         },
         {
             "Name": "front_leg_r",
-            "DataPath": "Objects[\"front_leg_r\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                -1.4901161193847656e-08,
-                3.3527612686157227e-08,
-                0.18276284635066986
+                -2.2351741790771484e-08,
+                0.18276286125183105,
+                1.4901161193847656e-08
             ],
             "Quaternion": [
-                -0.15668030083179474,
-                -0.24126243591308594,
-                0.1618344783782959,
-                0.943956196308136
+                -0.11918140202760696,
+                -0.30285876989364624,
+                0.3325870931148529,
+                0.8851317763328552
             ],
             "Scale": [
                 1,
@@ -572,22 +2687,22 @@
             "Children": [
                 "Objects[\"front_foot_r\"]"
             ],
-            "Data": "Joints[\"front_leg_r\"]"
+            "Data": "Joints[\"front_leg_r\"]",
+            "DataPath": "Objects[\"front_leg_r\"]"
         },
         {
             "Name": "upper_front_leg_r",
-            "DataPath": "Objects[\"upper_front_leg_r\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                2.675224095582962e-07,
-                1.4901161193847656e-08,
-                0.16675467789173126
+                0.0,
+                0.16675469279289246,
+                1.4901161193847656e-08
             ],
             "Quaternion": [
-                0.24984881281852722,
-                -0.771967887878418,
-                0.25026848912239075,
-                0.528211236000061
+                -0.6760480999946594,
+                -0.12444867938756943,
+                -0.44868528842926025,
+                0.5710981488227844
             ],
             "Scale": [
                 1,
@@ -599,22 +2714,22 @@
             "Children": [
                 "Objects[\"front_leg_r\"]"
             ],
-            "Data": "Joints[\"upper_front_leg_r\"]"
+            "Data": "Joints[\"upper_front_leg_r\"]",
+            "DataPath": "Objects[\"upper_front_leg_r\"]"
         },
         {
             "Name": "foot_rear_leg_r",
-            "DataPath": "Objects[\"foot_rear_leg_r\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                -9.313225746154785e-10,
-                2.7241185307502747e-08,
-                0.12354455888271332
+                7.450580596923828e-09,
+                0.12354452908039093,
+                3.725290298461914e-09
             ],
             "Quaternion": [
-                0.006234524305909872,
-                -0.7959141135215759,
-                0.6015670299530029,
-                0.06781545281410217
+                0.7313491702079773,
+                0.0896964892745018,
+                -0.6024872064590454,
+                0.3067445456981659
             ],
             "Scale": [
                 1,
@@ -624,22 +2739,22 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Joints[\"foot_rear_leg_r\"]"
+            "Data": "Joints[\"foot_rear_leg_r\"]",
+            "DataPath": "Objects[\"foot_rear_leg_r\"]"
         },
         {
             "Name": "lower_rear_leg_r",
-            "DataPath": "Objects[\"lower_rear_leg_r\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                3.725290298461914e-09,
-                3.725290298461914e-09,
-                0.09509315341711044
+                9.313225746154785e-09,
+                0.09509319067001343,
+                -1.30385160446167e-08
             ],
             "Quaternion": [
-                -0.0010563598480075598,
-                -0.8001687526702881,
-                0.5002419948577881,
-                0.33088791370391846
+                -0.5317140817642212,
+                -0.514072597026825,
+                0.6057748198509216,
+                0.29333674907684326
             ],
             "Scale": [
                 1,
@@ -651,22 +2766,22 @@
             "Children": [
                 "Objects[\"foot_rear_leg_r\"]"
             ],
-            "Data": "Joints[\"lower_rear_leg_r\"]"
+            "Data": "Joints[\"lower_rear_leg_r\"]",
+            "DataPath": "Objects[\"lower_rear_leg_r\"]"
         },
         {
             "Name": "upper_rear_leg_r",
-            "DataPath": "Objects[\"upper_rear_leg_r\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                -1.862645149230957e-09,
-                2.3283064365386963e-09,
-                0.2218538224697113
+                -3.3527612686157227e-08,
+                0.22185389697551727,
+                6.705522537231445e-08
             ],
             "Quaternion": [
-                0.0894695594906807,
-                0.6332305073738098,
-                -0.29542338848114014,
-                0.7097460031509399
+                0.5069113373756409,
+                0.12613007426261902,
+                0.24129387736320496,
+                0.8178688287734985
             ],
             "Scale": [
                 1,
@@ -678,22 +2793,22 @@
             "Children": [
                 "Objects[\"lower_rear_leg_r\"]"
             ],
-            "Data": "Joints[\"upper_rear_leg_r\"]"
+            "Data": "Joints[\"upper_rear_leg_r\"]",
+            "DataPath": "Objects[\"upper_rear_leg_r\"]"
         },
         {
             "Name": "body_to_rear_leg_r",
-            "DataPath": "Objects[\"body_to_rear_leg_r\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                2.675224095582962e-07,
-                1.4901161193847656e-08,
-                0.16675467789173126
+                0.0,
+                0.16675469279289246,
+                1.4901161193847656e-08
             ],
             "Quaternion": [
-                0.04524735361337662,
-                -0.9741301536560059,
-                0.08928455412387848,
-                0.202612042427063
+                -0.8620162010192871,
+                -0.12646795809268951,
+                -0.455966055393219,
+                0.18173848092556
             ],
             "Scale": [
                 1,
@@ -705,22 +2820,22 @@
             "Children": [
                 "Objects[\"upper_rear_leg_r\"]"
             ],
-            "Data": "Joints[\"body_to_rear_leg_r\"]"
+            "Data": "Joints[\"body_to_rear_leg_r\"]",
+            "DataPath": "Objects[\"body_to_rear_leg_r\"]"
         },
         {
             "Name": "front_foot_l",
-            "DataPath": "Objects[\"front_foot_l\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                0.0,
-                -1.1175870895385742e-08,
-                0.12580975890159607
+                -4.656612873077393e-10,
+                0.12580977380275726,
+                -7.450580596923828e-09
             ],
             "Quaternion": [
-                0.07596863806247711,
-                -0.7393063306808472,
-                0.582370936870575,
-                0.32939210534095764
+                0.6383486986160278,
+                -0.003644050331786275,
+                -0.01637279987335205,
+                0.7695645689964294
             ],
             "Scale": [
                 1,
@@ -730,22 +2845,22 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Joints[\"front_foot_l\"]"
+            "Data": "Joints[\"front_foot_l\"]",
+            "DataPath": "Objects[\"front_foot_l\"]"
         },
         {
             "Name": "front_leg_l",
-            "DataPath": "Objects[\"front_leg_l\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                1.1175870895385742e-08,
-                -1.6763806343078613e-08,
-                0.18247967958450317
+                2.9802322387695312e-08,
+                0.18247967958450317,
+                2.9802322387695312e-08
             ],
             "Quaternion": [
-                -0.1638062596321106,
-                0.23807062208652496,
-                -0.16731877624988556,
-                0.942599892616272
+                -0.11858168989419937,
+                0.3004911541938782,
+                -0.329409122467041,
+                0.8872052431106567
             ],
             "Scale": [
                 1,
@@ -757,22 +2872,22 @@
             "Children": [
                 "Objects[\"front_foot_l\"]"
             ],
-            "Data": "Joints[\"front_leg_l\"]"
+            "Data": "Joints[\"front_leg_l\"]",
+            "DataPath": "Objects[\"front_leg_l\"]"
         },
         {
             "Name": "upper_front_leg_l",
-            "DataPath": "Objects[\"upper_front_leg_l\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                2.675224095582962e-07,
-                1.4901161193847656e-08,
-                0.16675467789173126
+                0.0,
+                0.16675469279289246,
+                1.4901161193847656e-08
             ],
             "Quaternion": [
-                0.25643599033355713,
-                0.7699650526046753,
-                -0.2621653378009796,
-                0.5221721529960632
+                -0.6767797470092773,
+                0.12421836704015732,
+                0.4478551745414734,
+                0.5709331631660461
             ],
             "Scale": [
                 1,
@@ -784,22 +2899,22 @@
             "Children": [
                 "Objects[\"front_leg_l\"]"
             ],
-            "Data": "Joints[\"upper_front_leg_l\"]"
+            "Data": "Joints[\"upper_front_leg_l\"]",
+            "DataPath": "Objects[\"upper_front_leg_l\"]"
         },
         {
             "Name": "foot_rear_leg_l",
-            "DataPath": "Objects[\"foot_rear_leg_l\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                9.313225746154785e-10,
-                9.080395102500916e-09,
-                0.1234218180179596
+                -4.423782229423523e-09,
+                0.12342186272144318,
+                3.166496753692627e-08
             ],
             "Quaternion": [
-                0.008303144946694374,
-                0.7959807515144348,
-                -0.5992332696914673,
-                0.085236556828022
+                0.9414593577384949,
+                0.047744035720825195,
+                0.10882742702960968,
+                0.3154861330986023
             ],
             "Scale": [
                 1,
@@ -809,22 +2924,22 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Joints[\"foot_rear_leg_l\"]"
+            "Data": "Joints[\"foot_rear_leg_l\"]",
+            "DataPath": "Objects[\"foot_rear_leg_l\"]"
         },
         {
             "Name": "lower_rear_leg_l",
-            "DataPath": "Objects[\"lower_rear_leg_l\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                1.6763806343078613e-08,
-                5.587935447692871e-09,
-                0.09501414000988007
+                -3.725290298461914e-09,
+                0.09501412510871887,
+                -3.725290298461914e-09
             ],
             "Quaternion": [
-                -0.006786572281271219,
-                0.7965752482414246,
-                -0.5095258951187134,
-                0.32527703046798706
+                -0.7243177890777588,
+                0.4196699559688568,
+                -0.19480952620506287,
+                0.5111656188964844
             ],
             "Scale": [
                 1,
@@ -836,22 +2951,22 @@
             "Children": [
                 "Objects[\"foot_rear_leg_l\"]"
             ],
-            "Data": "Joints[\"lower_rear_leg_l\"]"
+            "Data": "Joints[\"lower_rear_leg_l\"]",
+            "DataPath": "Objects[\"lower_rear_leg_l\"]"
         },
         {
             "Name": "upper_rear_leg_l",
-            "DataPath": "Objects[\"upper_rear_leg_l\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                -9.313225746154785e-09,
-                1.862645149230957e-09,
-                0.22179993987083435
+                -7.450580596923828e-09,
+                0.22179999947547913,
+                7.450580596923828e-09
             ],
             "Quaternion": [
-                0.0943533182144165,
-                -0.6327853202819824,
-                0.31075260043144226,
-                0.7029317617416382
+                0.5072453022003174,
+                -0.1259821504354477,
+                -0.24111466109752655,
+                0.8177374005317688
             ],
             "Scale": [
                 1,
@@ -863,22 +2978,22 @@
             "Children": [
                 "Objects[\"lower_rear_leg_l\"]"
             ],
-            "Data": "Joints[\"upper_rear_leg_l\"]"
+            "Data": "Joints[\"upper_rear_leg_l\"]",
+            "DataPath": "Objects[\"upper_rear_leg_l\"]"
         },
         {
             "Name": "body_to_rear_leg_l",
-            "DataPath": "Objects[\"body_to_rear_leg_l\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                2.675224095582962e-07,
-                1.4901161193847656e-08,
-                0.16675467789173126
+                0.0,
+                0.16675469279289246,
+                1.4901161193847656e-08
             ],
             "Quaternion": [
-                0.04584050178527832,
-                0.9741588830947876,
-                -0.09515558928251266,
-                0.19964635372161865
+                -0.8623592853546143,
+                0.12632116675376892,
+                0.4554372727870941,
+                0.18153905868530273
             ],
             "Scale": [
                 1,
@@ -890,22 +3005,22 @@
             "Children": [
                 "Objects[\"upper_rear_leg_l\"]"
             ],
-            "Data": "Joints[\"body_to_rear_leg_l\"]"
+            "Data": "Joints[\"body_to_rear_leg_l\"]",
+            "DataPath": "Objects[\"body_to_rear_leg_l\"]"
         },
         {
             "Name": "body",
-            "DataPath": "Objects[\"body\"]",
             "ClassName": "TP3DObject",
             "Position": [
                 0.0,
-                3.725290298461914e-09,
-                0.06279443949460983
+                0.06279444694519043,
+                0.0
             ],
             "Quaternion": [
-                0.3931616246700287,
-                0.015452887862920761,
-                0.00910654105246067,
-                0.9192944169044495
+                -0.1964486986398697,
+                0.0,
+                0.0,
+                0.9805141091346741
             ],
             "Scale": [
                 1,
@@ -921,22 +3036,22 @@
                 "Objects[\"upper_front_leg_l\"]",
                 "Objects[\"body_to_rear_leg_l\"]"
             ],
-            "Data": "Joints[\"body\"]"
+            "Data": "Joints[\"body\"]",
+            "DataPath": "Objects[\"body\"]"
         },
         {
             "Name": "lower_body",
-            "DataPath": "Objects[\"lower_body\"]",
             "ClassName": "TP3DObject",
             "Position": [
-                0.00048700874322094023,
-                -0.1341002732515335,
-                0.14273975789546967
+                0.00045242783380672336,
+                -0.13008759915828705,
+                0.14137716591358185
             ],
             "Quaternion": [
+                0.4513667821884155,
                 0.0,
-                0.31181418895721436,
-                0.9501432180404663,
-                0.0
+                0.0,
+                0.8923385143280029
             ],
             "Scale": [
                 1,
@@ -948,12 +3063,11 @@
             "Children": [
                 "Objects[\"body\"]"
             ],
-            "Data": "Joints[\"lower_body\"]"
+            "Data": "Joints[\"lower_body\"]",
+            "DataPath": "Objects[\"lower_body\"]"
         },
         {
             "Name": "frog",
-            "DataPath": "Objects[\"frog\"]",
-            "Action": "Actions[\"Action.001\"]",
             "ClassName": "TP3DObject",
             "Position": [
                 0.0,
@@ -974,12 +3088,11 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Meshes[\"Grid\"]"
+            "Data": "Meshes[\"Grid\"]",
+            "DataPath": "Objects[\"frog\"]"
         },
         {
             "Name": "Armature",
-            "DataPath": "Objects[\"Armature\"]",
-            "Action": "Actions[\"Action.001\"]",
             "ClassName": "TP3DObject",
             "Position": [
                 0.0,
@@ -1003,11 +3116,12 @@
                 "Objects[\"lower_body\"]",
                 "Objects[\"frog\"]"
             ],
-            "Data": "Armatures[\"Armature.001\"]"
+            "Data": "Armatures[\"Armature.001\"]",
+            "DataPath": "Objects[\"Armature\"]",
+            "Action": "Actions[\"Action.001\"]"
         },
         {
             "Name": "Lamp",
-            "DataPath": "Objects[\"Lamp\"]",
             "ClassName": "TP3DObject",
             "Position": [
                 4.076245307922363,
@@ -1028,7 +3142,8 @@
             "RotationOrder": "roXYZ",
             "Visible": 1,
             "Children": [],
-            "Data": "Lights[\"Lamp\"]"
+            "Data": "Lights[\"Lamp\"]",
+            "DataPath": "Objects[\"Lamp\"]"
         }
     ],
     "Scenes": [

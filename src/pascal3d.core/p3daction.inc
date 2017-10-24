@@ -13,6 +13,7 @@
     public
       constructor Create( ATime, AValue: Float );
       constructor Create;
+      constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
 
       class function DOMNodeName: String; override;
 
@@ -144,6 +145,12 @@ begin
   inherited Create;
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Time', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Value', smAttribute ));
+end;
+
+constructor TP3DActionKey.CreateFromJSONContext(AContext: TP3DJSONContext);
+begin
+  Create();
+  LoadFromJSONContext( AContext );
 end;
 
 class function TP3DActionKey.DOMNodeName: String;
@@ -403,7 +410,7 @@ begin
 {            if ( Prop.IsArray ) then
               Prop.ArrayAsString[ Channel.ArrayIndex ]:= FloatToStr( Value )
             else}
-              Prop.AsString:= FloatToStr( Value );
+              Prop.AsString:= FloatToStr( Value, 15 );
           end;
     end;
 end;

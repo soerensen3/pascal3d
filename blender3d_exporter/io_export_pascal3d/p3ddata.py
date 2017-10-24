@@ -28,6 +28,7 @@ class P3DData( object ):
         self.ActiveScene = None
         self.ActiveSceneObj = None
         self.ActiveObj = None
+        self.ActiveObjP3D = None
 
     def createBinFile( self ):
         if ( self.BinFile is None ):

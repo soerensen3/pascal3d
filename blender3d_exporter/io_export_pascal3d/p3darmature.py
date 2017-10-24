@@ -2,11 +2,13 @@ from . import p3ddatablock, p3dexporthelper, p3dactor
 from mathutils import Matrix
 import bpy
 
+armjointcache = {}
+
 class P3DFakeBone:
     def is_visible( self, obj ):
         return True
 
-    def __init__( self, bone ):
+    def __init__( self, bone, armobj ):
 
         self.name = bone.name
         self.data = bone
@@ -19,9 +21,14 @@ class P3DFakeBone:
         #self.matrix_local = ( p3dexporthelper.bone_quat( bone ) * bone.rotation_quaternion ).to_matrix()
 
         if bone.parent: # We want to get the rotation relative to the parent bone or to the armature in case there is no parent
-            self.matrix_local = ( p3dexporthelper.bone_quat( bone.parent ).inverted() * p3dexporthelper.bone_quat( bone )).to_matrix() 
+            self.matrix_local = ( p3dexporthelper.bone_quat( bone.parent ).inverted() * p3dexporthelper.bone_quat( bone )).to_matrix()
         else:
             self.matrix_local = p3dexporthelper.bone_quat( bone ).to_matrix()
+        global armjointcache
+        armjointcache[ self.name ] = {
+            "rotation_quaternion": self.matrix_local.to_quaternion(),
+            "rotation_euler": self.matrix_local.to_euler(),
+            "location": self.location }
 
         '''p3dexporthelper.swap_quat_bone( bone.rotation_quaternion ).to_matrix()'''
         self.scale = [ 1, 1, 1 ]
@@ -31,7 +38,7 @@ class P3DFakeBone:
 
 class P3DArmature( p3ddatablock.P3DDataBlock ):
     def export_bone( self, bone, root, armobj ):
-        fakebone = P3DFakeBone( bone )
+        fakebone = P3DFakeBone( bone, armobj )
         for child in bone.children:
             fakebone.children.append( self.export_bone( child, root, fakebone ))
         p3dexporthelper.export_data_path( fakebone, root )
@@ -41,23 +48,30 @@ class P3DArmature( p3ddatablock.P3DDataBlock ):
         #    root.ActiveSceneObj.Objects.append( fakebone.DataPath )
         return fakebone
 
-
-
     def __init__( self, block, root = None, path='', obj = None ):
         self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Armatures', self.Name ), obj )
-        #block.pose_position = 'REST'
+        global armjointcache
+        armjointcache = {}
+        pose = block.pose_position
+        block.pose_position = 'REST'
+        root.ActiveScene.update()
         self.ClassName = 'TP3DArmature'
         self.Joints = []
         rootbones = []
+        armobj = root.ActiveObjP3D
+        print( 'armobj: ', type( root.ActiveObjP3D ))
         if ( obj ):
             for bone in obj.pose.bones:
                 self.Joints.append( p3dexporthelper.export_data_path( bone, root, obj ))
-                if bone.parent is None:
+                if not ( bone.parent ):
                     rootbones.append( bone )
         for bone in rootbones:
-            self.export_bone( bone, root, root.ActiveObj )
-
+            self.export_bone( bone, root, armobj )
+        block.pose_position = pose
+        root.ActiveScene.update()
+        #import json
+        #root.Exporter.report({ 'INFO' }, "armjointcache: " + json.dumps( armjointcache, indent=4 ))
 
     @staticmethod
     def find_storage( root ):

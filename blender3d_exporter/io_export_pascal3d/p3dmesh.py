@@ -121,13 +121,23 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Meshes', self.Name ), obj )
         self.ClassName = 'TP3DMesh'
         if ( block.materials ):
+            bpy.ops.object.mode_set(mode='OBJECT')
             root.createBinFile()
             print( repr( root.BinFile ))
 
-            if root.Exporter.ApplyModifiers:
-              mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
+            arm = obj.find_armature()
+            if arm and root.Exporter.ExportArmatures and hasattr( arm.data, 'pose_position' ):
+                pose = arm.data.pose_position
+                arm.data.pose_position = 'REST'
+                root.ActiveScene.update()
             else:
-              mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
+                arm = None
+                root.Exporter.report({ 'INFO' }, 'Mesh "{}" does not have a pose_position'.format( block.name ))
+
+            if root.Exporter.ApplyModifiers:
+                mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
+            else:
+                mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
 
             self.PackedPositions = '@' + str( self.ExportPositions( mesh, root ))
             self.PackedNormals = '@' + str( self.ExportNormals( mesh, root ))
@@ -152,6 +162,9 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
             self.PackedMaterialGroups = [ { "PolyStart": 0, "PolyEnd": len( mesh.polygons ) - 1,  "Material": p3dexporthelper.export_data_path( block.materials[ 0 ], root, block )}]
             self.ExportModifiers( block, root, obj )
             bpy.data.meshes.remove( mesh )
+            if arm:
+                arm.data.pose_position = pose
+                root.ActiveScene.update()
         else:
             root.Exporter.report({ 'ERROR' }, 'Mesh "{}" does not have a material'.format( block.name ))
 

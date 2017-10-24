@@ -1,0 +1,1179 @@
+{
+    "Armatures": [
+        {
+            "Name": "Armature",
+            "DataPath": "Armatures[\"Armature\"]",
+            "ClassName": "TP3DArmature",
+            "Joints": [
+                "Joints[\"Bone\"]",
+                "Joints[\"Bone.001\"]",
+                "Joints[\"Bone.002\"]",
+                "Joints[\"Bone.003\"]"
+            ]
+        }
+    ],
+    "Actions": [
+        {
+            "Name": "Action",
+            "DataPath": "Actions[\"Action\"]",
+            "ClassName": "TP3DAction",
+            "Channels": [
+                {
+                    "PropStr": "Owner.Objects[\"Bone\"].Position[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -6.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": -6.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -6.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": -6.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone\"].Position[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 8.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -8.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone\"].Position[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone\"].Quaternion[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.7071067690849304
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone\"].Quaternion[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone\"].Quaternion[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone\"].Quaternion[3]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.7071068286895752
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.001\"].Position[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": -2.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": -2.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -2.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": -2.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.001\"].Position[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 8.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -8.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.001\"].Position[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.001\"].Quaternion[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.7071067690849304
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.38268333673477173
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.9238795042037964
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.7071067690849304
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.001\"].Quaternion[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.001\"].Quaternion[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.001\"].Quaternion[3]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.7071068286895752
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.9238795638084412
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.38268330693244934
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.7071068286895752
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.002\"].Position[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 2.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 2.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 2.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 2.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.002\"].Position[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 8.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -8.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.002\"].Position[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.002\"].Quaternion[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.7071067690849304
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.38268333673477173
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.9238795042037964
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.7071067690849304
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.002\"].Quaternion[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.002\"].Quaternion[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.002\"].Quaternion[3]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.7071068286895752
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.9238795638084412
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.38268330693244934
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.7071068286895752
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.003\"].Position[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 6.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 6.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 6.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 6.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.003\"].Position[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 8.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": -8.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.003\"].Position[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 50.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 75.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.003\"].Quaternion[0]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.3826834261417389
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.38268333673477173
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.003\"].Quaternion[1]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.003\"].Quaternion[2]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.0
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.0
+                        }
+                    ]
+                },
+                {
+                    "PropStr": "Owner.Objects[\"Bone.003\"].Quaternion[3]",
+                    "InterpolationMode": "imExtrapolate",
+                    "TimeMode": "tmWrapAround",
+                    "Keys": [
+                        {
+                            "Time": 0.0,
+                            "Value": 0.9238795042037964
+                        },
+                        {
+                            "Time": 25.0,
+                            "Value": 0.9238795638084412
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Cameras": [
+        {
+            "Name": "Camera",
+            "DataPath": "Cameras[\"Camera\"]",
+            "ClassName": "TP3DCamera",
+            "Near": 0.10000000149011612,
+            "Far": 100.0,
+            "FOV": 0.8575560450553894
+        }
+    ],
+    "Joints": [
+        {
+            "Name": "Bone",
+            "DataPath": "Joints[\"Bone\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.7071067690849304,
+                0.0,
+                0.0,
+                0.7071068286895752
+            ],
+            "Position": [
+                -6.0,
+                0.0,
+                0.0
+            ],
+            "Length": 3.0
+        },
+        {
+            "Name": "Bone.001",
+            "DataPath": "Joints[\"Bone.001\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.7071067690849304,
+                0.0,
+                0.0,
+                0.7071068286895752
+            ],
+            "Position": [
+                -2.0,
+                0.0,
+                0.0
+            ],
+            "Length": 3.0
+        },
+        {
+            "Name": "Bone.002",
+            "DataPath": "Joints[\"Bone.002\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.3826834261417389,
+                0.0,
+                0.0,
+                0.9238795042037964
+            ],
+            "Position": [
+                2.0,
+                0.0,
+                0.0
+            ],
+            "Length": 2.9999998410542763
+        },
+        {
+            "Name": "Bone.003",
+            "DataPath": "Joints[\"Bone.003\"]",
+            "ClassName": "TP3DJoint",
+            "Quaternion": [
+                0.3826834261417389,
+                0.0,
+                0.0,
+                0.9238795042037964
+            ],
+            "Position": [
+                6.0,
+                0.0,
+                0.0
+            ],
+            "Length": 2.9999998410542763
+        }
+    ],
+    "Lights": [
+        {
+            "Name": "Lamp",
+            "DataPath": "Lights[\"Lamp\"]",
+            "ClassName": "TP3DLight",
+            "LightType": "ltPoint",
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Energy": 1.0
+        }
+    ],
+    "Materials": [
+        {
+            "Name": "Material",
+            "DataPath": "Materials[\"Material\"]",
+            "ClassName": "TP3DMaterialBase",
+            "Diff": [
+                0.64000004529953,
+                0.0,
+                0.009320275858044624
+            ],
+            "Spec": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Spec_Hardness": 50,
+            "Unlit": 0,
+            "Instancing": 1,
+            "TransparencyMode": "tmNone",
+            "Maps": []
+        }
+    ],
+    "Meshes": [
+        {
+            "Name": "Cube.005",
+            "DataPath": "Meshes[\"Cube.005\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@0",
+            "PackedNormals": "@24532",
+            "Loops": "@121304",
+            "Edges": "@153564",
+            "PackedFaces": "@218080",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone.001"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone.002"
+                },
+                {
+                    "Index": 3,
+                    "Name": "Bone.003"
+                }
+            ],
+            "PackedVertexWeights": "@226220",
+            "PackedVertexWeightIndices": "@250752",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 2033,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ],
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DMeshModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube.004",
+            "DataPath": "Meshes[\"Cube.004\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@283460",
+            "PackedNormals": "@307992",
+            "Loops": "@404764",
+            "Edges": "@437024",
+            "PackedFaces": "@501540",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone.001"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone.002"
+                },
+                {
+                    "Index": 3,
+                    "Name": "Bone.003"
+                }
+            ],
+            "PackedVertexWeights": "@509680",
+            "PackedVertexWeightIndices": "@534212",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 2033,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ],
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DMeshModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube.013",
+            "DataPath": "Meshes[\"Cube.013\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@566920",
+            "PackedNormals": "@591452",
+            "Loops": "@688224",
+            "Edges": "@720484",
+            "PackedFaces": "@785000",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone.001"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone.002"
+                },
+                {
+                    "Index": 3,
+                    "Name": "Bone.003"
+                }
+            ],
+            "PackedVertexWeights": "@793140",
+            "PackedVertexWeightIndices": "@817672",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 2033,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ],
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DMeshModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube.009",
+            "DataPath": "Meshes[\"Cube.009\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@850380",
+            "PackedNormals": "@874912",
+            "Loops": "@971684",
+            "Edges": "@1003944",
+            "PackedFaces": "@1068460",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone.001"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone.002"
+                },
+                {
+                    "Index": 3,
+                    "Name": "Bone.003"
+                }
+            ],
+            "PackedVertexWeights": "@1076600",
+            "PackedVertexWeightIndices": "@1101132",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 2033,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ],
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DMeshModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ]
+        }
+    ],
+    "Objects": [
+        {
+            "Name": "Camera",
+            "ClassName": "TP3DObject",
+            "Position": [
+                7.481131553649902,
+                -6.5076398849487305,
+                5.34366512298584
+            ],
+            "Quaternion": [
+                0.483536034822464,
+                0.20870360732078552,
+                0.33687159419059753,
+                0.7804827094078064
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Cameras[\"Camera\"]",
+            "DataPath": "Objects[\"Camera\"]"
+        },
+        {
+            "Name": "Bone",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -6.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.7071068286895752,
+                0.0,
+                0.0,
+                0.7071068286895752
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"Bone\"]",
+            "DataPath": "Objects[\"Bone\"]"
+        },
+        {
+            "Name": "Bone.001",
+            "ClassName": "TP3DObject",
+            "Position": [
+                -2.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.7071068286895752,
+                0.0,
+                0.0,
+                0.7071068286895752
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"Bone.001\"]",
+            "DataPath": "Objects[\"Bone.001\"]"
+        },
+        {
+            "Name": "Bone.002",
+            "ClassName": "TP3DObject",
+            "Position": [
+                2.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.3826834559440613,
+                0.0,
+                0.0,
+                0.9238795638084412
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"Bone.002\"]",
+            "DataPath": "Objects[\"Bone.002\"]"
+        },
+        {
+            "Name": "Bone.003",
+            "ClassName": "TP3DObject",
+            "Position": [
+                6.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.3826834559440613,
+                0.0,
+                0.0,
+                0.9238795638084412
+            ],
+            "Scale": [
+                1,
+                1,
+                1
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Joints[\"Bone.003\"]",
+            "DataPath": "Objects[\"Bone.003\"]"
+        },
+        {
+            "Name": "Monkey_1",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.005\"]",
+            "DataPath": "Objects[\"Monkey_1\"]"
+        },
+        {
+            "Name": "Monkey_2",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.004\"]",
+            "DataPath": "Objects[\"Monkey_2\"]"
+        },
+        {
+            "Name": "Monkey_3",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.013\"]",
+            "DataPath": "Objects[\"Monkey_3\"]"
+        },
+        {
+            "Name": "Monkey_4",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.009\"]",
+            "DataPath": "Objects[\"Monkey_4\"]"
+        },
+        {
+            "Name": "Armature",
+            "ClassName": "TP3DObject",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Quaternion": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [
+                "Objects[\"Bone\"]",
+                "Objects[\"Bone.001\"]",
+                "Objects[\"Bone.002\"]",
+                "Objects[\"Bone.003\"]",
+                "Objects[\"Monkey_1\"]",
+                "Objects[\"Monkey_2\"]",
+                "Objects[\"Monkey_3\"]",
+                "Objects[\"Monkey_4\"]"
+            ],
+            "Data": "Armatures[\"Armature\"]",
+            "DataPath": "Objects[\"Armature\"]",
+            "Action": "Actions[\"Action\"]"
+        },
+        {
+            "Name": "Lamp",
+            "ClassName": "TP3DObject",
+            "Position": [
+                4.076245307922363,
+                1.0054539442062378,
+                5.903861999511719
+            ],
+            "Quaternion": [
+                0.16907578706741333,
+                0.27217134833335876,
+                0.7558802962303162,
+                0.5709474682807922
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "RotationOrder": "roXYZ",
+            "Visible": 1,
+            "Children": [],
+            "Data": "Lights[\"Lamp\"]",
+            "DataPath": "Objects[\"Lamp\"]"
+        }
+    ],
+    "Scenes": [
+        {
+            "Name": "Scene",
+            "DataPath": "Scenes[\"Scene\"]",
+            "ClassName": "TP3DScene",
+            "Cam": "Objects[\"Camera\"]",
+            "Objects": [
+                "Objects[\"Armature\"]",
+                "Objects[\"Lamp\"]",
+                "Objects[\"Camera\"]"
+            ]
+        }
+    ],
+    "Textures": []
+}
