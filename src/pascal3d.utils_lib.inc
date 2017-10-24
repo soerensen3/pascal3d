@@ -6,6 +6,7 @@
 {$INCLUDE p3dfiles.inc}
 {$INCLUDE p3dpropaccess.inc}
 {$INCLUDE p3dinterfacedpersistent.inc}
+{$INCLUDE p3dtransform.inc}
 {$INCLUDE p3dfileutil.inc}
 {$INCLUDE p3dclassfactory.inc}
 

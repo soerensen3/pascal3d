@@ -170,7 +170,7 @@ begin
       ScreenCanvas.Lock;
       ScreenCanvas.Font.Color:= vec4( 1 );
 
-      ScreenCanvas.RenderTextShadow( DrawCursor, vec2( MouseX, MouseY ) + 2, 10, Black.Fade( 0.7 ));
+      ScreenCanvas.RenderTextShadow( DrawCursor, vec2( MouseX, MouseY ) + 2, 0, Black.Fade( 0.5 ));
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX-1, MouseY-1 ));
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX-1, MouseY+1 ));
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX+1, MouseY-1 ));

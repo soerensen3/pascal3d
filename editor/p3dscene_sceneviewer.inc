@@ -1097,12 +1097,14 @@ begin
         begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
-          //EditorSceneJoint.AddToRenderList( AScene,
+          //EditorSceneJoint
+          EditorSceneArrows.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
           //                                  AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )) {*
                                             //mat4lookatLH( vec3( 0 ), TP3DJoint( Selection.Data ).Tail - TP3DJoint( Selection.Data ).Position, vec3_Axis_PZ ) *
           //                                  mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 ))}, Viewer.RenderList, AFlags - [ rlfMaterials ]);
         end
       else
+        //EditorSceneArrows.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
         //EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
     end
   else if ( AData is TP3DMesh ) then

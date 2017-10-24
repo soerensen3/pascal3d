@@ -559,13 +559,40 @@ begin
     Result:= nil;
 end;
 
+function Copy2SymbSkipString( var S: String; Ch: Char ): String;
+var
+  i: Integer;
+begin
+  i:= 1;
+  while i <= Length( S ) do
+    begin
+      if ( S[ i ] = '"' ) then
+        begin
+          Inc( i );
+          while ( i <= Length( S )) do
+            begin
+              if ( S[ i ] = '"' ) then
+               if (( i = 1 ) or ( S[ i - 1 ] <> '\' )) then
+                 break;
+              Inc( i );
+            end;
+        end
+      else if ( S[ i ] = Ch ) then
+        break;
+      Inc( i );
+    end;
+  Result:= Copy( S, 1, i - 1 );
+  S:= Copy( S, i + 1, Length( S ));
+end;
+
 function TP3DPropertyList.GetPropByPath( APropPath: String ): TP3DPropertyAccess;
+
 var
   PropName, ArrayStr: String;
   ArrayIdx: LongInt;
   n: SizeInt;
 begin
-  PropName:= Copy2SymbDel( APropPath, '.' );
+  PropName:= Copy2SymbSkipString( APropPath, '.' );
   n:= Pos( '[', PropName );
   if ( n > 0 ) then
     begin
@@ -606,8 +633,6 @@ begin
         if ( KeyS = 'ClassName' ) then
           Continue;
         if ( KeyS = 'DataPath' ) then
-          Continue;
-        if ( KeyS = 'Action' ) then
           Continue;
         n:= FindByName( KeyS );
         if ( n < 0 ) then

@@ -25,6 +25,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams=""/>
       </local>
     </RunParams>
     <RequiredPackages Count="5">

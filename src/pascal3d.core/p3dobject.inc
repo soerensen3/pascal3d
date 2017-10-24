@@ -42,7 +42,39 @@ type
 
   TP3DObjectCollision = ( acNone, acBox, acSphere, acDataBlock );
 
-  TP3DObject = class ( specialize gP3DTransform < TP3DDataBlock >, IP3DTransform, IP3DRenderable, IP3DCollidable )
+  {
+  TP3DObjectModifier = class( TP3DInterfacedPersistent )
+    private
+      FObject: TP3DObject;
+
+    public
+      constructor Create( AObject: TP3DObject ); virtual;
+      constructor CreateFromJSONContext( AContext: TP3DJSONContext ); override;
+
+      function GetType: String;
+
+      procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
+
+    published
+      property Obj: TP3DObject read FObject write SetObj;
+  end;
+
+  { TP3DObjectModifierList }
+
+  TP3DObjectModifierList = class( specialize gP3DCustomObjectList < TP3DObjectModifier >)
+    private
+      FParentObject: TP3DMesh;
+
+    public
+      constructor Create( AParentObject: TP3DObject );
+
+      function Add(Item: TCustomItem): Integer; override;
+      procedure SetItem(Index: Integer; AValue: TCustomItem); override;
+
+      property ParentObject: TP3DObject read FParentObject;
+  end;}
+
+  TP3DObject = class ( specialize gP3DTransform < TP3DDataBlock >, IP3DTransform, IP3DRenderable, IP3DCollidable, IP3DAnimatable )
     private
       FChildren: TP3DObjectList;
       FCollision: TP3DObjectCollision;
@@ -78,6 +110,17 @@ type
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
       // <-- IP3DRenderable
+
+      // IP3DAnimatable -->
+    private
+      FAction: TP3DAction;
+
+      function GetAction: TP3DAction;
+      procedure SetAction( AValue: TP3DAction );
+
+    public
+      property Action: TP3DAction read GetAction write SetAction;
+      // <-- IP3DAnimatable
 
       //IP3DCollidable -->
     private
@@ -205,7 +248,6 @@ begin
   FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
-
   Properties.Add([ TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ),
                    TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
                    TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ),
@@ -217,7 +259,8 @@ begin
   Properties.Add([ TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ),
                    TP3DPropertyAccessRTTI.Create( Self, 'Collision', smAttribute ),
                    TP3DPropertyAccessDataBlock.CreateFieldSet( 'Data', @Data, @SetData, smAttribute ),
-                   TP3DPropertyAccessObjectList.CreateField( 'Children', @FChildren, smAttribute )],
+                   TP3DPropertyAccessObjectList.CreateField( 'Children', @FChildren, smAttribute ),
+                   TP3DPropertyAccessAction.CreateGetSet( 'Action', @GetAction, @SetAction, smAttribute )],
                    'Object' );
 end;
 
@@ -547,6 +590,24 @@ end;
 class function TP3DObject.DOMNodeName: String;
 begin
   Result:= 'object';
+end;
+
+function TP3DObject.GetAction: TP3DAction;
+begin
+  Result:= FAction;
+end;
+
+procedure TP3DObject.SetAction(AValue: TP3DAction);
+begin
+  if ( AValue = FAction ) then
+    exit;
+  if ( Assigned( FAction )) then
+    FAction.Users.Remove( Self );
+
+  FAction:= AValue;
+
+  if ( Assigned( FAction )) then
+    FAction.Users.Add( Self );
 end;
 
 { TP3DObjectList }

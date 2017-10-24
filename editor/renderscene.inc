@@ -1,12 +1,23 @@
+procedure PerformActions( GlobalTime: Double; Lib: TP3DLibrary );
+var
+  Action: TP3DAction;
+  Block: TP3DDataBlock;
+begin
+  for Action in Lib.Actions do
+    for Block in Action.Users do
+      Action.Perform( GlobalTime, Block );
+end;
+
 procedure TP3DSceneApplication.Render;
 var
   GlobalTime: Double;
 begin
   inherited Render;
 
-  //GlobalTime:= SDL_GetTicks / 100;
-  //P3DData.PerformActions( GlobalTime );
-  //MainWindow.Title:= FloatToStr( GlobalTime );
+  GlobalTime:= SDL_GetTicks / 100;
+  MainWindow.Title:= FloatToStr( GlobalTime );
+  if ( Assigned( SceneMain.ActiveLibrary )) then
+    PerformActions( GlobalTime, SceneMain.ActiveLibrary );
 
   SceneMain.CheckLastChange;
   if ( SceneMain.NeedsUpdate ) then

@@ -7,7 +7,7 @@ type
   { TP3DCamera }
 
   TP3DCameraHandedness = ( p3dchLeft, p3dchRight );
-  TP3DCamera = class ( TP3DDataBlock )
+  TP3DCamera = class ( TP3DDataBlock, IP3DAnimatable )
     private
       FAspect: Single;
       FFar: Single;
@@ -31,6 +31,17 @@ type
 
       class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
       function GetDataPath: String; override;
+
+      // IP3DAnimatable -->
+    private
+      FAction: TP3DAction;
+
+      function GetAction: TP3DAction;
+      procedure SetAction( AValue: TP3DAction );
+
+    public
+      property Action: TP3DAction read GetAction write SetAction;
+      // <-- IP3DAnimatable
 
     public
       procedure UpdateMatrices(CamObject: TP3DObject);
@@ -100,6 +111,16 @@ end;
 function TP3DCamera.GetDataPath: String;
 begin
   Result:= 'Cameras[ "' + Name + '" ]';
+end;
+
+function TP3DCamera.GetAction: TP3DAction;
+begin
+  Result:= FAction;
+end;
+
+procedure TP3DCamera.SetAction(AValue: TP3DAction);
+begin
+  FAction:= AValue;
 end;
 
 procedure TP3DCamera.UpdateMatrices( CamObject: TP3DObject );
