@@ -416,13 +416,13 @@ end;
 procedure TP3DCanvas2D.RenderTextShadow(Text: TP3DTextBmp; P: TVec2; blur: Single; Color: TP3DColorRGBA);
 begin
   if ( not PrepareForDrawing ) then exit;
+  if ( not Assigned( Text )) then exit;
 
   P3DFontManagerBmp.TextModifier.Reset;
   P3DFontManagerBmp.TextModifier.TextSmoothing:= blur;
   P3DFontManagerBmp.TextModifier.TextBias:= -0.05;
   P3DFontManagerBmp.TextModifier.TextAlpha:= ScreenColor.a * Color.a;
-  if ( Assigned( Text )) then
-    Text.Render( P, ScreenColor * Color, World * Proj );
+  Text.Render( P, ScreenColor * Color, World * Proj );
 end;
 
 procedure TP3DCanvas2D.RenderTextShadow(Text: String; P: TVec2; blur: Single; Color: TP3DColorRGBA; var CacheObj: TP3DTextBmp);
