@@ -14,10 +14,10 @@ var
 begin
   inherited Render;
 
-  GlobalTime:= SDL_GetTicks / 100;
-  MainWindow.Title:= FloatToStr( GlobalTime );
-  if ( Assigned( SceneMain.ActiveLibrary )) then
-    PerformActions( GlobalTime, SceneMain.ActiveLibrary );
+  //GlobalTime:= SDL_GetTicks / 100;
+  //MainWindow.Title:= FloatToStr( GlobalTime );
+  //if ( Assigned( SceneMain.ActiveLibrary )) then
+  //  PerformActions( GlobalTime, SceneMain.ActiveLibrary );
 
   SceneMain.CheckLastChange;
   if ( SceneMain.NeedsUpdate ) then

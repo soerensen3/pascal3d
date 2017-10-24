@@ -170,16 +170,16 @@ end;
 
 function TP3DActionEditor.GetTime: Float;
 begin
-  {if ( Assigned( EditAction )) then
-    Result:= EditAction.Owner.Actions.GlobalTime
-  else}
+  if ( Assigned( EditAction )) then
+    Result:= EditAction.Owner.GlobalTime
+  else
     Result:= 0;
 end;
 
 procedure TP3DActionEditor.SetTime(AValue: Float);
 begin
-  //if ( Assigned( EditAction )) then
-  //  EditAction.Owner.Actions.GlobalTime:= AValue;
+  if ( Assigned( EditAction )) then
+    EditAction.Owner.GlobalTime:= AValue;
 end;
 
 procedure TP3DActionEditor.Draw;

@@ -54,6 +54,8 @@ type
 
     public
       constructor Create;
+      constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+
       procedure MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
       procedure RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
@@ -70,15 +72,17 @@ type
       property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
   end;
 
+  TP3DPropertyAccessTransform = specialize gP3DPropertyAccessInterfacedPersistent < TP3DTransform >;
+
   { IP3DTransform }
 
-  {IP3DTransform = interface
+  IP3DTransform = interface
     ['{DC16F6B0-37DD-4AD3-A093-E49DC022D6AA}']
     function GetTransform: TP3DTransform;
     procedure SetTransform( AValue: TP3DTransform );
 
     property Transform: TP3DTransform read GetTransform write SetTransform;
-  end;}
+  end;
 
 
 {$ENDIF}
@@ -97,6 +101,12 @@ end;
 constructor TP3DTransform.Create;
 begin
   inherited Create;
+
+  FScale:= vec3( 1 );
+  FQuaternion:= quat( 0, 0, 0, 1 );
+  FRotationOrder:= roXYZ;
+  UpdateMatrix;
+
   Properties.Add([ TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ),
                    TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
                    TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ),
@@ -104,6 +114,12 @@ begin
                    TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ),
                    TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute )],
                    'Transform' );
+end;
+
+constructor TP3DTransform.CreateFromJSONContext(AContext: TP3DJSONContext);
+begin
+  Create;
+  LoadFromJSONContext( AContext );
 end;
 
 

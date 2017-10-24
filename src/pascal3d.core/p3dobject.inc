@@ -6,7 +6,7 @@ type
 
   TP3DObjectList = class;
 
-  { IP3DTransform }
+  {{ IP3DTransform }
 
   IP3DTransform = interface
     ['{31BC6803-4A40-42D7-AB13-E46CB7E6C8B4}']
@@ -38,7 +38,7 @@ type
     property Matrix: TMat4 read GetMatrix write SetMatrix;
     property Quaternion: TQuaternion read GetQuaternion write SetQuaternion;
     property Properties: TP3DPropertyList read GetProperties;
-  end;
+  end;}
 
   TP3DObjectCollision = ( acNone, acBox, acSphere, acDataBlock );
 
@@ -74,7 +74,7 @@ type
       property ParentObject: TP3DObject read FParentObject;
   end;}
 
-  TP3DObject = class ( specialize gP3DTransform < TP3DDataBlock >, IP3DTransform, IP3DRenderable, IP3DCollidable, IP3DAnimatable )
+  TP3DObject = class ( TP3DDataBlock, IP3DTransform, IP3DRenderable, IP3DCollidable, IP3DAnimatable )
     private
       FChildren: TP3DObjectList;
       FCollision: TP3DObjectCollision;
@@ -147,6 +147,18 @@ type
       property Sphere: TP3DSphere read GetSphere write SetSphere;
       //<-- IP3DCollidable
 
+      //IP3DTransform -->
+    private
+      FTransform: TP3DTransform;
+
+      function GetTransform: TP3DTransform;
+      procedure SetTransform(AValue: TP3DTransform);
+
+    public
+      property Transform: TP3DTransform read GetTransform write SetTransform;
+
+      //<-- IP3DTransform
+
     public
       procedure ClearFields(); override;
       function CalculateParentMatrix: TMat4;
@@ -159,7 +171,6 @@ type
       property Data: TP3DDataBlock read FData write SetData;
       property Scene: TP3DScene read FScene write SetScene;
       property Parent: TP3DDataBlock read FParent;
-      property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
       property Collision: TP3DObjectCollision read FCollision write FCollision;
   end;
 
@@ -244,17 +255,9 @@ begin
   FChildren:= TP3DObjectList.Create( Self );
   Children.OnChange:= @OnObjChange;
   FVisible:= True;
-  FScale:= vec3( 1 );
-  FQuaternion:= quat( 0, 0, 0, 1 );
-  FRotationOrder:= roXYZ;
-  UpdateMatrix;
-  Properties.Add([ TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ),
-                   TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
-                   TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ),
-                   TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ),
-                   TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ),
-                   TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute )],
-                   'Transform' );
+
+  FTransform:= TP3DTransform.Create;
+  Properties.Add( TP3DPropertyAccessTransform.CreateFieldSet( 'Transform', @FTransform, @SetTransform, smAttribute ), 'Transform' );
 
   Properties.Add([ TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ),
                    TP3DPropertyAccessRTTI.Create( Self, 'Collision', smAttribute ),
@@ -273,11 +276,9 @@ var
 
   procedure LoadTransformFromDOM( DOM: TDOMElement );
   begin
-    FPosition.FromString( DOM.GetAttribute( 'position' ));
-    FQuaternion.FromString( DOM.GetAttribute( 'quaternion' ));
-    FScale.FromString( DOM.GetAttribute( 'scale' ));
-    UpdateEuler;
-    UpdateMatrix;
+    Transform.Position.FromString( DOM.GetAttribute( 'position' ));
+    Transform.Quaternion.FromString( DOM.GetAttribute( 'quaternion' ));
+    Transform.Scale.FromString( DOM.GetAttribute( 'scale' ));
   end;
 
 begin
@@ -349,6 +350,7 @@ procedure TP3DObject.FastDestroy;
 begin
   FChildren.Clear;
   FChildren.Free;
+  FTransform.Free;
   //Owner.Objects.Remove( Self );
   inherited FastDestroy;
 end;
@@ -357,7 +359,7 @@ procedure TP3DObject.Render( world: TMat4; Scene: TP3DScene );
 var
   _world: TMat4;
 begin
-  _world:= world * Matrix;
+  _world:= world * Transform.Matrix;
 
   if ( Assigned( Scene.RootScene )) then
     Scene.RootScene.RenderCallback( _world, Self )
@@ -373,7 +375,7 @@ procedure TP3DObject.RenderCallbackOnly(world: TMat4; Scene: TP3DScene);
 var
   _world: TMat4;
 begin
-  _world:= world * Matrix;
+  _world:= world * Transform.Matrix;
 
   Children.Render( _world, Scene );
 
@@ -394,10 +396,10 @@ begin
           BB:= CalcAABB()
         else
           BB:= AABB;
-        Result:= P3DTransformAABBObjSpace( Matrix, BB );
+        Result:= P3DTransformAABBObjSpace( Transform.Matrix, BB );
       end
   else
-    Result:= P3DAABB( Position, Position, Position );
+    Result:= P3DAABB( Transform.Position, Transform.Position, Transform.Position );
 end;
 
 function TP3DObject.CalcSphere: TP3DSphere;
@@ -440,7 +442,7 @@ end;
 function TP3DObject.CalculateParentMatrix: TMat4;
 begin
   if ( Parent is TP3DObject ) then
-    Result:= TP3DObject( Parent ).CalculateParentMatrix * TP3DObject( Parent ).Matrix
+    Result:= TP3DObject( Parent ).CalculateParentMatrix * TP3DObject( Parent ).Transform.Matrix
   else
     Result:= Mat4Identity;
 end;
@@ -547,6 +549,18 @@ begin
 
 end;
 
+function TP3DObject.GetTransform: TP3DTransform;
+begin
+  Result:= FTransform;
+end;
+
+procedure TP3DObject.SetTransform(AValue: TP3DTransform);
+begin
+  if ( Assigned( FTransform )) then
+    FTransform.Free;
+  FTransform:= AValue;
+end;
+
 procedure TP3DObject.Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
 begin
   Render( world, Scene );
@@ -558,7 +572,7 @@ var
 begin
   if ( not Visible ) then
     exit;
-  mat:= AWorld * Matrix;
+  mat:= AWorld * Transform.Matrix;
   FMatrixFinal:= mat;
   if ( rlfObjects in AFlags ) then
     AList.PushRenderObject( Self, mat, P3DMaterialActive );

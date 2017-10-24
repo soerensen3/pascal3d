@@ -32,7 +32,7 @@
             "ClassName": "TP3DAction",
             "Channels": [
                 {
-                    "PropStr": "Owner.Objects[\"lower_body\"].Position[0]",
+                    "PropStr": "Owner.Objects[\"lower_body\"].Transform.Position[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -63,7 +63,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_body\"].Position[1]",
+                    "PropStr": "Owner.Objects[\"lower_body\"].Transform.Position[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -94,7 +94,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_body\"].Position[2]",
+                    "PropStr": "Owner.Objects[\"lower_body\"].Transform.Position[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -125,7 +125,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_body\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"lower_body\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -160,7 +160,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_body\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"lower_body\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -195,7 +195,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_body\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"lower_body\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -230,7 +230,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"body\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -265,7 +265,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"body\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -300,7 +300,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"body\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -335,7 +335,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"head\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"head\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -370,7 +370,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"head\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"head\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -405,7 +405,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"head\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"head\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -440,7 +440,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"head\"].Quaternion[0]",
+                    "PropStr": "Owner.Objects[\"head\"].Transform.Quaternion[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -471,7 +471,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"head\"].Quaternion[1]",
+                    "PropStr": "Owner.Objects[\"head\"].Transform.Quaternion[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -502,7 +502,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"head\"].Quaternion[2]",
+                    "PropStr": "Owner.Objects[\"head\"].Transform.Quaternion[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -533,7 +533,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"head\"].Quaternion[3]",
+                    "PropStr": "Owner.Objects[\"head\"].Transform.Quaternion[3]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -564,7 +564,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -599,7 +599,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -634,7 +634,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -669,7 +669,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[0]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Transform.Quaternion[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -700,7 +700,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[1]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Transform.Quaternion[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -731,7 +731,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[2]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Transform.Quaternion[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -762,7 +762,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Quaternion[3]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_r\"].Transform.Quaternion[3]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -793,7 +793,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_leg_r\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"front_leg_r\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -828,7 +828,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_leg_r\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"front_leg_r\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -863,7 +863,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_leg_r\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"front_leg_r\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -898,7 +898,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_foot_r\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"front_foot_r\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -933,7 +933,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_foot_r\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"front_foot_r\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -968,7 +968,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_foot_r\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"front_foot_r\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1003,7 +1003,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1038,7 +1038,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1073,7 +1073,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_r\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1108,7 +1108,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1143,7 +1143,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1178,7 +1178,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_r\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1213,7 +1213,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1248,7 +1248,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1283,7 +1283,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_r\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1318,7 +1318,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1353,7 +1353,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1388,7 +1388,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"upper_front_leg_l\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1423,7 +1423,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_leg_l\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"front_leg_l\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1458,7 +1458,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_leg_l\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"front_leg_l\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1493,7 +1493,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_leg_l\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"front_leg_l\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1528,7 +1528,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_foot_l\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"front_foot_l\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1563,7 +1563,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_foot_l\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"front_foot_l\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1598,7 +1598,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"front_foot_l\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"front_foot_l\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1633,7 +1633,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1668,7 +1668,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1703,7 +1703,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_l\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1738,7 +1738,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1773,7 +1773,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1808,7 +1808,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"upper_rear_leg_l\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1843,7 +1843,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1878,7 +1878,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1913,7 +1913,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"lower_rear_leg_l\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1948,7 +1948,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -1983,7 +1983,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -2018,7 +2018,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"foot_rear_leg_l\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -2053,7 +2053,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Rotation[0]",
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Transform.Rotation[0]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -2084,7 +2084,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Rotation[1]",
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Transform.Rotation[1]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -2115,7 +2115,7 @@
                     ]
                 },
                 {
-                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Rotation[2]",
+                    "PropStr": "Owner.Objects[\"body_to_rear_leg_r\"].Transform.Rotation[2]",
                     "InterpolationMode": "imExtrapolate",
                     "TimeMode": "tmWrapAround",
                     "Keys": [
@@ -2166,13 +2166,13 @@
             "Quaternion": [
                 0.45136675238609314,
                 0.0,
-                0.0,
+                8.904470915702275e-16,
                 0.8923385143280029
             ],
             "Position": [
-                0.00045242783380672336,
-                -0.13008759915828705,
-                0.14137716591358185
+                0.0,
+                -0.12999999523162842,
+                0.14000000059604645
             ],
             "Length": 0.06279445738384962
         },
@@ -2181,15 +2181,15 @@
             "DataPath": "Joints[\"body\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.2672727406024933,
+                0.28624770045280457,
                 0.0,
-                0.0,
-                0.9636209011077881
+                2.8386927504732667e-16,
+                0.958155632019043
             ],
             "Position": [
-                0.00045242783380672336,
-                -0.09287961572408676,
-                0.19196085631847382
+                -9.979046691091132e-17,
+                -0.09279201179742813,
+                0.19058369100093842
             ],
             "Length": 0.16675469593291026
         },
@@ -2198,15 +2198,15 @@
             "DataPath": "Joints[\"head\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                0.14094866812229156,
+                0.16046930849552155,
                 0.0,
-                -0.001056977198459208,
-                0.9900163412094116
+                -0.0010601644171401858,
+                0.9870402812957764
             ],
             "Position": [
-                0.00045242783380672336,
-                0.050050921738147736,
-                0.27785608172416687
+                -1.9050199794178762e-16,
+                0.04663568735122681,
+                0.2820552587509155
             ],
             "Length": 0.16837457513101328
         },
@@ -2215,15 +2215,15 @@
             "DataPath": "Joints[\"upper_front_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.49881505966186523,
+                -0.4900241494178772,
                 0.0,
-                -0.46562424302101135,
-                0.7310113906860352
+                -0.4594869911670685,
+                0.7407752275466919
             ],
             "Position": [
-                0.00045242783380672336,
-                0.050050921738147736,
-                0.27785608172416687
+                -1.9050199794178762e-16,
+                0.04663568735122681,
+                0.2820552587509155
             ],
             "Length": 0.18276287397997262
         },
@@ -2232,15 +2232,15 @@
             "DataPath": "Joints[\"front_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.669658362865448,
+                -0.6548760533332825,
                 0.0,
-                -0.01794338785111904,
-                0.7424525022506714
+                -0.017632795497775078,
+                0.755530595779419
             ],
             "Position": [
-                0.12486883997917175,
-                0.06261686235666275,
-                0.1445709615945816
+                0.12441642582416534,
+                0.06445430219173431,
+                0.1493702232837677
             ],
             "Length": 0.12579079487556744
         },
@@ -2249,15 +2249,15 @@
             "DataPath": "Joints[\"front_foot_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.04125358536839485,
+                -0.02151789702475071,
                 0.0,
-                -0.005902790930122137,
-                0.9991312623023987
+                -0.0058990949764847755,
+                0.9997510313987732
             ],
             "Position": [
-                0.12822043895721436,
-                0.07550686597824097,
-                0.01948721706867218
+                0.12776802480220795,
+                0.08227291703224182,
+                0.024892963469028473
             ],
             "Length": 0.14801871736483427
         },
@@ -2266,15 +2266,15 @@
             "DataPath": "Joints[\"body_to_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.7820832133293152,
+                -0.7842322587966919,
                 0.0,
-                -0.47317981719970703,
-                0.4055202305316925
+                -0.45579519867897034,
+                0.4209875762462616
             ],
             "Position": [
-                0.00045242783380672336,
-                0.050050921738147736,
-                0.27785608172416687
+                -1.9050199794178762e-16,
+                0.04663568735122681,
+                0.2820552587509155
             ],
             "Length": 0.22185380017552886
         },
@@ -2283,15 +2283,15 @@
             "DataPath": "Joints[\"upper_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.37439656257629395,
+                -0.36117246747016907,
                 0.0,
-                -0.38779371976852417,
-                0.8422845005989075
+                -0.38447850942611694,
+                0.8495473861694336
             ],
             "Position": [
-                0.08559286594390869,
-                -0.09883660823106766,
-                0.1371338814496994
+                0.08514042943716049,
+                -0.09657959640026093,
+                0.13556431233882904
             ],
             "Length": 0.09509318049273943
         },
@@ -2300,15 +2300,15 @@
             "DataPath": "Joints[\"lower_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.7570330500602722,
+                -0.8649753928184509,
                 0.0,
-                0.5889471769332886,
-                0.28291741013526917
+                0.4504043757915497,
+                0.22125399112701416
             ],
             "Position": [
-                0.14771394431591034,
-                -0.059003375470638275,
-                0.07715891301631927
+                0.14726151525974274,
+                -0.054409436881542206,
+                0.07720883935689926
             ],
             "Length": 0.12354454303594721
         },
@@ -2317,15 +2317,15 @@
             "DataPath": "Joints[\"foot_rear_leg_r\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.07813096791505814,
+                -0.0645892545580864,
                 0.0,
-                -0.05770089477300644,
-                0.9952719211578369
+                -0.002754795365035534,
+                0.9979081153869629
             ],
             "Position": [
-                0.10654312372207642,
-                -0.1627703309059143,
-                0.02423791214823723
+                0.12263815850019455,
+                -0.16585814952850342,
+                0.029921114444732666
             ],
             "Length": 0.18660669767576463
         },
@@ -2334,15 +2334,15 @@
             "DataPath": "Joints[\"upper_front_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.4995642900466919,
+                -0.4907509386539459,
                 0.0,
-                0.4647628366947174,
-                0.7310478091239929
+                0.4586283266544342,
+                0.7408263683319092
             ],
             "Position": [
-                0.00045242783380672336,
-                0.050050921738147736,
-                0.27785608172416687
+                -1.9050199794178762e-16,
+                0.04663568735122681,
+                0.2820552587509155
             ],
             "Length": 0.1824796441226291
         },
@@ -2351,15 +2351,15 @@
             "DataPath": "Joints[\"front_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.6695621013641357,
+                -0.6547836661338806,
                 0.0,
-                0.021411685273051262,
-                0.7424474358558655
+                0.021041110157966614,
+                0.7555233836174011
             ],
             "Position": [
-                -0.12354756891727448,
-                0.06261686235666275,
-                0.1445709615945816
+                -0.12399999797344208,
+                0.06445430219173431,
+                0.1493702232837677
             ],
             "Length": 0.12580974097987993
         },
@@ -2368,15 +2368,15 @@
             "DataPath": "Joints[\"front_foot_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.04125286638736725,
+                -0.021517567336559296,
                 0.0,
-                0.006761646829545498,
-                0.9991258382797241
+                0.006757419556379318,
+                0.9997456073760986
             ],
             "Position": [
-                -0.12754757702350616,
-                0.07550686597824097,
-                0.01948721706867218
+                -0.12800000607967377,
+                0.08227291703224182,
+                0.024892963469028473
             ],
             "Length": 0.14802193214305673
         },
@@ -2385,15 +2385,15 @@
             "DataPath": "Joints[\"body_to_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.7824668884277344,
+                -0.7845961451530457,
                 0.0,
-                0.4726310968399048,
-                0.4054199755191803
+                0.45525455474853516,
+                0.4208945631980896
             ],
             "Position": [
-                0.00045242783380672336,
-                0.050050921738147736,
-                0.27785608172416687
+                0.0,
+                0.04663568735122681,
+                0.2820552587509155
             ],
             "Length": 0.2217999459813573
         },
@@ -2402,15 +2402,15 @@
             "DataPath": "Joints[\"upper_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.3746620714664459,
+                -0.36142677068710327,
                 0.0,
-                0.38731229305267334,
-                0.8423879742622375
+                0.3839993178844452,
+                0.8496558666229248
             ],
             "Position": [
-                -0.08454756438732147,
-                -0.09883657842874527,
-                0.1371338963508606
+                -0.08500000089406967,
+                -0.09657959640026093,
+                0.13556431233882904
             ],
             "Length": 0.09501412276786131
         },
@@ -2419,15 +2419,15 @@
             "DataPath": "Joints[\"lower_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.9642142057418823,
+                -0.8698294162750244,
                 0.0,
-                -0.12335890531539917,
-                0.23467740416526794
+                -0.4414655566215515,
+                0.22023802995681763
             ],
             "Position": [
-                -0.14654755592346191,
-                -0.05900333449244499,
-                0.07715892046689987
+                -0.1469999998807907,
+                -0.054409436881542206,
+                0.07720883935689926
             ],
             "Length": 0.12342181443722909
         },
@@ -2436,15 +2436,15 @@
             "DataPath": "Joints[\"foot_rear_leg_l\"]",
             "ClassName": "TP3DJoint",
             "Quaternion": [
-                -0.07736729830503464,
+                -0.06458922475576401,
                 0.0,
-                -0.05941418930888176,
-                0.9952307343482971
+                0.002685035578906536,
+                0.997908353805542
             ],
             "Position": [
-                -0.13940154016017914,
-                -0.16883061826229095,
-                0.02130328118801117
+                -0.12300000339746475,
+                -0.16585814952850342,
+                0.029921114444732666
             ],
             "Length": 0.18660655664390444
         }
@@ -2591,23 +2591,25 @@
         {
             "Name": "Camera",
             "ClassName": "TP3DObject",
-            "Position": [
-                7.481131553649902,
-                -6.5076398849487305,
-                5.34366512298584
-            ],
-            "Quaternion": [
-                0.483536034822464,
-                0.20870360732078552,
-                0.33687159419059753,
-                0.7804827094078064
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    7.481131553649902,
+                    -6.5076398849487305,
+                    5.34366512298584
+                ],
+                "Quaternion": [
+                    0.483536034822464,
+                    0.20870360732078552,
+                    0.33687159419059753,
+                    0.7804827094078064
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Cameras[\"Camera\"]",
@@ -2616,23 +2618,25 @@
         {
             "Name": "head",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.16675469279289246,
-                1.4901161193847656e-08
-            ],
-            "Quaternion": [
-                -0.12878330051898956,
-                -0.00028250119066797197,
-                -0.0010185253340750933,
-                0.9916722178459167
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    3.308722450212111e-24,
+                    0.16675472259521484,
+                    -3.725290298461914e-09
+                ],
+                "Quaternion": [
+                    -0.1287834495306015,
+                    -0.0003034696856047958,
+                    -0.0010158028453588486,
+                    0.9916722178459167
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"head\"]",
@@ -2641,23 +2645,25 @@
         {
             "Name": "front_foot_r",
             "ClassName": "TP3DObject",
-            "Position": [
-                -6.984919309616089e-10,
-                0.1257908046245575,
-                4.470348358154297e-08
-            ],
-            "Quaternion": [
-                0.6384478211402893,
-                0.003212623530998826,
-                0.013545258902013302,
-                0.7695392370223999
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    3.4924596548080444e-10,
+                    0.1257907897233963,
+                    -1.862645149230957e-08
+                ],
+                "Quaternion": [
+                    0.6384556293487549,
+                    0.0034837552811950445,
+                    0.013171459548175335,
+                    0.7695380449295044
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"front_foot_r\"]",
@@ -2666,23 +2672,25 @@
         {
             "Name": "front_leg_r",
             "ClassName": "TP3DObject",
-            "Position": [
-                -2.2351741790771484e-08,
-                0.18276286125183105,
-                1.4901161193847656e-08
-            ],
-            "Quaternion": [
-                -0.11918140202760696,
-                -0.30285876989364624,
-                0.3325870931148529,
-                0.8851317763328552
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    2.60770320892334e-08,
+                    0.18276289105415344,
+                    -1.4901161193847656e-08
+                ],
+                "Quaternion": [
+                    -0.11488772183656693,
+                    -0.2922666072845459,
+                    0.3340946137905121,
+                    0.8886854648590088
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"front_foot_r\"]"
@@ -2693,23 +2701,25 @@
         {
             "Name": "upper_front_leg_r",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.16675469279289246,
-                1.4901161193847656e-08
-            ],
-            "Quaternion": [
-                -0.6760480999946594,
-                -0.12444867938756943,
-                -0.44868528842926025,
-                0.5710981488227844
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    3.308722450212111e-24,
+                    0.16675472259521484,
+                    -3.725290298461914e-09
+                ],
+                "Quaternion": [
+                    -0.6815647482872009,
+                    -0.1315271556377411,
+                    -0.4402601420879364,
+                    0.5695096254348755
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"front_leg_r\"]"
@@ -2720,23 +2730,25 @@
         {
             "Name": "foot_rear_leg_r",
             "ClassName": "TP3DObject",
-            "Position": [
-                7.450580596923828e-09,
-                0.12354452908039093,
-                3.725290298461914e-09
-            ],
-            "Quaternion": [
-                0.7313491702079773,
-                0.0896964892745018,
-                -0.6024872064590454,
-                0.3067445456981659
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    -4.6566128730773926e-09,
+                    0.12354456633329391,
+                    -9.313225746154785e-09
+                ],
+                "Quaternion": [
+                    0.8488754630088806,
+                    0.03147418424487114,
+                    -0.4500717520713806,
+                    0.27541834115982056
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"foot_rear_leg_r\"]",
@@ -2745,23 +2757,25 @@
         {
             "Name": "lower_rear_leg_r",
             "ClassName": "TP3DObject",
-            "Position": [
-                9.313225746154785e-09,
-                0.09509319067001343,
-                -1.30385160446167e-08
-            ],
-            "Quaternion": [
-                -0.5317140817642212,
-                -0.514072597026825,
-                0.6057748198509216,
-                0.29333674907684326
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    3.725290298461914e-09,
+                    0.09509317576885223,
+                    -1.862645149230957e-09
+                ],
+                "Quaternion": [
+                    -0.6549267172813416,
+                    -0.49523821473121643,
+                    0.4677072763442993,
+                    0.32720044255256653
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"foot_rear_leg_r\"]"
@@ -2772,23 +2786,25 @@
         {
             "Name": "upper_rear_leg_r",
             "ClassName": "TP3DObject",
-            "Position": [
-                -3.3527612686157227e-08,
-                0.22185389697551727,
-                6.705522537231445e-08
-            ],
-            "Quaternion": [
-                0.5069113373756409,
-                0.12613007426261902,
-                0.24129387736320496,
-                0.8178688287734985
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    1.4901161193847656e-08,
+                    0.2218538075685501,
+                    -2.9802322387695312e-08
+                ],
+                "Quaternion": [
+                    0.5141934156417847,
+                    0.13689976930618286,
+                    0.2253589630126953,
+                    0.8161354064941406
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"lower_rear_leg_r\"]"
@@ -2799,23 +2815,25 @@
         {
             "Name": "body_to_rear_leg_r",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.16675469279289246,
-                1.4901161193847656e-08
-            ],
-            "Quaternion": [
-                -0.8620162010192871,
-                -0.12646795809268951,
-                -0.455966055393219,
-                0.18173848092556
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    3.308722450212111e-24,
+                    0.16675472259521484,
+                    -3.725290298461914e-09
+                ],
+                "Quaternion": [
+                    -0.8719233870506287,
+                    -0.13047051429748535,
+                    -0.4367227256298065,
+                    0.17888633906841278
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"upper_rear_leg_r\"]"
@@ -2826,23 +2844,25 @@
         {
             "Name": "front_foot_l",
             "ClassName": "TP3DObject",
-            "Position": [
-                -4.656612873077393e-10,
-                0.12580977380275726,
-                -7.450580596923828e-09
-            ],
-            "Quaternion": [
-                0.6383486986160278,
-                -0.003644050331786275,
-                -0.01637279987335205,
-                0.7695645689964294
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    4.656612873077393e-10,
+                    0.12580974400043488,
+                    3.3527612686157227e-08
+                ],
+                "Quaternion": [
+                    0.6383600234985352,
+                    -0.003971894737333059,
+                    -0.01593036949634552,
+                    0.769562840461731
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"front_foot_l\"]",
@@ -2851,23 +2871,25 @@
         {
             "Name": "front_leg_l",
             "ClassName": "TP3DObject",
-            "Position": [
-                2.9802322387695312e-08,
-                0.18247967958450317,
-                2.9802322387695312e-08
-            ],
-            "Quaternion": [
-                -0.11858168989419937,
-                0.3004911541938782,
-                -0.329409122467041,
-                0.8872052431106567
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    -3.3527612686157227e-08,
+                    0.1824796348810196,
+                    -2.9802322387695312e-08
+                ],
+                "Quaternion": [
+                    -0.11430718749761581,
+                    0.2899763584136963,
+                    -0.33091655373573303,
+                    0.8906973600387573
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"front_foot_l\"]"
@@ -2878,23 +2900,25 @@
         {
             "Name": "upper_front_leg_l",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.16675469279289246,
-                1.4901161193847656e-08
-            ],
-            "Quaternion": [
-                -0.6767797470092773,
-                0.12421836704015732,
-                0.4478551745414734,
-                0.5709331631660461
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    3.308722450212111e-24,
+                    0.16675472259521484,
+                    -3.725290298461914e-09
+                ],
+                "Quaternion": [
+                    -0.6822757720947266,
+                    0.13128142058849335,
+                    0.4394373893737793,
+                    0.5693503618240356
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"front_leg_l\"]"
@@ -2905,23 +2929,25 @@
         {
             "Name": "foot_rear_leg_l",
             "ClassName": "TP3DObject",
-            "Position": [
-                -4.423782229423523e-09,
-                0.12342186272144318,
-                3.166496753692627e-08
-            ],
-            "Quaternion": [
-                0.9414593577384949,
-                0.047744035720825195,
-                0.10882742702960968,
-                0.3154861330986023
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.12342182546854019,
+                    3.725290298461914e-09
+                ],
+                "Quaternion": [
+                    0.8537850975990295,
+                    -0.03084961697459221,
+                    0.441133588552475,
+                    0.274773508310318
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"foot_rear_leg_l\"]",
@@ -2930,23 +2956,25 @@
         {
             "Name": "lower_rear_leg_l",
             "ClassName": "TP3DObject",
-            "Position": [
-                -3.725290298461914e-09,
-                0.09501412510871887,
-                -3.725290298461914e-09
-            ],
-            "Quaternion": [
-                -0.7243177890777588,
-                0.4196699559688568,
-                -0.19480952620506287,
-                0.5111656188964844
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    1.1175870895385742e-08,
+                    0.09501415491104126,
+                    9.313225746154785e-09
+                ],
+                "Quaternion": [
+                    -0.6594559550285339,
+                    0.4935714304447174,
+                    -0.4596651792526245,
+                    0.33198341727256775
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"foot_rear_leg_l\"]"
@@ -2957,23 +2985,25 @@
         {
             "Name": "upper_rear_leg_l",
             "ClassName": "TP3DObject",
-            "Position": [
-                -7.450580596923828e-09,
-                0.22179999947547913,
-                7.450580596923828e-09
-            ],
-            "Quaternion": [
-                0.5072453022003174,
-                -0.1259821504354477,
-                -0.24111466109752655,
-                0.8177374005317688
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    -4.0978193283081055e-08,
+                    0.22179995477199554,
+                    -5.21540641784668e-08
+                ],
+                "Quaternion": [
+                    0.5145142078399658,
+                    -0.1367432028055191,
+                    -0.22518646717071533,
+                    0.8160070776939392
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"lower_rear_leg_l\"]"
@@ -2984,23 +3014,25 @@
         {
             "Name": "body_to_rear_leg_l",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.16675469279289246,
-                1.4901161193847656e-08
-            ],
-            "Quaternion": [
-                -0.8623592853546143,
-                0.12632116675376892,
-                0.4554372727870941,
-                0.18153905868530273
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    1.9050205088134682e-16,
+                    0.16675472259521484,
+                    -3.725290298461914e-09
+                ],
+                "Quaternion": [
+                    -0.8722454905509949,
+                    0.1303158551454544,
+                    0.4362047016620636,
+                    0.17869292199611664
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"upper_rear_leg_l\"]"
@@ -3011,23 +3043,25 @@
         {
             "Name": "body",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.06279444694519043,
-                0.0
-            ],
-            "Quaternion": [
-                -0.1964486986398697,
-                0.0,
-                0.0,
-                0.9805141091346741
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    -3.308722450212111e-24,
+                    0.06279444694519043,
+                    0.0
+                ],
+                "Quaternion": [
+                    -0.17704974114894867,
+                    -1.267592878848839e-16,
+                    -5.998794270364546e-16,
+                    0.9842019081115723
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"head\"]",
@@ -3042,23 +3076,25 @@
         {
             "Name": "lower_body",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.00045242783380672336,
-                -0.13008759915828705,
-                0.14137716591358185
-            ],
-            "Quaternion": [
-                0.4513667821884155,
-                0.0,
-                0.0,
-                0.8923385143280029
-            ],
-            "Scale": [
-                1,
-                1,
-                1
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    -0.12999999523162842,
+                    0.14000000059604645
+                ],
+                "Quaternion": [
+                    0.4513667821884155,
+                    0.0,
+                    8.904470915702275e-16,
+                    0.8923385143280029
+                ],
+                "Scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"body\"]"
@@ -3069,23 +3105,25 @@
         {
             "Name": "frog",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"Grid\"]",
@@ -3094,23 +3132,25 @@
         {
             "Name": "Armature",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [
                 "Objects[\"lower_body\"]",
@@ -3123,23 +3163,25 @@
         {
             "Name": "Lamp",
             "ClassName": "TP3DObject",
-            "Position": [
-                4.076245307922363,
-                1.0054539442062378,
-                5.903861999511719
-            ],
-            "Quaternion": [
-                0.16907578706741333,
-                0.27217134833335876,
-                0.7558802962303162,
-                0.5709474682807922
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    4.076245307922363,
+                    1.0054539442062378,
+                    5.903861999511719
+                ],
+                "Quaternion": [
+                    0.16907578706741333,
+                    0.27217134833335876,
+                    0.7558802962303162,
+                    0.5709474682807922
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Lights[\"Lamp\"]",

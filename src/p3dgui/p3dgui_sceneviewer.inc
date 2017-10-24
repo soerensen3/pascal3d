@@ -109,7 +109,7 @@ begin
       FCam:= TP3DCamera.Create();
       FCamObject:= TP3DObject.Create();
       FCamObject.Data:= FCam;
-      FCamObject.RotationOrder:= roXZY;
+      FCamObject.Transform.RotationOrder:= roXZY;
       ResetOrbit;
       UpdateCamPos;
     end
@@ -125,7 +125,7 @@ end;
 
 procedure TP3DSceneViewer.UpdateCamPos;
 begin
-  FCamObject.Position:= FCamObject.Matrix.Row[ 2 ].xyz * OrbitDistance + OrbitCenter;
+  FCamObject.Transform.Position:= FCamObject.Transform.Matrix.Row[ 2 ].xyz * OrbitDistance + OrbitCenter;
   FCam.UpdateMatrices( FCamObject );
 end;
 
@@ -135,8 +135,8 @@ begin
   OrbitCenter:= vec3( 0 );
   if ( Assigned( FCamObject )) then
     begin
-      FCamObject.Position:= vec3( 0 );
-      FCamObject.Rotation:= vec3( 0 );
+      FCamObject.Transform.Position:= vec3( 0 );
+      FCamObject.Transform.Rotation:= vec3( 0 );
     end;
 end;
 
@@ -223,7 +223,7 @@ begin
               OrbitCenter:= OrbitCenter + m.Row[ 2 ].xyz * P3DInput.Mouse.DY * CamSpeed;
           end
         else
-          FCamObject.Rotation:= FCamObject.Rotation - vec3( P3DInput.Mouse.DY, 0, P3DInput.Mouse.DX ) * 2.5;
+          FCamObject.Transform.Rotation:= FCamObject.Transform.Rotation - vec3( P3DInput.Mouse.DY, 0, P3DInput.Mouse.DX ) * 2.5;
     end;
 end;
 
@@ -248,11 +248,11 @@ begin
   if ( OrbitCamera and ( gcisMouseOver in InputState )) then
     begin
       if ( KeyEvent( P3DK_7 ) or KeyEvent( P3DK_KP_7 )) then
-        FCamObject.Rotation:= vec3( 0, 180 * Ord( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]), 0 );
+        FCamObject.Transform.Rotation:= vec3( 0, 180 * Ord( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]), 0 );
       if ( KeyEvent( P3DK_1 ) or KeyEvent( P3DK_KP_1 )) then
-        FCamObject.Rotation:= vec3( 90, 0, 180 * Ord( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]));
+        FCamObject.Transform.Rotation:= vec3( 90, 0, 180 * Ord( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]));
       if ( KeyEvent( P3DK_3 ) or KeyEvent( P3DK_KP_3 )) then
-        FCamObject.Rotation:= vec3( 90, 0, 90 + 180 * Ord( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]));
+        FCamObject.Transform.Rotation:= vec3( 90, 0, 90 + 180 * Ord( P3DInput.Keyboard.Keys[ P3DK_LCTRL ]));
       if ( KeyEvent( P3DK_5 ) or KeyEvent( P3DK_KP_5 )) then
         FCam.IsIsometric:= not FCam.IsIsometric;
     end;

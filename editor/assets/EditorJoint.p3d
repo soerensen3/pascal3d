@@ -1,130 +1,134 @@
 {
+    "Armatures": [],
     "Actions": [],
+    "Cameras": [],
+    "Joints": [],
+    "Lights": [],
     "Materials": [
         {
-            "Unlit": false,
             "Name": "Material",
-            "Spec_Hardness": 50,
+            "DataPath": "Materials[\"Material\"]",
+            "ClassName": "TP3DMaterialBase",
             "Diff": [
                 0.64000004529953,
                 0.64000004529953,
                 0.64000004529953
             ],
-            "Instancing": 1,
             "Spec": [
                 0.5,
                 0.5,
                 0.5
             ],
+            "Spec_Hardness": 50,
+            "Unlit": 0,
+            "Instancing": 1,
             "TransparencyMode": "tmNone",
-            "ClassName": "TP3DMaterialBase",
-            "Maps": [],
-            "DataPath": "Materials[\"Material\"]"
+            "Maps": []
         }
     ],
     "Meshes": [
         {
             "Name": "Sphere",
-            "Loops": "@3584",
+            "DataPath": "Meshes[\"Sphere\"]",
+            "ClassName": "TP3DMesh",
             "PackedPositions": "@0",
             "PackedNormals": "@700",
+            "Loops": "@3584",
+            "Edges": "@4548",
+            "PackedFaces": "@6472",
             "PackedMaterialGroups": [
                 {
                     "PolyStart": 0,
-                    "Material": "Materials[\"Material\"]",
-                    "PolyEnd": 63
+                    "PolyEnd": 63,
+                    "Material": "Materials[\"Material\"]"
                 }
-            ],
-            "ClassName": "TP3DMesh",
-            "PackedFaces": "@6472",
-            "Edges": "@4548",
-            "DataPath": "Meshes[\"Sphere\"]"
+            ]
         },
         {
             "Name": "Cone",
-            "Loops": "@7148",
+            "DataPath": "Meshes[\"Cone\"]",
+            "ClassName": "TP3DMesh",
             "PackedPositions": "@6732",
             "PackedNormals": "@6808",
+            "Loops": "@7148",
+            "Edges": "@7264",
+            "PackedFaces": "@7492",
             "PackedMaterialGroups": [
                 {
                     "PolyStart": 0,
-                    "Material": "Materials[\"Material\"]",
-                    "PolyEnd": 8
+                    "PolyEnd": 8,
+                    "Material": "Materials[\"Material\"]"
                 }
-            ],
-            "ClassName": "TP3DMesh",
-            "PackedFaces": "@7492",
-            "Edges": "@7264",
-            "DataPath": "Meshes[\"Cone\"]"
+            ]
         }
     ],
-    "Joints": [],
-    "Cameras": [],
-    "Lights": [],
-    "Armatures": [],
     "Objects": [
         {
             "Name": "Sphere",
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
             "ClassName": "TP3DObject",
-            "Data": "Meshes[\"Sphere\"]",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    0.050000011920928955,
+                    0.050000011920928955,
+                    0.050000011920928955
+                ],
+                "RotationOrder": "roXYZ"
+            },
+            "Visible": 1,
             "Children": [],
-            "Scale": [
-                0.050000011920928955,
-                0.050000011920928955,
-                0.050000011920928955
-            ],
-            "DataPath": "Objects[\"Sphere\"]",
-            "Visible": 1
+            "Data": "Meshes[\"Sphere\"]",
+            "DataPath": "Objects[\"Sphere\"]"
         },
         {
             "Name": "Cone",
-            "Quaternion": [
-                1.0,
-                0.0,
-                0.0,
-                -1.6292068494294654e-07
-            ],
-            "RotationOrder": "roXYZ",
-            "Position": [
-                0.0,
-                0.0,
-                0.10000000149011612
-            ],
             "ClassName": "TP3DObject",
-            "Data": "Meshes[\"Cone\"]",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.10000000149011612
+                ],
+                "Quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    -1.6292068494294654e-07
+                ],
+                "Scale": [
+                    0.10675867646932602,
+                    0.10675867646932602,
+                    0.042703479528427124
+                ],
+                "RotationOrder": "roXYZ"
+            },
+            "Visible": 1,
             "Children": [],
-            "Scale": [
-                0.10675867646932602,
-                0.10675867646932602,
-                0.042703479528427124
-            ],
-            "DataPath": "Objects[\"Cone\"]",
-            "Visible": 1
+            "Data": "Meshes[\"Cone\"]",
+            "DataPath": "Objects[\"Cone\"]"
         }
     ],
-    "Textures": [],
     "Scenes": [
         {
             "Name": "Scene",
+            "DataPath": "Scenes[\"Scene\"]",
             "ClassName": "TP3DScene",
             "Cam": "None",
-            "DataPath": "Scenes[\"Scene\"]",
             "Objects": [
                 "Objects[\"Sphere\"]",
                 "Objects[\"Cone\"]"
             ]
         }
-    ]
+    ],
+    "Textures": []
 }

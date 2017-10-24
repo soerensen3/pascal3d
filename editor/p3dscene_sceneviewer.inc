@@ -381,7 +381,7 @@ var
 begin
   if FBrushPos=AValue then Exit;
   FBrushPos:=AValue;
-  p:= ( BrushPos.xy - ScenePanel.Selection.Position.xy ) / Grid.GridWorldUnit;
+  p:= ( BrushPos.xy - ScenePanel.Selection.Transform.Position.xy ) / Grid.GridWorldUnit;
   FBrushGridPos:= ivec2( round( p.x ), round( p.y ));
   FCanPaint:= ( InRange( BrushGridPos.X, 0, Grid.Width - 1 ) and InRange( BrushGridPos.Y, 0, Grid.Height - 1 ));
 end;
@@ -431,12 +431,12 @@ begin
       col:= vec4( Red500.xyz, 0.7 );
     ScenePanel.Canvas3D.RenderLineRect( brpos - h_sz, brpos + h_sz, vec4( col.xyz, 1 ));
     ScenePanel.Canvas3D.RenderRect( brpos - h_sz, brpos + h_sz, col );
-    ScenePanel.Canvas3D.RenderLineRect( ScenePanel.Selection.Position - h_sz,
-                                        ScenePanel.Selection.Position - h_sz +
+    ScenePanel.Canvas3D.RenderLineRect( ScenePanel.Selection.Transform.Position - h_sz,
+                                        ScenePanel.Selection.Transform.Position - h_sz +
                                           vec3( Grid.Width, Grid.Height, 0 ) * Grid.GridWorldUnit,
                                           Accent300 );
-    ScenePanel.Canvas3D.RenderRect( ScenePanel.Selection.Position - h_sz,
-                                    ScenePanel.Selection.Position - h_sz +
+    ScenePanel.Canvas3D.RenderRect( ScenePanel.Selection.Transform.Position - h_sz,
+                                    ScenePanel.Selection.Transform.Position - h_sz +
                                           vec3( Grid.Width, Grid.Height, 0 ) * Grid.GridWorldUnit,
                                           vec4( Accent300.xyz, 0.3 ));
   ScenePanel.Canvas3D.Unlock();
@@ -461,7 +461,7 @@ begin
   ray_pos:= unproject( vec2( P3DInput.Mouse.X - ScenePanel.Canvas3D.Left, P3DInput.Mouse.Y - ScenePanel.Canvas3D.Top ),
                        ScenePanel.Cam.View, ScenePanel.Cam.Proj, ScenePanel.Canvas3D.Width, ScenePanel.Canvas3D.Height, ray_dir );
   if ( ray_dir.Z <> 0 ) then
-    t:= - ( ray_pos.z + ScenePanel.Selection.Position.z ) / ray_dir.z
+    t:= - ( ray_pos.z + ScenePanel.Selection.Transform.Position.z ) / ray_dir.z
   else
     t:= 0;
   BrushPos:= ray_pos + ray_dir * t;
@@ -511,7 +511,7 @@ begin
       exit;
     end;
 
-  ScenePanel.Selection.Matrix:= TransMat;
+  ScenePanel.Selection.Transform.Matrix:= TransMat;
   Scale:= vec3( 1 );
   if ( AxisLock in [ alX, alXZ, alXY, alNone ]) then
     Scale.x:= MouseDelta.x;
@@ -520,7 +520,7 @@ begin
   if ( AxisLock in [ alZ, alXZ, alYZ ]) then
     Scale.z:= MouseDelta.y;
   if ( Scale <> vec3( 1 )) then
-    ScenePanel.Selection.Scale:= Scale;
+    ScenePanel.Selection.Transform.Scale:= Scale;
 end;
 
 { TP3DSceneEditModeRotate }
@@ -538,18 +538,18 @@ begin
       exit;
     end;
 
-  ScenePanel.Selection.Matrix:= TransMat;
+  ScenePanel.Selection.Transform.Matrix:= TransMat;
   c:= ToScreenCoords( TransCenter );
   dir:= ( MousePos - c.XY ).Normalize;
   dirOld:= ( MousePosInitial - c.XY ).Normalize;
   Angle:= arctan2( dirOld.y, dirOld.x ) - arctan2( dir.y, dir.x );
   P3DApplication.MainWindow.Title:= FloatToStr( Angle );
   if ( AxisLock in [ alX, alYZ ]) then
-    ScenePanel.Selection.RotateAroundGlobalAxis( AxisX, Angle );
+    ScenePanel.Selection.Transform.RotateAroundGlobalAxis( AxisX, Angle );
   if ( AxisLock in [ alY, alXZ, alNone ]) then
-    ScenePanel.Selection.RotateAroundGlobalAxis( AxisY, Angle );
+    ScenePanel.Selection.Transform.RotateAroundGlobalAxis( AxisY, Angle );
   if ( AxisLock in [ alZ, alXY ]) then
-    ScenePanel.Selection.RotateAroundGlobalAxis( AxisZ, Angle );
+    ScenePanel.Selection.Transform.RotateAroundGlobalAxis( AxisZ, Angle );
 end;
 
 procedure TP3DSceneEditModeRotate.AfterRender;
@@ -595,7 +595,7 @@ end;
 
 procedure TP3DSceneEditModeGrab.CheckInput;
 begin
-  ScenePanel.Selection.Matrix:= TransMat;
+  ScenePanel.Selection.Transform.Matrix:= TransMat;
   inherited CheckInput;
   if ( not Assigned( ScenePanel.Selection )) then
     begin
@@ -610,7 +610,7 @@ begin
   if ( AxisLock in [ alZ, alXZ, alYZ, alNone ]) then
     Translation-= AxisZ * MouseDelta.y;
 
-  ScenePanel.Selection.Position:= ScenePanel.Selection.Position + Translation;
+  ScenePanel.Selection.Transform.Position:= ScenePanel.Selection.Transform.Position + Translation;
   TransCenter:= ScenePanel.GetSelectionCenter;
 end;
 
@@ -630,7 +630,7 @@ end;
 procedure TP3DSceneEditModeDefault.Reset;
 begin
   if (( ScenePanel.EditMode <> emDefault ) and Assigned( ScenePanel.Selection )) then
-    ScenePanel.Selection.Matrix:= TransMat;
+    ScenePanel.Selection.Transform.Matrix:= TransMat;
   MouseDelta:= vec2( 0 );
   MousePosInitial:= vec2( -1 );
   AxisMode:= amScreen;
@@ -1004,7 +1004,7 @@ begin
       //if ( n >= 0 ) then
       Editor.MousePosInitial:= vec2( -1 );
       Editor.TransCenter:= GetSelectionCenter; //For now only one object selectable and center always at origin
-      Editor.TransMat:= Selection.Matrix; //FRenderList[ n ].Matrix;
+      Editor.TransMat:= Selection.Transform.Matrix; //FRenderList[ n ].Matrix;
 
       FEditMode:= AValue;
     end;
@@ -1084,7 +1084,7 @@ begin
           SelectionMaterial.Alpha:= 1;
           SelectionMaterial.PassToShader();
           if ( TP3DLight( AData ).LightType in [ ltSun, ltSpot ]) then
-            EditorSceneArrow.AddToRenderList( AScene, Selection.Matrix, Viewer.RenderList, AFlags - [ rlfMaterials, rlfLighting ]);
+            EditorSceneArrow.AddToRenderList( AScene, Selection.Transform.Matrix, Viewer.RenderList, AFlags - [ rlfMaterials, rlfLighting ]);
 
           EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials, rlfLighting ]);
         end
@@ -1162,7 +1162,7 @@ begin
   EditorLight.LightType:= ltSun;
   EditorLightObj:= TP3DObject.Create( AData );
   EditorLightObj.Data:= EditorLight;
-  EditorLightObj.Quaternion:= quat( 0.571, 0.169, 0.272, 0.756 );
+  EditorLightObj.Transform.Quaternion:= quat( 0.571, 0.169, 0.272, 0.756 );
 
   ShowEditorLight:= True;
 
@@ -1361,9 +1361,9 @@ var
   n: Integer;
 begin
   WriteLn( 'Selection = ', Selection.Name );
-  WriteLn( Selection.Matrix.ToString );
+  WriteLn( Selection.Transform.Matrix.ToString );
   if ( Assigned( Selection )) then
-    Result:= ( Selection.CalculateParentMatrix * Selection.Matrix ).Row[ 3 ].xyz
+    Result:= ( Selection.CalculateParentMatrix * Selection.Transform.Matrix ).Row[ 3 ].xyz
   else
     Result:= vec3( 0 );
   //TODO: FIX THIS!
@@ -1387,7 +1387,7 @@ procedure TP3DScenePanel.BeforeDraw(Sender: TObject);
 begin
   Editor.BeforeRender;
   if ( Assigned( Viewer.RenderList ) and ( Viewer.RenderList.Lights.Count = 0 )) then
-    Viewer.RenderList.Lights.PushRenderObject( EditorLight, EditorLightObj.Matrix, nil );
+    Viewer.RenderList.Lights.PushRenderObject( EditorLight, EditorLightObj.Transform.Matrix, nil );
 end;
 
 procedure TP3DScenePanel.AfterDraw(Sender: TObject);

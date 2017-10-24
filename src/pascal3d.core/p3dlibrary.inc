@@ -48,6 +48,7 @@ type
       FArmatures: TP3DArmatureContainer;
       FCameras: TP3DCameraContainer;
       FFonts: TP3DFontContainer;
+      FGlobalTime: Single;
       FGrids: TP3DGridContainer;
       FJoints: TP3DJointContainer;
       FLights: TP3DLightContainer;
@@ -68,6 +69,7 @@ type
       function GetDOMFile: TXMLDocument;
       function GetName: String; virtual;
       procedure PerformActions(GlobalTime: Float);
+      procedure SetGlobalTime(AValue: Single);
 //      function LoadDataBlockByPathNoCheck( LocalPath: String ): TP3DDataBlock;
 
     protected
@@ -123,6 +125,8 @@ type
       property Armatures: TP3DArmatureContainer read FArmatures write FArmatures;
       property Actions: TP3DActionContainer read FActions write FActions;
       property Fonts: TP3DFontContainer read FFonts write FFonts;
+
+      property GlobalTime: Single read FGlobalTime write SetGlobalTime;
 
       property FileWatch: TP3DFilePointer read FFileWatch write FFileWatch;
       property DOMFile: TXMLDocument read GetDOMFile write FDOMFile;
@@ -950,6 +954,18 @@ end;
 procedure TP3DLibrary.PerformActions(GlobalTime: Float);
 begin
   //Actions.PerformActions( GlobalTime );
+end;
+
+procedure TP3DLibrary.SetGlobalTime(AValue: Single);
+var
+  Action: TP3DAction;
+  User: TP3DDataBlock;
+begin
+  if FGlobalTime=AValue then Exit;
+  FGlobalTime:=AValue;
+  for Action in Actions do
+    for User in Action.Users do ;
+      Action.Perform( GlobalTime, User );
 end;
 
 { TP3DDataList }

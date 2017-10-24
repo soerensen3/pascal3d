@@ -1179,14 +1179,14 @@ var
 
 begin
   Result:= False;
-  mat4inverse( AObject.Matrix, mInv );
+  mat4inverse( AObject.Transform.Matrix, mInv );
   transOrig:= ( mInv * vec4( Orig, 1 )).xyz;
   transDir:= ( mInv * vec4( Dir, 0 )).xyz.Normalize;
   for i:= 0 to Indices.Count div 3 do
     if ( TestPoly( i )) then
       begin
         Result:= True;
-        HitPos:= ( AObject.Matrix * vec4( HitPos, 1 )).xyz;
+        HitPos:= ( AObject.Transform.Matrix * vec4( HitPos, 1 )).xyz;
         break;
       end;
 end;

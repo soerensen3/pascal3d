@@ -516,7 +516,7 @@ begin
             atmMatrix:
               begin
                 if ( Assigned( JointObj )) then
-                  m:= CalculateJointMatrixFromObj( JointObj, -( Root.CalculateParentMatrix * Root.Matrix ))
+                  m:= CalculateJointMatrixFromObj( JointObj, -( Root.CalculateParentMatrix * Root.Transform.Matrix ))
                 else
                   m:= Mat4Identity;
 
@@ -550,7 +550,7 @@ begin
   while Assigned( Obj ) do
     begin
       //Result:= ( Result * mat4( mat3( Obj.Quaternion ))) * mat4translate( vec4( Obj.Position, 1 ));
-      Result:= ( mat4translate( vec4( Obj.Position, 1 )) * mat4( mat3( Obj.Quaternion ))) * Result;
+      Result:= ( mat4translate( vec4( Obj.Transform.Position, 1 )) * mat4( mat3( Obj.Transform.Quaternion ))) * Result;
       //Result:= mat4( mat3( Obj.Quaternion )) * mat4translate( vec4( Obj.Position, 1 )) * Result;
 
       if ( Obj.Parent is TP3DObject ) then

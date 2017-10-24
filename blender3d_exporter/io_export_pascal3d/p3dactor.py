@@ -10,10 +10,11 @@ class P3DObject( p3ddatablock.P3DDataBlock ):
         print( "root.ActiveObjP3D", type( root.ActiveObjP3D ))
 
         self.ClassName = 'TP3DObject'
-        self.Position = list( block.location )
-        self.Quaternion = p3dexporthelper.swap_quat( list( block.matrix_local.to_quaternion()))
-        self.Scale = list( block.scale )
-        self.RotationOrder = 'ro' + block.rotation_mode
+        self.Transform = {
+            "Position" : list( block.location ),
+            "Quaternion": p3dexporthelper.swap_quat( list( block.matrix_local.to_quaternion())),
+            "Scale": list( block.scale ),
+            "RotationOrder": 'ro' + block.rotation_mode }
         self.Visible = int( block.is_visible( obj ))
         self.Children = []
         self.Data = p3dexporthelper.export_data_path( block.data, root, block )

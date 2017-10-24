@@ -796,11 +796,11 @@ begin
     with ( Obj as IP3DTransform ) do
       begin
         if ( Sender = PositionEdit ) then
-          Result:= vec4( Position, 0 )
+          Result:= vec4( Transform.Position, 0 )
         else if ( Sender = RotationEdit ) then
-          Result:= vec4( Rotation, 0 )
+          Result:= vec4( Transform.Rotation, 0 )
         else if ( Sender = ScaleEdit ) then
-          Result:= vec4( Scale, 0 );
+          Result:= vec4( Transform.Scale, 0 );
       end
   else
     Result:= vec4( 0 );
@@ -812,11 +812,11 @@ begin
     with ( Obj as IP3DTransform ) do
       begin
         if ( Sender = PositionEdit ) then
-          Position:= AValue.xyz
+          Transform.Position:= AValue.xyz
         else if ( Sender = RotationEdit ) then
-          Rotation:= AValue.xyz
+          Transform.Rotation:= AValue.xyz
         else if ( Sender = ScaleEdit ) then
-          Scale:= AValue.xyz;
+          Transform.Scale:= AValue.xyz;
       end;
 end;
 
@@ -826,12 +826,12 @@ begin
   if ( Obj is IP3DTransform ) then
     with ( Obj as IP3DTransform ) do
       case RotationMethodCombo.Caption of
-        'ZYX Euler': RotationOrder:= roZYX;
-        'ZXY Euler': RotationOrder:= roZXY;
-        'YZX Euler': RotationOrder:= roYZX;
-        'YXZ Euler': RotationOrder:= roYXZ;
-        'XZY Euler': RotationOrder:= roXZY;
-        'XYZ Euler': RotationOrder:= roXYZ;
+        'ZYX Euler': Transform.RotationOrder:= roZYX;
+        'ZXY Euler': Transform.RotationOrder:= roZXY;
+        'YZX Euler': Transform.RotationOrder:= roYZX;
+        'YXZ Euler': Transform.RotationOrder:= roYXZ;
+        'XZY Euler': Transform.RotationOrder:= roXZY;
+        'XYZ Euler': Transform.RotationOrder:= roXYZ;
       end;
 end;
 
@@ -840,8 +840,8 @@ begin
   inherited;
   if ( Obj is IP3DTransform ) then
     begin
-      QuaternionEdit.Prop:= ( Obj as IP3DTransform ).Properties.GetPropByName( 'Quaternion' );
-      case ( Obj as IP3DTransform ).RotationOrder of
+      QuaternionEdit.Prop:= ( Obj as IP3DTransform ).Transform.Properties.GetPropByName( 'Quaternion' );
+      case ( Obj as IP3DTransform ).Transform.RotationOrder of
         roZYX: RotationMethodCombo.FCaption:= 'ZYX Euler';
         roZXY: RotationMethodCombo.FCaption:= 'ZXY Euler';
         roYZX: RotationMethodCombo.FCaption:= 'YZX Euler';

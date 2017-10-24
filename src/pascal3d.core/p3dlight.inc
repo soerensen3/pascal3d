@@ -115,11 +115,11 @@ procedure TP3DLight.Render(world: TMat4; Scene: TP3DScene;
 begin
   if ( LightType = ltSun ) then
     begin
-      world:= mat4translate( vec4( -RenderObject.Direction * 3, 1 )) * world;
+      world:= mat4translate( vec4( -RenderObject.Transform.Direction * 3, 1 )) * world;
       //RenderLine3D( vec3( 0 ), RenderObject.Direction * 10, vec4( 0, 1, 1, 1 ));
     end
   else
-    world:= world * RenderObject.Matrix;
+    world:= world * RenderObject.Transform.Matrix;
 end;
 
 procedure TP3DLight.LoadFromDOM( ADOMNode: TDOMElement );
@@ -215,9 +215,9 @@ begin
             if ( obj is TP3DObject ) then
               with ( obj as TP3DObject ) do
                 begin
-                  pos:= matView * vec4( Position, 1 );
+                  pos:= matView * vec4( Transform.Position, 1 );
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.position' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
-                  pos:= vec4( normalize( mat3( matView ) * {mat3( matWorld ) * }Matrix.Row[ 2 ].XYZ ), 0 );
+                  pos:= vec4( normalize( mat3( matView ) * {mat3( matWorld ) * }Transform.Matrix.Row[ 2 ].XYZ ), 0 );
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.direction' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
                   pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
                   glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );

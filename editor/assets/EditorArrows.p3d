@@ -174,23 +174,25 @@
         {
             "Name": "TextZ",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.0,
-                1.2000000476837158
-            ],
-            "Quaternion": [
-                -3.090862676913275e-08,
-                0.7071068286895752,
-                0.7071068286895752,
-                -3.090862321641907e-08
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    1.2000000476837158
+                ],
+                "Quaternion": [
+                    -3.090862676913275e-08,
+                    0.7071068286895752,
+                    0.7071068286895752,
+                    -3.090862321641907e-08
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"CUTextX.002\"]",
@@ -199,23 +201,25 @@
         {
             "Name": "TextY",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                1.2000000476837158,
-                0.0
-            ],
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.7071068286895752,
-                0.7071067690849304
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    1.2000000476837158,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.7071068286895752,
+                    0.7071067690849304
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"CUTextX.001\"]",
@@ -224,23 +228,25 @@
         {
             "Name": "TextX",
             "ClassName": "TP3DObject",
-            "Position": [
-                1.2000000476837158,
-                0.0,
-                0.0
-            ],
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    1.2000000476837158,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"CUTextX\"]",
@@ -249,23 +255,25 @@
         {
             "Name": "ArrowX",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"ArrowX\"]",
@@ -274,23 +282,25 @@
         {
             "Name": "ArrowY",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"ArrowY\"]",
@@ -299,23 +309,25 @@
         {
             "Name": "ArrowZ",
             "ClassName": "TP3DObject",
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Quaternion": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "Scale": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "RotationOrder": "roXYZ",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"ArrowZ\"]",

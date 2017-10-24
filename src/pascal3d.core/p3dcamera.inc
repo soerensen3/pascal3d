@@ -89,7 +89,7 @@ begin
   if ( Users.Count > 0 ) then
     begin
       if ( Users.Items[ 0 ] is TP3DObject ) then
-        Result:= TP3DObject( Users.Items[ 0 ] ).Matrix;
+        Result:= TP3DObject( Users.Items[ 0 ] ).Transform.Matrix;
     end
   else
     Result:= Mat4Identity;
@@ -100,7 +100,7 @@ begin
   //TODO: REMOVE SIMPLE WORKAROUND IN FAVOR OF SOMETHING BETTER
   if ( Users.Count > 0 ) then
     if ( Users.Items[ 0 ] is TP3DObject ) then
-      TP3DObject( Users.Items[ 0 ] ).FMatrix:= AValue;
+      TP3DObject( Users.Items[ 0 ] ).Transform.Matrix:= AValue;
 end;
 
 class function TP3DCamera.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
@@ -126,7 +126,7 @@ end;
 procedure TP3DCamera.UpdateMatrices( CamObject: TP3DObject );
 begin
   if ( Assigned( CamObject )) then
-    mat4inverse( CamObject.Matrix, FView );
+    mat4inverse( CamObject.Transform.Matrix, FView );
   if ( IsIsometric ) then
     case Handedness of
       p3dchLeft: Proj:= mat4orthoLH( Aspect / IsoZoom, 1 / IsoZoom, Near, Far );
@@ -137,7 +137,7 @@ begin
       p3dchLeft: proj:= mat4perspectiveFOVLH( deg2rad * FOV, Aspect, Near, Far );
       p3dchRight: proj:= mat4perspectiveFOVRH( deg2rad * FOV, Aspect, Near, Far );
     end;
-  InvView:= CamObject.Matrix;
+  InvView:= CamObject.Transform.Matrix;
 end;
 
 procedure TP3DCamera.PassToShader;
