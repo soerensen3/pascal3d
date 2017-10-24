@@ -2,9 +2,9 @@
   <paths
     BaseDir=".">
     <path
-      value="../pascal3d/assets"/>
+      value="../../assets"/>
     <path
-      value="../pascal3d/fonts" />
+      value="../../fonts" />
   </paths>
   <window
     Title="p3dfontbmp"
@@ -16,6 +16,6 @@
     FileName="p3dfontbmp.html" />
   <shadernodelibrary>
     <path
-      value="../pascal3d/shaders" />
+      value="../../shaders" />
   </shadernodelibrary>
 </p3dsettings>

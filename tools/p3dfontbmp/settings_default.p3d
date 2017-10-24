@@ -23,7 +23,7 @@
     },
     {
       "ClassName" : "TP3DSearchPathContainer",
-      "BaseDir" : "\/home\/johannes\/Documents\/dev\/Lazarus\/p3d\/p3dfontbmp\/"
+      "BaseDir" : "\/home\/johannes\/Documents\/dev\/Lazarus\/p3d\/tools\/p3dfontbmp\/"
     }
   ]
 }

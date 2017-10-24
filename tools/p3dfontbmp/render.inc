@@ -10,7 +10,7 @@ var
   decl, Uniform: TP3DShaderDecl;
   wh, p1, p2: TVec2;
 begin
-  glClearColor( 0, 0.5, 1, 1 );
+  glClearColor( BlueGrey500.r, BlueGrey500.g, BlueGrey500.b, 1 );
   glClear( GL_COLOR_BUFFER_BIT OR GL_DEPTH_BUFFER_BIT );
   //if ( Canvas.Material.Maps.Count < 1 ) then
   //  Canvas.Material.Maps.Add( TP3DMaterialMapBase.Create( Canvas.Material ));
@@ -18,6 +18,7 @@ begin
 
   P3DFontManagerBmp.TextModifier.Reset;
   P3DFontManagerBmp.TextModifier.TextAlpha:= 1.0;
+  Canvas.WidthHeight:= vec2( MainWindow.Width, MainWindow.Height );
   Canvas.Lock();
   Canvas.Material.PassToShader();
   ActiveFont.ApplyShader;
@@ -27,8 +28,8 @@ begin
     Uniform.AsMat4:= Mat4Identity;
   if ( P3DShaderActive.Uniforms.FindByName( 'world', Uniform )) then
     Uniform.AsMat4:= Canvas.World;
-  wh:= vec2( ActiveFont.Texture.Width, ActiveFont.Texture.Height );
-  p1:= vec2( 10 );
+  wh:= vec2( ActiveFont.Texture.Width, ActiveFont.Texture.Height ) * Zoom;
+  p1:= ( vec2( 10 ) + OffSet * wh ) * Zoom;
   p2:= p1 + wh;
   if ( P3DShaderActive.Attributes.FindByName( 'TexCoord0', decl )) then
     begin
@@ -60,7 +61,10 @@ begin
   Canvas.Material.PassToShader();
   Canvas.RenderLineRect( p1, p2, Black );
   for i:= 0 to ActiveFont.Letters.Count - 1 do
-    Canvas.RenderLineRect( p1 + ActiveFont.Letters[ i ].uv1 * wh, p1 + ActiveFont.Letters[ i ].uv2 * wh, OrangeA700 );
+    begin
+      Canvas.RenderLineRect( p1 + ActiveFont.Letters[ i ].uv1 * wh, p1 + ActiveFont.Letters[ i ].uv2 * wh, OrangeA700 );
+      Canvas.RenderLineRect( p1 + ActiveFont.Letters[ i ].uv1_metrics * wh, p1 + ActiveFont.Letters[ i ].uv2_metrics * wh, Green200 );
+    end;
   Canvas.Font.Name:= ActiveFont.Name;
   Canvas.RenderText( 'Pack my box with five dozen liquor jugs', vec2( p1.x, p2.y ), txt );
   Canvas.Unlock();

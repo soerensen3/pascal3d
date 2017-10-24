@@ -1,5 +1,17 @@
 {$IFDEF IMPLEMENTATION}
 
+procedure TP3DFontBitmap.SetZoom(AValue: Single);
+begin
+  if FZoom=AValue then Exit;
+  FZoom:= Min( 20, Max( 0.1, AValue ));
+end;
+
+procedure TP3DFontBitmap.SetOffSet(AValue: TVec2);
+begin
+  if FOffSet=AValue then Exit;
+  FOffSet:= clamp( AValue, vec2( 1 ), vec2( 0 ));
+end;
+
 procedure TP3DFontBitmap.Events;
 type
   KeyState = array of PUInt8;
@@ -37,6 +49,18 @@ begin
           //if ( Event.keysym._mod = 256 ) then
           P3DApplication.MainWindow.FullScreen:= not P3DApplication.MainWindow.FullScreen;
     end;
+end;
+
+procedure TP3DFontBitmap.MouseWheel(Event: TSDL_MouseWheelEvent);
+begin
+  Zoom:= Zoom + Event.y / 3;
+end;
+
+procedure TP3DFontBitmap.MouseMotion(Event: TSDL_MouseMotionEvent);
+begin
+  if ( P3DInput.Mouse.Buttons[ 1 ]) then
+    OffSet:= OffSet + ( -vec2( P3DInput.Mouse.DX, P3DInput.Mouse.DY ) / Zoom / 10 );
+  inherited MouseMotion(Event);
 end;
 
 

@@ -69,6 +69,7 @@ end;
 procedure TP3DFontBitmap.Initialize;
 begin
   inherited Initialize;
+  Zoom:= 1;
 
   try
     //Do some OpenGL initializations
