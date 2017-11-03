@@ -132,10 +132,10 @@ var
   i: Integer;
   FN: String;
 begin
-  SetCurrentDirUTF8( P3DSearchPaths.BaseDir );
+  SetCurrentDirUTF8( P3DSearchPaths.BaseDir.FileName );
   Result:= TP3DLibrary.Create;
   i:= 1;
-  if ( Pos( '%d', AFileName ) > 0 ) then
+  if ( Pos( '%d', AFileName ) > 0 ) then  // Give name like Untitled1.p3d, Untitled2.p3d but make sure that each name only exists once
     begin
       while (( P3DData.Libraries.FindByFileName( Format( AFileName, [ i ])) > -1 ) or ( FileExists( Format( AFileName, [ i ])))) do
         Inc( i );
@@ -160,7 +160,7 @@ begin
     Lib:= P3DData;
 
   i:= 1;
-  if ( Pos( '%d', AName ) > 0 ) then
+  if ( Pos( '%d', AName ) > 0 ) then // Give name like NewScene1, NewScene2 but make sure that each name only exists once per file
     begin
       while ( Lib.Scenes.FindByName( Format( AName, [ i ])) > -1 ) do
         Inc( i );

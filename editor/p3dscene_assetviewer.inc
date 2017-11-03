@@ -29,7 +29,7 @@ begin
   Height:= 200;
   FDirectoryView:= TP3DTreeViewDirectory.Create( nil, Self );
   FAssetView:= TP3DListViewFile.Create( nil, Self );
-  FDirectoryView.Directory:= P3DSearchPaths.BaseDir;
+  FDirectoryView.Directory:= P3DSearchPaths.BaseDir.FileName;
   FDirectoryView.ShowSymbols:= True;
   FDirectoryView.ShowFiles:= True;
   FDirectoryView.Mask:= '*.p3d';

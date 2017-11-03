@@ -20,21 +20,27 @@ uses
 
 procedure DumpSearchPaths;
 var
-  Path: String;
+  Path: TP3DFilePointer;
 begin
-  WriteLn( 'Basedir: ' + P3DSearchPaths.BaseDir );
+  WriteLn( 'Basedir: ' + P3DSearchPaths.BaseDir.FileName );
   for Path in P3DSearchPaths.Paths do
-    WriteLn( 'Path: ' + Path );
+    WriteLn( 'Path: ' + Path.FileName );
 end;
+
+{$R *.res}
 
 begin
   DeleteFile( 'heap.trc' );
   SetHeapTraceOutput( 'heap.trc' );
-  P3DEventsInit;
   P3DUtilsInit;
+  P3DEventsInit;
   P3DCoreInit;
   P3DApplication:= TP3DSceneApplication.Create;
-  P3DApplication.LoadConfig( 'settings_default.xml' );
+  //P3DApplication.LoadConfig( 'settings_default.xml' );
+  //P3DConfig.SaveConfig( 'settings_default.p3d' );
+  P3DConfig.LoadConfig( 'settings_default.p3d' );
+  WriteLn( P3DConfig.Serialize );
+  //WriteLn( P3DShaderNodeLib.Paths.Text );
 
   P3DGUIInit;
   P3DApplication.Initialize;

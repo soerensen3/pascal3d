@@ -57,7 +57,7 @@ begin
       if ( Assigned( SceneMain.ActiveLibrary )) then
         with ( SceneMain.ActiveLibrary ) do
           begin
-            SetCurrentDir( P3DSearchPaths.BaseDir ); //SceneMain.ActiveLibrary.FileWatch.FileName );
+            SetCurrentDir( P3DSearchPaths.BaseDir.FileName ); //SceneMain.ActiveLibrary.FileWatch.FileName );
             SaveToFile();
           end;
     end;
