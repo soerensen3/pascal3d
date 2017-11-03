@@ -103,10 +103,6 @@ type
 
       class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
 
-      procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
-      function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
-
       procedure Render( world: TMat4; Scene: TP3DScene );
       procedure RenderCallbackOnly( world: TMat4; Scene: TP3DScene ); reintroduce;
 
@@ -114,8 +110,6 @@ type
 
       procedure ClearFields(); override;
       function CalculateParentMatrix: TMat4;
-
-      class function DOMNodeName: String; override;
 
     published
       property Children: TP3DObjectList read FChildren;
@@ -275,85 +269,6 @@ begin
                    TP3DPropertyAccessObjectModifierList.CreateField( 'Modifiers', @FModifiers, smAttribute ),
                    TP3DPropertyAccessAction.CreateGetSet( 'Action', @GetAction, @SetAction, smAttribute )],
                    'Object' );
-end;
-
-procedure TP3DObject.LoadFromDOM( ADOMNode: TDOMElement );
-var
-  Element: TDOMElement;
-  DataName: DOMString;
-  Child: TP3DObject;
-  n: Integer;
-
-  procedure LoadTransformFromDOM( DOM: TDOMElement );
-  begin
-    Transform.Position.FromString( DOM.GetAttribute( 'position' ));
-    Transform.Quaternion.FromString( DOM.GetAttribute( 'quaternion' ));
-    Transform.Scale.FromString( DOM.GetAttribute( 'scale' ));
-  end;
-
-begin
-  inherited LoadFromDOM( ADOMNode );
-{  DataName:= ADOMNode.GetAttribute( 'data' );
-  if ( DataName > '' ) then
-    begin
-      n:= Owner.AppendFromPath( DataName );
-      Data:= TP3DDataBlock( Owner.DataBlocks[ n ]);
-    end
-  else
-    Data:= nil;
-
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'transform': LoadTransformFromDom( Element );
-        'object':
-          begin
-            n:= Children.FindByName( Element.GetAttribute( 'name' ));
-            if ( n > -1 ) then
-              Children.Items[ n ].LoadFromDOM( Element )
-            else
-              begin
-                Child:= TP3DObject.CreateFromDOM( Element, Owner );
-                Children.Add( Child );
-              end;
-          end;
-      else
-        raise Exception.Create( 'Unknown tag inside Object Element: '+ Element.NodeName );
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;}
-end;
-
-procedure TP3DObject.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  Element: TDOMElement;
-  Child: TP3DObject;
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'object': begin Child:= TP3DObject.CreateFromDOM( Element, Owner ); Children.Add( Child ); end;
-      else
-        raise Exception.Create( 'Unknown tag inside object element: '+ Element.NodeName );
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
-end;
-
-
-function TP3DObject.SaveToDOM(AParent: TDOMElement): TDOMElement;
-begin
-  Result:= inherited SaveToDOM( AParent );
-  //Children.SaveToDOM( Result );
-  {if ( Assigned( Data )) then
-    begin
-      //Result.AttribStrings[ 'data' ]:= Data.DOMPath;
-      //Data.SaveToDOM( Result.OwnerDocument.DocumentElement );
-    end;}
 end;
 
 procedure TP3DObject.FastDestroy;
@@ -610,11 +525,6 @@ end;
 procedure TP3DObject.SetSphere(AValue: TP3DSphere);
 begin
   FSphere:= AValue;
-end;
-
-class function TP3DObject.DOMNodeName: String;
-begin
-  Result:= 'object';
 end;
 
 function TP3DObject.GetAction: TP3DAction;

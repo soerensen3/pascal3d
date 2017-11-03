@@ -44,12 +44,10 @@ type
     public
       constructor Create( const AData: TP3DLibrary = nil ); virtual;
       constructor CreateFromJSONContext( AContext: TP3DJSONContext ); override;
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DLibrary = nil ); virtual;
 
       destructor Destroy; override;
       procedure FastDestroy; virtual;
 
-      procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual;
       procedure LoadFromFile( FileName: String );
       procedure LoadFromBinary( FileName: String ); virtual;
       procedure Reload;
@@ -59,7 +57,6 @@ type
       procedure AddUser( User: TP3DDataBlock );
       procedure ClearFields; virtual;
       procedure ClearUsers;
-      class function DOMNodeName: String; override;
 
       property Owner: TP3DLibrary read FOwner;
       property TimeStamp: Integer read FTimeStamp;
@@ -169,9 +166,6 @@ type
       function GetDefaultValue: TItem; override;
 
     public
-      function SaveToDOM( AParentNode: TDOMElement ): Boolean; override;
-      procedure LoadFromDOM( AParentNode: TDOMElement ); override;
-
       function GetChildPropByPath( APath: String ): TP3DPropertyAccess; override;
       procedure ValueCreateNew( ClTp: TP3DInterfacedPersistentType; AContext: TP3DJSONContext ); override;
       procedure LoadFromJSONContext(AContext: TP3DJSONContext); override;
@@ -247,12 +241,13 @@ begin
       Value:= nil
     else
       begin
-        Owner:= TP3DDataBlock( Context ).Owner.GetOwnerFromPath( AValue, True );
+        WriteLn( 'Warning: gP3DPropertyAccessDataBlock.SetAsString() broken' );
+        {Owner:= TP3DDataBlock( Context ).Owner.GetOwnerFromPath( AValue, True );
         if ( not Assigned( Owner )) then
           raise Exception.Create( 'Could not find resource: ' + AValue );
         Path:= P3DXMLExtractRelativePath( AValue, FN );
         n:= Owner.AppendFromPath( Path{, TItem} ); // No need to check if already loaded, this is done in appendfrompath
-        Value:= TItem( TItem.GetContainer( Owner )[ n ]);
+        Value:= TItem( TItem.GetContainer( Owner )[ n ]);}
       end;
 end;
 
@@ -315,309 +310,12 @@ begin
     inherited CreateValueFromJSONContext( AClass, AContext );
 end;
 
-function gP3DPropertyAccessDataBlock.SaveToDOM( AParentNode: TDOMElement ): Boolean;
-var
-  root: TDOMElement;
-  Path: String;
-begin
-  Result:= inherited SaveToDOM( AParentNode );
-  if ( Result and CheckSameContext ) then
-    begin
-      root:= AParentNode.OwnerDocument.DocumentElement;
-      Path:= Value.DataPath;
-      if ( Path = '' ) then
-        begin
-          WriteLn( 'Error: empty DOMPath for ' + Value.Owner.Name + '.' + Value.Name );
-          exit;
-        end;
-      if ( not Assigned( P3DXMLFindPath( root, Path ))) then
-        if ( Assigned( Value )) then
-          Value.SaveToDOM( root );
-    end;
-end;
-
-procedure gP3DPropertyAccessDataBlock.LoadFromDOM(AParentNode: TDOMElement);
-begin
-  inherited LoadFromDOM(AParentNode);
-end;
-
 procedure StringSplit( S: String; Delim: Char; var S1, S2: String );
 begin
   S1:= ExtractWord( 1, S, [ Delim ]);
   S2:= Copy( S, Length( S1 ) + Length( Delim ) + 1, Length( S ));
 end;
 
-{
-function FindDOMByIdentifier( Identifier: String; RootNode: TDOMElement ): TDOMElement;
-var
-  Node: TDOMNode;
-  RestStr, Name: String;
-
-  function FindNode: TDOMElement;
-  var
-    Element: TDOMNode;
-  begin
-    Result:= nil;
-    Element:= RootNode.FirstChild;
-    while Assigned( Element ) do
-      if ( TDOMElement( Element ).GetAttribute( 'name' ) = Name ) then
-        begin
-          Result:= TDOMElement( Element );
-          break;
-        end
-      else
-        Element:= Element.NextSibling;
-  end;
-
-begin
-  Result:= nil;
-
-  if ( not Assigned( RootNode )) then
-    exit;
-
-  StringSplit( Identifier, '/', Name, RestStr );
-  Node:= FindNode();
-  if ( RestStr > '' ) then
-    Result:= FindDOMByIdentifier( RestStr, TDOMElement( Node ))
-  else
-    Result:= TDOMElement( Node );
-end;}
-
-
-{ gP3DCustomDatablockList }
-
-{
-function gP3DCustomDatablockList.GetCount: Integer;
-begin
-  Result:= FItems.Count;
-end;
-
-function gP3DCustomDatablockList.GetValues( Index: String ): TCustomItem;
-begin
-  Result:= GetByName( Index );
-end;
-
-procedure gP3DCustomDatablockList.SetCount( AValue: Integer );
-begin
-  FItems.Count:= AValue;
-end;
-
-function gP3DCustomDatablockList.GetItems( Index: Integer ): TCustomItem;
-begin
-  if ( Index = -1 ) then
-    Result:= nil
-  else
-    Result:= TCustomItem( FItems[ Index ]);
-end;
-
-constructor gP3DCustomDatablockList.Create;
-begin
-  inherited Create;
-  FItems:= TList.Create;
-end;
-
-destructor gP3DCustomDatablockList.Destroy;
-begin
-  Clear( FFreeChildrenOnDestroy );
-  FItems.Free;
-  inherited Destroy;
-end;
-
-function gP3DCustomDatablockList.Add( Item: TCustomItem ): Integer;
-begin
-  if ( not Assigned( Item )) then
-    exit( -1 );
-  Result:= FindByName( Item.Name );
-  if ( Result = -1 ) then
-    begin
-      Result:= FindInsertPos( Item.Name );
-      //WriteLn( 'Item.Name = ', Item.Name, ' at ', Result );
-      FItems.Insert( Result, Item );
-      if ( Assigned( OnChange )) then
-        OnChange( Self, Item, actAdd );
-      DoUpdate;
-    end
-  else if ( Item <> Items[ Result ]) then
-    raise Exception.Create( 'Cannot add to DatablockList. An item with the same name already exists: ' + Item.Name );
-end;
-
-{
-procedure gP3DCustomDatablockList.Insert( Index: Integer; Item: TCustomItem );
-begin
-  if ( not Assigned( Item )) then
-    exit;
-  FItems.Insert( Index, Item );
-  if ( Assigned( OnChange )) then
-    OnChange( Self, Item, actAdd );
-  DoUpdate;
-end;
-}
-function gP3DCustomDatablockList.FindInsertPos(AName: String): Integer;
-var
-  i: Integer;
-begin
-  Result:= 0;
-  for i:= 0 to Count - 1 do
-    begin //WriteLn( Items[ i ].Name, '<', AName, ' = ', Items[ i ].Name < AName );
-    if ( Items[ i ].Name < AName ) then
-      Result:= i + 1
-    else
-      break;end;
-end;
-
-function gP3DCustomDatablockList.FindUniqueName(BaseStr: String): String;
-var
-  I: Integer;
-begin
-  I:= 0;
-  repeat
-    Inc( I );
-    Result:= BaseStr + IntToStr( I );
-  until ( FindByName( Result ) = -1 );
-end;
-
-function gP3DCustomDatablockList.FindByName(AName: String): Integer;
-var
-  i: Integer;
-begin
-  Result:= -1;
-  for i:= 0 to Count - 1 do
-    if ( Items[ i ].Name = AName ) then
-      begin
-        Result:= i;
-        break;
-      end;
-end;
-
-function gP3DCustomDatablockList.GetByName(AName: String): TCustomItem;
-var
-  idx: Integer;
-begin
-  idx:= FindByName( AName );
-  if ( idx > -1 ) then
-    Result:= Items[ idx ]
-  else
-    Result:= nil;
-end;
-
-function gP3DCustomDatablockList.UpdateItemIndex(Index: Integer): Integer;
-var
-  Item: TCustomItem;
-begin
-  Item:= Items[ Index ];
-  Result:= FindInsertPos( Item.Name );
-  if ( Result <> Index ) then
-    begin
-      FItems.Delete( Index );
-      FItems.Insert( Result, Item );
-    end;
-end;
-
-procedure gP3DCustomDatablockList.SaveToDOM( AParent: TDOMElement );
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    Items[ i ].SaveToDOM( AParent );
-end;
-
-procedure gP3DCustomDatablockList.LoadFromStream(S: TStream);
-begin
-
-end;
-
-procedure gP3DCustomDatablockList.SaveToStream(S: TStream);
-begin
-
-end;
-
-procedure gP3DCustomDatablockList.DoUpdate;
-begin
-  FLastUpdate:= SDL_GetTicks;
-end;
-
-procedure gP3DCustomDatablockList.Delete( Index: Integer );
-begin
-  if ( Assigned( OnChange )) then
-    OnChange( Self, Items[ Index ], actDelete );
-  FItems.Delete( Index );
-  DoUpdate;
-end;
-
-procedure gP3DCustomDatablockList.Remove(Item: TCustomItem);
-begin
-  if ( Assigned( OnChange )) then
-    OnChange( Self, Item, actDelete );
-  FItems.Remove( Item );
-  DoUpdate;
-end;
-
-function gP3DCustomDatablockList.IndexOf( Item: TCustomItem ): Integer;
-begin
-  Result:= Fitems.IndexOf( Item );
-end;
-
-procedure gP3DCustomDatablockList.Clear( const FreeObjects: Boolean );
-var
-  i: Integer;
-begin
-  for i:= 0 to Self.Count - 1 do
-    begin
-      if ( Assigned( OnChange )) then
-        OnChange( Self, Items[ i ], actClear );
-      if ( FreeObjects ) then
-        Items[ i ].Free;
-    end;
-  FItems.Clear;
-  DoUpdate;
-end;
-
-function gP3DCustomDatablockList.GetEnumerator(): TP3DCustomObjectListEnumerator;
-begin
-  Result:= TP3DCustomObjectListEnumerator.Create( -1, @MoveNext );
-end;
-
-function gP3DCustomDatablockList.Reversed: TP3DCustomObjectListEnumerator;
-begin
-  Result:= TP3DCustomObjectListEnumerator.Create( Count, @MoveBack );
-end;
-
-function gP3DCustomDatablockList.MoveNext( var Index: Integer ): TCustomItem;
-begin
-  Inc( Index );
-  if ( Index < Count ) then
-    Result:= Items[ Index ]
-  else
-    Result:= nil;
-end;
-
-function gP3DCustomDatablockList.MoveBack(var Index: Integer): TCustomItem;
-begin
-  Dec( Index );
-  if ( Index > -1 ) then
-    Result:= Items[ Index ]
-  else
-    Result:= nil;
-end;
-
-procedure gP3DCustomDatablockList.SetItems( Index: Integer ; AValue: TCustomItem);
-var
-  Item: TCustomItem;
-begin
-  Item:= Items[ Index ];
-  if ( Item = AValue ) then
-    exit;
-
-  if ( Assigned( OnChange )) then
-    OnChange( Self, Item, actDelete );
-
-  FItems.Remove( Item );
-  if ( Assigned( AValue )) then
-    Add( AValue )
-  else
-    DoUpdate;
-end;
-}
 
 { TP3DDataBlock }
 
@@ -631,20 +329,6 @@ begin
     P3DDataBlockCache[ idx ].Name:= Name;
 end;
 
-{
-procedure TP3DDataBlock.SetAction(AValue: TP3DAction);
-begin
-  if FAction=AValue then Exit;
-
-  if ( Assigned( FAction )) then
-    FAction.RemoveUser( Self );
-
-  FAction:= AValue;
-
-  if ( Assigned( FAction )) then
-    FAction.AddUser( Self );
-end;
-}
 constructor TP3DDataBlock.Create(const AData: TP3DLibrary);
 begin
   if ( AData = nil ) then
@@ -671,19 +355,6 @@ begin
   WriteLn( 'CreateFromJSONContext: ', Name );
 end;
 
-constructor TP3DDataBlock.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);
-var
-  versionNd: TDOMElement;
-begin
-  Create( AData );
-
-  versionNd:= TDOMElement( ADOMNode.OwnerDocument.DocumentElement );
-  if (( Assigned( versionNd )) and ( versionNd.GetAttribute( 'version' ) >= '0.1' )) then
-    LoadFromDOMNew( ADOMNode )
-  else
-    LoadFromDOM( ADOMNode );
-end;
-
 destructor TP3DDataBlock.Destroy;
 begin
   ClearUsers;
@@ -703,39 +374,6 @@ begin
     WriteLn( '<main.' + Name + ':' + ClassName + '>.FastDestroy' );
   {$ENDIF}
   inherited Destroy;
-end;
-
-class function TP3DDataBlock.DOMNodeName: String;
-begin
-  Result:= 'datablock';
-end;
-
-
-
-
-procedure TP3DDataBlock.LoadFromDOM(ADOMNode: TDOMElement);
-  function GetFullPath(): String;
-  var
-    Node: TDOMElement;
-  begin
-    Node:= ADOMNode;
-    Result:= '';
-    Node:= TDOMElement( Node.ParentNode );
-
-    while ( Assigned( Node )) and ( Node.NodeName <> 'p3dfile' ) do
-      begin
-        Result:= Node.GetAttribute( 'name' ) + '/' + Result;
-        Node:= TDOMElement( Node.ParentNode );
-      end;
-  end;
-
-var
-  filename: DOMString;
-begin
-  //filename:= ADOMNode.OwnerDocument.DocumentElement.GetAttribute( 'filename' );
-  Name:= ADOMNode.GetAttribute( 'name' );
-  {FileWatch.FileName:= filename + '?' + }//DOMPath:= GetFullPath() + Name;
-//  WriteLn( FileWatch.FileName );
 end;
 
 
@@ -864,7 +502,8 @@ var
   Node: TDOMElement;
   Dir: String;
 begin
-  Owner.OpenDOMFile;
+  WriteLn( 'Warning: TP3DDataBlock.Reload broken' );
+  {Owner.OpenDOMFile;
   Node:= Owner.FindDOMToPath( DataPath );
   Dir:= GetCurrentDir;
   SetCurrentDir( ExtractFilePath( Owner.FileWatch.FileName ));
@@ -873,7 +512,7 @@ begin
   else
     WriteLn( 'Warning, cannot reload. Not found in DOM file!' );
   Owner.CloseDOMFile;
-  SetCurrentDir( Dir );
+  SetCurrentDir( Dir );}
 end;
 
 

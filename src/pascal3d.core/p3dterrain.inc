@@ -30,7 +30,6 @@ TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
     destructor Destroy; override;
 
     procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
-    procedure LoadFromDOM(ADOMNode: TDOMElement); override;
 
   published
     property GridSize: Single read FGridSize write FGridSize;
@@ -73,12 +72,6 @@ begin
   glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvX' ),  Position.x{ * UVMultiplier });
   glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvY' ), -Position.y{ * UVMultiplier });
   glUniform1f( P3DShaderActive.Uniforms.AddrByName( 'uvMultiplier' ), UVMultiplier );}
-end;
-
-procedure TP3DMeshModifierTerrain.LoadFromDOM(ADOMNode: TDOMElement);
-begin
-  GridSize:= StrToFloatDef( ADOMNode.GetAttribute( 'gridsize' ), 1 );
-  UVMultiplier:= StrToFloatDef( ADOMNode.GetAttribute( 'uvmultiplier' ), 1 );
 end;
 
 { TP3DMaterialModifierTerrain }

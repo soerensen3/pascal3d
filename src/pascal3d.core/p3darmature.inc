@@ -29,13 +29,10 @@ type
 
     public
       constructor Create( const AData: TP3DLibrary = nil ); override;
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DLibrary = nil ); override;
       procedure FastDestroy; override;
 
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
       procedure AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
-      class function DOMNodeName: String; override;
 
       property Armature: TP3DArmature read FArmature write SetArmature;
       property Quaternion: TQuaternion read FQuaternion write SetQuaternion;
@@ -57,9 +54,6 @@ type
       FArmature: TP3DArmature;
 
     public
-      procedure SaveToDOM(AParent: TDOMElement);
-      procedure LoadFromDOM( ADOMNode: TDOMElement );
-
       property Armature: TP3DArmature read FArmature write FArmature;
   end;
 
@@ -100,11 +94,6 @@ type
       // IP3DRenderable
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
-
-      procedure LoadFromDOM(ADOMNode: TDOMElement); override;
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
-      function SaveToDOM(AParent: TDOMElement): TDOMElement; override;
-      class function DOMNodeName: String; override;
 
     published
       property Joints: TP3DJointList read FJoints;
@@ -192,35 +181,6 @@ type
 {$IFDEF IMPLEMENTATION}
 
 { TP3DJointList }
-
-procedure TP3DJointList.SaveToDOM(AParent: TDOMElement);
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    Items[ i ].SaveToDOM( AParent );
-end;
-
-procedure TP3DJointList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  lst: TDOMNodeList;
-  i: Integer;
-begin
-  Clear();
-  lst:= ADOMNode.GetElementsByTagName( TP3DJoint.DOMNodeName );
-  try
-    Count:= lst.Count;
-    for i:= 0 to lst.Count - 1 do
-      begin
-        NamedItems[ i ]:= TP3DJoint.Create( Armature.Owner );
-        NamedItems[ i ].Armature:= Armature;
-        NamedItems[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
-      end;
-
-  finally
-    lst.Free;
-  end;
-end;
 
 { TP3DPoseJointList }
 {
@@ -423,15 +383,6 @@ begin
   Properties.Add( TP3DPropertyAccessVec3.CreateFieldSet( 'Tail', @FTail, @SetTail, smAttribute ));
 end;
 
-constructor TP3DJoint.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);
-var
-  n: Integer;
-begin
-  Create( AData );
-
-  LoadFromDOM( ADOMNode );
-end;
-
 procedure TP3DJoint.FastDestroy;
 begin
   Owner.Joints.Add( Self );
@@ -447,23 +398,6 @@ procedure TP3DJoint.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList:
 begin
   if ( rlfJoints in AFlags ) then
     AList.PushRenderObject( Self, AWorld, nil );
-end;
-
-procedure TP3DJoint.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  n: Integer;
-begin
-  {
-  n:= Owner.AppendFromDOM( TDOMElement( ADOMNode.ParentNode ));
-  if (( n > -1 ) and ( Owner.DataBlocks[ n ] is TP3DArmature )) then
-    Armature:= Owner.DataBlocks[ n ] as TP3DArmature;
-  inherited LoadFromDOMNew(ADOMNode);
-  }
-end;
-
-class function TP3DJoint.DOMNodeName: String;
-begin
-  Result:= 'joint';
 end;
 
 { TP3DArmature }
@@ -634,41 +568,6 @@ end;
 procedure TP3DArmature.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
 begin
 
-end;
-
-procedure TP3DArmature.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  Element: TDOMElement;
-  ActIdx: Integer;
-begin
-  inherited LoadFromDOM( ADOMNode );
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Element )) do
-    begin
-      //case Element.NodeName of
-        //'joint': Root.Add( TP3DJoint.CreateFromDOM( Element, Self ));
-      //else
-      //  raise Exception.Create( 'Unknown tag inside Armature element: '+ Element.NodeName );
-      //end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
-end;
-
-procedure TP3DArmature.LoadFromDOMNew(ADOMNode: TDOMElement);
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-  //Root.LoadFromDOM( ADOMNode );
-end;
-
-function TP3DArmature.SaveToDOM(AParent: TDOMElement): TDOMElement;
-begin
-  Result:= inherited SaveToDOM(AParent);
-  //Root.SaveToDOM( Result );
-end;
-
-class function TP3DArmature.DOMNodeName: String;
-begin
-  Result:= 'armature';
 end;
 
 { TP3DObjectModifierArmature }

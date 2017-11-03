@@ -67,11 +67,6 @@ type
       procedure Finalize; virtual;
       procedure Run;
 
-      procedure LoadConfig( FileName: String );
-      procedure LoadConfig( XML: TXMLDocument );
-      procedure LoadConfigSection( FileName, NodeName: String );
-      procedure LoadConfigSection( XML: TXMLDocument; DOMNode: TDOMElement );
-
       property OnMouseMotion: TSDLEventMouseMotion read FOnMouseMotion write FOnMouseMotion;
       property OnMouseButton: TSDLEventMouseButton read FOnMouseButton write FOnMouseButton;
       property OnMouseWheel: TSDLEventMouseWheel read FOnMouseWheel write FOnMouseWheel;
@@ -408,66 +403,6 @@ begin
     OnDeinit( Self );
 end;
 
-procedure TP3DApplication.LoadConfig(FileName: String);
-var
-  F: TXMLDocument;
-begin
-  if ( FileExists( FileName )) then
-    begin
-      ReadXMLFile( F, FileName );
-      LoadConfig( F );
-      F.Free;
-    end
-  else
-    raise Exception.Create( 'Could not load config! File not found: "' + FileName + '"' );
-end;
-
-procedure TP3DApplication.LoadConfig(XML: TXMLDocument);
-var
-  Child: TDOMElement;
-begin
-  Child:= TDOMElement( XML.DocumentElement.FirstChild );
-  while ( Assigned( Child )) do
-    begin
-      LoadConfigSection( XML, Child );
-
-      Child:= TDOMElement( Child.NextSibling );
-    end;
-end;
-
-procedure TP3DApplication.LoadConfigSection(FileName, NodeName: String);
-var
-  F: TXMLDocument;
-  Node: TDOMElement;
-begin
-  if ( FileExists( FileName )) then
-    begin
-      ReadXMLFile( F, FileName );
-      Node:= TDOMElement( F.DocumentElement.FindNode( NodeName ));
-      if ( Assigned( Node )) then
-        LoadConfigSection( F, Node );
-      F.Free;
-    end
-  else
-    raise Exception.Create( 'Could not load config! File not found: "' + FileName + '"' );
-end;
-
-procedure TP3DApplication.LoadConfigSection(XML: TXMLDocument; DOMNode: TDOMElement);
-var
-  wnd: TP3DWindow;
-begin
-  if ( DOMNode.NodeName = TP3DWindow.DOMNodeName ) then
-    begin
-      wnd:= TP3DWindow.Create;
-      wnd.LoadFromDOMNew( DOMNode );
-    end
-  else if ( DOMNode.NodeName = TP3DSearchPathContainer.DOMNodeName ) then
-    P3DSearchPaths.LoadFromDOMNew( DOMNode )
-  else if ( DOMNode.NodeName = TP3DLogger.DOMNodeName ) then
-    P3DLog.LoadFromDOMNew( DOMNode )
-  else if ( DOMNode.NodeName = TP3DShaderNodeLibrary.DOMNodeName ) then
-    P3DShaderNodeLib.LoadFromDOMNew( DOMNode );
-end;
 
 {$ENDIF}
 

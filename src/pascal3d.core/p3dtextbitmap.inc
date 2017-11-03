@@ -15,7 +15,6 @@ type
       constructor Create;
       destructor Destroy; override;
       constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
-      class function DOMNodeName: String; override;
 
       property Texture: TP3DTexture read FTexture write FTexture;
       property uv1: TVec2 read Fuv1 write Fuv1;
@@ -31,8 +30,6 @@ type
 
   TP3DFontLetterList = class ( specialize gP3DCustomObjectList < TP3DFontLetter > )
     function Find( C: WideChar ): Integer;
-    function SaveToDOM(AParent: TDOMElement ): TDOMElement;
-    procedure LoadFromDOM( ADOMNode: TDOMElement );
   end;
 
   TP3DPropertyAccessFontLetter = specialize gP3DPropertyAccessInterfacedPersistent < TP3DFontLetter >;
@@ -63,10 +60,6 @@ type
       procedure FastDestroy; override;
       procedure ApplyShader;
 
-      function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
-      procedure LoadFromDOMNew( ADOMNode: TDOMElement ); override;
-      class function DOMNodeName: String; override;
-
     published
       property Letters: TP3DFontLetterList read FLetters write FLetters;
       property Texture: TP3DTexture read FTexture write FTexture;
@@ -78,7 +71,6 @@ type
 { TP3DFontBmpList }
 
 TP3DFontBmpList = class ( specialize gP3DCustomObjectList < TP3DFontBmp >)
-  procedure SaveToDOM( AParent: TDOMElement );
   procedure LoadFromStream( S: TStream ); //gP3DListPropertyAccessObject needs this to compile
   procedure SaveToStream( S: TStream );
 end;
@@ -323,34 +315,6 @@ begin
         Result:= i;
         break;
       end;
-end;
-
-function TP3DFontLetterList.SaveToDOM(AParent: TDOMElement): TDOMElement;
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    Items[ i ].SaveToDOM( AParent );
-end;
-
-procedure TP3DFontLetterList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  lst: TDOMNodeList;
-  i: Integer;
-begin
-  Clear();
-  lst:= ADOMNode.GetElementsByTagName( TP3DFontLetter.DOMNodeName );
-  try
-    Count:= lst.Count;
-    for i:= 0 to lst.Count - 1 do
-      begin
-        Items[ i ]:= TP3DFontLetter.Create;
-        Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
-      end;
-
-  finally
-    lst.Free;
-  end;
 end;
 
 { TP3DFontBmp }
@@ -714,128 +678,6 @@ begin
   inherited FastDestroy;
 end;
 
-class function TP3DFontBmp.DOMNodeName: String;
-begin
-  Result:= 'font';
-end;
-
-{
-
-constructor TP3DFontBmp.CreateFromDOM(XML: TDOMElement);
-begin
-  Create;
-
-  LoadFromDOM( XML );
-end;
-
-constructor TP3DFontBmp.CreateFromFile(FName: String);
-begin
-  Create();
-  LoadFromFile( FName );
-end;
-
-procedure TP3DFontBmp.LoadFromDOM(XML: TDOMElement);
-var
-  letter: TP3DFontLetter;
-  child: TDOMNode;
-  i: Integer;
-  tex: String;
-begin
-  tex:= XML.Attributes.GetNamedItem( 'texture' ).NodeValue;
-  FFontName:= XML.Attributes.GetNamedItem( 'name' ).NodeValue;
-  Texture:= TP3DTexture.CreateFromFile( tex );
-  MipMapLoadBias:= FMipMapLoadBias;
-  Texture.MipMap:= False;
-  FSizeFactor:= StrToFloatDef( XML.Attributes.GetNamedItem( 'size' ).NodeValue, 1 );
-  for i:= 0 to XML.ChildNodes.Count - 1 do
-    if ( XML.ChildNodes[ i ].NodeName = 'char' ) then
-      begin
-        child:= XML.ChildNodes[ i ];
-
-        letter:= TP3DFontLetter.Create;
-        Letters.Add( letter );
-        letter.Letter:= child.Attributes.GetNamedItem( 'char' ).NodeValue[ 1 ];
-        letter.uv1.FromString( child.Attributes.GetNamedItem( 'uv1' ).NodeValue );
-        letter.uv2.FromString( child.Attributes.GetNamedItem( 'uv2' ).NodeValue );
-        {$IFDEF DEBUG}
-        WriteLn( 'letter ''' + letter.Letter + '''' );
-        WriteLn( 'uv1 ''' + letter.uv1.ToString() + '''' );
-        WriteLn( 'uv2 ''' + letter.uv2.ToString() + '''' );
-        {$ENDIF}
-      end;
-end;
-
-procedure TP3DFontBmp.LoadFromFile(FileName: String);
-var
-  xml: TXMLDocument;
-  dir: String;
-begin
-  if ( lowercase( ExtractFileExt( FileName )) = '.p3d' ) then
-    begin
-      FileWatch.FileName:= P3DSearchPaths.FindFileEx( FileName, GetCurrentDir );
-      if ( FileWatch.FileName = '' ) then
-        raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" was not found!', [ FileName ]));
-      ReadXMLFile( xml, FileWatch.FileName );
-      dir:= GetCurrentDir;
-      try
-        xml.DocumentElement.SetAttribute( 'filename', FileWatch.FileName );
-        SetCurrentDir( ExtractFilePath( FileWatch.FileName ));
-
-        if ( not ( xml.DocumentElement.TagName = 'p3dfile' )) then
-          raise Exception.Create( Format( 'Cannot load font from file! The specified file "%s" is not a font file!', [ FileName ]));
-
-        LoadFromDOMNew( xml.DocumentElement );
-      finally
-        SetCurrentDir( dir );
-        xml.Free;
-      end;
-    end
-end;}
-
-function TP3DFontBmp.SaveToDOM(AParent: TDOMElement): TDOMElement;
-begin
-  Result:= inherited SaveToDOM(AParent);
-  Letters.SaveToDOM( Result );
-end;
-
-procedure TP3DFontBmp.LoadFromDOMNew(ADOMNode: TDOMElement);
-begin
-  inherited LoadFromDOMNew( ADOMNode );
-  Letters.LoadFromDOM( ADOMNode );
-end;
-
-{
-procedure TP3DFontBmp.SaveToDOM(XML: TDOMDocument );
-var
-  letter: TP3DFontLetter;
-  node, root: TDOMElement;
-  i: Integer;
-begin
-  XML.AppendChild( XML.CreateElement( 'font' ));
-  root:= TDOMElement( XML.DocumentElement );
-  root.AttribStrings[ 'texture' ]:= Texture.FileWatch.FileName;
-  root.AttribStrings[ 'name' ]:= FontName;
-  root.AttribStrings[ 'size' ]:= FloatToStr( FSizeFactor );
-  for letter in Letters do
-    begin
-      node:= TDOMElement( root.AppendChild( root.OwnerDocument.CreateElement( 'char' )));
-
-      node.AttribStrings[ 'char' ]:= letter.Letter;
-      node.AttribStrings[ 'uv1' ]:= letter.uv1.ToString();
-      node.AttribStrings[ 'uv2' ]:= letter.uv2.ToString();
-    end;
-end;
-
-procedure TP3DFontBmp.SaveToFile(FileName: String);
-var
-  XML: TXMLDocument;
-begin
-  XML:= TXMLDocument.Create;
-  XML.AppendChild( XML.CreateElement( 'p3dfile' ));
-  SaveToDOM( XML.DocumentElement );
-  WriteXML( XML, FileName );
-end;
-}
 { TP3DMaterialModifierText }
 
 class function TP3DMaterialModifierText.GetIndex: Integer;
@@ -1036,20 +878,7 @@ begin
   LoadFromJSONContext( AContext );
 end;
 
-class function TP3DFontLetter.DOMNodeName: String;
-begin
-  Result:= 'char';
-end;
-
 { TP3DFontListBmp }
-
-procedure TP3DFontBmpList.SaveToDOM(AParent: TDOMElement);
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    Items[ i ].SaveToDOM( AParent );
-end;
 
 procedure TP3DFontBmpList.LoadFromStream(S: TStream);
 begin

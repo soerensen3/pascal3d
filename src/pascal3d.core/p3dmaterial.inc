@@ -26,8 +26,6 @@
 //         function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
          destructor Destroy; override;
 
-         class function DOMNodeName: String; override;
-
        published
          property TexChannel: Integer read FTexChannel write SetTexChannel;
          property Map: TP3DTexture read FMap write SetMap;
@@ -60,8 +58,6 @@
          FSpecularFactor: Single;
          FTransformDynamic: Boolean;
 
-         procedure LoadTransformFromDOM(DOM: TDOMElement);
-         procedure LoadTransformFromDOMNew(DOM: TDOMElement);
          procedure SetAlphaFactor(AValue: Single);
          procedure SetDiffuseFactor(AValue: Single);
          procedure SetDisplaceFactor(AValue: Single);
@@ -73,9 +69,6 @@
 
        public
          constructor Create( AParentMaterial: TP3DMaterial ); override;
-         constructor CreateFromDOM( AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary = nil );
-
-         procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
        published
          property DiffuseFactor: Single read FDiffuseFactor write SetDiffuseFactor;
@@ -89,14 +82,13 @@
 
      { TP3DMaterialMapList }
 
-     TP3DMaterialMapList = class( specialize gP3DInterfacedPersistentList < TP3DMaterialMap >)
+     TP3DMaterialMapList = class( specialize gP3DCustomObjectList < TP3DMaterialMap >)
        private
          FMapClass: TP3DMaterialMapClass;
          FParentMaterial: TP3DMaterial;
 
        public
          constructor Create( AParentMaterial: TP3DMaterial );
-         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
          procedure LoadFromStream( S: TStream ); //gP3DListPropertyAccessObject needs this to compile
          procedure SaveToStream( S: TStream );
          function Add(Item: TCustomItem): Integer; override;
@@ -127,9 +119,6 @@
 
          constructor Create( const AData: TP3DLibrary = nil ); override;
          procedure FastDestroy; override;
-         class function DOMNodeName: String; override;
-         function SaveToDOM(AParent: TDOMElement): TDOMElement; override;
-         procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
          procedure PassToShader( const ActiveSubset: String = '' ); virtual;
          procedure RemoveFromFields( Block: TP3DDataBlock ); override;
@@ -148,9 +137,6 @@
      { TP3DMaterialShader }
 
      TP3DMaterialShader = class ( TP3DMaterial )
-       public
-         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
-         class function DOMNodeName: String; override;
      end;
 
      { TP3DMaterialModifier }
@@ -292,9 +278,6 @@
          procedure BuildShader;
          procedure PassToShader( const ActiveSubset: String = '' ); override;
 
-         procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
-         procedure LoadFromDOMNew( ADOMNode: TDOMElement ); override;
-         class function DOMNodeName: String; override;
          procedure LoadFromJSONContext(AContext: TP3DJSONContext); override;
          procedure BeginUpdate;
          procedure EndUpdate;
@@ -416,11 +399,6 @@ begin
   inherited Destroy;
 end;
 
-class function TP3DMaterialMap.DOMNodeName: String;
-begin
-  Result:= 'map';
-end;
-
 { TP3DMaterialMapBase }
 
 procedure TP3DMaterialMapBase.SetDiffuseFactor(AValue: Single);
@@ -512,88 +490,6 @@ begin
                    TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ),
                    TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute )],
                    'Transform' );
-end;
-
-procedure TP3DMaterialMapBase.LoadTransformFromDOM( DOM: TDOMElement );
-//var
-//  Position, Scale: TVec3;
-//  Quaternion: TQuaternion;
-begin
-  Position.FromString( DOM.GetAttribute( 'position' ));
-  //Quaternion:= quat( 1 );
-  Quaternion.FromString( DOM.GetAttribute( 'quaternion' ));
-  Scale.FromString( DOM.GetAttribute( 'scale' ));
-//  Transform:= mat4translate( vec4( Position, 1 )){ * mat4( mat3( Quaternion ))} * mat4scale( vec4( Scale, 1 ));
-end;
-
-procedure TP3DMaterialMapBase.LoadTransformFromDOMNew(DOM: TDOMElement);
-//var
-  //Position, Scale: TVec3;
-  //Quaternion: TQuaternion;
-begin
-  Position.FromString( DOM.GetAttribute( 'Position' ));
-  Quaternion.FromString( DOM.GetAttribute( 'Quaternion' ));
-  Scale.FromString( DOM.GetAttribute( 'Scale' ));
-  //Transform:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
-end;
-
-constructor TP3DMaterialMapBase.CreateFromDOM(AParentMaterial: TP3DMaterialBase; ADOMNode: TDOMElement; const AData: TP3DLibrary);
-var
-  TexName, FullTexName, DataName: DOMString;
-  n: LongInt;
-  _Data: TP3DLibrary;
-  TransSect: TDOMNodeList;
-begin
-  Create( AParentMaterial );
-
-  {TexName:= ADOMNode.GetAttribute( 'file' );
-  FullTexName:= P3DSearchPaths.FindFileEx( TexName, GetCurrentDir );
-  if ( not FileExists( FullTexName )) then
-    raise Exception.Create( 'Error: The specified texture "' + TexName + '" could not be found!' );}
-
-  if ( not Assigned( AData )) then
-    _Data:= P3DData
-  else
-    _Data:= AData;
-
-  DataName:= ADOMNode.GetAttribute( 'data' );
-  if ( DataName > '' ) then
-    begin
-      n:= AParentMaterial.Owner.AppendFromPath( DataName, TP3DTexture );
-      Map:= AParentMaterial.Owner.Textures[ n ];
-    end
-  else
-    Map:= nil;
-
-  DiffuseFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'diffuse' ), 0.0 );
-  NormalFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'normal' ), 0.0 );
-  SpecularFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'specular' ), 0.0 );
-  DisplaceFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'displace' ), 0.0 );
-  AlphaFactor:= StrToFloatDef( ADOMNode.GetAttribute( 'alpha' ), 0.0 );
-  TexChannel:= StrToIntDef( ADOMNode.GetAttribute( 'layer' ), 0 );
-
-  case ADOMNode.GetAttribute( 'mode' ) of
-    'add': Mode:= mapAdd;
-    'multiply': Mode:= mapMultiply;
-    'subtract': Mode:= mapSubtract;
-    else
-      Mode:= mapMix;
-  end;
-
-  TransSect:= ADOMNode.GetElementsByTagName( 'transform' );
-  if ( TransSect.Count > 0 ) then
-    LoadTransformFromDOM( TDOMElement( TransSect.Item[ 0 ]));
-  FreeAndNil( TransSect );
-end;
-
-procedure TP3DMaterialMapBase.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  TransSect: TDOMNode;
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-  TransSect:= ADOMNode.FindNode( 'transform' );
-  if ( Assigned( TransSect )) then
-    LoadTransformFromDOMNew( TDOMElement( TransSect ));
 end;
 
 
@@ -835,64 +731,6 @@ begin
     end;
 end;
 
-procedure TP3DMaterialBase.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  SpecTmp: TVec4;
-  tex: TDOMElement;
-
-  procedure LoadTex;
-  var
-    Map: TP3DMaterialMapBase;
-  begin
-    if ( Maps.Count > 7 ) then
-      raise Exception.Create( 'Maximum Number of Maps reached: 8' );
-    Map:= TP3DMaterialMapBase.CreateFromDOM( Self, tex, Owner );
-
-    Maps.Add( Map );
-  end;
-
-begin
-  inherited LoadFromDOM( ADOMNode );
-  Name:= ADOMNode.GetAttribute( 'name' );
-  Alpha:= StrToFloatDef( ADOMNode.GetAttribute( 'alpha' ), 1.0 );
-  Diff.FromString( ADOMNode.GetAttribute( 'diffuse' ));
-  SpecTmp.FromString( ADOMNode.GetAttribute( 'specular' ));
-  Spec:= SpecTmp.YZW;
-  Spec_Hardness:= SpecTmp.X;
-
-  if ( ADOMNode.GetAttribute( 'unlit' ) = 'yes' ) then
-    FUnlit:= True;
-
-  FTransparencyMode:= tmStep;
-
-  Instancing:= True;
-
-  Maps.Clear( True );
-  tex:= TDOMElement( ADOMNode.FirstChild );
-  while Assigned( tex ) do
-    begin
-      case tex.NodeName of
-        'map': LoadTex;
-        '#comment':;
-      else
-        raise Exception.Create( 'Unknown tag inside Material Element: '+ tex.NodeName );
-      end;
-    tex:= TDOMElement( tex.NextSibling );
-  end;
-  BuildShader;
-end;
-
-procedure TP3DMaterialBase.LoadFromDOMNew(ADOMNode: TDOMElement);
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-  BuildShader();
-end;
-
-class function TP3DMaterialBase.DOMNodeName: String;
-begin
-  Result:= 'materialbase';
-end;
-
 procedure TP3DMaterialBase.LoadFromJSONContext(AContext: TP3DJSONContext);
 begin
   BeginUpdate;
@@ -924,49 +762,6 @@ begin
     sh:= sh + '_' + AModifiers.ParentObject.Name;
   outsh.Name:= sh;
 end;
-
-procedure TP3DMaterialShader.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  tex: TDOMElement;
-
-  procedure LoadTex;
-  var
-    Map: TP3DMaterialMap;
-  begin
-    if ( Maps.Count > 7 ) then
-      raise Exception.Create( 'Maximum Number of Maps reached: 8' );
-    Map:= TP3DMaterialMap.CreateFromDOM( Self, tex, Owner );
-
-    Maps.Add( Map );
-  end;
-var
-  VShaderFile, FShaderFile: DOMString;
-begin
-  inherited LoadFromDOM( ADOMNode );
-  VShaderFile:= ADOMNode.GetAttribute( 'vshader' );
-  FShaderFile:= ADOMNode.GetAttribute( 'fshader' );
-  Shader:= TP3DShader.CreateFromVertexAndFragmentShaderFile( VShaderFile, FShaderFile, Owner );
-
-  tex:= TDOMElement( ADOMNode.FirstChild );
-  Maps.Clear( True );
-  while Assigned( tex ) do
-    begin
-      case tex.NodeName of
-        'texture': LoadTex;
-        '#comment':;
-      else
-        raise Exception.Create( 'Unknown tag inside Material Element: '+ tex.NodeName );
-      end;
-    tex:= TDOMElement( tex.NextSibling );
-  end;
-end;
-
-class function TP3DMaterialShader.DOMNodeName: String;
-begin
-  Result:= 'materialshader';
-end;
-
-
 
 { TP3DMaterialModifierTexTransform }
 
@@ -1423,23 +1218,6 @@ begin
   inherited FastDestroy;
 end;
 
-class function TP3DMaterial.DOMNodeName: String;
-begin
-  Result:= 'material';
-end;
-
-function TP3DMaterial.SaveToDOM(AParent: TDOMElement): TDOMElement;
-begin
-  Result:= inherited SaveToDOM( AParent );
-  Maps.SaveToDOM( Result );
-end;
-
-procedure TP3DMaterial.LoadFromDOMNew(ADOMNode: TDOMElement);
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-  Maps.LoadFromDOM( ADOMNode );
-end;
-
 procedure TP3DMaterial.PassToShader(const ActiveSubset: String);
 var
   i: Integer;
@@ -1478,30 +1256,6 @@ constructor TP3DMaterialMapList.Create(AParentMaterial: TP3DMaterial);
 begin
   inherited Create;
   ParentMaterial:= AParentMaterial;
-end;
-
-procedure TP3DMaterialMapList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  i: Integer;
-  lst: TDOMNodeList;
-  Item: TP3DMaterialMap;
-begin
-  Clear();
-  if ( Assigned( MapClass )) then
-    begin
-      lst:= ADOMNode.GetElementsByTagName( MapClass.DOMNodeName );
-      try
-        for i:= 0 to lst.Count - 1 do
-          begin
-            Item:= MapClass.Create( ParentMaterial );
-            Item.LoadFromDOMNew( TDOMElement( lst[ i ]));
-            Add( Item );
-          end;
-
-      finally
-        lst.Free;
-      end;
-    end;
 end;
 
 procedure TP3DMaterialMapList.LoadFromStream(S: TStream);

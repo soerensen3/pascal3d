@@ -2,7 +2,7 @@
 
 { TP3DControlList }
 
-TP3DControlList = class( specialize gP3DInterfacedPersistentList < TP3DGraphicControl > )
+TP3DControlList = class( specialize gP3DCustomObjectList < TP3DGraphicControl > )
   private
     FClipRect: TP3DRect;
     FFinalScroll: TVec2;

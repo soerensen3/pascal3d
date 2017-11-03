@@ -15,8 +15,6 @@
       constructor Create;
       constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
 
-      class function DOMNodeName: String; override;
-
     published
       property Time: Float read FTime write FTime;
       property Value: Float read FValue write FValue;
@@ -27,7 +25,6 @@
   TP3DActionKeyList = class ( specialize gP3DCustomObjectList < TP3DActionKey >)
     public
       function AddKey( ATime, AValue: Float ): Integer;
-      procedure LoadFromDOM( ADOMNode: TDOMElement );
       procedure LoadFromStream( S: TStream ); //gP3DListPropertyAccessObject needs this to compile
       procedure SaveToStream( S: TStream );
 
@@ -67,10 +64,7 @@
       constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
       destructor Destroy; override;
 
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
       function Evaluate( Time: Float ): Float;
-
-      class function DOMNodeName: String; override;
 
     published
       property PropStr: String read FPropStr write SetPropStr;
@@ -82,9 +76,8 @@
 
   { TP3DActionChannelList }
 
-  TP3DActionChannelList = class( specialize gP3DInterfacedPersistentList < TP3DActionChannel >)
+  TP3DActionChannelList = class( specialize gP3DCustomObjectList < TP3DActionChannel >)
     public
-      procedure LoadFromDOM( ADOMNode: TDOMElement );
       destructor Destroy; override;
   end;
 
@@ -102,10 +95,8 @@
       constructor Create( const AData: TP3DLibrary=nil ); override;
       procedure FastDestroy; override;
 
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
       procedure Perform( Time: Float; AData: TP3DDataBlock );
 
-      class function DOMNodeName: String; override;
       property Channels: TP3DActionChannelList read FChannels write FChannels;
   end;
 
@@ -153,37 +144,11 @@ begin
   LoadFromJSONContext( AContext );
 end;
 
-class function TP3DActionKey.DOMNodeName: String;
-begin
-  Result:= 'key';
-end;
-
 { TP3DActionKeyList }
 
 function TP3DActionKeyList.AddKey(ATime, AValue: Float): Integer;
 begin
   Result:= Add( TP3DActionKey.Create( ATime, AValue ));
-end;
-
-procedure TP3DActionKeyList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  lst: TDOMNodeList;
-  i: Integer;
-begin
-  Clear();
-  lst:= ADOMNode.GetElementsByTagName( TP3DActionKey.DOMNodeName );
-  try
-    Count:= lst.Count;
-    for i:= 0 to lst.Count - 1 do
-      begin
-        Items[ i ]:= TP3DActionKey.Create();
-        Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
-        //WriteLn( 'Key Time=', Items[ i ].Time, ' Value=', Items[ i ].Value );
-      end;
-
-  finally
-    lst.Free;
-  end;
 end;
 
 procedure TP3DActionKeyList.LoadFromStream(S: TStream);
@@ -203,26 +168,6 @@ begin
 end;
 
 { TP3DActionChannelList }
-
-procedure TP3DActionChannelList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  lst: TDOMNodeList;
-  i: Integer;
-begin
-  Clear();
-  lst:= ADOMNode.GetElementsByTagName( TP3DActionChannel.DOMNodeName );
-  try
-    Count:= lst.Count;
-    for i:= 0 to lst.Count - 1 do
-      begin
-        Items[ i ]:= TP3DActionChannel.Create;
-        Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
-      end;
-
-  finally
-    lst.Free;
-  end;
-end;
 
 destructor TP3DActionChannelList.Destroy;
 begin
@@ -323,12 +268,6 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DActionChannel.LoadFromDOMNew(ADOMNode: TDOMElement);
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-  Keys.LoadFromDOM( ADOMNode );
-end;
-
 function TP3DActionChannel.Evaluate(Time: Float): Float;
 var
   First, Last: Integer;
@@ -353,12 +292,6 @@ begin
   else
     Result:= Keys[ Last ].Value;
 end;
-
-class function TP3DActionChannel.DOMNodeName: String;
-begin
-  Result:= 'channel';
-end;
-
 
 { TP3DAction }
 
@@ -388,12 +321,6 @@ begin
   inherited FastDestroy;
 end;
 
-procedure TP3DAction.LoadFromDOMNew(ADOMNode: TDOMElement);
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-  Channels.LoadFromDOM( ADOMNode );
-end;
-
 procedure TP3DAction.Perform(Time: Float; AData: TP3DDataBlock);
 var
   Channel: TP3DActionChannel;
@@ -413,11 +340,6 @@ begin
               Prop.AsString:= FloatToStr( Value, 15 );
           end;
     end;
-end;
-
-class function TP3DAction.DOMNodeName: String;
-begin
-  Result:= 'action';
 end;
 
 { TP3DActionList }

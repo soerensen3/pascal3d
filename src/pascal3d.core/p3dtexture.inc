@@ -54,18 +54,14 @@ type
       constructor CreateFromFile( AFileName: String; const AData: TP3DLibrary = nil );
       constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary = nil);
       constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DLibrary = nil );
-      constructor CreateFromDOM( ADOMNode: TDOMElement; const AData: TP3DLibrary = nil ); override;
       constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary = nil );
       constructor CreateFromGLTexture( Tex: GLint; const AData: TP3DLibrary = nil );
 
       procedure LoadMipMapFromSurface( level: Integer; ASurface: PSDL_Surface );
 
-      class function DOMNodeName: String; override;
       procedure Bind( const Location: Integer = 0 );
       procedure Unbind();
       procedure LoadFromBinary( FileName: String ); override;
-      procedure LoadFromDOM(ADOMNode: TDOMElement); override;
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
       procedure FastDestroy; override;
       procedure Reload; reintroduce;
       procedure SaveToFile;
@@ -458,40 +454,6 @@ begin
   LoadFromTextureFile( FileName );
 end;
 
-procedure TP3DTexture.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  FullTexName: String;
-  FileName: DOMString;
-begin
-  inherited LoadFromDOM(ADOMNode);
-  FileName:= ADOMNode.GetAttribute( 'file' );
-  FullTexName:= P3DSearchPaths.FindFileEx( FileName, GetCurrentDir );
-
-  if ( not FileExists( FullTexName )) then
-    raise Exception.Create( 'Error: The specified texture "' + ExtractFileName( FileName ) + '" could not be found!' );
-
-  LoadFromBinary( FullTexName );
-  FMipMap:= P3DStrToBoolDef( ADOMNode.GetAttribute( 'mipmap' ), True );
-  FFilteringMipMap:= StrToFilterDef( ADOMNode.GetAttribute( 'mipmap_filter' ), tfLinear );
-  FFiltering:= StrToFilterDef( ADOMNode.GetAttribute( 'texture_filter' ), tfLinear );
-  UpdateFiltering;
-end;
-
-procedure TP3DTexture.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  FullTexName: String;
-  FileName: DOMString;
-begin
-  inherited LoadFromDOMNew( ADOMNode );
-  {FileName:= ADOMNode.GetAttribute( 'File' );
-  FullTexName:= P3DSearchPaths.Models.FindFileEx( FileName, GetCurrentDir );
-
-  if ( not FileExists( FullTexName )) then
-    raise Exception.Create( 'Error: The specified texture "' + ExtractFileName( FileName ) + '" could not be found!' );
-
-  LoadFromBinary( FullTexName );}
-end;
-
 constructor TP3DTexture.CreateFromFile(AFileName: String; const AData: TP3DLibrary);
 var
   FileName: String;
@@ -519,12 +481,6 @@ begin
   Create( AData );
   //FFileWatch:= TP3DFilePointer.Create( '' );
   LoadFromSurface( ASurface );
-end;
-
-constructor TP3DTexture.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DLibrary);
-begin
-  inherited CreateFromDOM( ADOMNode, AData );
-  //FFileWatch:= TP3DFilePointer.Create( '' );
 end;
 
 constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary);
@@ -565,11 +521,6 @@ begin
   InternalMode:= P3DChooseFormatBySDLPixelFormat( ASurface^.format );
 
   glTexImage2D( GL_TEXTURE_2D, level, InternalMode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
-end;
-
-class function TP3DTexture.DOMNodeName: String;
-begin
-  Result:= 'texture';
 end;
 
 procedure TP3DTexture.Bind(const Location: Integer);

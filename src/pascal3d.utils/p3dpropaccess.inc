@@ -95,8 +95,6 @@ type
       constructor Create( AName: String; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore );
       { Returns a string list with all possible values which is mainly used for enums.}
       function GetNames: TStringList; virtual;
-      function SaveToDOM( AParentNode: TDOMElement ): Boolean; virtual; deprecated;
-      procedure LoadFromDOM( AParentNode: TDOMElement ); virtual; deprecated;
       { Load a the value of the property from a json context. }
       procedure LoadFromJSONContext( AContext: TP3DJSONContext ); virtual;
       { Returns a json representation of the property as string. This will also return values of sub properties. }
@@ -237,9 +235,6 @@ type
       property Values[ idx: Integer ]: TListData read GetValues write SetValues;
 
       destructor Destroy; override;
-
-      function SaveToDOM( AParentNode: TDOMElement ): Boolean; override; deprecated;
-      procedure SaveValueToDOM( AIndex: Integer; ADOMNode: TDOMElement ); virtual; deprecated;
 
       { This attempts to load the whole array from a json context. The previous content of the array is overwritten. If the context is an
         array each item is being appended to the list. If the context is a string and begins with @ followed by a number the binary file is
@@ -831,24 +826,6 @@ begin
   Result:= nil;
 end;
 
-function TP3DPropertyAccess.SaveToDOM(AParentNode: TDOMElement): Boolean;
-begin
-  Result:= False;
-  if ( Assigned( AParentNode )) then
-    case StoreMode of
-      smAttribute: AParentNode.AttribStrings[ Name ]:= AsString;
-      else
-        exit;
-    end;
-  Result:= True;
-end;
-
-procedure TP3DPropertyAccess.LoadFromDOM( AParentNode: TDOMElement );
-begin
-  if ( Assigned( AParentNode )) then
-    AsString:= AParentNode.AttribStrings[ Name ];
-end;
-
 procedure TP3DPropertyAccess.LoadFromJSONContext(AContext: TP3DJSONContext);
 begin
   raise Exception.CreateFmt( P3DERROR_JSON_PROP_LOADER_NOT_IMPLEMENTED, [ ClassName ]);
@@ -1382,37 +1359,6 @@ begin
   if ( Assigned( FFakeProp )) then
     FFakeProp.Free;
   inherited Destroy;
-end;
-
-function gP3DListPropertyAccess.SaveToDOM(AParentNode: TDOMElement): Boolean;
-var
-  Node: TDOMElement;
-  i: Integer;
-  Prop: TP3DPropertyAccess;
-begin
-  Result:= inherited SaveToDOM( AParentNode );
-  case StoreMode of
-    smNode:
-      begin
-        Node:= AParentNode.OwnerDocument.CreateElement( Name );
-        AParentNode.AppendChild( Node );
-
-        for i:= 0 to ArrayCount - 1 do
-          begin
-            Prop:= GetArrayAsProp( i );
-            Prop.SaveToDOM( Node );
-          end;
-      end;
-  end;
-end;
-
-procedure gP3DListPropertyAccess.SaveValueToDOM(AIndex: Integer; ADOMNode: TDOMElement);
-begin
-{  Val:= Values[ AIndex ];
-  if ( Assigned( Val )) then
-    Val.SaveToDOM( Node )
-  else
-    AParentNode.AppendChild( AParentNode.OwnerDocument.CreateElement( 'empty' ));}
 end;
 
 procedure gP3DListPropertyAccess.LoadFromJSONContext(AContext: TP3DJSONContext);

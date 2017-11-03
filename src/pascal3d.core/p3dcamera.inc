@@ -46,8 +46,6 @@ type
     public
       procedure UpdateMatrices(CamObject: TP3DObject);
       procedure PassToShader;
-      procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
-      class function DOMNodeName: String; override;
 
       constructor Create( const AData: TP3DLibrary = nil ); override;
       procedure FastDestroy; override;
@@ -155,29 +153,6 @@ begin
       //glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'mnormal'), 1, False, @mnorm ); cle( Self ); // contains left, up, forward vectors
       glUniform3fv( P3DShaderActive.Uniforms.AddrByName( 'campos'), 1, @Position ); cle( Self );
     end;
-end;
-
-procedure TP3DCamera.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  AttrS: DOMString;
-  FData: TP3DData;
-begin
-  Name:= ADOMNode.GetAttribute( 'name' );
-
-  AttrS:= ADOMNode.GetAttribute( 'near' );
-  if ( AttrS > '' ) then
-    Near:= StrToFloatDef( AttrS, 0.0 );
-
-  AttrS:= ADOMNode.GetAttribute( 'far' );
-  if ( AttrS > '' ) then
-    Far:= StrToFloatDef( AttrS, 0.0 );
-
-  //FileWatch.FileName:= '';
-end;
-
-class function TP3DCamera.DOMNodeName: String;
-begin
-  Result:= 'camera';
 end;
 
 constructor TP3DCamera.Create(const AData: TP3DLibrary);

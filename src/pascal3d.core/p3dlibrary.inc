@@ -60,56 +60,34 @@ type
       FTextures: TP3DTextureContainer;
 
       FFileWatch: TP3DFilePointer;
-      FDOMFile: TXMLDocument;
       FIsDesignerPackage: Boolean;
       FBinFile: TFileStream;
       FLastUpdate: Integer;
 
       function GetBinFile: TFileStream;
-      function GetDOMFile: TXMLDocument;
       function GetName: String; virtual;
       procedure PerformActions(GlobalTime: Float);
       procedure SetGlobalTime(AValue: Single);
-//      function LoadDataBlockByPathNoCheck( LocalPath: String ): TP3DDataBlock;
 
     protected
-      procedure OpenDOMFile;
-      procedure CreateDOMFile;
-      procedure CloseDOMFile;
-      procedure SaveDOMFile( const FName: String = '' );
       procedure CreateBinFile( const AFileName: String = '' );
       procedure CloseBinFile;
 
     public
       constructor Create;
-      constructor CreateFromDOM( ADOMNode: TDOMElement );
       constructor CreateFromFile( AFileName: String );
       destructor Destroy; override;
 
-      function FindDOMToPath( DOMPath: String ): TDOMElement;
       function GetOwnerFromPath( DOMPath: TP3DXMLPath; const ForceLoad: Boolean = False ): TP3DLibrary;
-//      function FindDataBlockByPath( DOMPath: String ): TP3DDataBlock;
-//      function LoadDataBlockByPath( DOMPath: String ): TP3DDataBlock;
-//      function LoadDatablockByDOM(ADOMNode: TDOMElement): TP3DDataBlock;
 
-      function AppendFromDOM( ADOMNode: TDOMElement; AParent: TP3DDataBlock ): Integer;
-      function AppendFromDOM( ADOMNode: TDOMElement; AType: TP3DDataBlockType; const AParent: TP3DDataBlock = nil ): Integer;
-      function AppendFromDOM( ADOMNode: TDOMElement ): Integer;
-      function AppendFromPath( APath: TP3DXMLPath ): Integer;
-      function AppendFromPath( APath: TP3DXMLPath; AParent: TP3DDataBlock ): Integer;
-      function AppendFromPath( APath: TP3DXMLPath; AType: TP3DDataBlockType; const AParent: TP3DDataBlock = nil ): Integer;
-
-      function AppendAllFromDom( ADOMNode: TDOMElement; AType: TP3DDataBlockType ): Integer;
       function AppendFile( AFileName: String ): String;
       function CreateNew( Tp: TP3DDataBlockType; const CreateObject: Boolean = True ): Integer;
-      procedure SaveToDOM( const ADOMNode: TDOMElement = nil );
       procedure SaveToFile( const AFileName: String = '' );
       procedure SaveToFile( AParentClass: TP3DDataBlockType; const AFileName: String = '' );
       procedure RemoveFromFields( Block: TP3DDataBlock ); virtual;
       procedure ClearFields; virtual;
       //function IsValid( Obj: TP3DDataBlock ): Boolean; virtual;
       function CheckLastChange: Integer; virtual;
-      class function DOMNodeName: String; override;
 
     published
       property Cameras: TP3DCameraContainer read FCameras write FCameras;
@@ -129,7 +107,6 @@ type
       property GlobalTime: Single read FGlobalTime write SetGlobalTime;
 
       property FileWatch: TP3DFilePointer read FFileWatch write FFileWatch;
-      property DOMFile: TXMLDocument read GetDOMFile write FDOMFile;
       property BinFile: TFileStream read GetBinFile write FBinFile;
       property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
       property Name: String read GetName;
@@ -211,13 +188,6 @@ begin
   Result:= ExtractFileName( FileWatch.FileName );
 end;
 
-function TP3DLibrary.GetDOMFile: TXMLDocument;
-begin
-  if ( not Assigned( FDOMFile )) then
-    OpenDOMFile;
-  Result:= FDOMFile;
-end;
-
 function TP3DLibrary.GetBinFile: TFileStream;
 begin
   if ( not Assigned( FBinFile )) then
@@ -268,13 +238,6 @@ begin
     P3DData.Libraries.Add( Self );
 end;
 
-
-constructor TP3DLibrary.CreateFromDOM(ADOMNode: TDOMElement);
-begin
-  Create;
-  AppendFromDom( ADOMNode );
-end;
-
 constructor TP3DLibrary.CreateFromFile(AFileName: String);
 begin
   Create;
@@ -294,7 +257,6 @@ begin
   else
     WriteLn('<main>.Objects: ' + DataBlocks.DumpObjectList );
   {$ENDIF}
-  CloseDOMFile;
 
   ClearFields;
   FreeAndNil( FCameras );
@@ -316,37 +278,6 @@ begin
     P3DData.Libraries.Remove( Self );
 
   inherited Destroy;
-end;
-
-procedure TP3DLibrary.OpenDOMFile;
-begin
-  CloseDOMFile;
-  ReadXMLFile( FDOMFile, FileWatch.FileName );
-end;
-
-procedure TP3DLibrary.CreateDOMFile;
-begin
-  CloseDOMFile;
-  FDOMFile:= TXMLDocument.Create;
-  DOMFile.AppendChild( DOMFile.CreateElement( 'p3dscene' ));
-  DOMFile.DocumentElement.AttribStrings[ 'version' ]:= IntToStr( P3DFileVerMaj ) + '.' + IntToStr( P3DFileVerMin );
-end;
-
-procedure TP3DLibrary.CloseDOMFile;
-begin
-  FreeAndNil( FDOMFile );
-end;
-
-procedure TP3DLibrary.SaveDOMFile(const FName: String);
-var
-  FileName: String;
-begin
-  if ( FName > '' ) then
-    FileName:= FName
-  else
-    FileName:= FileWatch.FileName;
-
-  P3DXMLWrite( DOMFile.DocumentElement, FileName );
 end;
 
 procedure TP3DLibrary.CreateBinFile(const AFileName: String);
@@ -378,11 +309,6 @@ begin
         DeleteFileUTF8( FName );
     end;
   FreeAndNil( FBinFile );
-end;
-
-function TP3DLibrary.FindDOMToPath(DOMPath: String): TDOMElement;
-begin
-  Result:= P3DXMLFindPath( DOMFile.DocumentElement, DOMPath );
 end;
 
 function TP3DLibrary.GetOwnerFromPath(DOMPath: TP3DXMLPath; const ForceLoad: Boolean): TP3DLibrary;
@@ -531,197 +457,6 @@ begin
 end;
 }
 
-function TP3DLibrary.AppendFromDOM(ADOMNode: TDOMElement; AParent: TP3DDataBlock): Integer;
-begin
-  if ( ADOMNode.NodeName = 'p3dfile' ) then
-    AppendAllFromDom( ADOMNode, TP3DScene )
-  else
-    begin
-      if ( ADOMNode.NodeName = TP3DObject.DOMNodeName ) then
-        begin
-          if ( AParent is TP3DScene ) then
-            Result:= TP3DScene( AParent ).Objects.Add( TP3DObject.CreateFromDOM( ADOMNode, Self ))
-          else if ( AParent is TP3DObject ) then
-            Result:= TP3DObject( AParent ).Children.Add( TP3DObject.CreateFromDOM( ADOMNode, Self ))
-          else
-            raise Exception.Create( 'TP3DLibrary.AppendFromDOM - Error: An object must have a parent.' );
-        end
-      else
-        AppendFromDom( ADOMNode );
-    end;
-end;
-
-//DEBUG THIS
-function TP3DLibrary.AppendFromDOM( ADOMNode: TDOMElement; AType: TP3DDataBlockType; const AParent: TP3DDataBlock ): Integer;
-var
-  ObjName: WideString;
-  tp: TP3DInterfacedPersistentType;
-begin
-  ObjName:= ADOMNode.AttribStrings[ 'Name' ];
-  tp:= P3DClassFactory.FindByDOMNodeName( ADOMNode.NodeName );
-  if ( tp.InheritsFrom( AType )) then
-    raise Exception.Create( Format( 'Error while appending from DOM: The DOM with name %s is of the wrong type. Expected "%s", Found "%s"', [ ObjName, AType.ClassName, tp.ClassName ]));
-  Result:= AType.GetContainer( Self ).FindByName( ObjName );
-  if ( Result > -1 ) then
-    begin
-    end
-  else
-    begin
-      if ( Assigned( AParent )) then
-        Result:= AppendFromDOM( ADOMNode, AParent )
-      else
-        Result:= AppendFromDOM( ADOMNode );
-    end;
-end;
-
-function TP3DLibrary.AppendFromDOM(ADOMNode: TDOMElement): Integer;
-var
-  ObjName: String;
-  tp: TP3DInterfacedPersistentType;
-
-  function LoadData(): Integer;
-    function CreateObject: Integer;
-    begin
-      Result:= -1;
-
-      if ( ADOMNode.NodeName = 'object' ) then
-        raise Exception.Create( 'TP3DLibrary.AppendFromDOM - Error: An object must have a parent.' )
-      else
-        tp:= P3DClassFactory.FindByDOMNodeName( ADOMNode.NodeName );
-      if (( not Assigned( tp )) or ( not ( tp.InheritsFrom( TP3DDataBlock )))) then
-        P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ADOMNode.NodeName + '". Skipping.' )
-      else
-        Result:= CreateNew( TP3DDataBlockType( tp ), False );
-    end;
-
-  var
-    versionNd: TDOMElement;
-    version: Extended;
-  begin
-    versionNd:= TDOMElement( ADOMNode.OwnerDocument.DocumentElement );
-    if ( Assigned( versionNd )) then
-      version:= StrToFloatDef( versionNd.GetAttribute( 'version' ), 0.0 );
-
-    Result:= CreateObject;
-
-    if ( version >= 0.1 ) then
-      TP3DDataBlockType( tp ).GetContainer( Self )[ Result ].LoadFromDOMNew( ADOMNode )
-//    else
-//      TP3DDataBlockType( tp ).GetContainer( Self ).LoadFromDOM( ADOMNode );
-    {.$IFDEF VERBOSE}
-    //WriteLn( Format( 'Created datablock of type "%s" and name "%s" with index %d', [ ADOMNode.NodeName, AName, Result ]));
-    {.$ENDIF}
-  end;
-
-{
-'mesh', 'material',
-  'camera', 'light',
-  'lamp', 'scene',
-  'armature', 'action': Result:= LoadData();
-'texture':
-    Result:= DataBlocks.IndexOf( TP3DTexture.CreateFromDOM( ADOMNode, Self ))
-
-
-else
-  P3DLog.LogInfo( Self, 'Warning: Cannot append from dom. Unsupported node type "' + ADOMNode.NodeName + '". Skipping.' );
-}
-begin
-  ObjName:= ADOMNode.AttribStrings[ 'Name' ];
-  if ( ObjName = '' ) then //temporary
-    ObjName:= ADOMNode.AttribStrings[ 'name' ];
-
-  if ( ObjName > '' ) then
-    begin
-      tp:= P3DClassFactory.FindByDOMNodeName( ADOMNode.NodeName );
-      if ( tp.InheritsFrom( TP3DDataBlock )) then
-        Result:= TP3DDataBlockType( tp ).GetContainer( Self ).FindByName( ObjName )
-      else
-        Result:= -1;
-      if ( Result = -1 ) then
-        Result:= LoadData();
-    end
-  else
-    Result:= -1;
-end;
-
-function TP3DLibrary.AppendFromPath(APath: TP3DXMLPath): Integer;
-var
-  Nd: TDOMElement;
-  Owner: TP3DLibrary;
-begin
-  if ( not Assigned( DOMFile )) then
-    begin
-      Result:= -1;
-      exit;
-    end;
-
-  Nd:= P3DXMLFindPath( DOMFile.DocumentElement, APath );
-  Owner:= GetOwnerFromPath( APath );
-  if ( Assigned( Nd )) then
-    Result:= Owner.AppendFromDOM( Nd )
-  else
-    Result:= -1;
-end;
-
-function TP3DLibrary.AppendFromPath(APath: TP3DXMLPath; AParent: TP3DDataBlock): Integer;
-var
-  Nd: TDOMElement;
-  Owner: TP3DLibrary;
-begin
-  if ( not Assigned( DOMFile )) then
-    begin
-      Result:= -1;
-      exit;
-    end;
-
-  Nd:= P3DXMLFindPath( DOMFile.DocumentElement, APath );
-  Owner:= GetOwnerFromPath( APath );
-  if ( Assigned( Nd )) then
-    Result:= Owner.AppendFromDOM( Nd, AParent )
-  else
-    Result:= -1;
-end;
-
-function TP3DLibrary.AppendFromPath(APath: TP3DXMLPath; AType: TP3DDataBlockType; const AParent: TP3DDataBlock): Integer;
-var
-  Nd: TDOMElement;
-  Owner: TP3DLibrary;
-begin
-  if ( not Assigned( DOMFile )) then
-    begin
-      Result:= -1;
-      exit;
-    end;
-
-  Nd:= P3DXMLFindPath( DOMFile.DocumentElement, APath );
-  Owner:= GetOwnerFromPath( APath );
-  if ( Assigned( Nd )) then
-    Result:= Owner.AppendFromDOM( Nd, AType, AParent )
-  else
-    Result:= -1;
-end;
-
-function TP3DLibrary.AppendAllFromDom(ADOMNode: TDOMElement; AType: TP3DDataBlockType): Integer;
-var
-  filter: String;
-  lst: TDOMNodeList;
-  i: Integer;
-begin
-  filter:= AType.DOMNodeName;
-  lst:= ADOMNode.GetElementsByTagName( filter );
-  try
-    Result:= 0;
-    for i:= 0 to lst.Count - 1 do
-      begin
-        if ( AppendFromDom( TDOMElement( lst[ i ])) > -1 ) then
-          Inc( Result );
-      end;
-
-  finally
-    lst.Free;
-  end;
-end;
-
 function TP3DLibrary.AppendFile( AFileName: String ): String;
 var
   dir, FName: String;
@@ -772,18 +507,6 @@ begin
     Result:= Tp.GetContainer( Self ).IndexOf( data );
 end;
 
-procedure TP3DLibrary.SaveToDOM(const ADOMNode: TDOMElement);
-var
-  Parent: TDOMElement;
-begin
-  if ( Assigned( ADOMNode )) then
-    Parent:= ADOMNode
-  else
-    Parent:= DOMFile.DocumentElement;
-
-  //Scenes.SaveToDOM( Parent );
-end;
-
 procedure TP3DLibrary.SaveToFile(const AFileName: String);
 var
   json: TJSONData;
@@ -826,23 +549,6 @@ begin
 
   CreateBinFile( ChangeFileExt( FileName, '.p3dbin' ));
 
-  if ( Assigned( FDOMFile )) then
-    FreeAndNil( FDOMFile );
-  CreateDOMFile;
-
-  {if ( AParentClass = TP3DObject ) then Objects.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DArmature ) then Armatures.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DAction ) then Actions.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DCamera ) then Cameras.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DFontBmp ) then Fonts.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DJoint ) then Joints.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DLight ) then Lights.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DMaterial ) then Materials.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DMesh ) then Meshes.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DScene ) then Scenes.SaveToDOM( DOMFile.DocumentElement )
-  else if ( AParentClass = TP3DShader ) then Shaders.SaveToDOM( DOMFile.DocumentElement );}
-
-  SaveDOMFile( FileName );
   CloseBinFile;
 end;
 
@@ -949,11 +655,6 @@ end;
 function TP3DLibrary.CheckLastChange: Integer;
 begin
   Result:= FLastUpdate;
-end;
-
-class function TP3DLibrary.DOMNodeName: String;
-begin
-  Result:= 'p3dfile';
 end;
 
 procedure TP3DLibrary.PerformActions(GlobalTime: Float);

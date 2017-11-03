@@ -140,8 +140,6 @@ type
       procedure LoadLibraryPath( PathName: String; const Ext: String = '*.pmd' );
       function FindNode( ANode: String ): TP3DShaderNode;
 
-      class function DOMNodeName: String; override;
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
       procedure UpdatePaths( const Index: Integer = -1 );
 
       property Paths: TP3DFilePointerList read FPaths write FPaths;
@@ -484,28 +482,6 @@ begin
       begin
         Result:= TP3DShaderNode( Node );
         break;
-      end;
-end;
-
-class function TP3DShaderNodeLibrary.DOMNodeName: String;
-begin
-  Result:= 'shadernodelibrary';
-end;
-
-procedure TP3DShaderNodeLibrary.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  Path: TDOMElement;
-  value: DOMString;
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-
-  Path:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Path )) do
-    if ( Path.NodeName = 'path' ) then
-      begin
-        value:= Path.GetAttribute( 'value' );
-        Paths.Add( TP3DFilePointer.Create( value ));
-        Path:= TDOMElement( Path.NextSibling );
       end;
 end;
 

@@ -17,10 +17,8 @@
     public
       constructor Create( const AData: TP3DLibrary = nil ); override;
       procedure FastDestroy; override;
-      class function DOMNodeName: String; override;
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject );
-      procedure LoadFromDOM(ADOMNode: TDOMElement);
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
 
       property Color: TVec3 read FColor write FColor;
@@ -105,11 +103,6 @@ begin
   inherited FastDestroy;
 end;
 
-class function TP3DLight.DOMNodeName: String;
-begin
-  Result:= 'light';
-end;
-
 procedure TP3DLight.Render(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DObject );
 begin
@@ -120,38 +113,6 @@ begin
     end
   else
     world:= world * RenderObject.Transform.Matrix;
-end;
-
-procedure TP3DLight.LoadFromDOM( ADOMNode: TDOMElement );
-var
-  AttrS: DOMString;
-begin
-  inherited LoadFromDOM( ADOMNode );
-  case ADOMNode.GetAttribute( 'type' ) of
-    'sun':
-      LightType:= ltSun;
-    'point':
-      LightType:= ltPoint;
-    'spot':
-      LightType:= ltSpot;
-    else
-      raise Exception.Create( 'Cannot create light from DOM. Either no or an unsupported light type was specified: "' + ADOMNode.GetAttribute( 'type' ) + '"' );
-  end;
-
-//  AttrS:= ADOMNode.GetAttribute( 'position' );
-//  if ( AttrS > '' ) then
-//    Position.FromString( AttrS );
-  AttrS:= ADOMNode.GetAttribute( 'color' );
-  if ( AttrS > '' ) then
-    Color.FromString( AttrS );
-//  if ( AttrS > '' ) then
-//    Position.FromString( AttrS );
-//  AttrS:= ADOMNode.GetAttribute( 'direction' );
-//  if ( AttrS > '' ) then
-//    Direction.FromString( AttrS );
-  AttrS:= ADOMNode.GetAttribute( 'energy' );
-  if ( AttrS > '' ) then
-    Energy:= StrToFloatDef( AttrS, 0.0, DefaultFormatSettings );
 end;
 
 procedure TP3DLight.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);

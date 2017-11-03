@@ -72,7 +72,6 @@ type
       procedure Show;
       procedure Hide;
       procedure UpdateViewport;
-      class function DOMNodeName: String; override;
 
       property OnRender: TP3DWindowEvent read fOnRender write fOnRender;
 
@@ -99,7 +98,7 @@ type
   end;
 
   TP3DPropertyAccessWindow = specialize gP3DPropertyAccessInterfacedPersistent < TP3DWindow >;
-  TP3DWindowList = specialize gP3DInterfacedPersistentList < TP3DWindow >;
+  TP3DWindowList = specialize gP3DCustomObjectList < TP3DWindow >;
   TP3DPropertyAccessWindowList = specialize gP3DListPropertyAccessObject < TP3DWindowList, TP3DWindow, TP3DPropertyAccessWindow >;
 
   function P3DClientToScreen( Window: TP3DWindow; X, Y: Integer ): TPoint;
@@ -210,11 +209,6 @@ end;
 procedure TP3DWindow.UpdateViewport;
 begin
   ResizeViewport( Width, Height );
-end;
-
-class function TP3DWindow.DOMNodeName: String;
-begin
-  Result:= 'window';
 end;
 
 destructor TP3DWindow.Destroy;

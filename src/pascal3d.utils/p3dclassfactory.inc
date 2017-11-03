@@ -16,7 +16,6 @@ type
   }
 
   TP3DClassFactory = class ( specialize gP3DClassFactory < TP3DInterfacedPersistentType >)
-    function FindByDOMNodeName( ADOMName: String ): TClassItem; deprecated;
     function Add(Item: TCustomItem): Integer; override;  // Add's a new class to the dictionary and returns it's index.
                                                          // If the class was already added the found index is returned instead.
   end;
@@ -42,19 +41,6 @@ begin
 end;
 
 { TP3DClassFactory }
-
-function TP3DClassFactory.FindByDOMNodeName(ADOMName: String): TClassItem;
-var
-  i: Integer;
-begin
-  Result:= nil;
-  for i := 0 to Count - 1 do
-    if ( Items[ i ].DOMNodeName = ADOMName ) then
-      begin
-        Result:= Items[ i ];
-        break;
-      end;
-end;
 
 function TP3DClassFactory.Add(Item: TCustomItem): Integer;
 begin

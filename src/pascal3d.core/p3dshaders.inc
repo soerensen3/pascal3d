@@ -119,8 +119,6 @@ type
       constructor CreateFromVertexAndFragmentShader( AVShader, AFShader: String; const AData: TP3DLibrary = nil );
       procedure FastDestroy; override;
 
-      class function DOMNodeName: String; override;
-
       procedure UpdateUniforms();
       procedure BindAttribLocations();
       function DumpUniforms: String;
@@ -1124,11 +1122,6 @@ begin
   FUniforms.Clear( True );
   FUniforms.Free;
   inherited FastDestroy;
-end;
-
-class function TP3DShader.DOMNodeName: String;
-begin
-  Result:= 'shader';
 end;
 
 procedure TP3DShader.UpdateUniforms;

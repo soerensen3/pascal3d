@@ -23,9 +23,7 @@
 
       public
         constructor Create( AParentMesh: TP3DMesh );
-        constructor CreateFromDOM( ADOMNode: TDOMElement; AParentMesh: TP3DMesh );
         constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
-        class function DOMNodeName: String; override;
 
       published
         property PolyStart: Integer read FPolyStart write SetPolyStart;
@@ -38,7 +36,7 @@
 
     { TP3DMeshMaterialGroupList }
 
-    TP3DMeshMaterialGroupList = class( specialize gP3DInterfacedPersistentList < TP3DMeshMaterialGroup >)
+    TP3DMeshMaterialGroupList = class( specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >)
       private
         FParentMesh: TP3DMesh;
 
@@ -46,8 +44,6 @@
         constructor Create( AParentMesh: TP3DMesh );
 
         function Find( Material: TP3DMaterial ): Integer;
-        procedure SaveToDOM( AParent: TDOMElement );
-        procedure LoadFromDOM( ADOMNode: TDOMElement );
         procedure Add( PolyStart: Integer; PolyEnd: Integer; Material: TP3DMaterial ); overload;
         function Add(Item: TCustomItem): Integer; override;
 
@@ -77,11 +73,8 @@
 
       public
         constructor Create( AMesh: TP3DMesh ); virtual;
-        constructor CreateFromDOM( ADOMNode: TDOMElement; AMesh: TP3DMesh );
         constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
 
-        procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual; abstract;
-        class function DOMNodeName: String; override;
         function GetType: String;
 
         procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
@@ -99,8 +92,6 @@
       public
         constructor Create( AParentMesh: TP3DMesh );
 
-        procedure SaveToDOM( AParent: TDOMElement );
-        procedure LoadFromDOM( ADOMNode: TDOMElement );
         function Add(Item: TCustomItem): Integer; override;
         procedure SetItem(Index: Integer; AValue: TCustomItem); override;
 
@@ -127,9 +118,7 @@
       public
         //property Weight[ VIndex: Integer ]: Float read GetWeight;
         constructor Create( AMesh: TP3DMesh );
-        constructor CreateFromDOM( ADOMNode: TDOMElement );
         constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
-        class function DOMNodeName: String; override;
 
       published
         property Name: String read FName write FName;
@@ -139,7 +128,7 @@
 
     { TP3DMeshWeightGroupList }
 
-    TP3DMeshWeightGroupList = class( specialize gP3DInterfacedPersistentList < TP3DMeshWeightGroup >)
+    TP3DMeshWeightGroupList = class( specialize gP3DCustomObjectList < TP3DMeshWeightGroup >)
       private
         FParentMesh: TP3DMesh;
 
@@ -147,9 +136,6 @@
         constructor Create( AParentMesh: TP3DMesh );
 
         function Add(Item: TCustomItem): Integer; override;
-
-        procedure SaveToDOM( AParent: TDOMElement );
-        procedure LoadFromDOM( ADOMNode: TDOMElement );
 
         property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
     end;
@@ -175,9 +161,6 @@
         PackedVertexWeightIndices: TIVec4List;
         PackedMaterialGroups: TP3DMeshMaterialGroupList;
 
-        procedure LoadMaterialFromDOM( DOM: TDOMElement );
-        procedure LoadModifierFromDOM( DOM: TDOMElement );
-        function LoadWeightGroupsFromDOM( DOM: TDOMElement ): Boolean;
         procedure BuildIndicesFromFaces;
         class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
         function GetDataPath: String; override;
@@ -202,12 +185,7 @@
 
         procedure FastDestroy; override;
 
-        procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
-        procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
         procedure LoadFromJSONContext( AContext: TP3DJSONContext ); override;
-
-        function  SaveToDOM(AParent: TDOMElement): TDOMElement; override;
-        class function DOMNodeName: String; override;
 
         //IP3DRenderable
         procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject );
@@ -348,59 +326,6 @@ begin
     end;}
 end;
 
-procedure TP3DMesh.LoadMaterialFromDOM(DOM: TDOMElement);
-var
-  MatIdx: Integer;
-  AName: String;
-  MatPolyStart: Integer;
-  MatPolyEnd: Integer;
-  MaterialGroup: TP3DMeshMaterialGroup;
-begin
-  {AName:= DOM.GetAttribute( 'name' );
-  MatIdx:= Owner.AppendFromPath( AName, TP3DMaterial );
-  MatPolyStart:= StrToInt( DOM.GetAttribute( 'start' ));
-  MatPolyEnd:= StrToInt( DOM.GetAttribute( 'end' ));
-
-  MaterialGroup:= TP3DMeshMaterialGroup.Create( Self );
-  MaterialGroup.Material:= TP3DMaterialShader( Owner.DataBlocks[ MatIdx ]);
-  MaterialGroup.PolyStart:= MatPolyStart;
-  MaterialGroup.PolyEnd:= MatPolyEnd;
-  PackedMaterialGroups.Add( MaterialGroup );}
-end;
-
-procedure TP3DMesh.LoadModifierFromDOM(DOM: TDOMElement);
-var
-  M: TP3DMeshModifier;
-begin
-  M:= nil;
-  case DOM.GetAttribute( 'name' ) of
-    'terrain': M:= TP3DMeshModifierTerrain.CreateFromDOM( DOM, Self );
-    //'armature': M:= TP3DMeshModifierArmature.CreateFromDOM( DOM, Self );
-    else
-      raise Exception.Create( 'Cannot create mesh modifier. Modifier type not found!' ); //TODO: Improve msg
-  end;
-  if ( Assigned( M )) then
-    Modifiers.Add( M );
-end;
-
-function TP3DMesh.LoadWeightGroupsFromDOM(DOM: TDOMElement): Boolean;
-var
-  L: TDOMNodeList;
-  i: Integer;
-  grp: TP3DMeshWeightGroup;
-begin
-  L:= DOM.GetElementsByTagName( 'weightgroup' );
-
-  for i:= 0 to L.Count - 1 do
-    begin
-      grp:= TP3DMeshWeightGroup.Create( Self );
-      grp.Name:= TDOMElement( L.Item[ i ]).GetAttribute( 'name' );
-      WeightGroups.Add( grp );
-    end;
-
-  Result:= L.Count > 0;
-end;
-
 procedure TP3DMesh.BuildIndicesFromFaces;
 var
   i, j, vbase: Integer;
@@ -528,179 +453,6 @@ begin
   inherited FastDestroy;
 end;
 
-procedure TP3DMesh.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  Element: TDOMElement;
-  ext: String;
-  cnt, numTex, i: Integer;
-  F: TFileStream;
-begin
-  inherited LoadFromDOM( ADOMNode );
-  //Name:= ADOMNode.GetAttribute( 'name' );
-
-  if ( ADOMNode.hasAttribute( 'binary' )) then
-    begin
-      ext:= ADOMNode.GetAttribute( 'binary' );
-      ext:= ExpandFileName( P3DSearchPaths.FindFileEx( ext, GetCurrentDir ));
-      try
-        if ( not FileExists( ext )) then
-          raise Exception.Create( Format( 'Error while loading mesh "%s"! The specified file does not exist!', [ Ext ]));
-        F:= TFileStream.Create( Ext, fmOpenRead );
-        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'vertices' ), 0 );
-        if ( cnt > 0 ) then
-          begin
-            LoadVec3FromStream( PackedPositions, F, cnt );
-            if ( LoadWeightGroupsFromDOM( ADOMNode )) then
-              begin
-                LoadVec3FromStream( PackedVertexWeights, F, cnt );
-                //for i:= 0 to 50 do
-                 // WriteLn( VertexWeights[ i ].ToString());
-                LoadIntFromStream( PackedVertexWeightIndices, F, cnt * 4 );
-                //for i:= 0 to VertexGroups.Count div 4 - 1 do
-                //  WriteLn( Format( '%d, %d, %d, %d', [ VertexGroups[ i * 4 ], VertexGroups[ i * 4 + 1 ], VertexGroups[ i * 4 + 2 ], VertexGroups[ i * 4 + 3 ]]));
-              end;
-          end;
-
-        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'normals' ), 0 );
-        if ( cnt > 0 ) then
-          LoadVec3FromStream( PackedNormals, F, cnt );
-
-        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'loops' ), 0 );
-        Loops.LoadFromStream( F, cnt );
-
-        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'texcoords' ), 0 );
-        numtex:= StrToIntDef( ADOMNode.GetAttribute( 'texlayers' ), 0 );
-        if ( cnt > 0 ) then
-          begin
-            TexCoords.Count:= numTex;
-            for i:= 0 to numTex - 1 do
-              begin
-                TexCoords[ i ]:= TP3DVec2BufferGL.Create( True );
-                LoadVec2FromStream( TexCoords[ i ], F, cnt );
-              end;
-
-            cnt:= StrToIntDef( ADOMNode.GetAttribute( 'tangents' ), 0 );
-            if ( cnt > 0 ) then
-              LoadVec3FromStream( PackedTangents, F, cnt );
-
-            if ( cnt > 0 ) then
-              cnt:= StrToIntDef( ADOMNode.GetAttribute( 'cotangents' ), 0 );
-            LoadVec3FromStream( PackedCotangents, F, cnt );
-          end;
-
-        cnt:= StrToIntDef( ADOMNode.GetAttribute( 'faces' ), 0 );
-        //if ( cnt > 0 ) then
-        //  LoadFaceFromStream( PackedFaces, F, cnt, Loops.Count );
-        PackedFaces.LoadFromStream( F, cnt );
-        F.Free;
-      except on E: Exception do
-        begin
-          P3DLog.LogException( Self, E );
-          if ( Assigned( F )) then
-            F.Free;
-          exit;
-        end;
-      end;
-    end;
-
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'matrix': ;//Matrix:= LoadMat4FromDOM( Element );
-        'material': LoadMaterialFromDOM( Element );
-        'modifier': LoadModifierFromDOM( Element );
-        'weightgroup': ; //Do nothing. Loaded elsewhere!
-      else
-        raise Exception.Create( 'Unknown tag inside Mesh Element: '+ Element.NodeName );
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
-  //CalcCotangentsFromTangents;
-  //Calc_Tangent_Binormal;
-  UnpackBuffers;
-end;
-
-procedure TP3DMesh.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  FN, SPos: String;
-  S: TFileStream;
-  i: Integer;
-  vec: TVec4;
-
-  function SetupStream( AName: String ): Boolean;
-  var
-    P: Integer;
-  begin
-    Result:= False;
-    SPos:= ADOMNode.AttribStrings[ AName ];
-    if ( SPos = '' ) then
-      exit;
-    FN:= Copy2SymbDel( SPos, ':' );
-    P:= StrToInt( SPos );
-    if ( Assigned( S )) then
-      if ( CompareFilenames( S.FileName, FN ) <> 0 ) then
-        S.Free;
-    if ( not Assigned( S )) then
-      S:= TFileStream.Create( FN, fmOpenRead );
-    S.Position:= P;
-    Result:= True;
-  end;
-
-begin
-  S:= nil;
-  inherited LoadFromDOMNew(ADOMNode);
-  ClearVBO;
-  try
-    if ( SetupStream( 'Positions' )) then
-      PackedPositions.LoadFromStream( S );
-
-    if ( SetupStream( 'Normals' )) then
-      PackedNormals.LoadFromStream( S );
-
-    if ( SetupStream( 'Tangents' )) then
-      PackedTangents.LoadFromStream( S );
-
-    if ( SetupStream( 'Cotangents' )) then
-      PackedCotangents.LoadFromStream( S );
-
-    if ( SetupStream( 'Faces' )) then
-      PackedFaces.LoadFromStream( S );
-
-    TexCoords.Clear( True );
-
-    i:= 0;
-    while ( SetupStream( 'TexCoords' + IntToStr( i ))) do
-      begin
-        TexCoords[ TexCoords.Add( TP3DVec2BufferGL.Create( True ))].LoadFromStream( S );
-        Inc( i );
-      end;
-
-    if ( SetupStream( 'Loops' )) then
-      Loops.LoadFromStream( S );
-
-    if ( SetupStream( 'VertexWeightIndices' )) then
-      PackedVertexWeightIndices.LoadFromStream( S );
-
-    if ( SetupStream( 'VertexWeights' )) then
-      PackedVertexWeights.LoadFromStream( S );
-
-    {if ( SetupStream( 'Indices' )) then
-      Indices.LoadFromStream( S )
-    else
-      BuildIndicesFromFaces;}
-
-    PackedMaterialGroups.LoadFromDOM( ADOMNode );
-    UnpackBuffers;
-
-    WeightGroups.LoadFromDOM( ADOMNode );
-    Modifiers.LoadFromDOM( ADOMNode );
-  finally
-    S.Free;
-  end;
-
-end;
-
 procedure TP3DMesh.LoadFromJSONContext( AContext: TP3DJSONContext );
 var
   Prop: Integer;
@@ -715,77 +467,6 @@ begin
   WriteLn();
   WriteLn( Properties[ Prop ].AsString );
   WriteLn();}
-end;
-
-function TP3DMesh.SaveToDOM(AParent: TDOMElement): TDOMElement;
-var
-  fn, comment: String;
-  S: TFileStream;
-  i: Integer;
-begin
-  Result:= inherited SaveToDOM( AParent );
-
-  comment:= 'summary for mesh ' + Name + LineEnding;
-  comment+= '  Positions: ' + IntToStr( PackedPositions.Count ) + LineEnding;
-  comment+= '  Normals: ' + IntToStr( PackedNormals.Count ) + LineEnding;
-  comment+= '  Tangents: ' + IntToStr( PackedTangents.Count ) + LineEnding;
-  comment+= '  Cotangents: ' + IntToStr( PackedCotangents.Count ) + LineEnding;
-  comment+= '  Faces: ' + IntToStr( PackedFaces.Count ) + LineEnding;
-
-  for i:= 0 to TexCoords.Count - 1 do
-    comment+= '  TexCoords' + IntToStr( i ) + ': ' + IntToStr( TexCoords[ i ].Count ) + LineEnding;
-
-  comment+= '  Loops: ' + IntToStr( Loops.Count ) + LineEnding;
-
-  comment+= '  VertexWeightIndices: ' + IntToStr( PackedVertexWeightIndices.Count ) + LineEnding;
-  comment+= '  VertexWeights: ' + IntToStr( PackedVertexWeights.Count ) + LineEnding;
-
-  Result.AppendChild( Result.OwnerDocument.CreateComment( comment ));
-
-  fn:= Owner.BinFile.FileName; //ExtractFileNameOnly( Owner.Name ) + '.' + Name + '.p3dbin';
-  //S:= TFileStream.Create( fn, fmCreate );
-  S:= Owner.BinFile;
-
-  Result.AttribStrings[ 'Positions' ]:= fn + ':' + IntToStr( S.Position );
-  PackedPositions.SaveToStream( S );
-
-  Result.AttribStrings[ 'Normals' ]:= fn + ':' + IntToStr( S.Position );
-  PackedNormals.SaveToStream( S );
-
-  Result.AttribStrings[ 'Tangents' ]:= fn + ':' + IntToStr( S.Position );
-  PackedTangents.SaveToStream( S );
-
-  Result.AttribStrings[ 'Cotangents' ]:= fn + ':' + IntToStr( S.Position );
-  PackedCotangents.SaveToStream( S );
-
-  Result.AttribStrings[ 'Faces' ]:= fn + ':' + IntToStr( S.Position );
-  PackedFaces.SaveToStream( S );
-
-  for i:= 0 to TexCoords.Count - 1 do
-    begin
-      Result.AttribStrings[ 'TexCoords' + IntToStr( i )]:= fn + ':' + IntToStr( S.Position );
-      TexCoords[ i ].SaveToStream( S );
-    end;
-
-  Result.AttribStrings[ 'Loops' ]:= fn + ':' + IntToStr( S.Position );
-  Loops.SaveToStream( S );
-
-  Result.AttribStrings[ 'VertexWeightIndices' ]:= fn + ':' + IntToStr( S.Position );
-  PackedVertexWeightIndices.SaveToStream( S );
-
-  Result.AttribStrings[ 'VertexWeights' ]:= fn + ':' + IntToStr( S.Position );
-  PackedVertexWeights.SaveToStream( S );
-
-  //S.Free;
-
-  PackedMaterialGroups.SaveToDOM( Result );
-  WeightGroups.SaveToDOM( Result );
-  Modifiers.SaveToDOM( Result );
-end;
-
-class function TP3DMesh.DOMNodeName: String;
-begin
-  Result:= 'mesh';
 end;
 
 procedure TP3DMesh.Render(world: TMat4; Scene: TP3DScene;
@@ -1560,21 +1241,10 @@ begin
   Properties.Add( TP3DPropertyAccessMaterial.CreateFieldSet( 'Material', @FMaterial, @SetMaterial, smAttribute ));
 end;
 
-constructor TP3DMeshMaterialGroup.CreateFromDOM(ADOMNode: TDOMElement; AParentMesh: TP3DMesh);
-begin
-  Create( AParentMesh );
-  LoadFromDOMNew( ADOMNode );
-end;
-
 constructor TP3DMeshMaterialGroup.CreateFromJSONContext(AContext: TP3DJSONContext);
 begin
   Create( nil );
   LoadFromJSONContext( AContext );
-end;
-
-class function TP3DMeshMaterialGroup.DOMNodeName: String;
-begin
-  Result:= 'materialgroup';
 end;
 
 { TP3DMeshModifier }
@@ -1594,12 +1264,6 @@ begin
   Properties.Add( TP3DPropertyAccessString.CreateGetSet( 'Type', @GetType, nil, smDoNotStore ));
 end;
 
-constructor TP3DMeshModifier.CreateFromDOM(ADOMNode: TDOMElement; AMesh: TP3DMesh);
-begin
-  Create( AMesh );
-  LoadFromDOM( ADOMNode );
-end;
-
 constructor TP3DMeshModifier.CreateFromJSONContext(AContext: TP3DJSONContext);
 begin
   {if ( AContext.Owner is TP3DMesh ) then
@@ -1608,11 +1272,6 @@ begin
     raise Exception.Create( 'Cannot create TP3DMesh from JSON context. Owner is empty or no mesh.' );}
   Create( nil );
   LoadFromJSONContext( AContext );
-end;
-
-class function TP3DMeshModifier.DOMNodeName: String;
-begin
-  Result:= 'modifier';
 end;
 
 function TP3DMeshModifier.GetType: String;
@@ -1627,12 +1286,6 @@ begin
   Result:= 0.0;//Mesh.;
 end;
 
-constructor TP3DMeshWeightGroup.CreateFromDOM(ADOMNode: TDOMElement);
-begin
-  inherited Create;
-  LoadFromDOMNew( ADOMNode );
-end;
-
 constructor TP3DMeshWeightGroup.CreateFromJSONContext(AContext: TP3DJSONContext);
 begin
 //  if ( AContext.Owner is TP3DMesh ) then
@@ -1641,11 +1294,6 @@ begin
 //    raise Exception.Create( 'Cannot create TP3DMeshWeightGroup from JSON context. Owner is empty or no weightgroup.' );
   Create( nil );
   LoadFromJSONContext( AContext );
-end;
-
-class function TP3DMeshWeightGroup.DOMNodeName: String;
-begin
-  Result:= 'weightgroup';
 end;
 
 constructor TP3DMeshWeightGroup.Create(AMesh: TP3DMesh);
@@ -1678,43 +1326,6 @@ begin
       end;
 end;
 
-procedure TP3DMeshMaterialGroupList.SaveToDOM(AParent: TDOMElement);
-var
-  Node: TDOMElement;
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    begin
-      Items[ i ].SaveToDOM( AParent );
-      {Node:= AParent.OwnerDocument.CreateElement( 'material' );
-      AParent.AppendChild( Node );
-      Node.AttribStrings[ 'start' ]:= IntToStr( Items[ i ].PolyStart );
-      Node.AttribStrings[ 'end' ]:= IntToStr( Items[ i ].PolyEnd );
-      if ( Assigned( Items[ i ].Material  )) then
-        begin
-          Items[ i ].Material.SaveToDOM( AParent.OwnerDocument.DocumentElement );
-//          Node.AttribStrings[ 'data' ]:= Items[ i ].Material.DOMPath;
-        end;}
-    end;
-end;
-
-procedure TP3DMeshMaterialGroupList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  i: Integer;
-  lst: TDOMNodeList;
-begin
-  Clear();
-  lst:= ADOMNode.GetElementsByTagName( TP3DMeshMaterialGroup.DOMNodeName );
-  try
-    Count:= lst.Count;
-    for i:= 0 to lst.Count - 1 do
-      Items[ i ]:= TP3DMeshMaterialGroup.CreateFromDOM( TDOMElement( lst[ i ]), ParentMesh );
-
-  finally
-    lst.Free;
-  end;
-end;
-
 procedure TP3DMeshMaterialGroupList.Add(PolyStart: Integer; PolyEnd: Integer; Material: TP3DMaterial);
 var
   Group: TP3DMeshMaterialGroup;
@@ -1733,43 +1344,6 @@ begin
 end;
 
 { TP3DMeshModifierList }
-
-procedure TP3DMeshModifierList.SaveToDOM(AParent: TDOMElement);
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    Items[ i ].SaveToDOM( AParent );
-end;
-
-procedure TP3DMeshModifierList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  i: Integer;
-  lst: TDOMNodeList;
-  ClName: DOMString;
-  Tp: TP3DMeshModifierClass;
-begin
-  {Clear();
-  lst:= ADOMNode.GetElementsByTagName( TP3DMeshModifier.DOMNodeName );
-  try
-    Count:= lst.Count;
-    for i:= 0 to lst.Count - 1 do
-      begin
-        ClName:= TDOMElement( lst[ i ]).GetAttribute( 'Type' );
-        Tp:= P3DMeshModifierClassFactory.FindByName( ClName );
-        if ( Assigned( Tp )) then
-          begin
-            Items[ i ]:= Tp.Create( ParentMesh );
-            Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
-          end
-        else
-          raise Exception.Create( 'Cannot load mesh modifier from DOM: The specified modifier class was not found ' + ClName );
-      end;
-
-  finally
-    lst.Free;
-  end;}
-end;
 
 function TP3DMeshModifierList.Add(Item: TCustomItem): Integer;
 begin
@@ -1801,34 +1375,6 @@ function TP3DMeshWeightGroupList.Add(Item: TCustomItem): Integer;
 begin
   Result:= inherited Add( Item );
   Item.Mesh:= ParentMesh;
-end;
-
-procedure TP3DMeshWeightGroupList.SaveToDOM(AParent: TDOMElement);
-var
-  i: Integer;
-begin
-  for i:= 0 to Count - 1 do
-    Items[ i ].SaveToDOM( AParent );
-end;
-
-procedure TP3DMeshWeightGroupList.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  i: Integer;
-  lst: TDOMNodeList;
-begin
-  Clear();
-  lst:= ADOMNode.GetElementsByTagName( TP3DMeshWeightGroup.DOMNodeName );
-  try
-    Count:= lst.Count;
-    for i:= 0 to lst.Count - 1 do
-      begin
-        Items[ i ]:= TP3DMeshWeightGroup.Create( ParentMesh );
-        Items[ i ].LoadFromDOMNew( TDOMElement( lst[ i ]));
-      end;
-
-  finally
-    lst.Free;
-  end;
 end;
 
 {$ENDIF}

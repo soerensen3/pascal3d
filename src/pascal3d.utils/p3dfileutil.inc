@@ -27,9 +27,6 @@ type
                                                                           // which is checked before the search paths. The path does not have
                                                                           // to be in the scope.
 
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override; deprecated;
-      class function DOMNodeName: String; override;
-
       property FullPath[ Index: Integer ]: String read GetFullPath;
       property Paths: TP3DFilePointerList read FPaths write FPaths;
 
@@ -552,29 +549,6 @@ begin
         end;
     end;
 end;
-
-procedure TP3DSearchPathContainer.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  Path: TDOMElement;
-  value: DOMString;
-begin
-  inherited LoadFromDOMNew(ADOMNode);
-
-  Path:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Path )) do
-    if ( Path.NodeName = 'path' ) then
-      begin
-        value:= Path.GetAttribute( 'value' );
-        P3DSearchPaths.Paths.Add( TP3DFilePointer.Create( value ));
-        Path:= TDOMElement( Path.NextSibling );
-      end;
-end;
-
-class function TP3DSearchPathContainer.DOMNodeName: String;
-begin
-  Result:= 'paths';
-end;
-
 
 
 {$ENDIF}

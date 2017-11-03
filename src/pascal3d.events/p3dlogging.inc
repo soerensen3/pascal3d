@@ -28,8 +28,6 @@ type
       function LogException( Sender: TObject; Message: String ): TDOMElement;
       function LogException( Sender: TObject; Message: Exception ): TDOMElement;
 
-      class function DOMNodeName: String; override;
-
       property LogFile: TXMLDocument read FLogFile write FLogFile;
       property Level: TDOMElement read FLevel write FLevel;
 
@@ -320,11 +318,6 @@ end;
 function TP3DLogger.LogException(Sender: TObject; Message: Exception ): TDOMElement;
 begin //TODO: Sender might be invalid - in this case this would cause another exception
   Result:= LogException( Sender, Message.Message );//StringReplace( Message.Message, LineEnding, '<br />', [ rfReplaceAll ]));
-end;
-
-class function TP3DLogger.DOMNodeName: String;
-begin
-  Result:= 'logging';
 end;
 
 

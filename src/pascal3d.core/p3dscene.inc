@@ -149,10 +149,6 @@ type
       class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
       constructor Create( const AData: TP3DLibrary = nil ); override;
       constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DLibrary = nil );
-      procedure LoadFromDOM(ADOMNode: TDOMElement); override;
-      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
-      function SaveToDOM( AParent: TDOMElement ): TDOMElement; override;
-      class function DOMNodeName: String; override;
       procedure FastDestroy; override;
 
       procedure ClearFields; override;
@@ -759,78 +755,6 @@ begin
   Create( AData );
   AppendFile( AFileName );
 end;
-
-procedure TP3DScene.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  Element: TDOMElement;
-  Child: TP3DObject;
-  CamName: DOMString;
-  n: Integer;
-begin
-  inherited LoadFromDOM( ADOMNode );
-  {Name:= ADOMNode.GetAttribute( 'name' );
-
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'object': begin Child:= TP3DObject.CreateFromDOM( Element, Owner ); Objects.Add( Child ); end;
-      else
-        raise Exception.Create( 'Unknown tag inside scene element: '+ Element.NodeName );
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
-  CamName:= ADOMNode.GetAttribute( 'camera' );
-  if ( CamName > '' ) then
-    begin
-      n:= Owner.AppendFromPath( CamName, TP3DObject );
-      Cam:= TP3DObject( Owner.DataBlocks[ n ]);
-    end;}
-end;
-
-procedure TP3DScene.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  Element: TDOMElement;
-  Child: TP3DObject;
-begin
-  Element:= TDOMElement( ADOMNode.FirstChild );
-  while ( Assigned( Element )) do
-    begin
-      case Element.NodeName of
-        'object': begin Child:= TP3DObject.CreateFromDOM( Element, Owner ); Objects.Add( Child ); end;
-      else
-        raise Exception.Create( 'Unknown tag inside scene element: '+ Element.NodeName );
-      end;
-      Element:= TDOMElement( Element.NextSibling );
-    end;
-
-  inherited LoadFromDOMNew(ADOMNode);
-end;
-
-function TP3DScene.SaveToDOM(AParent: TDOMElement): TDOMElement;
-begin
-  Result:= inherited SaveToDOM( AParent );
-  //Objects.SaveToDOM( Result );
-end;
-
-class function TP3DScene.DOMNodeName: String;
-begin
-  Result:= 'scene';
-end;
-
-{
-constructor TP3DScene.CreateFromDOM(ADOMNode: TDOMElement; const AData: TP3DData );
-begin
-  if ( not Assigned( ADOMNode )) then
-    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Not Assigned!' );
-
-  if ( not ( ADOMNode.NodeName = 'p3dscene' )) then
-    raise Exception.Create( ClassName + ': Cannot create from DOM Node. Scenes must begin with p3dscene!' );
-
-  Create( AData );
-
-  AppendFromDom( ADOMNode );
-end;}
 
 procedure TP3DScene.FastDestroy;
 begin
