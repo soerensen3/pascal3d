@@ -1,5 +1,6 @@
 {
   "ClassName" : "TP3DLibrary",
+  "FileWatch" : "fonts\/Pascal3D-Cursors.p3d",
   "Cameras" : [
   ],
   "Joints" : [
@@ -23,7 +24,7 @@
       "Filtering" : "tfLinear",
       "FilteringMipMap" : "tfLinear",
       "MipMap" : 1,
-      "File" : "..\/..\/fonts\/Pascal3D-Cursors.png"
+      "File" : "fonts\/Pascal3D-Cursors.png"
     }
   ],
   "Armatures" : [

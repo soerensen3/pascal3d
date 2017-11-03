@@ -1,5 +1,6 @@
 {
   "ClassName" : "TP3DLibrary",
+  "FileWatch" : "fonts\/Cabin-Regular.p3d",
   "Cameras" : [
   ],
   "Joints" : [
@@ -23,7 +24,7 @@
       "Filtering" : "tfLinear",
       "FilteringMipMap" : "tfLinear",
       "MipMap" : 1,
-      "File" : "..\/..\/fonts\/Cabin-Regular.png"
+      "File" : "fonts\/Cabin-Regular.png"
     }
   ],
   "Armatures" : [
