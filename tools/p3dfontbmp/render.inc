@@ -12,6 +12,9 @@ var
 begin
   glClearColor( BlueGrey500.r, BlueGrey500.g, BlueGrey500.b, 1 );
   glClear( GL_COLOR_BUFFER_BIT OR GL_DEPTH_BUFFER_BIT );
+
+  if ( not Assigned( ActiveFont )) then
+    exit;
   //if ( Canvas.Material.Maps.Count < 1 ) then
   //  Canvas.Material.Maps.Add( TP3DMaterialMapBase.Create( Canvas.Material ));
   //Canvas.Material.Maps[ 0 ].Map:= ActiveFont.Texture;

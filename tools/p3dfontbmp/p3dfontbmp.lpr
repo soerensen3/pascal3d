@@ -38,15 +38,13 @@ type
       property Config: TP3DInterfacedPersistentList read FConfig write FConfig;
   end;
 
-  { TP3DPropertyAccessConfig }
-
   { TP3DPropertyAccessConfigItem }
 
   TP3DPropertyAccessConfigItem = class ( TP3DPropertyAccessInterfacedPersistent )
     procedure ValueCreateNew( ClTp: TP3DInterfacedPersistentType; AContext: TP3DJSONContext ); override;
   end;
 
-  TP3DPropertyAccessConfig = specialize gP3DListPropertyAccessObject < TP3DInterfacedPersistentList, TP3DInterfacedPersistent, TP3DPropertyAccessConfigItem >;
+  TP3DPropertyAccessConfig = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DInterfacedPersistentList, TP3DInterfacedPersistent, TP3DPropertyAccessInterfacedPersistent_NoCreate >;
 
 
 
@@ -85,8 +83,11 @@ end;
 procedure TP3DConfig.LoadConfig(FileName: String);
 var
   loader: TP3DJSONLoader;
+  i: Integer;
 begin
   loader:= TP3DJSONLoader.Create( FileName, Self );
+  //for i:= 0 to Config.Count - 1 do
+  //  Config[ i ].Find;
   loader.ReadFile;
   loader.Free;
 end;
@@ -98,21 +99,25 @@ Begin
     P3DEventsInit;
     P3DCoreInit;
 
-    config:= TP3DConfig.Create;
+    //config:= TP3DConfig.Create;
     //Create the application from your class
     P3DApplication:= TP3DFontBitmap.Create;
 
     //Load the config which for example contains paths for assets and shaders and setups the main window
-    P3DApplication.LoadConfig( 'settings_default.xml' );
+    //P3DApplication.LoadConfig( 'settings_default.xml' );
 
-    config.Config.Add( P3DApplication );
+    {config.Config.Add( P3DApplication );
     config.Config.Add( P3DLog );
     config.Config.Add( P3DSearchPaths );
+    config.Config.Add( P3DShaderNodeLib );
+    //P3DShaderNodeLib.Paths.Add( '../../shaders' );
+    //config.SaveConfig( 'settings_default.p3d' );}
     //config.LoadConfig( 'settings_default.p3d' );
+    P3DConfig.LoadConfig( 'settings_default.p3d' );
 
     //Initialize everything and run the application
     P3DApplication.Initialize;
-    config.Free;
+    //config.Free;
     if ( P3DApplication.MainWindow.Visible ) then
       P3DApplication.Run;
 

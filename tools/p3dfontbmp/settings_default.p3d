@@ -2,6 +2,24 @@
   "ClassName" : "TP3DConfig",
   "Config" : [
     {
+      "ClassName" : "TP3DSearchPathContainer",
+      "BaseDir" : "../../",
+      "Paths" : [
+        "assets",
+        "fonts"
+      ]
+    },
+    {
+      "ClassName" : "TP3DLogger",
+      "FileWatch" : "p3dfontbmp.html"
+    },
+    {
+      "ClassName" : "TP3DShaderNodeLibrary",
+      "Paths" : [
+        "shaders"
+      ]
+    },
+    {
       "ClassName" : "TP3DFontBitmap",
       "Windows" : [
         {
@@ -16,14 +34,6 @@
           "Title" : "p3dfontbmp"
         }
       ]
-    },
-    {
-      "ClassName" : "TP3DLogger",
-      "FileName" : "\/home\/johannes\/Documents\/dev\/Lazarus\/p3d\/p3dfontbmp\/p3dfontbmp.html"
-    },
-    {
-      "ClassName" : "TP3DSearchPathContainer",
-      "BaseDir" : "\/home\/johannes\/Documents\/dev\/Lazarus\/p3d\/tools\/p3dfontbmp\/"
     }
   ]
 }
