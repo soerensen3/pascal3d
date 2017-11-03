@@ -226,6 +226,8 @@ begin
 end;
 
 constructor TP3DLibrary.Create;
+var
+  fp: TP3DPropertyAccessFilePointer;
 begin
   inherited;
 
@@ -244,8 +246,11 @@ begin
   Fonts:= TP3DFontContainer.Create( Self );
   FileWatch:= TP3DFilePointer.Create( '', Self );
 
+  fp:= TP3DPropertyAccessFilePointer.CreateField( 'FileWatch', @FFileWatch, smAttribute );
+  fp.PathMode:= pmRelativeToBaseBath;
+
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessFilePointer.CreateFieldSet( 'FileWatch', @FileWatch, nil, smDoNotStore ));
+  Properties.Add( fp );
 
   Properties.Add( TP3DPropertyAccessCameraContainer.CreateField( 'Cameras', @FCameras, smAttribute ));
   Properties.Add( TP3DPropertyAccessJointContainer.CreateField( 'Joints', @FJoints, smAttribute ));

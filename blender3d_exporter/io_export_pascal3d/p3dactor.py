@@ -2,6 +2,15 @@ from . import p3ddatablock, p3dexporthelper
 import bpy
 
 class P3DObject( p3ddatablock.P3DDataBlock ):
+    def ExportModifiers( self, root, obj ):
+        self.Modifiers = []
+        root.Exporter.report({ 'INFO' }, str( obj ))
+        if root.Exporter.ExportArmatures and obj:
+            armature = obj.find_armature()
+            if ( armature ):
+                self.Modifiers = [{ "ClassName" : "TP3DObjectModifierArmature", "Armature": "Armatures[\"" + armature.data.name + "\"]" }]
+
+
     def __init__( self, block, root = None, path='', obj = None ): # obj = scene
         self.Name = block.name
         root.ActiveObj = block
@@ -18,6 +27,7 @@ class P3DObject( p3ddatablock.P3DDataBlock ):
         self.Visible = int( block.is_visible( obj ))
         self.Children = []
         self.Data = p3dexporthelper.export_data_path( block.data, root, block )
+        self.ExportModifiers( root, block )
 
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Objects', self.Name ))
 

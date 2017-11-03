@@ -21,7 +21,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="63">
+    <Files Count="64">
       <Item1>
         <AddToUsesPkgSection Value="False"/>
       </Item1>
@@ -269,6 +269,10 @@
         <Filename Value="pascal3d.utils\p3dtransform.inc"/>
         <Type Value="Include"/>
       </Item63>
+      <Item64>
+        <Filename Value="pascal3d.utils\p3dconfig.inc"/>
+        <Type Value="Include"/>
+      </Item64>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>

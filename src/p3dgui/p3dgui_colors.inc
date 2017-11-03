@@ -34,16 +34,16 @@ begin
   Primary800:=                          Grey800;
   Primary900:=                          Grey900;
 
-  Secondary50:=                         amber50;
-  Secondary100:=                        amber100;
-  Secondary200:=                        amber200;
-  Secondary300:=                        amber300;
-  Secondary400:=                        amber400;
-  Secondary500:=                        amber500;
-  Secondary600:=                        amber600;
-  Secondary700:=                        amber700;
-  Secondary800:=                        amber800;
-  Secondary900:=                        amber900;
+  Secondary50:=                         Amber50;
+  Secondary100:=                        Amber100;
+  Secondary200:=                        Amber200;
+  Secondary300:=                        Amber300;
+  Secondary400:=                        Amber400;
+  Secondary500:=                        Amber500;
+  Secondary600:=                        Amber600;
+  Secondary700:=                        Amber700;
+  Secondary800:=                        Amber800;
+  Secondary900:=                        Amber900;
 
 
   Accent50:=                            BlueGrey50;
@@ -57,6 +57,8 @@ begin
   Accent800:=                           BlueGrey800;
   Accent900:=                           BlueGrey900;
 end;
+
+
 
 
 

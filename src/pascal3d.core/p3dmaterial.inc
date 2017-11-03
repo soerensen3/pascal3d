@@ -36,6 +36,8 @@
          property Name: String read GetName;
      end;
 
+     TP3DMaterialSubsetDict = specialize TFPGMap < String, TP3DShader >;
+
      TP3DPropertyAccessMaterialMap = specialize gP3DPropertyAccessInterfacedPersistent < TP3DMaterialMap >;
 
      TP3DMaterialMapClass = class of TP3DMaterialMap;
@@ -117,10 +119,10 @@
          procedure SetShader( AValue: TP3DShader );
 
        protected
-         class function GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
          function GetDataPath: String; override;
 
        public
+         class function GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
          procedure ClearFields; override;
 
          constructor Create( const AData: TP3DLibrary = nil ); override;
@@ -129,7 +131,7 @@
          function SaveToDOM(AParent: TDOMElement): TDOMElement; override;
          procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
 
-         procedure PassToShader(); virtual;
+         procedure PassToShader( const ActiveSubset: String = '' ); virtual;
          procedure RemoveFromFields( Block: TP3DDataBlock ); override;
 
        published
@@ -251,6 +253,7 @@
          property Transforms: TVec3List read FTransforms write FTransforms;
      end;
 
+     TP3DObjectModifierList = class;
 
      { TP3DMaterialBase }
 
@@ -262,6 +265,7 @@
          FInstancing: Boolean;
          FIsUpdating: Boolean;
          FModifiers: TP3DMaterialModifierList;
+         FShaderSubsets: TP3DMaterialSubsetDict;
          FSpec: TP3DColorRGB;
          FSpec_Hardness: Single;
          FTransparencyMode: TP3DMapTransparencyMode;
@@ -275,7 +279,7 @@
          procedure SetSpec_Hardness(AValue: Single);
          procedure SetTransparencyMode(AValue: TP3DMapTransparencyMode);
          procedure SetUnlit( AValue: Boolean );
-         procedure AddPasses(ShaderTree: TP3DShaderNodeTree); virtual;
+         procedure AddPasses(ShaderTree: TP3DShaderNodeTree; const AModifiers: TP3DObjectModifierList = nil ); virtual;
          function GetHasTransparency: Boolean; override;
          procedure UpdateHasTransparency;
          procedure SetName(NewName: TComponentName); override;
@@ -284,8 +288,9 @@
          constructor Create(const AData: TP3DLibrary=nil); override;
          procedure FastDestroy; override;
 
-         procedure BuildShader(); virtual;
-         procedure PassToShader(); override;
+         function BuildShaderForSubset( AModifiers: TP3DObjectModifierList ): TP3DShader; virtual;
+         procedure BuildShader;
+         procedure PassToShader( const ActiveSubset: String = '' ); override;
 
          procedure LoadFromDOM( ADOMNode: TDOMElement ); override;
          procedure LoadFromDOMNew( ADOMNode: TDOMElement ); override;
@@ -293,6 +298,7 @@
          procedure LoadFromJSONContext(AContext: TP3DJSONContext); override;
          procedure BeginUpdate;
          procedure EndUpdate;
+         procedure BuildShaderSubset( AModifiers: TP3DObjectModifierList; Index: String );
 
          property Diff: TP3DColorRGB read FDiff write FDiff;
          property Spec: TP3DColorRGB read FSpec write FSpec;
@@ -307,6 +313,7 @@
          property TransparencyMode: TP3DMapTransparencyMode read FTransparencyMode write SetTransparencyMode;
          property AlphaThreshhold: Single read FAlphaThreshhold write SetAlphaThreshhold;
          property IsUpdating: Boolean read FIsUpdating;
+         property ShaderSubsets: TP3DMaterialSubsetDict read FShaderSubsets write FShaderSubsets;
      end;
 
 
@@ -599,13 +606,16 @@ begin
   BuildShader();
 end;
 
-procedure TP3DMaterialBase.AddPasses(ShaderTree: TP3DShaderNodeTree);
+procedure TP3DMaterialBase.AddPasses(ShaderTree: TP3DShaderNodeTree; const AModifiers: TP3DObjectModifierList);
 var
   Modifier: TP3DMaterialModifier;
-  i: Integer;
+  OModifier: TP3DObjectModifier;
 begin
   for Modifier in Modifiers do
     Modifier.AddPass( ShaderTree, Self );
+  if ( Assigned( AModifiers )) then
+    for OModifier in AModifiers do
+      OModifier.AddPass( ShaderTree, Self );
   ShaderTree.Nodes.SortByName;
 end;
 
@@ -685,6 +695,7 @@ begin
   Diff:= vec3( 1 );
   FTransparencyMode:= tmMultiply;
   FAlphaThreshhold:= 0.9;
+  FShaderSubsets:= TP3DMaterialSubsetDict.Create;
 
   Modifiers:= TP3DMaterialModifierList.Create;
   Modifiers.Add( TP3DMaterialModifierInit.Create );
@@ -709,10 +720,11 @@ procedure TP3DMaterialBase.FastDestroy;
 begin
   Modifiers.Clear( True );
   Modifiers.Free;
+  FShaderSubsets.Free;
   inherited FastDestroy;
 end;
 
-procedure TP3DMaterialBase.BuildShader;
+function TP3DMaterialBase.BuildShaderForSubset(AModifiers: TP3DObjectModifierList): TP3DShader;
 var
   ShaderTree, Passes: TP3DShaderNodeTree;
   Compiled: TP3DShaderCompiled;
@@ -760,10 +772,11 @@ begin
 
   ShaderTree:= TP3DShaderNodeTree.Create;
   Compiled:= nil;
+  Result:= nil;
 
   try
     Passes:= TP3DShaderNodeTree.Create;
-    AddPasses( Passes );
+    AddPasses( Passes, AModifiers );
 
     CompileBuffers;
 
@@ -771,8 +784,7 @@ begin
 
     Passes.Free;
 
-    Shader:= TP3DShader.CreateFromVertexAndFragmentShader( Compiled.FindBuffer( 'vshader' ).Code, Compiled.FindBuffer( 'fshader' ).Code, Owner );
-    ShaderOwned:= True;
+    Result:= TP3DShader.CreateFromVertexAndFragmentShader( Compiled.FindBuffer( 'vshader' ).Code, Compiled.FindBuffer( 'fshader' ).Code, Owner );
   finally
     ShaderTree.Free;
     if ( Assigned( Compiled )) then
@@ -780,31 +792,43 @@ begin
   end;
 end;
 
-procedure TP3DMaterialBase.PassToShader;
+procedure TP3DMaterialBase.BuildShader;
+begin
+  if ( IsUpdating ) then
+    exit;
+  Shader:= BuildShaderForSubset( nil );
+  ShaderOwned:= True;
+end;
+
+procedure TP3DMaterialBase.PassToShader(const ActiveSubset: String);
 var
   i: Integer;
+  Sh: TP3DShader;
 begin
   if ( not Assigned( Shader )) then
     BuildShader();
   if ( Assigned( Shader )) then
     begin
       P3DMaterialActive:= Self;
-      Shader.Enable;
+      ShaderSubsets.TryGetData( ActiveSubset, Sh );
+      if ( not Assigned( Sh )) then
+        Sh:= Shader;
+      Sh.Enable;
       if ( not UseVertexColor ) then
         begin
           glVertexAttrib4f( P3DAttribColor,
             Diff.R, Diff.G, Diff.B, Alpha ); cle( Self );
         end;
 
-      glUniform4f( Shader.Uniforms.AddrByName( 'mat_specular' ), Spec.r, Spec.g, Spec.b, 1 ); cle( Self );
-      glUniform1f( Shader.Uniforms.AddrByName( 'mat_hardness' ), Spec_Hardness ); cle( Self );
+      glUniform4f( Sh.Uniforms.AddrByName( 'mat_specular' ), Spec.r, Spec.g, Spec.b, 1 ); cle( Self );
+      glUniform1f( Sh.Uniforms.AddrByName( 'mat_hardness' ), Spec_Hardness ); cle( Self );
 
       for i:= 0 to Maps.Count - 1 do
         begin
           glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
           if ( Assigned( Maps[ i ].Map )) then
             glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
-          glUniform1i( Shader.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
+          glUniform1i( Sh.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
         end;
       for i:= 0 to Modifiers.Count - 1 do
         Modifiers[ i ].PassToShader( Self );
@@ -886,6 +910,19 @@ procedure TP3DMaterialBase.EndUpdate;
 begin
   FIsUpdating:= False;
   BuildShader();
+end;
+
+procedure TP3DMaterialBase.BuildShaderSubset(AModifiers: TP3DObjectModifierList; Index: String);
+var
+  outsh: TP3DShader;
+  sh: TComponentName;
+begin
+  outsh:= BuildShaderForSubset( AModifiers );
+  ShaderSubsets[ Index ]:= outsh;
+  sh:= 'Shader_' + Name;
+  if ( Assigned( AModifiers ) and Assigned( AModifiers.ParentObject )) then
+    sh:= sh + '_' + AModifiers.ParentObject.Name;
+  outsh.Name:= sh;
 end;
 
 procedure TP3DMaterialShader.LoadFromDOM(ADOMNode: TDOMElement);
@@ -1403,7 +1440,7 @@ begin
   Maps.LoadFromDOM( ADOMNode );
 end;
 
-procedure TP3DMaterial.PassToShader;
+procedure TP3DMaterial.PassToShader(const ActiveSubset: String);
 var
   i: Integer;
 begin

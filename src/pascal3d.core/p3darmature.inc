@@ -6,6 +6,7 @@
 type
   TP3DJointList = class;
 
+  TP3DArmature = class;
   { TP3DJoint }
 
   TP3DJoint = class( TP3DDataBlock, IP3DRenderable )
@@ -68,9 +69,12 @@ type
 
   { TP3DArmature }
 
+  TP3DMaterialModifierArmature = class;
+
   TP3DArmature = class ( TP3DDataBlock, IP3DRenderable )
     private
       FJoints: TP3DJointList;
+      FMaterialModifier: TP3DMaterialModifierArmature;
       FRotations: TQuaternionList;
       FTransformMethod: TP3DArmatureTransformMethod;
       FTranslations: TVec3List;
@@ -108,6 +112,7 @@ type
       property Translations: TVec3List read FTranslations write FTranslations;
       property Rotations: TQuaternionList read FRotations write FRotations;
       property TransformMethod: TP3DArmatureTransformMethod read FTransformMethod write FTransformMethod;
+      property MaterialModifier: TP3DMaterialModifierArmature read FMaterialModifier write FMaterialModifier;
   end;
 
   TP3DArmatureList = specialize gP3DNamedInterfacedPersistentList < TP3DArmature >;
@@ -120,22 +125,22 @@ type
 
   TP3DMaterialModifierArmature = class ( TP3DMaterialModifier )
     private
-      FMeshModifier: TP3DMeshModifier;
+      FArmature: TP3DArmature;
 
     published
-      constructor Create( AMeshModifier: TP3DMeshModifier );
+      constructor Create( AArmature: TP3DArmature );
 
       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); override;
       procedure PassToShader( Material: TP3DMaterialBase ); override;
       class function GetIndex: Integer; override;
 
-      property MeshModifier: TP3DMeshModifier read FMeshModifier write FMeshModifier;
+      property Armature: TP3DArmature read FArmature write FArmature;
   end;
 
 
   { TP3DMeshModifierArmature }
 
-  TP3DMeshModifierArmature = class ( TP3DMeshModifier )
+{  TP3DMeshModifierArmature = class ( TP3DMeshModifier )
     private
       FArmature: TP3DArmature;
       FInitialized: Boolean;
@@ -156,7 +161,31 @@ type
 
     published
       property Armature: TP3DArmature read FArmature write SetArmature;
+  end deprecated;}
+
+  { TP3DObjectModifierArmature }
+
+  TP3DObjectModifierArmature = class ( TP3DObjectModifier )
+    private
+      FArmature: TP3DArmature;
+      FInitialized: Boolean;
+      procedure SetArmature( AValue: TP3DArmature );
+      procedure SetObj( AValue: TP3DObject ); override;
+
+    public
+      constructor Create;
+      constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+      procedure UpdateMaterials;
+
+      procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
+      procedure AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase); override;
+
+      property Initialized: Boolean read FInitialized;
+
+    published
+      property Armature: TP3DArmature read FArmature write SetArmature;
   end;
+
 
 {$ENDIF}
 
@@ -583,6 +612,7 @@ begin
   //Owner.Armatures.Add( Self );
   //Properties.Add( TP3DPropertyAccessArmatureAction.CreateFieldSet( 'CurrentAction', @FCurrentAction, @SetCurrentAction, smAttribute ));
   Properties.Add( TP3DPropertyAccessJointList.CreateField( 'Joints', @FJoints, smAttribute ));
+  MaterialModifier:= TP3DMaterialModifierArmature.Create( Self );
 end;
 
 procedure TP3DArmature.FastDestroy;
@@ -641,8 +671,129 @@ begin
   Result:= 'armature';
 end;
 
-{ TP3DMeshModifierArmature }
+{ TP3DObjectModifierArmature }
 
+procedure TP3DObjectModifierArmature.SetArmature(AValue: TP3DArmature);
+begin
+  if FArmature=AValue then Exit;
+  FArmature:=AValue;
+  UpdateMaterials;
+end;
+
+procedure TP3DObjectModifierArmature.SetObj(AValue: TP3DObject);
+begin
+  inherited SetObj(AValue);
+  UpdateMaterials;
+end;
+
+constructor TP3DObjectModifierArmature.Create;
+begin
+  inherited Create;
+  Properties.Add( TP3DPropertyAccessArmature.CreateFieldSet( 'Armature', @FArmature, @SetArmature, smAttribute ));
+end;
+
+constructor TP3DObjectModifierArmature.CreateFromJSONContext(AContext: TP3DJSONContext);
+begin
+  Create;
+  LoadFromJSONContext( AContext );
+end;
+
+procedure TP3DObjectModifierArmature.UpdateMaterials;
+var
+  Mesh: TP3DMesh;
+  i: Integer;
+begin
+  if ( Assigned( Obj ) and ( Obj.Data is TP3DMesh )) then
+    begin
+      Mesh:= TP3DMesh( Obj.Data );
+      for i:= 0 to Mesh.MaterialGroups.Count -1 do
+        if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
+          begin
+            //TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierArmature.Create( Self ));
+            TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShaderSubset( Obj.Modifiers, Obj.DataPath );
+          end;
+      FInitialized:= True;
+    end;
+end;
+
+procedure TP3DObjectModifierArmature.PassToShader(Material: TP3DMaterial; var world: TMat4);
+  function RealMod (x, y : extended) : extended;
+  begin
+     Result := x - y * Trunc(x/y);
+  end;
+var
+  decl: TP3DShaderDecl;
+  joint: TP3DJoint;
+  poslist: TVec3List;
+  quatList: TQuaternionList;
+  i: Integer;
+  quat: TQuaternion;
+begin
+  if ( not Initialized ) then
+    UpdateMaterials;
+  if ( Assigned( Armature ) {and Assigned( Armature.CurrentAction )}) then
+    begin
+      {Armature.CurrentAction.UpdateFrameSample;
+      decl:= Material.Shader.Uniforms.Names[ 'jointPos[0]' ];
+      if ( Assigned( decl )) then
+        begin
+          {poslist:= TVec3List.Create;
+          for joint in Armature.Joints do
+            poslist.Add( joint.Position );
+          decl.SetAsVec3List( poslist );
+          poslist.Free;}
+          decl.AsVec3List:= Armature.CurrentAction.FrameSample.Translations;
+        end;
+      //if ( Assigned( decl )) then
+      //  decl.SetAsVec3List( Armature.CurrentAction.FrameSample.Translations );
+      decl:= Material.Shader.Uniforms.Names[ 'jointQuat[0]' ];
+      if ( Assigned( decl )) then
+        decl.AsQuatList:= Armature.CurrentAction.FrameSample.Rotations;
+      {for i:= 0 to 5 do //Armature.CurrentAction.FrameSample.Rotations.Count - 1 do
+        begin
+          glGetUniformfv( Material.Shader.ProgramObj, glGetUniformLocation( Material.Shader.ProgramObj, PChar( 'jointPos[' + IntToStr( i ) + ']' )), @quat );
+          WriteLn( quat.xyz.ToString() );
+        end;}
+      //WriteLn( Material.Shader.DumpUniforms );
+      //quatList:= decl.AsQuatList;
+      //for i:= 0 to quatList.Count - 1 do
+      //  WriteLn( quatList[ i ].ToString());
+      //quatList.Free;}
+      //Material.PassToShader();
+      Armature.UpdateJointTex( TP3DObject( Armature.Users.Items[ 0 ]));
+      i:= Material.Maps.Count;
+      glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
+      glBindTexture( GL_TEXTURE_2D, Armature.JointTex.GLTexture ); cle( Self );
+
+      decl:= P3DShaderActive.Uniforms.Names[ 'jointTex' ];
+      if ( Assigned( decl )) then
+        decl.AsInt:= i;
+      decl:= P3DShaderActive.Uniforms.Names[ 'jointTexWidth' ];
+      if ( Assigned( decl )) then
+        decl.AsInt:= Armature.JointTex.Width;
+      decl:= P3DShaderActive.Uniforms.Names[ 'jointTexHeight' ];
+      if ( Assigned( decl )) then
+        decl.AsInt:= Armature.JointTex.Height;
+      decl:= P3DShaderActive.Uniforms.Names[ 'to_arm' ];
+      if ( Assigned( decl )) then
+        decl.AsMat4:= Mat4Identity;
+      //Armature.CurrentAction.CurrentFrame:= SDL_GetTicks() / 100;
+      //P3DApplication.MainWindow.Title:= FloatToStr( Armature.CurrentAction.CurrentFrame ) + ':' + FloatToStr( frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count ));
+      decl:= P3DShaderActive.Uniforms.Names[ 'time' ];
+      if ( Assigned( decl )) then
+        decl.AsFloat:= 0;//frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count );
+    end;
+end;
+
+procedure TP3DObjectModifierArmature.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
+begin
+  if ( Assigned( Armature )) then
+    Armature.MaterialModifier.AddPass( ShaderTree, Material );
+end;
+
+
+{ TP3DMeshModifierArmature }
+{
 procedure TP3DMeshModifierArmature.SetArmature(AValue: TP3DArmature);
 begin
   if FArmature=AValue then Exit;
@@ -790,14 +941,14 @@ begin
         TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
       end;
 end;
-
+}
 
 { TP3DMaterialModifierArmature }
 
-constructor TP3DMaterialModifierArmature.Create(AMeshModifier: TP3DMeshModifier);
+constructor TP3DMaterialModifierArmature.Create(AArmature: TP3DArmature);
 begin
   inherited Create();
-  MeshModifier:= AMeshModifier;
+  Armature:= AArmature;
 end;
 
 procedure TP3DMaterialModifierArmature.AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase);
@@ -812,9 +963,9 @@ procedure TP3DMaterialModifierArmature.AddPass(ShaderTree: TP3DShaderNodeTree; M
     Result:= Node;
   end;
 begin
-  if ( Assigned( TP3DMeshModifierArmature( MeshModifier ).Armature )) then
+  if ( Assigned( Armature )) then
     begin
-      ChangeSocketValueInt( ShaderTree.AddCopyEx( '00025_pass_armature_matrix' ), 'numJoints', TP3DMeshModifierArmature( MeshModifier ).Armature.Joints.Count );
+      ChangeSocketValueInt( ShaderTree.AddCopyEx( '00025_pass_armature_matrix' ), 'numJoints', Armature.Joints.Count );
       //ChangeSocketValueInt( ShaderTree.AddCopyEx( '00025_pass_armature' ), 'numJoints', TP3DMeshModifierArmature( MeshModifier ).Armature.Joints.Count );
       ShaderTree.AddCopyEx( '01050_pass_armature_debug' );
     end;

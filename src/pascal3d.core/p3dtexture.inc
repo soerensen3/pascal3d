@@ -433,7 +433,7 @@ begin
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Filtering', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FilteringMipMap', smAttribute ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'MipMap', smAttribute ));
-  Properties.Add( TP3DPropertyAccessFilePointer.CreateField( 'File', @FFileWatch, smAttribute ));
+  Properties.Add( TP3DPropertyAccessFilePointer.CreateField( 'File', @FFileWatch, smAttribute, pmRelativeToBaseBath ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DataType' ));
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'NumChannels' ));
 end;

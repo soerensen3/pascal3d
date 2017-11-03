@@ -420,29 +420,30 @@ constructor TP3DObjectInspector.Create(const AData: TP3DLibrary; const AParent: 
 begin
   inherited Create( AData, AParent );
 
-  Toolbar:= TP3DGraphicControl.Create( nil, Self );
+  Toolbar:= TP3DGraphicControl.Create( AData, Self );
   Toolbar.Align:= alTop;
   Toolbar.Height:= 32;
 
-  Scrollbar:= TP3DScrollBar.Create( nil, Self );
+  Scrollbar:= TP3DScrollBar.Create( AData, Self );
   Scrollbar.Align:= alRight;
   Scrollbar.Kind:= p3dsbVertical;
   Scrollbar.Width:= 10;
   Scrollbar.OnChange:= @ScrollBarChange;
 
   Pages:= TP3DOIPageList.Create;
-  Container:= TP3DGraphicControl.Create( nil, Self );
+  Container:= TP3DGraphicControl.Create( AData, Self );
 
   Container.Align:= alClient;
 
-  AddPage( TP3DOIEditorPageObject.Create( nil, Container ));
-  AddPage( TP3DOIEditorPageLight.Create( nil, Container ));
-  AddPage( TP3DOIEditorPageCamera.Create( nil, Container ));
-  with ( AddPage( TP3DOIEditorPageMaterial.Create( nil, Self )) as TP3DOIEditorPageMaterial ) do
-    EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( nil, Container )));
-  AddPage( TP3DOIEditorPageGrid.Create( nil, Container ));
-  AddPage( TP3DOIEditorPageAction.Create( nil, Container ));
-  AddPage( TP3DOIEditorPageProperties.Create( nil, Container ));
+  AddPage( TP3DOIEditorPageObject.Create( AData, Container ));
+  AddPage( TP3DOIEditorPageLight.Create( AData, Container ));
+  AddPage( TP3DOIEditorPageCamera.Create( AData, Container ));
+  with ( AddPage( TP3DOIEditorPageMaterial.Create( AData, Self )) as TP3DOIEditorPageMaterial ) do
+    EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( AData, Container )));
+  AddPage( TP3DOIEditorPageObjectModifier.Create( AData, Container ));
+  AddPage( TP3DOIEditorPageGrid.Create( AData, Container ));
+  AddPage( TP3DOIEditorPageAction.Create( AData, Container ));
+  AddPage( TP3DOIEditorPageProperties.Create( AData, Container ));
 end;
 
 procedure TP3DObjectInspector.FastDestroy;
@@ -538,6 +539,7 @@ begin
   if ( Assigned( Scrollbar ) and Assigned( Container )) then
     UpdateScrollBar;
 end;
+
 
 
 {$INCLUDE p3dgui_propertyeditor.inc}

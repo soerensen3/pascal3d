@@ -104,16 +104,6 @@
         property Name: TComponentName read FName write SetName stored False;
     end;
 
-    { gP3DListPropertyAccessInterfacedPersistent }
-
-    generic gP3DListPropertyAccessInterfacedPersistent < TListProp, TListData, TPropType > = class ( specialize gP3DListPropertyAccess < TListProp, TListData, TPropType >)
-      public
-        procedure SetArrayCount(AValue: Integer); override;
-        procedure ValueCreateNew( AContext: TP3DJSONContext ); virtual;
-        procedure LoadItemFromJSONContext(AIndex: Integer; AContext: TP3DJSONContext); override;
-    end;
-
-
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}

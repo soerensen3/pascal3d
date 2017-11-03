@@ -9,4 +9,5 @@
 {$INCLUDE p3dtransform.inc}
 {$INCLUDE p3dfileutil.inc}
 {$INCLUDE p3dclassfactory.inc}
+{$INCLUDE p3dconfig}
 

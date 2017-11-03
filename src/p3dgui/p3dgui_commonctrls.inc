@@ -820,7 +820,7 @@ constructor TP3DTreeViewDirectory.Create(const AData: TP3DLibrary; const AParent
 begin
   inherited Create( AData, AParent );
   FMask:= '*.*';
-  Directory:= P3DSearchPaths.BaseDir;
+  Directory:= P3DSearchPaths.BaseDir.FileName;
 end;
 
 
@@ -1307,35 +1307,36 @@ constructor TP3DListViewFile.Create(const AData: TP3DLibrary; const AParent: TP3
 begin
   inherited Create( AData, AParent );
   FMask:= '*.*';
-  Directory:= P3DSearchPaths.BaseDir;
+  Directory:= P3DSearchPaths.BaseDir.FileName;
 end;
 
 procedure TP3DListViewFile.Update;
   procedure ListP3DFile( FN: String );
   var
-    XML: TXMLDocument;
-    list: TDOMNodeList;
     i: Integer;
     name: String;
+    json, scenes: TJSONData;
+    F: TStringList;
   begin
-    ReadXMLFile( XML, FN );
+    F:= TStringList.Create;
     try
+      F.LoadFromFile( FN );
+      json:= GetJSON( F.Text );
       if ( ShowFolderUp and
         ( not ( Assigned( TreeViewDirectory )
         and ( TreeViewDirectory.Directory = Directory )))) then
         Children[ Children.Add( '<-' + ExtractFileName( FN ), nil )].SymbolText:= P3DSymbolLibrary;
 
-      list:= XML.GetElementsByTagName( 'scene' );
-      for i:= 0 to list.Count - 1 do
+      scenes:= json.GetPath( 'Scenes' );
+      for i:= 0 to scenes.Count - 1 do
         begin
-          name:= TDOMElement( list[ i ]).AttribStrings[ 'Name' ];
-          if ( name = '' ) then
-            name:= TDOMElement( list[ i ]).AttribStrings[ 'name' ];
+          name:= scenes.Items[ i ].GetPath( 'Name' ).AsString;
           if ( name > '' ) then
             Children.Add( name, nil, P3DSymbolScene );
         end;
     finally
-      XML.Free;
+      json.Free;
+      F.Free;
     end;
   end;
 
@@ -1697,6 +1698,21 @@ procedure TP3DTreeViewObjects.Update;
       end;
   end;
 
+  procedure AddGridList( List: TP3DGridContainer; Parent: TP3DTreeNodeList );
+  var
+    Grid: TP3DTileGrid;
+    n: LongInt;
+  begin
+    for Grid in List do
+      begin
+        if ( P3DDataBlockCache.IsValid( Grid )) then
+          n:= Parent.Add( Grid.Name, Grid )
+        else
+          Parent.Add( 'Error: Orphaned datablock', nil );
+        Parent[ n ].SymbolText:= P3DSymbolGrid;
+      end;
+  end;
+
   procedure AddDataList( Data: TP3DLibrary; Parent: TP3DTreeNodeList );
   var
     Node: TP3DTreeNodeList;
@@ -1742,6 +1758,9 @@ procedure TP3DTreeViewObjects.Update;
 
     Node:= Parent[ Parent.Add( 'Fonts', Data.Fonts, False, P3DSymbolFont )].Children;
     AddFontList( Data.Fonts, Node );
+
+    Node:= Parent[ Parent.Add( 'Grids', Data.Grids, False, P3DSymbolGrid )].Children;
+    AddGridList( Data.Grids, Node );
   end;
 
 var
@@ -1762,9 +1781,9 @@ begin
       if ( Obj is TP3DLibrary ) then
         AddDataList( TP3DLibrary( Obj ), Children )
       else if ( Obj is TP3DScene ) then
-        AddObjectList( TP3DScene( Obj ).Objects, Children )
+        AddObjectList( TP3DScene( Obj ).Objects, Children, True )
       else if ( Obj is TP3DObject ) then
-        AddObjectList( TP3DObject( Obj ).Children, Children );
+        AddObjectList( TP3DObject( Obj ).Children, Children, True );
     end
   else
     AddDataList( P3DData, Children );

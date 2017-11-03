@@ -10,10 +10,9 @@ type
 
   TP3DSearchPathContainer = class( TP3DInterfacedPersistent )
     private
-      FBaseDir: String;
-      FPaths: TStringList;
+      FBaseDir: TP3DFilePointer;
+      FPaths: TP3DFilePointerList;
 
-      procedure SetBaseDir(AValue: String);
       function GetFullPath( Index: Integer ): String;
 
     public
@@ -32,10 +31,10 @@ type
       class function DOMNodeName: String; override;
 
       property FullPath[ Index: Integer ]: String read GetFullPath;
-      property Paths: TStringList read FPaths write FPaths;
+      property Paths: TP3DFilePointerList read FPaths write FPaths;
 
     published
-      property BaseDir: String read FBaseDir write SetBaseDir;
+      property BaseDir: TP3DFilePointer read FBaseDir write FBaseDir;
   end;
 
   function P3DListFolderFiles( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
@@ -452,6 +451,7 @@ function P3DLoadFileToString(FileName: String): String;
 var
   F: TFileStream = nil;
 begin
+  Result:= '';
   try
     F:= TFileStream.Create( FileName, fmOpenRead );
     Result:= F.ReadAnsiString;
@@ -468,17 +468,28 @@ begin
   Result:= '';
   if ( InRange( Index, 0, Paths.Count - 1 )) then
     begin
-      Result:= AppendPathDelim( TrimFilename( Paths[ Index ]));
+      Result:= AppendPathDelim( TrimFilename( Paths[ Index ].FileName ));
       if ( not FilenameIsAbsolute( Result )) then
-        Result:= AppendPathDelim( TrimFilename( BaseDir + Result ));
+        Result:= AppendPathDelim( TrimFilename( BaseDir.FileName + Result ));
     end;
 end;
 
 constructor TP3DSearchPathContainer.Create;
+var
+  fp: TP3DPropertyAccessFilePointer;
+  fpl: TP3DPropertyAccessFilePointerList;
 begin
   inherited Create;
-  FPaths:= TStringList.Create;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'BaseDir', smAttribute ));
+  FPaths:= TP3DFilePointerList.Create;
+  BaseDir:= TP3DFilePointer.Create( ExtractFilePath( ParamStr( 0 )));
+  fp:= TP3DPropertyAccessFilePointer.CreateField( 'BaseDir', @BaseDir, smAttribute );
+  fp.PathMode:= pmRelativeToBinary;
+  Properties.Add( fp );
+  fpl:= TP3DPropertyAccessFilePointerList.CreateField( 'Paths', @FPaths, smAttribute );
+  fpl.PathMode:= pmRelativeToBaseBath;
+  Properties.Add( fpl );
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Add( Self );
 end;
 
 constructor TP3DSearchPathContainer.CreateFromJSONContext(AContext: TP3DJSONContext);
@@ -489,7 +500,11 @@ end;
 
 destructor TP3DSearchPathContainer.Destroy;
 begin
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Remove( Self );
+  FPaths.Clear( True );
   FPaths.Free;
+  BaseDir.Free;
   inherited Destroy;
 end;
 
@@ -520,8 +535,8 @@ begin
           exit;
         end;
     end;
-  BasePath:= AppendPathDelim( BaseDir );
-  FileName:= BasePath + FName;
+  BasePath:= AppendPathDelim( BaseDir.FileName );
+  FileName:= CleanAndExpandDirectory( BasePath + FName );
   if ( FileExists( FileName )) then
     begin
       Result:= FileName;
@@ -529,7 +544,7 @@ begin
     end;
   for i:= Paths.Count - 1 downto 0 do
     begin
-      FileName:= CleanAndExpandDirectory( BasePath + Paths[ i ]) + FName;
+      FileName:= CleanAndExpandDirectory( Paths[ i ].FileName ) + FName;
       if ( FileExists( FileName ) or DirectoryExists( FileName )) then
         begin
           Result:= FileName;
@@ -550,7 +565,7 @@ begin
     if ( Path.NodeName = 'path' ) then
       begin
         value:= Path.GetAttribute( 'value' );
-        P3DSearchPaths.Paths.Add( value );
+        P3DSearchPaths.Paths.Add( TP3DFilePointer.Create( value ));
         Path:= TDOMElement( Path.NextSibling );
       end;
 end;
@@ -558,12 +573,6 @@ end;
 class function TP3DSearchPathContainer.DOMNodeName: String;
 begin
   Result:= 'paths';
-end;
-
-procedure TP3DSearchPathContainer.SetBaseDir(AValue: String);
-begin
-  if FBaseDir= AValue then Exit;
-  FBaseDir:= AppendPathDelim( ExpandFileName( AValue ));
 end;
 
 

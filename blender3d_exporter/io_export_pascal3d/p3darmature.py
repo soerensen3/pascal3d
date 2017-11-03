@@ -8,6 +8,9 @@ class P3DFakeBone:
     def is_visible( self, obj ):
         return True
 
+    def find_armature( self ):
+        return None
+
     def __init__( self, bone, armobj ):
 
         self.name = bone.name

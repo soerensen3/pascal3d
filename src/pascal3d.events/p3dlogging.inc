@@ -8,17 +8,18 @@ type
 
   TP3DLogger = class ( TP3DInterfacedPersistent )
     private
-      FFileName: String;
+      FFileWatch: TP3DFilePointer;
       FLevel: TDOMElement;
       FLogFile: TXMLDocument;
 
-      procedure SetFileName( AValue: String );
+      procedure SetFileName( Sender: TP3DFilePointer; ANewValue: String );
       function CreateMessageHeader( Sender: TObject ): TDOMElement;
 
     public
       constructor Create;
       constructor CreateFromJSONContext( AContext: TP3DJSONContext ); override;
       destructor Destroy; override;
+
 
       procedure WriteFile;
       procedure AddChild( ADOM: TDOMElement );
@@ -33,7 +34,7 @@ type
       property Level: TDOMElement read FLevel write FLevel;
 
     published
-      property FileName: String read FFileName write SetFileName;
+      property FileWatch: TP3DFilePointer read FFileWatch write FFileWatch;
   end;
 
 const
@@ -153,14 +154,14 @@ end;
 
 { TP3DLogger }
 
-procedure TP3DLogger.SetFileName(AValue: String);
+procedure TP3DLogger.SetFileName(Sender: TP3DFilePointer; ANewValue: String);
 var
   FullPath: RawByteString;
 begin
-  FullPath:= ExpandFileName( AValue );
+  {FullPath:= ExpandFileName( AValue );
   if ( FFileName = FullPath ) then
     Exit;
-  FFileName:= FullPath;
+  FFileName:= FullPath;}
   WriteFile();
 end;
 
@@ -189,8 +190,11 @@ end;
 constructor TP3DLogger.Create;
 var
   F: TStringStream;
+  fp: TP3DPropertyAccessFilePointer;
 begin
   inherited Create;
+  FileWatch:= TP3DFilePointer.Create( ChangeFileExt( ParamStr( 0 ), '.html' ));
+  FileWatch.OnFileNameChange:= @SetFileName;
   F:= TStringStream.Create( P3DLogOutput );
   XMLRead.ReadXMLFile( FLogFile, F );
   F.Free;
@@ -198,7 +202,11 @@ begin
   Level.AppendChild( LogFile.CreateTextNode( 'Logfile for ' + ExtractFileName( ParamStr( 0 ))));
 
   Level:= TDOMElement( FLogFile.DocumentElement.FindNode( 'body' ).FindNode( 'table'));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FileName', smAttribute ));
+  fp:= TP3DPropertyAccessFilePointer.CreateField( 'FileWatch', @FileWatch, smAttribute );
+  fp.PathMode:= pmRelativeToBinary;
+  Properties.Add( fp );
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Add( Self );
 end;
 
 constructor TP3DLogger.CreateFromJSONContext( AContext: TP3DJSONContext );
@@ -209,6 +217,9 @@ end;
 
 destructor TP3DLogger.Destroy;
 begin
+  FileWatch.Free;
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Remove( Self );
   FLevel:= nil;
   FLogFile.Free;
   inherited Destroy;
@@ -216,8 +227,8 @@ end;
 
 procedure TP3DLogger.WriteFile;
 begin
-  if ( FileName <> '' ) then
-    WriteHTML( LogFile.DocumentElement, FileName ); //XMLWrite.WriteXMLFile( LogFile, FileName );
+  if ( FileWatch.FileName <> '' ) then
+    WriteHTML( LogFile.DocumentElement, FileWatch.FileName ); //XMLWrite.WriteXMLFile( LogFile, FileName );
 end;
 
 procedure TP3DLogger.AddChild(ADOM: TDOMElement);

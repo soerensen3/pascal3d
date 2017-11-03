@@ -28,6 +28,8 @@ const
   P3DERROR_JSON_CLASS_TYPE_NOT_FOUND = 'Failed to load object from JSON Data: The specified class type "%s" is not registered!';
   P3DERROR_JSON_CLASS_TYPE_NODE_NOT_FOUND = 'Failed to load object from JSON Data: There was no class type specified!';
 
+  P3DPROPVALUEEMPTYOBJ = 'None';
+
 type
   { TP3DPropertyAccess }
 
@@ -415,19 +417,51 @@ type
     -----------------------------
     Used to access a filepointer. }
 
+
+  TP3DPathMode = ( pmAbsolute, pmRelativeToBinary, pmRelativeToBaseBath, pmRelativeToCurrentPath );
   TP3DPropertyAccessFilePointer = class( specialize gP3DPropertyAccess < TP3DFilePointer >)
     private
-      FAbsolutePaths: Boolean;
+      FPathMode: TP3DPathMode;
 
     public
+      constructor CreateField(AName: String; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode=smDoNotStore; APathMode: TP3DPathMode = pmRelativeToBaseBath ); reintroduce;
+      constructor CreateFieldSet(AName: String; AField: pItem; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode=smDoNotStore; APathMode: TP3DPathMode = pmRelativeToBaseBath ); reintroduce;
+      constructor CreateGetField(AName: String; AGetter: TGetter; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode=smDoNotStore; APathMode: TP3DPathMode = pmRelativeToBaseBath ); reintroduce;
+      constructor CreateGetSet(AName: String; AGetter: TGetter; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode=smDoNotStore; APathMode: TP3DPathMode = pmRelativeToBaseBath ); reintroduce;
+
       procedure LoadFromJSONContext( AContext: TP3DJSONContext ); override;
       function Serialize: String; override;
 
     published
       function GetAsString: String; override;
       procedure SetAsString(AValue: String); override;
-      property AbsolutePaths: Boolean read FAbsolutePaths write FAbsolutePaths;
+      property PathMode: TP3DPathMode read FPathMode write FPathMode;
       function GetDefaultValue: TP3DFilePointer; override;
+  end;
+
+  { TP3DPropertyAccessFilePointerList }
+
+  TP3DPropertyAccessFilePointerList  = class ( specialize gP3DListPropertyAccessObject < TP3DFilePointerList, TP3DFilePointer, TP3DPropertyAccessFilePointer >)
+    private
+      FPathMode: TP3DPathMode;
+
+    public
+      function GetArrayAsProp(ArrayIndex: Integer): TP3DPropertyAccess; override;
+      property PathMode: TP3DPathMode read FPathMode write FPathMode;
+  end;
+
+  { TP3DPropertyAccessStrings }
+
+  TP3DPropertyAccessStrings = class( specialize gP3DListPropertyAccess < TStrings, String, TP3DPropertyAccessString >)
+    function GetAsString: String; override;
+    procedure SetAsString(AValue: String); override;
+    procedure SetArrayAsString(ArrayIndex: Integer; AValue: String); override;
+    function GetDefaultValue: TStrings; override;
+    procedure SetValues(idx: Integer; AValue: TListData); override;
+    class function GetIsArray: Boolean; static; override;
+    procedure LoadFromStream(S: TStream); override;
+    procedure SaveToStream(S: TStream); override;
+    function Serialize: String; override;
   end;
 
 {$ENDIF}
@@ -1519,6 +1553,72 @@ procedure gP3DListPropertyAccessObject.ValueCreateNew(AContext: TP3DJSONContext)
 begin
   Value:= TItem.Create;
 end;
+
+{ TP3DPropertyAccessStrings }
+
+function TP3DPropertyAccessStrings.GetAsString: String;
+begin
+  if ( Assigned( Value )) then
+    Result:= Value.Text
+  else
+    Result:= P3DPROPVALUEEMPTYOBJ;
+end;
+
+procedure TP3DPropertyAccessStrings.SetAsString(AValue: String);
+begin
+  if ( Assigned( Value )) then
+    Value.Text:= AValue;
+end;
+
+procedure TP3DPropertyAccessStrings.SetArrayAsString(ArrayIndex: Integer; AValue: String);
+begin
+  if ( InRange( ArrayIndex, 0, Value.Count - 1 )) then
+    try
+      Value[ ArrayIndex ]:= AValue;
+    except
+      On E: Exception do
+        WriteLn( 'Error while setting property ' + Name + '[' + IntToStr( ArrayIndex ) + ']: "' + AValue + '" is not a valid integer!' );
+    end;
+end;
+
+function TP3DPropertyAccessStrings.GetDefaultValue: TStrings;
+begin
+  Result:= nil;
+end;
+
+procedure TP3DPropertyAccessStrings.SetValues(idx: Integer; AValue: TListData);
+begin
+  SetArrayAsString( idx, AValue );
+end;
+
+class function TP3DPropertyAccessStrings.GetIsArray: Boolean;
+begin
+  Result:= True;
+end;
+
+procedure TP3DPropertyAccessStrings.LoadFromStream(S: TStream);
+begin
+  inherited LoadFromStream(S);
+end;
+
+procedure TP3DPropertyAccessStrings.SaveToStream(S: TStream);
+begin
+  inherited SaveToStream(S);
+end;
+
+function TP3DPropertyAccessStrings.Serialize: String;
+var
+  i: Integer;
+begin
+  Result:= '[ ';
+  for i:= 0 to Value.Count - 1 do
+    if ( i > 0 ) then
+      Result:= Result + ', "' + StringToJSONString( Value[ i ], False ) + '"'
+    else
+      Result:= Result + '"' + StringToJSONString( Value[ i ], False ) + '"';
+  Result:= Result + ' ]';
+end;
+
 
 
 {$ENDIF}

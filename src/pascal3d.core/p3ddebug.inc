@@ -62,26 +62,4 @@ begin
 end;
 
 
-{ gP3DListPropertyAccessInterfacedPersistent }
-
-procedure gP3DListPropertyAccessInterfacedPersistent.SetArrayCount(AValue: Integer);
-begin
-  if ( Assigned( Value )) then
-    Value.Count:= AValue;
-end;
-
-procedure gP3DListPropertyAccessInterfacedPersistent.ValueCreateNew(AContext: TP3DJSONContext);
-begin
-  //if ( not Assigned( Value )) then
-  //  Value:= TItem.Create( AContext.Owner );
-  //TODO: FINISH
-end;
-
-procedure gP3DListPropertyAccessInterfacedPersistent.LoadItemFromJSONContext(AIndex: Integer; AContext: TP3DJSONContext);
-begin
-  inherited LoadItemFromJSONContext(AIndex, AContext);
-end;
-
-
-
 {$ENDIF}

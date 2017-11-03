@@ -121,11 +121,12 @@ begin
   if ( FFileName = AValue ) then
     Exit;
 
-  FN:= AValue;
-  if ( FN > '' ) then
+   FN:= AValue;
+   if ( FN > '' ) then
     begin
       FName:= P3DSearchPaths.FindFileEx( AValue, GetCurrentDir ); //ExpandFileName( AValue );
-      if ( SysUtils.FileExists( FName )) then
+      if ( FName > '' ) then
+      {if ( SysUtils.FileExists( FName )) then}
         FN:= FName;
     end;
   if ( Assigned( OnFileNameChange )) then
@@ -186,17 +187,43 @@ end;
 
 { TP3DPropertyAccessFilePointer }
 
+constructor TP3DPropertyAccessFilePointer.CreateField(AName: String; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
+begin
+  inherited CreateField( AName, AField, AStoreMode );
+  PathMode:= APathMode;
+end;
+
+constructor TP3DPropertyAccessFilePointer.CreateFieldSet(AName: String; AField: pItem; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
+begin
+  inherited CreateFieldSet( AName, AField, ASetter, AStoreMode );
+  PathMode:= APathMode;
+end;
+
+constructor TP3DPropertyAccessFilePointer.CreateGetField(AName: String; AGetter: TGetter; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
+begin
+  inherited CreateGetField( AName, AGetter, AField, AStoreMode );
+  PathMode:= APathMode;
+end;
+
+constructor TP3DPropertyAccessFilePointer.CreateGetSet(AName: String; AGetter: TGetter; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
+begin
+  inherited CreateGetSet( AName, AGetter, ASetter, AStoreMode );
+  PathMode:= APathMode;
+end;
+
 procedure TP3DPropertyAccessFilePointer.LoadFromJSONContext(AContext: TP3DJSONContext);
 var
-  Path: String;
+  Path, FN: String;
+  Val: TP3DFilePointer;
 begin
   if ( AContext.Data.JSONType = jtString ) then
     begin
-      Path:= P3DSearchPaths.FindFileEx( AContext.Data.AsString, GetCurrentDir );
+      {Path:= P3DSearchPaths.FindFileEx( AContext.Data.AsString, GetCurrentDir );
       if ( Path > '' ) then
-        Value.FileName:= Path
-      else
-        Value.FileName:= AContext.Data.AsString
+        FN:= Path
+      else}
+        FN:= AContext.Data.AsString;
+      SetAsString( FN );
     end
   else
     raise Exception.CreateFmt( P3DERROR_JSON_WRONG_TYPE, [ JSONTypeName( jtString ), JSONTypeName( AContext.Data.JSONType )]);
@@ -210,16 +237,32 @@ end;
 function TP3DPropertyAccessFilePointer.GetAsString: String;
 begin
   if ( Assigned( Value )) then
-    if ( AbsolutePaths ) then
-      Result:= Value.FileName
-    else
-      Result:= ExtractRelativepath( AppendPathDelim( GetCurrentDir()), Value.FileName );
+    case PathMode of
+      pmAbsolute: Result:= Value.FileName;
+      pmRelativeToBinary: Result:= ExtractRelativepath( ExtractFilePath( ParamStr( 0 )), Value.FileName );
+      pmRelativeToBaseBath: Result:= ExtractRelativepath( P3DSearchPaths.BaseDir.FileName, Value.FileName );
+      pmRelativeToCurrentPath: Result:= ExtractRelativepath( AppendPathDelim( GetCurrentDir()), Value.FileName );
+    end;
 end;
 
 procedure TP3DPropertyAccessFilePointer.SetAsString(AValue: String);
+var
+  FN: String;
 begin
-  if ( Assigned( Value )) then
-    Value.FileName:= AValue;
+  if ( FilenameIsAbsolute( AValue )) then
+    FN:= AValue
+  else
+    case FPathMode of
+      pmAbsolute: FN:= CreateAbsolutePath( AValue, ExtractFilePath( Value.FileName ));
+      pmRelativeToBaseBath: FN:= CreateAbsolutePath( AValue, P3DSearchPaths.BaseDir.FileName );
+      pmRelativeToBinary: FN:= CreateAbsolutePath( AValue, ExtractFilePath( ParamStr( 0 )));
+      pmRelativeToCurrentPath: FN:= CreateAbsolutePath( AValue, GetCurrentDir );
+    end;
+  WriteLn( Name, ': ', FN );
+  if ( not Assigned( Value )) then
+    Value:= TP3DFilePointer.Create( FN )
+  else
+    Value.FileName:= FN;
 end;
 
 function TP3DPropertyAccessFilePointer.GetDefaultValue: TP3DFilePointer;

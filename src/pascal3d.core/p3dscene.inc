@@ -20,6 +20,7 @@ type
 
   TP3DRenderObject = class ( TP3DInterfacedPersistent )
     private
+      FActiveSubset: String;
       FObjects: TP3DObjectList;
       FData: TP3DDataBlock;
       FInstanceCount: Integer;
@@ -46,6 +47,7 @@ type
       property Matrices: TMat4List read FMatrices write FMatrices;
       property Material: TP3DMaterial read FMaterial write FMaterial;
       property InstanceCount: Integer read FInstanceCount write FInstanceCount;
+      property ActiveSubset: String read FActiveSubset write FActiveSubset;
   end;
 
   TP3DRenderListScoreFunc = function ( Item: TP3DRenderObject ): Integer;
@@ -91,6 +93,7 @@ type
 
   TP3DRenderList = class ( TP3DCustomRenderList )
     private
+      FActiveSubset: String;
       FLights: TP3DLightRenderList;
       FOnAdd: TP3DRenderListAddCallBack;
       FTransparencyStart: Integer;
@@ -102,11 +105,12 @@ type
       procedure Add( AData: TP3DDataBlock; AWorld: TMat4; AScene: TP3DScene; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault ); reintroduce;
       function PickFromCamera( X, Y: Integer; Camera: TP3DObject ): TP3DObject;
       procedure Render( Camera: TP3DObject; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
-      procedure SetupMaterial( Material: TP3DMaterial; Camera: TP3DObject; const Fast: Boolean = False; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
+      procedure SetupMaterial( Material: TP3DMaterial; Camera: TP3DObject; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure RenderMesh( Idx: Integer; Camera: TP3DObject; const AFlags: TP3DRenderListFlags = P3DRenderListFlagsDefault );
       procedure Sort( Func: TP3DRenderListScoreFunc; lo, hi: Integer );
       procedure Optimize;
       procedure Clear; reintroduce;
+      function PushRenderObject(AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial): Integer; override;
       function CheckCollision( RenderList: TP3DRenderList; out A, B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
       function CheckCollision( ASphere: TP3DSphere; out B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
       function CheckCollision( AAABB: TP3DAABB; out B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
@@ -114,6 +118,7 @@ type
       property Lights: TP3DLightRenderList read FLights write FLights;
       property LastUpdate: Integer read FLastUpdate;
       property OnAdd: TP3DRenderListAddCallBack read FOnAdd write FOnAdd;
+      property ActiveSubset: String read FActiveSubset write FActiveSubset;
   end;
 
   { TP3DScene }
@@ -324,6 +329,7 @@ constructor TP3DRenderList.Create;
 begin
   inherited Create;
   Lights:= TP3DLightRenderList.Create;
+  ActiveSubset:= '';
 end;
 
 destructor TP3DRenderList.Destroy;
@@ -425,7 +431,7 @@ begin
   cam:= TP3DCamera( Camera.Data );
   mat:= P3DMaterialActive;
   if ( Assigned( mat )) then
-    SetupMaterial( mat, Camera, False, AFlags );
+    SetupMaterial( mat, Camera, AFlags );
 
   Optimize;
   if ( rlfDepthTest in AFlags ) then
@@ -443,8 +449,10 @@ begin
 
   for i:= 0 to Count - 1 do
     if ( Items[ i ].Data is TP3DMesh ) then
-      RenderMesh( i, Camera, AFlags );
-  if ( Assigned( P3DMaterialActive ) and P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
+      begin
+        RenderMesh( i, Camera, AFlags );
+      end;
+  if ( Assigned( P3DShaderActive ) and P3DShaderActive.Attributes.FindByName( 'instanceID', decl )) then
     begin
       glVertexAttrib1f( decl.Addr, 0.0 );
       glVertexAttribDivisorARB( decl.Addr, 0 ); cle( Self );
@@ -457,9 +465,9 @@ begin
   glEnable( GL_DEPTH_TEST );
 end;
 
-procedure TP3DRenderList.SetupMaterial( Material: TP3DMaterial; Camera: TP3DObject; const Fast: Boolean; const AFlags: TP3DRenderListFlags );
+procedure TP3DRenderList.SetupMaterial(Material: TP3DMaterial; Camera: TP3DObject; const AFlags: TP3DRenderListFlags);
 begin
-  Material.PassToShader();
+  Material.PassToShader( ActiveSubset );
   TP3DCamera( Camera.Data ).PassToShader();
   if ( rlfLighting in AFlags ) then
     Lights.PassToActiveShader( TP3DCamera( Camera.Data ).View, [ liLightParams, liPosition ]);
@@ -469,13 +477,17 @@ procedure TP3DRenderList.RenderMesh(Idx: Integer; Camera: TP3DObject; const AFla
 var
   n, j: Integer;
   decl: TP3DShaderDecl;
+  Obj: TP3DPropertyAccess;
 begin
   if ( Items[ Idx ].Data is TP3DMesh ) then
     begin
       if ( Idx = FTransparencyStart ) then
         glDepthMask( False );
-      if (( rlfMaterials in AFlags ) and ( P3DMaterialActive <> Items[ Idx ].Material )) then
-        SetupMaterial( Items[ Idx ].Material, Camera, False, AFlags );
+      if (( rlfMaterials in AFlags ) and (( P3DMaterialActive <> Items[ Idx ].Material ) or ( ActiveSubset <> Items[ Idx ].ActiveSubset ))) then
+        begin
+          ActiveSubset:= Items[ Idx ].ActiveSubset;
+          SetupMaterial( Items[ Idx ].Material, Camera, AFlags );
+        end;
       if ( rlfIndexColors in AFlags ) then
         begin
           //Diff:= vec3( iv[ 0 ], iv[ 1 ], iv[ 2 ]) / 255;
@@ -483,24 +495,30 @@ begin
 //            Diff.R, Diff.G, Diff.B, 1.0 ); cle( nil );
         end;
 
-
       with( TP3DMesh( Items[ Idx ].Data )) do
         begin
+          if ( ActiveSubset > '' ) then
+            begin
+              Obj:= Owner.Properties.GetPropByPath( ActiveSubset );
+              if (( Obj is TP3DPropertyAccessObject ) and ( Assigned( TP3DPropertyAccessObject( Obj ).Value ))) then
+                for n:= 0 to TP3DPropertyAccessObject( Obj ).Value.Modifiers.Count - 1 do
+                  TP3DPropertyAccessObject( Obj ).Value.Modifiers[ n ].PassToShader( P3DMaterialActive, Mat4Identity );
+            end;
           if ( rlfMaterials in AFlags ) then
             n:= MaterialGroups.Find( P3DMaterialActive )
           else
             n:= -1;
 
-          if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWidth', decl )) then
+          if ( P3DShaderActive.Uniforms.FindByName( 'instanceGridWidth', decl )) then
             decl.AsInt:= 1;
 
-          if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
+          if ( P3DShaderActive.Uniforms.FindByName( 'instanceGridWorldSize', decl )) then
             decl.AsFloat:= 1.0;
 
-          if ( P3DMaterialActive.Shader.Uniforms.FindByName( 'world', decl )) then
+          if ( P3DShaderActive.Uniforms.FindByName( 'world', decl )) then
             decl.AsMat4:= Mat4Identity;
 
-          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
+          if ( P3DShaderActive.Attributes.FindByName( 'instanceID', decl )) then
             begin
 //                P3DMaterialActive.Shader.DumpAttributes;
               glVertexAttrib1f( decl.Addr, 0.0 );
@@ -509,7 +527,7 @@ begin
 //                Items[ Idx ].Material.Shader.DumpAttributes;
             end;
 
-          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_position', decl )) then
+          if ( P3DShaderActive.Attributes.FindByName( 'instance_position', decl )) then
             begin
               Items[ Idx ].Positions.PushData();
               Items[ Idx ].Positions.Divisor:= Items[ Idx ].InstanceCount div Items[ Idx ].Positions.Count;
@@ -518,7 +536,7 @@ begin
               //glVertexAttribDivisorARB( decl.Addr, Items[ Idx ].InstanceCount div Items[ Idx ].Positions.Count ); cle( Self );
             end;
 
-          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_rotation', decl )) then
+          if ( P3DShaderActive.Attributes.FindByName( 'instance_rotation', decl )) then
             begin
               Items[ Idx ].Rotations.PushData();
               Items[ Idx ].Rotations.Divisor:= Items[ Idx ].InstanceCount div Items[ Idx ].Rotations.Count;
@@ -527,7 +545,7 @@ begin
               //glVertexAttribDivisorARB( decl.Addr, Items[ Idx ].InstanceCount div Items[ Idx ].Rotations.Count ); cle( Self );
             end;
 
-          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instance_scaling', decl )) then
+          if ( P3DShaderActive.Attributes.FindByName( 'instance_scaling', decl )) then
             begin
               Items[ Idx ].Scalings.PushData();
               Items[ Idx ].Scalings.Divisor:= Items[ Idx ].InstanceCount div Items[ Idx ].Scalings.Count;
@@ -544,7 +562,7 @@ begin
           else
             RenderMaterialGroupInstanced( Items[ Idx ].InstanceCount, n );
 
-          if ( P3DMaterialActive.Shader.Attributes.FindByName( 'instanceID', decl )) then
+          if ( P3DShaderActive.Attributes.FindByName( 'instanceID', decl )) then
             begin
 //                P3DMaterialActive.Shader.DumpAttributes;
               glVertexAttrib1f( decl.Addr, 0.0 );
@@ -621,6 +639,12 @@ begin
   inherited Clear( True );
   Lights.Clear( True );
   ModifierStack.Clear( False );
+end;
+
+function TP3DRenderList.PushRenderObject(AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial): Integer;
+begin
+  Result:= inherited PushRenderObject(AData, AMatrix, AMaterial);
+  Items[ Result ].ActiveSubset:= ActiveSubset;
 end;
 
 function TP3DRenderList.CheckCollision(RenderList: TP3DRenderList; out A, B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3): Boolean;

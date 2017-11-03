@@ -84,7 +84,6 @@ type
       procedure WriteFile; // Starts writing an object's properties to a JSON File by traversing the object's tree
 
       procedure Reload; override;  // Tries to reopen the JSON file and checks if a binary file exists and is newer than the possibly loaded one.
-      //function LoadFromPath( ):
 
     published
       property JSON: TJSONData read FJSON write FJSON; // A pointer to the opened JSON file. May be nil if OpenFiles was not called.

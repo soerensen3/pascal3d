@@ -36,6 +36,7 @@ uses
   fpjson,
   typinfo,
   strutils,
+  fgl,
   SDL2,
   sdl2_ttf,
   sdl2_image,
@@ -109,7 +110,7 @@ begin
                              TP3DMesh, TP3DScene, TP3DTexture,
                              TP3DMaterialMapBase, TP3DMaterialMap,
                              TP3DFontLetter,
-                             TP3DMeshModifierArmature, TP3DMeshModifierTerrain ]);
+                             TP3DObjectModifierArmature, TP3DMeshModifierTerrain ]);
   if ( not Assigned( P3DShaderNodeLib )) then
     P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create;
 

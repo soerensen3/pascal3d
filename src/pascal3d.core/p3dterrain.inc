@@ -67,7 +67,6 @@ end;
 procedure TP3DMeshModifierTerrain.PassToShader( Material: TP3DMaterial; var world: TMat4);
 var
   Position: TVec3;
-  //Position: TVec3;
 begin
   {Position:= vec3( round( Scene.ActiveCam.Position.X / GridSize ), round( Scene.ActiveCam.Position.Y / GridSize ), 0 );
   world.Row[ 3 ]:= vec4( Position * GridSize, 1 );

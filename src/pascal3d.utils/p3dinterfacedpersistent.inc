@@ -62,12 +62,29 @@ type
       procedure LoadFromDOM( ADOMNode: TDOMElement ); virtual;
   end;
 
+  { gP3DPropertyAccessInterfacedPersistent_NoCreate }
+
+  generic gP3DPropertyAccessInterfacedPersistent_NoCreate < TItem: TP3DInterfacedPersistent > = class( specialize gP3DPropertyAccessInterfacedPersistent < TItem >)
+    public
+      procedure ValueCreateNew(ClTp: TP3DInterfacedPersistentType; AContext: TP3DJSONContext); override;
+  end;
+
   TP3DInterfacedPersistentList = specialize gP3DInterfacedPersistentList < TP3DInterfacedPersistent >;
 
 
   TP3DPropertyAccessInterfacedPersistent = specialize gP3DPropertyAccessInterfacedPersistent < TP3DInterfacedPersistent >;
+  TP3DPropertyAccessInterfacedPersistent_NoCreate = specialize gP3DPropertyAccessInterfacedPersistent_NoCreate < TP3DInterfacedPersistent >;
 
   TP3DPropertyAccessInterfacedPersistentList = specialize gP3DListPropertyAccessObject < TP3DInterfacedPersistentList, TP3DInterfacedPersistent, TP3DPropertyAccessInterfacedPersistent >;
+
+  { gP3DListPropertyAccessInterfacedPersistent }
+
+  generic gP3DListPropertyAccessInterfacedPersistent < TListProp, TListData, TPropType > = class ( specialize gP3DListPropertyAccess < TListProp, TListData, TPropType >)
+    public
+      procedure SetArrayCount(AValue: Integer); override;
+      procedure ValueCreateNew( AContext: TP3DJSONContext ); virtual;
+      procedure LoadItemFromJSONContext(AIndex: Integer; AContext: TP3DJSONContext); override;
+  end;
 
   {{ gP3DTransformPersistent }
 
@@ -218,7 +235,10 @@ begin
           end
         else
           raise Exception.CreateFmt( P3DERROR_JSON_CLASS_TYPE_NOT_FOUND, [ ClName.AsString ]);
-        CreateValueFromJSONContext( Cl, AContext );
+        if ( Assigned( Cl )) then
+          CreateValueFromJSONContext( Cl, AContext )
+        else if ( Assigned( Value )) then
+          Value.LoadFromJSONContext( AContext );
       except
         on E: Exception do
           Exception.CreateFmt( P3DERROR_JSON_CLASS_TYPE_NODE_NOT_FOUND, []);
@@ -282,6 +302,28 @@ procedure gP3DInterfacedPersistentList.LoadFromDOM(ADOMNode: TDOMElement);
 begin
 
 end;
+
+{ gP3DListPropertyAccessInterfacedPersistent }
+
+procedure gP3DListPropertyAccessInterfacedPersistent.SetArrayCount(AValue: Integer);
+begin
+  if ( Assigned( Value )) then
+    Value.Count:= AValue;
+end;
+
+procedure gP3DListPropertyAccessInterfacedPersistent.ValueCreateNew(AContext: TP3DJSONContext);
+begin
+  //if ( not Assigned( Value )) then
+  //  Value:= TItem.Create( AContext.Owner );
+  //TODO: FINISH
+end;
+
+procedure gP3DListPropertyAccessInterfacedPersistent.LoadItemFromJSONContext(AIndex: Integer; AContext: TP3DJSONContext);
+begin
+  inherited LoadItemFromJSONContext(AIndex, AContext);
+end;
+
+
 
 {$ENDIF}
 

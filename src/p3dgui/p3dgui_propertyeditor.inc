@@ -341,6 +341,7 @@ type
   TP3DPropertyEditorTextureList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessTextureList >;
   TP3DPropertyEditorArmatureList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessArmatureList >;
   TP3DPropertyEditorFontBmpList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessFontBmpList >;
+  TP3DPropertyEditorObjectModifierList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessObjectModifierList >;
   TP3DPropertyEditorGraphicControlList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessGraphicControlList >;
   TP3DPropertyEditorObjectList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessObjectList >;
   TP3DPropertyEditorActionList = specialize gP3DPropertyEditorInterfacedPersistentList < TP3DPropertyAccessActionList >;
@@ -787,8 +788,8 @@ begin
       else
         inherited MouseUp(mb1, mb2, mb3, X, Y);
     end
-  else
-    inherited MouseUp(mb1, mb2, mb3, X, Y);*)
+  else*)
+    inherited MouseUp(mb1, mb2, mb3, X, Y);
 end;
 
 function gP3DPropertyEditorList.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;
@@ -865,17 +866,14 @@ end;
 
 procedure gP3DPropertyEditorInterfacedPersistentList.MouseUp(mb1, mb2, mb3: Boolean; X, Y: Integer);
 begin
-  if ( Assigned( Selection )) then
-    begin
-      if ( P3DRect( Canvas.Width - FOptionsSymbol.Width - ScrollBarV.Width, Selection.FRenderPos.Y - ScrollBarV.Position,
-                          FOptionsSymbol.Width, FOptionsSymbol.Height ).PtInRect( vec2( X, Y ))) then
-        begin // Options
-          OptionsPopup.Width:= Canvas.Width;
-          OptionsPopup.PopUp( Canvas.Left, round( Canvas.Top + Selection.FRenderPos.Y - ScrollBarV.Position + FOptionsSymbol.Height ));
-        end
-      else
-        inherited MouseUp(mb1, mb2, mb3, X, Y);
+  if (( Assigned( Selection ) and ( P3DRect( Canvas.Width - FOptionsSymbol.Width - ScrollBarV.Width, Selection.FRenderPos.Y - ScrollBarV.Position,
+                          FOptionsSymbol.Width, FOptionsSymbol.Height ).PtInRect( vec2( X, Y ))))) then
+    begin // Options
+      OptionsPopup.Width:= Canvas.Width;
+      OptionsPopup.PopUp( Canvas.Left, round( Canvas.Top + Selection.FRenderPos.Y - ScrollBarV.Position + FOptionsSymbol.Height ));
     end
+  else
+    inherited MouseUp(mb1, mb2, mb3, X, Y);
 end;
 
 procedure gP3DPropertyEditorInterfacedPersistentList.PopupClick(Sender: TP3DMenuItem);

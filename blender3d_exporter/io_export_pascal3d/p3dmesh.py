@@ -111,10 +111,7 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
         return pos
 
     def ExportModifiers( self, block, root, obj ):
-        if root.Exporter.ExportArmatures:
-            armature = obj.find_armature()
-            if ( armature ):
-                self.Modifiers = [{ "ClassName" : "TP3DMeshModifierArmature", "Armature": "Armatures[\"" + armature.data.name + "\"]" }]
+        pass
 
     def __init__( self, block, root = None, path='', obj = None ):
         self.Name = block.name

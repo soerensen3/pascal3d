@@ -56,6 +56,8 @@ begin
   //  P3DApplication:= TP3DApplication.Create;
   if ( not Assigned( P3DInput )) then
     P3DInput:= TP3DInputManager.Create;
+  if ( Assigned( P3DClassFactory )) then
+    P3DClassFactory.Add( TP3DWindow );
 end;
 
 procedure P3DEventsFinish;

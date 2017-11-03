@@ -703,14 +703,31 @@
     ],
     "Meshes": [
         {
-            "Name": "Cube",
-            "DataPath": "Meshes[\"Cube\"]",
+            "Name": "Cube.004",
+            "DataPath": "Meshes[\"Cube.004\"]",
             "ClassName": "TP3DMesh",
             "PackedPositions": "@0",
-            "PackedNormals": "@98116",
-            "Loops": "@485192",
-            "Edges": "@614220",
-            "PackedFaces": "@872272",
+            "PackedNormals": "@100",
+            "Loops": "@392",
+            "Edges": "@492",
+            "PackedFaces": "@688",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 5,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube.001",
+            "DataPath": "Meshes[\"Cube.001\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@716",
+            "PackedNormals": "@25248",
+            "Loops": "@122020",
+            "Edges": "@154280",
+            "PackedFaces": "@218796",
             "WeightGroups": [
                 {
                     "Index": 0,
@@ -729,19 +746,124 @@
                     "Name": "Bone.003"
                 }
             ],
-            "PackedVertexWeights": "@904820",
-            "PackedVertexWeightIndices": "@1002936",
+            "PackedVertexWeights": "@226936",
+            "PackedVertexWeightIndices": "@251468",
             "PackedMaterialGroups": [
                 {
                     "PolyStart": 0,
-                    "PolyEnd": 8135,
+                    "PolyEnd": 2033,
                     "Material": "Materials[\"Material\"]"
                 }
-            ],
-            "Modifiers": [
+            ]
+        },
+        {
+            "Name": "Cube.002",
+            "DataPath": "Meshes[\"Cube.002\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@284176",
+            "PackedNormals": "@308708",
+            "Loops": "@405480",
+            "Edges": "@437740",
+            "PackedFaces": "@502256",
+            "WeightGroups": [
                 {
-                    "ClassName": "TP3DMeshModifierArmature",
-                    "Armature": "Armatures[\"Armature\"]"
+                    "Index": 0,
+                    "Name": "Bone"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone.001"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone.002"
+                },
+                {
+                    "Index": 3,
+                    "Name": "Bone.003"
+                }
+            ],
+            "PackedVertexWeights": "@510396",
+            "PackedVertexWeightIndices": "@534928",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 2033,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube.003",
+            "DataPath": "Meshes[\"Cube.003\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@567636",
+            "PackedNormals": "@592168",
+            "Loops": "@688940",
+            "Edges": "@721200",
+            "PackedFaces": "@785716",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone.001"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone.002"
+                },
+                {
+                    "Index": 3,
+                    "Name": "Bone.003"
+                }
+            ],
+            "PackedVertexWeights": "@793856",
+            "PackedVertexWeightIndices": "@818388",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 2033,
+                    "Material": "Materials[\"Material\"]"
+                }
+            ]
+        },
+        {
+            "Name": "Cube",
+            "DataPath": "Meshes[\"Cube\"]",
+            "ClassName": "TP3DMesh",
+            "PackedPositions": "@851096",
+            "PackedNormals": "@875628",
+            "Loops": "@972400",
+            "Edges": "@1004660",
+            "PackedFaces": "@1069176",
+            "WeightGroups": [
+                {
+                    "Index": 0,
+                    "Name": "Bone"
+                },
+                {
+                    "Index": 1,
+                    "Name": "Bone.001"
+                },
+                {
+                    "Index": 2,
+                    "Name": "Bone.002"
+                },
+                {
+                    "Index": 3,
+                    "Name": "Bone.003"
+                }
+            ],
+            "PackedVertexWeights": "@1077316",
+            "PackedVertexWeightIndices": "@1101848",
+            "PackedMaterialGroups": [
+                {
+                    "PolyStart": 0,
+                    "PolyEnd": 2033,
+                    "Material": "Materials[\"Material\"]"
                 }
             ]
         }
@@ -772,7 +894,36 @@
             "Visible": 1,
             "Children": [],
             "Data": "Cameras[\"Camera\"]",
+            "Modifiers": [],
             "DataPath": "Objects[\"Camera\"]"
+        },
+        {
+            "Name": "Cube",
+            "ClassName": "TP3DObject",
+            "Transform": {
+                "Position": [
+                    -7.419593334197998,
+                    0.3428187370300293,
+                    1.8789045810699463
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.004\"]",
+            "Modifiers": [],
+            "DataPath": "Objects[\"Cube\"]"
         },
         {
             "Name": "Bone",
@@ -799,6 +950,7 @@
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"Bone\"]",
+            "Modifiers": [],
             "DataPath": "Objects[\"Bone\"]"
         },
         {
@@ -826,6 +978,7 @@
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"Bone.001\"]",
+            "Modifiers": [],
             "DataPath": "Objects[\"Bone.001\"]"
         },
         {
@@ -853,6 +1006,7 @@
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"Bone.002\"]",
+            "Modifiers": [],
             "DataPath": "Objects[\"Bone.002\"]"
         },
         {
@@ -880,10 +1034,110 @@
             "Visible": 1,
             "Children": [],
             "Data": "Joints[\"Bone.003\"]",
+            "Modifiers": [],
             "DataPath": "Objects[\"Bone.003\"]"
         },
         {
-            "Name": "Cube",
+            "Name": "Monkey1",
+            "ClassName": "TP3DObject",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.001\"]",
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DObjectModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ],
+            "DataPath": "Objects[\"Monkey1\"]"
+        },
+        {
+            "Name": "Monkey2",
+            "ClassName": "TP3DObject",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.002\"]",
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DObjectModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ],
+            "DataPath": "Objects[\"Monkey2\"]"
+        },
+        {
+            "Name": "Monkey3",
+            "ClassName": "TP3DObject",
+            "Transform": {
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Quaternion": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "RotationOrder": "roXYZ"
+            },
+            "Visible": 1,
+            "Children": [],
+            "Data": "Meshes[\"Cube.003\"]",
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DObjectModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ],
+            "DataPath": "Objects[\"Monkey3\"]"
+        },
+        {
+            "Name": "Monkey4",
             "ClassName": "TP3DObject",
             "Transform": {
                 "Position": [
@@ -907,7 +1161,13 @@
             "Visible": 1,
             "Children": [],
             "Data": "Meshes[\"Cube\"]",
-            "DataPath": "Objects[\"Cube\"]"
+            "Modifiers": [
+                {
+                    "ClassName": "TP3DObjectModifierArmature",
+                    "Armature": "Armatures[\"Armature\"]"
+                }
+            ],
+            "DataPath": "Objects[\"Monkey4\"]"
         },
         {
             "Name": "Armature",
@@ -937,9 +1197,13 @@
                 "Objects[\"Bone.001\"]",
                 "Objects[\"Bone.002\"]",
                 "Objects[\"Bone.003\"]",
-                "Objects[\"Cube\"]"
+                "Objects[\"Monkey1\"]",
+                "Objects[\"Monkey2\"]",
+                "Objects[\"Monkey3\"]",
+                "Objects[\"Monkey4\"]"
             ],
             "Data": "Armatures[\"Armature\"]",
+            "Modifiers": [],
             "DataPath": "Objects[\"Armature\"]",
             "Action": "Actions[\"Action\"]"
         },
@@ -968,6 +1232,7 @@
             "Visible": 1,
             "Children": [],
             "Data": "Lights[\"Lamp\"]",
+            "Modifiers": [],
             "DataPath": "Objects[\"Lamp\"]"
         }
     ],
@@ -978,6 +1243,7 @@
             "ClassName": "TP3DScene",
             "Cam": "Objects[\"Camera\"]",
             "Objects": [
+                "Objects[\"Cube\"]",
                 "Objects[\"Armature\"]",
                 "Objects[\"Lamp\"]",
                 "Objects[\"Camera\"]"

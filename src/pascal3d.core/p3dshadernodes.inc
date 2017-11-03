@@ -127,12 +127,24 @@ type
   { TP3DShaderNodeLibrary }
 
   TP3DShaderNodeLibrary = class( TP3DNodeTree )
-    procedure LoadLibrary( FileName: String );
-    procedure LoadLibraryPath( PathName: String; const Ext: String = '*.*' );
-    function FindNode( ANode: String ): TP3DShaderNode;
+    private
+      FPaths: TP3DFilePointerList;
 
-    class function DOMNodeName: String; override;
-    procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
+      procedure OnChange( Sender: TPersistent; Item: TP3DFilePointer; Action: TP3DCustomListOnChangeAction );
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      procedure LoadLibrary( FileName: String );
+      procedure LoadLibraryPath( PathName: String; const Ext: String = '*.pmd' );
+      function FindNode( ANode: String ): TP3DShaderNode;
+
+      class function DOMNodeName: String; override;
+      procedure LoadFromDOMNew(ADOMNode: TDOMElement); override;
+      procedure UpdatePaths( const Index: Integer = -1 );
+
+      property Paths: TP3DFilePointerList read FPaths write FPaths;
   end;
 
   { TP3DShaderBuffer }
@@ -393,6 +405,34 @@ end;
 
 { TP3DShaderNodeLibrary }
 
+procedure TP3DShaderNodeLibrary.OnChange(Sender: TPersistent; Item: TP3DFilePointer; Action: TP3DCustomListOnChangeAction);
+begin
+  UpdatePaths();
+end;
+
+constructor TP3DShaderNodeLibrary.Create;
+var
+  fpl: TP3DPropertyAccessFilePointerList;
+begin
+  inherited Create;
+  FPaths:= TP3DFilePointerList.Create;
+  FPaths.OnChange:= @OnChange;
+  fpl:= TP3DPropertyAccessFilePointerList.CreateField( 'Paths', @FPaths, smAttribute );
+  fpl.PathMode:= pmRelativeToBaseBath;
+  Properties.Add( fpl );
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Add( Self );
+end;
+
+destructor TP3DShaderNodeLibrary.Destroy;
+begin
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Remove( Self );
+  FPaths.Clear( True );
+  FPaths.Free;
+  inherited Destroy;
+end;
+
 procedure TP3DShaderNodeLibrary.LoadLibrary(FileName: String);
 begin
   ParseMarkdownFileAppend( FileName, Self );
@@ -424,8 +464,9 @@ var
   line: String;
   Path: String;
 begin
-  Path:= IncludeTrailingPathDelimiter( P3DSearchPaths.FindFileEx( PathName, GetCurrentDir()));
-  if ( Path = DirectorySeparator ) then
+  Path:= IncludeTrailingPathDelimiter( PathName ); //P3DSearchPaths.FindFileEx( PathName, GetCurrentDir()));
+  //if ( Path = DirectorySeparator ) then
+  if ( not DirectoryExists( Path )) then
     raise Exception.Create( Format( 'Could not load shader library from path. The specified path "%s" was not found', [ PathName ]));
   Files:= P3DListFolderFiles( Path + Ext, True, True );
   for line in Files do
@@ -463,9 +504,23 @@ begin
     if ( Path.NodeName = 'path' ) then
       begin
         value:= Path.GetAttribute( 'value' );
-        LoadLibraryPath( value );
+        Paths.Add( TP3DFilePointer.Create( value ));
         Path:= TDOMElement( Path.NextSibling );
       end;
+end;
+
+procedure TP3DShaderNodeLibrary.UpdatePaths(const Index: Integer);
+var
+  Path: TP3DFilePointer;
+begin
+  if ( Index < 0 ) then
+    begin
+      Nodes.Clear( True );
+      for Path in Paths do
+        LoadLibraryPath( Path.FileName );
+    end
+  else
+    //No idea..
 end;
 
 

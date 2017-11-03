@@ -157,14 +157,11 @@
     TP3DPropertyAccessMeshWeightGroup = specialize gP3DPropertyAccessInterfacedPersistent < TP3DMeshWeightGroup >;
     TP3DPropertyAccessMeshWeightGroupList = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DMeshWeightGroupList, TP3DMeshWeightGroup, TP3DPropertyAccessMeshWeightGroup >;
 
-    TP3DArmature = class;
-
     { TP3DMesh }
     //TP3DCustomMeshRenderable = specialize gP3DRenderable < TP3DDataBlock >;
     TP3DTexCoordList = specialize gP3DCustomObjectList < TP3DVec2BufferGL >;
     TP3DMesh = class( TP3DDataBlock, IP3DRenderable, IP3DCollidable )
       private
-        FArmature: TP3DArmature;
         FFileWatch: TP3DFilePointer;
         FModifiers: TP3DMeshModifierList;
 
@@ -235,8 +232,6 @@
 
         //        procedure ClearChildren;
         property Modifiers: TP3DMeshModifierList read FModifiers write FModifiers;
-        property FileWatch: TP3DFilePointer read FFileWatch write FFileWatch;
-        property Armature: TP3DArmature read FArmature;
 
         //IP3DCollidable -->
       private
@@ -380,7 +375,7 @@ begin
   M:= nil;
   case DOM.GetAttribute( 'name' ) of
     'terrain': M:= TP3DMeshModifierTerrain.CreateFromDOM( DOM, Self );
-    'armature': M:= TP3DMeshModifierArmature.CreateFromDOM( DOM, Self );
+    //'armature': M:= TP3DMeshModifierArmature.CreateFromDOM( DOM, Self );
     else
       raise Exception.Create( 'Cannot create mesh modifier. Modifier type not found!' ); //TODO: Improve msg
   end;
@@ -464,8 +459,8 @@ begin
   Modifiers:= TP3DMeshModifierList.Create( Self );
 
   //Owner.Meshes.Add( Self );
-  FileWatch:= TP3DFilePointer.Create( '' );
-  Properties.Add( TP3DPropertyAccessFilePointer.CreateField( 'FileWatch', @FFileWatch, smDoNotStore ));
+  //FileWatch:= TP3DFilePointer.Create( '' );
+  //Properties.Add( TP3DPropertyAccessFilePointer.CreateField( 'FileWatch', @FFileWatch, smDoNotStore ));
 //  Properties.Add( TP3DPropertyAccessVec4List.CreateField( 'VertexWeightIndices', @VertexWeightIndices, smDoNotStore ));
 //  Properties.Add( TP3DPropertyAccessVec4List.CreateField( 'VertexWeights', @VertexWeights, smDoNotStore ));
   Properties.Add( TP3DPropertyAccessIntList.CreateField( 'Loops', @Loops, smNode ));
@@ -526,7 +521,7 @@ begin
   PackedMaterialGroups.Free;
   WeightGroups.Clear( True );
   WeightGroups.Free;
-  FileWatch.Free;
+  //FileWatch.Free;
 
   //Owner.Meshes.Remove( Self );
 
@@ -598,7 +593,6 @@ begin
         //  LoadFaceFromStream( PackedFaces, F, cnt, Loops.Count );
         PackedFaces.LoadFromStream( F, cnt );
         F.Free;
-        FileWatch.FileName:= ext;
       except on E: Exception do
         begin
           P3DLog.LogException( Self, E );

@@ -342,10 +342,14 @@ begin
   MainWindow:= nil;
   Windows:= TP3DWindowList.Create;
   Properties.Add( TP3DPropertyAccessWindowList.CreateField( 'Windows', @FWindows, smAttribute ));
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Add( Self );
 end;
 
 destructor TP3DApplication.Destroy;
 begin
+  if ( Assigned( P3DConfig )) then
+    P3DConfig.Config.Remove( Self );
   Finalize;
   SDL_Quit();
   if ( Assigned( MainWindow )) then

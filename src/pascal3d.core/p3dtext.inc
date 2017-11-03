@@ -37,6 +37,7 @@ const
   P3DSymbolArmature              = '^';
   P3DSymbolClear                 = '_';
   P3DSymbolGrid                  = '`';
+  P3DSymbolModifier              = 'a';
 
 type
   TP3DFontManager = class;

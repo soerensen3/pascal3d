@@ -86,6 +86,7 @@
   TP3DGroupBox = class( TP3DGraphicControl )
     private
       FBorderColor: TP3DColorRGBA;
+      FBorderless: Boolean;
       FCanCollapse: Boolean;
       FCaption: String;
       FCaptionTxt: TP3DTextBmp;
@@ -96,6 +97,7 @@
       FCollapseSymbolTxt: TP3DTextBmp;
       FCollapseSymbol: Char;
 
+      procedure SetBordeless(AValue: Boolean);
       procedure SetCanCollapse(AValue: Boolean);
       procedure SetCaption(AValue: String);
       procedure SetCollapsed(AValue: Boolean);
@@ -117,6 +119,7 @@
       property BorderColor: TP3DColorRGBA read FBorderColor write FBorderColor;
       property CanCollapse: Boolean read FCanCollapse write SetCanCollapse;
       property Collapsed: Boolean read FCollapsed write SetCollapsed;
+      property Borderless: Boolean read FBorderless write SetBordeless;
   end;
 
   { TP3DCustomValueEdit }
@@ -730,6 +733,8 @@ var
   pt2: TVec2;
 begin
   inherited Draw;
+  if ( Borderless ) then
+    exit;
   Canvas.RenderRect( vec2( 0, 0 ), WidthHeight, Color );
   Canvas.GetValidText( Caption, FCaptionTxt,
     P3DFontManager[ Canvas.Font.Name, Canvas.Font.Size ]);
@@ -770,6 +775,17 @@ begin
   if FCanCollapse= AValue then Exit;
   FCanCollapse:= AValue;
   UpdateCollapsed;
+end;
+
+procedure TP3DGroupBox.SetBordeless(AValue: Boolean);
+begin
+  if FBorderless=AValue then Exit;
+  FBorderless:=AValue;
+
+  if ( Borderless ) then
+    begin
+      CanCollapse:= False;
+    end;
 end;
 
 { TP3DEdit }

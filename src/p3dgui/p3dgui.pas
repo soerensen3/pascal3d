@@ -72,7 +72,7 @@ procedure P3DGUIFinish;
 implementation
 
 uses
-  Types, XMLRead;
+  Types, XMLRead, jsonparser, fpjson;
 
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dgui_colors.inc}

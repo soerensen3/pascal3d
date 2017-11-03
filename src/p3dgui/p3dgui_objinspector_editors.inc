@@ -225,7 +225,6 @@ published
     private
       FEditorCamera: TP3DOIEditorDataCamera;
 
-
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
@@ -393,6 +392,16 @@ published
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read GetSelectionChange write SetSelectionChange;
   end;
 
+  { TP3DOIEditorDataProperties }
+
+  TP3DOIEditorDataProperties = class ( TP3DOIEditorGroup )
+    public
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+  end;
+
+
   { TP3DOIEditorPageMaps }
 
   TP3DOIEditorPageMaps = class ( TP3DOIEditorPage )
@@ -442,6 +451,28 @@ published
       property EditorMatMesh: TP3DOIEditorDataMeshMaterial read FEditorMatMesh write FEditorMatMesh;
       property EditorMatBase: TP3DOIEditorDataMaterialBase read FEditorMatBase write FEditorMatBase;
       property EditorPageMaps: TP3DOIEditorPageMaps read FEditorPageMaps write FEditorPageMaps;
+  end;
+
+  { TP3DOIEditorPageMeshModifier }
+
+  TP3DOIEditorPageObjectModifier = class ( TP3DOIEditorPage )
+    private
+      FEditorObjectModifiers: TP3DPropertyEditorObjectModifierList;
+      FEditorSelectedMod: TP3DOIEditorDataProperties;
+
+      procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
+
+    public
+      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+
+      procedure Update; override;
+
+      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
+
+    published
+      property EditorMeshModifiers: TP3DPropertyEditorObjectModifierList read FEditorObjectModifiers write FEditorObjectModifiers;
+      property EditorSelectedMod: TP3DOIEditorDataProperties read FEditorSelectedMod write FEditorSelectedMod;
   end;
 
   { TP3DOIEditorPageProperties }
@@ -1933,6 +1964,43 @@ begin
   Result.Caption:= P3DSymbolOptions;
 end;
 
+{ TP3DOIEditorDataProperties }
+
+procedure TP3DOIEditorDataProperties.Update;
+  function AddCategory( Prop: TP3DPropertyAccess; var Cat: TP3DOIEditorGroup ):TP3DOIEditorGroup;
+  begin
+    if ( not Assigned( Cat ) or ( Cat.Caption <> Prop.Category )) then
+      begin
+        Cat:= TP3DOIEditorGroup.Create( Owner, Self );
+        Cat.Align:= alTop;
+        Cat.Caption:= Prop.Category;
+        Cat.PageModeY:= pmExpand;
+      end;
+    Result:= Cat;
+  end;
+
+var
+  _O: TInterfacedPersistent;
+  O: TP3DInterfacedPersistent absolute _O;
+  Cat: TP3DOIEditorGroup;
+  Prop: TP3DPropertyAccess;
+
+begin
+  Controls.Clear( True );
+
+  _O:= Obj;
+  Cat:= nil;
+  if ( O is TP3DInterfacedPersistent ) then
+    for Prop in O.Properties do
+      AddCategory( Prop, Cat ).AddPropertyEditor( Prop );
+
+  inherited Update;
+end;
+
+class function TP3DOIEditorDataProperties.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= AObj is TP3DInterfacedPersistent;
+end;
 
 { TP3DOIEditorActionKey }
 
@@ -2066,5 +2134,53 @@ begin
   Result:= inherited CreateButton(AParent, AMouseClick);
   Result.Caption:= P3DSymbolArmature;
 end;
+
+{ TP3DOIEditorPageMeshModifier }
+
+procedure TP3DOIEditorPageObjectModifier.SelectionChange(Sender: TP3DListView; var NewSelection: TP3DListItem);
+begin
+  if ( Assigned( NewSelection )) then
+    FEditorSelectedMod.Obj:= TP3DInterfacedPersistent( FEditorObjectModifiers.LProp.Values[ Integer( NewSelection.Data )])
+  else
+    FEditorSelectedMod.Obj:= nil;
+end;
+
+constructor TP3DOIEditorPageObjectModifier.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+begin
+  inherited Create(AData, AParent);
+
+  FEditorObjectModifiers:= TP3DPropertyEditorObjectModifierList.Create( AData, Self );
+  FEditorObjectModifiers.Align:= alTop;
+  FEditorObjectModifiers.Height:= 100;
+  FEditorObjectModifiers.OnSelectionChange:= @SelectionChange;
+
+  FEditorSelectedMod:= TP3DOIEditorDataProperties.Create( AData, Self );
+  FEditorSelectedMod.Borderless:= True;
+  FEditorSelectedMod.Margin:= vec4( 0 );
+  FEditorSelectedMod.Align:= alTop;
+  FEditorSelectedMod.PageModeY:= pmExpand;
+end;
+
+procedure TP3DOIEditorPageObjectModifier.Update;
+begin
+  inherited Update;
+  if ( Obj is TP3DObject ) then
+    FEditorObjectModifiers.Prop:= TP3DObject( Obj ).Properties.GetPropByName( 'Modifiers' )
+  else
+    FEditorObjectModifiers.Prop:= nil;
+  FEditorSelectedMod.Obj:= nil;
+end;
+
+class function TP3DOIEditorPageObjectModifier.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+begin
+  Result:= ( AObj is TP3DObject );
+end;
+
+function TP3DOIEditorPageObjectModifier.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
+begin
+  Result:= inherited CreateButton(AParent, AMouseClick);
+  Result.Caption:= P3DSymbolModifier;
+end;
+
 
 {$ENDIF}

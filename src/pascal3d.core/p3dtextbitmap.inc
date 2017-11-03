@@ -962,7 +962,7 @@ begin
       Lib:= TP3DLibrary.Create;
       //P3DData.Libraries.Add( Lib );
       Lib.FileWatch.FileName:= ChangeFileExt( Font.FileWatch.FileName, '.p3d' );
-      //Lib.IsDesignerPackage:= True;
+      Lib.IsDesignerPackage:= True;
       Fnt:= TP3DFontBmp.CreateByFont( Font, DefaultTexWidth, DefaultTexHeight, DefaultTextMargin, Lib );
       {Lib.CreateDOMFile();
       Lib.SaveToDOM();
