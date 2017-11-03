@@ -162,7 +162,6 @@ begin
       P3DShaderNodeLib.Nodes.Clear( True );
 
       SetCurrentDir( ExtractFileDir( ParamStr( 0 )));
-      P3DApplication.LoadConfigSection( ExtractFileDir( ParamStr( 0 )) + '/settings_default.xml', 'shadernodelibrary' );
       UpdateMaterials( P3DData );
       for i:= 0 to P3DData.Libraries.Count - 1 do
         UpdateMaterials( P3DData.Libraries[ i ]);

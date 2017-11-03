@@ -11,11 +11,13 @@
 
     private
       FActionList: TP3DTreeView;
+      FShift: Single;
       FZoom: Single;
       FOnGetTime: TGetTimeFunc;
       FOnSetTime: TSetTimeFunc;
       FTimeLbl: TP3DTextBmp;
 
+      procedure SetShift(AValue: Single);
       procedure SetZoom(AValue: Single);
       function GetTime: Single;
       procedure SetTime(AValue: Single);
@@ -34,6 +36,7 @@
       property ActionList: TP3DTreeView read FActionList write FActionList;
       property Zoom: Single read FZoom write SetZoom;
       property Time: Single read GetTime write SetTime;
+      property Shift: Single read FShift write SetShift;
   end;
 
   TP3DActionEditor = class ( TP3DGraphicControl )
@@ -67,6 +70,12 @@ procedure TP3DTimeLine.SetZoom(AValue: Single);
 begin
   if FZoom=AValue then Exit;
   FZoom:= clamp( AValue, 0.1, 10 );
+end;
+
+procedure TP3DTimeLine.SetShift(AValue: Single);
+begin
+  if FShift=AValue then Exit;
+  FShift:= min( 25, AValue );
 end;
 
 function TP3DTimeLine.GetTime: Single;
@@ -114,8 +123,8 @@ procedure TP3DTimeLine.Draw;
           begin
             for i:= 0 to Channel.Keys.Count - 1 do
               begin
-                Canvas.RenderLineCircle( vec2( Channel.Keys[ i ].Time * Zoom, Node.RenderPos.Y + Node.Text.Height / 2 - ActionList.ScrollBarV.Position ), Node.Text.Height / 4, 16, Secondary900 );
-                Canvas.RenderCircle( vec2( Channel.Keys[ i ].Time * Zoom, Node.RenderPos.Y + Node.Text.Height / 2 - ActionList.ScrollBarV.Position ), Node.Text.Height / 4, 16, Secondary500 );
+                Canvas.RenderLineCircle( vec2(( Shift + Channel.Keys[ i ].Time ) * Zoom, Node.RenderPos.Y + Node.Text.Height / 2 - ActionList.ScrollBarV.Position ), Node.Text.Height / 4, 16, Secondary900 );
+                Canvas.RenderCircle( vec2(( Shift + Channel.Keys[ i ].Time ) * Zoom, Node.RenderPos.Y + Node.Text.Height / 2 - ActionList.ScrollBarV.Position ), Node.Text.Height / 4, 16, Secondary500 );
               end;
           end;
         if ( Node.Expanded ) then
@@ -127,17 +136,17 @@ var
 begin
   Canvas.RenderRect( vec2( 0 ), Canvas.WidthHeight, Accent200);
   for i:= 0 to Canvas.Width div ( 10 * max( 1, floor( Zoom ))) do
-    Canvas.RenderLine( vec2( i * Zoom * 10, 0 ), vec2( i * Zoom * 10, Canvas.Height ), Primary300 );
+    Canvas.RenderLine( vec2( Shift mod 10 * Zoom + i * Zoom * 10, 0 ), vec2( Shift mod 10 * Zoom + i * Zoom * 10, Canvas.Height ), Primary300 );
 //  Canvas.RenderText( );
   Canvas.RenderRect( vec2( 0, Canvas.Height - 20 ), Canvas.WidthHeight, Accent900.Fade( 0.5 ));
   if ( Assigned( ActionList )) then
     begin
       Canvas.Scroll:= ActionList.Canvas.Scroll;
       DrawList( ActionList.Children );
-      Canvas.RenderLine( vec2( Time * Zoom, 0 ), vec2( Time * Zoom, Canvas.Height ), Secondary900 );
+      Canvas.RenderLine( vec2(( Shift + Time ) * Zoom, 0 ), vec2(( Shift + Time ) * Zoom, Canvas.Height ), Secondary900 );
       Canvas.GetValidText( FloatToStr( Time ), FTimeLbl );
-      Canvas.RenderRect( vec2( Time * Zoom, Canvas.Height - FTimeLbl.Height ), vec2( Time * Zoom + FTimeLbl.Width, Canvas.Height ), Secondary900 );
-      Canvas.RenderText( FTimeLbl, vec2( Time * Zoom, Canvas.Height - FTimeLbl.Height ));
+      Canvas.RenderRect( vec2(( Shift + Time ) * Zoom, Canvas.Height - FTimeLbl.Height ), vec2(( Shift + Time ) * Zoom + FTimeLbl.Width, Canvas.Height ), Secondary900 );
+      Canvas.RenderText( FTimeLbl, vec2(( Shift + Time ) * Zoom, Canvas.Height - FTimeLbl.Height ));
     end;
 end;
 
@@ -150,7 +159,12 @@ end;
 procedure TP3DTimeLine.MouseMove(X, Y: Integer);
 begin
   if ( gcisMouseBtn1Down in InputState ) then
-    Time:= X / Zoom;
+    Time:= -Shift + X / Zoom;
+  if ( gcisMouseBtn2Down in InputState ) then
+    begin
+      Shift:= Shift + P3DInput.Mouse.DX / Zoom;
+      ActionList.ScrollBarV.Position:= ActionList.ScrollBarV.Position - P3DInput.Mouse.DY;
+    end;
 end;
 
 
