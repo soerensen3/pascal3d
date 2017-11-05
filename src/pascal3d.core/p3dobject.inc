@@ -276,6 +276,7 @@ begin
   FChildren.Clear;
   FChildren.Free;
   FTransform.Free;
+  FModifiers.Clear( True );
   FModifiers.Free;
   inherited FastDestroy;
 end;

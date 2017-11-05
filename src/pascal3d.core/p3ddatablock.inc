@@ -235,6 +235,8 @@ var
   Owner: TP3DLibrary;
   Path: TP3DXMLPath;
   FN: String;
+  Prop: TP3DPropertyAccess;
+  Val: TP3DInterfacedPersistent;
 begin
   if (( Context is TP3DDataBlock ) and ( AValue > '' )) then
     if (( AValue = '<None>' ) or ( AValue = '<None:' + TItem.ClassName + '>' )) then
@@ -242,12 +244,22 @@ begin
     else
       begin
         WriteLn( 'Warning: gP3DPropertyAccessDataBlock.SetAsString() broken' );
-        {Owner:= TP3DDataBlock( Context ).Owner.GetOwnerFromPath( AValue, True );
+        Owner:= TP3DDataBlock( Context ).Owner.GetOwnerFromPath( AValue, True );
         if ( not Assigned( Owner )) then
           raise Exception.Create( 'Could not find resource: ' + AValue );
+        Enclosed( AValue, '"', '"' );
         Path:= P3DXMLExtractRelativePath( AValue, FN );
-        n:= Owner.AppendFromPath( Path{, TItem} ); // No need to check if already loaded, this is done in appendfrompath
-        Value:= TItem( TItem.GetContainer( Owner )[ n ]);}
+        Prop:= Owner.Properties.GetPropByPath( Path{, TItem} ); // No need to check if already loaded, this is done in appendfrompath
+        if ( Prop is IP3DPropertyAccessInterfacedPersistent ) then
+          begin
+            Val:= ( Prop as IP3DPropertyAccessInterfacedPersistent ).GetObjectValue;
+            if ( Val is TItem ) then
+              Value:= TItem( Val )
+            else
+              raise Exception.CreateFmt( 'Cannot set datablock by string. The assigned value "%s" is of the wrong type.', [ Prop.Name ]);
+          end
+        else
+          raise Exception.CreateFmt( 'Cannot set datablock by string. The assigned value "%s" is of the wrong type.', [ Prop.Name ]);
       end;
 end;
 

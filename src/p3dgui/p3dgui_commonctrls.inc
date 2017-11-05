@@ -104,7 +104,7 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       class function IsFocusControl: Boolean; override;
 
@@ -144,7 +144,7 @@ type
 
     public
       constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       procedure Draw; override;
       procedure MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
@@ -177,7 +177,7 @@ type
 
     public
       constructor Create( const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil ); override;
-      destructor Destroy; override;
+      procedure FastDestroy; override;
 
       function ItemAtPos( p: TVec2 ): TP3DListItem;
 
@@ -339,7 +339,7 @@ begin
   ScrollBarWidth:= 10;
 end;
 
-destructor TP3DCustomItemView.Destroy;
+procedure TP3DCustomItemView.FastDestroy;
 begin
   Font.Free;
   Preset.Free;
@@ -347,7 +347,7 @@ begin
     ScrollBarV.Free;
   if ( P3DDataBlockCache.IsValid( ScrollBarH )) then
     ScrollBarH.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 class function TP3DCustomItemView.IsFocusControl: Boolean;
@@ -415,13 +415,13 @@ begin
   SymbolMinus:= TP3DTextBmp.CreateSimple( P3DSymbolMinus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );
 end;
 
-destructor TP3DTreeView.Destroy;
+procedure TP3DTreeView.FastDestroy;
 begin
   Children.Clear( True );
   Children.Free;
   SymbolPlus.Free;
   SymbolMinus.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 procedure TP3DTreeView.Draw;
@@ -1024,11 +1024,11 @@ begin
   Font.Size:= 32;
 end;
 
-destructor TP3DListView.Destroy;
+procedure TP3DListView.FastDestroy;
 begin
   Children.Clear( True );
   Children.Free;
-  inherited Destroy;
+  inherited FastDestroy;
 end;
 
 function TP3DListView.ItemAtPos(p: TVec2): TP3DListItem;

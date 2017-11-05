@@ -55,6 +55,9 @@ type
     property Context: TInterfacedPersistent read GetContext write SetContext;
   end;
 
+  TP3DPropertyAccessInterpolationMode = ( imInterpolate, imConstant, imExtrapolate );
+  TP3DPropertyAccessInterpolationModes = set of TP3DPropertyAccessInterpolationMode;
+
   { TP3DPropertyAccess class is the base class (abstract) for any pascal3d property. You should never create an instance of TP3DPropertyAccess
     as this is an abstract class. There are different kind of properties provided for most pascal3d types. If possible an RTTI property
     should be used. To define a new kind of property one should inherit from gP3DPropertyAccess. E.g. TP3DPropertyAccessMyClass = class( specialize gP3DPropertyAccess < TMyClass > ) ...
@@ -74,6 +77,8 @@ type
       function GetArrayAsString( ArrayIndex: Integer ): String;
       class function GetIsArray: Boolean; static; virtual;
       procedure SetArrayAsString( ArrayIndex: Integer ; AValue: String); virtual;
+
+      class function GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes; static; virtual;
       function GetContext: TInterfacedPersistent;
       function GetStoreMode: TP3DPropertyAccessStoreMode;
       procedure SetContext(AValue: TInterfacedPersistent);
@@ -99,6 +104,9 @@ type
       procedure LoadFromJSONContext( AContext: TP3DJSONContext ); virtual;
       { Returns a json representation of the property as string. This will also return values of sub properties. }
       function Serialize(): String; virtual; abstract;
+      { Function to calculate an interpolation between two values. This function is used for TP3DAction mostly. }
+      procedure SetInterpolate( Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode ); virtual;
+
       { Returns an item of the given index as a property. The base property is assumed to be an array. }
       property ArrayAsProp[ ArrayIndex: Integer ]: TP3DPropertyAccess read GetArrayAsProp;
       { Reads or writes the value of the given index as a string. The base property is assumed to be an array. }
@@ -107,6 +115,9 @@ type
       property ArrayCount: Integer read GetArrayCount write SetArrayCount;
       { Class property to tell if a property class can be read as an array. }
       class property IsArray: Boolean read GetIsArray;
+      { Class property to tell if a property class can be interpolated with certain modes. }
+      class property SupportedInterpolationModes: TP3DPropertyAccessInterpolationModes read GetSupportedInterpolationModes;
+
 
     published
       { Name of the property. }
@@ -334,7 +345,7 @@ type
     This is used to access an integer value.
   }
 
-  TP3DPropertyAccessInt    = class( specialize gP3DPropertyAccess < Integer >)
+  TP3DPropertyAccessInt = class( specialize gP3DPropertyAccess < Integer >)
     function GetAsString: String; override;
     procedure SetAsString(AValue: String); override;
     function GetDefaultValue: Integer; override;
@@ -342,6 +353,8 @@ type
     procedure LoadFromStream(S: TStream); override;
     procedure SaveToStream(S: TStream); override;
     function Serialize: String; override;
+    procedure SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode); override;
+    class function GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes; static; override;
   end;
 
   { TP3DPropertyAccessFloat
@@ -357,6 +370,8 @@ type
     procedure LoadFromStream(S: TStream); override;
     procedure SaveToStream(S: TStream); override;
     function Serialize: String; override;
+    procedure SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode); override;
+    class function GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes; static; override;
   end;
 
   { TP3DPropertyAccessString
@@ -388,6 +403,8 @@ type
     procedure LoadFromStream(S: TStream); override;
     procedure SaveToStream(S: TStream); override;
     function Serialize: String; override;
+    procedure SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode); override;
+    class function GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes; static; override;
   end;
 
   TP3DPropertyAccessVec2      = specialize gP3DPropertyAccessVec  < TVec2, Float, TP3DPropertyAccessFloat >;
@@ -733,6 +750,11 @@ end;
 
 { TP3DPropertyAccess }
 
+class function TP3DPropertyAccess.GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes; static;
+begin
+  Result:= [ imConstant ];
+end;
+
 function TP3DPropertyAccess.GetArrayCount: Integer;
 begin
   Result:= 0;
@@ -829,6 +851,12 @@ end;
 procedure TP3DPropertyAccess.LoadFromJSONContext(AContext: TP3DJSONContext);
 begin
   raise Exception.CreateFmt( P3DERROR_JSON_PROP_LOADER_NOT_IMPLEMENTED, [ ClassName ]);
+end;
+
+procedure TP3DPropertyAccess.SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode);
+begin
+  // Always constant by default
+  if ( AMix >= 1 ) then AsString:= Value2 else AsString:= Value1;
 end;
 
 { TP3DPropertyAccessRTTI }
@@ -1181,6 +1209,20 @@ begin
   Result:= AsString;
 end;
 
+procedure TP3DPropertyAccessFloat.SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode);
+begin
+  case AInterpolationMode of
+    imConstant: inherited SetInterpolate(Value1, Value2, AMix, AInterpolationMode);
+    imInterpolate: Value:= mix( Value1.ToSingle, Value2.ToSingle, clamp( AMix, 0, 1 ));
+    imExtrapolate: Value:= mix( Value1.ToSingle, Value2.ToSingle, AMix );
+  end;
+end;
+
+class function TP3DPropertyAccessFloat.GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes;
+begin
+  Result:= [ imConstant, imInterpolate, imExtrapolate ];
+end;
+
 { TP3DPropertyAccessInt }
 
 function TP3DPropertyAccessInt.GetAsString: String;
@@ -1216,6 +1258,20 @@ end;
 function TP3DPropertyAccessInt.Serialize: String;
 begin
   Result:= AsString;
+end;
+
+procedure TP3DPropertyAccessInt.SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode);
+begin
+  case AInterpolationMode of
+    imConstant: inherited SetInterpolate(Value1, Value2, AMix, AInterpolationMode);
+    imInterpolate: Value:= round( mix( Value1.ToSingle, Value2.ToSingle, clamp( AMix, 0, 1 )));
+    imExtrapolate: Value:= round( mix( Value1.ToSingle, Value2.ToSingle, AMix ));
+  end;
+end;
+
+class function TP3DPropertyAccessInt.GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes;
+begin
+  Result:= [ imConstant, imInterpolate, imExtrapolate ];
 end;
 
 
@@ -1283,6 +1339,30 @@ end;
 function gP3DPropertyAccessVec.Serialize: String;
 begin
   Result:= '[' + AsString + ']';
+end;
+
+procedure gP3DPropertyAccessVec.SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode);
+var
+  v1, v2: TItem;
+  a: Float;
+begin
+  if ( AInterpolationMode = imConstant ) then
+    inherited SetInterpolate(Value1, Value2, AMix, AInterpolationMode)
+  else
+    begin
+      v1.FromString( Value1 );
+      v2.FromString( Value2 );
+      case AInterpolationMode of
+        imInterpolate: a:= clamp( AMix, 0, 1 );
+        imExtrapolate: a:= AMix;
+      end;
+      Value:= TItem( v1 * ( 1 - a ) + v2 * a );
+    end;
+end;
+
+class function gP3DPropertyAccessVec.GetSupportedInterpolationModes: TP3DPropertyAccessInterpolationModes;
+begin
+  Result:= [ imConstant, imInterpolate, imExtrapolate ];
 end;
 
 { gP3DListPropertyAccess }

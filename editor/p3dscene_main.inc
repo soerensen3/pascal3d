@@ -60,12 +60,6 @@ begin
   else if ( Assigned( SceneView )) then
     SceneView.ToolBar.UpdateButtonsFast;
 
-  if ( Assigned( AValue ) and ( AValue.Actions.Count > 0 )) then
-    begin
-      ActionEditor.EditAction:= AValue.Actions[ 0 ];
-      ActionEditor.UpdateList;
-    end;
-
   if ( Assigned( DataView )) then
     DataView.UpdateButtons;
 end;
@@ -75,8 +69,8 @@ begin
   if FActiveDataBlock=AValue then Exit;
   FActiveDataBlock:=AValue;
 
-  if ( AValue is TP3DObject ) then;
-    SceneView.Selection:= TP3DObject( AValue );
+  //current workaround
+  ActionEditor.UpdateList;
 end;
 
 procedure TP3DSceneMain.SetActiveScene(AValue: TP3DScene);

@@ -297,24 +297,18 @@ var
   n: Integer;
   Angle1, Angle2: Float;
 begin
-  exit; //TODO: Repair
-
+  inherited AfterRender;
   with ( ScenePanel ) do
     begin
-      Canvas.Lock;
-
-      //n:= RenderList.Find( Selection );
-      if ( n >= 0 ) then
-        begin
-          c:= ToScreenCoords( TransCenter ).XY;
-          Canvas.RenderCircle( c.XY, 5, 16, vec4( 1, 0, 0, 1 ));
-          Canvas.RenderLine( c.XY, vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ), vec4( 0, 0, 0, 1 ));
-          dir:= ( MousePos - c.XY ).Normalize;
-          dirOld:= ( MousePosInitial - c.XY ).Normalize;
-          Angle1:= arctan2( dirOld.y, dirOld.x ) / deg2rad;
-          Angle2:= arctan2( dir.y, dir.x ) / deg2rad;
-          Canvas.RenderArc( c, 50, Angle1, Angle2, 64, vec4( 0, 0, 1, 0.2 ));
-        end;
+      ScenePanel.Canvas.Lock;
+      c:= ToScreenCoords( TransCenter ).XY;
+      Canvas.RenderCircle( c.XY, 5, 16, vec4( 1, 0, 0, 1 ));
+      Canvas.RenderLine( c.XY, vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ), vec4( 0, 0, 0, 1 ));
+      dir:= ( MousePos - c.XY ).Normalize;
+      dirOld:= ( MousePosInitial - c.XY ).Normalize;
+      Angle1:= arctan2( dirOld.y, dirOld.x ) / deg2rad;
+      Angle2:= arctan2( dir.y, dir.x ) / deg2rad;
+      Canvas.RenderArc( c, 50, Angle1, Angle2, 64, vec4( 0, 0, 1, 0.2 ));
       ScenePanel.Canvas.Unlock();
     end;
 end;

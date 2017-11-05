@@ -40,7 +40,7 @@ class P3DAction( p3ddatablock.P3DDataBlock ):
                  "Value":   add + key.co[ 1 ] / [ 1, 0.017453292 ][ is_euler ]} #rad to deg conversion if euler angle'''
     def ExportKey( self, time, value ):
         return { "Time":    time,
-                 "Value":   value }
+                 "Value":   str( value )}
 
     def ExportFCurve( self, root, prop, curve, obj ):
         #arr_idx = curve.array_index
@@ -98,18 +98,29 @@ class P3DAction( p3ddatablock.P3DDataBlock ):
             #curve[ time ] = values
             if ( is_joint ):
                 print( values )
-            for i, value in enumerate( values ):
-                if ( not ( value == 'x' )):
-                    keys[ i ].append( self.ExportKey( time, value ))
+            if ( 'x' in values ):
+                for i, value in enumerate( values ):
+                    if ( not ( value == 'x' )):
+                        keys[ i ].append( self.ExportKey( time, value ))
+            else:
+                keys[ 0 ].append( self.ExportKey( time, ', '.join( map( str, values ))))
 
         result = []
-        for arr_idx, curve_key in enumerate( keys ):
-            if ( len( curve_key )):
-                result.append(
-                    { "PropStr" :                    prop + '[' + str( arr_idx ) + ']',
-                      "InterpolationMode":           "imExtrapolate",
-                      "TimeMode" :                   "tmWrapAround",
-                      "Keys" :                       curve_key })
+        if ( 'x' in values ):
+            for arr_idx, curve_key in enumerate( keys ):
+                if ( len( curve_key )):
+                    result.append(
+                        { "PropStr" :                    prop + '[' + str( arr_idx ) + ']',
+                          "InterpolationMode":           "imExtrapolate",
+                          "TimeMode" :                   "tmWrapAround",
+                          "Keys" :                       curve_key })
+        else:
+                if ( len( keys[ 0 ])):
+                    result.append(
+                        { "PropStr" :                    prop,
+                          "InterpolationMode":           "imExtrapolate",
+                          "TimeMode" :                   "tmWrapAround",
+                          "Keys" :                       keys[ 0 ]})
         return result
 
     def ExportRawData( self, block ):
@@ -134,6 +145,13 @@ class P3DAction( p3ddatablock.P3DDataBlock ):
     def __init__( self, block, root = None, path='', obj = None ):
         self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Actions', self.Name ))
+        if ( root.FirstActionObj is None ):
+            root.FirstActionObj = obj
+        oldaction = block
+        if ( obj.animation_data.action != block ):
+            oldaction = obj.animation_data.action
+            obj.animation_data.action = block
+            root.Exporter.report({ 'INFO' }, 'Set animation of ' + obj.name + ' to ' + block.name )
         self.ClassName = 'TP3DAction'
         self.Channels = []
         channels = self.ExportRawData( block )
@@ -145,6 +163,8 @@ class P3DAction( p3ddatablock.P3DDataBlock ):
 
         for prop, curve in channels.items():
             self.Channels = self.Channels + self.ExportFCurve( root, prop, curve, obj )
+
+        obj.animation_data.action = oldaction
         if hasattr( obj.data, 'pose_position' ):
             obj.data.pose_position = pose
             root.ActiveScene.update()

@@ -543,8 +543,6 @@ begin
   FJoints.Armature:= Self;
   FRotations:= TQuaternionList.Create;
   FTranslations:= TVec3List.Create;
-  //Owner.Armatures.Add( Self );
-  //Properties.Add( TP3DPropertyAccessArmatureAction.CreateFieldSet( 'CurrentAction', @FCurrentAction, @SetCurrentAction, smAttribute ));
   Properties.Add( TP3DPropertyAccessJointList.CreateField( 'Joints', @FJoints, smAttribute ));
   MaterialModifier:= TP3DMaterialModifierArmature.Create( Self );
 end;
@@ -555,7 +553,7 @@ begin
   FTranslations.Free;
   FJoints.Clear( False );
   FJoints.Free;
-  //Owner.Armatures.Remove( Self );
+  MaterialModifier.Free;
 
   inherited FastDestroy;
 end;

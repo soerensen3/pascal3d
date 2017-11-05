@@ -9,7 +9,7 @@ class P3DDataBlock( object ):
         #  self.Name = block.name
         self.DataPath = path
 
-        if hasattr( block, 'animation_data'):
+        if ( root.Exporter.ExportActions != '0' ) and ( hasattr( block, 'animation_data' )):
             if ( block.animation_data and block.animation_data.action ):
                 self.Action = p3dexporthelper.export_data_path( block.animation_data.action, root, block )
 

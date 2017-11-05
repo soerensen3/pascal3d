@@ -8,23 +8,23 @@
   TP3DActionKey = class ( TP3DInterfacedPersistent )
     private
       FTime: Float;
-      FValue: Float;
+      FValue: String;
 
     public
-      constructor Create( ATime, AValue: Float );
+      constructor Create(ATime: Float; AValue: String);
       constructor Create;
       constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
 
     published
       property Time: Float read FTime write FTime;
-      property Value: Float read FValue write FValue;
+      property Value: String read FValue write FValue;
   end;
 
   { TP3DActionKeyList }
 
   TP3DActionKeyList = class ( specialize gP3DCustomObjectList < TP3DActionKey >)
     public
-      function AddKey( ATime, AValue: Float ): Integer;
+      function AddKey(ATime: Float; AValue: String): Integer;
       procedure LoadFromStream( S: TStream ); //gP3DListPropertyAccessObject needs this to compile
       procedure SaveToStream( S: TStream );
 
@@ -37,13 +37,12 @@
 
   { TP3DActionChannel }
 
-  TP3DActionChannelInterpolationMode = ( imInterpolate, imConstant, imExtrapolate );
+  //TP3DActionChannelInterpolationMode = ( imInterpolate, imConstant, imExtrapolate );
   TP3DActionChannelTimeMode = ( tmContinue, tmWrapAround, tmClamp );
   TP3DActionChannel = class( TP3DInterfacedPersistent )
     private
-      FArrayIndex: Integer;
       FFilter: String;
-      FInterpolationMode: TP3DActionChannelInterpolationMode;
+      FInterpolationMode: TP3DPropertyAccessInterpolationMode;
       FKeys: TP3DActionKeyList;
       FPropStr: String;
       FTimeMode: TP3DActionChannelTimeMode;
@@ -52,10 +51,10 @@
       procedure SetFilter(AValue: String);
       procedure SetPropStr( AValue: String );
 
-      function Interpolate( Value1, Value2, a: Float ): Float;
+      {function Interpolate( Value1, Value2, a: Float ): Float;
       function ModeConstant( Value1, Value2, a: Float ): Float;
       function ModeInterpolate( Value1, Value2, a: Float ): Float;
-      function ModeExtrapolate( Value1, Value2, a: Float ): Float;
+      function ModeExtrapolate( Value1, Value2, a: Float ): Float;}
       function PercentageBetweenKeys( Time: Float; Key1, Key2: Integer ): Float;
       function TransformTime( Time: Float ): Float;
 
@@ -64,12 +63,12 @@
       constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
       destructor Destroy; override;
 
-      function Evaluate( Time: Float ): Float;
+      procedure EvaluateSet( Prop: TP3DPropertyAccess; Time: Float );
 
     published
       property PropStr: String read FPropStr write SetPropStr;
       property Keys: TP3DActionKeyList read FKeys write FKeys;
-      property InterpolationMode: TP3DActionChannelInterpolationMode read FInterpolationMode write FInterpolationMode;
+      property InterpolationMode: TP3DPropertyAccessInterpolationMode read FInterpolationMode write FInterpolationMode;
       property TimeMode: TP3DActionChannelTimeMode read FTimeMode write FTimeMode;
       property FrameCount: Float read GetFrameCount;
   end;
@@ -122,20 +121,20 @@
 
 { TP3DActionKey }
 
-constructor TP3DActionKey.Create(ATime, AValue: Float);
+constructor TP3DActionKey.Create(ATime: Float; AValue: String);
 begin
   inherited Create;
   FTime:= ATime;
   FValue:= AValue;
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Time', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Value', smAttribute ));
+  Properties.Add( TP3DPropertyAccessString.CreateField( 'Value', @Value, smAttribute ));
 end;
 
 constructor TP3DActionKey.Create;
 begin
   inherited Create;
   Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Time', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Value', smAttribute ));
+  Properties.Add( TP3DPropertyAccessString.CreateField( 'Value', @Value, smAttribute ));
 end;
 
 constructor TP3DActionKey.CreateFromJSONContext(AContext: TP3DJSONContext);
@@ -146,7 +145,7 @@ end;
 
 { TP3DActionKeyList }
 
-function TP3DActionKeyList.AddKey(ATime, AValue: Float): Integer;
+function TP3DActionKeyList.AddKey( ATime: Float; AValue: String ): Integer;
 begin
   Result:= Add( TP3DActionKey.Create( ATime, AValue ));
 end;
@@ -200,7 +199,7 @@ begin
   else
     Result:= 0.0;
 end;
-
+{
 function TP3DActionChannel.Interpolate(Value1, Value2, a: Float): Float;
 begin
   case InterpolationMode of
@@ -227,6 +226,7 @@ function TP3DActionChannel.ModeExtrapolate(Value1, Value2, a: Float): Float;
 begin
   Result:= mix( Value1, Value2, a );
 end;
+}
 
 function TP3DActionChannel.PercentageBetweenKeys(Time: Float; Key1,
   Key2: Integer): Float;
@@ -268,12 +268,11 @@ begin
   inherited Destroy;
 end;
 
-function TP3DActionChannel.Evaluate(Time: Float): Float;
+procedure TP3DActionChannel.EvaluateSet(Prop: TP3DPropertyAccess; Time: Float);
 var
   First, Last: Integer;
 begin
   Time:= TransformTime( Time );
-  Result:= 0;
   if ( Keys.Count < 1 ) then
     exit;
   Last:= 0;
@@ -288,9 +287,9 @@ begin
       Dec( Last ); Dec( First );
     end;
   if ( First >= 0 ) then
-    Result:= Interpolate( Keys[ First ].Value, Keys[ Last ].Value, PercentageBetweenKeys( Time, First, Last ))
+    Prop.SetInterpolate( Keys[ First ].Value, Keys[ Last ].Value, PercentageBetweenKeys( Time, First, Last ), InterpolationMode ) //Interpolate( Keys[ First ].Value, Keys[ Last ].Value, PercentageBetweenKeys( Time, First, Last ))
   else
-    Result:= Keys[ Last ].Value;
+    Prop.AsString:= Keys[ Last ].Value;
 end;
 
 { TP3DAction }
@@ -325,20 +324,13 @@ procedure TP3DAction.Perform(Time: Float; AData: TP3DDataBlock);
 var
   Channel: TP3DActionChannel;
   Prop: TP3DPropertyAccess;
-  Value: Float;
 begin
   if ( Assigned( AData )) then
     for Channel in Channels do
       begin
         Prop:= AData.Properties.GetPropByPath( Channel.PropStr );
         if ( Assigned( Prop )) then
-          begin
-            Value:= Channel.Evaluate( Time );
-{            if ( Prop.IsArray ) then
-              Prop.ArrayAsString[ Channel.ArrayIndex ]:= FloatToStr( Value )
-            else}
-              Prop.AsString:= FloatToStr( Value, 15 );
-          end;
+          Channel.EvaluateSet( Prop, Time );
     end;
 end;
 

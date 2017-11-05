@@ -30,6 +30,12 @@ PathModes = (
     ( '2', 'Filenames only', '' ),
     )
 
+ActionExpModes = (
+    ( '0', 'Do not export', '' ),
+    ( '1', 'Export used actions only', '' ),
+    ( '2', 'Export all actions', '' ),
+    )
+
 class P3DExporter( bpy.types.Operator ):
     binfile = None
     bl_idname = 'export.p3d'
@@ -70,10 +76,11 @@ class P3DExporter( bpy.types.Operator ):
       description = 'Select wether to export armatures.',
       default = True )
 
-    ExportAnimations = BoolProperty(
-      name = 'Export Animations',
-      description = 'Select wether to export animations.',
-      default = True )
+    ExportActions = EnumProperty(
+      name = 'Export Actions',
+      description = 'Select how to export actions.',
+      items = ActionExpModes,
+      default = '0' )
 
     PathMode = EnumProperty(
       name = 'Path Mode',
@@ -129,13 +136,19 @@ class P3DExporter( bpy.types.Operator ):
             self.supported_types.append( 'LAMP' )
         if self.ExportCameras:
             self.supported_types.append( 'CAMERA' )
-        if self.ExportAnimations:
+        if self.ExportActions != '0':
             self.supported_types.append( 'ACTION' )
 
         Data = p3ddata.P3DData( filename=self.filepath )
         Data.Exporter = self
         for scene in bpy.data.scenes:
             p3dexporthelper.export_data_root( scene, Data )
+        if self.ExportActions == '2':
+            if ( Data.FirstActionObj ):
+                for action in bpy.data.actions:
+                    p3dexporthelper.export_data_root( action, Data, Data.FirstActionObj )
+            else:
+                self.report({ 'WARNING' }, 'Cannot export actions without an object using actions in the scene' )
         Data.toJSONFile()
         del Data
 

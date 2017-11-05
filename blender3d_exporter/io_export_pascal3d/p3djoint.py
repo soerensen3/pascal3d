@@ -21,7 +21,8 @@ class P3DJoint( p3ddatablock.P3DDataBlock ):
         self.Quaternion = p3dexporthelper.swap_quat( p3dexporthelper.bone_quat( block ))
         self.Position = list( block.head )
 
-        self.Length = ( block.bone.head_local - block.bone.tail_local ).length
+        self.Tail = list( block.tail )
+        #self.Length = ( block.bone.head_local - block.bone.tail_local ).length
     @staticmethod
     def find_storage( root ):
         return root.Joints

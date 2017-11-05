@@ -172,6 +172,8 @@ function TP3DActionEditor.GetEditAction: TP3DAction;
 begin
   if ( SceneMain.ActiveDataBlock is TP3DAction ) then
     Result:= TP3DAction( SceneMain.ActiveDataBlock )
+  else if ( SceneMain.ActiveDataBlock is IP3DAnimatable ) then
+    Result:= ( SceneMain.ActiveDataBlock as IP3DAnimatable ).Action
   else
     Result:= Nil;
 end;
@@ -180,6 +182,7 @@ end;
 procedure TP3DActionEditor.SetEditAction(AValue: TP3DAction);
 begin
   SceneMain.ActiveDataBlock:= AValue;
+  UpdateList;
 end;
 
 function TP3DActionEditor.GetTime: Float;
