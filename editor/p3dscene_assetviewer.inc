@@ -7,9 +7,8 @@
       FDirectoryView: TP3DTreeViewDirectory;
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-
-      procedure FastDestroy; override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      destructor Destroy; override;
 
     published
       property DirectoryView: TP3DTreeViewDirectory read FDirectoryView write FDirectoryView;
@@ -23,12 +22,12 @@
 
 { TP3DSAssetPanel }
 
-constructor TP3DSAssetPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DSAssetPanel.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   Height:= 200;
-  FDirectoryView:= TP3DTreeViewDirectory.Create( nil, Self );
-  FAssetView:= TP3DListViewFile.Create( nil, Self );
+  FDirectoryView:= TP3DTreeViewDirectory.CreateBlock( nil, Self );
+  FAssetView:= TP3DListViewFile.CreateBlock( nil, Self );
   FDirectoryView.Directory:= P3DSearchPaths.BaseDir.FileName;
   FDirectoryView.ShowSymbols:= True;
   FDirectoryView.ShowFiles:= True;
@@ -45,11 +44,11 @@ begin
   FAssetView.AllowOpenP3D:= True;
 end;
 
-procedure TP3DSAssetPanel.FastDestroy;
+destructor TP3DSAssetPanel.Destroy;
 begin
   FDirectoryView.Free;
   FAssetView.Free;
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
 {$ENDIF}

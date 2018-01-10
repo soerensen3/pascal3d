@@ -25,7 +25,7 @@
 
     { TP3DMenuItem }
 
-    TP3DMenuItem = class( TP3DInterfacedPersistent )
+    TP3DMenuItem = class( TP3DStreamable )
       private
         FCaption: String;
         FColor: TP3DColorRGBA;
@@ -64,7 +64,7 @@
 
     TP3DCustomPopupMenu = class ( TP3DGraphicControl )
       public
-        constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+        constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
         class function IsFocusControl: Boolean; override;
 
@@ -88,8 +88,8 @@
         class function HasShadow: Boolean; override;
 
       public
-        constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-        procedure FastDestroy; override;
+        constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+        destructor Destroy; override;
 
         procedure MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer); override;
         procedure MouseMove(X, Y: Integer); override;
@@ -213,18 +213,18 @@ begin
       end;
 end;
 
-constructor TP3DPopupMenu.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DPopupMenu.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   FItems:= TP3DMenuItemList.Create( Self );
   FItems.OnChange:= @ItemsChange;
 end;
 
-procedure TP3DPopupMenu.FastDestroy;
+destructor TP3DPopupMenu.Destroy;
 begin
   FItems.Clear( True );
   FItems.Free;
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
 procedure TP3DPopupMenu.Update;
@@ -288,9 +288,9 @@ begin
 end;
 
 
-constructor TP3DCustomPopupMenu.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DCustomPopupMenu.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   Visible:= False;
 end;
 

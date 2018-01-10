@@ -1,11 +1,12 @@
 procedure PerformActions( GlobalTime: Double; Lib: TP3DLibrary );
 var
   Action: TP3DAction;
-  Block: TP3DDataBlock;
+  Block: IP3DStreamableUser;
 begin
   for Action in Lib.Actions do
     for Block in Action.Users do
-      Action.Perform( GlobalTime, Block );
+      if ( Block.GetUser is TP3DDataBlock ) then
+        Action.Perform( GlobalTime, TP3DDataBlock( Block.GetUser ));
 end;
 
 procedure TP3DSceneApplication.Render;

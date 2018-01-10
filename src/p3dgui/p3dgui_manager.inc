@@ -2,7 +2,7 @@
 type
 
 { TP3DGUIManager }
-TP3DGUIManager = class ( TP3DInterfacedPersistent )
+TP3DGUIManager = class ( TP3DStreamable )
   private
     FCanvas: TP3DCanvas2D;
     FControlContainer: TP3DControlContainer;
@@ -61,18 +61,20 @@ end;
 
 { TP3DGUIManager }
 
-constructor TP3DGUIManager.Create();
+constructor TP3DGUIManager.Create;
 begin
   inherited Create;
 
   ScrollSpeed:= -50;
-  Controls:= TP3DControlList.Create( nil );
+  Controls:= TP3DControlList.Create;
   ScreenCanvas:= TP3DCanvas2D.Create( nil );
   ScreenCanvas.Font.Size:= 48;
   UpdateExtents;
   Cursor:= curArrow;
   CursorOverride:= curArrow;
-  ControlContainer:= TP3DControlContainer.Create( Self );
+  ControlContainer:= TP3DControlContainer.Create;
+  Properties.Add( TP3DPropAccessGraphicControlList.CreateField( 'Controls', @FControls ));
+  Properties.Add( TP3DPropAccessGraphicControlList.CreateField( 'ControlsContainer', @FControlContainer ));
 end;
 
 destructor TP3DGUIManager.Destroy;

@@ -31,10 +31,10 @@
     </RunParams>
     <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="libsdl2"/>
+        <PackageName Value="laz_opengl"/>
       </Item1>
       <Item2>
-        <PackageName Value="pl_opengl"/>
+        <PackageName Value="libsdl2"/>
       </Item2>
       <Item3>
         <PackageName Value="pascal3d_math"/>

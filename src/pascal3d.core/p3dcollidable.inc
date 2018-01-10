@@ -2,7 +2,7 @@
 
 {$IFDEF INTERFACE}
   type
-    IP3DCollidable = interface
+    IP3DCollidable = interface ( IP3DBaseInterface )
       ['{3E4A48D1-471D-49AF-B73D-A60235CDF63D}']
 
       function CastRay( Orig, Dir: TVec3; AObject: TP3DObject; out HitPos: TVec3 ): Boolean;

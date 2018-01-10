@@ -3,14 +3,16 @@ type
 
   { TP3DColorRGBA }
 
-  TP3DColorRGBA = object ( TVec4 )
+  {TP3DColorRGBA = TVec4
     function Fade( Opacity: Float ): TP3DColorRGBA;
   end;
 
   { TP3DColorRGB }
 
   TP3DColorRGB = object ( TVec3 )
-  end;
+  end;}
+  TP3DColorRGBA = TVec4;
+  TP3DColorRGB = TVec3;
 
 const
   Black: TP3DColorRGBA =                        ( FCoord: ( $00 / 255, $00 / 255, $00 / 255, 1.0 ));
@@ -290,7 +292,7 @@ const
   BlueGrey800: TP3DColorRGBA =                  ( FCoord: ( $37 / 255, $47 / 255, $4f / 255, 1.0 ));
   BlueGrey900: TP3DColorRGBA =                  ( FCoord: ( $26 / 255, $32 / 255, $38 / 255, 1.0 ));
 
-  operator * ( a, b: TP3DColorRGBA ) c : TP3DColorRGBA;
+  {operator * ( a, b: TP3DColorRGBA ) c : TP3DColorRGBA;
   operator * ( a: TP3DColorRGBA; b: TVec4 ) c: TP3DColorRGBA;
   operator * ( a: TVec4; b: TP3DColorRGBA ) c: TP3DColorRGBA;
 
@@ -300,18 +302,18 @@ const
   operator * ( a: TP3DColorRGB; b: TVec3 ) c: TP3DColorRGB;
   operator * ( a: TVec3; b: TP3DColorRGB ) c: TP3DColorRGB;
 
-  operator := ( a: TVec3 ) b: TP3DColorRGB;
+  operator := ( a: TVec3 ) b: TP3DColorRGB;}
 
 type
-  TP3DPropertyAccessColorRGBA = specialize gP3DPropertyAccessVec < TP3DColorRGBA, Float, TP3DPropertyAccessFloat >;
-  TP3DPropertyAccessColorRGB = specialize gP3DPropertyAccessVec < TP3DColorRGB, Float, TP3DPropertyAccessFloat >;
+  TP3DPropAccessColorRGBA = specialize gP3DPropAccessVec < TP3DColorRGBA, Float, TP3DPropAccessFloat >;
+  TP3DPropAccessColorRGB = specialize gP3DPropAccessVec < TP3DColorRGB, Float, TP3DPropAccessFloat >;
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
 { TP3DColorRGBA }
-
+{
 function TP3DColorRGBA.Fade( Opacity: Float ): TP3DColorRGBA;
 begin
   Result:= vec4( XYZ, A * Opacity );
@@ -363,6 +365,11 @@ begin
   b.B:= a.B;
 end;
 
+operator=(A, B: TVec2): Boolean;
+begin
+  Result:= A.Compare( B );
+end;
+}
 
 {$ENDIF}
 

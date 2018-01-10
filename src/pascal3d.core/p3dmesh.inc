@@ -3,103 +3,103 @@
 {$IFDEF INTERFACE}
   type
     TP3DMesh = class;
+    TP3DMeshPointer = class;
     TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowAABB, rfDebugShowArmature );
     TP3DRenderFlags = set of TP3DRenderFlag;
 
     { TP3DMeshMaterialGroup }
 
-    TP3DMeshMaterialGroup = class ( TP3DInterfacedPersistent )
+    TP3DMeshMaterialGroup = class ( TP3DStreamable )
       private
         FIndexEnd: Integer;
         FIndexStart: Integer;
-        FMaterial: TP3DMaterial;
+        FMaterial: TP3DMaterialPointer;
         FParentMesh: TP3DMesh;
         FPolyEnd: Integer;
         FPolyStart: Integer;
 
+        function GetMaterial: TP3DMaterial;
         procedure SetMaterial( AValue: TP3DMaterial );
         procedure SetPolyEnd(AValue: Integer);
         procedure SetPolyStart(AValue: Integer);
 
       public
-        constructor Create( AParentMesh: TP3DMesh );
-        constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+        constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       published
         property PolyStart: Integer read FPolyStart write SetPolyStart;
         property PolyEnd: Integer read FPolyEnd write SetPolyEnd;
         property IndexStart: Integer read FIndexStart write FIndexStart;
         property IndexEnd: Integer read FIndexEnd write FIndexEnd;
-        property Material: TP3DMaterial read FMaterial write SetMaterial;
+        property Material: TP3DMaterial read GetMaterial write SetMaterial;
         property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
     end;
 
+    TP3DMeshMaterialGroupContainer = specialize gP3DStreamableContainer < TP3DMeshMaterialGroup >;
+    TP3DMeshMaterialGroupPointer = specialize gP3DStreamablePointer < TP3DMeshMaterialGroup >;
+    //TP3DMeshMaterialGroupContainerList = specialize gP3DStreamableContainerList < TP3DMeshMaterialGroup, TP3DMeshMaterialGroupContainer >;
+    TP3DMeshMaterialGroupPointerList = specialize gP3DStreamableList < TP3DMeshMaterialGroup, TP3DMeshMaterialGroupPointer >;
+
     { TP3DMeshMaterialGroupList }
 
-    TP3DMeshMaterialGroupList = class( specialize gP3DCustomObjectList < TP3DMeshMaterialGroup >)
+    TP3DMeshMaterialGroupContainerList = class( specialize gP3DStreamableContainerList < TP3DMeshMaterialGroup, TP3DMeshMaterialGroupContainer >)
       private
         FParentMesh: TP3DMesh;
 
       public
-        constructor Create( AParentMesh: TP3DMesh );
-
-        function Find( Material: TP3DMaterial ): Integer;
+        function Find( Material: TP3DMaterial ): Integer; overload;
         procedure Add( PolyStart: Integer; PolyEnd: Integer; Material: TP3DMaterial ); overload;
-        function Add(Item: TCustomItem): Integer; override;
+        procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
 
         property ParentMesh: TP3DMesh read FParentMesh;
     end;
 
     // List of Mesh faces, where ...
     // X = start loop index, Y = loop count
-    TP3DFace = object( TIVec2 )
+    {TP3DFace = object( TIVec2 )
       property IndexStart: Integer read FCoord[ 0 ] write FCoord[ 0 ];
       property IndexEnd: Integer read FCoord[ 1 ] write FCoord[ 1 ];
-    end;
-
-    TP3DPropertyAccessMeshMaterialGroup = specialize gP3DPropertyAccessInterfacedPersistent < TP3DMeshMaterialGroup >;
-    TP3DPropertyAccessMeshMaterialGroupList = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DMeshMaterialGroupList, TP3DMeshMaterialGroup, TP3DPropertyAccessMeshMaterialGroup >;
-
+    end;}
+    TP3DFace = TIVec2;
 
     TP3DFaceList = TIVec2List;
 
     { TP3DMeshModifier }
 
-    TP3DMeshModifier = class( TP3DInterfacedPersistent )
+    TP3DMeshModifier = class abstract( TP3DStreamable )
       private
-        FMesh: TP3DMesh;
+        FMesh: TP3DMeshPointer;
 
+        function GetMesh: TP3DMesh;
         procedure SetMesh( AValue: TP3DMesh ); virtual;
 
       public
-        constructor Create( AMesh: TP3DMesh ); virtual;
-        constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+        constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
         function GetType: String;
 
         procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
 
       published
-        property Mesh: TP3DMesh read FMesh write SetMesh;
+        property Mesh: TP3DMesh read GetMesh write SetMesh;
     end;
+
+    TP3DMeshModifierContainer = specialize gP3DStreamableContainer < TP3DMeshModifier >;
+    TP3DMeshModifierPointer = specialize gP3DStreamablePointer < TP3DMeshModifier >;
+    //TP3DMeshModifierContainerList = specialize gP3DStreamableContainerList < TP3DMeshModifier, TP3DMeshModifierContainer >;
+    TP3DMeshModifierPointerList = specialize gP3DStreamableList < TP3DMeshModifier, TP3DMeshModifierPointer >;
 
     { TP3DMeshModifierList }
 
-    TP3DMeshModifierList = class( specialize gP3DCustomObjectList < TP3DMeshModifier >)
+    TP3DMeshModifierContainerList = class( specialize gP3DStreamableContainerList < TP3DMeshModifier, TP3DMeshModifierContainer > )
       private
         FParentMesh: TP3DMesh;
 
       public
-        constructor Create( AParentMesh: TP3DMesh );
-
-        function Add(Item: TCustomItem): Integer; override;
-        procedure SetItem(Index: Integer; AValue: TCustomItem); override;
+        procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
 
         property ParentMesh: TP3DMesh read FParentMesh;
     end;
-
-    TP3DPropertyAccessMeshModifier = specialize gP3DPropertyAccessInterfacedPersistent < TP3DMeshModifier >;
-    TP3DPropertyAccessMeshModifierList = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DMeshModifierList, TP3DMeshModifier, TP3DPropertyAccessMeshModifier >;
 
     TP3DMeshModifierClass = class of TP3DMeshModifier;
 
@@ -107,49 +107,47 @@
 
     { TP3DMeshWeightGroup }
 
-    TP3DMeshWeightGroup = class( TP3DInterfacedPersistent )
+    TP3DMeshWeightGroup = class( TP3DNamedStreamable )
       private
         FIndex: Integer;
         FMesh: TP3DMesh;
-        FName: String;
 
         function GetWeight( VIndex: Integer ): Float;
 
       public
         //property Weight[ VIndex: Integer ]: Float read GetWeight;
-        constructor Create( AMesh: TP3DMesh );
-        constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+        constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       published
-        property Name: String read FName write FName;
         property Mesh: TP3DMesh read FMesh write FMesh;
         property Index: Integer read FIndex write FIndex;
     end;
 
+    TP3DMeshWeightGroupContainer = specialize gP3DStreamableContainer < TP3DMeshWeightGroup >;
+    TP3DMeshWeightGroupPointer = specialize gP3DStreamablePointer < TP3DMeshWeightGroup >;
+    //TP3DMeshWeightGroupContainerList = specialize gP3DNamedStreamableContainerList < TP3DMeshWeightGroup, TP3DMeshWeightGroupContainer >;
+    TP3DMeshWeightGroupPointerList = specialize gP3DNamedStreamableList < TP3DMeshWeightGroup, TP3DMeshWeightGroupPointer >;
+
+
     { TP3DMeshWeightGroupList }
 
-    TP3DMeshWeightGroupList = class( specialize gP3DCustomObjectList < TP3DMeshWeightGroup >)
+    TP3DMeshWeightGroupContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DMeshWeightGroup, TP3DMeshWeightGroupContainer > )
       private
         FParentMesh: TP3DMesh;
 
       public
-        constructor Create( AParentMesh: TP3DMesh );
-
-        function Add(Item: TCustomItem): Integer; override;
+        procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
 
         property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
     end;
-
-    TP3DPropertyAccessMeshWeightGroup = specialize gP3DPropertyAccessInterfacedPersistent < TP3DMeshWeightGroup >;
-    TP3DPropertyAccessMeshWeightGroupList = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DMeshWeightGroupList, TP3DMeshWeightGroup, TP3DPropertyAccessMeshWeightGroup >;
 
     { TP3DMesh }
     //TP3DCustomMeshRenderable = specialize gP3DRenderable < TP3DDataBlock >;
     TP3DTexCoordList = specialize gP3DCustomObjectList < TP3DVec2BufferGL >;
     TP3DMesh = class( TP3DDataBlock, IP3DRenderable, IP3DCollidable )
-      private
+      protected
         FFileWatch: TP3DFilePointer;
-        FModifiers: TP3DMeshModifierList;
+        FModifiers: TP3DMeshModifierContainerList;
 
         Loops: TIntList;
         PackedPositions: TVec3List;
@@ -159,11 +157,9 @@
         PackedFaces: TIntList;
         PackedVertexWeights: TVec3List;
         PackedVertexWeightIndices: TIVec4List;
-        PackedMaterialGroups: TP3DMeshMaterialGroupList;
+        PackedMaterialGroups: TP3DMeshMaterialGroupContainerList;
 
         procedure BuildIndicesFromFaces;
-        class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-        function GetDataPath: String; override;
 
       public
         VertexWeights: TP3DVec4BufferGL;
@@ -178,14 +174,18 @@
 
         Indices: TP3DIntBufferGL;
         VBArray: TP3DVertexBufferArray;
-        MaterialGroups: TP3DMeshMaterialGroupList;
-        WeightGroups: TP3DMeshWeightGroupList;
+        MaterialGroups: TP3DMeshMaterialGroupContainerList;
+        WeightGroups: TP3DMeshWeightGroupContainerList;
 
-        constructor Create( const AData: TP3DLibrary = nil ); override;
+        constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
 
-        procedure FastDestroy; override;
+        destructor Destroy; override;
 
-        procedure LoadFromJSONContext( AContext: TP3DJSONContext ); override;
+        class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
+
+        procedure SetJSON(AValue: TJSONData); override;
+
+        //procedure LoadFromJSONContext( AContext: TP3DJSONContext ); override;
 
         //IP3DRenderable
         procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject );
@@ -206,10 +206,9 @@
         procedure CreateVBO;
         procedure CalcCotangentsFromTangents;
         procedure Calc_Tangents_Cotangents;
-        procedure RemoveFromFields( Block: TP3DDataBlock ); override;
 
         //        procedure ClearChildren;
-        property Modifiers: TP3DMeshModifierList read FModifiers write FModifiers;
+        property Modifiers: TP3DMeshModifierContainerList read FModifiers write FModifiers;
 
         //IP3DCollidable -->
       private
@@ -237,9 +236,10 @@
         //<-- IP3DCollidable
       end;
 
-    TP3DPropertyAccessMesh = specialize gP3DPropertyAccessDataBlock < TP3DMesh >;
-    TP3DMeshList = specialize gP3DNamedInterfacedPersistentList < TP3DMesh >;
-    TP3DPropertyAccessMeshList = specialize gP3DPropertyAccessDataBlockList < TP3DMeshList, TP3DMesh, TP3DPropertyAccessMesh >;
+    TP3DMeshContainer = specialize gP3DStreamableContainer < TP3DMesh >;
+    TP3DMeshPointer = class( specialize gP3DStreamablePointer < TP3DMesh >);
+    TP3DMeshContainerList = specialize gP3DNamedStreamableContainerList < TP3DMesh, TP3DMeshContainer >;
+    TP3DMeshPointerList = specialize gP3DStreamableList < TP3DMesh, TP3DMeshPointer >;
 //var
   //P3DMeshModifierClassFactory: TP3DMeshModifierClassFactory = nil;
 {$ENDIF}
@@ -337,88 +337,95 @@ begin
       vbase:= Faces[ i ].X;
       for j:= 2 to Faces[ i ].Y - 1 do
         begin
-          Indices.Add([ vbase,
-                        vbase + j - 1,
-                        vbase + j ]);
+          Indices.AddArray([ vbase,
+                             vbase + j - 1,
+                             vbase + j ]);
         end;
     end;
 end;
 
-class function TP3DMesh.GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DMesh.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Meshes;
+  Result:= ALib.Properties.GetPropByName( 'Meshes' );
 end;
 
-function TP3DMesh.GetDataPath: String;
+procedure TP3DMesh.SetJSON(AValue: TJSONData);
 begin
-  Result:= 'Meshes[ "' + Name + '" ]';
+  inherited SetJSON(AValue);
+  UnpackBuffers;
 end;
 
-constructor TP3DMesh.Create(const AData: TP3DLibrary);
+constructor TP3DMesh.CreateBlock(const AData: TP3DLibrary);
+var
+  PropTexCoord: TP3DPropAccessVec2BufferGLList;
 begin
-  inherited Create( AData );
+  inherited CreateBlock( AData );
 
-  Positions:= TP3DVec3BufferGL.Create( True );
+  Positions:= TP3DVec3BufferGL.Create;
   PackedPositions:= TVec3List.Create;
-  Normals:= TP3DVec3BufferGL.Create( True );
+  Normals:= TP3DVec3BufferGL.Create;
   PackedNormals:= TVec3List.Create;
-  Cotangents:= TP3DVec3BufferGL.Create( True );
+  Cotangents:= TP3DVec3BufferGL.Create;
   PackedCotangents:= TVec3List.Create;
-  Tangents:= TP3DVec3BufferGL.Create( True );
+  Tangents:= TP3DVec3BufferGL.Create;
   PackedTangents:= TVec3List.Create;
-  Indices:= TP3DIntBufferGL.Create( True );
-  Edges:= TP3DIntBufferGL.Create( True );
+  Indices:= TP3DIntBufferGL.Create;
+  Edges:= TP3DIntBufferGL.Create;
   Loops:= TIntList.Create;
-  VertexWeightIndices:= TP3DVec4BufferGL.Create( True );
+  VertexWeightIndices:= TP3DVec4BufferGL.Create;
   PackedVertexWeightIndices:= TIVec4List.Create;
-  VertexWeights:= TP3DVec4BufferGL.Create( True );
+  VertexWeights:= TP3DVec4BufferGL.Create;
   PackedVertexWeights:= TVec3List.Create;
   VBArray:= TP3DVertexBufferArray.Create;
   Faces:= TP3DFaceList.Create;
   PackedFaces:= TIntList.Create;
   TexCoords:= TP3DTexCoordList.Create;
 
-  MaterialGroups:= TP3DMeshMaterialGroupList.Create( Self );
-  PackedMaterialGroups:= TP3DMeshMaterialGroupList.Create( Self );
-  WeightGroups:= TP3DMeshWeightGroupList.Create( Self );
-  Modifiers:= TP3DMeshModifierList.Create( Self );
+  MaterialGroups:= TP3DMeshMaterialGroupContainerList.Create( 'MaterialGroups', smText );
+  MaterialGroups.FParentMesh:= Self;
+  PackedMaterialGroups:= TP3DMeshMaterialGroupContainerList.Create( 'PackedMaterialGroups', smText );
+  PackedMaterialGroups.FParentMesh:= Self;
+
+  WeightGroups:= TP3DMeshWeightGroupContainerList.Create( 'WeightGroups', smExternalBinary );
+  WeightGroups.FParentMesh:= Self;
+
+  Modifiers:= TP3DMeshModifierContainerList.Create( 'Modifiers', smText );
+  Modifiers.FParentMesh:= Self;
 
   //Owner.Meshes.Add( Self );
   //FileWatch:= TP3DFilePointer.Create( '' );
   //Properties.Add( TP3DPropertyAccessFilePointer.CreateField( 'FileWatch', @FFileWatch, smDoNotStore ));
 //  Properties.Add( TP3DPropertyAccessVec4List.CreateField( 'VertexWeightIndices', @VertexWeightIndices, smDoNotStore ));
 //  Properties.Add( TP3DPropertyAccessVec4List.CreateField( 'VertexWeights', @VertexWeights, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessIntList.CreateField( 'Loops', @Loops, smNode ));
-  Properties.Add( TP3DPropertyAccessIntList.CreateField( 'Edges', @Edges, smNode ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'PackedPositions', @PackedPositions, smNode ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'PackedNormals', @PackedNormals, smNode ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'PackedTangents', @PackedTangents, smNode ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'PackedCotangents', @PackedCotangents, smNode ));
-  Properties.Add( TP3DPropertyAccessIntList.CreateField( 'PackedFaces', @PackedFaces, smNode ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'PackedVertexWeights', @PackedVertexWeights, smNode ));
-  Properties.Add( TP3DPropertyAccessIVec4List.CreateField( 'PackedVertexWeightIndices', @PackedVertexWeightIndices, smNode ));
-  Properties.Add( TP3DPropertyAccessVec2BufferGLList.CreateField( 'TexCoords', @TexCoords, smNode ));
-  Properties.Add( TP3DPropertyAccessMeshWeightGroupList.CreateField( 'WeightGroups', @WeightGroups, smNode ));
-  Properties.Add( TP3DPropertyAccessMeshMaterialGroupList.CreateField( 'PackedMaterialGroups', @PackedMaterialGroups, smNode ));
-  Properties.Add( TP3DPropertyAccessMeshModifierList.CreateField( 'Modifiers', @Modifiers, smNode ));
+  Properties.Add( TP3DPropAccessIntList.CreateField( 'Loops', @Loops, smExternalBinary ));
+  Properties.Add( TP3DPropAccessIntBufferGL.CreateField( 'Edges', @Edges, smExternalBinary ));
+  Properties.Add( TP3DPropAccessVec3List.CreateField( 'PackedPositions', @PackedPositions, smExternalBinary ));
+  Properties.Add( TP3DPropAccessVec3List.CreateField( 'PackedNormals', @PackedNormals, smExternalBinary ));
+  Properties.Add( TP3DPropAccessVec3List.CreateField( 'PackedTangents', @PackedTangents, smExternalBinary ));
+  Properties.Add( TP3DPropAccessVec3List.CreateField( 'PackedCotangents', @PackedCotangents, smExternalBinary ));
+  Properties.Add( TP3DPropAccessIntList.CreateField( 'PackedFaces', @PackedFaces, smExternalBinary ));
+  Properties.Add( TP3DPropAccessVec3List.CreateField( 'PackedVertexWeights', @PackedVertexWeights, smExternalBinary ));
+  Properties.Add( TP3DPropAccessIVec4List.CreateField( 'PackedVertexWeightIndices', @PackedVertexWeightIndices, smExternalBinary ));
+  PropTexCoord:= TP3DPropAccessVec2BufferGLList.CreateField( 'TexCoords', @TexCoords, smText );
+  PropTexCoord.ChildrenStoreMode:= smExternalBinary;
+  Properties.Add( PropTexCoord );
+  Properties.Add( WeightGroups );
+  Properties.Add( PackedMaterialGroups );
+  Properties.Add( Modifiers );
 
-  Properties.Add( TP3DPropertyAccessIntList.CreateField( 'Indices', @Indices, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessMeshMaterialGroupList.CreateField( 'MaterialGroups', @MaterialGroups, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'Positions', @Positions, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'Normals', @Normals, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'Tangents', @Tangents, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'Cotangents', @Cotangents, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessIVec2List.CreateField( 'Faces', @Faces, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessVec3List.CreateField( 'VertexWeights', @VertexWeights, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessIVec4List.CreateField( 'VertexWeightIndices', @VertexWeightIndices, smDoNotStore ));
-
+  Properties.Add( TP3DPropAccessIntBufferGL.CreateField( 'Indices', @Indices, smDoNotStore ));
+  Properties.Add( MaterialGroups );
+  Properties.Add( TP3DPropAccessVec3BufferGL.CreateField( 'Positions', @Positions, smDoNotStore ));
+  Properties.Add( TP3DPropAccessVec3BufferGL.CreateField( 'Normals', @Normals, smDoNotStore ));
+  Properties.Add( TP3DPropAccessVec3BufferGL.CreateField( 'Tangents', @Tangents, smDoNotStore ));
+  Properties.Add( TP3DPropAccessVec3BufferGL.CreateField( 'Cotangents', @Cotangents, smDoNotStore ));
+  Properties.Add( TP3DPropAccessIVec2BufferGL.CreateField( 'Faces', @Faces, smDoNotStore ));
+  Properties.Add( TP3DPropAccessVec3List.CreateField( 'VertexWeights', @VertexWeights, smDoNotStore ));
+  Properties.Add( TP3DPropAccessIVec4BufferGL.CreateField( 'VertexWeightIndices', @VertexWeightIndices, smDoNotStore ));
 end;
 
-procedure TP3DMesh.FastDestroy;
+destructor TP3DMesh.Destroy;
 begin
-  Modifiers.Clear( True );
-  Modifiers.Free;
-
   Positions.Free;
   PackedPositions.Free;
   Normals.Free;
@@ -436,23 +443,18 @@ begin
   PackedVertexWeightIndices.Free;
   Faces.Free;
   PackedFaces.Free;
-  TexCoords.Clear( True );
+  TexCoords.Clear;
   TexCoords.Free;
 
   VBArray.Free;
-  MaterialGroups.Clear( True );
-  MaterialGroups.Free;
-  PackedMaterialGroups.Clear( True );
-  PackedMaterialGroups.Free;
-  WeightGroups.Clear( True );
-  WeightGroups.Free;
   //FileWatch.Free;
 
   //Owner.Meshes.Remove( Self );
 
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
+{
 procedure TP3DMesh.LoadFromJSONContext( AContext: TP3DJSONContext );
 var
   Prop: Integer;
@@ -467,7 +469,7 @@ begin
   WriteLn();
   WriteLn( Properties[ Prop ].AsString );
   WriteLn();}
-end;
+end; }
 
 procedure TP3DMesh.Render(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DObject);
@@ -908,7 +910,7 @@ begin
   VertexWeights.Clear;
   VertexWeightIndices.Clear;
   Faces.Clear;
-  MaterialGroups.Clear( True );
+  MaterialGroups.Clear;
   Indices.Clear;
 
   Faces.Count:= PackedFaces.Count;
@@ -931,7 +933,7 @@ begin
           if ( PackedVertexWeights.Count > 0 ) then
             begin
               Weight:= PackedVertexWeights[ Loops[ vidx ]];
-              VertexWeights.Add( vec4( Weight, 1 - Weight.GetDistManh ));
+              VertexWeights.Add( vec4( Weight, 1 - Weight.length_manh ));
             end;
           if ( PackedVertexWeightIndices.Count > 0 ) then
             begin
@@ -941,14 +943,14 @@ begin
         end;
       for j:= 1 to LastVertex do
         begin
-          Edges.Add([ vbase + j -1, vbase + j ]);
+          Edges.AddArray([ vbase + j -1, vbase + j ]);
           if ( j > 1 ) then
-            Indices.Add([ vbase,
-                          vbase + j - 1,
-                          vbase + j ]);
+            Indices.AddArray([ vbase,
+                               vbase + j - 1,
+                               vbase + j ]);
         end;
       if ( LastVertex > 0 ) then
-        Edges.Add([ vbase + LastVertex, vbase ]);
+        Edges.AddArray([ vbase + LastVertex, vbase ]);
       Faces[ i ]:= ivec2( Idx, Indices.Count - Idx );
     end;
   for i:= 0 to PackedMaterialGroups.Count - 1 do
@@ -1141,7 +1143,7 @@ begin
   sqrrad:= 0.0;
   ctr:= ( AABB.Min + AABB.Max ) / 2;
   for p in Positions do
-    sqrrad:= max( sqrrad, ( p - ctr ).GetDistSqr );
+    sqrrad:= max( sqrrad, ( p - ctr ).length_sq );
   FSphere:= P3DSphere( ctr, sqrt( sqrrad ));
   Result:= Sphere;
 end;
@@ -1149,16 +1151,6 @@ end;
 function TP3DMesh.CastRay(Orig, Dir: TVec3; out HitPos: TVec3): Boolean;
 begin
   Result:= False;
-end;
-
-procedure TP3DMesh.RemoveFromFields(Block: TP3DDataBlock);
-var
-  i: Integer;
-begin
-  for i:= 0 to MaterialGroups.Count - 1 do
-    if ( MaterialGroups[ i ].Material = Block ) then
-      MaterialGroups[ i ].Material:= nil;
-  inherited RemoveFromFields( Block );
 end;
 
 function TP3DMesh.GetAABB: TP3DAABB;
@@ -1203,15 +1195,12 @@ end;
 
 procedure TP3DMeshMaterialGroup.SetMaterial( AValue: TP3DMaterial );
 begin
-  if FMaterial=AValue then Exit;
+  FMaterial.AsValue:= AValue;
+end;
 
-  if ( Assigned( FMaterial )) then
-    Material.RemoveUser( ParentMesh );
-
-  FMaterial:= AValue;
-
-  if ( Assigned( FMaterial )) then
-    Material.AddUser( ParentMesh );
+function TP3DMeshMaterialGroup.GetMaterial: TP3DMaterial;
+begin
+  Result:= FMaterial.AsValue;
 end;
 
 procedure TP3DMeshMaterialGroup.SetPolyEnd(AValue: Integer);
@@ -1228,50 +1217,36 @@ begin
   FPolyStart:=AValue;
 end;
 
-constructor TP3DMeshMaterialGroup.Create(AParentMesh: TP3DMesh);
+constructor TP3DMeshMaterialGroup.Create(const AOwner: IP3DStreamableContainer);
 begin
-  ParentMesh:= AParentMesh;
-  inherited Create;
+  inherited Create( AOwner );
 
-  Properties.Context:= AParentMesh;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyStart', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PolyEnd', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexStart' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IndexEnd' ));
-  Properties.Add( TP3DPropertyAccessMaterial.CreateFieldSet( 'Material', @FMaterial, @SetMaterial, smAttribute ));
-end;
-
-constructor TP3DMeshMaterialGroup.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create( nil );
-  LoadFromJSONContext( AContext );
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'PolyStart', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'PolyEnd', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'IndexStart' ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'IndexEnd' ));
+  FMaterial:= TP3DMaterialPointer.Create( 'Material', smText );
+  Properties.Add( FMaterial );
 end;
 
 { TP3DMeshModifier }
 
 procedure TP3DMeshModifier.SetMesh(AValue: TP3DMesh);
 begin
-  if FMesh=AValue then Exit;
-  FMesh:=AValue;
+  FMesh.AsValue:= AValue;
 end;
 
-constructor TP3DMeshModifier.Create(AMesh: TP3DMesh);
+function TP3DMeshModifier.GetMesh: TP3DMesh;
+begin
+  Result:= FMesh.AsValue;
+end;
+
+constructor TP3DMeshModifier.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create;
-  Mesh:= AMesh;
-  Properties.Context:= Mesh;
-  Properties.Add( TP3DPropertyAccessMesh.CreateField( 'Mesh', @FMesh, smDoNotStore ));
-  Properties.Add( TP3DPropertyAccessString.CreateGetSet( 'Type', @GetType, nil, smDoNotStore ));
-end;
-
-constructor TP3DMeshModifier.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  {if ( AContext.Owner is TP3DMesh ) then
-    Create( TP3DMesh( AContext.Owner ))
-  else
-    raise Exception.Create( 'Cannot create TP3DMesh from JSON context. Owner is empty or no mesh.' );}
-  Create( nil );
-  LoadFromJSONContext( AContext );
+  FMesh:= TP3DMeshPointer.Create( 'Mesh' );
+  Properties.Add( FMesh );
+  Properties.Add( TP3DPropAccessString.CreateGetSet( 'Type', @GetType, nil, smDoNotStore ));
 end;
 
 function TP3DMeshModifier.GetType: String;
@@ -1286,95 +1261,62 @@ begin
   Result:= 0.0;//Mesh.;
 end;
 
-constructor TP3DMeshWeightGroup.CreateFromJSONContext(AContext: TP3DJSONContext);
+constructor TP3DMeshWeightGroup.Create(const AOwner: IP3DStreamableContainer);
 begin
-//  if ( AContext.Owner is TP3DMesh ) then
-//    Create( TP3DMesh( AContext.Owner ))
-//  else
-//    raise Exception.Create( 'Cannot create TP3DMeshWeightGroup from JSON context. Owner is empty or no weightgroup.' );
-  Create( nil );
-  LoadFromJSONContext( AContext );
-end;
-
-constructor TP3DMeshWeightGroup.Create(AMesh: TP3DMesh);
-begin
-  inherited Create;
-  Mesh:= AMesh;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Index', smAttribute ));
+  inherited Create( AOwner );
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Name', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Index', smText ));
 end;
 
 
 { TP3DMeshMaterialGroupList }
 
-constructor TP3DMeshMaterialGroupList.Create(AParentMesh: TP3DMesh);
-begin
-  inherited Create;
-  FParentMesh:= AParentMesh;
-end;
-
-function TP3DMeshMaterialGroupList.Find( Material: TP3DMaterial ): Integer;
+function TP3DMeshMaterialGroupContainerList.Find( Material: TP3DMaterial ): Integer;
 var
   i: Integer;
 begin
   Result:= -1;
   for i:= 0 to Count - 1 do
-    if ( Items[ i ].Material = Material ) then
+    if ( AsValues[ i ].Material = Material ) then
       begin
         Result:= i;
         break;
       end;
 end;
 
-procedure TP3DMeshMaterialGroupList.Add(PolyStart: Integer; PolyEnd: Integer; Material: TP3DMaterial);
+
+procedure TP3DMeshMaterialGroupContainerList.Add(PolyStart: Integer; PolyEnd: Integer; Material: TP3DMaterial);
 var
   Group: TP3DMeshMaterialGroup;
 begin
-  Group:= TP3DMeshMaterialGroup.Create( ParentMesh );
+  Group:= TP3DMeshMaterialGroup.Create( Self );
   Group.PolyStart:= PolyStart;
   Group.PolyEnd:= PolyEnd;
   Group.Material:= Material;
-  Add( Group );
 end;
 
-function TP3DMeshMaterialGroupList.Add(Item: TCustomItem): Integer;
+
+procedure TP3DMeshMaterialGroupContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
 begin
-  Result:= inherited Add(Item);
-  Item.ParentMesh:= ParentMesh;
+  inherited Notify( ASender, AItem, AAction );
+  if (( AAction = actAdd ) and Assigned( AItem )) then
+    AItem.ParentMesh:= ParentMesh;
 end;
 
 { TP3DMeshModifierList }
 
-function TP3DMeshModifierList.Add(Item: TCustomItem): Integer;
+procedure TP3DMeshModifierContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
 begin
-  Result:=inherited Add(Item);
-  Item.Mesh:= ParentMesh;
-end;
-
-procedure TP3DMeshModifierList.SetItem(Index: Integer; AValue: TCustomItem);
-begin
-  inherited SetItem(Index, AValue);
-  AValue.Mesh:= ParentMesh;
-end;
-
-constructor TP3DMeshModifierList.Create(AParentMesh: TP3DMesh);
-begin
-  inherited Create;
-  FParentMesh:= AParentMesh;
+  inherited Notify( ASender, AItem, AAction );
+  AItem.Mesh:= ParentMesh;
 end;
 
 { TP3DMeshWeightGroupList }
 
-constructor TP3DMeshWeightGroupList.Create(AParentMesh: TP3DMesh);
+procedure TP3DMeshWeightGroupContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
 begin
-  inherited Create;
-  ParentMesh:= AParentMesh;
-end;
-
-function TP3DMeshWeightGroupList.Add(Item: TCustomItem): Integer;
-begin
-  Result:= inherited Add( Item );
-  Item.Mesh:= ParentMesh;
+  inherited Notify( ASender, AItem, AAction );
+  AItem.Mesh:= ParentMesh;
 end;
 
 {$ENDIF}

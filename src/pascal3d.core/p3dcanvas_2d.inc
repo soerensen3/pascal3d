@@ -322,7 +322,7 @@ var
 begin
   if ( not PrepareForDrawing ) then exit;
 
-  VBO:= TP3DVec2BufferGL.Create( False );
+  VBO:= TP3DVec2BufferGL.Create;
 
   glVertexAttrib4f( P3DAttribColor, Color.R, Color.G, Color.B, Color.A ); cle( Self );
   theta:= 2 * PI / num_segments;

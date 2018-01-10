@@ -18,36 +18,38 @@ type
       FVarType: Integer;
 
       function GetAsFloat: Float;
-      function GetAsFloatList: TFloatList;
+      function GetAsFloatList: TP3DFloatList;
       function GetAsInt: Integer;
-      function GetAsIntList: TIntList;
+      function GetAsIntList: TP3DIntList;
       function GetAsMat2: TMat2;
       function GetAsMat3: TMat3;
       function GetAsMat4: TMat4;
-      function GetAsQuat: TQuaternion;
-      function GetAsQuatList: TQuaternionList;
+      function GetAsQuat: TQuat;
+      function GetAsQuatList: TP3DQuatList;
       function GetAsString: String;
       function GetAsVec2: TVec2;
-      function GetAsVec2List: TVec2List;
+      function GetAsVec2List: TP3DVec2List;
       function GetAsVec3: TVec3;
-      function GetAsVec3List: TVec3List;
+      function GetAsVec3List: TP3DVec3List;
       function GetAsVec4: TVec4;
-      function GetAsVec4List: TVec4List;
+      function GetAsVec4List: TP3DVec4List;
       procedure SetAsFloat( AValue: Float );
+      procedure SetAsFloatList(AValue: TP3DFloatList);
       procedure SetAsFloatList(AValue: TFloatList);
       procedure SetAsInt( AValue: Integer );
+      procedure SetAsIntList(AValue: TP3DIntList);
       procedure SetAsIntList(AValue: TIntList);
       procedure SetAsMat2( AValue: TMat2 );
       procedure SetAsMat3( AValue: TMat3 );
       procedure SetAsMat4( AValue: TMat4 );
-      procedure SetAsQuat(AValue: TQuaternion);
-      procedure SetAsQuatList(AValue: TQuaternionList);
+      procedure SetAsQuat(AValue: TQuat);
+      procedure SetAsQuatList(AValue: TP3DQuatList);
       procedure SetAsVec2( AValue: TVec2 );
-      procedure SetAsVec2List(AValue: TVec2List);
+      procedure SetAsVec2List(AValue: TP3DVec2List);
       procedure SetAsVec3( AValue: TVec3 );
-      procedure SetAsVec3List(AValue: TVec3List);
+      procedure SetAsVec3List(AValue: TP3DVec3List);
       procedure SetAsVec4( AValue: TVec4 );
-      procedure SetAsVec4List(AValue: TVec4List);
+      procedure SetAsVec4List(AValue: TP3DVec4List);
 
     public
       constructor Create( AProgramObject: GLuint; ADeclType: TP3DShaderDeclType; AName: String; AAddr: GLint );
@@ -57,16 +59,16 @@ type
       property AsVec2: TVec2 read GetAsVec2 write SetAsVec2;
       property AsVec3: TVec3 read GetAsVec3 write SetAsVec3;
       property AsVec4: TVec4 read GetAsVec4 write SetAsVec4;
-      property AsQuat: TQuaternion read GetAsQuat write SetAsQuat;
+      property AsQuat: TQuat read GetAsQuat write SetAsQuat;
       property AsMat2: TMat2 read GetAsMat2 write SetAsMat2;
       property AsMat3: TMat3 read GetAsMat3 write SetAsMat3;
       property AsMat4: TMat4 read GetAsMat4 write SetAsMat4;
-      property AsIntList: TIntList read GetAsIntList write SetAsIntList;
-      property AsFloatList: TFloatList read GetAsFloatList write SetAsFloatList;
-      property AsVec2List: TVec2List read GetAsVec2List write SetAsVec2List;
-      property AsVec3List: TVec3List read GetAsVec3List write SetAsVec3List;
-      property AsVec4List: TVec4List read GetAsVec4List write SetAsVec4List;
-      property AsQuatList: TQuaternionList read GetAsQuatList write SetAsQuatList;
+      property AsIntList: TP3DIntList read GetAsIntList write SetAsIntList;
+      property AsFloatList: TP3DFloatList read GetAsFloatList write SetAsFloatList;
+      property AsVec2List: TP3DVec2List read GetAsVec2List write SetAsVec2List;
+      property AsVec3List: TP3DVec3List read GetAsVec3List write SetAsVec3List;
+      property AsVec4List: TP3DVec4List read GetAsVec4List write SetAsVec4List;
+      property AsQuatList: TP3DQuatList read GetAsQuatList write SetAsQuatList;
       property AsString: String read GetAsString;
       property VarType: Integer read FVarType write FVarType;
       property DeclType: TP3DShaderDeclType read FShaderDeclType write FShaderDeclType;
@@ -83,19 +85,18 @@ type
       function GetNames( Name: String ): TP3DShaderDecl;
       procedure SetNames( Name: String ; AValue: TP3DShaderDecl );
 
-    published
+    public
       function FindByName( Name: String ): Integer;
       function FindByName(Name: String; out Decl: TP3DShaderDecl): Boolean;
       function AddrByName( Name: String ): GLint;
       procedure Delete( Index: Integer ); override;
-      procedure Clear( const FreeObjects: Boolean = True ); override;
+      procedure Clear; override;
 
-    public
       property Names[ AName: String ]: TP3DShaderDecl read GetNames write SetNames;
   end;
 
   TP3DShader = class ( TP3DDataBlock )
-    private
+    protected
       FAttributes: TP3DShaderDeclList;
       FFShader: String;
       FProgramObj: GLHandle;
@@ -107,17 +108,17 @@ type
       procedure SetVShader(AValue: String);
       procedure ScanShaderObjects;
       procedure LinkProgram;
-      class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-      function GetDataPath: String; override;
 
     public
-      procedure Enable;
-      procedure Disable;
-
-      constructor Create( const AData: TP3DLibrary = nil ); override;
+      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
       constructor CreateFromVertexAndFragmentShaderFile( fnvshader, fnfshader: String; const AData: TP3DLibrary = nil );
       constructor CreateFromVertexAndFragmentShader( AVShader, AFShader: String; const AData: TP3DLibrary = nil );
-      procedure FastDestroy; override;
+      destructor Destroy; override;
+
+      class function GetContainer( ALib: TP3DLibrary ): TP3DPropertyAccess; override;
+
+      procedure Enable;
+      procedure Disable;
 
       procedure UpdateUniforms();
       procedure BindAttribLocations();
@@ -134,10 +135,11 @@ type
       property VShader: String read FVShader write SetVShader;
       property FShader: String read FFShader write SetFShader;
   end;
-  TP3DShaderList = specialize gP3DNamedInterfacedPersistentList < TP3DShader >;
 
-  TP3DPropertyAccessShader = specialize gP3DPropertyAccessDataBlock < TP3DShader >;
-  TP3DPropertyAccessShaderList = specialize gP3DPropertyAccessDataBlockList < TP3DShaderList, TP3DShader, TP3DPropertyAccessShader >;
+  TP3DShaderContainer = specialize gP3DStreamableContainer < TP3DShader >;
+  TP3DShaderPointer = specialize gP3DStreamablePointer < TP3DShader >;
+  TP3DShaderContainerList = specialize gP3DNamedStreamableContainerList < TP3DShader, TP3DShaderContainer >;
+  TP3DShaderPointerList = specialize gP3DStreamableList < TP3DShader, TP3DShaderPointer >;
 
 
 {$ENDIF}
@@ -151,7 +153,7 @@ begin
   glGetUniformiv( ProgramObject, Addr, @Result ); cle( Self );
 end;
 
-function TP3DShaderDecl.GetAsIntList: TIntList;
+function TP3DShaderDecl.GetAsIntList: TP3DIntList;
 var
   BaseName: String;
   decl: GLuint;
@@ -161,7 +163,7 @@ begin
   case DeclType of
     sdtUniform:
       begin
-        Result:= TIntList.Create;
+        Result:= TP3DIntList.Create;
         BaseName:= Copy2Symb( Name, '[' );
         i:= 0;
         decl:= Addr;
@@ -185,7 +187,7 @@ begin
   end;
 end;
 
-function TP3DShaderDecl.GetAsFloatList: TFloatList;
+function TP3DShaderDecl.GetAsFloatList: TP3DFloatList;
 var
   BaseName: String;
   decl: GLuint;
@@ -195,7 +197,7 @@ begin
   case DeclType of
     sdtUniform:
       begin
-        Result:= TFloatList.Create;
+        Result:= TP3DFloatList.Create;
         BaseName:= Copy2Symb( Name, '[' );
         i:= 0;
         decl:= Addr;
@@ -235,7 +237,7 @@ begin
   end;
 end;
 
-function TP3DShaderDecl.GetAsQuat: TQuaternion;
+function TP3DShaderDecl.GetAsQuat: TQuat;
 begin
   case DeclType of
     sdtUniform: begin glGetUniformfv( ProgramObject, Addr, @Result ); cle( Self ); end;
@@ -243,17 +245,17 @@ begin
   end;
 end;
 
-function TP3DShaderDecl.GetAsQuatList: TQuaternionList;
+function TP3DShaderDecl.GetAsQuatList: TP3DQuatList;
 var
   BaseName: String;
   decl: GLuint;
-  tmp: TQuaternion;
+  tmp: TQuat;
   i: Integer;
 begin
   case DeclType of
     sdtUniform:
       begin
-        Result:= TQuaternionList.Create;
+        Result:= TP3DQuatList.Create;
         BaseName:= Copy2Symb( Name, '[' );
         i:= 0;
         decl:= Addr;
@@ -299,7 +301,7 @@ begin
   end;
 end;
 
-function TP3DShaderDecl.GetAsVec2List: TVec2List;
+function TP3DShaderDecl.GetAsVec2List: TP3DVec2List;
 var
   BaseName: String;
   decl: GLuint;
@@ -309,7 +311,7 @@ begin
   case DeclType of
     sdtUniform:
       begin
-        Result:= TVec2List.Create;
+        Result:= TP3DVec2List.Create;
         BaseName:= Copy2Symb( Name, '[' );
         i:= 0;
         decl:= Addr;
@@ -333,7 +335,7 @@ begin
   end;
 end;
 
-function TP3DShaderDecl.GetAsVec3List: TVec3List;
+function TP3DShaderDecl.GetAsVec3List: TP3DVec3List;
 var
   BaseName: String;
   decl: GLuint;
@@ -343,7 +345,7 @@ begin
   case DeclType of
     sdtUniform:
       begin
-        Result:= TVec3List.Create;
+        Result:= TP3DVec3List.Create;
         BaseName:= Copy2Symb( Name, '[' );
         i:= 0;
         decl:= Addr;
@@ -367,7 +369,7 @@ begin
   end;
 end;
 
-function TP3DShaderDecl.GetAsVec4List: TVec4List;
+function TP3DShaderDecl.GetAsVec4List: TP3DVec4List;
 var
   BaseName: String;
   decl: GLuint;
@@ -377,7 +379,7 @@ begin
   case DeclType of
     sdtUniform:
       begin
-        Result:= TVec4List.Create;
+        Result:= TP3DVec4List.Create;
         BaseName:= Copy2Symb( Name, '[' );
         i:= 0;
         decl:= Addr;
@@ -403,6 +405,16 @@ begin
   end;
 end;
 
+procedure TP3DShaderDecl.SetAsFloatList(AValue: TP3DFloatList);
+begin
+  if ( not Assigned( Self )) then
+    exit;
+  case DeclType of
+    sdtUniform: begin glUniform1fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+//    sdtAttribute: begin glVertexAttrib1fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+  end;
+end;
+
 procedure TP3DShaderDecl.SetAsFloatList(AValue: TFloatList);
 begin
   if ( not Assigned( Self )) then
@@ -423,7 +435,7 @@ begin
   end;
 end;
 
-procedure TP3DShaderDecl.SetAsIntList(AValue: TIntList);
+procedure TP3DShaderDecl.SetAsIntList(AValue: TP3DIntList);
 begin
   if ( not Assigned( Self )) then
     exit;
@@ -431,6 +443,11 @@ begin
     sdtUniform: begin glUniform1iv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
 //    sdtAttribute: begin glVertexAttrib1v( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
   end;
+end;
+
+procedure TP3DShaderDecl.SetAsIntList(AValue: TIntList);
+begin
+
 end;
 
 procedure TP3DShaderDecl.SetAsMat2(AValue: TMat2);
@@ -460,7 +477,7 @@ begin
   end;
 end;
 
-procedure TP3DShaderDecl.SetAsQuat(AValue: TQuaternion);
+procedure TP3DShaderDecl.SetAsQuat(AValue: TQuat);
 begin
   if ( not Assigned( Self )) then
     exit;
@@ -470,7 +487,7 @@ begin
   end;
 end;
 
-procedure TP3DShaderDecl.SetAsQuatList(AValue: TQuaternionList);
+procedure TP3DShaderDecl.SetAsQuatList(AValue: TP3DQuatList);
 var
   i: Integer;
 begin
@@ -496,12 +513,12 @@ begin
   end;
 end;
 
-procedure TP3DShaderDecl.SetAsVec2List(AValue: TVec2List);
+procedure TP3DShaderDecl.SetAsVec2List(AValue: TP3DVec2List);
 begin
   if ( not Assigned( Self )) then
     exit;
   case DeclType of
-    sdtUniform: begin glUniform2fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+    sdtUniform: begin glUniform2fv( Addr, AValue.Count, PGLfloat( AValue.PtrTo( 0 ))); cle( Self ); end;
     sdtAttribute:
       if ( AValue is TP3DVec2BufferGL ) then
         TP3DVec2BufferGL( AValue ).SetAttribArray( Addr );
@@ -518,12 +535,12 @@ begin
   end;
 end;
 
-procedure TP3DShaderDecl.SetAsVec3List(AValue: TVec3List);
+procedure TP3DShaderDecl.SetAsVec3List(AValue: TP3DVec3List);
 begin
   if ( not Assigned( Self )) then
     exit;
   case DeclType of
-    sdtUniform: begin glUniform3fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+    sdtUniform: begin glUniform3fv( Addr, AValue.Count, PGLfloat( AValue.PtrTo( 0 ))); cle( Self ); end;
     sdtAttribute:
       if ( AValue is TP3DVec3BufferGL ) then
         TP3DVec3BufferGL( AValue ).SetAttribArray( Addr );
@@ -540,15 +557,15 @@ begin
   end;
 end;
 
-procedure TP3DShaderDecl.SetAsVec4List(AValue: TVec4List);
+procedure TP3DShaderDecl.SetAsVec4List(AValue: TP3DVec4List);
 begin
   if ( not Assigned( Self )) then
     exit;
   case DeclType of
-    sdtUniform: begin glUniform4fv( Addr, AValue.Count, AValue.PtrTo( 0 )); cle( Self ); end;
+    sdtUniform: begin glUniform4fv( Addr, AValue.Count, PGLfloat( AValue.PtrTo( 0 ))); cle( Self ); end;
     sdtAttribute:
-      if ( AValue is TP3DVec4BufferGL ) then
-        TP3DVec4BufferGL( AValue ).SetAttribArray( Addr );
+      if ( AValue is IP3DAttribute ) then
+        ( AValue as IP3DAttribute ).SetAttribArray( Addr );
   end;
 end;
 
@@ -655,7 +672,7 @@ end;
 
 function ShaderCheckForErrors( glShader: GLHandle; Shader: String ): String;
 var
-  blen, slen: GLInt;
+  blen, slen: GLsizei;
   InfoLog : PGLChar;
   E: TStringList; //Errors
   C: TStringList; //Code
@@ -670,7 +687,7 @@ begin
     begin
       GetMem( InfoLog, blen * SizeOf( GLCharARB ));
 
-      glGetShaderInfoLog( glShader, blen , slen, InfoLog ); cle( nil );
+      glGetShaderInfoLog( glShader, blen , @slen, InfoLog ); cle( nil );
 
       E:= TStringList.Create;
       E.Text:= Trim( PChar( InfoLog ));
@@ -875,13 +892,10 @@ begin
   inherited Delete(Index);
 end;
 
-procedure TP3DShaderDeclList.Clear(const FreeObjects: Boolean);
+procedure TP3DShaderDeclList.Clear;
 var
   i: Integer;
 begin
-  if ( FreeObjects ) then
-    for i:= Count - 1 downto 0 do
-      Items[ i ].Free;
   Count:= 0;
 end;
 
@@ -937,8 +951,8 @@ var
 begin
   Enable;
   cnt:= 0;
-  Attributes.Clear( True );
-  Uniforms.Clear( True );
+  Attributes.Clear;
+  Uniforms.Clear;
 
   msg:= '';
   glGetError();
@@ -1017,21 +1031,17 @@ begin
   Disable;
   F:= TStringList.Create;
   F.Text:= VShader;
-  F.SaveToFile( '/tmp/' + Name + '.vert' );
+  //F.SaveToFile( '/tmp/' + Name + '.vert' );
   F.Text:= FShader;
-  F.SaveToFile( '/tmp/' + Name + '.frag' );
+  //F.SaveToFile( '/tmp/' + Name + '.frag' );
   F.Free;
 end;
 
-class function TP3DShader.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DShader.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Shaders;
+  Result:= ALib.Properties.GetPropByName( 'Lights' );
 end;
 
-function TP3DShader.GetDataPath: String;
-begin
-  Result:= 'Shaders[ "' + Name + '" ]';
-end;
 
 procedure TP3DShader.Enable;
 begin
@@ -1047,9 +1057,9 @@ begin
   glUseProgram( 0 );
 end;
 
-constructor TP3DShader.Create(const AData: TP3DLibrary);
+constructor TP3DShader.CreateBlock(const AData: TP3DLibrary);
 begin
-  inherited Create( AData );
+  inherited CreateBlock( AData );
   ProgramObj:= -1;
   FUniforms:= TP3DShaderDeclList.Create;
   FAttributes:= TP3DShaderDeclList.Create;
@@ -1057,13 +1067,11 @@ begin
 end;
 
 constructor TP3DShader.CreateFromVertexAndFragmentShaderFile(fnvshader, fnfshader: String; const AData: TP3DLibrary);
-var
-  path: String;
 begin
-  Create( AData );
+  CreateBlock( AData );
   VShader:= LoadShaderToText( fnvshader );
   FShader:= LoadShaderToText( fnfshader );
-  CreateFromVertexAndFragmentShader( vshader, fshader, Owner );
+  CreateFromVertexAndFragmentShader( vshader, fshader, OwnerLib );
   FVShaderWatch:= TP3DFilePointer.Create( fnvshader );
   FFShaderWatch:= TP3DFilePointer.Create( fnfshader );
 end;
@@ -1099,7 +1107,7 @@ var
   Res: Integer;
 
 begin
-  Create( AData );
+  CreateBlock( AData );
   if ( Assigned( FVShaderWatch )) then
     FVShaderWatch.Free;
   if ( Assigned( FFShaderWatch )) then
@@ -1109,7 +1117,7 @@ begin
   LinkProgram;
 end;
 
-procedure TP3DShader.FastDestroy;
+destructor TP3DShader.Destroy;
 begin
   if ( Assigned( FVShaderWatch )) then
     FVShaderWatch.Free;
@@ -1117,14 +1125,14 @@ begin
     FFShaderWatch.Free;
   DeleteProgram( ProgramObj );
   //Owner.Shaders.Remove( Self );
-  FAttributes.Clear( True );
+  FAttributes.Clear;
   FAttributes.Free;
-  FUniforms.Clear( True );
+  FUniforms.Clear;
   FUniforms.Free;
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
-procedure TP3DShader.UpdateUniforms;
+procedure TP3DShader.UpdateUniforms();
 var
   i: Integer;
 begin
@@ -1132,7 +1140,7 @@ begin
     Uniforms[ i ].Addr:= glGetUniformLocation( ProgramObj, PChar( Uniforms[ i ].Name ));
 end;
 
-procedure TP3DShader.BindAttribLocations;
+procedure TP3DShader.BindAttribLocations();
 begin
   glBindAttribLocation( ProgramObj, P3DAttribPosition,  'Position'  );
   glBindAttribLocation( ProgramObj, P3DAttribNormal,    'Normal'    );

@@ -27,10 +27,11 @@ type
 
   { TP3DTransform }
 
-  TP3DTransform = class( TP3DInterfacedPersistent )
+  TP3DTransform = class( TP3DStreamable )
     protected
+      FOnChange: TNotifyEvent;
       FPosition: TVec3;
-      FQuaternion: TQuaternion;
+      FQuaternion: TQuat;
       FRotation: TVec3;
       FScale: TVec3;
       FMatrix: TMat4;
@@ -39,13 +40,13 @@ type
       function GetDirection: TVec3;
       function GetMatrix: TMat4;
       function GetPosition: TVec3;
-      function GetQuaternion: TQuaternion;
+      function GetQuaternion: TQuat;
       function GetRotation: TVec3;
       function GetRotationOrder: TRotationOrder;
       function GetScale: TVec3;
       procedure SetMatrix( AValue: TMat4 );
       procedure SetPosition( AValue: TVec3 );
-      procedure SetQuaternion( AValue: TQuaternion );
+      procedure SetQuaternion( AValue: TQuat );
       procedure SetRotation( AValue: TVec3 );
       procedure SetRotationOrder( AValue: TRotationOrder );
       procedure SetScale( AValue: TVec3 );
@@ -53,8 +54,7 @@ type
       procedure UpdateEuler;
 
     public
-      constructor Create;
-      constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
       procedure MoveAlongLocalAxis( AAxis: TVec3; AValue: Float );
@@ -66,22 +66,25 @@ type
       property Rotation: TVec3 read FRotation write SetRotation;
       property Scale: TVec3 read FScale write SetScale;
       property Matrix: TMat4 read FMatrix write SetMatrix;
-      property Quaternion: TQuaternion read FQuaternion write SetQuaternion;
+      property Quaternion: TQuat read FQuaternion write SetQuaternion;
 
     published
       property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
+      property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
-  TP3DPropertyAccessTransform = specialize gP3DPropertyAccessInterfacedPersistent < TP3DTransform >;
+  TP3DTransformContainer = specialize gP3DStreamableContainer < TP3DTransform >;
+  TP3DTransformPointer = specialize gP3DStreamablePointer < TP3DTransform >;
+  //TP3DTransformContainerList = specialize gP3DStreamableContainerList < TP3DTransform, TP3DTransformContainer >;
+  //TP3DTransformPointerList = specialize gP3DStreamableList < TP3DTransform, TP3DTransformPointer >;
 
   { IP3DTransform }
 
-  IP3DTransform = interface
+  IP3DTransform = interface ( IP3DBaseInterface )
     ['{DC16F6B0-37DD-4AD3-A093-E49DC022D6AA}']
     function GetTransform: TP3DTransform;
-    procedure SetTransform( AValue: TP3DTransform );
 
-    property Transform: TP3DTransform read GetTransform write SetTransform;
+    property Transform: TP3DTransform read GetTransform;
   end;
 
 
@@ -91,37 +94,34 @@ type
 procedure TP3DTransform.UpdateMatrix;
 begin
   FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
+  if ( Assigned( FOnChange )) then
+    FOnChange( Self );
 end;
 
 procedure TP3DTransform.UpdateEuler;
 begin
   FRotation:= QuatToEuler( Quaternion, deg2rad * Rotation, RotationOrder ) / deg2rad;
+  if ( Assigned( FOnChange )) then
+    FOnChange( Self );
 end;
 
-constructor TP3DTransform.Create;
+constructor TP3DTransform.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create;
+  inherited Create( AOwner );
 
   FScale:= vec3( 1 );
   FQuaternion:= quat( 0, 0, 0, 1 );
   FRotationOrder:= roXYZ;
   UpdateMatrix;
 
-  Properties.Add([ TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ),
-                   TP3DPropertyAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
-                   TP3DPropertyAccessRTTI.Create( Self, 'RotationOrder', smAttribute ),
-                   TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ),
-                   TP3DPropertyAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ),
-                   TP3DPropertyAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smAttribute )],
+  Properties.Add([ TP3DPropAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smText ),
+                   TP3DPropAccessVec3.CreateGetSet( 'Rotation', @GetRotation, @SetRotation ),
+                   TP3DPropAccessRTTI.Create( Self, 'RotationOrder', smText ),
+                   TP3DPropAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smText ),
+                   TP3DPropAccessVec3.CreateGetSet( 'Direction', @GetDirection, nil ),
+                   TP3DPropAccessVec3.CreateGetSet( 'Scale', @GetScale, @SetScale, smText )],
                    'Transform' );
 end;
-
-constructor TP3DTransform.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create;
-  LoadFromJSONContext( AContext );
-end;
-
 
 procedure TP3DTransform.MoveAlongGlobalAxis( AAxis: TVec3; AValue: Float );
 begin
@@ -135,7 +135,7 @@ end;
 
 procedure TP3DTransform.RotateAroundGlobalAxis( AAxis: TVec3; AValue: Float );
 begin
-  Quaternion:= Quaternion * quatRotation( AAxis, AValue );
+  Quaternion:= Quaternion * quatrotate( AAxis, AValue );
 end;
 
 procedure TP3DTransform.RotateAroundLocalAxis( AAxis: TVec3; AValue: Float );
@@ -168,7 +168,7 @@ begin
   Result:= FPosition;
 end;
 
-function TP3DTransform.GetQuaternion: TQuaternion;
+function TP3DTransform.GetQuaternion: TQuat;
 begin
   Result:= FQuaternion;
 end;
@@ -195,7 +195,7 @@ begin
   UpdateMatrix;
 end;
 
-procedure TP3DTransform.SetQuaternion(AValue: TQuaternion);
+procedure TP3DTransform.SetQuaternion(AValue: TQuat);
 begin
   if ( FQuaternion = AValue ) then Exit;
   FQuaternion:= AValue;

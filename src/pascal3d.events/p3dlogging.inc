@@ -6,7 +6,7 @@
 type
   { TP3DLogger }
 
-  TP3DLogger = class ( TP3DInterfacedPersistent )
+  TP3DLogger = class ( TP3DStreamable )
     private
       FFileWatch: TP3DFilePointer;
       FLevel: TDOMElement;
@@ -16,8 +16,7 @@ type
       function CreateMessageHeader( Sender: TObject ): TDOMElement;
 
     public
-      constructor Create;
-      constructor CreateFromJSONContext( AContext: TP3DJSONContext ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
 
@@ -39,6 +38,7 @@ const
   P3DLogOutput =
   '<html>' + LineEnding +
   '  <head>' + LineEnding +
+  '    <title>$title$</title>' + LineEnding +
   '    <link rel="stylesheet" href="tomorrow.css" />' + LineEnding +
   '    <script src="highlight.pack.js"></script>' + LineEnding +
   '    <script src="highlightjs-line-numbers.min.js"></script>' + LineEnding +
@@ -117,13 +117,18 @@ var
     if ( not Assigned( Element )) then
       exit;
     if ( Element.NodeName = '#text' ) then
-      Write( F, Element.TextContent )
+      begin
+        if ( Element.TextContent = '$title$' ) then
+          Write( F, ExtractFileName( AFileName ))
+        else
+          Write( F, P3DHTMLEncode( Element.TextContent ));
+      end
     else
       begin
         Write( F, '<' + Element.NodeName );
         if ( Assigned( Element.Attributes )) then
           for i:= 0 to Element.Attributes.Length - 1 do
-            Write( F, Format( ' %s="%s"', [ Element.Attributes[ i ].NodeName, Element.Attributes[ i ].NodeValue ]));
+            Write( F, Format( ' %s="%s"', [ Element.Attributes[ i ].NodeName, P3DHTMLEncode( Element.Attributes[ i ].NodeValue )]));
 
         if ( Element.ChildNodes.Count > 0 ) then
           begin
@@ -173,24 +178,24 @@ begin
   Result.AttribStrings[ 'class' ]:= 'messageheader';
 
   if ( Sender is TP3DDataBlock ) then
-    N:= '{' + TP3DDataBlock( Sender ).Owner.Name + '}.' + TP3DObject( Sender ).Name + ': '
+    N:= '{' + TP3DDataBlock( Sender ).OwnerLib.Name + '}.' + TP3DObject( Sender ).Name + ': '
   else if ( Sender is TP3DObject ) then
     N:= TP3DObject( Sender ).Name + ': '
   else
     N:= 'Instance of ';
 
-  Txt:= '<span>Unit</span> ' + Sender.UnitName + ' <span>Object</span> ' + N + Sender.ClassName;
+  Txt:= '<span>Unit</span> ' + Sender.UnitName + ' <span>Object</span> ' + N + StringReplace( StringReplace( Sender.ClassName, '<', '&lt;', [ rfReplaceAll ]), '>', '&gt;', [ rfReplaceAll ]);
   S:= TStringStream.Create( Txt );
   ReadXMLFragment( Result, S );
   S.Free;
 end;
 
-constructor TP3DLogger.Create;
+constructor TP3DLogger.Create(const AOwner: IP3DStreamableContainer);
 var
   F: TStringStream;
-  fp: TP3DPropertyAccessFilePointer;
+  fp: TP3DPropAccessFilePointer;
 begin
-  inherited Create;
+  inherited Create( AOwner );
   FileWatch:= TP3DFilePointer.Create( ChangeFileExt( ParamStr( 0 ), '.html' ));
   FileWatch.OnFileNameChange:= @SetFileName;
   F:= TStringStream.Create( P3DLogOutput );
@@ -200,24 +205,18 @@ begin
   Level.AppendChild( LogFile.CreateTextNode( 'Logfile for ' + ExtractFileName( ParamStr( 0 ))));
 
   Level:= TDOMElement( FLogFile.DocumentElement.FindNode( 'body' ).FindNode( 'table'));
-  fp:= TP3DPropertyAccessFilePointer.CreateField( 'FileWatch', @FileWatch, smAttribute );
+  fp:= TP3DPropAccessFilePointer.CreateField( 'FileWatch', @FileWatch, smText );
   fp.PathMode:= pmRelativeToBinary;
   Properties.Add( fp );
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Add( Self );
-end;
-
-constructor TP3DLogger.CreateFromJSONContext( AContext: TP3DJSONContext );
-begin
-  Create;
-  LoadFromJSONContext( AContext );
+    P3DConfig.AddStreamable( 'P3DLogger', Self );
 end;
 
 destructor TP3DLogger.Destroy;
 begin
   FileWatch.Free;
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Remove( Self );
+    P3DConfig.RemoveStreamable( 'P3DLogger' );
   FLevel:= nil;
   FLogFile.Free;
   inherited Destroy;
@@ -272,6 +271,9 @@ var
   NodeText: TDOMText;
   N: TComponentName;
 begin
+  if ( not Assigned( Self )) then
+    exit;
+  //TODO: REMOVE THIS LINE
   Node:= LogFile.CreateElement( 'tr' );
   Node.SetAttribute( 'class', 'info' );
   cell:= LogFile.CreateElement( 'td' );

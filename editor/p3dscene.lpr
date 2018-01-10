@@ -39,7 +39,7 @@ begin
   //P3DApplication.LoadConfig( 'settings_default.xml' );
   //P3DConfig.SaveConfig( 'settings_default.p3d' );
   P3DConfig.LoadConfig( 'settings_default.p3d' );
-  WriteLn( P3DConfig.Serialize );
+
   //WriteLn( P3DShaderNodeLib.Paths.Text );
 
   P3DGUIInit;

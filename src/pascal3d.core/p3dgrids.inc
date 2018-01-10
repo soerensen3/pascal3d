@@ -2,33 +2,8 @@
 {$IFDEF INTERFACE}
 
 
-TP3DTileGrid = class;
+TP3DGridScene = class;
 TP3DRenderListModifierGrid = class;
-
-{ TP3DGridScene }
-
-TP3DGridScene = class ( TP3DInterfacedPersistent )
-  private
-    FObjectList: TP3DRenderList;
-    FInstances: TP3DFloatBufferGL;
-    FModifier: TP3DRenderListModifierGrid;
-    FScene: TP3DScene;
-    FTileGrid: TP3DTileGrid;
-
-    procedure SetScene(AValue: TP3DScene);
-
-  public
-    constructor Create( ATileGrid: TP3DTileGrid );
-    constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
-    destructor Destroy; override;
-
-  published
-    property TileGrid: TP3DTileGrid read FTileGrid;
-    property Scene: TP3DScene read FScene write SetScene;
-    property Instances: TP3DFloatBufferGL read FInstances;
-    property Modifier: TP3DRenderListModifierGrid read FModifier;
-    property ObjectList: TP3DRenderList read FObjectList write FObjectList;
-end;
 
 { TP3DGridSceneList }
 
@@ -40,7 +15,7 @@ end;
 { TP3DTileGrid }
 
 TP3DTileGrid = class ( TP3DDataBlock, IP3DCollidable, IP3DRenderable )
-  private
+  protected
     FGridWorldUnit: Single;
     FHeight: Integer;
     FScenes: TP3DGridSceneList;
@@ -51,8 +26,6 @@ TP3DTileGrid = class ( TP3DDataBlock, IP3DCollidable, IP3DRenderable )
     procedure SetHeight( AValue: Integer );
     procedure SetSceneAt( x, y: Integer; AValue: TP3DGridScene );
     procedure SetWidth( AValue: Integer );
-    class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-    function GetDataPath: String; override;
 
   protected
     procedure UpdateSize;
@@ -64,8 +37,10 @@ TP3DTileGrid = class ( TP3DDataBlock, IP3DCollidable, IP3DRenderable )
   public
     procedure UpdateArrays;
 
-    constructor Create( const AData: TP3DLibrary=nil ); override;
+    constructor CreateBlock( const AData: TP3DLibrary=nil ); override;
     destructor Destroy; override;
+
+    class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
 
     procedure PassToShader(Scene: TP3DGridScene; baseInstanceCount: Integer);
 
@@ -75,7 +50,7 @@ TP3DTileGrid = class ( TP3DDataBlock, IP3DCollidable, IP3DRenderable )
 
 
     property SceneAt[ x, y: Integer ]: TP3DGridScene read GetSceneAt write SetSceneAt;
-    procedure OnGridDataChange( Sender: TPersistent; Item: TP3DGridScene; Action: TP3DCustomListOnChangeAction );
+    procedure OnGridDataChange( Sender: TObject; Item: TP3DGridScene; Action: TP3DListOnChangeAction );
     function AddScene( AScene: TP3DScene ): Integer;
 
   published
@@ -111,10 +86,37 @@ TP3DTileGrid = class ( TP3DDataBlock, IP3DCollidable, IP3DRenderable )
     //<-- IP3DCollidable
 end;
 
-TP3DTileGridList = specialize gP3DNamedInterfacedPersistentList < TP3DTileGrid >;
+TP3DTileGridContainer = specialize gP3DStreamableContainer < TP3DTileGrid >;
+TP3DTileGridPointer = specialize gP3DStreamablePointer < TP3DTileGrid >;
+TP3DTileGridContainerList = specialize gP3DNamedStreamableContainerList < TP3DTileGrid, TP3DTileGridContainer >;
+TP3DTileGridPointerList = specialize gP3DNamedStreamableList < TP3DTileGrid, TP3DTileGridPointer >;
 
-TP3DPropertyAccessTileGrid = specialize gP3DPropertyAccessDataBlock < TP3DTileGrid >;
-TP3DPropertyAccessTileGridList = specialize gP3DPropertyAccessDataBlockList < TP3DTileGridList, TP3DTileGrid, TP3DPropertyAccessTileGrid >;
+{ TP3DGridScene }
+
+TP3DGridScene = class ( TP3DStreamable )
+  private
+    FObjectList: TP3DRenderList;
+    FInstances: TP3DFloatBufferGL;
+    FModifier: TP3DRenderListModifierGrid;
+    FScene: TP3DScenePointer;
+    FTileGrid: TP3DTileGridPointer;
+
+    function GetScene: TP3DScene;
+    function GetTileGrid: TP3DTileGrid;
+    procedure SetScene(AValue: TP3DScene);
+    procedure SetTileGrid(AValue: TP3DTileGrid);
+
+  public
+    constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+    destructor Destroy; override;
+
+  published
+    property TileGrid: TP3DTileGrid read GetTileGrid write SetTileGrid;
+    property Scene: TP3DScene read GetScene write SetScene;
+    property Instances: TP3DFloatBufferGL read FInstances;
+    property Modifier: TP3DRenderListModifierGrid read FModifier;
+    property ObjectList: TP3DRenderList read FObjectList write FObjectList;
+end;
 
 { TP3DRenderListModifierGrid }
 
@@ -139,30 +141,36 @@ end;
 
 procedure TP3DGridScene.SetScene(AValue: TP3DScene);
 begin
-  if FScene=AValue then Exit;
-  FScene:=AValue;
+  {TODO:BROKEN:if FScene=AValue then Exit;
+  FScene:= AValue;
   FreeAndNil( FObjectList );
   if ( Assigned( Scene )) then
-    Scene.MakeRenderList( nil, Mat4Identity, FObjectList, [ rlfObjects ]);
+    Scene.MakeRenderList( nil, Mat4Identity, FObjectList, [ rlfObjects ]);}
 end;
 
-constructor TP3DGridScene.Create(ATileGrid: TP3DTileGrid );
+function TP3DGridScene.GetTileGrid: TP3DTileGrid;
 begin
-  inherited Create;
-  FTileGrid:= ATileGrid;
+  Result:= FTileGrid.AsValue;
+end;
+
+function TP3DGridScene.GetScene: TP3DScene;
+begin
+  Result:= FScene.AsValue;
+end;
+
+procedure TP3DGridScene.SetTileGrid(AValue: TP3DTileGrid);
+begin
+  FTileGrid.AsValue:= AValue;
+end;
+
+constructor TP3DGridScene.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create( AOwner );
+  FTileGrid:= TP3DTileGridPointer.Create( 'TileGrid' );
   FModifier:= TP3DRenderListModifierGrid.Create( Self );
-  FInstances:= TP3DFloatBufferGL.Create( True );
-  Properties.Context:= ATileGrid;
-  Properties.Add( TP3DPropertyAccessScene.CreateFieldSet( 'Scene', @FScene, @SetScene, smAttribute ));
-end;
-
-constructor TP3DGridScene.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  if ( AContext.Owner is TP3DTileGrid ) then
-    Create( TP3DTileGrid( AContext.Owner ))
-  else
-    raise Exception.Create( 'Cannot create TP3DGridScene from JSON context. Owner is empty or no tilegrid.' );
-  LoadFromJSONContext( AContext );
+  FInstances:= TP3DFloatBufferGL.Create;
+  FScene:= TP3DScenePointer.Create( 'Scene', smText );
+  Properties.Add([ FTileGrid, FScene ]);
 end;
 
 destructor TP3DGridScene.Destroy;
@@ -203,14 +211,9 @@ begin
   UpdateSize;
 end;
 
-class function TP3DTileGrid.GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DTileGrid.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Grids;
-end;
-
-function TP3DTileGrid.GetDataPath: String;
-begin
-  Result:= 'Grids[ "' + Name + '" ]';
+  Result:= ALib.Properties.GetPropByName( 'Grids' );
 end;
 
 procedure TP3DTileGrid.UpdateSize;
@@ -268,19 +271,19 @@ begin
     Scenes[ i ].Instances.PushData;
 end;
 
-constructor TP3DTileGrid.Create(const AData: TP3DLibrary);
+constructor TP3DTileGrid.CreateBlock(const AData: TP3DLibrary);
 begin
-  inherited Create( AData );
+  inherited CreateBlock( AData );
   Scenes:= TP3DGridSceneList.Create;
   GridData:= TP3DGridSceneList.Create;
   GridData.OnChange:= @OnGridDataChange;
   GridWorldUnit:= 1;
   FWidth:= 32;
   Height:= 32;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'GridWorldUnit', smAttribute ));
-  //Properties.Add( TP3DPropertyAccessSceneList.CreateField( 'Scenes', @FScenes, smNode ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Width', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Height', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'GridWorldUnit', smText ));
+  //Properties.Add( TP3DPropAccessSceneList.CreateField( 'Scenes', @FScenes, smNode ));
 end;
 
 destructor TP3DTileGrid.Destroy;
@@ -360,7 +363,7 @@ var
 begin
   Result:= False;
 
-  m:= -Mat;
+  mat4inverse( Mat, m );
 
   transsp:= P3DTransformSphere( m, ASphere );
   gridpos:= transsp.Position / GridWorldUnit;
@@ -390,7 +393,7 @@ begin
 
 end;
 
-procedure TP3DTileGrid.OnGridDataChange( Sender: TPersistent; Item: TP3DGridScene; Action: TP3DCustomListOnChangeAction );
+procedure TP3DTileGrid.OnGridDataChange( Sender: TObject; Item: TP3DGridScene; Action: TP3DListOnChangeAction );
 begin
   if ( FIsUpdating ) then
     exit;
@@ -418,7 +421,7 @@ begin
   Result:= Scenes.FindByScene( AScene );
   if ( Result < 0 ) then
     begin
-      Scene:= TP3DGridScene.Create( Self );
+      Scene:= TP3DGridScene.Create;
       Scene.Scene:= AScene;
       Result:= Scenes.Add( Scene );
     end;

@@ -27,7 +27,7 @@ type
   TP3DWindowEventMouseMotion = procedure( Sender: TP3DWindow; Event: TSDL_MouseMotionEvent );
   TP3DWindowEventMouseWheel  = procedure( Sender: TP3DWindow; Event: TSDL_MouseWheelEvent );
 
-  TP3DWindow = class ( TP3DInterfacedPersistent )
+  TP3DWindow = class ( TP3DStreamable )
     protected
       FFullScreen: Boolean;
       FOnClose: TP3DWindowEvent;
@@ -36,7 +36,7 @@ type
       FOnMouseButton: TP3DWindowEventMouseButton;
       FOnMouseMotion: TP3DWindowEventMouseMotion;
       FOnMouseWheel: TP3DWindowEventMouseWheel;
-      fOnRender: TP3DWindowEvent;
+      FOnRender: TP3DWindowEvent;
       FOnResize: TP3DWindowEvent;
       FTitle: String;
       FVisible: Boolean;
@@ -60,21 +60,17 @@ type
       procedure SetShowBorder(AValue: Boolean);
 
     public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      constructor CreateFrom( Wnd: Pointer );
+      constructor CreateDummyWindow;
       destructor Destroy; override;
 
       procedure Render;
-
-      constructor Create;
-      constructor CreateFromJSONContext( AContext: TP3DJSONContext ); override;
-      constructor CreateFrom( Wnd: Pointer );
-      constructor CreateDummyWindow;
-
       procedure Show;
       procedure Hide;
       procedure UpdateViewport;
 
-      property OnRender: TP3DWindowEvent read fOnRender write fOnRender;
-
+      property OnRender: TP3DWindowEvent read FOnRender write FOnRender;
       property OnMouseMotion: TP3DWindowEventMouseMotion read FOnMouseMotion write FOnMouseMotion;
       property OnMouseButton: TP3DWindowEventMouseButton read FOnMouseButton write FOnMouseButton;
       property OnMouseWheel: TP3DWindowEventMouseWheel read FOnMouseWheel write FOnMouseWheel;
@@ -97,9 +93,10 @@ type
       property ShowBorder: Boolean read FShowBorder write SetShowBorder;
   end;
 
-  TP3DPropertyAccessWindow = specialize gP3DPropertyAccessInterfacedPersistent < TP3DWindow >;
-  TP3DWindowList = specialize gP3DCustomObjectList < TP3DWindow >;
-  TP3DPropertyAccessWindowList = specialize gP3DListPropertyAccessObject < TP3DWindowList, TP3DWindow, TP3DPropertyAccessWindow >;
+  TP3DWindowContainer = specialize gP3DStreamableContainer < TP3DWindow >;
+  TP3DWindowPointer = specialize gP3DStreamablePointer < TP3DWindow >;
+  TP3DWindowContainerList = specialize gP3DStreamableContainerList < TP3DWindow, TP3DWindowContainer >;
+  TP3DWindowPointerList = specialize gP3DStreamableList < TP3DWindow, TP3DWindowPointer >;
 
   function P3DClientToScreen( Window: TP3DWindow; X, Y: Integer ): TPoint;
   function P3DScreenToClient( Window: TP3DWindow; X, Y: Integer ): TPoint;
@@ -227,9 +224,9 @@ begin
   SDL_GL_SwapWindow( window );
 end;
 
-constructor TP3DWindow.Create;
+constructor TP3DWindow.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create;
+  inherited Create( AOwner );
   if ( not P3DApplication.SDLInitialized ) then
     P3DApplication.InitSDL;
   FWindow:= SDL_CreateWindow( 'SDL WINDOW', 100, 100, 640, 480,
@@ -265,20 +262,14 @@ begin
 
   P3DApplication.InitializeWindow( Self );
 
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Left', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'ShowBorder', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FullScreen', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Title', smAttribute ));
-end;
-
-constructor TP3DWindow.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create;
-  LoadFromJSONContext( AContext );
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Width', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Height', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Visible', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Left', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Height', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'ShowBorder', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'FullScreen', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Title', smText ));
 end;
 
 constructor TP3DWindow.CreateFrom(Wnd: Pointer);  //TODO: TP3DWindow.CreateFrom
@@ -309,14 +300,14 @@ begin                                             //incomplete
   FVisible:= True;
   P3DApplication.InitializeWindow( Self );
 
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Left', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'ShowBorder', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FullScreen', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Title', smAttribute ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Width', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Height', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Visible', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Left', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Height', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'ShowBorder', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'FullScreen', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Title', smText ));
 end;
 
 constructor TP3DWindow.CreateDummyWindow;

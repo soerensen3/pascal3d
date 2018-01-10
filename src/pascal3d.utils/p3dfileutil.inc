@@ -8,7 +8,7 @@ type
     This class manages the search paths relative to the base directory. It also introduces functions to find files in it's scope.
   }
 
-  TP3DSearchPathContainer = class( TP3DInterfacedPersistent )
+  TP3DSearchPathContainer = class( TP3DStreamable )
     private
       FBaseDir: TP3DFilePointer;
       FPaths: TP3DFilePointerList;
@@ -16,8 +16,7 @@ type
       function GetFullPath( Index: Integer ): String;
 
     public
-      constructor Create;
-      constructor CreateFromJSONContext( AContext: TP3DJSONContext ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       function FindFile( FName: String ): String; // Utilty function to recursively find a file in scope. The full path to the file name will be
@@ -39,9 +38,8 @@ type
   procedure P3DLoadConfig( FileName: String );
   function P3DMatchFileName( FileName: String; Mask: String ): Boolean;
   function P3DLoadFileToString( FileName: String ): String;
+  procedure P3DSaveStringToFile( FileName: String; AValue: String );
 
-var
-  P3DSearchPaths: TP3DSearchPathContainer = nil;
 
 {$ENDIF}
 
@@ -444,16 +442,39 @@ begin
   Result:= FilenameIsMatching( Mask, FileName, False );
 end;
 
-function P3DLoadFileToString(FileName: String): String;
+function P3DLoadFileToString( FileName: String ): String;
 var
-  F: TFileStream = nil;
+  //F: TFileStream = nil;
+  S: TStringList;
 begin
   Result:= '';
+  if ( FileExists( FileName )) then
+    try
+      S:= TStringList.Create;
+      S.LoadFromFile( FileName );
+      Result:= S.Text;
+      //F:= TFileStream.Create( FileName, fmOpenRead );
+      //Result:= F.ReadAnsiString;
+    finally
+      S.Free;
+      //F.Free;
+    end;
+end;
+
+procedure P3DSaveStringToFile( FileName: String; AValue: String );
+var
+  //F: TFileStream = nil;
+  S: TStringList;
+begin
   try
-    F:= TFileStream.Create( FileName, fmOpenRead );
-    Result:= F.ReadAnsiString;
+    S:= TStringList.Create;
+    //F:= TFileStream.Create( FileName, fmOpenWrite );
+    //F.WriteAnsiString( AValue );
+    S.Text:= AValue;
+    S.SaveToFile( FileName );
   finally
-    F.Free;
+    //F.Free;
+    S.Free;
   end;
 end;
 
@@ -471,36 +492,28 @@ begin
     end;
 end;
 
-constructor TP3DSearchPathContainer.Create;
+constructor TP3DSearchPathContainer.Create(const AOwner: IP3DStreamableContainer);
 var
-  fp: TP3DPropertyAccessFilePointer;
-  fpl: TP3DPropertyAccessFilePointerList;
+  fp: TP3DPropAccessFilePointer;
+  fpl: TP3DPropAccessFilePointerList;
 begin
-  inherited Create;
+  inherited Create( AOwner );
   FPaths:= TP3DFilePointerList.Create;
   BaseDir:= TP3DFilePointer.Create( ExtractFilePath( ParamStr( 0 )));
-  fp:= TP3DPropertyAccessFilePointer.CreateField( 'BaseDir', @BaseDir, smAttribute );
+  fp:= TP3DPropAccessFilePointer.CreateField( 'BaseDir', @BaseDir, smText );
   fp.PathMode:= pmRelativeToBinary;
   Properties.Add( fp );
-  fpl:= TP3DPropertyAccessFilePointerList.CreateField( 'Paths', @FPaths, smAttribute );
+  fpl:= TP3DPropAccessFilePointerList.CreateField( 'Paths', @FPaths, smText );
   fpl.PathMode:= pmRelativeToBaseBath;
   Properties.Add( fpl );
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Add( Self );
-end;
-
-constructor TP3DSearchPathContainer.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create;
-  LoadFromJSONContext( AContext );
+    P3DConfig.AddStreamable( 'P3DSearchPaths', Self );
 end;
 
 destructor TP3DSearchPathContainer.Destroy;
 begin
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Remove( Self );
-  FPaths.Clear( True );
-  FPaths.Free;
+    P3DConfig.RemoveStreamable( 'P3DSearchPaths' );
   BaseDir.Free;
   inherited Destroy;
 end;

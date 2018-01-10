@@ -2,7 +2,7 @@
 
 { TP3DControlList }
 
-TP3DControlList = class( specialize gP3DCustomObjectList < TP3DGraphicControl > )
+TP3DControlList = class( specialize gP3DNamedStreamableList < TP3DGraphicControl > )
   private
     FClipRect: TP3DRect;
     FFinalScroll: TVec2;
@@ -41,7 +41,6 @@ TP3DControlList = class( specialize gP3DCustomObjectList < TP3DGraphicControl > 
     function IndexOf( Name: String ): Integer; overload;
     function ChildOf( AControl: TP3DGraphicControl ): Boolean;
 
-    constructor Create( AParent: TP3DGraphicControl );
     destructor Destroy; override;
 
     property Parent: TP3DGraphicControl read FParent;
@@ -83,12 +82,6 @@ end;
 procedure TP3DControlList.Delete(Itm: TP3DGraphicControl);
 begin
   Delete( IndexOf( Itm ));
-end;
-
-constructor TP3DControlList.Create(AParent: TP3DGraphicControl);
-begin
-  inherited Create;
-  FParent:= AParent;
 end;
 
 destructor TP3DControlList.Destroy;

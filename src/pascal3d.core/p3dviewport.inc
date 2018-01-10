@@ -1,7 +1,7 @@
 //p3dviewport.inc
 //part of p3dgraphics.pas
 {$IFDEF INTERFACE}
-
+  type
   { TP3DViewport }
 
   TP3DViewport = record

@@ -37,22 +37,21 @@ type
       property Stream: TStream read FStream write FStream;
   end;
 
-  TP3DInterfacedPersistent = class;
-  TP3DPropertyList = class;
+  //TP3DPropertyList = class;
 
   { TP3DJSONLoader
 
-    Streaming support for any object that extends TP3DInterfacedPersistent by loading it's properties from a json or a binary file.
+    Streaming support for any object that extends TP3DStreamable by loading it's properties from a json or a binary file.
     The binary file is generally expected to have the same file name as the json but a ".p3dbin" extension. Property means a descendant of
     TP3DPropertyAccess. All properties in the Properties field of the object are saved or loaded.
   }
 
-  TP3DJSONLoader = class ( TP3DFilePointer )
+  {TP3DJSONLoader = class ( TP3DFilePointer )
     private
       FBinaryFile: TP3DBinaryFile;
       FJSON: TJSONData;
       FPostponedLoading: TP3DPropertyList;
-      FRoot: TP3DInterfacedPersistent;
+      FRoot: TP3DStreamable;
 
       procedure OpenFiles; // Open a JSON File if the filepointer exists or create a new file in memory. If the file is found a corresponding
                           // binary file will be opened for read as well. If not found an empty binary file will be created.
@@ -67,7 +66,7 @@ type
       constructor Create( AFileName: String; AUserPointer: Pointer=nil ); // Create a new JSON Loader with the given file name. The file does
                                                                           // not need to exist, but the path should be valid when saved. You
                                                                           // can pass an optional user pointer.
-      constructor Create( AFileName: String; ARoot: TP3DInterfacedPersistent;
+      constructor Create( AFileName: String; ARoot: TP3DStreamable;
                           AUserPointer: Pointer=nil );                    // Create a new JSON Loader with the given file name and the given
                                                                           // root object. The file does not need to exist, but the path should
                                                                           // be valid when saved. You can pass an optional user pointer.
@@ -88,9 +87,9 @@ type
     published
       property JSON: TJSONData read FJSON write FJSON; // A pointer to the opened JSON file. May be nil if OpenFiles was not called.
       property BinaryFile: TP3DBinaryFile read FBinaryFile write FBinaryFile; // A pointer to the opened Binary file. May be nil if OpenFiles was not called.
-      property Root: TP3DInterfacedPersistent read FRoot write FRoot; // This is the root object to be loaded and saved. From there on a JSON
+      property Root: TP3DStreamable read FRoot write FRoot; // This is the root object to be loaded and saved. From there on a JSON
                                                                       // tree with the properties and subproperties is created on save or parsed on load.
-  end;
+  end;}
 
   { TP3DJSONContext
 
@@ -98,36 +97,9 @@ type
     parent.
   }
 
-  TP3DJSONContext = record
-    JSONLoader: TP3DJSONLoader;
-    Data: TJSONData;
-    Owner: TPersistent;
-    Parent: TJSONData;
-  end;
-
-  {IP3DJSONStreamable = interface
-    [ '{5ED472BA-80BE-48E6-A86A-D33B74A75DF7}' ]
-
-    constructor CreateFromJSONContext( AContext: TP3DJSONContext );
-    procedure LoadFromJSONContext( AContext: TP3DJSONContext );
-
-  end;}
-
-  // Convenience function to create json context which is passed on loading properties from a JSON File.
-  function P3DJSONContext( AJSONLoader: TP3DJSONLoader; AData: TJSONData; AOwner: TPersistent; AParent: TJSONData): TP3DJSONContext;
-
-
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
-function P3DJSONContext( AJSONLoader: TP3DJSONLoader; AData: TJSONData; AOwner: TPersistent; AParent: TJSONData): TP3DJSONContext;
-begin
-  Result.JSONLoader:= AJSONLoader;
-  Result.Data:= AData;
-  Result.Owner:= AOwner;
-  Result.Parent:= AParent;
-end;
-
 { TP3DBinaryFile }
 
 constructor TP3DBinaryFile.Create(AFileName: String; AUserPointer: Pointer; FileMode: Word);
@@ -147,7 +119,7 @@ end;
 
 //
 // binary file will be opened for read as well.
-
+{
 procedure TP3DJSONLoader.OpenFiles;
 var
   P: TJSONParser;
@@ -274,7 +246,7 @@ begin
     begin
       Result:= ARoot.Find( n );
       if ( Result = nil ) then
-        ARestPath:= n + Copy( APath, p2, l-p2 )
+        ARestPath:= n + Copy( APath, p2, l-p2 + 1 )
       else
         begin
           n:= Copy( APath, p2, l - p2 + 1 );
@@ -290,7 +262,7 @@ begin
   OpenFiles;
 end;
 
-constructor TP3DJSONLoader.Create(AFileName: String; ARoot: TP3DInterfacedPersistent; AUserPointer: Pointer);
+constructor TP3DJSONLoader.Create(AFileName: String; ARoot: TP3DStreamable; AUserPointer: Pointer);
 begin
   Create( AFileName, AUserPointer );
   Root:= ARoot;
@@ -340,5 +312,5 @@ begin
   ReadFile;
   // not implemented
 end;
-
+}
 {$ENDIF}

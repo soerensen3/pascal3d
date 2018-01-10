@@ -26,7 +26,7 @@ type
 
   { TP3DApplication }
 
-  TP3DApplication = class ( TP3DInterfacedPersistent )
+  TP3DApplication = class ( TP3DJSONRoot )
     private
       FActiveWindow: TP3DWindow;
       FMainWindow: TP3DWindow;
@@ -39,7 +39,7 @@ type
       FOnMouseWheel: TSDLEventMouseWheel;
       FRunning: Boolean;
       FSDLInitialized: Boolean;
-      FWindows: TP3DWindowList;
+      FWindows: TP3DWindowContainerList;
       ReadingTextInput: Boolean;
 
       procedure SetActiveWindow(AValue: TP3DWindow);
@@ -59,7 +59,7 @@ type
       procedure AfterRun; virtual;
 
     public
-      constructor Create;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure InitSDL;
@@ -78,7 +78,7 @@ type
       property ActiveWindow: TP3DWindow read FActiveWindow write SetActiveWindow;
       property SDLInitialized: Boolean read FSDLInitialized write FSDLInitialized;
       property Running: Boolean read FRunning write FRunning;
-      property Windows: TP3DWindowList read FWindows write FWindows;
+      property Windows: TP3DWindowContainerList read FWindows;
   end;
 
 const
@@ -100,13 +100,13 @@ end;
 
 procedure TP3DApplication.InitializeWindow(Sender: TP3DWindow);
 begin
-  Windows.Add( Sender );
+  //Windows.Add( Sender );
 end;
 
 
 procedure TP3DApplication.FinalizeWindow(Sender: TP3DWindow);
 begin
-  Windows.Remove( Sender );
+  //Windows.Remove( Sender );
   if ( Sender = MainWindow ) then
     Running:= False;
 end;
@@ -329,27 +329,24 @@ begin
   FActiveWindow:=AValue;
 end;
 
-constructor TP3DApplication.Create;
+constructor TP3DApplication.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited;
+  inherited Create( AOwner );
   P3DUtilsInit;
   P3DEventsInit;
   MainWindow:= nil;
-  Windows:= TP3DWindowList.Create;
-  Properties.Add( TP3DPropertyAccessWindowList.CreateField( 'Windows', @FWindows, smAttribute ));
+  FWindows:= TP3DWindowContainerList.Create( 'Windows', smText );
+  Properties.Add( FWindows );
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Add( Self );
+    P3DConfig.AddStreamable( 'P3DApplication', Self );
 end;
 
 destructor TP3DApplication.Destroy;
 begin
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Remove( Self );
+    P3DConfig.RemoveStreamable( 'P3DApplication' );
   Finalize;
   SDL_Quit();
-  if ( Assigned( MainWindow )) then
-    MainWindow.Free;
-  Windows.Free;
   inherited Destroy;
 end;
 

@@ -4,7 +4,7 @@
   type
     TP3DObject = class; TP3DScene = class;
 
-    IP3DRenderable = interface
+    IP3DRenderable = interface ( IP3DBaseInterface )
       ['{D1EC4419-688C-44DD-8EFD-B7CD43F10C06}']
 
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject );

@@ -75,8 +75,9 @@ type
     is done automatically in the main loop in p3dapplication.inc for P3DFilePointers var.
   }
 
-  TP3DFilePointerList = class( specialize gP3DCustomObjectList < TP3DFilePointer > )
+  TP3DFilePointerList = class( specialize gP3DCustomList < TP3DFilePointer > )
     function AddWatch( AFileName: String; AUserPointer: Pointer = nil ): Integer;
+    function IndexOf(const Item: T): Integer;
 
     procedure CheckForChange;
   end;
@@ -95,6 +96,11 @@ var
 function TP3DFilePointerList.AddWatch( AFileName: String; AUserPointer: Pointer ): Integer;
 begin
   Result:= Add( TP3DFilePointer.Create( AFileName, AUserPointer ));
+end;
+
+function TP3DFilePointerList.IndexOf(const Item: T): Integer;
+begin
+  Result:= inherited IndexOf( Item );
 end;
 
 procedure TP3DFilePointerList.CheckForChange;
@@ -184,104 +190,5 @@ begin
   FLastFileAge:= GetFileAge;
 end;
 
-
-{ TP3DPropertyAccessFilePointer }
-
-constructor TP3DPropertyAccessFilePointer.CreateField(AName: String; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
-begin
-  inherited CreateField( AName, AField, AStoreMode );
-  PathMode:= APathMode;
-end;
-
-constructor TP3DPropertyAccessFilePointer.CreateFieldSet(AName: String; AField: pItem; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
-begin
-  inherited CreateFieldSet( AName, AField, ASetter, AStoreMode );
-  PathMode:= APathMode;
-end;
-
-constructor TP3DPropertyAccessFilePointer.CreateGetField(AName: String; AGetter: TGetter; AField: pItem; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
-begin
-  inherited CreateGetField( AName, AGetter, AField, AStoreMode );
-  PathMode:= APathMode;
-end;
-
-constructor TP3DPropertyAccessFilePointer.CreateGetSet(AName: String; AGetter: TGetter; ASetter: TSetter; const AStoreMode: TP3DPropertyAccessStoreMode; APathMode: TP3DPathMode);
-begin
-  inherited CreateGetSet( AName, AGetter, ASetter, AStoreMode );
-  PathMode:= APathMode;
-end;
-
-procedure TP3DPropertyAccessFilePointer.LoadFromJSONContext(AContext: TP3DJSONContext);
-var
-  Path, FN: String;
-  Val: TP3DFilePointer;
-begin
-  if ( AContext.Data.JSONType = jtString ) then
-    begin
-      {Path:= P3DSearchPaths.FindFileEx( AContext.Data.AsString, GetCurrentDir );
-      if ( Path > '' ) then
-        FN:= Path
-      else}
-        FN:= AContext.Data.AsString;
-      SetAsString( FN );
-    end
-  else
-    raise Exception.CreateFmt( P3DERROR_JSON_WRONG_TYPE, [ JSONTypeName( jtString ), JSONTypeName( AContext.Data.JSONType )]);
-end;
-
-function TP3DPropertyAccessFilePointer.Serialize: String;
-begin
-  Result:= '"' + AsString + '"';
-end;
-
-function TP3DPropertyAccessFilePointer.GetAsString: String;
-begin
-  if ( Assigned( Value )) then
-    case PathMode of
-      pmAbsolute: Result:= Value.FileName;
-      pmRelativeToBinary: Result:= ExtractRelativepath( ExtractFilePath( ParamStr( 0 )), Value.FileName );
-      pmRelativeToBaseBath: Result:= ExtractRelativepath( P3DSearchPaths.BaseDir.FileName, Value.FileName );
-      pmRelativeToCurrentPath: Result:= ExtractRelativepath( AppendPathDelim( GetCurrentDir()), Value.FileName );
-    end;
-end;
-
-procedure TP3DPropertyAccessFilePointer.SetAsString(AValue: String);
-var
-  FN: String;
-begin
-  if ( FilenameIsAbsolute( AValue )) then
-    FN:= AValue
-  else
-    case FPathMode of
-      pmAbsolute: FN:= CreateAbsolutePath( AValue, ExtractFilePath( Value.FileName ));
-      pmRelativeToBaseBath: FN:= CreateAbsolutePath( AValue, P3DSearchPaths.BaseDir.FileName );
-      pmRelativeToBinary: FN:= CreateAbsolutePath( AValue, ExtractFilePath( ParamStr( 0 )));
-      pmRelativeToCurrentPath: FN:= CreateAbsolutePath( AValue, GetCurrentDir );
-    end;
-  WriteLn( Name, ': ', FN );
-  if ( not Assigned( Value )) then
-    Value:= TP3DFilePointer.Create( FN )
-  else
-    Value.FileName:= FN;
-end;
-
-function TP3DPropertyAccessFilePointer.GetDefaultValue: TP3DFilePointer;
-begin
-  Result:= nil;
-end;
-{$ENDIF}
-
-{$IFDEF INITIALIZATION}
-  if ( not Assigned( P3DFilePointers )) then
-    P3DFilePointers:= TP3DFilePointerList.Create;
-  if ( not Assigned( P3DSearchPaths )) then
-    P3DSearchPaths:= TP3DSearchPathContainer.Create;
-{$ENDIF}
-
-{$IFDEF FINALIZATION}
-  if ( Assigned( P3DFilePointers )) then
-    FreeAndNil( P3DFilePointers );
-  if ( Assigned( P3DSearchPaths )) then
-    FreeAndNil( P3DSearchPaths );
 {$ENDIF}
 

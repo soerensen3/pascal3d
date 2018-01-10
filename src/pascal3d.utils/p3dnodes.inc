@@ -65,7 +65,7 @@ type
       procedure SetX(AValue: Single);
       procedure SetY(AValue: Single);
 
-      procedure SocketsChange( Sender: TPersistent; Item: TP3DNodeSocket; Action: TP3DCustomListOnChangeAction ); virtual;
+      procedure SocketsChange( Sender: TObject; Item: TP3DNodeSocket; Action: TP3DListOnChangeAction ); virtual;
 
     public
       constructor Create;
@@ -93,13 +93,12 @@ type
 
   { TP3DNodeTree }
 
-  TP3DNodeTree = class ( TP3DInterfacedPersistent ) //NodeTree
+  TP3DNodeTree = class ( TP3DJSONRoot ) //NodeTree
     private
       FNodes: TP3DNodeList;
 
     public
-      constructor Create;
-      constructor CreateFromJSONContext( AContext: TP3DJSONContext ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
     published
@@ -136,21 +135,15 @@ end;
 
 { TP3DNodeTree }
 
-constructor TP3DNodeTree.Create;
+constructor TP3DNodeTree.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited;
+  inherited Create( AOwner );
   FNodes:= TP3DNodeList.Create;
-end;
-
-constructor TP3DNodeTree.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create;
-  LoadFromJSONContext( AContext );
 end;
 
 destructor TP3DNodeTree.Destroy;
 begin
-  Nodes.Clear( True );
+  Nodes.Clear;
   FreeAndNil( FNodes );
   inherited Destroy;
 end;
@@ -181,7 +174,7 @@ begin
     OnChange( Self );
 end;
 
-procedure TP3DNode.SocketsChange(Sender: TPersistent; Item: TP3DNodeSocket; Action: TP3DCustomListOnChangeAction);
+procedure TP3DNode.SocketsChange(Sender: TObject; Item: TP3DNodeSocket; Action: TP3DListOnChangeAction);
 begin
   if ( Assigned( OnChange )) then
     OnChange( Self );
@@ -198,9 +191,9 @@ end;
 
 destructor TP3DNode.Destroy;
 begin
-  Inputs.Clear( True );
+  Inputs.Clear;
   Inputs.Free;
-  Outputs.Clear( True );
+  Outputs.Clear;
   Outputs.Free;
   inherited Destroy;
 end;

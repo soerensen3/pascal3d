@@ -20,6 +20,7 @@
 
 unit pascal3d.core;
 {$mode objfpc}{$H+}
+{$interfaces CORBA}
 {$modeswitch nestedprocvars}
 
 {.$DEFINE DEBUG_DATABLOCKS}
@@ -45,7 +46,7 @@ uses
   LazUTF8Classes,
 
   Math,
-  p3dMath,
+  p3d.math,
   pascal3d.utils,
   pascal3d.events;
 
@@ -63,6 +64,7 @@ var
   P3DCanvasMaterialDefault: TP3DMaterialBase = nil;
   P3DDataBlockCache: TP3DDataBlockCache = nil;
   P3DAttributes: TP3DAttributeList = nil;
+  P3DCoreContainers: TP3DJSONRootContainerList;
 
 procedure P3DCoreInit;
 procedure P3DCoreFinish;
@@ -93,6 +95,8 @@ procedure P3DCoreInit;
 begin
   InitGL;
 
+  if ( not Assigned( P3DCoreContainers )) then
+    P3DCoreContainers:= TP3DJSONRootContainerList.Create( 'P3DCoreContainers' );
   if ( not Assigned( P3DAttributes )) then
     P3DAttributes:= TP3DAttributeList.Create;
   if ( not Assigned( P3DDataBlockCache )) then
@@ -104,7 +108,7 @@ begin
   if ( not Assigned( P3DClassFactory )) then
     P3DClassFactory:= TP3DClassFactory.Create;
   P3DClassFactory.AddArray([ TP3DObject, TP3DAction,
-                             TP3DArmature, TP3DJoint,
+                             TP3DArmature, TP3DRestJoint, TP3DPoseJoint,
                              TP3DCamera, TP3DTileGrid, TP3DLight,
                              TP3DMaterialBase, TP3DMaterialShader,
                              TP3DMesh, TP3DScene, TP3DTexture,
@@ -112,14 +116,14 @@ begin
                              TP3DFontLetter,
                              TP3DObjectModifierArmature, TP3DMeshModifierTerrain ]);
   if ( not Assigned( P3DShaderNodeLib )) then
-    P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create;
+    P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create( P3DCoreContainers );
 
   if ( TTF_Init() <> 0 ) then
     raise Exception.Create( 'Cannot initialize sdl2_text!' );
   if ( not Assigned( P3DFontManager )) then
     P3DFontManager:= TP3DFontManager.Create;
   if ( not Assigned( P3DFontManagerBmp )) then
-    P3DFontManagerBmp:= TP3DFontManagerBmp.Create;
+    P3DFontManagerBmp:= TP3DFontManagerBmp.Create( P3DCoreContainers );
   //if ( not Assigned( P3DMeshModifierClassFactory )) then
   //  P3DMeshModifierClassFactory:= TP3DMeshModifierClassFactory.Create;
   //P3DMeshModifierClassFactory.Add( TP3DMeshModifierArmature );
@@ -133,8 +137,8 @@ begin
   (*{$DEFINE FINALIZATION}
   {$INCLUDE pascal3d.core_lib.inc}
   {$UNDEF FINALIZATION}*)
-  if ( Assigned( P3DFontManagerBmp )) then
-    FreeAndNil( P3DFontManagerBmp );
+  if ( Assigned( P3DCoreContainers )) then
+    FreeAndNil( P3DCoreContainers );
   if ( Assigned( P3DFontManager )) then
     FreeAndNil( P3DFontManager );
   if ( Assigned( P3DViewports )) then

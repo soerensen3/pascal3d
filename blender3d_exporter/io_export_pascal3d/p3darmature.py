@@ -40,16 +40,33 @@ class P3DFakeBone:
         self.DataPath = 'Objects[\"' + self.name + "\"]"
 
 class P3DArmature( p3ddatablock.P3DDataBlock ):
-    def export_bone( self, bone, root, armobj ):
+    def export_pose_bone( self, bone, root, armobj ):
         fakebone = P3DFakeBone( bone, armobj )
         for child in bone.children:
-            fakebone.children.append( self.export_bone( child, root, fakebone ))
+            fakebone.children.append( self.export_pose_bone( child, root, fakebone ))
         p3dexporthelper.export_data_path( fakebone, root )
         if ( armobj and ( bone.parent is None )):
             armobj.Children.append( fakebone.DataPath )
         #if ( root.ActiveSceneObj and ( bone.parent is None )):
         #    root.ActiveSceneObj.Objects.append( fakebone.DataPath )
         return fakebone
+
+    def export_bone( self, bone, root ):
+        rot_local, pos_local = p3dexporthelper.get_bone_local_transform( bone )
+        path = self.DataPath + '.Joints[ "%s" ]'
+        root.Exporter.report({ 'INFO' }, path )
+        return { 'Name' : bone.name,
+                 'Transform' : {
+                     'Quaternion': p3dexporthelper.swap_quat( p3dexporthelper.bone_quat( bone )),
+                     'Position' : list( bone.head ), },
+                 'TransformLocal' : {
+                     'Quaternion': p3dexporthelper.swap_quat( rot_local ),
+                     'Position' : list( pos_local ), },
+                 'Parent' : path % bone.parent.name if ( bone.parent ) else 'None',
+                 'Children': [ path % child.name for child in bone.children ],
+                 'Tail' : list( bone.tail ),
+                 'ClassName': 'TP3DRestJoint' }
+
 
     def __init__( self, block, root = None, path='', obj = None ):
         self.Name = block.name
@@ -66,11 +83,12 @@ class P3DArmature( p3ddatablock.P3DDataBlock ):
         print( 'armobj: ', type( root.ActiveObjP3D ))
         if ( obj ):
             for bone in obj.pose.bones:
-                self.Joints.append( p3dexporthelper.export_data_path( bone, root, obj ))
+                #self.Joints.append( p3dexporthelper.export_data_path( bone, root, obj ))
+                self.Joints.append( self.export_bone( bone, root ))
                 if not ( bone.parent ):
                     rootbones.append( bone )
-        for bone in rootbones:
-            self.export_bone( bone, root, armobj )
+        #for bone in rootbones:
+        #    self.export_pose_bone( bone, root, armobj )
         block.pose_position = pose
         root.ActiveScene.update()
         #import json

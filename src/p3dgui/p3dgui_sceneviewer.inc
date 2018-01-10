@@ -29,8 +29,8 @@ type
       procedure ResetOrbit;
 
     public
-      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
-      procedure FastDestroy; override;
+      constructor CreateBlock(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      destructor Destroy; override;
 
       procedure Paint(); override;
       procedure MouseMove(X, Y: Integer); override;
@@ -106,8 +106,8 @@ begin
   FOrbitCamera:=AValue;
   if ( AValue ) then
     begin
-      FCam:= TP3DCamera.Create();
-      FCamObject:= TP3DObject.Create();
+      FCam:= TP3DCamera.CreateBlock();
+      FCamObject:= TP3DObject.CreateBlock();
       FCamObject.Data:= FCam;
       FCamObject.Transform.RotationOrder:= roXZY;
       ResetOrbit;
@@ -140,9 +140,9 @@ begin
     end;
 end;
 
-constructor TP3DSceneViewer.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DSceneViewer.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create(AData, AParent);
+  inherited CreateBlock(AData, AParent);
   RenderFlags:= P3DRenderListFlagsDefault;
   RenderList:= TP3DRenderList.Create;
   //CamSpeed:= 0.2;
@@ -258,11 +258,11 @@ begin
     end;
 end;
 
-procedure TP3DSceneViewer.FastDestroy;
+destructor TP3DSceneViewer.Destroy;
 begin
   if ( Assigned( RenderList )) then
     RenderList.Free;
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
 {

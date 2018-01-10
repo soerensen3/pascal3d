@@ -4,6 +4,8 @@ unit pascal3d.events;
 {.$DEFINE VERBOSE} //WILL OUTPUT DEBUGGING MESSAGES FOR CREATED OBJECTS
 
 {$mode objfpc}{$H+}
+{$interfaces CORBA}
+
 
 interface
 
@@ -32,6 +34,8 @@ var
   P3DLog: TP3DLogger;
   P3DInput: TP3DInputManager;
   P3DApplication: TP3DApplication;
+  P3DEventsContainers: TP3DJSONRootContainerList = nil;
+
 
 procedure P3DEventsInit;
 procedure P3DEventsFinish;
@@ -50,8 +54,10 @@ uses pascal3d.core;
 
 procedure P3DEventsInit;
 begin
+  if ( not Assigned( P3DEventsContainers )) then
+    P3DEventsContainers:= TP3DJSONRootContainerList.Create( 'P3DEventsContainers' );
   if ( not Assigned( P3DLog )) then
-    P3DLog:= TP3DLogger.Create;
+    P3DLog:= TP3DLogger.Create( P3DEventsContainers );
   //if ( not Assigned( P3DApplication )) then
   //  P3DApplication:= TP3DApplication.Create;
   if ( not Assigned( P3DInput )) then
@@ -66,8 +72,8 @@ begin
     FreeAndNil( P3DInput );
   if ( Assigned( P3DApplication )) then
     FreeAndNil( P3DApplication );
-  if ( Assigned( P3DLog )) then
-    FreeAndNil( P3DLog );
+  if ( Assigned( P3DEventsContainers )) then
+    FreeAndNil( P3DEventsContainers );
 end;
 
 finalization

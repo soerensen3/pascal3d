@@ -16,8 +16,10 @@ type
       procedure GenBufferObject;
       procedure DeleteBufferObject;
       procedure SetStatic(AValue: Boolean);
+      function GetInstance: TObject;
 
     public
+      constructor Create;
       constructor Create(const AStatic: Boolean);
       destructor Destroy; override;
 
@@ -59,6 +61,11 @@ begin
   if FStatic=AValue then Exit;
   FStatic:=AValue;
   PushData;
+end;
+
+function TP3DBufferObjectGL.GetInstance: TObject;
+begin
+  Result:= Self;
 end;
 
 procedure TP3DBufferObjectGL.PushData;
@@ -108,14 +115,18 @@ end;
 
 {$ENDIF}
 
-constructor TP3DBufferObjectGL.Create( const AStatic: Boolean );
+constructor TP3DBufferObjectGL.Create;
 begin
-  inherited Create;
   GenBufferObject;
   {$IFDEF USE_ATTRIB}
   FIdx:= -1;
   FDivisor:= 0;
   {$ENDIF}
+end;
+
+constructor TP3DBufferObjectGL.Create( const AStatic: Boolean );
+begin
+  Create;
   FStatic:= AStatic;
 end;
 

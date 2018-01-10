@@ -6,19 +6,20 @@ type
     This is required for streaming object properties with the JSON Loader. The specialized type is considered the base class of the dictionary.
   }
 
-  generic gP3DClassFactory < TClassItem > = class ( specialize gP3DCustomList < TClassItem >)
+  generic gP3DClassFactory < TClassItem > = class ( specialize TFPGList < TClassItem >)
     function FindByName( AName: String ): TClassItem; // Find a class by it's name. Nil is returned if the class was not found.
+    procedure AddArray( const AItems: array of TClassItem );
   end;
 
   { TP3DClassFactory
 
-    A class factory with TP3DInterfacedPersistent as the base class.
+    A class factory with TP3DStreamable as the base class.
   }
-
-  TP3DClassFactory = class ( specialize gP3DClassFactory < TP3DInterfacedPersistentType >)
-    function Add(Item: TCustomItem): Integer; override;  // Add's a new class to the dictionary and returns it's index.
-                                                         // If the class was already added the found index is returned instead.
-  end;
+  TP3DStreamableType = class of TP3DStreamable;
+  TP3DClassFactory = class ( specialize gP3DClassFactory < TP3DStreamableType >);
+{    function Add(Item: T): Integer; override;  // Add's a new class to the dictionary and returns it's index.
+                                               // If the class was already added the found index is returned instead.
+  end;}
 
 
 {$ENDIF}
@@ -40,15 +41,23 @@ begin
       end;
 end;
 
-{ TP3DClassFactory }
+procedure gP3DClassFactory.AddArray(const AItems: array of TClassItem);
+var
+  i: Integer;
+begin
+  for i:= low( AItems ) to High( AItems ) do
+    Add( AItems[ i ]);
+end;
 
+{ TP3DClassFactory }
+{
 function TP3DClassFactory.Add(Item: TCustomItem): Integer;
 begin
   Result:= Find( Item );
   if ( Result = -1 ) then
     Result:= inherited Add(Item);
 end;
-
+}
 
 {$ENDIF}
 

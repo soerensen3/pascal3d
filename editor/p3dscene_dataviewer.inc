@@ -19,8 +19,8 @@ type
       function UpdateViewMode(AViewMode: TP3DDataViewerMode): Boolean;
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      procedure FastDestroy; override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      destructor Destroy; override;
 
       procedure ButtonMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
       procedure DataMouseClick(Sender:TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -57,7 +57,7 @@ procedure TP3DDataPanel.UpdateActiveScene;
 begin
   SceneView.Scene:= SceneMain.ActiveScene;
   if ( Assigned( SceneMain.ActiveScene )) then
-    SceneMain.ActiveLibrary:= SceneMain.ActiveScene.Owner;
+    SceneMain.ActiveLibrary:= SceneMain.ActiveScene.OwnerLib;
   if (( SceneMain.ViewMode in [ dvmLibrary, dvmScene ]) and Assigned( SceneView )) then
     SceneView.ToolBar.UpdateButtonsFast;
 end;
@@ -101,7 +101,7 @@ begin
     dvmLibrary:
       if ( Assigned( SceneMain.ActiveScene )) then
         begin
-          Viewer.Obj:= SceneMain.ActiveScene.Owner;
+          Viewer.Obj:= SceneMain.ActiveScene.OwnerLib;
           Result:= True;
         end;
     dvmScene:
@@ -120,10 +120,10 @@ begin
     SetEmptyParent;
 end;
 
-constructor TP3DDataPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DDataPanel.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
   procedure CreatePopup;
   begin
-    LibraryPopup:= TP3DPopupMenu.Create( AData );
+    LibraryPopup:= TP3DPopupMenu.CreateBlock( AData );
     LibraryPopup.OnItemClick:= @PopupMouseClick;
     LibraryPopup.Items[ LibraryPopup.Items.Add( 'Action' )].Enabled:= False;
     LibraryPopup.Items.Add( '  Reload' );
@@ -136,7 +136,7 @@ constructor TP3DDataPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGr
 
   function CreateButton( Symbol: String ): TP3DGroupButton;
   begin
-    Result:= TP3DGroupButton.Create( AData, ToolBar );
+    Result:= TP3DGroupButton.CreateBlock( AData, ToolBar );
     Result.Align:= alLeft;
     Result.HAlignment:= haCenter;
     Result.VAlignment:= vaCenter;
@@ -150,12 +150,12 @@ constructor TP3DDataPanel.Create(const AData: TP3DLibrary; const AParent: TP3DGr
   end;
 
 begin
-  inherited Create( AData, AParent );
-  ToolBar:= TP3DGraphicControl.Create( Owner, Self );
+  inherited CreateBlock( AData, AParent );
+  ToolBar:= TP3DGraphicControl.CreateBlock( OwnerLib, Self );
   ToolBar.Height:= 32;
   ToolBar.Align:= alTop;
 
-  Viewer:= TP3DTreeViewObjects.Create( Owner, Self );
+  Viewer:= TP3DTreeViewObjects.CreateBlock( OwnerLib, Self );
   Viewer.Align:= alClient;
   Viewer.ShowSymbols:= True;
   Width:= 200;
@@ -175,7 +175,7 @@ begin
   UpdateViewMode( SceneMain.ViewMode );
 end;
 
-procedure TP3DDataPanel.FastDestroy;
+destructor TP3DDataPanel.Destroy;
 begin
   if (( Assigned( ToolBar )) and ( P3DDataBlockCache.IsValid( ToolBar ))) then
     ToolBar.Free;
@@ -187,7 +187,7 @@ begin
     LibraryButton.Free;
   if (( Assigned( SceneButton )) and ( P3DDataBlockCache.IsValid( SceneButton ))) then
     SceneButton.Free;
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
 procedure TP3DDataPanel.ButtonMouseClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -217,17 +217,17 @@ procedure TP3DDataPanel.PopupMouseClick(Sender: TP3DMenuItem);
   begin
     if ( FSelectionParent is TP3DObjectList ) then
       begin
-        Obj:= SceneMain.ActiveLibrary.Objects[ SceneMain.ActiveLibrary.CreateNew( TP )];
+        Obj:= SceneMain.ActiveLibrary.CreateNewWithObj( TP );
         TP3DObjectList( FSelectionParent ).Add( Obj );
       end
     else if ( FSelectionParent is TP3DLibrary ) then
-      TP3DLibrary( FSelectionParent ).CreateNew( TP, False );
+      TP3DLibrary( FSelectionParent ).CreateNew( TP );
   end;
 
 begin
   case Sender.Caption of
-    '  Reload': if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
-      TP3DDataBlock( DataView.Viewer.Selection.Data ).Reload;
+//    '  Reload': if ( TObject( DataView.Viewer.Selection.Data ) is TP3DDataBlock ) then
+//      TP3DDataBlock( DataView.Viewer.Selection.Data ).Reload;
     '  Remove':
         if ( TObject( DataView.Viewer.Selection.Data ) is TP3DLibrary ) then
           begin
@@ -272,7 +272,7 @@ begin
       Sel:= TPersistent( NewSelection.Data );
       OIPanel.ObjectInspector.Obj:= TInterfacedPersistent( NewSelection.Data );
       if ( TInterfacedPersistent( NewSelection.Data ) is TP3DDataBlock ) then
-        SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).Owner;
+        SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).OwnerLib;
 
       if ( Sel is TP3DObject ) then
         begin
@@ -295,7 +295,7 @@ begin
       else if ( Sel is TP3DDataBlock ) then
         begin
           //SceneView.FSelection:= nil;
-          SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).Owner;
+          SceneMain.ActiveLibrary:= TP3DDataBlock( NewSelection.Data ).OwnerLib;
           FSelectionParent:= SceneMain.ActiveLibrary;
         end
       else

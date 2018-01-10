@@ -61,8 +61,8 @@
       property ObjectList: TP3DRenderList read FObjectList write FObjectList;
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      procedure FastDestroy; override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      destructor Destroy; override;
 
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure KeyboardAction; override;
@@ -148,7 +148,7 @@ begin
   n:= P3DData.OpenLibrary( 'EditorJoint.p3d' );
   P3DData.Libraries[ n ].IsDesignerPackage:= True;
   EditorSceneJoint:= P3DData.Libraries[ n ].Scenes[ 0 ];
-  EditorSceneLampMaterial:= TP3DMaterialBase.Create();//TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]); //Error
+  EditorSceneLampMaterial:= TP3DMaterialBase.CreateBlock();//TP3DMaterialBase( P3DData.Libraries[ n ].Materials[ 0 ]); //Error
 end;
 
 { TP3DScenePanelToolbar }
@@ -161,7 +161,7 @@ end;
 procedure TP3DScenePanelToolbar.UpdateButtons(AViewMode: TP3DDataViewerMode);
   function CreateButton( Text: String; const Symbol: Boolean = False ): TP3DGroupButton;
   begin
-    Result:= TP3DGroupButton.Create( Owner, Self );
+    Result:= TP3DGroupButton.CreateBlock( OwnerLib, Self );
     Result.HAlignment:= haCenter;
     Result.VAlignment:= vaCenter;
     Result.Group:= 'DataViewer';
@@ -198,7 +198,7 @@ procedure TP3DScenePanelToolbar.UpdateButtons(AViewMode: TP3DDataViewerMode);
   begin
     for i:= 0 to AScenes.Count - 1 do
       begin
-        Btn:= CreateButton( AScenes[ i ].Owner.Name + ': ' + AScenes[ i ].Name );
+        Btn:= CreateButton( AScenes[ i ].OwnerLib.Name + ': ' + AScenes[ i ].Name );
         if ( AScenes[ i ] = SceneMain.ActiveScene ) then
           Btn.Down:= True;
         Btn.PointerTag:= AScenes[ i ];
@@ -425,7 +425,7 @@ var
   var
     p, p2: TVec3;
   begin
-    p:= ( trans * vec4( Joint.Position, 1 )).xyz;
+    p:= ( trans * vec4( Joint.Transform.Position, 1 )).xyz;
     p2:= ( trans * vec4( Joint.Tail, 1 )).xyz;
     Canvas3D.RenderLine( p, p2, vec4( 1, 0, 0, 1 ), vec4( 0, 1, 0, 1 ));
   end;
@@ -465,7 +465,7 @@ begin
       else
         EditorSceneLamp.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags - [ rlfMaterials, rlfLighting ]);
     end
-  else if ( AData is TP3DJoint ) then
+{  else if ( AData is TP3DJoint ) then
     begin
       if ( Assigned( Selection ) and ( Selection.Data = AData )) then
         begin
@@ -480,7 +480,7 @@ begin
       else
         //EditorSceneArrows.AddToRenderList( AScene, AWorld, Viewer.RenderList, AFlags );
         //EditorSceneJoint.AddToRenderList( AScene, AWorld * mat4scale( vec4( vec3(( AData as TP3DJoint ).Length ), 1 )), Viewer.RenderList, AFlags );
-    end{
+    end}{
   else if ( AData is TP3DMesh ) then
     if ( Assigned( Selection ) and ( Selection.Data = AData ) and ( Assigned( TP3DMesh( AData ).Armature ))) then
       begin
@@ -496,15 +496,15 @@ begin
 end;
 
 
-constructor TP3DScenePanel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DScenePanel.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
 
-  ToolBar:= TP3DScenePanelToolbar.Create( AData, Self );
+  ToolBar:= TP3DScenePanelToolbar.CreateBlock( AData, Self );
   ToolBar.Align:= alTop;
   ToolBar.Height:= 32;
 
-  Viewer:= TP3DSceneViewer.Create( AData, Self );
+  Viewer:= TP3DSceneViewer.CreateBlock( AData, Self );
   Viewer.Align:= alClient;
   Viewer.OrbitCamera:= True;
   Viewer.Color:= Accent800; //vec4( 225/255, 230/255, 234/255, 1 );
@@ -512,7 +512,7 @@ begin
   Viewer.Font.Color:= White;
   Viewer.Caption:= 'Scene Viewer';
 
-  SelectionMaterial:= TP3DMaterialBase.Create();
+  SelectionMaterial:= TP3DMaterialBase.CreateBlock();
   SelectionMaterial.Name:= 'SelectionMaterial';
   SelectionMaterial.Diff:= Accent100.xyz;
   SelectionMaterial.Unlit:= True;
@@ -520,7 +520,7 @@ begin
 
   Viewer.OverrideMaterial:= SelectionMaterial;
 
-  FPickMaterial:= TP3DMaterialBase.Create();
+  FPickMaterial:= TP3DMaterialBase.CreateBlock();
   FPickMaterial.Unlit:= True;
   FPickMaterial.Instancing:= True;
 
@@ -532,9 +532,9 @@ begin
 
   FEditor:= EditModeDefault;
 
-  EditorLight:= TP3DLight.Create( AData );
+  EditorLight:= TP3DLight.CreateBlock( AData );
   EditorLight.LightType:= ltSun;
-  EditorLightObj:= TP3DObject.Create( AData );
+  EditorLightObj:= TP3DObject.CreateBlock( AData );
   EditorLightObj.Data:= EditorLight;
   EditorLightObj.Transform.Quaternion:= quat( 0.571, 0.169, 0.272, 0.756 );
 
@@ -544,7 +544,7 @@ begin
   UpdateCanvas3D;
 end;
 
-procedure TP3DScenePanel.FastDestroy;
+destructor TP3DScenePanel.Destroy;
 begin
   FCanvas3D.Free;
 
@@ -559,7 +559,7 @@ begin
   EditorLight.Free;
 
   FreeAndNil( EditorSceneArrowsRL );
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
 procedure TP3DScenePanel.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);

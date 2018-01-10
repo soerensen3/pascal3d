@@ -5,6 +5,8 @@
 function Split( S: String; Delim: Char ): TStringList;
 function Enclosed( var S: String; sStart: Char; sEnd: Char; const TrimStr: Boolean = True ): Boolean;
 function FloatToStr( AValue: Float; const Precision: Integer = 2 ): String;
+function Copy2SymbSkipString( var S: String; Ch: Char ): String;
+function PathGetNextFragment( var APath: String; out ArrayIdxStr: String ): String;
 
 
 
@@ -65,5 +67,47 @@ Begin
   Until i>len;
   SetLength(Result,count-1);
 End;
+
+function Copy2SymbSkipString( var S: String; Ch: Char ): String;
+var
+  i: Integer;
+begin
+  i:= 1;
+  while i <= Length( S ) do
+    begin
+      if ( S[ i ] = '"' ) then
+        begin
+          Inc( i );
+          while ( i <= Length( S )) do
+            begin
+              if ( S[ i ] = '"' ) then
+                if (( i = 1 ) or ( S[ i - 1 ] <> '\' )) then
+                  break;
+              Inc( i );
+            end;
+        end
+      else if ( S[ i ] = Ch ) then
+        break;
+      Inc( i );
+    end;
+  Result:= Copy( S, 1, i - 1 );
+  S:= Copy( S, i + 1, Length( S ));
+end;
+
+function PathGetNextFragment( var APath: String; out ArrayIdxStr: String ): String;
+var
+  n: Integer;
+begin
+  Result:= Copy2SymbSkipString( APath, '.' );
+  n:= Pos( '[', Result );
+  if ( n > 0 ) then
+    begin
+      ArrayIdxStr:= Result;
+      Result:= Copy2SymbDel( ArrayIdxStr, '[' );
+      ArrayIdxStr:= Trim( Copy2Symb( ArrayIdxStr, ']' ));
+    end
+  else
+    ArrayIdxStr:= '';
+end;
 
 {$ENDIF}

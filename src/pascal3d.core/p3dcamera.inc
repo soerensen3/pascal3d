@@ -29,9 +29,6 @@ type
       function GetView: TMat4;
       procedure SetView(AValue: TMat4);
 
-      class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-      function GetDataPath: String; override;
-
       // IP3DAnimatable -->
     private
       FAction: TP3DAction;
@@ -44,11 +41,12 @@ type
       // <-- IP3DAnimatable
 
     public
+      class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
+
       procedure UpdateMatrices(CamObject: TP3DObject);
       procedure PassToShader;
 
-      constructor Create( const AData: TP3DLibrary = nil ); override;
-      procedure FastDestroy; override;
+      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
 
       property Position: TVec3 read FPosition write FPosition;
       property Forward: TVec3 read FForward;
@@ -70,11 +68,10 @@ type
       property IsoZoom: Single read FIsoZoom write FIsoZoom;
   end;
 
-  TP3DCameraList = specialize gP3DNamedInterfacedPersistentList < TP3DCamera >;
-
-  TP3DPropertyAccessCamera = specialize gP3DPropertyAccessDataBlock < TP3DCamera >;
-  TP3DPropertyAccessCameraList = specialize gP3DPropertyAccessDataBlockList < TP3DCameraList, TP3DCamera, TP3DPropertyAccessCamera >;
-
+  TP3DCameraContainer = specialize gP3DStreamableContainer < TP3DCamera >;
+  TP3DCameraPointer = specialize gP3DStreamablePointer < TP3DCamera >;
+  TP3DCameraContainerList = specialize gP3DNamedStreamableContainerList < TP3DCamera, TP3DCameraContainer >;
+  TP3DCameraPointerList = specialize gP3DStreamableList < TP3DCamera, TP3DCameraPointer >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -86,8 +83,8 @@ begin
   //TODO: REMOVE SIMPLE WORKAROUND IN FAVOR OF SOMETHING BETTER
   if ( Users.Count > 0 ) then
     begin
-      if ( Users.Items[ 0 ] is TP3DObject ) then
-        Result:= TP3DObject( Users.Items[ 0 ] ).Transform.Matrix;
+      if ( Users.Items[ 0 ].GetInstance is TP3DObject ) then
+        Result:= TP3DObject( Users.Items[ 0 ].GetInstance ).Transform.Matrix;
     end
   else
     Result:= Mat4Identity;
@@ -97,18 +94,13 @@ procedure TP3DCamera.SetView(AValue: TMat4);
 begin
   //TODO: REMOVE SIMPLE WORKAROUND IN FAVOR OF SOMETHING BETTER
   if ( Users.Count > 0 ) then
-    if ( Users.Items[ 0 ] is TP3DObject ) then
-      TP3DObject( Users.Items[ 0 ] ).Transform.Matrix:= AValue;
+    if ( Users.Items[ 0 ].GetInstance is TP3DObject ) then
+      TP3DObject( Users.Items[ 0 ].GetInstance ).Transform.Matrix:= AValue;
 end;
 
-class function TP3DCamera.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DCamera.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Cameras;
-end;
-
-function TP3DCamera.GetDataPath: String;
-begin
-  Result:= 'Cameras[ "' + Name + '" ]';
+  Result:= ALib.Properties.GetPropByName( 'Cameras' );
 end;
 
 function TP3DCamera.GetAction: TP3DAction;
@@ -155,9 +147,9 @@ begin
     end;
 end;
 
-constructor TP3DCamera.Create(const AData: TP3DLibrary);
+constructor TP3DCamera.CreateBlock(const AData: TP3DLibrary);
 begin
-  inherited Create( AData );
+  inherited CreateBlock( AData );
   Aspect:= 4/3;
   FNear:= 0.1;
   FFar:= 100;
@@ -165,20 +157,13 @@ begin
   FIsoZoom:= 1.0;
   //FHandedness:= coRight;
   //Owner.Cameras.Add( Self );
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FOV', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Near', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Far', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IsoZoom', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Handedness', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Aspect', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'IsIsometric', smAttribute ));
-end;
-
-procedure TP3DCamera.FastDestroy;
-begin
-  //Owner.Cameras.Remove( Self );
-
-  inherited FastDestroy;
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'FOV', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Near', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Far', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'IsoZoom', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Handedness', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Aspect', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'IsIsometric', smText ));
 end;
 
 

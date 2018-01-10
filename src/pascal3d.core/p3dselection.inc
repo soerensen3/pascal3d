@@ -27,7 +27,7 @@ begin
   glEnable( GL_SCISSOR_TEST ); cle( nil );
   if ( not Assigned( PickMaterial )) then
     begin
-      PickMaterial:= TP3DMaterialBase.Create();
+      PickMaterial:= TP3DMaterialBase.CreateBlock();
       PickMaterial.Name:= 'PickMaterial';
       PickMaterial.Unlit:= True;
     end;

@@ -104,7 +104,7 @@ begin
       DataView.Update;
       DataView.Children.ExpandAll();
     end;}
-  if (( Event.keysym.scancode = SDL_SCANCODE_F3 ) and ( Event._repeat = 0 ) and ( Event.type_ = SDL_KEYDOWN )) then
+{  if (( Event.keysym.scancode = SDL_SCANCODE_F3 ) and ( Event._repeat = 0 ) and ( Event.type_ = SDL_KEYDOWN )) then
     //if ( FileExists( '/tmp/frog.p3d' )) then
       begin
         try
@@ -147,9 +147,9 @@ begin
           P.Free;
         end;
         S.Free;}
-      end;
+      end;}
   if (( Event.keysym.scancode = SDL_SCANCODE_F4 ) and ( Event._repeat = 0 ) and ( Event.type_ = SDL_KEYDOWN )) then
-    with ( TP3DModalWindow.Create()) do
+    with ( TP3DModalWindow.CreateBlock()) do
       begin
         Width:= 300;
         Height:= 150;

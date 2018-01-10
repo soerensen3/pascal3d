@@ -47,7 +47,7 @@
         function RenderButtonText( R: TP3DRect; C: TP3DColorRGBA ): TVec2;
 
       public
-        constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+        constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
         destructor Destroy; override;
 
         procedure Draw; override;
@@ -89,7 +89,7 @@
     { TP3DSplitter }
 
     TP3DSplitter = class ( TP3DButton )
-      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
       procedure MouseMove(X, Y: Integer); override;
       procedure GetControls( out Ctrl1, Ctrl2: TP3DGraphicControl );
       procedure SetAlign(const AValue: TP3DControlAlign); override;
@@ -221,9 +221,9 @@ begin
 end;
 
 
-constructor TP3DButton.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DButton.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   PresetDown:= TP3DButtonPreset.Create;
   PresetHover:= TP3DButtonPreset.Create;
   PresetNormal:= TP3DButtonPreset.Create;
@@ -313,10 +313,9 @@ end;
 
 { TP3DSlider }
 
-constructor TP3DSplitter.Create(const AData: TP3DLibrary;
-  const AParent: TP3DGraphicControl);
+constructor TP3DSplitter.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create(AData, AParent);
+  inherited CreateBlock(AData, AParent);
   WidthHeight:= vec2( 5 );
   Caption:= '.';
   Cursor:= curHResize;

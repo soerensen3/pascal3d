@@ -26,7 +26,7 @@ TP3DMeshModifierTerrain = class ( TP3DMeshModifier )
     FUVMultiplier: Float;
 
   public
-    constructor Create( AMesh: TP3DMesh ); override;
+    constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
     destructor Destroy; override;
 
     procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
@@ -43,11 +43,11 @@ end;
 
 { TP3DMeshModifierTerrain }
 
-constructor TP3DMeshModifierTerrain.Create(AMesh: TP3DMesh);
+constructor TP3DMeshModifierTerrain.Create(const AOwner: IP3DStreamableContainer);
 var
   i: Integer;
 begin
-  inherited Create( AMesh );
+  inherited Create( AOwner );
   GridSize:= 1.0;
   UVMultiplier:= 1.0;
   for i:= 0 to Mesh.MaterialGroups.Count -1 do

@@ -104,41 +104,41 @@ var
 begin
   //P3DSymbols:= P3DCreateSymbols( 'Pascal3D-Symbols', 48 );
 
-  SceneMain:= TP3DSceneMain.Create();
+  SceneMain:= TP3DSceneMain.CreateBlock();
   SceneMain.Align:= alClient;
 
 
-  OIPanel:= TP3DOIPanel.Create();
+  OIPanel:= TP3DOIPanel.CreateBlock();
   OIPanel.Parent:= SceneMain;
   OIPanel.Align:= alRight;
   OIPanel.Width:= 200;
   OIPanel.ObjectInspector.Obj:= P3DData;
 
-  with ( TP3DSplitter.Create()) do
+  with ( TP3DSplitter.CreateBlock()) do
     begin
       Parent:= SceneMain;
       Align:= alRight;
     end;
 
-  AssetView:= TP3DSAssetPanel.Create();
+  AssetView:= TP3DSAssetPanel.CreateBlock();
   AssetView.Parent:= SceneMain;
   AssetView.Align:= alBottom;
 
-  with ( TP3DSplitter.Create()) do
+  with ( TP3DSplitter.CreateBlock()) do
     begin
       Parent:= SceneMain;
       Align:= alBottom;
     end;
 
-  SceneView:= TP3DScenePanel.Create();
+  SceneView:= TP3DScenePanel.CreateBlock();
   SceneView.Parent:= SceneMain;
   SceneView.Align:= alClient;
 
-  DataView:= TP3DDataPanel.Create();
+  DataView:= TP3DDataPanel.CreateBlock();
   DataView.Parent:= SceneMain;
   DataView.Align:= alLeft;
 
-  with ( TP3DSplitter.Create()) do
+  with ( TP3DSplitter.CreateBlock()) do
     begin
       Parent:= SceneMain;
       Align:= alLeft;
@@ -146,11 +146,11 @@ begin
 //  DataView.BringToFront;
   //DataView.ObjectList:= TestScene.Objects;
 
-  ActionEditor:= TP3DActionEditor.Create();
+  ActionEditor:= TP3DActionEditor.CreateBlock();
   ActionEditor.Parent:= SceneMain;
   ActionEditor.Align:= alBottom;
 
-  with ( TP3DSplitter.Create()) do
+  with ( TP3DSplitter.CreateBlock()) do
     begin
       Parent:= SceneMain;
       Align:= alBottom;
@@ -159,9 +159,9 @@ begin
   SceneMain.ActiveLibrary:= SceneMain.NewLibrary();
   SceneMain.ActiveScene:= SceneMain.NewScene();
   SceneMain.ViewMode:= dvmScene;
-  SceneMain.PropEd:= TP3DPropertyEditorString.Create();
+  SceneMain.PropEd:= TP3DPropertyEditorString.CreateBlock();
   SceneMain.PropEd.Align:= alBottom;
-  SceneMain.Edit:= TP3DEdit.Create();
+  SceneMain.Edit:= TP3DEdit.CreateBlock();
   SceneMain.Edit.OnKeyDown:= @SceneMain.OnEditKeyDown;
   SceneMain.Edit.Align:= alBottom;
 

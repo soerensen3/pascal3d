@@ -5,6 +5,7 @@ type
   TP3DInterfacedPersistent = class ( TInterfacedPersistent )
     private
       FProperties: TP3DPropertyList;
+
       function GetProperties: TP3DPropertyList;
 
     public
@@ -14,6 +15,7 @@ type
 
       procedure LoadFromJSONContext( AContext: TP3DJSONContext ); virtual;
       function Serialize: String;
+      function GetPath: String; virtual; abstract;
 
       property Properties: TP3DPropertyList read FProperties write FProperties;
   end;
@@ -44,7 +46,6 @@ type
       function Serialize: String; override;
 
       function GetAsString: String; override;
-      procedure SetAsString(AValue: String); override;
       property Properties: TP3DPropertyList read GetProperties;
   end;
 
@@ -118,6 +119,7 @@ function TP3DInterfacedPersistent.Serialize: String;
 begin
   Result:= '{ "ClassName" : "' + ClassName + '"' + ifthen( Properties.Count > 0, ', ' + Properties.Serialize(), '' ) + ' }'
 end;
+
 
 { gP3DPropertyAccessInterfacedPersistent }
 
@@ -224,12 +226,7 @@ begin
         Result:= '{ "' + Value.ClassName + '" : {' + Value.Properties.GetAsString() + '}}';
     end
   else
-    Result:= Prop.AsString + ':' + Value.ClassName + ' = <None>';
-end;
-
-procedure gP3DPropertyAccessInterfacedPersistent.SetAsString(AValue: String);
-begin
-
+    Result:= {Prop.AsString + ':' + Prop.Name + ':' + TItem.ClassName + ' = }'<None>';
 end;
 
 { gP3DListPropertyAccessInterfacedPersistent }

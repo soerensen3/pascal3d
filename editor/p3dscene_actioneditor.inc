@@ -23,7 +23,7 @@
       procedure SetTime(AValue: Single);
 
     public
-      constructor Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl); override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -52,7 +52,7 @@
     public
       procedure Draw; override;
       procedure UpdateList;
-      constructor Create(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       property ToolBar: TP3DGroupBox read FToolBar write FToolBar;
       property ActionList: TP3DTreeView read FActionList write FActionList;
@@ -92,9 +92,9 @@ begin
     OnSetTime( AValue );
 end;
 
-constructor TP3DTimeLine.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DTimeLine.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   Zoom:= 5;
 end;
 
@@ -109,7 +109,7 @@ procedure TP3DTimeLine.Draw;
   var
     i: Integer;
     p: TVec2;
-    Data: TP3DInterfacedPersistent;
+    Data: TP3DStreamable;
     Channel: TP3DActionChannel absolute Data;
     Node: TP3DTreeNode;
   begin
@@ -188,7 +188,7 @@ end;
 function TP3DActionEditor.GetTime: Float;
 begin
   if ( Assigned( EditAction )) then
-    Result:= EditAction.Owner.GlobalTime
+    Result:= EditAction.OwnerLib.GlobalTime
   else
     Result:= 0;
 end;
@@ -196,7 +196,7 @@ end;
 procedure TP3DActionEditor.SetTime(AValue: Float);
 begin
   if ( Assigned( EditAction )) then
-    EditAction.Owner.GlobalTime:= AValue;
+    EditAction.OwnerLib.GlobalTime:= AValue;
 end;
 
 procedure TP3DActionEditor.Draw;
@@ -221,18 +221,18 @@ begin
     end;
 end;
 
-constructor TP3DActionEditor.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DActionEditor.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create(AData, AParent);
+  inherited CreateBlock(AData, AParent);
   Height:= 100;
   //ToolBar:= TP3DGroupBox.Create( Owner, Self );
   //ToolBar.Align:= alBottom;
-  ActionList:= TP3DTreeView.Create( Owner, Self );
+  ActionList:= TP3DTreeView.CreateBlock( OwnerLib, Self );
   ActionList.Align:= alLeft;
   ActionList.Width:= 200;
-  with ( TP3DSplitter.Create( Owner, Self )) do
+  with ( TP3DSplitter.CreateBlock( OwnerLib, Self )) do
     Align:= alLeft;
-  TimeLine:= TP3DTimeLine.Create( Owner, Self );
+  TimeLine:= TP3DTimeLine.CreateBlock( OwnerLib, Self );
   TimeLine.Align:= alClient;
   TimeLine.ActionList:= ActionList;
   TimeLine.OnGetTime:= @GetTime;

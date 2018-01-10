@@ -10,7 +10,7 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
         class P3DMap( object ): pass
         mapobj = P3DMap()
 
-        mapobj.Data = p3dexporthelper.export_data_path( tex_slot.texture, root )
+        mapobj.Map = p3dexporthelper.export_data_path( tex_slot.texture, root )
 
         if ( tex_slot.use_map_color_diffuse ):
             mapobj.DiffuseFactor = tex_slot.diffuse_color_factor
@@ -35,11 +35,12 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
             mapobj.AlphaFactor = tex_slot.alpha_factor
 
         if ( not(( list( tex_slot.offset ) == [ 0.0, 0.0, 0.0 ]) and ( list( tex_slot.scale ) == [ 1.0, 1.0, 1.0 ]))):
-            mapobj.Position = list( tex_slot.offset )
-            mapobj.Quaternion = [ 0.0, 0.0, 0.0, 1.0 ]
-            mapobj.Scale = list( tex_slot.scale )
+            Position = list( tex_slot.offset )
+            Quaternion = [ 0.0, 0.0, 0.0, 1.0 ]
+            Scale = list( tex_slot.scale )
+            mapobj.Transform = { "Position": Position, "Quaternion": Quaternion, "Scale": Scale }
 
-        mapobj.Mode = 'tex_slot' + str( tex_slot.blend_type ).capitalize()
+        mapobj.Mode = 'map' + str( tex_slot.blend_type ).capitalize()
         mapobj.ClassName = 'TP3DMaterialMapBase'
         if ( tex_slot.uv_layer != '' ):
             mapobj.TexChannel = 0 #self.file.mesh.uv_layers.find( tex_slot.uv_layer )

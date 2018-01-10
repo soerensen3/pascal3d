@@ -15,7 +15,7 @@ type
       procedure PenChange( Sender: TObject );
 
     public
-      constructor Create(AOwner: TPersistent);
+      constructor Create(AOwner: TObject);
       destructor Destroy; override;
 
       function PrepareForDrawing: Boolean;
@@ -85,7 +85,7 @@ begin
   UpdateParams;
 end;
 
-constructor TP3DCanvas3D.Create(AOwner: TPersistent);
+constructor TP3DCanvas3D.Create(AOwner: TObject);
 begin
   inherited Create( AOwner );
   FPen:= TP3DPen.Create( vec4( 0, 0, 0, 1 ), 1.0, psSolid );

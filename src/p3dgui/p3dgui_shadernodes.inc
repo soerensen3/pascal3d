@@ -142,7 +142,7 @@ end;
 
 destructor TP3DNodeSocketVectorEdit.Destroy;
 begin
-  if ( ParentList.IndexOf( FDropDown ) > -1 ) then //Prevent error on freeing of already destroyed Control when destroying ParentList
+  if ( Assigned( ParentList ) and ( ParentList.IndexOf( FDropDown ) > -1 )) then //Prevent error on freeing of already destroyed Control when destroying ParentList
     FDropDown.Free;
   inherited Destroy;
 end;

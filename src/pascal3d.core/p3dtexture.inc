@@ -46,11 +46,12 @@ type
       procedure LoadFromGLTexture( Tex: GLint );
       procedure LoadFromTextureFile( FileName: String );
       procedure FileNameChanged( Sender: TP3DFilePointer; ANewFileName: String );
-      class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-      function GetDataPath: String; override;
+
+   public
+      class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
 
     public
-      constructor Create(const AData: TP3DLibrary=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary=nil); override;
       constructor CreateFromFile( AFileName: String; const AData: TP3DLibrary = nil );
       constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary = nil);
       constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DLibrary = nil );
@@ -61,8 +62,8 @@ type
 
       procedure Bind( const Location: Integer = 0 );
       procedure Unbind();
-      procedure LoadFromBinary( FileName: String ); override;
-      procedure FastDestroy; override;
+      procedure LoadFromBinary( FileName: String ); //override;
+      destructor Destroy; override;
       procedure Reload; reintroduce;
       procedure SaveToFile;
       procedure SaveToFile( FileName: String );
@@ -79,9 +80,10 @@ type
       property NumChannels: Integer read FNumChannels;
   end;
 
-  TP3DPropertyAccessTexture = specialize gP3DPropertyAccessDataBlock < TP3DTexture >;
-  TP3DTextureList = specialize gP3DNamedInterfacedPersistentList < TP3DTexture >;
-  TP3DPropertyAccessTextureList = specialize gP3DPropertyAccessDataBlockList < TP3DTextureList, TP3DTexture, TP3DPropertyAccessTexture >;
+  TP3DTextureContainer = specialize gP3DStreamableContainer < TP3DTexture >;
+  TP3DTexturePointer = specialize gP3DStreamablePointer < TP3DTexture >;
+  TP3DTextureContainerList = specialize gP3DNamedStreamableContainerList < TP3DTexture, TP3DTextureContainer >;
+  TP3DTexturePointerList = specialize gP3DStreamableList < TP3DTexture, TP3DTexturePointer >;
 
 {$ENDIF}
 
@@ -406,32 +408,27 @@ begin
   LoadFromTextureFile( ANewFileName );
 end;
 
-class function TP3DTexture.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DTexture.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Textures;
+  Result:= ALib.Properties.GetPropByName( 'Textures' );
 end;
 
-function TP3DTexture.GetDataPath: String;
+constructor TP3DTexture.CreateBlock(const AData: TP3DLibrary);
 begin
-  Result:= 'Textures[ "' + Name + '" ]';
-end;
-
-constructor TP3DTexture.Create(const AData: TP3DLibrary);
-begin
-  inherited Create(AData);
+  inherited CreateBlock(AData);
   FFileWatch:= TP3DFilePointer.Create( '' );
   FileWatch.OnFileNameChange:= @FileNameChanged;
-  Owner.Textures.Add( Self );
+  //OwnerLib.Textures.Add( Self );
 
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Width' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Height' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'GLTexture' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Filtering', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'FilteringMipMap', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'MipMap', smAttribute ));
-  Properties.Add( TP3DPropertyAccessFilePointer.CreateField( 'File', @FFileWatch, smAttribute, pmRelativeToBaseBath ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'DataType' ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'NumChannels' ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Width' ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Height' ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'GLTexture' ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Filtering', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'FilteringMipMap', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'MipMap', smText ));
+  Properties.Add( TP3DPropAccessFilePointer.CreateField( 'File', @FFileWatch, smText, pmRelativeToJSONFile ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'DataType' ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'NumChannels' ));
 end;
 
 procedure TP3DTexture.LoadFromBinary(FileName: String );
@@ -446,13 +443,14 @@ begin
       exit;
     end;
 
-  inherited LoadFromBinary( FileName );
+  //inherited LoadFromBinary( FileName );
   FileWatch.OnFileNameChange:= nil;
   FileWatch.FileName:= FileName;
   FileWatch.OnFileNameChange:= @FileNameChanged;
 
   LoadFromTextureFile( FileName );
 end;
+
 
 constructor TP3DTexture.CreateFromFile(AFileName: String; const AData: TP3DLibrary);
 var
@@ -461,16 +459,17 @@ begin
   FileName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AFileName ]));
-  Create( AData );
-  LoadFromFile( FileName );
+  CreateBlock( AData );
+  LoadFromTextureFile( FileName );
 end;
 
 constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  Create( AData );
+  CreateBlock( AData );
   //FFileWatch:= TP3DFilePointer.Create( '' );
+
   LoadFromBuffer( AWidth, AHeight, ANumChannels, ADataType, ABuffer );
 end;
 
@@ -478,7 +477,7 @@ constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface; const AData: T
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  Create( AData );
+  CreateBlock( AData );
   //FFileWatch:= TP3DFilePointer.Create( '' );
   LoadFromSurface( ASurface );
 end;
@@ -487,7 +486,7 @@ constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: 
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  Create( AData );
+  CreateBlock( AData );
   //FFileWatch:= TP3DFilePointer.Create( '' );
   LoadEmpty( AWidth, AHeight, ANumChannels, ADataType );
 end;
@@ -496,7 +495,7 @@ constructor TP3DTexture.CreateFromGLTexture(Tex: GLint; const AData: TP3DLibrary
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  Create( AData );
+  CreateBlock( AData );
   //FFileWatch:= TP3DFilePointer.Create( '' );
   LoadFromGLTexture( Tex );
 end;
@@ -529,20 +528,18 @@ begin
   glBindTexture( GL_TEXTURE_2D, GLTexture );
 end;
 
-procedure TP3DTexture.Unbind;
+procedure TP3DTexture.Unbind();
 begin
   glBindTexture( GL_TEXTURE_2D, 0 );
 end;
 
-procedure TP3DTexture.FastDestroy;
+destructor TP3DTexture.Destroy;
 begin
   if ( Assigned( glDeleteTextures )) then
     glDeleteTextures( 1, @FGLTexture ); cle( Self );
   FileWatch.Free;
 
-  Owner.Textures.Remove( Self );
-
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
 procedure TP3DTexture.Reload;
@@ -550,7 +547,7 @@ var
   tex: Integer;
 begin
   tex:= FGLTexture;
-  LoadFromFile( FileWatch.FileName );
+  //LoadFromFile( FileWatch.FileName );
   if ( Assigned( glDeleteTextures )) then
     glDeleteTextures( 1, @tex ); cle( Self );
 end;

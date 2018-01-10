@@ -5,15 +5,13 @@
 
   { TP3DActionKey }
 
-  TP3DActionKey = class ( TP3DInterfacedPersistent )
+  TP3DActionKey = class ( TP3DStreamable )
     private
       FTime: Float;
       FValue: String;
 
     public
-      constructor Create(ATime: Float; AValue: String);
-      constructor Create;
-      constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
     published
       property Time: Float read FTime write FTime;
@@ -22,28 +20,30 @@
 
   { TP3DActionKeyList }
 
-  TP3DActionKeyList = class ( specialize gP3DCustomObjectList < TP3DActionKey >)
+  {TP3DActionKeyList = class ( specialize gP3DCustomObjectList < TP3DActionKey >)
     public
       function AddKey(ATime: Float; AValue: String): Integer;
       procedure LoadFromStream( S: TStream ); //gP3DListPropertyAccessObject needs this to compile
       procedure SaveToStream( S: TStream );
 
       destructor Destroy; override;
-  end;
+  end;}
 
-  TP3DPropertyAccessActionKey = specialize gP3DPropertyAccessInterfacedPersistent < TP3DActionKey >;
-  TP3DPropertyAccessActionKeyList = specialize gP3DListPropertyAccessObject < TP3DActionKeyList, TP3DActionKey, TP3DPropertyAccessActionKey >;
+  TP3DActionKeyContainer = specialize gP3DStreamableContainer < TP3DActionKey >;
+  TP3DActionKeyPointer = specialize gP3DStreamablePointer < TP3DActionKey >;
+  TP3DActionKeyContainerList = specialize gP3DStreamableContainerList < TP3DActionKey, TP3DActionKeyContainer >;
+  TP3DActionKeyPointerList = specialize gP3DStreamableList < TP3DActionKey, TP3DActionKeyPointer >;
 
 
   { TP3DActionChannel }
 
   //TP3DActionChannelInterpolationMode = ( imInterpolate, imConstant, imExtrapolate );
   TP3DActionChannelTimeMode = ( tmContinue, tmWrapAround, tmClamp );
-  TP3DActionChannel = class( TP3DInterfacedPersistent )
+  TP3DActionChannel = class( TP3DStreamable )
     private
       FFilter: String;
       FInterpolationMode: TP3DPropertyAccessInterpolationMode;
-      FKeys: TP3DActionKeyList;
+      FKeys: TP3DActionKeyContainerList;
       FPropStr: String;
       FTimeMode: TP3DActionChannelTimeMode;
 
@@ -59,15 +59,14 @@
       function TransformTime( Time: Float ): Float;
 
     public
-      constructor Create;
-      constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure EvaluateSet( Prop: TP3DPropertyAccess; Time: Float );
 
     published
       property PropStr: String read FPropStr write SetPropStr;
-      property Keys: TP3DActionKeyList read FKeys write FKeys;
+      property Keys: TP3DActionKeyContainerList read FKeys write FKeys;
       property InterpolationMode: TP3DPropertyAccessInterpolationMode read FInterpolationMode write FInterpolationMode;
       property TimeMode: TP3DActionChannelTimeMode read FTimeMode write FTimeMode;
       property FrameCount: Float read GetFrameCount;
@@ -75,33 +74,40 @@
 
   { TP3DActionChannelList }
 
-  TP3DActionChannelList = class( specialize gP3DCustomObjectList < TP3DActionChannel >)
+  {TP3DActionChannelList = class( specialize gP3DCustomObjectList < TP3DActionChannel >)
     public
       destructor Destroy; override;
-  end;
+  end;}
 
-  TP3DPropertyAccessActionChannel = specialize gP3DPropertyAccessInterfacedPersistent < TP3DActionChannel >;
-  TP3DPropertyAccessActionChannelList = specialize gP3DListPropertyAccessObject < TP3DActionChannelList, TP3DActionChannel, TP3DPropertyAccessActionChannel >;
+  TP3DActionChannelContainer = specialize gP3DStreamableContainer < TP3DActionChannel >;
+  TP3DActionChannelPointer = specialize gP3DStreamablePointer < TP3DActionChannel >;
+  TP3DActionChannelContainerList = specialize gP3DStreamableContainerList < TP3DActionChannel, TP3DActionChannelContainer >;
+  TP3DActionChannelPointerList = specialize gP3DStreamableList < TP3DActionChannel, TP3DActionChannelPointer >;
 
   TP3DAction = class ( TP3DDataBlock )
-    private
-      FChannels: TP3DActionChannelList;
-
-      class function GetContainer( ALib: TP3DLibrary ): TP3DNamedInterfacedPersistentList; override;
-      function GetDataPath: String; override;
+    protected
+      FChannels: TP3DActionChannelContainerList;
 
     public
-      constructor Create( const AData: TP3DLibrary=nil ); override;
-      procedure FastDestroy; override;
+      constructor CreateBlock( const AData: TP3DLibrary=nil ); override;
+      destructor Destroy; override;
+
+      class function GetContainer( ALib: TP3DLibrary ): TP3DPropertyAccess; override;
 
       procedure Perform( Time: Float; AData: TP3DDataBlock );
 
-      property Channels: TP3DActionChannelList read FChannels write FChannels;
+      property Channels: TP3DActionChannelContainerList read FChannels write FChannels;
   end;
+
+  TP3DActionContainer = specialize gP3DStreamableContainer < TP3DAction >;
+  TP3DActionPointer = specialize gP3DStreamablePointer < TP3DAction >;
+  //TP3DActionContainerList = specialize gP3DNamedStreamableContainerList < TP3DAction, TP3DActionContainer >;
+  TP3DActionPointerList = specialize gP3DNamedStreamableList < TP3DAction, TP3DActionPointer >;
+
 
   { TP3DActionList }
 
-  TP3DActionList = class( specialize gP3DNamedInterfacedPersistentList < TP3DAction >)
+  TP3DActionContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DAction, TP3DActionContainer >)
     private
       FGlobalTime: Float;
       procedure SetGlobalTime(AValue: Float);
@@ -112,8 +118,6 @@
     published
       property GlobalTime: Float read FGlobalTime write SetGlobalTime;
   end;
-  TP3DPropertyAccessAction = specialize gP3DPropertyAccessDataBlock < TP3DAction >;
-  TP3DPropertyAccessActionList = specialize gP3DPropertyAccessDataBlockList < TP3DActionList, TP3DAction, TP3DPropertyAccessAction >;
 
 {$ENDIF}
 
@@ -121,33 +125,23 @@
 
 { TP3DActionKey }
 
-constructor TP3DActionKey.Create(ATime: Float; AValue: String);
+constructor TP3DActionKey.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create;
-  FTime:= ATime;
-  FValue:= AValue;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Time', smAttribute ));
-  Properties.Add( TP3DPropertyAccessString.CreateField( 'Value', @Value, smAttribute ));
-end;
-
-constructor TP3DActionKey.Create;
-begin
-  inherited Create;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Time', smAttribute ));
-  Properties.Add( TP3DPropertyAccessString.CreateField( 'Value', @Value, smAttribute ));
-end;
-
-constructor TP3DActionKey.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create();
-  LoadFromJSONContext( AContext );
+  inherited Create(AOwner);
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Time', smText ));
+  Properties.Add( TP3DPropAccessString.CreateField( 'Value', @Value, smText ));
 end;
 
 { TP3DActionKeyList }
-
-function TP3DActionKeyList.AddKey( ATime: Float; AValue: String ): Integer;
+{
+function TP3DActionKeyContainerList.AddKey( ATime: Float; AValue: String ): Integer;
+var
+  Key: TP3DActionKey;
 begin
-  Result:= Add( TP3DActionKey.Create( ATime, AValue ));
+  Key:= TP3DActionKey.Create();
+  Key.Time:= ATime;
+  Key.Value:= AValue;
+  Result:= Add( Key );
 end;
 
 procedure TP3DActionKeyList.LoadFromStream(S: TStream);
@@ -165,15 +159,7 @@ begin
   Clear( True );
   inherited Destroy;
 end;
-
-{ TP3DActionChannelList }
-
-destructor TP3DActionChannelList.Destroy;
-begin
-  Clear( True );
-  inherited Destroy;
-end;
-
+}
 
 
 { TP3DActionChannel }
@@ -246,20 +232,14 @@ begin
   end;
 end;
 
-constructor TP3DActionChannel.Create;
+constructor TP3DActionChannel.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create;
-  FKeys:= TP3DActionKeyList.Create;
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'PropStr', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'TimeMode', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'InterpolationMode', smAttribute ));
-  Properties.Add( TP3DPropertyAccessActionKeyList.CreateFieldSet( 'Keys', @FKeys, nil, smNode ));
-end;
-
-constructor TP3DActionChannel.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create();
-  LoadFromJSONContext( AContext );
+  inherited Create( AOwner );
+  FKeys:= TP3DActionKeyContainerList.Create( 'Keys', smText );
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'PropStr', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'TimeMode', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'InterpolationMode', smText ));
+  Properties.Add( Keys );
 end;
 
 destructor TP3DActionChannel.Destroy;
@@ -294,31 +274,27 @@ end;
 
 { TP3DAction }
 
-class function TP3DAction.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DAction.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Actions;
+  Result:= ALib.Properties.GetPropByName( 'Actions' );
 end;
 
-function TP3DAction.GetDataPath: String;
+constructor TP3DAction.CreateBlock(const AData: TP3DLibrary);
 begin
-  Result:= 'Actions[ "' + Name + '" ]';
+  inherited CreateBlock(AData);
+
+  FChannels:= TP3DActionChannelContainerList.Create( 'Channels', smText );
+  //Owner.Actions.Add( Self );
+  Properties.Add( Channels );
 end;
 
-constructor TP3DAction.Create(const AData: TP3DLibrary);
+destructor TP3DAction.Destroy;
 begin
-  inherited Create(AData);
-
-  FChannels:= TP3DActionChannelList.Create;
-  Owner.Actions.Add( Self );
-  Properties.Add( TP3DPropertyAccessActionChannelList.CreateField( 'Channels', @FChannels, smNode ));
-end;
-
-procedure TP3DAction.FastDestroy;
-begin
-  Owner.Actions.Remove( Self );
+  //Owner.Actions.Remove( Self );
   FreeAndNil( FChannels );
-  inherited FastDestroy;
+  inherited Destroy;
 end;
+
 
 procedure TP3DAction.Perform(Time: Float; AData: TP3DDataBlock);
 var
@@ -336,21 +312,22 @@ end;
 
 { TP3DActionList }
 
-procedure TP3DActionList.SetGlobalTime(AValue: Float);
+procedure TP3DActionContainerList.SetGlobalTime(AValue: Float);
 begin
   if FGlobalTime=AValue then Exit;
   FGlobalTime:=AValue;
   PerformActions( AValue );
 end;
 
-procedure TP3DActionList.PerformActions(GlobalTime: Float);
+procedure TP3DActionContainerList.PerformActions(GlobalTime: Float);
 var
   Action: TP3DAction;
-  Block: TP3DDataBlock;
+  Block: IP3DStreamableUser;
 begin
   for Action in Self do
     for Block in Action.Users do
-      Action.Perform( GlobalTime, Block );
+      if ( Block.GetUser is TP3DDataBlock ) then
+        Action.Perform( GlobalTime, TP3DDataBlock( Block.GetUser ));
 end;
 
 {$ENDIF}

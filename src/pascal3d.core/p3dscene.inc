@@ -18,17 +18,21 @@ type
 
   { TP3DRenderObject }
 
-  TP3DRenderObject = class ( TP3DInterfacedPersistent )
+  TP3DRenderObject = class ( TObject )
     private
       FActiveSubset: String;
-      FObjects: TP3DObjectList;
-      FData: TP3DDataBlock;
+      FObjects: TP3DObjectPointerList;
+      FData: TP3DDataBlockPointer;
       FInstanceCount: Integer;
-      FMaterial: TP3DMaterial;
+      FMaterial: TP3DMaterialPointer;
       FMatrices: TMat4List;
       FPositions: TP3DVec3BufferGL;
       FRotations: TP3DVec4BufferGL;
       FScalings: TP3DVec3BufferGL;
+      function GetData: TP3DDataBlock;
+      function GetMaterial: TP3DMaterial;
+      procedure SetData(AValue: TP3DDataBlock);
+      procedure SetMaterial(AValue: TP3DMaterial);
 
     public
       Modifiers: array of TP3DRenderListModifier;
@@ -40,12 +44,12 @@ type
       function CollideWithSphere( ASphere: TP3DSphere; out Intersect: TVec3; out N: TVec3 ): Boolean;
       function CollideWithAABB( AAABB: TP3DAABB; out Intersect: TVec3; out N: TVec3 ): Boolean;
 
-      property Data: TP3DDataBlock read FData write FData;
+      property Data: TP3DDataBlock read GetData write SetData;
       property Positions: TP3DVec3BufferGL read FPositions write FPositions;
       property Rotations: TP3DVec4BufferGL read FRotations write FRotations;
       property Scalings: TP3DVec3BufferGL read FScalings write FScalings;
       property Matrices: TMat4List read FMatrices write FMatrices;
-      property Material: TP3DMaterial read FMaterial write FMaterial;
+      property Material: TP3DMaterial read GetMaterial write SetMaterial;
       property InstanceCount: Integer read FInstanceCount write FInstanceCount;
       property ActiveSubset: String read FActiveSubset write FActiveSubset;
   end;
@@ -116,7 +120,6 @@ type
       function CheckCollision( AAABB: TP3DAABB; out B: TP3DRenderObject; out Intersect: TVec3; out N: TVec3 ): Boolean;
 
       property Lights: TP3DLightRenderList read FLights write FLights;
-      property LastUpdate: Integer read FLastUpdate;
       property OnAdd: TP3DRenderListAddCallBack read FOnAdd write FOnAdd;
       property ActiveSubset: String read FActiveSubset write FActiveSubset;
   end;
@@ -126,32 +129,31 @@ type
   TP3DSceneRenderCallback = procedure ( world: TMat4; AObject: TP3DObject ) of object;
   TP3DScene = class( TP3DDataBlock, IP3DRenderable )
     private
-      FCam: TP3DObject;
+      FCam: TP3DObjectPointer;
       FIsDesignTime: Boolean;
       FInheritedDesignTime: Boolean;
-      FLights: TP3DLightList;
-      FObjects: TP3DObjectList;
+      FLights: TP3DLightPointerList;
+      FObjects: TP3DObjectPointerList;
       FActiveCam: TP3DObject;
       FOnRenderCallback: TP3DSceneRenderCallback;
       FRootScene: TP3DScene;
 
+      function GetCam: TP3DObject;
       procedure SetCam( AValue: TP3DObject );
       procedure RenderCallback( world: TMat4; AObject: TP3DObject ); virtual;
-      procedure OnObjChange( Sender: TP3DNamedInterfacedPersistentList; Item: TP3DObject; AAction: TP3DCustomListOnChangeAction );
-      function GetDataPath: String; override;
+      procedure OnObjChange( Sender: IP3DNamedStreamableList; Item: TP3DObject; AAction: TP3DListOnChangeAction );
 
     protected
       property ActiveCam: TP3DObject read FActiveCam write FActiveCam;
       property RootScene: TP3DScene read FRootScene write FRootScene;
-      property Lights: TP3DLightList read FLights write FLights;
+      property Lights: TP3DLightPointerList read FLights write FLights;
 
     public
-      class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-      constructor Create( const AData: TP3DLibrary = nil ); override;
-      constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DLibrary = nil );
-      procedure FastDestroy; override;
+      class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
+      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+      //constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DLibrary = nil );
+      destructor Destroy; override;
 
-      procedure ClearFields; override;
       procedure UpdateLights;
 
       procedure Clear;
@@ -167,17 +169,18 @@ type
       procedure AppendFile( AFileName: String );
       procedure AppendFromData(AData: TP3DLibrary);
       procedure PassToShader; virtual;
-      procedure RemoveFromFields( Block: TP3DDataBlock ); override;
       //function Pick( X,Y: Integer; const ARootScene: TP3DScene=nil ): TP3DObject;
 
-      property Objects: TP3DObjectList read FObjects;
-      property Cam: TP3DObject read FCam write SetCam;
+      property Objects: TP3DObjectPointerList read FObjects;
+      property Cam: TP3DObject read GetCam write SetCam;
       property IsDesignTime: Boolean read FIsDesignTime write FIsDesignTime;
       property OnRenderCallback: TP3DSceneRenderCallback read FOnRenderCallback write FOnRenderCallback;
   end;
-  TP3DSceneList = specialize gP3DNamedInterfacedPersistentList < TP3DScene >;
-  TP3DPropertyAccessScene = specialize gP3DPropertyAccessDataBlock < TP3DScene >;
-  TP3DPropertyAccessSceneList = specialize gP3DPropertyAccessDataBlockList < TP3DSceneList, TP3DScene, TP3DPropertyAccessScene >;
+
+  TP3DSceneContainer = specialize gP3DStreamableContainer < TP3DScene >;
+  TP3DScenePointer = specialize gP3DStreamablePointer < TP3DScene >;
+  TP3DSceneContainerList = specialize gP3DNamedStreamableContainerList < TP3DScene, TP3DSceneContainer >;
+  TP3DScenePointerList = specialize gP3DStreamableList < TP3DScene, TP3DScenePointer >;
 
 {$ENDIF}
 
@@ -260,7 +263,7 @@ end;
 function TP3DCustomRenderList.PushRenderObject(AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial): Integer;
 var
   Obj: TP3DRenderObject;
-  q: TQuaternion;
+  q: TQuat;
   i: Integer;
   loc, scale: TVec3;
   rot: TMat3;
@@ -289,7 +292,7 @@ begin
 
       mat4decompose( AMatrix, loc, rot, scale );
       q:= quat( rot );
-      Obj.Rotations.Add( q );
+      Obj.Rotations.Add( vec4( q ));
       Obj.Positions.Add( loc );
       Obj.Scalings.Add( scale );
       Obj.Matrices.Add( AMatrix );
@@ -330,8 +333,8 @@ end;
 
 destructor TP3DRenderList.Destroy;
 begin
-  inherited Clear( True );
-  Lights.Clear( True );
+  inherited Clear;
+  Lights.Clear;
   FreeAndNil( FLights );
   inherited Destroy;
 end;
@@ -473,7 +476,7 @@ procedure TP3DRenderList.RenderMesh(Idx: Integer; Camera: TP3DObject; const AFla
 var
   n, j: Integer;
   decl: TP3DShaderDecl;
-  Obj: TP3DPropertyAccess;
+  ObjProp: TP3DObjectPointer;
 begin
   if ( Items[ Idx ].Data is TP3DMesh ) then
     begin
@@ -495,10 +498,12 @@ begin
         begin
           if ( ActiveSubset > '' ) then
             begin
-              Obj:= Owner.Properties.GetPropByPath( ActiveSubset );
-              if (( Obj is TP3DPropertyAccessObject ) and ( Assigned( TP3DPropertyAccessObject( Obj ).Value ))) then
-                for n:= 0 to TP3DPropertyAccessObject( Obj ).Value.Modifiers.Count - 1 do
-                  TP3DPropertyAccessObject( Obj ).Value.Modifiers[ n ].PassToShader( P3DMaterialActive, Mat4Identity );
+              ObjProp:= TP3DObjectPointer.Create( 'Obj' );
+              ObjProp.Assign( OwnerLib.Properties.GetPropByPath( ActiveSubset ));
+              if ( Assigned( ObjProp.AsValue )) then
+                for n:= 0 to ObjProp.AsValue.Modifiers.Count - 1 do
+                  ObjProp.AsValue.Modifiers[ n ].PassToShader( P3DMaterialActive, Mat4Identity );
+              ObjProp.Free;
             end;
           if ( rlfMaterials in AFlags ) then
             n:= MaterialGroups.Find( P3DMaterialActive )
@@ -632,9 +637,9 @@ end;
 
 procedure TP3DRenderList.Clear;
 begin
-  inherited Clear( True );
-  Lights.Clear( True );
-  ModifierStack.Clear( False );
+  inherited Clear;
+  Lights.Clear;
+  ModifierStack.Clear;
 end;
 
 function TP3DRenderList.PushRenderObject(AData: TP3DDataBlock; AMatrix: TMat4; AMaterial: TP3DMaterial): Integer;
@@ -694,15 +699,12 @@ end;
 
 procedure TP3DScene.SetCam(AValue: TP3DObject);
 begin
-  if FCam=AValue then Exit;
+  FCam.AsValue:= AValue;
+end;
 
-  if ( Assigned( FCam )) then
-    FCam.RemoveUser( Self );
-
-  FCam:= AValue;
-
-  if ( Assigned( FCam )) then
-    FCam.AddUser( Self );
+function TP3DScene.GetCam: TP3DObject;
+begin
+  Result:= FCam.AsValue;
 end;
 
 procedure TP3DScene.RenderCallback(world: TMat4; AObject: TP3DObject);
@@ -711,9 +713,10 @@ begin
     OnRenderCallback( world, AObject );
 end;
 
-procedure TP3DScene.OnObjChange(Sender: TP3DNamedInterfacedPersistentList; Item: TP3DObject; AAction: TP3DCustomListOnChangeAction);
+procedure TP3DScene.OnObjChange(Sender: IP3DNamedStreamableList; Item: TP3DObject; AAction: TP3DListOnChangeAction
+  );
 begin
-  if ( AAction = actAdd ) then
+  {if ( AAction = actAdd ) then
     begin
       Item.AddUser( Self );
       Item.FScene:= Self;
@@ -724,54 +727,41 @@ begin
       Item.RemoveUser( Self );
       Item.FScene:= nil;
       Item.FParent:= nil;
-    end;
+    end;}
 end;
 
-function TP3DScene.GetDataPath: String;
+class function TP3DScene.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= 'Scenes[ "' + Name + '" ]';
+  Result:= ALib.Properties.GetPropByName( 'Scenes' );
 end;
 
-class function TP3DScene.GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+constructor TP3DScene.CreateBlock(const AData: TP3DLibrary);
 begin
-  Result:= ALib.Scenes;
-end;
-
-constructor TP3DScene.Create( const AData: TP3DLibrary );
-begin
-  inherited Create( AData );
-  FObjects:= TP3DObjectList.Create( Self );
-  FObjects.OnChange:= @OnObjChange;
-  Lights:= TP3DLightList.Create( Self );
+  inherited CreateBlock( AData );
+  FObjects:= TP3DObjectPointerList.Create( 'Objects', smText );
+  //FObjects.OnChange:= @OnObjChange;
+  Lights:= TP3DLightPointerList.Create( 'Lights' );
   //Owner.Scenes.Add( Self );
-  Properties.Add( TP3DPropertyAccessObject.CreateFieldSet( 'Cam', @FCam, @SetCam, smAttribute ));
-  Properties.Add( TP3DPropertyAccessObjectList.CreateFieldSet( 'Objects', @FObjects, nil, smAttribute ));
+  Properties.Add( TP3DObjectPointer.Create( 'Cam', smText ));
+  Properties.Add( FObjects );
+  Properties.Add( FLights );
 end;
 
+{
 constructor TP3DScene.Create(AFileName: String; const AWatchFileForChanges: Boolean; const AData: TP3DLibrary);
 begin
   if ( not FileExists( AFileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
-  Create( AData );
+  CreateBlock( AData );
   AppendFile( AFileName );
 end;
+}
 
-procedure TP3DScene.FastDestroy;
+destructor TP3DScene.Destroy;
 begin
   Objects.Free;
   Lights.Free;
-  //Owner.Scenes.Remove( Self );
-  inherited FastDestroy;
-end;
-
-procedure TP3DScene.ClearFields;
-begin
-  Cam:= nil;
-  Lights.Clear();
-  Objects.Clear();
-  ActiveCam:= nil;
-  RootScene:= nil;
-  inherited ClearFields;
+  inherited Destroy;
 end;
 
 procedure TP3DScene.UpdateLights;
@@ -798,7 +788,6 @@ end;
 
 procedure TP3DScene.Clear;
 begin
-  Objects.Clear( False );
 end;
 
 procedure TP3DScene.Render(world: TMat4; Scene: TP3DScene;
@@ -877,7 +866,7 @@ var
 begin
   for Scene in AData.Scenes do
     begin
-      Obj:= TP3DObject.Create( Owner );
+      Obj:= TP3DObject.CreateBlock( OwnerLib );
       Obj.Data:= Scene;
       Objects.Add( Obj );
     end;
@@ -885,7 +874,7 @@ end;
 
 procedure TP3DScene.PassToShader;
 var
-  LightList: TP3DLightList;
+  LightList: TP3DLightPointerList;
 begin
   if ( Assigned( ActiveCam )) then
     begin
@@ -898,18 +887,9 @@ begin
         begin
           //TP3DCamera( ActiveCam.Data ).UpdateMatrices( ActiveCam );
           TP3DCamera( ActiveCam.Data ).PassToShader;
-          LightList.PassToActiveShader( TP3DCamera( ActiveCam.Data ).View, [ liPosition, liLightParams ]);
+          //LightList.PassToActiveShader( TP3DCamera( ActiveCam.Data ).View, [ liPosition, liLightParams ]);
         end;
     end;
-end;
-
-procedure TP3DScene.RemoveFromFields( Block: TP3DDataBlock );
-begin
-  if ( Block = Cam ) then
-    Cam:= nil;
-  if ( Block is TP3DObject ) then
-    Objects.Remove( TP3DObject( Block ));
-  inherited RemoveFromFields( Block );
 end;
 
 {
@@ -937,15 +917,36 @@ end;
 
 { TP3DRenderObject }
 
+function TP3DRenderObject.GetData: TP3DDataBlock;
+begin
+  Result:= FData.AsValue;
+end;
+
+function TP3DRenderObject.GetMaterial: TP3DMaterial;
+begin
+  Result:= FMaterial.AsValue;
+end;
+
+procedure TP3DRenderObject.SetData(AValue: TP3DDataBlock);
+begin
+  FData.AsValue:= AValue;
+end;
+
+procedure TP3DRenderObject.SetMaterial(AValue: TP3DMaterial);
+begin
+  FMaterial.AsValue:= AValue;
+end;
 
 constructor TP3DRenderObject.Create;
 begin
   inherited Create;
-  FPositions:= TP3DVec3BufferGL.Create( True );
-  FRotations:= TP3DVec4BufferGL.Create( True );
-  FScalings:= TP3DVec3BufferGL.Create( True );
-  FObjects:= TP3DObjectList.Create( Self );
+  FPositions:= TP3DVec3BufferGL.Create;
+  FRotations:= TP3DVec4BufferGL.Create;
+  FScalings:= TP3DVec3BufferGL.Create;
+  FObjects:= TP3DObjectPointerList.Create( 'Objects' );
   FMatrices:= TMat4List.Create;
+  FData:= TP3DDataBlockPointer.Create( 'Data' );
+  FMaterial:= TP3DMaterialPointer.Create( 'Material' );
   Material:= nil;
   Data:= nil;
   InstanceCount:= 0;
@@ -959,6 +960,8 @@ begin
   FMatrices.Free;
   FObjects.Free;
   SetLength( Modifiers, 0 );
+  FData.Free;
+  FMaterial.Free;
   {if ( Assigned( Data )) then
     WriteLn( 'Destroying RenderObject with data ' + Data.Name )
   else

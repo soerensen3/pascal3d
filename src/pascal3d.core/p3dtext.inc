@@ -69,9 +69,10 @@ type
 
   TP3DFontManager = class ( specialize gP3DCustomObjectList < TP3DFont >)
     private
-      FMaterial: TP3DMaterialBase;
+      FMaterial: TP3DMaterialBasePointer;
 
       function GetFont( FontName: String; Height: Integer ): TP3DFont;
+      function GetMaterial: TP3DMaterialBase;
 
     public
       constructor Create;
@@ -82,19 +83,18 @@ type
 
       property Fonts [ FontName: String; Height: Integer ]: TP3DFont read GetFont; default;
 
-    published
       function Find( FontName: String; Height: Integer ): Integer;
-      property Material: TP3DMaterialBase read FMaterial write FMaterial;
+      property Material: TP3DMaterialBase read GetMaterial;
   end;
 
   { TP3DText }
 
-  TP3DText = class
+  TP3DText = class ( TP3DStreamable )
     private
       FFont: TP3DFont;
       FHeight: Single;
       FLetterPosAndSize: TVec4List;
-      FTexture: TP3DTexture;
+      FTexture: TP3DTexturePointer;
       FIndices: TP3DIntBufferGL;
       FTexCoords: TP3DVec2BufferGL;
       FVertices: TP3DVec2BufferGL;
@@ -102,12 +102,14 @@ type
       FWidth: Single;
 
       procedure ApplyShader;
+      function GetTexture: TP3DTexture;
       procedure Render;
+      procedure SetTexture(AValue: TP3DTexture);
 
       //function AppendLetter( L: WideChar; fs: Single; p: TVec2 ): TVec2;
 
     public
-      constructor Create;
+      constructor Create( const AOwner: IP3DStreamableContainer = nil ); override;
       destructor Destroy; override;
 
       procedure Render( p: TVec2; Color: TVec4 );
@@ -126,7 +128,7 @@ type
       property TexCoords: TP3DVec2BufferGL read FTexCoords write FTexCoords;
       property Indices: TP3DIntBufferGL read FIndices write FIndices;
       property LetterPosAndSize: TVec4List read FLetterPosAndSize write FLetterPosAndSize;
-      property Texture: TP3DTexture read FTexture write FTexture;
+      property Texture: TP3DTexture read GetTexture write SetTexture;
   end;
 
   function p3dTextSimple( AText: String; AFont: TP3DFont ): TP3DText;
@@ -160,19 +162,19 @@ begin
       FWidth:= surface^.w;
       FHeight:= surface^.h;
 
-      vertices:= TP3DVec2BufferGL.Create( True );
-      texcoords:= TP3DVec2BufferGL.Create( True );
+      vertices:= TP3DVec2BufferGL.Create;
+      texcoords:= TP3DVec2BufferGL.Create;
 
-      Vertices.Add([ vec2( 0, 0 ), vec2( Width, 0 ), vec2( Width, Height ), vec2( 0, Height )]);
+      Vertices.AddArray([ vec2( 0, 0 ), vec2( Width, 0 ), vec2( Width, Height ), vec2( 0, Height )]);
       Vertices.PushData;
       Vertices.SetAttribArray( P3DAttribPosition );
-      TexCoords.Add([ vec2( 0, 0 ), vec2( 1, 0 ), vec2( 1, 1 ), vec2( 0, 1 )]);
+      TexCoords.AddArray([ vec2( 0, 0 ), vec2( 1, 0 ), vec2( 1, 1 ), vec2( 0, 1 )]);
       if ( P3DShaderActive.Attributes.FindByName( 'TexCoord0', decl )) then
         decl.AsVec2List:= TexCoords;
       TexCoords.PushData;
 
-      Indices:= TP3DIntBufferGL.Create( True );
-      Indices.Add([ 0, 1, 2, 0, 2, 3 ]);
+      Indices:= TP3DIntBufferGL.Create;
+      Indices.AddArray([ 0, 1, 2, 0, 2, 3 ]);
       Indices.PushData;
     end;
 end;
@@ -187,9 +189,15 @@ end;
 { TP3DText }
 
 procedure TP3DText.ApplyShader;
+var
+  Map: TP3DMaterialMapBase;
 begin
   if ( P3DFontManager.Material.Maps.Count = 0 ) then
-    P3DFontManager.Material.Maps.Add( TP3DMaterialMapBase.Create( P3DFontManager.Material ));
+    begin
+      Map:= TP3DMaterialMapBase.Create( P3DFontManager.Material.Maps );
+      Map.ParentMaterial:= P3DFontManager.Material;
+      //P3DFontManager.Material.Maps.Add( Map );
+    end;
   P3DFontManager.Material.Maps[ 0 ].Map:= Texture;
   TP3DMaterialMapBase( P3DFontManager.Material.Maps[ 0 ]).AlphaFactor:= 1;
   if ( not Assigned( P3DFontManager.Material.Shader )) then
@@ -198,9 +206,17 @@ begin
   P3DFontManager.Material.PassToShader();
 end;
 
-constructor TP3DText.Create;
+function TP3DText.GetTexture: TP3DTexture;
 begin
+  Result:= FTexture.AsValue;
+end;
+
+constructor TP3DText.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create( AOwner );
   LetterPosAndSize:= TVec4List.Create;
+  FTexture:= TP3DTexturePointer.CreateGetSet( 'Texture', @GetTexture, @SetTexture );
+  Properties.Add( FTexture );
 end;
 
 destructor TP3DText.Destroy;
@@ -209,8 +225,8 @@ begin
   FVertices.Free;
   FTexCoords.Free;
   FIndices.Free;
-  if ( Assigned( FTexture ) and P3DDataBlockCache.IsValid( FTexture )) then
-    FTexture.Free;
+  if ( Assigned( FTexture.AsValue ) and P3DDataBlockCache.IsValid( FTexture.AsValue )) then
+    FTexture.AsValue.Free;
   inherited Destroy;
 end;
 
@@ -222,6 +238,11 @@ begin
     decl.AsVec2List:= TexCoords;
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   glDrawElements( GL_TRIANGLES, Indices.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
+end;
+
+procedure TP3DText.SetTexture(AValue: TP3DTexture);
+begin
+  FTexture.AsValue:= AValue;
 end;
 
 procedure TP3DText.Render(p: TVec2; Color: TVec4);
@@ -330,7 +351,7 @@ begin
   Result:= p3dTextSize( Copy( FText, idx1, idx2-idx1 ), FFont );
 end;
 
-procedure TP3DText.BuildIndex;
+procedure TP3DText.BuildIndex();
 var
   Cur: TPoint;
   sz: TPoint;
@@ -361,6 +382,11 @@ begin
     Result:= Items[ Add( FontName + '.ttf', Height )];
 end;
 
+function TP3DFontManager.GetMaterial: TP3DMaterialBase;
+begin
+  Result:= FMaterial.AsValue;
+end;
+
 function TP3DFontManager.Add(Item: TP3DFont): Integer;
 begin
   Result:= inherited Add(Item);
@@ -375,16 +401,18 @@ end;
 constructor TP3DFontManager.Create;
 begin
   inherited;
-  FMaterial:= TP3DMaterialBase.Create;
-  FMaterial.Name:= 'FontMaterial';
-  FMaterial.FUnlit:= True;
-  FMaterial.FUseVertexColor:= True;
+  FMaterial:= TP3DMaterialBasePointer.Create( 'Material' );
+  FMaterial.AsValue:= TP3DMaterialBase.CreateBlock();
+  FMaterial.AsValue.Name:= 'FontMaterial';
+  FMaterial.AsValue.FUnlit:= True;
+  FMaterial.AsValue.FUseVertexColor:= True;
 end;
 
 destructor TP3DFontManager.Destroy;
 begin
-  FreeAndNil( FMaterial );
-  Clear( True );
+  if ( Assigned( FMaterial )) then
+    FreeAndNil( FMaterial );
+  Clear;
   inherited Destroy;
 end;
 

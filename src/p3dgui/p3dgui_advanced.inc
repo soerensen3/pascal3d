@@ -20,7 +20,7 @@ type
       procedure CalcHSVFromMousePos( X, Y: Integer );
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure Draw; override;
       procedure MouseMove(X, Y: Integer); override;
@@ -44,7 +44,7 @@ type
       procedure CalcValueFromMousePos( Y: Integer );
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       procedure Draw; override;
       procedure MouseDown(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
       procedure MouseMove(X, Y: Integer); override;
@@ -78,7 +78,7 @@ type
       class function HasShadow: Boolean; override;
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       procedure UpdateColor;
       procedure Draw; override;
@@ -109,7 +109,7 @@ type
       //FOnChange: TP3DComboBoxChange;
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -141,7 +141,7 @@ type
       procedure SetTexture(AValue: TP3DTexture);
 
     public
-      constructor Create(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;      destructor Destroy; override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;      destructor Destroy; override;
       procedure Draw; override;
 
       property Color: TP3DColorRGBA read FColor write FColor;
@@ -320,9 +320,9 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DColorRGBAWheel.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DColorRGBAWheel.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
   HSV:= vec3( 0, 0, 1 );
 end;
@@ -371,9 +371,9 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DColorRGBAValue.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DColorRGBAValue.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
   Value:= 1.0;
 end;
@@ -449,27 +449,27 @@ begin
   Result:= True;
 end;
 
-constructor TP3DColorRGBAPicker.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DColorRGBAPicker.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 var
   container: TP3DGraphicControl;
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   WidthHeight:= vec2( 200, 150 );
   BorderColor:= vec4( 0, 0, 0, 0.2 );
   BGColor:= vec4( 1 );
-  container:= TP3DGraphicControl.Create( nil, Self );
+  container:= TP3DGraphicControl.CreateBlock( nil, Self );
   container.Align:= alClient;
 
-  ColorValue:= TP3DColorRGBAValue.Create( nil, container );
+  ColorValue:= TP3DColorRGBAValue.CreateBlock( nil, container );
   ColorValue.Align:= alRight;
   ColorValue.Margin:= vec4( 15 );
   ColorValue.OnChange:= @ColorChange;
 
-  ColorWheel:= TP3DColorRGBAWheel.Create( nil, container );
+  ColorWheel:= TP3DColorRGBAWheel.CreateBlock( nil, container );
   ColorWheel.Align:= alClient;
   ColorWheel.OnChange:= @ColorChange;
 
-  ColorEdit:= TP3DVectorEdit.Create( nil, Self );
+  ColorEdit:= TP3DVectorEdit.CreateBlock( nil, Self );
   ColorEdit.Labels[ 0 ]:= 'R';
   ColorEdit.Labels[ 1 ]:= 'G';
   ColorEdit.Labels[ 2 ]:= 'B';
@@ -512,12 +512,12 @@ begin
   ColorPicker.Color:= AValue;
 end;
 
-constructor TP3DColorRGBAComboBox.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DColorRGBAComboBox.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
 
   BorderColor:= vec4( 0, 0, 0, 0.2 );
-  FColorPicker:= TP3DColorRGBAPicker.Create( AData );
+  FColorPicker:= TP3DColorRGBAPicker.CreateBlock( AData );
   FColorPicker.Visible:= False;
 end;
 
@@ -568,16 +568,19 @@ begin
   Material.Maps[ 0 ].Map:= AValue;
 end;
 
-constructor TP3DImage.Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DImage.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData, AParent );
+  inherited CreateBlock( AData, AParent );
   Color:= vec4( 1 );
   KeepAspect:= True;
-  Material:= TP3DMaterialBase.Create();
+  Material:= TP3DMaterialBase.CreateBlock();
   Material.Unlit:= True;
   Material.UseVertexColor:= True;
-  with( Material.Maps[ Material.Maps.Add( TP3DMaterialMapBase.Create( Material ))]) do
-    Texture:= nil;
+  with( Material.Maps[ Material.Maps.Add( TP3DMaterialMapBase.Create())]) do
+    begin
+      Texture:= nil;
+      ParentMaterial:= Material;
+    end;
   Material.BuildShader();
 end;
 

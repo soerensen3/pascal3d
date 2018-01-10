@@ -14,7 +14,7 @@ class P3DData( object ):
         self.Armatures = P3DDataBlockList()
         self.Actions = P3DDataBlockList()
         self.Cameras = P3DDataBlockList()
-        self.Joints = P3DDataBlockList()
+        #self.Joints = P3DDataBlockList()
         self.Lights = P3DDataBlockList()
         self.Materials = P3DDataBlockList()
         self.Meshes = P3DDataBlockList()

@@ -156,7 +156,7 @@ class P3DAction( p3ddatablock.P3DDataBlock ):
         self.Channels = []
         channels = self.ExportRawData( block )
 
-        if hasattr( obj.data, 'pose_position' ):
+        if hasattr( obj, 'data' ) and hasattr( obj.data, 'pose_position' ):
             pose = obj.data.pose_position
             obj.data.pose_position = 'POSE'
             root.ActiveScene.update()
@@ -165,7 +165,7 @@ class P3DAction( p3ddatablock.P3DDataBlock ):
             self.Channels = self.Channels + self.ExportFCurve( root, prop, curve, obj )
 
         obj.animation_data.action = oldaction
-        if hasattr( obj.data, 'pose_position' ):
+        if hasattr( obj, 'data' ) and hasattr( obj.data, 'pose_position' ):
             obj.data.pose_position = pose
             root.ActiveScene.update()
 

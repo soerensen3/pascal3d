@@ -104,7 +104,7 @@ type
   { TP3DShaderNodeSocket }
 
   TP3DShaderNodeSocket = class ( TP3DNodeSocket )
-    private
+    protected
       FFragments: TP3DShaderNodeFragmentList;
       FIsCopy: Boolean;
       procedure SetConnected( AValue: TP3DNodeSocket); override;
@@ -130,10 +130,10 @@ type
     private
       FPaths: TP3DFilePointerList;
 
-      procedure OnChange( Sender: TPersistent; Item: TP3DFilePointer; Action: TP3DCustomListOnChangeAction );
+      procedure OnChange( ASender: TObject; AItem: TP3DFilePointer; AAction: TP3DListOnChangeAction );
 
     public
-      constructor Create;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure LoadLibrary( FileName: String );
@@ -384,7 +384,7 @@ end;
 
 destructor TP3DShaderNodeFragmentIfDef.Destroy;
 begin
-  Fragments.Clear( True );
+  Fragments.Clear;
   Fragments.Free;
   inherited Destroy;
 end;
@@ -403,30 +403,30 @@ end;
 
 { TP3DShaderNodeLibrary }
 
-procedure TP3DShaderNodeLibrary.OnChange(Sender: TPersistent; Item: TP3DFilePointer; Action: TP3DCustomListOnChangeAction);
+procedure TP3DShaderNodeLibrary.OnChange(ASender: TObject; AItem: TP3DFilePointer; AAction: TP3DListOnChangeAction);
 begin
   UpdatePaths();
 end;
 
-constructor TP3DShaderNodeLibrary.Create;
+constructor TP3DShaderNodeLibrary.Create(const AOwner: IP3DStreamableContainer);
 var
-  fpl: TP3DPropertyAccessFilePointerList;
+  fpl: TP3DPropAccessFilePointerList;
 begin
-  inherited Create;
+  inherited Create( AOwner );
   FPaths:= TP3DFilePointerList.Create;
   FPaths.OnChange:= @OnChange;
-  fpl:= TP3DPropertyAccessFilePointerList.CreateField( 'Paths', @FPaths, smAttribute );
+  fpl:= TP3DPropAccessFilePointerList.CreateField( 'Paths', @FPaths, smText );
   fpl.PathMode:= pmRelativeToBaseBath;
   Properties.Add( fpl );
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Add( Self );
+    P3DConfig.AddStreamable( 'P3DShaderNodeLib', Self );
 end;
 
 destructor TP3DShaderNodeLibrary.Destroy;
 begin
   if ( Assigned( P3DConfig )) then
-    P3DConfig.Config.Remove( Self );
-  FPaths.Clear( True );
+    P3DConfig.RemoveStreamable( 'P3DShaderNodeLib' );
+  FPaths.Clear;
   FPaths.Free;
   inherited Destroy;
 end;
@@ -491,9 +491,10 @@ var
 begin
   if ( Index < 0 ) then
     begin
-      Nodes.Clear( True );
+      Nodes.Clear;
       for Path in Paths do
-        LoadLibraryPath( Path.FileName );
+        if ( Assigned( Path )) then
+          LoadLibraryPath( Path.FileName );
     end
   else
     //No idea..
@@ -543,7 +544,7 @@ destructor TP3DShaderNodeSocket.Destroy;
 begin
   if ( not FIsCopy ) then
     begin
-      Fragments.Clear( True );
+      Fragments.Clear;
       FFragments.Free
     end
   else
@@ -617,7 +618,7 @@ end;
 
 destructor TP3DShaderCompiled.Destroy;
 begin
-  FBuffers.Clear( True );
+  FBuffers.Clear;
   FBuffers.Free;
   inherited Destroy;
 end;

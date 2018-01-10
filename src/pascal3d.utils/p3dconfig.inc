@@ -2,55 +2,57 @@
 type
   { TP3DConfig }
 
-  TP3DConfig = class ( TP3DInterfacedPersistent )
-    private
-      FConfig: TP3DInterfacedPersistentList;
-
+  TP3DConfig = class ( TP3DJSONRoot )
     public
-      constructor Create;
-      destructor Destroy; override;
+      procedure AddStreamable( APropName: String; AObj: TP3DStreamable );
+      procedure RemoveStreamable( APropName: String );
+
       procedure SaveConfig( FileName: String );
       procedure LoadConfig( FileName: String );
-
-    published
-      property Config: TP3DInterfacedPersistentList read FConfig write FConfig;
   end;
 
-  TP3DPropertyAccessConfig = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DInterfacedPersistentList, TP3DInterfacedPersistent, TP3DPropertyAccessInterfacedPersistent_NoCreate >;
+  TP3DStreamablePointerConfig = specialize gP3DPropAccessStreamable < TP3DStreamable >;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
-constructor TP3DConfig.Create;
+procedure TP3DConfig.AddStreamable(APropName: String; AObj: TP3DStreamable);
+var
+  cfg: TP3DStreamablePointerConfig;
 begin
-  inherited Create;
-  Config:= TP3DInterfacedPersistentList.Create;
-  Properties.Add( TP3DPropertyAccessConfig.CreateField( 'Config', @FConfig, smAttribute ));
+  //Prop:= tp3dpropaccess
+  if ( not Assigned( AObj )) then
+    exit;
+  cfg:= TP3DStreamablePointerConfig.Create( APropName );
+  Properties.Add( cfg );
+  cfg.AsValue:= AObj;
 end;
 
-destructor TP3DConfig.Destroy;
+procedure TP3DConfig.RemoveStreamable(APropName: String);
+var
+  n: Integer;
 begin
-  Config.Free;
-  inherited Destroy;
+  n:= Properties.FindByName( APropName );
+  if ( n > -1 ) then
+    Properties.Delete( n );
 end;
 
 procedure TP3DConfig.SaveConfig(FileName: String);
-var
-  loader: TP3DJSONLoader;
 begin
-  loader:= TP3DJSONLoader.Create( FileName, Self );
-  loader.WriteFile;
-  loader.Free;
+  FileName:= CreateAbsolutePath( FileName, ProgramDirectory );
+  JSONLoader.FileName:= FileName;
+  JSONLoader.Root:= Self;
+  JSONLoader.WriteFile;
 end;
 
 procedure TP3DConfig.LoadConfig(FileName: String);
-var
-  loader: TP3DJSONLoader;
 begin
   FileName:= CreateAbsolutePath( FileName, ProgramDirectory );
-  loader:= TP3DJSONLoader.Create( FileName, Self );
-  loader.ReadFile;
-  loader.Free;
+  JSONLoader.FileName:= FileName;
+  JSONLoader.Root:= Self;
+  JSONLoader.ReadFile;
+  JSONLoader.ReadJSON;
 end;
 
 {$ENDIF}

@@ -9,15 +9,13 @@ const
   P3DFileVerMin = 1;
 
 type
-  TP3DLibraryList = class;
-
-
+  {
   TP3DActionContainer   = specialize gP3DDatablockContainer < TP3DAction >;
   TP3DArmatureContainer = specialize gP3DDatablockContainer < TP3DArmature >;
   TP3DCameraContainer   = specialize gP3DDatablockContainer < TP3DCamera >;
   TP3DFontContainer     = specialize gP3DDatablockContainer < TP3DFontBmp >;
   TP3DGridContainer     = specialize gP3DDatablockContainer < TP3DTileGrid >;
-  TP3DJointContainer    = specialize gP3DDatablockContainer < TP3DJoint >;
+  //TP3DJointContainer    = specialize gP3DDatablockContainer < TP3DJoint >;
   TP3DLightContainer    = specialize gP3DDatablockContainer < TP3DLight >;
   TP3DMaterialContainer = specialize gP3DDatablockContainer < TP3DMaterial >;
   TP3DMeshContainer     = specialize gP3DDatablockContainer < TP3DMesh >;
@@ -26,40 +24,39 @@ type
   TP3DShaderContainer   = specialize gP3DDatablockContainer < TP3DShader >;
   TP3DTextureContainer  = specialize gP3DDatablockContainer < TP3DTexture >;
 
-  TP3DPropertyAccessActionContainer   = specialize gP3DListPropertyAccessContainer < TP3DActionContainer, TP3DAction, TP3DPropertyAccessAction >;
-  TP3DPropertyAccessArmatureContainer = specialize gP3DListPropertyAccessContainer < TP3DArmatureContainer, TP3DArmature, TP3DPropertyAccessArmature >;
-  TP3DPropertyAccessCameraContainer   = specialize gP3DListPropertyAccessContainer < TP3DCameraContainer, TP3DCamera, TP3DPropertyAccessCamera >;
-  TP3DPropertyAccessFontContainer     = specialize gP3DListPropertyAccessContainer < TP3DFontContainer, TP3DFontBmp, TP3DPropertyAccessFontBmp >;
-  TP3DPropertyAccessGridContainer     = specialize gP3DListPropertyAccessContainer < TP3DGridContainer, TP3DTileGrid, TP3DPropertyAccessTileGrid >;
-  TP3DPropertyAccessJointContainer    = specialize gP3DListPropertyAccessContainer < TP3DJointContainer, TP3DJoint, TP3DPropertyAccessJoint >;
-  TP3DPropertyAccessLightContainer    = specialize gP3DListPropertyAccessContainer < TP3DLightContainer, TP3DLight, TP3DPropertyAccessLight >;
-  TP3DPropertyAccessMaterialContainer = specialize gP3DListPropertyAccessContainer < TP3DMaterialContainer, TP3DMaterial, TP3DPropertyAccessMaterial >;
-  TP3DPropertyAccessMeshContainer     = specialize gP3DListPropertyAccessContainer < TP3DMeshContainer, TP3DMesh, TP3DPropertyAccessMesh >;
-  TP3DPropertyAccessObjectContainer   = specialize gP3DListPropertyAccessContainer < TP3DObjectContainer, TP3DObject, TP3DPropertyAccessObject >;
-  TP3DPropertyAccessSceneContainer    = specialize gP3DListPropertyAccessContainer < TP3DSceneContainer, TP3DScene, TP3DPropertyAccessScene >;
-  TP3DPropertyAccessShaderContainer   = specialize gP3DListPropertyAccessContainer < TP3DShaderContainer, TP3DShader, TP3DPropertyAccessShader >;
-  TP3DPropertyAccessTextureContainer  = specialize gP3DListPropertyAccessContainer < TP3DTextureContainer, TP3DTexture, TP3DPropertyAccessTexture >;
+  TP3DPropertyAccessActionContainer   = specialize gP3DListPropertyAccessDataBlockContainer < TP3DActionContainer, TP3DAction, TP3DPropertyAccessAction >;
+  TP3DPropertyAccessArmatureContainer = specialize gP3DListPropertyAccessDataBlockContainer < TP3DArmatureContainer, TP3DArmature, TP3DPropertyAccessArmature >;
+  TP3DPropertyAccessCameraContainer   = specialize gP3DListPropertyAccessDataBlockContainer < TP3DCameraContainer, TP3DCamera, TP3DPropertyAccessCamera >;
+  TP3DPropertyAccessFontContainer     = specialize gP3DListPropertyAccessDataBlockContainer < TP3DFontContainer, TP3DFontBmp, TP3DPropertyAccessFontBmp >;
+  TP3DPropertyAccessGridContainer     = specialize gP3DListPropertyAccessDataBlockContainer < TP3DGridContainer, TP3DTileGrid, TP3DPropertyAccessTileGrid >;
+  //TP3DPropertyAccessJointContainer    = specialize gP3DListPropertyAccessDataBlockContainer < TP3DJointContainer, TP3DJoint, TP3DPropertyAccessJoint >;
+  TP3DPropertyAccessLightContainer    = specialize gP3DListPropertyAccessDataBlockContainer < TP3DLightContainer, TP3DLight, TP3DPropertyAccessLight >;
+  TP3DPropertyAccessMaterialContainer = specialize gP3DListPropertyAccessDataBlockContainer < TP3DMaterialContainer, TP3DMaterial, TP3DPropertyAccessMaterial >;
+  TP3DPropertyAccessMeshContainer     = specialize gP3DListPropertyAccessDataBlockContainer < TP3DMeshContainer, TP3DMesh, TP3DPropertyAccessMesh >;
+  TP3DPropertyAccessObjectContainer   = specialize gP3DListPropertyAccessDataBlockContainer < TP3DObjectContainer, TP3DObject, TP3DPropertyAccessObject >;
+  TP3DPropertyAccessSceneContainer    = specialize gP3DListPropertyAccessDataBlockContainer < TP3DSceneContainer, TP3DScene, TP3DPropertyAccessScene >;
+  TP3DPropertyAccessShaderContainer   = specialize gP3DListPropertyAccessDataBlockContainer < TP3DShaderContainer, TP3DShader, TP3DPropertyAccessShader >;
+  TP3DPropertyAccessTextureContainer  = specialize gP3DListPropertyAccessDataBlockContainer < TP3DTextureContainer, TP3DTexture, TP3DPropertyAccessTexture >;
+  }
 
   { TP3DLibrary }
 
-  TP3DLibrary = class ( TP3DInterfacedPersistent )
+  TP3DLibrary = class ( TP3DJSONRootNamed, IP3DJSONStream, IP3DJSONStreamBinary )
     private
-      FActions: TP3DActionContainer;
-      FArmatures: TP3DArmatureContainer;
-      FCameras: TP3DCameraContainer;
-      FFonts: TP3DFontContainer;
+      FActions: TP3DActionContainerList;
+      FArmatures: TP3DArmatureContainerList;
+      FCameras: TP3DCameraContainerList;
+      FFonts: TP3DFontBmpContainerList;
       FGlobalTime: Single;
-      FGrids: TP3DGridContainer;
-      FJoints: TP3DJointContainer;
-      FLights: TP3DLightContainer;
-      FMaterials: TP3DMaterialContainer;
-      FMeshes: TP3DMeshContainer;
-      FObjects: TP3DObjectContainer;
-      FScenes: TP3DSceneContainer;
-      FShaders: TP3DShaderContainer;
-      FTextures: TP3DTextureContainer;
+      FGrids: TP3DTileGridContainerList;
+      FLights: TP3DLightContainerList;
+      FMaterials: TP3DMaterialContainerList;
+      FMeshes: TP3DMeshContainerList;
+      FObjects: TP3DObjectContainerList;
+      FScenes: TP3DSceneContainerList;
+      FShaders: TP3DShaderContainerList;
+      FTextures: TP3DTextureContainerList;
 
-      FFileWatch: TP3DFilePointer;
       FIsDesignerPackage: Boolean;
       FBinFile: TFileStream;
       FLastUpdate: Integer;
@@ -68,57 +65,75 @@ type
       function GetName: String; virtual;
       procedure PerformActions(GlobalTime: Float);
       procedure SetGlobalTime(AValue: Single);
+      function GetFullPath: String;
 
     protected
       procedure CreateBinFile( const AFileName: String = '' );
+      procedure OpenBinFile( const AFileName: String = '' );
       procedure CloseBinFile;
+      function GetBinaryStream: TStream;
 
     public
-      constructor Create;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor CreateFromFile( AFileName: String );
       destructor Destroy; override;
 
       function GetOwnerFromPath( DOMPath: TP3DXMLPath; const ForceLoad: Boolean = False ): TP3DLibrary;
 
       function AppendFile( AFileName: String ): String;
-      function CreateNew( Tp: TP3DDataBlockType; const CreateObject: Boolean = True ): Integer;
+      function CreateNew( Tp: TP3DDataBlockType ): TP3DDataBlock;
+      function CreateNewWithObj( Tp: TP3DDataBlockType ): TP3DObject;
       procedure SaveToFile( const AFileName: String = '' );
-      procedure SaveToFile( AParentClass: TP3DDataBlockType; const AFileName: String = '' );
+      //procedure SaveToFile( AParentClass: TP3DDataBlockType; const AFileName: String = '' );
       procedure RemoveFromFields( Block: TP3DDataBlock ); virtual;
       procedure ClearFields; virtual;
       //function IsValid( Obj: TP3DDataBlock ): Boolean; virtual;
       function CheckLastChange: Integer; virtual;
 
     published
-      property Cameras: TP3DCameraContainer read FCameras write FCameras;
-      property Grids: TP3DGridContainer read FGrids write FGrids;
-      property Joints: TP3DJointContainer read FJoints write FJoints;
-      property Lights: TP3DLightContainer read FLights write FLights;
-      property Materials: TP3DMaterialContainer read FMaterials write FMaterials;
-      property Meshes: TP3DMeshContainer read FMeshes write FMeshes;
-      property Objects: TP3DObjectContainer read FObjects write FObjects;
-      property Scenes: TP3DSceneContainer read FScenes write FScenes;
-      property Shaders: TP3DShaderContainer read FShaders write FShaders;
-      property Textures: TP3DTextureContainer read FTextures write FTextures;
-      property Armatures: TP3DArmatureContainer read FArmatures write FArmatures;
-      property Actions: TP3DActionContainer read FActions write FActions;
-      property Fonts: TP3DFontContainer read FFonts write FFonts;
+      property Cameras: TP3DCameraContainerList read FCameras write FCameras;
+      property Grids: TP3DTileGridContainerList read FGrids write FGrids;
+      property Lights: TP3DLightContainerList read FLights write FLights;
+      property Materials: TP3DMaterialContainerList read FMaterials write FMaterials;
+      property Meshes: TP3DMeshContainerList read FMeshes write FMeshes;
+      property Objects: TP3DObjectContainerList read FObjects write FObjects;
+      property Scenes: TP3DSceneContainerList read FScenes write FScenes;
+      property Shaders: TP3DShaderContainerList read FShaders write FShaders;
+      property Textures: TP3DTextureContainerList read FTextures write FTextures;
+      property Armatures: TP3DArmatureContainerList read FArmatures write FArmatures;
+      property Actions: TP3DActionContainerList read FActions write FActions;
+      property Fonts: TP3DFontBmpContainerList read FFonts write FFonts;
 
       property GlobalTime: Single read FGlobalTime write SetGlobalTime;
 
-      property FileWatch: TP3DFilePointer read FFileWatch write FFileWatch;
       property BinFile: TFileStream read GetBinFile write FBinFile;
       property IsDesignerPackage: Boolean read FIsDesignerPackage write FIsDesignerPackage;
       property Name: String read GetName;
   end;
 
+  TP3DLibraryContainer = specialize gP3DStreamableContainer < TP3DLibrary >;
+  TP3DLibraryPointer = class( specialize gP3DStreamablePointer < TP3DLibrary >);
+  //TP3DLibraryContainerList = specialize gP3DStreamableContainerList < TP3DLibrary, TP3DLibraryContainer >;
+  TP3DLibraryPointerList = specialize gP3DStreamableList < TP3DLibrary, TP3DLibraryPointer >;
+
+  { TP3DLibraryList }
+
+  TP3DLibraryContainerList = class ( specialize gP3DNamedStreamableContainerList < TP3DLibrary, TP3DLibraryContainer >)
+    private
+      FLastUpdate: Integer;
+    public
+      function FindByFileName( AFileName: String ): Integer;
+      property LastUpdate: Integer read FLastUpdate;
+  end;
+
+
   TP3DData = class ( TP3DLibrary )
     private
-      FLibraries: TP3DLibraryList;
+      FLibraries: TP3DLibraryContainerList;
       function GetName: String; override;
 
     public
-      constructor Create;
+      constructor Create; reintroduce;
       destructor Destroy; override;
 //      procedure PerformActions(GlobalTime: Float); override;
 
@@ -128,23 +143,8 @@ type
       function CheckLastChange: Integer; override;
 
     published
-      property Libraries: TP3DLibraryList read FLibraries write FLibraries;
+      property Libraries: TP3DLibraryContainerList read FLibraries write FLibraries;
   end;
-
-  { TP3DLibraryList }
-
-  TP3DLibraryList = class ( specialize gP3DCustomObjectList < TP3DLibrary >)
-    public
-      procedure LoadFromStream( S: TStream ); //gP3DListPropertyAccessObject needs this to compile
-      procedure SaveToStream( S: TStream );
-
-      function FindByFileName( AFileName: String ): Integer;
-      property LastUpdate: Integer read FLastUpdate;
-  end;
-
-  TP3DPropertyAccessLibrary = specialize gP3DPropertyAccessInterfacedPersistent < TP3DLibrary >;
-  TP3DPropertyAccessLibraryList = specialize gP3DListPropertyAccessObject < TP3DLibraryList, TP3DLibrary, TP3DPropertyAccessLibrary >;
-
 
   { TP3DDataBlockCacheEntry }
 
@@ -185,7 +185,7 @@ type
 
 function TP3DLibrary.GetName: String;
 begin
-  Result:= ExtractFileName( FileWatch.FileName );
+  Result:= ExtractFileName( JSONLoader.FileName );
 end;
 
 function TP3DLibrary.GetBinFile: TFileStream;
@@ -195,57 +195,46 @@ begin
   Result:= FBinFile;
 end;
 
-constructor TP3DLibrary.Create;
+constructor TP3DLibrary.Create(const AOwner: IP3DStreamableContainer);
 var
-  fp: TP3DPropertyAccessFilePointer;
+  fp: TP3DPropAccessFilePointer;
 begin
-  inherited;
+  inherited Create( AOwner );
+  Root:= Self;
 
-  Cameras:= TP3DCameraContainer.Create( Self );
-  Grids:= TP3DGridContainer.Create( Self );
-  Joints:= TP3DJointContainer.Create( Self );
-  Lights:= TP3DLightContainer.Create( Self );
-  Materials:= TP3DMaterialContainer.Create( Self );
-  Meshes:= TP3DMeshContainer.Create( Self );
-  Objects:= TP3DObjectContainer.Create( Self );
-  Scenes:= TP3DSceneContainer.Create( Self );
-  Shaders:= TP3DShaderContainer.Create( Self );
-  Textures:= TP3DTextureContainer.Create( Self );
-  Armatures:= TP3DArmatureContainer.Create( Self );
-  Actions:= TP3DActionContainer.Create( Self );
-  Fonts:= TP3DFontContainer.Create( Self );
-  FileWatch:= TP3DFilePointer.Create( '', Self );
+  FCameras:= TP3DCameraContainerList.Create( 'Cameras', smText );
+  FGrids:= TP3DTileGridContainerList.Create( 'Grids', smText );
+  FLights:= TP3DLightContainerList.Create( 'Lights', smText );
+  FMaterials:= TP3DMaterialContainerList.Create( 'Materials', smText );
+  FMeshes:= TP3DMeshContainerList.Create( 'Meshes', smText );
+  FObjects:= TP3DObjectContainerList.Create( 'Objects', smText );
+  FScenes:= TP3DSceneContainerList.Create( 'Scenes', smText );
+  FShaders:= TP3DShaderContainerList.Create( 'Shaders', smText );
+  FTextures:= TP3DTextureContainerList.Create( 'Textures', smText );
+  FArmatures:= TP3DArmatureContainerList.Create( 'Armatures', smText );
+  FActions:= TP3DActionContainerList.Create( 'Actions', smText );
+  FFonts:= TP3DFontBmpContainerList.Create( 'Fonts', smText );
 
-  fp:= TP3DPropertyAccessFilePointer.CreateField( 'FileWatch', @FFileWatch, smAttribute );
-  fp.PathMode:= pmRelativeToBaseBath;
+  //Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Name', smDoNotStore ));
 
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smDoNotStore ));
-  Properties.Add( fp );
+  Properties.Add([ FCameras, FGrids, FLights, FMaterials, FMeshes, FObjects, FScenes, FShaders, FTextures, FArmatures, FActions, FFonts ]);
 
-  Properties.Add( TP3DPropertyAccessCameraContainer.CreateField( 'Cameras', @FCameras, smAttribute ));
-  Properties.Add( TP3DPropertyAccessJointContainer.CreateField( 'Joints', @FJoints, smAttribute ));
-  Properties.Add( TP3DPropertyAccessLightContainer.CreateField( 'Lights', @FLights, smAttribute ));
-  Properties.Add( TP3DPropertyAccessMaterialContainer.CreateField( 'Materials', @FMaterials, smAttribute ));
-  Properties.Add( TP3DPropertyAccessMeshContainer.CreateField( 'Meshes', @FMeshes, smAttribute ));
-  Properties.Add( TP3DPropertyAccessObjectContainer.CreateField( 'Objects', @FObjects, smAttribute ));
-  Properties.Add( TP3DPropertyAccessSceneContainer.CreateField( 'Scenes', @FScenes, smAttribute ));
-  Properties.Add( TP3DPropertyAccessShaderContainer.CreateField( 'Shaders', @FShaders, smAttribute ));
-  Properties.Add( TP3DPropertyAccessTextureContainer.CreateField( 'Textures', @FTextures, smAttribute ));
-  Properties.Add( TP3DPropertyAccessArmatureContainer.CreateField( 'Armatures', @FArmatures, smAttribute ));
-  Properties.Add( TP3DPropertyAccessActionContainer.CreateField( 'Actions', @FActions, smAttribute ));
-  Properties.Add( TP3DPropertyAccessFontContainer.CreateField( 'Fonts', @FFonts, smAttribute ));
-  if ( not ( Self is TP3DData )) then
+  if ( not Assigned( Owner ) and not ( Self is TP3DData )) then
     P3DData.Libraries.Add( Self );
 end;
 
 constructor TP3DLibrary.CreateFromFile(AFileName: String);
 begin
-  Create;
-  FileWatch.FileName:= AppendFile( AFileName );
+  if ( Assigned( P3DData )) then
+    Create( P3DData.Libraries )
+  else
+    raise Exception.Create( 'P3DCore not initialized!' );
+  JSONLoader.FileName:= AppendFile( AFileName );
 end;
 
 destructor TP3DLibrary.Destroy;
 begin
+  JSONLoader.Free;
   {$IFDEF DEBUG_DATABLOCKS}
   if ( Assigned( FileWatch ) and ( FileWatch.FileName > '' )) then
     WriteLn( '<' + ExtractFileNameOnly( FileWatch.FileName ) + '>.Destroy' )
@@ -259,9 +248,8 @@ begin
   {$ENDIF}
 
   ClearFields;
-  FreeAndNil( FCameras );
+  {FreeAndNil( FCameras );
   FreeAndNil( FGrids );
-  FreeAndNil( FJoints );
   FreeAndNil( FLights );
   FreeAndNil( FMaterials );
   FreeAndNil( FMeshes );
@@ -271,8 +259,7 @@ begin
   FreeAndNil( FTextures );
   FreeAndNil( FArmatures );
   FreeAndNil( FActions );
-  FreeAndNil( FFonts );
-  FreeAndNil( FFileWatch );
+  FreeAndNil( FFonts );}
 
   if ( Self <> P3DData ) then
     P3DData.Libraries.Remove( Self );
@@ -287,12 +274,27 @@ begin
   if ( AFileName > '' ) then
     FName:= AFileName
   else
-    FName:= ChangeFileExt( FileWatch.FileName, '.p3dbin' );
+    FName:= ChangeFileExt( JSONLoader.FileName, '.p3dbin' );
 
   if ( Assigned( FBinFile )) then
     FreeAndNil( FBinFile );
 
   BinFile:= TFileStream.Create( FName, fmCreate );
+end;
+
+procedure TP3DLibrary.OpenBinFile(const AFileName: String);
+var
+  FName: String;
+begin
+  if ( AFileName > '' ) then
+    FName:= AFileName
+  else
+    FName:= ChangeFileExt( JSONLoader.FileName, '.p3dbin' );
+
+  if ( Assigned( FBinFile )) then
+    FreeAndNil( FBinFile );
+
+  BinFile:= TFileStream.Create( FName, fmOpenRead );
 end;
 
 procedure TP3DLibrary.CloseBinFile;
@@ -311,12 +313,17 @@ begin
   FreeAndNil( FBinFile );
 end;
 
+function TP3DLibrary.GetBinaryStream: TStream;
+begin
+  Result:= GetBinFile;
+end;
+
 function TP3DLibrary.GetOwnerFromPath(DOMPath: TP3DXMLPath; const ForceLoad: Boolean): TP3DLibrary;
 var
   FN: String;
 begin
   P3DXMLExtractRelativePath( DOMPath, FN );
-  if (( FN = '' ) or ( CompareFilenames( FN, FileWatch.FileName ) = 0 )) then
+  if (( FN = '' ) or ( CompareFilenames( FN, JSONLoader.FileName ) = 0 )) then
     Result:= Self
   else
     if ( ForceLoad ) then
@@ -471,12 +478,14 @@ begin
   if ( not FileExists( FName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
 
-  FileWatch.FileName:= AFileName;
+  JSONLoader.FileName:= AFileName;
 
-  Loader:= TP3DJSONLoader.Create( AFileName );
-  Loader.Root:= Self;
-  LoadFromJSONContext( P3DJSONContext( Loader, Loader.JSON, Self, nil ));
-  Loader.Free;
+  JSONLoader.ReadFile;
+
+  if ( FileExistsUTF8( ChangeFileExt( JSONLoader.FileName, '.p3dbin' ))) then
+    OpenBinFile();
+
+  JSONLoader.ReadJSON;
   {OpenDOMFile;
   dir:= GetCurrentDir;
   try
@@ -490,21 +499,15 @@ begin
   Result:= FName;
 end;
 
-function TP3DLibrary.CreateNew(Tp: TP3DDataBlockType; const CreateObject: Boolean ): Integer;
-var
-  data: TP3DDataBlock;
-  obj: TP3DObject;
+function TP3DLibrary.CreateNew(Tp: TP3DDataBlockType): TP3DDataBlock;
 begin
-  data:= Tp.Create( Self );
+  Result:= Tp.CreateBlock( Self );
+end;
 
-  if ( CreateObject ) then
-    begin
-      obj:= TP3DObject.Create( Self );
-      obj.data:= data;
-      Result:= Objects.IndexOf( obj );
-    end
-  else
-    Result:= Tp.GetContainer( Self ).IndexOf( data );
+function TP3DLibrary.CreateNewWithObj(Tp: TP3DDataBlockType): TP3DObject;
+begin
+  Result:= TP3DObject.CreateBlock( Self );
+  Result.Data:= CreateNew( Tp );
 end;
 
 procedure TP3DLibrary.SaveToFile(const AFileName: String);
@@ -517,27 +520,10 @@ begin
   if ( AFileName > '' ) then
     FileName:= AFileName
   else
-    FileName:= FileWatch.FileName;
-  S:= Serialize;
-  WriteLn( S );
-  json:= GetJSON( S );
-  S:= json.FormatJSON();
-  DeleteFile( FileName );
-  {F:= TFileStream.Create( FileName, fmCreate );
-  json.DumpJSON( F );
-  F.Free;}
-  {AssignFile( F, FileName );
-  Rewrite( F );
-  Write( F, S );
-  CloseFile( F );}
-  F:= TStringListUTF8.Create;
-  F.Text:= S;
-  F.SaveToFile( FileName );
-  F.Free;
-  json.Free;
-  //SaveToFile( TP3DScene, AFileName );
+    FileName:= JSONLoader.FileName;
+  JSONLoader.WriteFile( FileName );
 end;
-
+{
 procedure TP3DLibrary.SaveToFile( AParentClass: TP3DDataBlockType; const AFileName: String );
 var
   FileName: String;
@@ -545,13 +531,13 @@ begin
   if ( AFileName > '' ) then
     FileName:= AFileName
   else
-    FileName:= FileWatch.FileName;
+    FileName:= JSONLoader.FileName;
 
   CreateBinFile( ChangeFileExt( FileName, '.p3dbin' ));
 
   CloseBinFile;
 end;
-
+}
 procedure TP3DLibrary.RemoveFromFields( Block: TP3DDataBlock );
 begin
   {$IFDEF DEBUG_DATABLOCKS}
@@ -587,36 +573,10 @@ end;
 procedure TP3DLibrary.ClearFields;
 var
   User: TP3DDataBlock;
-  Block: TP3DNamedInterfacedPersistent;
   i, j, idx: Integer;
 
 begin
-{  for i:= Datablocks.Count - 1 downto 0 do
-    begin
-      Block:= DataBlocks[ i ];
-      {if ( Block is TP3DDataBlock ) then
-        begin
-          for j:= TP3DDataBlock( TP3DDataBlock( Block )).Users.Count - 1 downto 0 do
-            begin
-              User:= TP3DDataBlock( TP3DDataBlock( Block )).Users[ j ];
-              if ( User.Owner <> Self ) then
-                User.RemoveFromFields( TP3DDataBlock( Block ));
-            end;
-          TP3DDataBlock( Block ).FastDestroy; //Destroy the object without checking fields
-        end
-      else }if ( IsValid( Block )) then
-        Block.Free
-      else
-        begin
-          idx:= P3DDataBlockCache.FindBlock( TP3DDataBlock( Block ));
-          if ( idx > -1 ) then
-            WriteLn( 'Orphaned datablock no. ', i, ' with cached name: ', P3DDataBlockCache[ idx ].Name )
-          else
-            WriteLn( 'Orphaned datablock no. ', i, ' with no cached name' );
-        end;
-    end;}
   Cameras.Clear();
-  Joints.Clear();
   Lights.Clear();
   Materials.Clear();
   Meshes.Clear();
@@ -665,36 +625,32 @@ end;
 procedure TP3DLibrary.SetGlobalTime(AValue: Single);
 var
   Action: TP3DAction;
-  User: TP3DDataBlock;
+  User: IP3DStreamableUser;
 begin
   if FGlobalTime=AValue then Exit;
   FGlobalTime:=AValue;
   for Action in Actions do
     for User in Action.Users do ;
-      Action.Perform( GlobalTime, User );
+      if ( User.GetUser is TP3DDataBlock ) then
+        Action.Perform( GlobalTime, TP3DDataBlock( User.GetUser ));
+end;
+
+function TP3DLibrary.GetFullPath: String;
+begin
+  Result:= '';
 end;
 
 { TP3DDataList }
 
-procedure TP3DLibraryList.LoadFromStream(S: TStream);
-begin
-
-end;
-
-procedure TP3DLibraryList.SaveToStream(S: TStream);
-begin
-
-end;
-
-function TP3DLibraryList.FindByFileName(AFileName: String): Integer;
+function TP3DLibraryContainerList.FindByFileName(AFileName: String): Integer;
 var
   i: Integer;
-  FName: String;
+  _Name: String;
 begin
   Result:= -1;
-  FName:= ExpandFileNameUTF8( AFileName );
+  _Name:= ExpandFileNameUTF8( AFileName );
   for i:= 0 to Count - 1 do
-    if ( P3DMatchFileName( Items[ i ].FileWatch.FileName, FName )) then
+    if ( P3DMatchFileName( AsValues[ i ].JSONLoader.FileName, _Name )) then
       begin
         Result:= i;
         break;
@@ -759,7 +715,7 @@ begin
   entry.Datablock:= Block;
   entry.Name:= Block.Name;
   entry.BlockType:= TP3DDataBlockType( Block.ClassType );
-  entry.Owner:= Block.Owner;
+  entry.Owner:= Block.OwnerLib;
   //entry.StackTrace:= DumpCallStack;
 
   n:= FindBlock( Block );
@@ -774,7 +730,7 @@ end;
 
 destructor TP3DDataBlockCache.Destroy;
 begin
-  Clear( True );
+  Clear;
   inherited Destroy;
 end;
 
@@ -798,7 +754,7 @@ begin
       if ( Assigned( Lib )) then
         begin
           //WriteLn( item.BlockType.GetContainer( Lib ).DumpObjectList );
-          Result:= item.BlockType.GetContainer( Lib ).IndexOf( item.Datablock ) > -1
+          //TODO: Fix this line Result:= item.BlockType.GetContainer( Lib ).IndexOf( item.Datablock ) > -1
         end
       else
         exit( False );
@@ -816,9 +772,9 @@ end;
 
 constructor TP3DData.Create;
 begin
-  inherited Create;
-  Libraries:= TP3DLibraryList.Create;
-  Properties.Add( TP3DPropertyAccessLibraryList.CreateFieldSet( 'Libraries', @FLibraries, Nil, smDoNotStore ));
+  inherited Create();
+  Libraries:= TP3DLibraryContainerList.Create( 'Libraries' );
+  Properties.Add( Libraries );
 end;
 
 destructor TP3DData.Destroy;
@@ -877,7 +833,7 @@ begin
     begin
       F:= TP3DLibrary.CreateFromFile( FName );
       Result:= Libraries.Count - 1;
-      //Result:= Libraries.Add( F );
+      Result:= Libraries.IndexOf( F );
     end;
 end;
 

@@ -3,7 +3,7 @@
 
   TP3DLightType = ( ltPoint = 0, ltSun = 1, ltSpot = 2 );
   TP3DLight = class ( TP3DDataBlock, IP3DRenderable )
-    private
+    protected
       FColor: TVec3;
       FEnergy: Float;
       FLightType: TP3DLightType;
@@ -11,13 +11,11 @@
       FQuadraticAttenuation: Float;
 
       function GetLightRange: Float;
-      class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-      function GetDataPath: String; override;
 
     public
-      constructor Create( const AData: TP3DLibrary = nil ); override;
-      procedure FastDestroy; override;
+      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
 
+      class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject );
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
 
@@ -34,23 +32,25 @@
   TP3DLightInformation = ( liLightParams, liPosition );
   TP3DLightInformationSet = set of TP3DLightInformation;
 
+  TP3DLightContainer = specialize gP3DStreamableContainer < TP3DLight >;
+  TP3DLightPointer = specialize gP3DStreamablePointer < TP3DLight >;
+  TP3DLightContainerList = specialize gP3DNamedStreamableContainerList < TP3DLight, TP3DLightContainer >;
+  TP3DLightPointerList = specialize gP3DStreamableList < TP3DLight, TP3DLightPointer >;
+
   { TP3DLightList }
 
-  TP3DLightList = class ( specialize gP3DNamedInterfacedPersistentList < TP3DLight > )
-    procedure Delete( Index: Integer ); override;
+  {TP3DLightPointerList = class ( specialize gP3DStreamableList < TP3DLight, TP3DPropAccessLightPointer > )
+    public
+      procedure PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
+  end;}
 
-    procedure PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
-  end;
-
-  TP3DPropertyAccessLight = specialize gP3DPropertyAccessDataBlock < TP3DLight >;
-  TP3DPropertyAccessLightList = specialize gP3DPropertyAccessDataBlockList < TP3DLightList, TP3DLight, TP3DPropertyAccessLight >;
 
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
-function calculateAttenuation( LightSources: TP3DLightList; i: Integer; dist: Float ): Float;
+function calculateAttenuation( LightSources: TP3DLightContainerList; i: Integer; dist: Float ): Float;
 begin
   Result:= ( 1.0 / ( max( 0.01, //LightSources[i].constantAttenuation + //useless
                      LightSources[ i ].linearAttenuation * dist +
@@ -72,35 +72,23 @@ begin
     Result:= 0;
 end;
 
-class function TP3DLight.GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DLight.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Lights;
+  Result:= ALib.Properties.GetPropByName( 'Lights' );
 end;
 
-function TP3DLight.GetDataPath: String;
+constructor TP3DLight.CreateBlock(const AData: TP3DLibrary);
 begin
-  Result:= 'Lights[ "' + Name + '" ]';
-end;
-
-constructor TP3DLight.Create(const AData: TP3DLibrary);
-begin
-  inherited Create( AData );
+  inherited CreateBlock( AData );
   FLinearAttenuation:= 0.1;
   FColor:= vec3( 1 );
   FEnergy:= 1.0;
   //Owner.Lights.Add( Self );
-  Properties.Add( TP3DPropertyAccessVec3.CreateField( 'Color', @Color, smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Energy', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'LinearAttenuation', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'QuadraticAttenuation', smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'LightType', smAttribute ));
-end;
-
-procedure TP3DLight.FastDestroy;
-begin
-  //Owner.Lights.Remove( Self );
-
-  inherited FastDestroy;
+  Properties.Add( TP3DPropAccessVec3.CreateField( 'Color', @Color, smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Energy', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'LinearAttenuation', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'QuadraticAttenuation', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'LightType', smText ));
 end;
 
 procedure TP3DLight.Render(world: TMat4; Scene: TP3DScene;
@@ -122,15 +110,8 @@ begin
 end;
 
 { TP3DLightList }
-
-procedure TP3DLightList.Delete(Index: Integer);
-begin
-  Items[ Index ].Free;
-  inherited Delete(Index);
-end;
-
-
-procedure TP3DLightList.PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
+{
+procedure TP3DLightPointerList.PassToActiveShader( matView: TMat4; Params: TP3DLightInformationSet );
 var
   numLights: Integer;
   i, j: Integer;
@@ -144,35 +125,35 @@ begin
 
   numLights:= 0;
   for i:= 0 to Count - 1 do
-    for j:= 0 to NamedItems[ i ].Users.Count -1 do
+    for j:= 0 to Items[ i ].Users.Count -1 do
       begin
         l:= 'LightSource[' + IntToStr( numLights ) + ']';
 
         if ( liLightParams in Params ) then
           begin
             //Color
-            glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.color' ), NamedItems[ i ].Color.R, NamedItems[ i ].Color.G, NamedItems[ i ].Color.B, NamedItems[ i ].Energy ); cle( Self );
+            glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.color' ), Items[ i ].Color.R, Items[ i ].Color.G, Items[ i ].Color.B, Items[ i ].Energy ); cle( Self );
 
             //linear Attenuation
-            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.linearAttenuation' ), NamedItems[ i ].LinearAttenuation ); cle( Self );
+            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.linearAttenuation' ), Items[ i ].LinearAttenuation ); cle( Self );
 
             //quadratic Attenuation
-            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.quadraticAttenuation' ), NamedItems[ i ].QuadraticAttenuation ); cle( Self );
+            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.quadraticAttenuation' ), Items[ i ].QuadraticAttenuation ); cle( Self );
 
             //range
-            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.range' ), NamedItems[ i ].GetLightRange ); cle( Self );
+            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.range' ), Items[ i ].GetLightRange ); cle( Self );
 
             //energy
 //            glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.energy' ), NamedItems[ i ].Energy ); cle( Self );
 
             //type
-            glUniform1i( P3DShaderActive.Uniforms.AddrByName( l + '.type' ), Ord( NamedItems[ i ].LightType )); cle( Self );
+            glUniform1i( P3DShaderActive.Uniforms.AddrByName( l + '.type' ), Ord( Items[ i ].LightType )); cle( Self );
           end;
 
         if ( liPosition in Params ) then
           begin
             //position in viewspace
-            obj:= NamedItems[ i ].Users.NamedItems[ j ];
+            obj:= Items[ i ].Users.Items[ j ];
             if ( obj is TP3DObject ) then
               with ( obj as TP3DObject ) do
                 begin
@@ -191,7 +172,7 @@ begin
         //WriteLn( P3DShaderActive.DumpUniforms );
       end;
   glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'numLightSource'), numLights ); cle( Self );
-end;
+end;}
 
 {$ENDIF}
 

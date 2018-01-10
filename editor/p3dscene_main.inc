@@ -26,7 +26,7 @@ type
       procedure OnEditKeyDown( Sender: TObject );
 
     public
-      constructor Create(const AData: TP3DLibrary=nil); override;
+      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
 
       function NewLibrary( const AFileName: String = 'Untitled%d.p3d' ): TP3DLibrary;
       function NewScene( const AName: String = 'NewScene%d' ): TP3DScene;
@@ -81,7 +81,7 @@ begin
   if ( Assigned( SceneMain.ActiveScene )) then
     begin
       SceneView.Scene:= SceneMain.ActiveScene;
-      SceneMain.ActiveLibrary:= SceneMain.ActiveScene.Owner;
+      SceneMain.ActiveLibrary:= SceneMain.ActiveScene.OwnerLib;
     end;
   if ( Assigned( SceneView )) then
     SceneView.ToolBar.UpdateButtonsFast;
@@ -110,13 +110,13 @@ end;
 procedure TP3DSceneMain.OnEditKeyDown(Sender: TObject);
 begin
   if ( P3DInput.Keyboard.DKeys[ P3DK_RETURN ] = ksPressed ) then
-    if ( OIPanel.ObjectInspector.Obj is TP3DInterfacedPersistent ) then
-      PropEd.Prop:= TP3DInterfacedPersistent( OIPanel.ObjectInspector.Obj ).Properties.GetPropByPath( Edit.Text );
+    if ( OIPanel.ObjectInspector.Obj is TP3DStreamable ) then
+      PropEd.Prop:= TP3DStreamable( OIPanel.ObjectInspector.Obj ).Properties.GetPropByPath( Edit.Text );
 end;
 
-constructor TP3DSceneMain.Create(const AData: TP3DLibrary);
+constructor TP3DSceneMain.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create(AData);
+  inherited CreateBlock(AData);
   PageModeX:= pmStretch;
   PageModeY:= pmStretch;
 end;
@@ -138,7 +138,7 @@ begin
   else
     FN:= AFileName;
 
-  Result.FileWatch.FileName:= FN;
+  Result.JSONLoader.FileName:= FN;
   P3DData.Libraries.Add( Result );
 end;
 
@@ -163,7 +163,7 @@ begin
   else
     N:= AName;
 
-  Result:= TP3DScene.Create( ActiveLibrary );
+  Result:= TP3DScene.CreateBlock( ActiveLibrary );
   Result.Name:= N;
 end;
 

@@ -4,52 +4,101 @@
 {$IFDEF INTERFACE}
 
 type
-  TP3DJointList = class;
+  TP3DRestJointPointer = class;
+  TP3DRestJointPointerList = class;
 
   TP3DArmature = class;
   { TP3DJoint }
 
-  TP3DJoint = class( TP3DDataBlock, IP3DRenderable )
-    private
+  TP3DJoint = class( TP3DNamedStreamable, IP3DTransform )
+    protected
       FArmature: TP3DArmature;
       FLength: Float;
-      FMatrix: TMat4;
       FMatrixInv: TMat4;
-      FQuaternion: TQuaternion;
-      FPosition: TVec3;
+      FTransform: TP3DTransformContainer;
       FTail: TVec3;
 
-      procedure SetArmature(AValue: TP3DArmature);
-      procedure SetQuaternion(AValue: TQuaternion);
-      procedure SetPosition(AValue: TVec3);
+      function GetTransform: TP3DTransform;
+      procedure SetArmature(AValue: TP3DArmature); virtual;
       procedure SetTail(AValue: TVec3);
       procedure UpdateMatrix;
-      class function GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-      function GetDataPath: String; override;
+      procedure OnTransformChange( Sender: TObject );
 
     public
-      constructor Create( const AData: TP3DLibrary = nil ); override;
-      procedure FastDestroy; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      destructor Destroy; override;
 
-      procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
-      procedure AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
+      //procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
+      //procedure AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
 
       property Armature: TP3DArmature read FArmature write SetArmature;
-      property Quaternion: TQuaternion read FQuaternion write SetQuaternion;
-      property Position: TVec3 read FPosition write SetPosition;
-      property Matrix: TMat4 read FMatrix;
       property MatrixInv: TMat4 read FMatrixInv;
+      property Transform: TP3DTransform read GetTransform;
       property Tail: TVec3 read FTail write SetTail;
 
     published
       property Length: Float read FLength;
   end;
 
-  TP3DPropertyAccessJoint = specialize gP3DPropertyAccessDataBlock < TP3DJoint >;
+  { TP3DRestJoint }
+
+  TP3DRestJoint = class ( TP3DJoint )
+    protected
+      FChildren: TP3DRestJointPointerList;
+      FParent: TP3DRestJointPointer;
+      FTransformLocal: TP3DTransformContainer;
+
+      function GetParent: TP3DRestJoint;
+      function GetTransformLocal: TP3DTransform;
+      procedure SetArmature(AValue: TP3DArmature); override;
+      procedure SetParent(AValue: TP3DRestJoint);
+
+    public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      destructor Destroy; override;
+
+    published
+      property Children: TP3DRestJointPointerList read FChildren write FChildren;
+      property Parent: TP3DRestJoint read GetParent write SetParent;
+      property TransformLocal: TP3DTransform read GetTransformLocal;
+  end;
+
+
+  TP3DPoseJointPointerList = class;
+
+  { TP3DPoseJoint }
+
+  TP3DPoseJoint = class ( TP3DJoint )
+    protected
+      FChildren: TP3DPoseJointPointerList;
+      FParent: TP3DPoseJoint;
+      FRestJoint: TP3DRestJoint;
+
+      procedure SetParent(AValue: TP3DPoseJoint);
+      procedure OnChildrenChange(Sender: TObject; Item: TP3DPoseJoint; Action: TP3DListOnChangeAction);
+
+    public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+
+    published
+      property Children: TP3DPoseJointPointerList read FChildren;
+      property Parent: TP3DPoseJoint read FParent write SetParent;
+      property RestJoint: TP3DRestJoint read FRestJoint write FRestJoint;
+  end;
+
+  TP3DRestJointContainer = specialize gP3DStreamableContainer < TP3DRestJoint >;
+  TP3DRestJointPointer = class( specialize gP3DStreamablePointer < TP3DRestJoint >);
+  //TP3DRestJointContainerList = specialize gP3DNamedStreamableContainerList < TP3DRestJoint, TP3DRestJointContainer >;
+  TP3DRestJointPointerList = class( specialize gP3DNamedStreamableList < TP3DRestJoint, TP3DRestJointPointer >);
+
+  TP3DPoseJointContainer = specialize gP3DStreamableContainer < TP3DPoseJoint >;
+  TP3DPoseJointPointer = specialize gP3DStreamablePointer < TP3DPoseJoint >;
+  //TP3DPoseJointContainerList = specialize gP3DNamedStreamableContainerList < TP3DPoseJoint, TP3DPoseJointContainer >;
+  TP3DPoseJointPointerList = class( specialize gP3DNamedStreamableList < TP3DPoseJoint, TP3DPoseJointPointer >);
 
   { TP3DJointList }
 
-  TP3DJointList = class ( specialize gP3DNamedInterfacedPersistentList < TP3DJoint > )
+  TP3DRestJointContainerList = class ( specialize gP3DNamedStreamableContainerList < TP3DRestJoint, TP3DRestJointContainer > )
     private
       FArmature: TP3DArmature;
 
@@ -57,7 +106,19 @@ type
       property Armature: TP3DArmature read FArmature write FArmature;
   end;
 
-  TP3DPropertyAccessJointList = specialize gP3DPropertyAccessDataBlockList < TP3DJointList, TP3DJoint, TP3DPropertyAccessJoint >;
+  TP3DObjectModifierArmature = class;
+
+  { TP3DPoseJointList }
+
+  TP3DPoseJointContainerList = class ( specialize gP3DNamedStreamableContainerList < TP3DPoseJoint, TP3DPoseJointContainer > )
+    private
+      FArmature: TP3DArmature;
+      FModifier: TP3DObjectModifierArmature;
+
+    public
+      property Armature: TP3DArmature read FArmature write FArmature;
+      property Modifier: TP3DObjectModifierArmature read FModifier write FModifier;
+  end;
 
   TP3DArmatureTransformMethod = ( atmMatrix, atmDualQuaternion );
 
@@ -66,47 +127,43 @@ type
   TP3DMaterialModifierArmature = class;
 
   TP3DArmature = class ( TP3DDataBlock, IP3DRenderable )
-    private
-      FJoints: TP3DJointList;
+    protected
+      FJoints: TP3DRestJointContainerList;
       FMaterialModifier: TP3DMaterialModifierArmature;
-      FRotations: TQuaternionList;
+      FRotations: TQuatList;
       FTransformMethod: TP3DArmatureTransformMethod;
       FTranslations: TVec3List;
       OwnsJointTex: Boolean;
-      FJointTex: TP3DTexture;
-
-      class function GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList; override;
-      function GetDataPath: String; override;
+      FJointTex: TP3DTextureContainer;
 
       function GetJointTex: TP3DTexture;
       procedure SetJointTex(AValue: TP3DTexture);
-      procedure UpdateJointTex( Root: TP3DObject );
+      procedure UpdateJointTex( ARoot: TP3DObject );
       function CalculateJointMatrixFromObj( AObj: TP3DObject; InvMatrix: TMat4 ): TMat4;
+      function GetObjArmatureModifier( AObj: TP3DObject ): TP3DObjectModifierArmature;
 
     public
-      procedure ClearFields; override;
-      procedure RemoveFromFields(Block: TP3DDataBlock); override;
+      constructor CreateBlock( const AData: TP3DLibrary= nil ); override;
+      destructor Destroy; override;
 
-      constructor Create( const AData: TP3DLibrary= nil ); override;
-
-      procedure FastDestroy; override;
-
+      class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
       // IP3DRenderable
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
 
     published
-      property Joints: TP3DJointList read FJoints;
-      property JointTex: TP3DTexture read GetJointTex write SetJointTex;
+      property Joints: TP3DRestJointContainerList read FJoints;
+      property JointTex: TP3DTexture read GetJointTex;
       property Translations: TVec3List read FTranslations write FTranslations;
-      property Rotations: TQuaternionList read FRotations write FRotations;
+      property Rotations: TQuatList read FRotations write FRotations;
       property TransformMethod: TP3DArmatureTransformMethod read FTransformMethod write FTransformMethod;
       property MaterialModifier: TP3DMaterialModifierArmature read FMaterialModifier write FMaterialModifier;
   end;
 
-  TP3DArmatureList = specialize gP3DNamedInterfacedPersistentList < TP3DArmature >;
-  TP3DPropertyAccessArmature = specialize gP3DPropertyAccessDataBlock < TP3DArmature >;
-  TP3DPropertyAccessArmatureList = specialize gP3DPropertyAccessDataBlockList < TP3DArmatureList, TP3DArmature, TP3DPropertyAccessArmature >;
+  TP3DArmatureContainer = specialize gP3DStreamableContainer < TP3DArmature >;
+  TP3DArmaturePointer = specialize gP3DStreamablePointer < TP3DArmature >;
+  TP3DArmatureContainerList = specialize gP3DNamedStreamableContainerList < TP3DArmature, TP3DArmatureContainer >;
+  TP3DArmaturePointerList = specialize gP3DStreamableList < TP3DArmature, TP3DArmaturePointer >;
 
 
 
@@ -156,14 +213,15 @@ type
 
   TP3DObjectModifierArmature = class ( TP3DObjectModifier )
     private
-      FArmature: TP3DArmature;
+      FArmature: TP3DArmaturePointer;
       FInitialized: Boolean;
+      FPose: TP3DPoseJointContainerList;
+      function GetArmature: TP3DArmature;
       procedure SetArmature( AValue: TP3DArmature );
       procedure SetObj( AValue: TP3DObject ); override;
 
     public
-      constructor Create;
-      constructor CreateFromJSONContext(AContext: TP3DJSONContext); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       procedure UpdateMaterials;
 
       procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
@@ -172,7 +230,8 @@ type
       property Initialized: Boolean read FInitialized;
 
     published
-      property Armature: TP3DArmature read FArmature write SetArmature;
+      property Armature: TP3DArmature read GetArmature write SetArmature;
+      property Pose: TP3DPoseJointContainerList read FPose;
   end;
 
 
@@ -235,7 +294,7 @@ end;
 
 { TP3DPoseJoint }
 {
-function TP3DPoseJoint.GetQuaternion: TQuaternion;
+function TP3DPoseJoint.GetQuaternion: TQuat;
 begin
   if ( FrameIndex > -1 ) then
     Result:= Action.Frames[ FrameIndex ].Rotations[ RotIdx ]
@@ -249,7 +308,7 @@ begin
   Result:= mat4translate( vec4( Translations[ PosIdx ], 1 )) * mat4( {mat3scale( vec3( Length )) * }mat3( Rotations[ RotIdx ]))
 end;
 
-procedure TP3DPoseJoint.SetQuaternion(AValue: TQuaternion);
+procedure TP3DPoseJoint.SetQuaternion(AValue: TQuat);
 begin
   if ( FrameIndex > -1 ) then
     Action.Frames[ FrameIndex ].Rotations[ RotIdx ]:= AValue
@@ -292,9 +351,9 @@ begin
     end;
 
   Properties.Context:= Action;
-  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smAttribute ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smAttribute ));
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smAttribute ));
+  Properties.Add( TP3DPropertyAccessQuat.CreateGetSet( 'Quaternion', @GetQuaternion, @SetQuaternion, smText ));
+  Properties.Add( TP3DPropertyAccessVec3.CreateGetSet( 'Position', @GetPosition, @SetPosition, smText ));
+  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Name', smText ));
 end;
 
 constructor TP3DPoseJoint.CreateFromDOM(ADOMNode: TDOMElement; AAction: TP3DArmatureAction; AFrameIndex: Integer);
@@ -305,7 +364,7 @@ end;
 
 procedure TP3DPoseJoint.LoadFromDOM(ADOMNode: TDOMElement);
 var
-  Rot: TQuaternion;
+  Rot: TQuat;
   Pos: TVec3;
 begin
   Name:= ADOMNode.GetAttribute( 'name' );
@@ -326,16 +385,15 @@ end;
 procedure TP3DJoint.SetArmature(AValue: TP3DArmature);
 begin
   if FArmature=AValue then Exit;
-
-  if ( Assigned( Armature )) then
-    Armature.Joints.Remove( Self );
   FArmature:=AValue;
-
-  if ( Assigned( Armature )) then
-    Armature.Joints.Add( Self );
 end;
 
-procedure TP3DJoint.SetQuaternion(AValue: TQuaternion);
+function TP3DJoint.GetTransform: TP3DTransform;
+begin
+  Result:= FTransform.AsValue;
+end;
+{
+procedure TP3DJoint.SetQuaternion(AValue: TQuat);
 begin
   if FQuaternion=AValue then Exit;
   FQuaternion:=AValue;
@@ -349,21 +407,27 @@ begin
   UpdateMatrix;
   FLength:= len( Tail - Position );
 end;
+}
 
 procedure TP3DJoint.SetTail(AValue: TVec3);
 begin
   if FTail=AValue then Exit;
   FTail:=AValue;
-  FLength:= len( Tail - Position );
+  FLength:= _length( Tail - Transform.Position );
 end;
 
 procedure TP3DJoint.UpdateMatrix;
 begin
-  FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion ));
-  FMatrixInv:= -FMatrix
+  //FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion ));
+  mat4inverse( FTransform.AsValue.Matrix, FMatrixInv );
 end;
 
-class function TP3DJoint.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+procedure TP3DJoint.OnTransformChange(Sender: TObject);
+begin
+  UpdateMatrix;
+end;
+
+{class function TP3DJoint.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
 begin
   Result:= ALib.Joints;
 end;
@@ -371,24 +435,27 @@ end;
 function TP3DJoint.GetDataPath: String;
 begin
   Result:= 'Joints[ "' + Name + '" ]';
-end;
+end;}
 
-constructor TP3DJoint.Create(const AData: TP3DLibrary);
+constructor TP3DJoint.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create( AData );
-  Owner.Joints.Add( Self );
-  Properties.Add( TP3DPropertyAccessRTTI.Create( Self, 'Length', smAttribute ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateFieldSet( 'Position', @FPosition, @SetPosition, smAttribute ));
-  Properties.Add( TP3DPropertyAccessQuat.CreateFieldSet( 'Quaternion', @Quaternion, @SetQuaternion, smAttribute ));
-  Properties.Add( TP3DPropertyAccessVec3.CreateFieldSet( 'Tail', @FTail, @SetTail, smAttribute ));
+  inherited Create( AOwner );
+  FTransform:= TP3DTransformContainer.Create( 'Transform', smText );
+  FTransform.AsValue:= TP3DTransform.Create;
+  Transform.OnChange:= @OnTransformChange;
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Length', smText ));
+  //Properties.Add( TP3DPropAccessVec3.CreateFieldSet( 'Position', @FPosition, @SetPosition, smText ));
+  //Properties.Add( TP3DPropAccessQuat.CreateFieldSet( 'Quaternion', @Quaternion, @SetQuaternion, smText ));
+  Properties.Add( FTransform, 'Transform' );
+  Properties.Add( TP3DPropAccessVec3.CreateFieldSet( 'Tail', @FTail, @SetTail, smText ));
 end;
 
-procedure TP3DJoint.FastDestroy;
+destructor TP3DJoint.Destroy;
 begin
-  Owner.Joints.Add( Self );
-  inherited FastDestroy;
+  Transform.Free;
+  inherited Destroy;
 end;
-
+{
 procedure TP3DJoint.Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
 begin
 
@@ -399,45 +466,31 @@ begin
   if ( rlfJoints in AFlags ) then
     AList.PushRenderObject( Self, AWorld, nil );
 end;
-
+}
 { TP3DArmature }
 
 procedure TP3DArmature.SetJointTex(AValue: TP3DTexture);
 begin
-  if FJointTex=AValue then Exit;
-  if ( Assigned( JointTex )) then
-    begin
-      JointTex.RemoveUser( Self );
-      if ( OwnsJointTex ) then
-        JointTex.Free;
-    end;
-  FJointTex:=AValue;
+  FJointTex.AsValue:=AValue;
   OwnsJointTex:= False;
-  if ( Assigned( JointTex )) then
-    JointTex.AddUser( Self );
 end;
 
-class function TP3DArmature.GetContainer( ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DArmature.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Armatures;
-end;
-
-function TP3DArmature.GetDataPath: String;
-begin
-  Result:= 'Armatures[ "' + Name + '" ]';
+  Result:= ALib.Properties.GetPropByName( 'Armatures' );
 end;
 
 function TP3DArmature.GetJointTex: TP3DTexture;
 begin
-  Result:= FJointTex;
+  Result:= FJointTex.AsValue;
 end;
 
-procedure TP3DArmature.UpdateJointTex(Root: TP3DObject);
+procedure TP3DArmature.UpdateJointTex(ARoot: TP3DObject);
 var
   Buffer: TVec4List;
   i, j, w, h, n: Integer;
   m: TMat4;
-  q: TQuaternion;
+  q: TQuat;
   t: TVec4;
   rlist: TP3DRenderList;
   Capt: String;
@@ -452,26 +505,26 @@ var
   end;
 
 begin
-  if ( Assigned( FJointTex )) then
+  if ( Assigned( FJointTex.AsValue )) then
     begin
       if ( OwnsJointTex ) then
-        FJointTex.Free
+        FJointTex.AsValue.Free
       else
-        FJointTex.RemoveUser( Self );
+        FJointTex.AsValue:= nil;
     end;
 
   rlist:= TP3DRenderList.Create;
-  Root.AddToRenderList( nil, Mat4Identity, rlist, [ rlfJoints ]);
+  ARoot.AddToRenderList( nil, Mat4Identity, rlist, [ rlfJoints ]);
   Buffer:= TVec4List.Create;
   w:= getNextPower2( Joints.Count );
   h:= 1;
   for i:= 0 to h - 1 do
     for j:= 0 to w - 1 do
       if ( j >= Joints.Count ) then
-        Buffer.Add([ vec4( 1, 0, 0, 0 ), vec4( 0, 1, 0, 0 ), vec4( 0, 0, 1, 0 ), vec4( 0, 0, 0, 1 )])
+        Buffer.AddArray([ vec4( 1, 0, 0, 0 ), vec4( 0, 1, 0, 0 ), vec4( 0, 0, 1, 0 ), vec4( 0, 0, 0, 1 )])
       else
         begin
-          n:= rlist.Find( Joints.NamedItems[ j ], nil );
+          {n:= rlist.Find( Joints.NamedItems[ j ], nil );
 
           Joint:= Joints.NamedItems[ j ];
           JointObj:= TP3DObject( Joint.Users[ 0 ]);
@@ -494,19 +547,19 @@ begin
 
                 Buffer.Add([ q, t ]);
               end;
-          end;
+          end;}
         end;
-  FJointTex:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr, Owner );
+  FJointTex.AsValue:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr, OwnerLib );
   OwnsJointTex:= True;
-  FJointTex.AddUser( Self );
   //FJointTex.SaveToFile( '/tmp/jointtex' + FJointTex.Name + '.png' );
   Buffer.Free;
   rlist.Free;
 end;
 
-function TP3DArmature.CalculateJointMatrixFromObj(AObj: TP3DObject; InvMatrix: TMat4 ): TMat4;
+function TP3DArmature.CalculateJointMatrixFromObj( AObj: TP3DObject; InvMatrix: TMat4 ): TMat4;
 var
   Obj: TP3DObject;
+  Modifier: TP3DObjectModifierArmature;
 begin
   Result:= Mat4Identity;
   Obj:= AObj;
@@ -522,40 +575,44 @@ begin
         Obj:= nil;
     end;
   Result:= InvMatrix * Result;
+  {Modifier:= ObjGetArmatureModifier( AObj );
   if ( Assigned( AObj ) and ( AObj.Data is TP3DJoint )) then
-    Result:= Result * TP3DJoint( AObj.Data ).MatrixInv;
+    Result:= Result * TP3DJoint( AObj.Data ).MatrixInv;}
 end;
 
-procedure TP3DArmature.ClearFields;
+function TP3DArmature.GetObjArmatureModifier(AObj: TP3DObject): TP3DObjectModifierArmature;
+var
+  Modifier: TP3DObjectModifier;
 begin
-  inherited ClearFields;
+  Result:= nil;
+  for Modifier in AObj.Modifiers do
+    if (( Modifier is TP3DObjectModifierArmature ) and ( TP3DObjectModifierArmature( Modifier ).Armature = Self )) then
+      begin
+        Result:= TP3DObjectModifierArmature( Modifier );
+        break;
+      end;
 end;
 
-procedure TP3DArmature.RemoveFromFields(Block: TP3DDataBlock);
+constructor TP3DArmature.CreateBlock(const AData: TP3DLibrary);
 begin
-  inherited RemoveFromFields(Block);
-end;
-
-constructor TP3DArmature.Create(const AData: TP3DLibrary);
-begin
-  inherited Create( AData );
-  FJoints:= TP3DJointList.Create( Self );
+  inherited CreateBlock( AData );
+  FJoints:= TP3DRestJointContainerList.Create( 'Joints', smText );
   FJoints.Armature:= Self;
-  FRotations:= TQuaternionList.Create;
+  FJointTex:= TP3DTextureContainer.Create( 'Joints', smText );
+  FRotations:= TQuatList.Create;
   FTranslations:= TVec3List.Create;
-  Properties.Add( TP3DPropertyAccessJointList.CreateField( 'Joints', @FJoints, smAttribute ));
+  Properties.Add([ FJointTex, FJoints ]);
   MaterialModifier:= TP3DMaterialModifierArmature.Create( Self );
 end;
 
-procedure TP3DArmature.FastDestroy;
+destructor TP3DArmature.Destroy;
 begin
   FRotations.Free;
   FTranslations.Free;
-  FJoints.Clear( False );
   FJoints.Free;
   MaterialModifier.Free;
 
-  inherited FastDestroy;
+  inherited Destroy;
 end;
 
 procedure TP3DArmature.Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
@@ -570,10 +627,17 @@ end;
 
 { TP3DObjectModifierArmature }
 
+function TP3DObjectModifierArmature.GetArmature: TP3DArmature;
+begin
+  Result:= FArmature.AsValue;
+end;
+
 procedure TP3DObjectModifierArmature.SetArmature(AValue: TP3DArmature);
 begin
-  if FArmature=AValue then Exit;
-  FArmature:=AValue;
+  if ( FArmature.AsValue = AValue ) then
+    exit;
+
+  FArmature.AsValue:= AValue;
   UpdateMaterials;
 end;
 
@@ -583,16 +647,13 @@ begin
   UpdateMaterials;
 end;
 
-constructor TP3DObjectModifierArmature.Create;
+constructor TP3DObjectModifierArmature.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create;
-  Properties.Add( TP3DPropertyAccessArmature.CreateFieldSet( 'Armature', @FArmature, @SetArmature, smAttribute ));
-end;
-
-constructor TP3DObjectModifierArmature.CreateFromJSONContext(AContext: TP3DJSONContext);
-begin
-  Create;
-  LoadFromJSONContext( AContext );
+  inherited Create( AOwner );
+  FPose:= TP3DPoseJointContainerList.Create( 'Pose', smText );
+  Properties.Add( FPose );
+  FArmature:= TP3DArmaturePointer.Create( 'Armature', smText );
+  Properties.Add( FArmature );
 end;
 
 procedure TP3DObjectModifierArmature.UpdateMaterials;
@@ -607,7 +668,7 @@ begin
         if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
           begin
             //TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierArmature.Create( Self ));
-            TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShaderSubset( Obj.Modifiers, Obj.DataPath );
+            TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShaderSubset( Obj.Modifiers, Obj.Owner.GetFullPath );
           end;
       FInitialized:= True;
     end;
@@ -622,9 +683,9 @@ var
   decl: TP3DShaderDecl;
   joint: TP3DJoint;
   poslist: TVec3List;
-  quatList: TQuaternionList;
+  quatList: TQuatList;
   i: Integer;
-  quat: TQuaternion;
+  quat: TQuat;
 begin
   if ( not Initialized ) then
     UpdateMaterials;
@@ -689,157 +750,6 @@ begin
 end;
 
 
-{ TP3DMeshModifierArmature }
-{
-procedure TP3DMeshModifierArmature.SetArmature(AValue: TP3DArmature);
-begin
-  if FArmature=AValue then Exit;
-  FArmature:=AValue;
-  if ( Assigned( Mesh )) then
-    begin
-      Mesh.FArmature:= AValue;
-      //UpdateMaterials;
-    end;
-end;
-
-procedure TP3DMeshModifierArmature.SetMesh(AValue: TP3DMesh);
-begin
-  inherited SetMesh(AValue);
-  if ( Assigned( Mesh )) then
-    begin
-      Mesh.FArmature:= Armature;
-      //UpdateMaterials;
-    end;
-end;
-
-constructor TP3DMeshModifierArmature.Create( AMesh: TP3DMesh );
-begin
-  inherited Create( AMesh );
-
-  Properties.Add( TP3DPropertyAccessArmature.CreateFieldSet( 'Armature', @FArmature, @SetArmature, smAttribute ));
-  FInitialized:= False;
-end;
-
-destructor TP3DMeshModifierArmature.Destroy;
-begin
-  inherited Destroy;
-end;
-
-procedure TP3DMeshModifierArmature.UpdateMaterials;
-var
-  i: Integer;
-begin
-  if ( Assigned( Mesh )) then
-    begin
-      for i:= 0 to Mesh.MaterialGroups.Count -1 do
-        if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
-          begin
-            TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierArmature.Create( Self ));
-            TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
-          end;
-      FInitialized:= True;
-    end;
-end;
-
-procedure TP3DMeshModifierArmature.PassToShader( Material: TP3DMaterial; var world: TMat4 );
-  function RealMod (x, y : extended) : extended;
-  begin
-     Result := x - y * Trunc(x/y);
-  end;
-var
-  decl: TP3DShaderDecl;
-  joint: TP3DJoint;
-  poslist: TVec3List;
-  quatList: TQuaternionList;
-  i: Integer;
-  quat: TQuaternion;
-begin
-  if ( not Initialized ) then
-    UpdateMaterials;
-  if ( Assigned( Armature ) {and Assigned( Armature.CurrentAction )}) then
-    begin
-      {Armature.CurrentAction.UpdateFrameSample;
-      decl:= Material.Shader.Uniforms.Names[ 'jointPos[0]' ];
-      if ( Assigned( decl )) then
-        begin
-          {poslist:= TVec3List.Create;
-          for joint in Armature.Joints do
-            poslist.Add( joint.Position );
-          decl.SetAsVec3List( poslist );
-          poslist.Free;}
-          decl.AsVec3List:= Armature.CurrentAction.FrameSample.Translations;
-        end;
-      //if ( Assigned( decl )) then
-      //  decl.SetAsVec3List( Armature.CurrentAction.FrameSample.Translations );
-      decl:= Material.Shader.Uniforms.Names[ 'jointQuat[0]' ];
-      if ( Assigned( decl )) then
-        decl.AsQuatList:= Armature.CurrentAction.FrameSample.Rotations;
-      {for i:= 0 to 5 do //Armature.CurrentAction.FrameSample.Rotations.Count - 1 do
-        begin
-          glGetUniformfv( Material.Shader.ProgramObj, glGetUniformLocation( Material.Shader.ProgramObj, PChar( 'jointPos[' + IntToStr( i ) + ']' )), @quat );
-          WriteLn( quat.xyz.ToString() );
-        end;}
-      //WriteLn( Material.Shader.DumpUniforms );
-      //quatList:= decl.AsQuatList;
-      //for i:= 0 to quatList.Count - 1 do
-      //  WriteLn( quatList[ i ].ToString());
-      //quatList.Free;}
-      //Material.PassToShader();
-      Armature.UpdateJointTex( TP3DObject( Armature.Users.Items[ 0 ]));
-      i:= Material.Maps.Count;
-      glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-      glBindTexture( GL_TEXTURE_2D, Armature.JointTex.GLTexture ); cle( Self );
-
-      decl:= Material.Shader.Uniforms.Names[ 'jointTex' ];
-      if ( Assigned( decl )) then
-        decl.AsInt:= i;
-      decl:= Material.Shader.Uniforms.Names[ 'jointTexWidth' ];
-      if ( Assigned( decl )) then
-        decl.AsInt:= Armature.JointTex.Width;
-      decl:= Material.Shader.Uniforms.Names[ 'jointTexHeight' ];
-      if ( Assigned( decl )) then
-        decl.AsInt:= Armature.JointTex.Height;
-      decl:= Material.Shader.Uniforms.Names[ 'to_arm' ];
-      if ( Assigned( decl )) then
-        decl.AsMat4:= Mat4Identity;
-      //Armature.CurrentAction.CurrentFrame:= SDL_GetTicks() / 100;
-      //P3DApplication.MainWindow.Title:= FloatToStr( Armature.CurrentAction.CurrentFrame ) + ':' + FloatToStr( frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count ));
-      decl:= Material.Shader.Uniforms.Names[ 'time' ];
-      if ( Assigned( decl )) then
-        decl.AsFloat:= 0;//frac( Armature.CurrentAction.CurrentFrame / Armature.CurrentAction.Frames.Count );
-    end;
-end;
-
-procedure TP3DMeshModifierArmature.LoadFromDOM(ADOMNode: TDOMElement);
-var
-  data: DOMString;
-  i: Integer;
-begin
-  {
-  data:= ADOMNode.GetAttribute( 'data' );
-  Armature:= TP3DArmature( Mesh.Owner.DataBlocks[ Mesh.Owner.AppendFromPath( data, TP3DArmature )]);
-  for i:= 0 to Mesh.MaterialGroups.Count -1 do
-    if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
-      begin
-        TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierArmature.Create( Self ));
-        TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
-      end;}
-end;
-
-procedure TP3DMeshModifierArmature.LoadFromDOMNew(ADOMNode: TDOMElement);
-var
-  i: Integer;
-begin
-  inherited LoadFromDOMNew( ADOMNode );
-  for i:= 0 to Mesh.MaterialGroups.Count -1 do
-    if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then
-      begin
-        TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierArmature.Create( Self ));
-        TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
-      end;
-end;
-}
-
 { TP3DMaterialModifierArmature }
 
 constructor TP3DMaterialModifierArmature.Create(AArmature: TP3DArmature);
@@ -878,7 +788,83 @@ begin
   Result:= 25;
 end;
 
-{ TP3DArmatureAction }
+
+{ TP3DPoseJoint }
+
+procedure TP3DPoseJoint.OnChildrenChange(Sender: TObject; Item: TP3DPoseJoint; Action: TP3DListOnChangeAction);
+begin
+  if ( Action = actAdd ) then
+    Item.FParent:= Self
+  else
+    Item.FParent:= nil;
+end;
+
+procedure TP3DPoseJoint.SetParent(AValue: TP3DPoseJoint);
+begin
+  if FParent=AValue then Exit;
+  FParent:=AValue;
+end;
+
+constructor TP3DPoseJoint.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create( AOwner );
+  FChildren:= TP3DPoseJointPointerList.Create( 'Children', smText );
+  Properties.Add( FChildren );
+  FChildren.OnChange:= @OnChildrenChange;
+end;
+
+{ TP3DRestJoint }
+
+procedure TP3DRestJoint.SetArmature(AValue: TP3DArmature);
+begin
+  if FArmature=AValue then Exit;
+
+  if ( Assigned( Armature )) then
+    Armature.Joints.Remove( Self );
+  FArmature:=AValue;
+
+  if ( Assigned( Armature )) then
+    Armature.Joints.Add( Self );
+end;
+
+procedure TP3DRestJoint.SetParent(AValue: TP3DRestJoint);
+begin
+  FParent.AsValue:= AValue;
+end;
+
+function TP3DRestJoint.GetTransformLocal: TP3DTransform;
+begin
+  Result:= FTransformLocal.AsValue;
+end;
+
+function TP3DRestJoint.GetParent: TP3DRestJoint;
+begin
+  Result:= FParent.AsValue;
+end;
+
+constructor TP3DRestJoint.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create( AOwner );
+  FTransformLocal:= TP3DTransformContainer.Create( 'Transform', smText );
+  FTransformLocal.AsValue:= TP3DTransform.Create( FTransformLocal );
+  FChildren:= TP3DRestJointPointerList.Create( 'Children', smText );
+  FParent:= TP3DRestJointPointer.Create( 'Parent', smText );
+  Properties.Add( FTransformLocal, 'Joint' );
+  Properties.Add( FParent, 'Joint' );
+  Properties.Add( FChildren, 'Joint' );
+
+  //FTransformLocal.OnChange:= @OnTransformChange;
+end;
+
+
+
+destructor TP3DRestJoint.Destroy;
+begin
+  FChildren.Free;
+  FTransformLocal.Free;
+  inherited Destroy;
+end;
+
 
 {$ENDIF}
 

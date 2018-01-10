@@ -18,7 +18,7 @@ type
       procedure SetFontSize(AValue: Integer);
 
     public
-      procedure Assign( Font: TP3DCanvasFont );
+      procedure Assign( Font: TP3DCanvasFont ); reintroduce;
       constructor Create;
 
       property Color: TP3DColorRGBA read FFontColor write SetFontColor; //Object properties can't be published for some reason
@@ -88,7 +88,7 @@ type
       FLockID: Integer;
       FMaterial: TP3DMaterialBase;
       FOffScreenCanvas: Boolean;
-      FOwner: TPersistent;
+      FOwner: TObject;
       FRect: TP3DRect;
       FScreenColor: TVec4;
 
@@ -106,7 +106,7 @@ type
     public
       function Lock(): Integer; virtual;
       procedure Unlock();
-      constructor Create( AOwner: TPersistent );
+      constructor Create( AOwner: TObject );
       destructor Destroy; override;
 
       property Rect: TP3DRect read FRect write FRect;
@@ -118,7 +118,7 @@ type
       property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
       property WidthHeight: TVec2 read GetWidthHeight write SetWidthHeight;
       property LockID: Integer read FLockID write FLockID;
-      property Owner: TPersistent read FOwner write FOwner;
+      property Owner: TObject read FOwner write FOwner;
       property Font: TP3DCanvasFont read FFont write FFont; //TODO: OnChange event for font should fire redraw of texts in components
       property ScreenColor: TVec4 read FScreenColor write FScreenColor;
       property Material: TP3DMaterialBase read FMaterial write FMaterial;
@@ -139,7 +139,7 @@ procedure InitDefaultMat;
 begin
   if ( not Assigned( P3DCanvasMaterialDefault )) then
     begin
-      P3DCanvasMaterialDefault:= TP3DMaterialBase.Create();
+      P3DCanvasMaterialDefault:= TP3DMaterialBase.CreateBlock();
       P3DCanvasMaterialDefault.Name:= 'CanvasDefaultMat';
       P3DCanvasMaterialDefault.Unlit:= True;
       P3DCanvasMaterialDefault.UseVertexColor:= True;
@@ -285,7 +285,7 @@ begin
     UpdateLockedArea();
 end;
 
-procedure TP3DCanvas.UpdateLockedArea;
+procedure TP3DCanvas.UpdateLockedArea();
 var
   VP: TP3DViewport;
 begin
@@ -311,7 +311,7 @@ begin
     raise Exception.Create( 'TP3DCanvas.CheckDrawingAllowed: The canvas material is currently unassigned!' );
 end;
 
-function TP3DCanvas.Lock: Integer;
+function TP3DCanvas.Lock(): Integer;
 begin
   if ( LockID >= 0 ) then
     raise Exception.Create( 'TP3DCanvas.Lock: Failed to lock canvas. The canvas is already locked!' );
@@ -319,7 +319,7 @@ begin
   Result:= LockID;
 end;
 
-procedure TP3DCanvas.Unlock;
+procedure TP3DCanvas.Unlock();
 begin
   //P3DViewports.DebugShowVP( vec4( 1, 0, 0, 0.1 ));
   if ( LockID <> P3DViewports.Count - 1 ) then
@@ -328,7 +328,7 @@ begin
   LockID:= -1;
 end;
 
-constructor TP3DCanvas.Create(AOwner: TPersistent);
+constructor TP3DCanvas.Create(AOwner: TObject);
 begin
   inherited Create;
   FFont:= TP3DCanvasFont.Create;

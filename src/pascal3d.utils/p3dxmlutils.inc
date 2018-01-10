@@ -54,6 +54,7 @@ var
 
 begin
   iPos := 1;
+  Result:= '';
   for i := 1 to Length( Data ) do
     if ( Data[ i ] = '&' ) then
       begin

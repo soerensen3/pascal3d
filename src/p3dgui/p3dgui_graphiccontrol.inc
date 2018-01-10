@@ -55,7 +55,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure SetTopLeft(AValue: TVec2); virtual;
     procedure SetWidth(AValue: Single); virtual;
     procedure SetWidthHeight(AValue: TVec2); virtual;
-    class function GetContainer( ALib: TP3DLibrary ): TP3DNamedInterfacedPersistentList; override;
+    class function GetContainer( ALib: TP3DLibrary ): IP3DStreamableContainer; override;
 
   protected
     FAlign: TP3DControlAlign;
@@ -115,9 +115,8 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property HideChildren: Boolean read FHideChildren write FHideChildren; //Do not call children's render procedure
 
   public
-    constructor Create(const AData: TP3DLibrary; const AParent: TP3DGraphicControl); virtual;
-    constructor Create( const AData: TP3DLibrary = nil ); override;
-    procedure FastDestroy; override;
+    constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl = nil ); reintroduce; virtual;
+    destructor Destroy; override;
 
     procedure BeginDrag(); virtual; //Start drag and drop with control as drag source
     procedure Draw; virtual;
@@ -191,11 +190,10 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property NeedsUpdate: Boolean read FNeedsUpdate write FNeedsUpdate;
 end;
 
-TP3DControlContainer = specialize gP3DDatablockContainer < TP3DGraphicControl >;
-
-
-TP3DPropertyAccessGraphicControl = specialize gP3DPropertyAccessDataBlock < TP3DGraphicControl >;
-TP3DPropertyAccessGraphicControlList = specialize gP3DListPropertyAccessInterfacedPersistent < TP3DControlList, TP3DGraphicControl, TP3DPropertyAccessGraphicControl >;
+  TP3DGraphicControlContainer = specialize gP3DStreamableContainer < TP3DGraphicControl >;
+  TP3DGraphicControlPointer = specialize gP3DStreamablePointer < TP3DGraphicControl >;
+  TP3DGraphicControlContainerList = specialize gP3DNamedStreamableList < TP3DGraphicControl, TP3DGraphicControlContainer >;
+  TP3DGraphicControlPointerList = specialize gP3DNamedStreamableList < TP3DGraphicControl, TP3DGraphicControlPointer >;
 
 {$ENDIF}
 
@@ -203,11 +201,11 @@ TP3DPropertyAccessGraphicControlList = specialize gP3DListPropertyAccessInterfac
 
 { TP3DGraphicControl }
 
-constructor TP3DGraphicControl.Create(const AData: TP3DLibrary;
-  const AParent: TP3DGraphicControl);
+constructor TP3DGraphicControl.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
 begin
-  inherited Create( AData );
-  Controls:= TP3DControlList.Create( Self );
+  inherited CreateBlock( AData );
+  Controls:= TP3DControlList.Create;
+  Controls.FParent:= Self;
   FCanvas:= TP3DCanvas2D.Create( Self );
   if ( Assigned( AParent )) then
     ParentCtrl:= AParent.Controls
@@ -223,40 +221,35 @@ begin
 
   Cursor:= curArrow;
 
-  Properties.Add( [ TP3DPropertyAccessRTTI.Create( Self, 'Align', smAttribute ),
-                    TP3DPropertyAccessVec2.CreateGetSet( 'TopLeft', @GetTopLeft, @SetTopLeft ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'MinWidth', smAttribute ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'MaxWidth', smAttribute ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'MinHeight', smAttribute ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'MaxHeight', smAttribute )],
+  Properties.Add( [ TP3DPropAccessRTTI.Create( Self, 'Align', smText ),
+                    TP3DPropAccessVec2.CreateGetSet( 'TopLeft', @GetTopLeft, @SetTopLeft ),
+                    TP3DPropAccessRTTI.Create( Self, 'MinWidth', smText ),
+                    TP3DPropAccessRTTI.Create( Self, 'MaxWidth', smText ),
+                    TP3DPropAccessRTTI.Create( Self, 'MinHeight', smText ),
+                    TP3DPropAccessRTTI.Create( Self, 'MaxHeight', smText )],
                     'Position and Size' );
 
-  Properties.Add( [ TP3DPropertyAccessVec4.CreateFieldSet( 'Margin', @FMargin, @SetMargin, smAttribute ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'NoMargin', smAttribute )],
+  Properties.Add( [ TP3DPropAccessVec4.CreateFieldSet( 'Margin', @FMargin, @SetMargin, smText ),
+                    TP3DPropAccessRTTI.Create( Self, 'NoMargin', smText )],
                     'Margin' );
 
   Properties.Add( [
-                    TP3DPropertyAccessRTTI.Create( Self, 'Enabled', smAttribute ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'Visible', smAttribute ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'Focused', smAttribute ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'Cursor', smAttribute )],
+                    TP3DPropAccessRTTI.Create( Self, 'Enabled', smText ),
+                    TP3DPropAccessRTTI.Create( Self, 'Visible', smText ),
+                    TP3DPropAccessRTTI.Create( Self, 'Focused', smText ),
+                    TP3DPropAccessRTTI.Create( Self, 'Cursor', smText )],
                     'Behavior' );
 
-  Properties.Add( [ TP3DPropertyAccessGraphicControl.CreateGetSet( 'Parent', @GetParent, @SetParent, smAttribute ),
-                    TP3DPropertyAccessVec2.CreateGetSet( 'Scroll', @GetScroll, @SetScroll ),
-                    TP3DPropertyAccessRTTI.Create( Self, 'Tag', smAttribute )],
+  Properties.Add( [ TP3DPropAccessGraphicControl.CreateGetSet( 'Parent', @GetParent, @SetParent, smText ),
+                    TP3DPropAccessVec2.CreateGetSet( 'Scroll', @GetScroll, @SetScroll ),
+                    TP3DPropAccessRTTI.Create( Self, 'Tag', smText )],
                     'Other' );
-  //Properties.Add( TP3DPropertyAccesslRTTI.Create( Self, 'ClientRect', smAttribute )); //cannot be published
-  Properties.Add( TP3DPropertyAccessGraphicControlList.CreateField( 'Controls', @FControls, smAttribute )); //cannot be published
+  //Properties.Add( TP3DPropAccesslRTTI.Create( Self, 'ClientRect', smText )); //cannot be published
+  Properties.Add( TP3DPropAccessGraphicControlList.CreateField( 'Controls', @FControls, smText )); //cannot be published
   //property Controls: TP3DControlList read FControls write FControls;
 end;
 
-constructor TP3DGraphicControl.Create(const AData: TP3DLibrary);
-begin
-  Create( AData, nil );
-end;
-
-procedure TP3DGraphicControl.FastDestroy;
+destructor TP3DGraphicControl.Destroy;
 begin
   P3DGUIManager.CtrlDeleteNotifier( Self );
   ParentCtrl.Remove( Self );
@@ -374,9 +367,13 @@ begin
   NeedsUpdate:= True;
 end;
 
-class function TP3DGraphicControl.GetContainer(ALib: TP3DLibrary): TP3DNamedInterfacedPersistentList;
+class function TP3DGraphicControl.GetContainer(ALib: TP3DLibrary): IP3DStreamableContainer;
+var
+  Prop: TP3DPropertyAccess;
 begin
-  Result:= P3DGUIManager.ControlContainer;
+  Prop:= P3DGUIManager.Properties.GetPropByName( 'Controls' );
+  if ( Prop is IP3DStreamableContainer ) then
+    Result:= Prop as IP3DStreamableContainer;
 end;
 
 function TP3DGraphicControl.GetFocused: Boolean;
