@@ -58,19 +58,19 @@ type
       property Obj: TP3DObject read FObject write SetObj;
   end;
 
-  TP3DObjectModifierContainer = specialize gP3DStreamableContainer < TP3DObjectModifier >;
+  {TP3DObjectModifierContainer = specialize gP3DStreamableContainer < TP3DObjectModifier >;
   TP3DPropAccessObjectModifierPointer = specialize gP3DStreamablePointer < TP3DObjectModifier >;
   //TP3DObjectModifierContainerList = specialize gP3DStreamableContainerList < TP3DObjectModifier, TP3DObjectModifierContainer >;
   TP3DObjectModifierPointerList = specialize gP3DStreamableList < TP3DObjectModifier, TP3DPropAccessObjectModifierPointer >;
-
+  }
   { TP3DObjectModifierContainerList }
 
-  TP3DObjectModifierContainerList = class( specialize gP3DStreamableContainerList < TP3DObjectModifier, TP3DObjectModifierContainer >)
+  TP3DObjectModifierContainerList = class( specialize gP3DStreamableContainerList < TP3DObjectModifier >)
     private
       FParentObject: TP3DObject;
 
     public
-      procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
+      procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
 
       property ParentObject: TP3DObject read FParentObject;
   end;
@@ -79,7 +79,7 @@ type
     protected
       FChildren: TP3DObjectPointerList;
       FCollision: TP3DObjectCollision;
-      FData: TP3DDataBlockPointer;
+      FData: TP3DStreamablePointer;
       FMatrixFinal: TMat4;
       FParent: TP3DDataBlock;
       FScene: TP3DScene;
@@ -89,10 +89,10 @@ type
       function GetData: TP3DDataBlock;
       procedure SetData( AValue: TP3DDataBlock );
       procedure SetScene( AValue: TP3DScene );
-      procedure OnObjChange( ASender: TObject; AItem: TP3DObject; AAction: TP3DListOnChangeAction );
+      procedure OnObjChange( ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction );
 
     public
-      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
@@ -120,7 +120,7 @@ type
 
       // IP3DAnimatable -->
     private
-      FAction: TP3DActionPointer;
+      FAction: TP3DStreamablePointer;
 
       function GetAction: TP3DAction;
       procedure SetAction( AValue: TP3DAction );
@@ -156,7 +156,7 @@ type
 
       //IP3DTransform -->
     private
-      FTransform: TP3DTransformContainer;
+      FTransform: TP3DStreamableContainer;
 
       function GetTransform: TP3DTransform;
       procedure SetTransform(AValue: TP3DTransform);
@@ -170,14 +170,13 @@ type
 
   TP3DRenderListModifier = class;
 
-  TP3DObjectContainer = specialize gP3DStreamableContainer < TP3DObject >;
+  {TP3DObjectContainer = specialize gP3DStreamableContainer < TP3DObject >;
   TP3DObjectPointer = specialize gP3DStreamablePointer < TP3DObject >;
-  TP3DObjectContainerList = specialize gP3DNamedStreamableContainerList < TP3DObject, TP3DObjectContainer >;
   //TP3DObjectPointerList = class( specialize gP3DNamedStreamableList < TP3DObject, TP3DObjectPointer >);
+  }
+  TP3DObjectContainerList = specialize gP3DNamedStreamableContainerList < TP3DObject >;
 
-
-  { TP3DObjectList }
-  TP3DObjectPointerList = class( specialize gP3DStreamableList < TP3DObject, TP3DObjectPointer > )
+  TP3DObjectPointerList = class( specialize gP3DStreamablePointerList < TP3DObject > )
     private
       //FOwner: TPersistent;
 
@@ -200,17 +199,18 @@ type
 
 { TP3DObject }
 
-procedure TP3DObject.OnObjChange(ASender: TObject; AItem: TP3DObject; AAction: TP3DListOnChangeAction);
+procedure TP3DObject.OnObjChange(ASender: TObject; AItem: TP3DStreamable;
+  AAction: TP3DListOnChangeAction);
 begin
   if ( AAction = actAdd ) then
-    AItem.FParent:= Self
+    TP3DObject( AItem ).FParent:= Self
   else
-    AItem.FParent:= nil;
+    TP3DObject( AItem ).FParent:= nil;
 end;
 
 function TP3DObject.GetData: TP3DDataBlock;
 begin
-  Result:= FData.AsValue;
+  Result:= TP3DDataBlock( FData.AsValue );
 end;
 
 procedure TP3DObject.SetData( AValue: TP3DDataBlock );
@@ -237,15 +237,15 @@ begin
   Result:= ALib.Properties.GetPropByName( 'Objects' );
 end;
 
-constructor TP3DObject.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DObject.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
   //Owner.Objects.Add( Self );
   FChildren:= TP3DObjectPointerList.Create( 'Children', smText );
   Children.OnChange:= @OnObjChange;
   FVisible:= True;
 
-  FTransform:= TP3DTransformContainer.Create( 'Transform', smText );
+  FTransform:= TP3DStreamableContainer.Create( 'Transform', TP3DTransform, smText );
   Properties.Add( FTransform, 'Transform' );
   //WriteLn( 'FTransform: ', Assigned( FTransform ));
   FTransform.AsValue:= TP3DTransform.Create( FTransform );
@@ -253,8 +253,8 @@ begin
   FModifiers:= TP3DObjectModifierContainerList.Create( 'Modifiers', smText );
   FModifiers.FParentObject:= Self;
 
-  FData:= TP3DDataBlockPointer.Create( 'Data', smText );
-  FAction:= TP3DActionPointer.Create( 'Action', smText );
+  FData:= TP3DStreamablePointer.Create( 'Data', TP3DDataBlock, smText );
+  FAction:= TP3DStreamablePointer.Create( 'Action', TP3DAction, smText );
 
   Properties.Add([ TP3DPropAccessRTTI.Create( Self, 'Visible', smText ),
                    TP3DPropAccessRTTI.Create( Self, 'Collision', smText ),
@@ -445,7 +445,7 @@ end;
 
 function TP3DObject.GetTransform: TP3DTransform;
 begin
-  Result:= FTransform.AsValue;
+  Result:= TP3DTransform( FTransform.AsValue );
 end;
 
 procedure TP3DObject.SetTransform(AValue: TP3DTransform);
@@ -496,7 +496,7 @@ end;
 
 function TP3DObject.GetAction: TP3DAction;
 begin
-  Result:= FAction.AsValue;
+  Result:= TP3DAction( FAction.AsValue );
 end;
 
 procedure TP3DObject.SetAction(AValue: TP3DAction);
@@ -533,7 +533,10 @@ begin
   if ( not Assigned( ARenderList )) then
     ARenderList:= TP3DRenderList.Create;
   for Obj in Self do
-    Obj.AddToRenderList( ARootScene, world, ARenderList, AFlags );
+    if ( Assigned( Obj )) then
+      Obj.AddToRenderList( ARootScene, world, ARenderList, AFlags )
+    else
+      WriteLn( 'Empty object in list ', GetFullPath );
 end;
 
 function TP3DObjectPointerList.OutputDebugInfo: String;
@@ -608,10 +611,10 @@ end;
 
 { TP3DObjectModifierContainerList }
 
-procedure TP3DObjectModifierContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
+procedure TP3DObjectModifierContainerList.Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
 begin
   inherited Notify(ASender, AItem, AAction);
-  AItem.Obj:= ParentObject;
+  TP3DObjectModifier( AItem ).Obj:= ParentObject;
 end;
 
 { TP3DObjectModifier }

@@ -37,7 +37,7 @@ TP3DTileGrid = class ( TP3DDataBlock, IP3DCollidable, IP3DRenderable )
   public
     procedure UpdateArrays;
 
-    constructor CreateBlock( const AData: TP3DLibrary=nil ); override;
+    constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
     destructor Destroy; override;
 
     class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
@@ -86,11 +86,11 @@ TP3DTileGrid = class ( TP3DDataBlock, IP3DCollidable, IP3DRenderable )
     //<-- IP3DCollidable
 end;
 
-TP3DTileGridContainer = specialize gP3DStreamableContainer < TP3DTileGrid >;
+{TP3DTileGridContainer = specialize gP3DStreamableContainer < TP3DTileGrid >;
 TP3DTileGridPointer = specialize gP3DStreamablePointer < TP3DTileGrid >;
-TP3DTileGridContainerList = specialize gP3DNamedStreamableContainerList < TP3DTileGrid, TP3DTileGridContainer >;
 TP3DTileGridPointerList = specialize gP3DNamedStreamableList < TP3DTileGrid, TP3DTileGridPointer >;
-
+}
+TP3DTileGridContainerList = specialize gP3DNamedStreamableContainerList < TP3DTileGrid >;
 { TP3DGridScene }
 
 TP3DGridScene = class ( TP3DStreamable )
@@ -98,8 +98,8 @@ TP3DGridScene = class ( TP3DStreamable )
     FObjectList: TP3DRenderList;
     FInstances: TP3DFloatBufferGL;
     FModifier: TP3DRenderListModifierGrid;
-    FScene: TP3DScenePointer;
-    FTileGrid: TP3DTileGridPointer;
+    FScene: TP3DStreamablePointer;
+    FTileGrid: TP3DStreamablePointer;
 
     function GetScene: TP3DScene;
     function GetTileGrid: TP3DTileGrid;
@@ -150,12 +150,12 @@ end;
 
 function TP3DGridScene.GetTileGrid: TP3DTileGrid;
 begin
-  Result:= FTileGrid.AsValue;
+  Result:= TP3DTileGrid( FTileGrid.AsValue );
 end;
 
 function TP3DGridScene.GetScene: TP3DScene;
 begin
-  Result:= FScene.AsValue;
+  Result:= TP3DScene( FScene.AsValue );
 end;
 
 procedure TP3DGridScene.SetTileGrid(AValue: TP3DTileGrid);
@@ -166,10 +166,10 @@ end;
 constructor TP3DGridScene.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
-  FTileGrid:= TP3DTileGridPointer.Create( 'TileGrid' );
+  FTileGrid:= TP3DStreamablePointer.Create( 'TileGrid', TP3DTileGrid );
   FModifier:= TP3DRenderListModifierGrid.Create( Self );
   FInstances:= TP3DFloatBufferGL.Create;
-  FScene:= TP3DScenePointer.Create( 'Scene', smText );
+  FScene:= TP3DStreamablePointer.Create( 'Scene', TP3DScene, smText );
   Properties.Add([ FTileGrid, FScene ]);
 end;
 
@@ -271,9 +271,9 @@ begin
     Scenes[ i ].Instances.PushData;
 end;
 
-constructor TP3DTileGrid.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DTileGrid.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
   Scenes:= TP3DGridSceneList.Create;
   GridData:= TP3DGridSceneList.Create;
   GridData.OnChange:= @OnGridDataChange;

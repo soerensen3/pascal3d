@@ -51,7 +51,7 @@ type
       class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor CreateFromFile( AFileName: String; const AData: TP3DLibrary = nil );
       constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary = nil);
       constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DLibrary = nil );
@@ -80,10 +80,10 @@ type
       property NumChannels: Integer read FNumChannels;
   end;
 
-  TP3DTextureContainer = specialize gP3DStreamableContainer < TP3DTexture >;
+  {TP3DTextureContainer = specialize gP3DStreamableContainer < TP3DTexture >;
   TP3DTexturePointer = specialize gP3DStreamablePointer < TP3DTexture >;
-  TP3DTextureContainerList = specialize gP3DNamedStreamableContainerList < TP3DTexture, TP3DTextureContainer >;
-  TP3DTexturePointerList = specialize gP3DStreamableList < TP3DTexture, TP3DTexturePointer >;
+  TP3DTexturePointerList = specialize gP3DStreamableList < TP3DTexture, TP3DTexturePointer >;}
+  TP3DTextureContainerList = specialize gP3DNamedStreamableContainerList < TP3DTexture >;
 
 {$ENDIF}
 
@@ -413,9 +413,9 @@ begin
   Result:= ALib.Properties.GetPropByName( 'Textures' );
 end;
 
-constructor TP3DTexture.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DTexture.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData);
+  inherited Create( AOwner );
   FFileWatch:= TP3DFilePointer.Create( '' );
   FileWatch.OnFileNameChange:= @FileNameChanged;
   //OwnerLib.Textures.Add( Self );

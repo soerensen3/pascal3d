@@ -73,11 +73,6 @@ type
       property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
-  TP3DTransformContainer = specialize gP3DStreamableContainer < TP3DTransform >;
-  TP3DTransformPointer = specialize gP3DStreamablePointer < TP3DTransform >;
-  //TP3DTransformContainerList = specialize gP3DStreamableContainerList < TP3DTransform, TP3DTransformContainer >;
-  //TP3DTransformPointerList = specialize gP3DStreamableList < TP3DTransform, TP3DTransformPointer >;
-
   { IP3DTransform }
 
   IP3DTransform = interface ( IP3DBaseInterface )

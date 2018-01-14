@@ -8,7 +8,7 @@ type
     This class manages the search paths relative to the base directory. It also introduces functions to find files in it's scope.
   }
 
-  TP3DSearchPathContainer = class( TP3DStreamable )
+  TP3DSearchPathContainer = class( TP3DJSONRoot )
     private
       FBaseDir: TP3DFilePointer;
       FPaths: TP3DFilePointerList;
@@ -35,7 +35,7 @@ type
 
   function P3DListFolderFiles( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
   function P3DListFolderDirectories( Folder: String; Recursive: Boolean; Relative: Boolean ): TStringList;
-  procedure P3DLoadConfig( FileName: String );
+//  procedure P3DLoadConfig( FileName: String );
   function P3DMatchFileName( FileName: String; Mask: String ): Boolean;
   function P3DLoadFileToString( FileName: String ): String;
   procedure P3DSaveStringToFile( FileName: String; AValue: String );
@@ -147,6 +147,8 @@ begin
   Result.Sort;
 end;
 
+{
+
 procedure ReadGeneral( BaseNode: TDOMElement );
 var
   rootdir: DOMString;
@@ -205,7 +207,7 @@ begin
     FreeAndNil( F );
   end;
 
-end;
+end;}
 
 function P3DMatchFileName(FileName: String; Mask: String): Boolean; //Credit to https://github.com/alrieckert/lazarus/blob/master/components/codetools/fileprocs.pas
 
@@ -514,6 +516,7 @@ destructor TP3DSearchPathContainer.Destroy;
 begin
   if ( Assigned( P3DConfig )) then
     P3DConfig.RemoveStreamable( 'P3DSearchPaths' );
+  Paths.Free;
   BaseDir.Free;
   inherited Destroy;
 end;

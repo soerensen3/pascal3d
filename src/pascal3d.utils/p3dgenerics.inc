@@ -5,12 +5,27 @@
 
   type
     TP3DListOnChangeAction = ( actAdd, actDelete, actClear );
+
+    generic gP3DListEnumerator < T > = class
+      private type
+        TMoveNext = function ( var AIndex: Integer; out AItem: T ): Boolean of object;
+      private
+        FCurrent: T;
+        FCurrentIdx: Integer;
+        FMoveNext: TMoveNext;
+
+      public
+        constructor Create( AStartIndex: Integer; AMoveNext: TMoveNext );
+        function MoveNext: Boolean;
+        property Current: T read FCurrent;
+        property CurrentIdx: Integer read FCurrentIdx;
+    end;
+
     { gP3DCustomList }
 
     generic gP3DCustomList < T > = class( TObject )
       public type
-        TList = specialize TFPGList < T >;
-        TEnumerator = specialize TFPGListEnumerator < T >;
+        TEnumerator = specialize gP3DListEnumerator < T >;
         TListNotifyEvent = procedure ( ASender: TObject; AItem: T; Action: TP3DListOnChangeAction ) of object;
 
       protected
@@ -23,6 +38,7 @@
         function GetItems( Index: Integer ): T;
         procedure SetItems( Index: Integer ; AValue: T);
 
+        function MoveNext( var AIndex: Integer; out AItem: T ): Boolean;
         procedure Notify( ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction ); virtual;
         procedure DoUpdate;
 
@@ -47,23 +63,65 @@
     end;
 
     { gP3DCustomObjectList }
+    generic gP3DCustomObjectList < T > = class( TObject )
+      public type
+        TEnumerator = specialize gP3DListEnumerator < T >;
+        TListNotifyEvent = procedure ( ASender: TObject; AItem: T; Action: TP3DListOnChangeAction ) of object;
 
-    generic gP3DCustomObjectList < T > = class ( specialize gP3DCustomList < T > )
       protected
-        FOwnsObjects: Boolean;
+        FItems: TObjectList;
+        FOnChange: TListNotifyEvent;
+        FLastUpdate: Integer;
 
-        procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
-        procedure FreeObjects( AFrom, ATo : Integer );
+        function GetOwnsObjects: Boolean;
+        procedure SetOwnsObjects(AValue: Boolean);
+        function GetCount: Integer; virtual;
+        procedure SetCount(AValue: Integer); virtual;
+        function GetItems( Index: Integer ): T;
+        procedure SetItems( Index: Integer ; AValue: T);
+
+        function MoveNext( var AIndex: Integer; out AItem: T ): Boolean;
+        procedure Notify( ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction ); virtual;
+        procedure DoUpdate;
 
       public
         constructor Create;
+        destructor Destroy; override;
 
-        property OwnsObjects: Boolean read FOwnsObjects write FOwnsObjects;
+        function GetEnumerator: TEnumerator;
+
+        function Add( Item: T ): Integer; virtual;
+        procedure Remove( AItem: T ); virtual;
+        procedure Delete( Index: Integer ); virtual;
+        procedure Clear; virtual;
+        procedure Insert( Index: Integer; Item: T ); virtual;
+
+        function IndexOf(AItem: Pointer): Integer; virtual;
+
+        property Items[ Index: Integer ]: T read GetItems write SetItems; default;
+        property OnChange: TListNotifyEvent read FOnChange write FOnChange;
+        property Count: Integer read GetCount write SetCount;
+        property LastUpdate: Integer read FLastUpdate;
+        property OwnsObjects: Boolean read GetOwnsObjects write SetOwnsObjects;
     end;
 
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+constructor gP3DListEnumerator.Create( AStartIndex: Integer; AMoveNext: TMoveNext );
+begin
+  inherited Create;
+  FillByte( FCurrent, SizeOf( FCurrent ), 0 );
+  FCurrentIdx:= AStartIndex;
+  FMoveNext:= AMoveNext;
+end;
+
+function gP3DListEnumerator.MoveNext: Boolean;
+begin
+  Result:= FMoveNext( FCurrentIdx, FCurrent );
+end;
+
 
 { gP3DCustomList }
 
@@ -79,7 +137,7 @@ end;
 
 function gP3DCustomList.GetItems(Index: Integer): T;
 begin
-  Result:= FItems[ Index ];
+  Result:= T( FItems[ Index ]);
 end;
 
 procedure gP3DCustomList.SetItems(Index: Integer; AValue: T);
@@ -90,6 +148,16 @@ begin
   Notify( Self, Item, actDelete );
   FItems[ Index ]:= AValue;
   Notify( Self, AValue, actAdd );
+end;
+
+function gP3DCustomList.MoveNext(var AIndex: Integer; out AItem: T): Boolean;
+begin
+  Inc( AIndex );
+  Result:= AIndex < Count;
+  if ( Result ) then
+    AItem:= Items[ AIndex ]
+  else
+    AItem:= default( T );
 end;
 
 procedure gP3DCustomList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
@@ -118,7 +186,7 @@ end;
 
 function gP3DCustomList.GetEnumerator: TEnumerator;
 begin
-  Result:= FItems.GetEnumerator;
+  Result:= TEnumerator.Create( -1, @MoveNext );
 end;
 
 function gP3DCustomList.Add(Item: T): Integer;
@@ -159,32 +227,118 @@ begin
     Result:= FItems.IndexOf( nil );
 end;
 
-
 { gP3DCustomObjectList }
+
+function gP3DCustomObjectList.GetOwnsObjects: Boolean;
+begin
+  Result:= FItems.OwnsObjects;
+end;
+
+procedure gP3DCustomObjectList.SetOwnsObjects(AValue: Boolean);
+begin
+  FItems.OwnsObjects:= AValue;
+end;
+
+function gP3DCustomObjectList.GetCount: Integer;
+begin
+  Result:= FItems.Count;
+end;
+
+procedure gP3DCustomObjectList.SetCount(AValue: Integer);
+begin
+  FItems.Count:= AValue;
+end;
+
+function gP3DCustomObjectList.GetItems(Index: Integer): T;
+begin
+  Result:= T( FItems[ Index ]);
+end;
+
+procedure gP3DCustomObjectList.SetItems(Index: Integer; AValue: T);
+var
+  Item: T;
+begin
+  Item:= Items[ Index ];
+  Notify( Self, Item, actDelete );
+  FItems[ Index ]:= TObject( AValue );
+  Notify( Self, AValue, actAdd );
+end;
+
+function gP3DCustomObjectList.MoveNext(var AIndex: Integer; out AItem: T): Boolean;
+begin
+  Inc( AIndex );
+  Result:= AIndex < Count;
+  if ( Result ) then
+    AItem:= Items[ AIndex ]
+  else
+    AItem:= default( T );
+end;
 
 procedure gP3DCustomObjectList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
 begin
-  inherited Notify(ASender, AItem, AAction);
-  if ( not Assigned( AItem )) then
-    exit;
-  if (( AAction = actDelete ) and OwnsObjects ) then
-    FreeObjects( IndexOf( AItem ), IndexOf( AItem ))
-  else if (( AAction = actClear ) and OwnsObjects ) then
-    FreeObjects( 0, Count - 1 );
+  if ( Assigned( OnChange )) then
+    OnChange( ASender, AItem, AAction );
+  DoUpdate;
 end;
 
-procedure gP3DCustomObjectList.FreeObjects(AFrom, ATo: Integer);
-var
-  i: Integer;
+procedure gP3DCustomObjectList.DoUpdate;
 begin
-  for i:= ATo downto AFrom do
-    Items[ i ].Free;
+  FLastUpdate:= GetTickCount64;
 end;
 
 constructor gP3DCustomObjectList.Create;
 begin
   inherited Create;
-  FOwnsObjects:= True;
+  FItems:= TObjectList.Create;
+end;
+
+destructor gP3DCustomObjectList.Destroy;
+begin
+  FreeAndNil( FItems );
+  inherited Destroy;
+end;
+
+function gP3DCustomObjectList.GetEnumerator: TEnumerator;
+begin
+  Result:= TEnumerator.Create( -1, @MoveNext );
+end;
+
+function gP3DCustomObjectList.Add(Item: T): Integer;
+begin
+  Result:= FItems.Add( TObject( Item ));
+  Notify( Self, Item, actAdd );
+end;
+
+procedure gP3DCustomObjectList.Remove(AItem: T);
+begin
+  Notify( Self, AItem, actDelete );
+  FItems.Remove( TObject( AItem ));
+end;
+
+procedure gP3DCustomObjectList.Delete(Index: Integer);
+begin
+  Notify( Self, Items[ Index ], actDelete );
+  FItems.Delete( Index );
+end;
+
+procedure gP3DCustomObjectList.Clear;
+begin
+  Notify( Self, Default( T ), actClear );
+  FItems.Clear;
+end;
+
+procedure gP3DCustomObjectList.Insert(Index: Integer; Item: T);
+begin
+  FItems.Insert( Index, TObject( Item ));
+  Notify( Self, Item, actAdd );
+end;
+
+function gP3DCustomObjectList.IndexOf(AItem: Pointer): Integer;
+begin
+  if ( Assigned( AItem )) then
+    Result:= FItems.IndexOf( TObject( AItem^ ))
+  else
+    Result:= FItems.IndexOf( nil );
 end;
 
 

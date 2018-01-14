@@ -32,10 +32,13 @@ type
     function Find( C: WideChar ): Integer;
   end;}
 
-  TP3DFontLetterContainer = specialize gP3DStreamableContainer < TP3DFontLetter >;
+  {TP3DFontLetterContainer = specialize gP3DStreamableContainer < TP3DFontLetter >;
   TP3DFontLetterPointer = specialize gP3DStreamablePointer < TP3DFontLetter >;
   TP3DFontLetterContainerList = specialize gP3DNamedStreamableContainerList < TP3DFontLetter, TP3DFontLetterContainer >;
   TP3DFontLetterPointerList = specialize gP3DNamedStreamableList < TP3DFontLetter, TP3DFontLetterPointer >;
+  }
+  TP3DFontLetterContainerList = specialize gP3DNamedStreamableContainerList < TP3DFontLetter >;
+  TP3DFontLetterPointerList = specialize gP3DStreamablePointerList < TP3DFontLetter >;
 
   { TP3DFontBmp }
 
@@ -46,7 +49,7 @@ type
       FMargin: Single;
       FMipMapLoadBias: Single;
       FSizeFactor: Single;
-      FTexture: TP3DTexturePointer;
+      FTexture: TP3DStreamablePointer;
 
       procedure SetFileName(AValue: String);
       procedure SetMipMapLodBias(AValue: Single);
@@ -54,7 +57,7 @@ type
       procedure SetTexture(AValue: TP3DTexture);
 
     public
-      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor CreateByFont( AFont: TP3DFont; AWidth, AHeight, AMargin: Integer; const AData: TP3DLibrary = nil );
 
       destructor Destroy; override;
@@ -71,11 +74,11 @@ type
       property MipMapLoadBias: Single read FMipMapLoadBias write SetMipMapLodBias;
   end;
 
-  TP3DFontBmpContainer = specialize gP3DStreamableContainer < TP3DFontBmp >;
+  {TP3DFontBmpContainer = specialize gP3DStreamableContainer < TP3DFontBmp >;
   TP3DFontBmpPointer = specialize gP3DStreamablePointer < TP3DFontBmp >;
-  TP3DFontBmpContainerList = specialize gP3DNamedStreamableContainerList < TP3DFontBmp, TP3DFontBmpContainer >;
-  TP3DFontBmpPointerList = specialize gP3DStreamableList < TP3DFontBmp, TP3DFontBmpPointer >;
-
+  }
+  TP3DFontBmpContainerList = specialize gP3DNamedStreamableContainerList < TP3DFontBmp >;
+  TP3DFontBmpPointerList = specialize gP3DStreamablePointerList < TP3DFontBmp >;
 { TP3DFontBmpList }
 {
 TP3DFontBmpList = class ( specialize gP3DNamedStreamableList < TP3DFontBmp >)
@@ -113,8 +116,8 @@ TP3DFontManagerBmp = class ( TP3DStreamable )
     FDefaultTextMargin: Integer;
     FDefaultTextSize: Single;
     FDefaultTexWidth: Integer;
-    FMaterial: TP3DMaterialBaseContainer;
-    FTextModifier: TP3DMaterialModifierContainer;
+    FMaterial: TP3DStreamableContainer;
+    FTextModifier: TP3DStreamableContainer;
     FItems: TP3DFontBmpPointerList;
 
     function GetCount: Integer;
@@ -342,12 +345,12 @@ begin
   if ( P3DFontManagerBmp.Material.Maps.Count = 0 ) then
     begin
       Map:= TP3DMaterialMapBase.Create( P3DFontManagerBmp.Material.Maps );
-      Map.ParentMaterial:= P3DFontManagerBmp.Material;
+      //Map.ParentMaterial:= P3DFontManagerBmp.Material;
       //P3DFontManagerBmp.Material.Maps.Add( Map );
     end;
   P3DFontManagerBmp.Material.Maps[ 0 ].Map:= Texture;
-  TP3DMaterialMapBase( P3DFontManagerBmp.Material.Maps.Items[ 0 ]).AlphaFactor:= 1;
-  TP3DMaterialMapBase( P3DFontManagerBmp.Material.Maps.Items[ 0 ]).DiffuseFactor:= 0;
+  TP3DMaterialMapBase( P3DFontManagerBmp.Material.Maps.AsValues[ 0 ]).AlphaFactor:= 1;
+  TP3DMaterialMapBase( P3DFontManagerBmp.Material.Maps.AsValues[ 0 ]).DiffuseFactor:= 0;
   if ( not Assigned( P3DFontManagerBmp.Material.Shader )) then
     P3DFontManagerBmp.Material.BuildShader();
   P3DFontManagerBmp.Material.PassToShader();
@@ -355,7 +358,7 @@ end;
 
 function TP3DFontBmp.GetTexture: TP3DTexture;
 begin
-  Result:= FTexture.AsValue;
+  Result:= TP3DTexture( FTexture.AsValue );
 end;
 
 procedure TP3DFontBmp.SetTexture(AValue: TP3DTexture);
@@ -368,15 +371,15 @@ begin
   FFileName:= AValue;
 end;
 
-constructor TP3DFontBmp.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DFontBmp.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
   Letters:= TP3DFontLetterContainerList.Create( 'Letters', smText );
   SizeFactor:= 1;
   MipMapLoadBias:= 0;//-0.65;
   Margin:= 0;
 
-  FTexture:= TP3DTexturePointer.Create( 'Texture', smText );
+  FTexture:= TP3DStreamablePointer.Create( 'Texture', TP3DTexture, smText );
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'SizeFactor', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'MipMapLoadBias', smText ));
   Properties.Add( FTexture );
@@ -785,12 +788,12 @@ end;
 
 function TP3DFontManagerBmp.GetItems( Index: Integer ): TP3DFontBmp;
 begin
-  Result:= FItems[ Index ];
+  Result:= TP3DFontBmp( FItems[ Index ]);
 end;
 
 function TP3DFontManagerBmp.GetMaterial: TP3DMaterialBase;
 begin
-  Result:= FMaterial.AsValue;
+  Result:= TP3DMaterialBase( FMaterial.AsValue );
 end;
 
 function TP3DFontManagerBmp.GetTextModifier: TP3DMaterialModifierText;
@@ -832,12 +835,12 @@ begin
   DefaultTexHeight:= 2048;
   DefaultTextSize:= 48*2;
   DefaultTextMargin:= 48;
-  FMaterial:= TP3DMaterialBaseContainer.Create( 'Material' );
+  FMaterial:= TP3DStreamableContainer.Create( 'Material', TP3DMaterialBase );
   Properties.Add( FMaterial );
   FMaterial.AsValue:= TP3DMaterialBase.CreateBlock();
   Material.Name:= 'FontBmpMaterial';
   Material.FUnlit:= True;
-  FTextModifier:= TP3DMaterialModifierContainer.Create( 'TextModifier' );
+  FTextModifier:= TP3DStreamableContainer.Create( 'TextModifier', TP3DMaterialModifierText );
   Properties.Add( FTextModifier );
   FTextModifier.AsValue:= TP3DMaterialModifierText.Create( FTextModifier );
   Material.Modifiers.Add( TextModifier );

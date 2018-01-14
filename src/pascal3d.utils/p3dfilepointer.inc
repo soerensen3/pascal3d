@@ -75,9 +75,8 @@ type
     is done automatically in the main loop in p3dapplication.inc for P3DFilePointers var.
   }
 
-  TP3DFilePointerList = class( specialize gP3DCustomList < TP3DFilePointer > )
+  TP3DFilePointerList = class( specialize gP3DCustomObjectList < TP3DFilePointer > )
     function AddWatch( AFileName: String; AUserPointer: Pointer = nil ): Integer;
-    function IndexOf(const Item: T): Integer;
 
     procedure CheckForChange;
   end;
@@ -96,11 +95,6 @@ var
 function TP3DFilePointerList.AddWatch( AFileName: String; AUserPointer: Pointer ): Integer;
 begin
   Result:= Add( TP3DFilePointer.Create( AFileName, AUserPointer ));
-end;
-
-function TP3DFilePointerList.IndexOf(const Item: T): Integer;
-begin
-  Result:= inherited IndexOf( Item );
 end;
 
 procedure TP3DFilePointerList.CheckForChange;

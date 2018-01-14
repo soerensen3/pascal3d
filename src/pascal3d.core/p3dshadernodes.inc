@@ -358,6 +358,7 @@ begin
   Defines.Sorted:= True;
   Defines.Duplicates:= dupIgnore;
   Declarations:= TP3DShaderNodeSocketList.Create;
+  Declarations.OwnsObjects:= False;
 end;
 
 destructor TP3DShaderBuffer.Destroy;

@@ -47,7 +47,6 @@ type
       FArmatures: TP3DArmatureContainerList;
       FCameras: TP3DCameraContainerList;
       FFonts: TP3DFontBmpContainerList;
-      FGlobalTime: Single;
       FGrids: TP3DTileGridContainerList;
       FLights: TP3DLightContainerList;
       FMaterials: TP3DMaterialContainerList;
@@ -57,6 +56,7 @@ type
       FShaders: TP3DShaderContainerList;
       FTextures: TP3DTextureContainerList;
 
+      FGlobalTime: Single;
       FIsDesignerPackage: Boolean;
       FBinFile: TFileStream;
       FLastUpdate: Integer;
@@ -78,7 +78,7 @@ type
       constructor CreateFromFile( AFileName: String );
       destructor Destroy; override;
 
-      function GetOwnerFromPath( DOMPath: TP3DXMLPath; const ForceLoad: Boolean = False ): TP3DLibrary;
+      //function GetOwnerFromPath( DOMPath: TP3DXMLPath; const ForceLoad: Boolean = False ): TP3DLibrary;
 
       function AppendFile( AFileName: String ): String;
       function CreateNew( Tp: TP3DDataBlockType ): TP3DDataBlock;
@@ -111,14 +111,14 @@ type
       property Name: String read GetName;
   end;
 
-  TP3DLibraryContainer = specialize gP3DStreamableContainer < TP3DLibrary >;
+  {TP3DLibraryContainer = specialize gP3DStreamableContainer < TP3DLibrary >;
   TP3DLibraryPointer = class( specialize gP3DStreamablePointer < TP3DLibrary >);
   //TP3DLibraryContainerList = specialize gP3DStreamableContainerList < TP3DLibrary, TP3DLibraryContainer >;
   TP3DLibraryPointerList = specialize gP3DStreamableList < TP3DLibrary, TP3DLibraryPointer >;
-
+  }
   { TP3DLibraryList }
 
-  TP3DLibraryContainerList = class ( specialize gP3DNamedStreamableContainerList < TP3DLibrary, TP3DLibraryContainer >)
+  TP3DLibraryContainerList = class ( specialize gP3DNamedStreamableContainerList < TP3DLibrary >)
     private
       FLastUpdate: Integer;
     public
@@ -318,6 +318,7 @@ begin
   Result:= GetBinFile;
 end;
 
+{
 function TP3DLibrary.GetOwnerFromPath(DOMPath: TP3DXMLPath; const ForceLoad: Boolean): TP3DLibrary;
 var
   FN: String;
@@ -331,7 +332,7 @@ begin
     else
       Result:= P3DData.Libraries[ P3DData.Libraries.FindByFileName( FN )];
 end;
-
+}
 
 {function TP3DLibrary.FindDataBlockByPath(DOMPath: String): TP3DDataBlock;
 var

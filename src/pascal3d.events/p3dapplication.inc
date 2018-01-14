@@ -100,13 +100,12 @@ end;
 
 procedure TP3DApplication.InitializeWindow(Sender: TP3DWindow);
 begin
-  //Windows.Add( Sender );
+
 end;
 
 
 procedure TP3DApplication.FinalizeWindow(Sender: TP3DWindow);
 begin
-  //Windows.Remove( Sender );
   if ( Sender = MainWindow ) then
     Running:= False;
 end;

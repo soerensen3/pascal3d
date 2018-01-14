@@ -13,7 +13,7 @@
       function GetLightRange: Float;
 
     public
-      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
       procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject );
@@ -32,10 +32,12 @@
   TP3DLightInformation = ( liLightParams, liPosition );
   TP3DLightInformationSet = set of TP3DLightInformation;
 
-  TP3DLightContainer = specialize gP3DStreamableContainer < TP3DLight >;
+  {TP3DLightContainer = specialize gP3DStreamableContainer < TP3DLight >;
   TP3DLightPointer = specialize gP3DStreamablePointer < TP3DLight >;
-  TP3DLightContainerList = specialize gP3DNamedStreamableContainerList < TP3DLight, TP3DLightContainer >;
-  TP3DLightPointerList = specialize gP3DStreamableList < TP3DLight, TP3DLightPointer >;
+  }
+
+  TP3DLightContainerList = specialize gP3DNamedStreamableContainerList < TP3DLight >;
+  TP3DLightPointerList = specialize gP3DStreamablePointerList < TP3DLight >;
 
   { TP3DLightList }
 
@@ -77,9 +79,9 @@ begin
   Result:= ALib.Properties.GetPropByName( 'Lights' );
 end;
 
-constructor TP3DLight.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DLight.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
   FLinearAttenuation:= 0.1;
   FColor:= vec3( 1 );
   FEnergy:= 1.0;

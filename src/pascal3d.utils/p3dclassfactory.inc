@@ -6,7 +6,7 @@ type
     This is required for streaming object properties with the JSON Loader. The specialized type is considered the base class of the dictionary.
   }
 
-  generic gP3DClassFactory < TClassItem > = class ( specialize TFPGList < TClassItem >)
+  generic gP3DClassFactory < TClassItem > = class ( specialize gP3DCustomList < TClassItem >)
     function FindByName( AName: String ): TClassItem; // Find a class by it's name. Nil is returned if the class was not found.
     procedure AddArray( const AItems: array of TClassItem );
   end;

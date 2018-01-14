@@ -944,7 +944,7 @@ end;
 
 procedure TP3DTreeNodeList.Delete(Index: Integer);
 begin
-  Items[ Index ].FParent:= nil;
+  AsValues[ Index ].FParent:= nil;
   inherited Delete( Index );
 end;
 

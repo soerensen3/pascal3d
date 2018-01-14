@@ -120,10 +120,10 @@ begin
 
   if ( TTF_Init() <> 0 ) then
     raise Exception.Create( 'Cannot initialize sdl2_text!' );
-  if ( not Assigned( P3DFontManager )) then
-    P3DFontManager:= TP3DFontManager.Create;
-  if ( not Assigned( P3DFontManagerBmp )) then
-    P3DFontManagerBmp:= TP3DFontManagerBmp.Create( P3DCoreContainers );
+  //if ( not Assigned( P3DFontManager )) then
+  //  P3DFontManager:= TP3DFontManager.Create;
+  //if ( not Assigned( P3DFontManagerBmp )) then
+  //  P3DFontManagerBmp:= TP3DFontManagerBmp.Create( P3DCoreContainers );
   //if ( not Assigned( P3DMeshModifierClassFactory )) then
   //  P3DMeshModifierClassFactory:= TP3DMeshModifierClassFactory.Create;
   //P3DMeshModifierClassFactory.Add( TP3DMeshModifierArmature );

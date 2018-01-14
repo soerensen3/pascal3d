@@ -29,11 +29,11 @@
       destructor Destroy; override;
   end;}
 
-  TP3DActionKeyContainer = specialize gP3DStreamableContainer < TP3DActionKey >;
+  {TP3DActionKeyContainer = specialize gP3DStreamableContainer < TP3DActionKey >;
   TP3DActionKeyPointer = specialize gP3DStreamablePointer < TP3DActionKey >;
-  TP3DActionKeyContainerList = specialize gP3DStreamableContainerList < TP3DActionKey, TP3DActionKeyContainer >;
   TP3DActionKeyPointerList = specialize gP3DStreamableList < TP3DActionKey, TP3DActionKeyPointer >;
-
+  }
+  TP3DActionKeyContainerList = specialize gP3DStreamableContainerList < TP3DActionKey >;
 
   { TP3DActionChannel }
 
@@ -78,18 +78,19 @@
     public
       destructor Destroy; override;
   end;}
-
+  {
   TP3DActionChannelContainer = specialize gP3DStreamableContainer < TP3DActionChannel >;
   TP3DActionChannelPointer = specialize gP3DStreamablePointer < TP3DActionChannel >;
-  TP3DActionChannelContainerList = specialize gP3DStreamableContainerList < TP3DActionChannel, TP3DActionChannelContainer >;
   TP3DActionChannelPointerList = specialize gP3DStreamableList < TP3DActionChannel, TP3DActionChannelPointer >;
+  }
+  TP3DActionChannelContainerList = specialize gP3DStreamableContainerList < TP3DActionChannel >;
 
   TP3DAction = class ( TP3DDataBlock )
     protected
       FChannels: TP3DActionChannelContainerList;
 
     public
-      constructor CreateBlock( const AData: TP3DLibrary=nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       class function GetContainer( ALib: TP3DLibrary ): TP3DPropertyAccess; override;
@@ -99,15 +100,15 @@
       property Channels: TP3DActionChannelContainerList read FChannels write FChannels;
   end;
 
-  TP3DActionContainer = specialize gP3DStreamableContainer < TP3DAction >;
+  {TP3DActionContainer = specialize gP3DStreamableContainer < TP3DAction >;
   TP3DActionPointer = specialize gP3DStreamablePointer < TP3DAction >;
   //TP3DActionContainerList = specialize gP3DNamedStreamableContainerList < TP3DAction, TP3DActionContainer >;
   TP3DActionPointerList = specialize gP3DNamedStreamableList < TP3DAction, TP3DActionPointer >;
-
+  }
 
   { TP3DActionList }
 
-  TP3DActionContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DAction, TP3DActionContainer >)
+  TP3DActionContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DAction >)
     private
       FGlobalTime: Float;
       procedure SetGlobalTime(AValue: Float);
@@ -279,18 +280,16 @@ begin
   Result:= ALib.Properties.GetPropByName( 'Actions' );
 end;
 
-constructor TP3DAction.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DAction.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData);
+  inherited Create( AOwner );
 
   FChannels:= TP3DActionChannelContainerList.Create( 'Channels', smText );
-  //Owner.Actions.Add( Self );
   Properties.Add( Channels );
 end;
 
 destructor TP3DAction.Destroy;
 begin
-  //Owner.Actions.Remove( Self );
   FreeAndNil( FChannels );
   inherited Destroy;
 end;

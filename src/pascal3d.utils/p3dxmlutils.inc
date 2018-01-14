@@ -5,9 +5,9 @@
 
 type TP3DXMLPath = string;
 
-function P3DXMLFindPath( ABase: TDOMElement; APath: TP3DXMLPath ): TDOMElement;
-function P3DXMLExtractRelativePath( APath: TP3DXMLPath; out FileName: String ): TP3DXMLPath;
-procedure P3DXMLWrite( Element: TDOMNode; const AFileName: String );
+//function P3DXMLFindPath( ABase: TDOMElement; APath: TP3DXMLPath ): TDOMElement;
+//function P3DXMLExtractRelativePath( APath: TP3DXMLPath; out FileName: String ): TP3DXMLPath;
+//procedure P3DXMLWrite( Element: TDOMNode; const AFileName: String );
 function P3DHTMLEncode( const Data: String ): String; //http://stackoverflow.com/questions/2968082/is-there-a-delphi-standard-function-for-escaping-html
 function P3DHTMLDecode( const Data: String ): String;
 
@@ -77,7 +77,7 @@ begin
 end;
 
 
-function P3DXMLFindPath( ABase: TDOMElement; APath: TP3DXMLPath ): TDOMElement;
+{function P3DXMLFindPath( ABase: TDOMElement; APath: TP3DXMLPath ): TDOMElement;
 var
   Child: TDOMElement;
   RestPath, CurPath: String;
@@ -173,5 +173,5 @@ begin
     WriteNode( Element );
   CloseFile( F );
 end;
-
+}
 {$ENDIF}

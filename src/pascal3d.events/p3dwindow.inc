@@ -93,10 +93,12 @@ type
       property ShowBorder: Boolean read FShowBorder write SetShowBorder;
   end;
 
-  TP3DWindowContainer = specialize gP3DStreamableContainer < TP3DWindow >;
-  TP3DWindowPointer = specialize gP3DStreamablePointer < TP3DWindow >;
-  TP3DWindowContainerList = specialize gP3DStreamableContainerList < TP3DWindow, TP3DWindowContainer >;
-  TP3DWindowPointerList = specialize gP3DStreamableList < TP3DWindow, TP3DWindowPointer >;
+  TP3DWindowContainerList = specialize gP3DStreamableContainerList < TP3DWindow >;
+  TP3DWindowPointerList = specialize gP3DStreamablePointerList < TP3DWindow >;
+
+
+  {TP3DWindowContainer = specialize gP3DStreamableContainer < TP3DWindow >;
+  TP3DWindowPointer = specialize gP3DStreamablePointer < TP3DWindow >;}
 
   function P3DClientToScreen( Window: TP3DWindow; X, Y: Integer ): TPoint;
   function P3DScreenToClient( Window: TP3DWindow; X, Y: Integer ): TPoint;

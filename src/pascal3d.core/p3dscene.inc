@@ -22,9 +22,9 @@ type
     private
       FActiveSubset: String;
       FObjects: TP3DObjectPointerList;
-      FData: TP3DDataBlockPointer;
+      FData: TP3DStreamablePointer;
       FInstanceCount: Integer;
-      FMaterial: TP3DMaterialPointer;
+      FMaterial: TP3DStreamablePointer;
       FMatrices: TMat4List;
       FPositions: TP3DVec3BufferGL;
       FRotations: TP3DVec4BufferGL;
@@ -129,7 +129,7 @@ type
   TP3DSceneRenderCallback = procedure ( world: TMat4; AObject: TP3DObject ) of object;
   TP3DScene = class( TP3DDataBlock, IP3DRenderable )
     private
-      FCam: TP3DObjectPointer;
+      FCam: TP3DStreamablePointer;
       FIsDesignTime: Boolean;
       FInheritedDesignTime: Boolean;
       FLights: TP3DLightPointerList;
@@ -141,7 +141,7 @@ type
       function GetCam: TP3DObject;
       procedure SetCam( AValue: TP3DObject );
       procedure RenderCallback( world: TMat4; AObject: TP3DObject ); virtual;
-      procedure OnObjChange( Sender: IP3DNamedStreamableList; Item: TP3DObject; AAction: TP3DListOnChangeAction );
+      procedure OnObjChange( Sender: TObject; Item: TP3DStreamable; AAction: TP3DListOnChangeAction );
 
     protected
       property ActiveCam: TP3DObject read FActiveCam write FActiveCam;
@@ -150,7 +150,7 @@ type
 
     public
       class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
-      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       //constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DLibrary = nil );
       destructor Destroy; override;
 
@@ -177,11 +177,11 @@ type
       property OnRenderCallback: TP3DSceneRenderCallback read FOnRenderCallback write FOnRenderCallback;
   end;
 
-  TP3DSceneContainer = specialize gP3DStreamableContainer < TP3DScene >;
+  {TP3DSceneContainer = specialize gP3DStreamableContainer < TP3DScene >;
   TP3DScenePointer = specialize gP3DStreamablePointer < TP3DScene >;
-  TP3DSceneContainerList = specialize gP3DNamedStreamableContainerList < TP3DScene, TP3DSceneContainer >;
   TP3DScenePointerList = specialize gP3DStreamableList < TP3DScene, TP3DScenePointer >;
-
+  }
+  TP3DSceneContainerList = specialize gP3DNamedStreamableContainerList < TP3DScene >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -476,17 +476,20 @@ procedure TP3DRenderList.RenderMesh(Idx: Integer; Camera: TP3DObject; const AFla
 var
   n, j: Integer;
   decl: TP3DShaderDecl;
-  ObjProp: TP3DObjectPointer;
+  ObjProp: TP3DStreamablePointer;
 begin
   if ( Items[ Idx ].Data is TP3DMesh ) then
     begin
       if ( Idx = FTransparencyStart ) then
         glDepthMask( False );
+
       if (( rlfMaterials in AFlags ) and (( P3DMaterialActive <> Items[ Idx ].Material ) or ( ActiveSubset <> Items[ Idx ].ActiveSubset ))) then
         begin
           ActiveSubset:= Items[ Idx ].ActiveSubset;
           SetupMaterial( Items[ Idx ].Material, Camera, AFlags );
         end;
+      if ( not Assigned( P3DMaterialActive )) then
+        raise Exception.Create( 'Error rendering mesh! No material is assigned! If you rendered without rlfMaterials it means you have to enable an material before. If you rendered with rlfMaterials it means that a material in the mesh is nil.' );
       if ( rlfIndexColors in AFlags ) then
         begin
           //Diff:= vec3( iv[ 0 ], iv[ 1 ], iv[ 2 ]) / 255;
@@ -498,11 +501,11 @@ begin
         begin
           if ( ActiveSubset > '' ) then
             begin
-              ObjProp:= TP3DObjectPointer.Create( 'Obj' );
+              ObjProp:= TP3DStreamablePointer.Create( 'Obj', TP3DObject );
               ObjProp.Assign( OwnerLib.Properties.GetPropByPath( ActiveSubset ));
               if ( Assigned( ObjProp.AsValue )) then
-                for n:= 0 to ObjProp.AsValue.Modifiers.Count - 1 do
-                  ObjProp.AsValue.Modifiers[ n ].PassToShader( P3DMaterialActive, Mat4Identity );
+                for n:= 0 to TP3DObject( ObjProp.AsValue ).Modifiers.Count - 1 do
+                  TP3DObject( ObjProp.AsValue ).Modifiers[ n ].PassToShader( P3DMaterialActive, Mat4Identity );
               ObjProp.Free;
             end;
           if ( rlfMaterials in AFlags ) then
@@ -616,7 +619,9 @@ procedure TP3DRenderList.Sort(Func: TP3DRenderListScoreFunc; lo, hi: Integer);
   end;
 
 begin
+  FItems.OwnsObjects:= False;
   quicksort( lo, hi );
+  FItems.OwnsObjects:= True;
 end;
 
 procedure TP3DRenderList.Optimize;
@@ -704,7 +709,7 @@ end;
 
 function TP3DScene.GetCam: TP3DObject;
 begin
-  Result:= FCam.AsValue;
+  Result:= TP3DObject( FCam.AsValue );
 end;
 
 procedure TP3DScene.RenderCallback(world: TMat4; AObject: TP3DObject);
@@ -713,7 +718,7 @@ begin
     OnRenderCallback( world, AObject );
 end;
 
-procedure TP3DScene.OnObjChange(Sender: IP3DNamedStreamableList; Item: TP3DObject; AAction: TP3DListOnChangeAction
+procedure TP3DScene.OnObjChange(Sender: TObject; Item: TP3DStreamable; AAction: TP3DListOnChangeAction
   );
 begin
   {if ( AAction = actAdd ) then
@@ -735,14 +740,14 @@ begin
   Result:= ALib.Properties.GetPropByName( 'Scenes' );
 end;
 
-constructor TP3DScene.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DScene.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
   FObjects:= TP3DObjectPointerList.Create( 'Objects', smText );
   //FObjects.OnChange:= @OnObjChange;
   Lights:= TP3DLightPointerList.Create( 'Lights' );
   //Owner.Scenes.Add( Self );
-  Properties.Add( TP3DObjectPointer.Create( 'Cam', smText ));
+  Properties.Add( TP3DStreamablePointer.Create( 'Cam', TP3DObject, smText ));
   Properties.Add( FObjects );
   Properties.Add( FLights );
 end;
@@ -919,12 +924,12 @@ end;
 
 function TP3DRenderObject.GetData: TP3DDataBlock;
 begin
-  Result:= FData.AsValue;
+  Result:= TP3DDataBlock( FData.AsValue );
 end;
 
 function TP3DRenderObject.GetMaterial: TP3DMaterial;
 begin
-  Result:= FMaterial.AsValue;
+  Result:= TP3DMaterial( FMaterial.AsValue );
 end;
 
 procedure TP3DRenderObject.SetData(AValue: TP3DDataBlock);
@@ -945,8 +950,8 @@ begin
   FScalings:= TP3DVec3BufferGL.Create;
   FObjects:= TP3DObjectPointerList.Create( 'Objects' );
   FMatrices:= TMat4List.Create;
-  FData:= TP3DDataBlockPointer.Create( 'Data' );
-  FMaterial:= TP3DMaterialPointer.Create( 'Material' );
+  FData:= TP3DStreamablePointer.Create( 'Data', TP3DDataBlock );
+  FMaterial:= TP3DStreamablePointer.Create( 'Material', TP3DMaterial );
   Material:= nil;
   Data:= nil;
   InstanceCount:= 0;

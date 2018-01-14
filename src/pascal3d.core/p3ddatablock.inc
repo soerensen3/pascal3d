@@ -22,10 +22,9 @@ type
     - It introduces reference counting (Users) if another datablock's property points to it.
     - Every datablock has a library as an owner.
     }
-  TP3DLibraryPointer = class;
   TP3DDataBlock = class abstract( TP3DNamedStreamable )
     private
-      FOwnerLib: TP3DLibraryPointer;
+      FOwnerLib: TP3DStreamablePointer;
       FTimeStamp: Integer;
       function GetOwnerLib: TP3DLibrary;
 
@@ -34,7 +33,7 @@ type
 
     public
       constructor Create( const AOwner: IP3DStreamableContainer = nil ); override;
-      constructor CreateBlock( const AData: TP3DLibrary = nil ); reintroduce; virtual;
+      constructor CreateBlock( const AData: TP3DLibrary = nil );
       destructor Destroy; override;
 
       property OwnerLib: TP3DLibrary read GetOwnerLib;
@@ -43,10 +42,10 @@ type
 
   TP3DDataBlockType = class of TP3DDataBlock;
 
-  TP3DDataBlockContainer = specialize gP3DStreamableContainer < TP3DDataBlock >;
+  {TP3DDataBlockContainer = specialize gP3DStreamableContainer < TP3DDataBlock >;
   TP3DDataBlockPointer = specialize gP3DStreamablePointer < TP3DDataBlock >;
   TP3DDataBlockContainerList = specialize gP3DStreamableList < TP3DDataBlock, TP3DDataBlockContainer >;
-  TP3DDataBlockPointerList = specialize gP3DStreamableList < TP3DDataBlock, TP3DDataBlockPointer >;
+  TP3DDataBlockPointerList = specialize gP3DStreamableList < TP3DDataBlock, TP3DDataBlockPointer >;}
 
 {$ENDIF}
 
@@ -63,22 +62,22 @@ end;
 
 function TP3DDataBlock.GetOwnerLib: TP3DLibrary;
 begin
-  Result:= FOwnerLib.AsValue;
+  Result:= TP3DLibrary( FOwnerLib.AsValue );
 end;
 
 constructor TP3DDataBlock.Create(const AOwner: IP3DStreamableContainer);
 begin
-  if ( Assigned( AOwner ) and Assigned( AOwner.GetRoot )) then
-    CreateBlock( TP3DLibrary( AOwner.GetRoot.GetInstance ))
-  else
-    CreateBlock( nil )
+  inherited Create( AOwner );
+  FOwnerLib:= TP3DStreamablePointer.Create( 'OwnerLib', TP3DLibrary, smDoNotStore );
+  FOwnerLib.AsValue:= TP3DStreamable( Owner.GetRoot.GetInstance );
+
+  Properties.Add( FOwnerLib );
 end;
 
 constructor TP3DDataBlock.CreateBlock(const AData: TP3DLibrary);
 var
   _OwnerLib: TP3DLibrary;
   p: TP3DPropertyAccess;
-  pr: TP3DPropertyAccess;
 begin
   if ( AData = nil ) then
     _OwnerLib:= P3DData
@@ -89,12 +88,7 @@ begin
   if ( not ( p is IP3DStreamableContainer )) then
     raise Exception.Create( 'No container found for ' + ClassName );
 
-  inherited Create( p as IP3DStreamableContainer );
-
-  FOwnerLib:= TP3DLibraryPointer.Create( 'OwnerLib', smDoNotStore );
-  FOwnerLib.AsValue:= _OwnerLib;
-
-  Properties.Add( FOwnerLib );
+  Create( p as IP3DStreamableContainer );
 end;
 
 destructor TP3DDataBlock.Destroy;

@@ -6,7 +6,7 @@
 type
   { TP3DLogger }
 
-  TP3DLogger = class ( TP3DStreamable )
+  TP3DLogger = class ( TP3DJSONRoot )
     private
       FFileWatch: TP3DFilePointer;
       FLevel: TDOMElement;

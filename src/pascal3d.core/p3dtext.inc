@@ -69,7 +69,7 @@ type
 
   TP3DFontManager = class ( specialize gP3DCustomObjectList < TP3DFont >)
     private
-      FMaterial: TP3DMaterialBasePointer;
+      FMaterial: TP3DStreamablePointer;
 
       function GetFont( FontName: String; Height: Integer ): TP3DFont;
       function GetMaterial: TP3DMaterialBase;
@@ -81,7 +81,7 @@ type
       function Add( Item: TP3DFont ): Integer; override;
       function Add( FontName: String; Height: Integer ): Integer;
 
-      property Fonts [ FontName: String; Height: Integer ]: TP3DFont read GetFont; default;
+      property Fonts[ FontName: String; Height: Integer ]: TP3DFont read GetFont; default;
 
       function Find( FontName: String; Height: Integer ): Integer;
       property Material: TP3DMaterialBase read GetMaterial;
@@ -94,7 +94,7 @@ type
       FFont: TP3DFont;
       FHeight: Single;
       FLetterPosAndSize: TVec4List;
-      FTexture: TP3DTexturePointer;
+      FTexture: TP3DStreamablePointer;
       FIndices: TP3DIntBufferGL;
       FTexCoords: TP3DVec2BufferGL;
       FVertices: TP3DVec2BufferGL;
@@ -195,7 +195,7 @@ begin
   if ( P3DFontManager.Material.Maps.Count = 0 ) then
     begin
       Map:= TP3DMaterialMapBase.Create( P3DFontManager.Material.Maps );
-      Map.ParentMaterial:= P3DFontManager.Material;
+      //Map.ParentMaterial:= P3DFontManager.Material;
       //P3DFontManager.Material.Maps.Add( Map );
     end;
   P3DFontManager.Material.Maps[ 0 ].Map:= Texture;
@@ -208,14 +208,14 @@ end;
 
 function TP3DText.GetTexture: TP3DTexture;
 begin
-  Result:= FTexture.AsValue;
+  Result:= TP3DTexture( FTexture.AsValue );
 end;
 
 constructor TP3DText.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
   LetterPosAndSize:= TVec4List.Create;
-  FTexture:= TP3DTexturePointer.CreateGetSet( 'Texture', @GetTexture, @SetTexture );
+  FTexture:= TP3DStreamablePointer.Create( 'Texture', TP3DTexture );
   Properties.Add( FTexture );
 end;
 
@@ -225,7 +225,7 @@ begin
   FVertices.Free;
   FTexCoords.Free;
   FIndices.Free;
-  if ( Assigned( FTexture.AsValue ) and P3DDataBlockCache.IsValid( FTexture.AsValue )) then
+  if ( Assigned( FTexture.AsValue ) and P3DDataBlockCache.IsValid( TP3DTexture( FTexture.AsValue ))) then
     FTexture.AsValue.Free;
   inherited Destroy;
 end;
@@ -384,7 +384,7 @@ end;
 
 function TP3DFontManager.GetMaterial: TP3DMaterialBase;
 begin
-  Result:= FMaterial.AsValue;
+  Result:= TP3DMaterialBase( FMaterial.AsValue );
 end;
 
 function TP3DFontManager.Add(Item: TP3DFont): Integer;
@@ -401,11 +401,14 @@ end;
 constructor TP3DFontManager.Create;
 begin
   inherited;
-  FMaterial:= TP3DMaterialBasePointer.Create( 'Material' );
+  FMaterial:= TP3DStreamablePointer.Create( 'Material', TP3DMaterialBase );
   FMaterial.AsValue:= TP3DMaterialBase.CreateBlock();
-  FMaterial.AsValue.Name:= 'FontMaterial';
-  FMaterial.AsValue.FUnlit:= True;
-  FMaterial.AsValue.FUseVertexColor:= True;
+  with( TP3DMaterialBase( FMaterial.AsValue )) do
+    begin
+      Name:= 'FontMaterial';
+      FUnlit:= True;
+      FUseVertexColor:= True;
+    end;
 end;
 
 destructor TP3DFontManager.Destroy;

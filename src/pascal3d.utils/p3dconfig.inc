@@ -11,20 +11,18 @@ type
       procedure LoadConfig( FileName: String );
   end;
 
-  TP3DStreamablePointerConfig = specialize gP3DPropAccessStreamable < TP3DStreamable >;
-
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
 procedure TP3DConfig.AddStreamable(APropName: String; AObj: TP3DStreamable);
 var
-  cfg: TP3DStreamablePointerConfig;
+  cfg: TP3DPropAccessStreamable;
 begin
   //Prop:= tp3dpropaccess
   if ( not Assigned( AObj )) then
     exit;
-  cfg:= TP3DStreamablePointerConfig.Create( APropName );
+  cfg:= TP3DPropAccessStreamable.Create( APropName, TP3DStreamable, smText );
   Properties.Add( cfg );
   cfg.AsValue:= AObj;
 end;

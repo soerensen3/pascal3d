@@ -8,14 +8,15 @@
 
     IP3DBaseInterface = interface ['{ADA5FD76-2F9B-4062-BAF3-945C235D4EAB}']
       function GetInstance: TObject;
-      function GetInterface( const iidstr : shortstring; out obj ): boolean;
+      function GetInterface( const iidstr : shortstring; out obj ): boolean; overload;
+      function GetInterface( const iid : tguid; out obj) : boolean; overload;
     end;
 
 
     { TP3DInterfacedObject }
 
     {$M+}
-    TP3DInterfacedObject = class ( TObject, IP3DBaseInterface )
+    TP3DInterfacedObject = class ( TInterfacedObject, IP3DBaseInterface )
       function GetInstance: TObject;
     end;
     {$M-}

@@ -30,8 +30,7 @@
 
     { TP3DAttributeList }
 
-    TP3DAttributeList = class ( specialize gP3DCustomObjectList < IP3DAttribute > )
-      constructor Create;
+    TP3DAttributeList = class ( specialize gP3DCustomList < IP3DAttribute > )
       procedure DisableAllAttributes;
     end;
 
@@ -314,12 +313,6 @@ end;
 
 
 { TP3DAttributeList }
-
-constructor TP3DAttributeList.Create;
-begin
-  inherited Create;
-  OwnsObjects:= False;
-end;
 
 procedure TP3DAttributeList.DisableAllAttributes;
 var

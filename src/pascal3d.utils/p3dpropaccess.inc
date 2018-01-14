@@ -79,6 +79,8 @@
         property Category: String read FCategory write FCategory;
     end;
 
+    TP3DPropertyAccessClass = class of TP3DPropertyAccess;
+
     IP3DPropAccessPathArray = interface ( IP3DPropAccessPath ) ['{EB03BC8A-9A4C-49A8-B6E2-E91D0FD309C7}']
       function GetArrayItemAsProp( Idx: Integer ): TP3DPropertyAccess;
       function IndexOf( AItem: Pointer ): Integer;
@@ -104,8 +106,9 @@
     { TP3DPropertyList }
 
     TP3DStreamable = class;
+    TP3DStreamableClass = class of TP3DStreamable;
 
-    TP3DPropertyList = class ( specialize gP3DCustomList < TP3DPropertyAccess >)
+    TP3DPropertyList = class ( specialize gP3DCustomObjectList < TP3DPropertyAccess >)
       private
         FContext: TP3DStreamable;
 
@@ -115,7 +118,6 @@
 
       public
         constructor Create( AContext: TP3DStreamable );
-        destructor Destroy; override;
 
         function Add( Item: TP3DPropertyAccess ): Integer; override;
         function Add( Item: TP3DPropertyAccess; Category: String ): Integer;// inline;
@@ -263,7 +265,7 @@
         property JSON: TJSONData read FJSON;
     end;
 
-    TP3DDeferredLoadList = specialize TFPGObjectList < TP3DDeferredLoad >;
+    TP3DDeferredLoadList = specialize gP3DCustomObjectList < TP3DDeferredLoad >;
 
     { TP3DJSONLoader }
 
@@ -294,53 +296,6 @@
         property Root: TP3DStreamable read FRoot write FRoot;
         property FileAge: LongInt read FFileAge;
         property IsLoading: Boolean read FIsLoading;
-    end;
-
-    {$INCLUDE p3dstreamable.inc}
-    {$INCLUDE p3dpropaccess_basetypes.inc}
-    {$INCLUDE p3dpropaccess_p3dtypes.inc}
-
-    { TP3DJSONRoot }
-
-    TP3DJSONRoot = class ( TP3DStreamable, IP3DJSONStream )
-      protected
-        FJSONLoader: TP3DJSONLoader;
-
-        function GetJSONLoader: TP3DJSONLoader;
-        function GetClassFactory: TP3DClassFactory;
-
-      public
-        constructor Create( const AOwner: IP3DStreamableContainer = nil ); override;
-        destructor Destroy; override;
-
-        property JSONLoader: TP3DJSONLoader read FJSONLoader;
-    end;
-
-    { TP3DJSONRootNamed }
-
-    TP3DJSONRootNamed = class ( TP3DNamedStreamable, IP3DJSONStream )
-      protected
-        FJSONLoader: TP3DJSONLoader;
-
-        function GetJSONLoader: TP3DJSONLoader;
-        function GetClassFactory: TP3DClassFactory;
-
-      public
-        constructor Create( const AOwner: IP3DStreamableContainer = nil ); override;
-        destructor Destroy; override;
-
-        property JSONLoader: TP3DJSONLoader read FJSONLoader;
-    end;
-
-    { TP3DJSONRootContainerList }
-
-    TP3DJSONRootContainerList = class( TP3DStreamableContainerList, IP3DJSONStream )
-      protected
-        function GetJSONLoader(): TP3DJSONLoader;
-        function GetClassFactory: TP3DClassFactory;
-
-      public
-        constructor Create(AName: String; const AStoreMode: TP3DPropertyAccessStoreMode=smDoNotStore); override;
     end;
 
     //..........................................................................
@@ -390,7 +345,6 @@ end;
 
 procedure TP3DPropertyAccess.SetAsJSON(AValue: TJSONData);
 begin
-  WriteLn( Name + ': ' + ClassName );
   if ( LoadDeferred and Assigned( Root ) and ( Root.GetJSONLoader.IsLoading )) then
     Root.GetJSONLoader.DeferredLoading.Add( TP3DDeferredLoad.Create( GetFullPath, AValue ))
   else
@@ -421,7 +375,6 @@ end;
 
 destructor TP3DPropertyAccess.Destroy;
 begin
-  WriteLn( 'Freeing ', Name, ': ', ClassName );
   inherited Destroy;
 end;
 
@@ -512,16 +465,6 @@ begin
   FContext:= AContext;
   if ( not Assigned( Context.Root )) then
     WriteLn( 'Context root is not assigned!' );
-end;
-
-destructor TP3DPropertyList.Destroy;
-var
-  i: Integer;
-begin
-  for i := Count-1 downto 0 do
-    Items[ i ].Free;
-  Clear;
-  inherited Destroy;
 end;
 
 function TP3DPropertyList.Add(Item: TP3DPropertyAccess): Integer;
@@ -913,7 +856,6 @@ var
   i: Integer;
 begin
   a:= TJSONArray.Create();
-  WriteLn( Self.ClassName );
   for i:= 0 to Count - 1 do
     a.Add( GetArrayItemAsProp( i ).AsJSON );
   Result:= a;
@@ -1037,8 +979,6 @@ procedure TP3DJSONLoader.SetJSON(AValue: TJSONData);
 begin
   if FJSON=AValue then Exit;
 
-  if ( Assigned( FJSON )) then
-    FJSON.Free;
   FJSON:= AValue;
   FFileAge:= GetTickCount64;
 end;
@@ -1136,82 +1076,6 @@ begin
   P3DSaveStringToFile( FN, JSON.FormatJSON());
 end;
 
-{ TP3DJSONRootNamed }
-
-function TP3DJSONRootNamed.GetJSONLoader: TP3DJSONLoader;
-begin
-  Result:= FJSONLoader;
-end;
-
-function TP3DJSONRootNamed.GetClassFactory: TP3DClassFactory;
-begin
-  Result:= P3DClassFactory;
-end;
-
-constructor TP3DJSONRootNamed.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create( AOwner );
-  FJSONLoader:= TP3DJSONLoader.Create( '' );
-  FJSONLoader.Root:= Self;
-end;
-
-destructor TP3DJSONRootNamed.Destroy;
-begin
-  JSONLoader.Free;
-  inherited Destroy;
-end;
-
-{ TP3DJSONRootContainerList }
-
-function TP3DJSONRootContainerList.GetJSONLoader(): TP3DJSONLoader;
-begin
-  Result:= nil;
-end;
-
-function TP3DJSONRootContainerList.GetClassFactory: TP3DClassFactory;
-begin
-  Result:= P3DClassFactory;
-end;
-
-constructor TP3DJSONRootContainerList.Create(AName: String; const AStoreMode: TP3DPropertyAccessStoreMode);
-begin
-  inherited Create( AName, AStoreMode );
-  FRoot:= Self;
-end;
-
-
-
-{ TP3DJSONRoot }
-
-function TP3DJSONRoot.GetJSONLoader: TP3DJSONLoader;
-begin
-  Result:= FJSONLoader;
-end;
-
-function TP3DJSONRoot.GetClassFactory: TP3DClassFactory;
-begin
-  Result:= P3DClassFactory;
-end;
-
-constructor TP3DJSONRoot.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-  FJSONLoader:= TP3DJSONLoader.Create( '' );
-  FJSONLoader.Root:= Self;
-end;
-
-destructor TP3DJSONRoot.Destroy;
-begin
-  JSONLoader.Free;
-  inherited Destroy;
-end;
-
-
-
-
-{$INCLUDE p3dstreamable.inc}
-{$INCLUDE p3dpropaccess_basetypes.inc}
-{$INCLUDE p3dpropaccess_p3dtypes.inc}
 
 {$ENDIF}
 

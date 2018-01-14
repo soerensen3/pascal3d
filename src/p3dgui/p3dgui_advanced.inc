@@ -576,7 +576,7 @@ begin
   Material:= TP3DMaterialBase.CreateBlock();
   Material.Unlit:= True;
   Material.UseVertexColor:= True;
-  with( Material.Maps[ Material.Maps.Add( TP3DMaterialMapBase.Create())]) do
+  with( TP3DMaterialMapBase.Create( Material.Maps )) do
     begin
       Texture:= nil;
       ParentMaterial:= Material;

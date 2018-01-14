@@ -54,10 +54,10 @@ uses pascal3d.core;
 
 procedure P3DEventsInit;
 begin
-  if ( not Assigned( P3DEventsContainers )) then
-    P3DEventsContainers:= TP3DJSONRootContainerList.Create( 'P3DEventsContainers' );
+//  if ( not Assigned( P3DEventsContainers )) then
+//    P3DEventsContainers:= TP3DJSONRootContainerList.Create( 'P3DEventsContainers' );
   if ( not Assigned( P3DLog )) then
-    P3DLog:= TP3DLogger.Create( P3DEventsContainers );
+    P3DLog:= TP3DLogger.Create();
   //if ( not Assigned( P3DApplication )) then
   //  P3DApplication:= TP3DApplication.Create;
   if ( not Assigned( P3DInput )) then

@@ -9,12 +9,13 @@
      TP3DMaterialMap = class ( TP3DStreamable )
        private
          FHasTransparency: Boolean;
-         FMap: TP3DTexturePointer;
-         FParentMaterial: TP3DMaterial;
+         FMap: TP3DStreamablePointer;
+         FParentMaterial: TP3DStreamablePointer;
          FTexChannel: Integer;
 
          function GetMap: TP3DTexture;
          function GetName: String;
+         function GetParentMaterial: TP3DMaterial;
          procedure SetMap( AValue: TP3DTexture );
          procedure SetTexChannel(AValue: Integer); virtual;
 
@@ -25,14 +26,12 @@
        published
          property TexChannel: Integer read FTexChannel write SetTexChannel;
          property Map: TP3DTexture read GetMap write SetMap;
-         property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
+         property ParentMaterial: TP3DMaterial read GetParentMaterial;
          property HasTransparency: Boolean read FHasTransparency;
          property Name: String read GetName;
      end;
 
      TP3DMaterialSubsetDict = specialize TFPGMap < String, TP3DShader >;
-
-     TP3DPropAccessMaterialMap = specialize gP3DPropAccessStreamable < TP3DMaterialMap >;
 
      TP3DMaterialMapClass = class of TP3DMaterialMap;
 
@@ -53,7 +52,7 @@
          FNormalFactor: Single;
          FSpecularFactor: Single;
          FTransformDynamic: Boolean;
-         FTransform: TP3DTransformContainer;
+         FTransform: TP3DStreamableContainer;
 
          function GetTransform: TP3DTransform;
          procedure SetAlphaFactor(AValue: Single);
@@ -80,22 +79,20 @@
          property Transform: TP3DTransform read GetTransform;
      end;
 
-     TP3DMaterialMapContainer = specialize gP3DStreamableContainer < TP3DMaterialMap >;
+     {TP3DMaterialMapContainer = specialize gP3DStreamableContainer < TP3DMaterialMap >;
      TP3DMaterialMapPointer = specialize gP3DStreamablePointer < TP3DMaterialMap >;
      //TP3DMaterialMapContainerList = specialize gP3DStreamableContainerList < TP3DMaterialMap, TP3DMaterialMapContainer >;
      TP3DMaterialMapPointerList = specialize gP3DStreamableList < TP3DMaterialMap, TP3DMaterialMapPointer >;
-
+     }
      { TP3DMaterialMapList }
 
-     TP3DMaterialMapContainerList = class( specialize gP3DStreamableContainerList < TP3DMaterialMap, TP3DMaterialMapContainer >)
+     TP3DMaterialMapContainerList = class( specialize gP3DStreamableContainerList < TP3DMaterialMap >)
        private
          FMapClass: TP3DMaterialMapClass;
          FParentMaterial: TP3DMaterial;
 
        public
-         procedure LoadFromStream( S: TStream ); //gP3DListPropertyAccessObject needs this to compile
-         procedure SaveToStream( S: TStream );
-         procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
+         procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
 
          property MapClass: TP3DMaterialMapClass read FMapClass write FMapClass;
          property ParentMaterial: TP3DMaterial read FParentMaterial write FParentMaterial;
@@ -105,7 +102,7 @@
      TP3DMaterial = class ( TP3DDataBlock )
        private
          FMaps: TP3DMaterialMapContainerList;
-         FShader: TP3DShaderPointer;
+         FShader: TP3DStreamablePointer;
          ShaderOwned: Boolean;
 
          function GetHasTransparency: Boolean; virtual;
@@ -115,7 +112,7 @@
        public
          class function GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess; override;
 
-         constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+         constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
          destructor Destroy; override;
 
          procedure PassToShader( const ActiveSubset: String = '' ); virtual;
@@ -126,10 +123,11 @@
          property HasTransparency: Boolean read GetHasTransparency;
      end;
 
-     TP3DMaterialContainer = specialize gP3DStreamableContainer < TP3DMaterial >;
+     {TP3DMaterialContainer = specialize gP3DStreamableContainer < TP3DMaterial >;
      TP3DMaterialPointer = specialize gP3DStreamablePointer < TP3DMaterial >;
-     TP3DMaterialContainerList = specialize gP3DStreamableContainerList < TP3DMaterial, TP3DMaterialContainer >;
      TP3DMaterialPointerList = specialize gP3DStreamableList < TP3DMaterial, TP3DMaterialPointer >;
+     }
+     TP3DMaterialContainerList = specialize gP3DNamedStreamableContainerList < TP3DMaterial >;
 
      { TP3DMaterialShader }
 
@@ -146,17 +144,17 @@
          procedure PassToShader( Material: TP3DMaterialBase ); virtual; abstract;
      end;
 
-     TP3DMaterialModifierContainer = specialize gP3DStreamableContainer < TP3DMaterialModifier >;
+     {TP3DMaterialModifierContainer = specialize gP3DStreamableContainer < TP3DMaterialModifier >;
      TP3DMaterialModifierPointer = specialize gP3DStreamablePointer < TP3DMaterialModifier >;
      //TP3DMaterialModifierContainerList = specialize gP3DStreamableContainerList < TP3DMaterialModifier, TP3DMaterialModifierContainer >;
      TP3DMaterialModifierPointerList = specialize gP3DStreamableList < TP3DMaterialModifier, TP3DMaterialModifierPointer >;
-
+     }
      { TP3DMaterialModifierList }
 
-     TP3DMaterialModifierContainerList = class ( specialize gP3DStreamableContainerList < TP3DMaterialModifier, TP3DMaterialModifierContainer > )
+     TP3DMaterialModifierContainerList = class ( specialize gP3DStreamableContainerList < TP3DMaterialModifier >)
        public
          procedure SortByIndex;
-         procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
+         procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
          function Find( ModType: TP3DMaterialModifierType ): Integer; reintroduce;
      end;
 
@@ -270,9 +268,10 @@
          procedure AddPasses(ShaderTree: TP3DShaderNodeTree; const AModifiers: TP3DObjectModifierContainerList = nil ); virtual;
          function GetHasTransparency: Boolean; override;
          procedure UpdateHasTransparency;
+         procedure SetJSON(AValue: TJSONData); override;
 
        public
-         constructor CreateBlock(const AData: TP3DLibrary=nil); override;
+         constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
          destructor Destroy; override;
 
          function BuildShaderForSubset( AModifiers: TP3DObjectModifierContainerList ): TP3DShader; virtual;
@@ -299,11 +298,11 @@
          property ShaderSubsets: TP3DMaterialSubsetDict read FShaderSubsets write FShaderSubsets;
      end;
 
-     TP3DMaterialBaseContainer = specialize gP3DStreamableContainer < TP3DMaterialBase >;
+     {TP3DMaterialBaseContainer = specialize gP3DStreamableContainer < TP3DMaterialBase >;
      TP3DMaterialBasePointer = specialize gP3DStreamablePointer < TP3DMaterialBase >;
      TP3DMaterialBaseContainerList = specialize gP3DNamedStreamableContainerList < TP3DMaterialBase, TP3DMaterialBaseContainer >;
      TP3DMaterialBasePointerList = specialize gP3DStreamableList < TP3DMaterialBase, TP3DMaterialBasePointer >;
-
+     }
 
   var
     P3DMaterialActive: TP3DMaterial = nil;
@@ -333,19 +332,26 @@ begin
     Result:= '<None>';
 end;
 
+function TP3DMaterialMap.GetParentMaterial: TP3DMaterial;
+begin
+  Result:= TP3DMaterial( FParentMaterial.AsValue );
+end;
+
 function TP3DMaterialMap.GetMap: TP3DTexture;
 begin
-  Result:= FMap.AsValue;
+  Result:= TP3DTexture( FMap.AsValue );
 end;
 
 constructor TP3DMaterialMap.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
   FTexChannel:= 0;
-  //Properties.Context:= AParentMaterial;
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'TexChannel', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Name', smText ));
-  FMap:= TP3DTexturePointer.Create( 'Map', smText );
+  FMap:= TP3DStreamablePointer.Create( 'Map', TP3DTexture, smText );
+  FParentMaterial:= TP3DStreamablePointer.Create( 'ParentMaterial', TP3DMaterial );
+  FParentMaterial.AsValue:= TP3DStreamable( TP3DPropAccessStreamable( Owner.GetContainer.Context.GetInstance ).Context.GetInstance );
+
   Properties.Add( FMap );
 end;
 
@@ -379,7 +385,7 @@ end;
 
 function TP3DMaterialMapBase.GetTransform: TP3DTransform;
 begin
-  Result:= FTransform.AsValue;
+  Result:= TP3DTransform( FTransform.AsValue );
 end;
 
 procedure TP3DMaterialMapBase.SetAlphaFactor(AValue: Single);
@@ -446,7 +452,7 @@ begin
   FNormalFactor:= 0.0;
   FSpecularFactor:= 0.0;
   FMode:= mapMix;
-  FTransform:= TP3DTransformContainer.Create( 'Transform', smText );
+  FTransform:= TP3DStreamableContainer.Create( 'Transform', TP3DTransform, smText );
   Properties.Add( FTransform );
   FTransform.AsValue:= TP3DTransform.Create( FTransform );
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'DiffuseFactor', smText ));
@@ -470,14 +476,13 @@ end;
 
 procedure TP3DMaterialBase.AddPasses(ShaderTree: TP3DShaderNodeTree; const AModifiers: TP3DObjectModifierContainerList);
 var
-  Modifier: TP3DMaterialModifier;
-  OModifier: TP3DObjectModifier;
+  Modifier: TP3DStreamable;
 begin
   for Modifier in Modifiers do
-    Modifier.AddPass( ShaderTree, Self );
+    TP3DMaterialModifier( Modifier ).AddPass( ShaderTree, Self );
   if ( Assigned( AModifiers )) then
-    for OModifier in AModifiers do
-      OModifier.AddPass( ShaderTree, Self );
+    for Modifier in AModifiers do
+      TP3DObjectModifier( Modifier ).AddPass( ShaderTree, Self );
   ShaderTree.Nodes.SortByName;
 end;
 
@@ -489,17 +494,24 @@ end;
 
 procedure TP3DMaterialBase.UpdateHasTransparency;
 var
-  Map: TP3DMaterialMap;
+  Map: TP3DStreamable;
 begin
   FHasTransparency:= FAlpha < 1;
 
   if (( not FHasTransparency ) and ( TransparencyMode = tmMultiply )) then
     for Map in Maps do
-      if ( Map.HasTransparency ) then
+      if ( TP3DMaterialMap( Map ).HasTransparency ) then
         begin
           FHasTransparency:= True;
           break;
         end;
+end;
+
+procedure TP3DMaterialBase.SetJSON(AValue: TJSONData);
+begin
+  BeginUpdate;
+  inherited SetJSON(AValue);
+  EndUpdate;
 end;
 
 procedure TP3DMaterialBase.SetAlpha(AValue: Single);
@@ -538,9 +550,9 @@ begin
   BuildShader();
 end;
 
-constructor TP3DMaterialBase.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DMaterialBase.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
 
   Maps.MapClass:= TP3DMaterialMapBase;
 
@@ -678,12 +690,12 @@ begin
       for i:= 0 to Maps.Count - 1 do
         begin
           glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-          if ( Assigned( Maps[ i ].Map )) then
-            glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
+          if ( Assigned( TP3DMaterialMap( Maps[ i ]).Map )) then
+            glBindTexture( GL_TEXTURE_2D, TP3DMaterialMap( Maps[ i ]).Map.GLTexture ); cle( Self );
           glUniform1i( Sh.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
         end;
       for i:= 0 to Modifiers.Count - 1 do
-        Modifiers[ i ].PassToShader( Self );
+        TP3DMaterialModifier( Modifiers[ i ]).PassToShader( Self );
     end;
 end;
 
@@ -775,7 +787,7 @@ begin
         begin
           if ( P3DShaderActive.Uniforms.FindByName( 'TexMat' + IntToStr( i ), decl )) then
             begin
-              decl.AsMat4:= TP3DMaterialMapBase( Maps.Items[ i ]).Transform.Matrix;
+              decl.AsMat4:= TP3DMaterialMapBase( Maps[ i ]).Transform.Matrix;
             end;
         end;
 
@@ -810,14 +822,17 @@ begin
   TexCoordsAdded:= [];
   with ( Material ) do
     for i:= 0 to Maps.Count - 1 do
-      begin
-        if ( not ( Maps[ i ].TexChannel in TexCoordsAdded )) then
-          begin
-            ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00010_map_texcoord_init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
-            TexCoordsAdded:= TexCoordsAdded + [ Maps[ i ].TexChannel ];
-          end;
-        ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00010_map_init' ), 'MapIndex', i ), 'TexCoordIndex', Maps[ i ].TexChannel );
-      end;
+      if ( Assigned( Maps[ i ])) then
+        begin
+          if ( not ( TP3DMaterialMap( Maps[ i ]).TexChannel in TexCoordsAdded )) then
+            begin
+              ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00010_map_texcoord_init' ), 'Location', i + 8 ), 'TexCoordIndex', i );
+              TexCoordsAdded:= TexCoordsAdded + [ TP3DMaterialMap( Maps[ i ]).TexChannel ];
+            end;
+          ChangeSocketValueInt( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00010_map_init' ), 'MapIndex', i ), 'TexCoordIndex', TP3DMaterialMap( Maps[ i ]).TexChannel );
+        end
+      //else
+      //  raise Exception.Create( Material.Name + '.Maps[' + IntToStr( i ) + '] is not assigned!' );
 end;
 
 procedure TP3DMaterialModifierInit.PassToShader(Material: TP3DMaterialBase);
@@ -883,24 +898,25 @@ begin
   HasNormalMaps:= False;
   with ( Material ) do
     for i:= 0 to Maps.Count - 1 do
+      if ( Assigned( Maps[ i ])) then
       begin
         ChangeSocketValueInt( ShaderTree.AddCopyEx( '00100_map_pass_read_frag' ), 'Index', i );
         ChangeSocketValueInt( ShaderTree.AddCopyEx( '00100_map_pass_read_vert' ), 'Index', i );
         if (( TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor <> 0 ) or ( TP3DMaterialMapBase( Maps[ i ]).AlphaFactor <> 0 )) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps.Items[ i ]).DiffuseFactor ),
-                         'Alpha', TP3DMaterialMapBase( Maps.Items[ i ]).AlphaFactor ),
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_diffuse' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DiffuseFactor ),
+                         'Alpha', TP3DMaterialMapBase( Maps[ i ]).AlphaFactor ),
                          ShaderTree.AddCopyEx( '00100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
         if ( TP3DMaterialMapBase( Maps[ i ]).NormalFactor <> 0 ) then
           begin
-            ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps.Items[ i ]).NormalFactor ),
+            ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_normal' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).NormalFactor ),
               ShaderTree.AddCopyEx( '00100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
             HasNormalMaps:= True;
           end;
         if ( TP3DMaterialMapBase( Maps[ i ]).SpecularFactor <> 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps.Items[ i ]).SpecularFactor ),
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_specular' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).SpecularFactor ),
           ShaderTree.AddCopyEx( '00100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
         if ( TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor <> 0 ) then
-          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_displace' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps.Items[ i ]).DisplaceFactor ),
+          ConnectSocket( ChangeSocketValueFloat( ChangeSocketValueInt( ShaderTree.AddCopyEx( '00105_map_pass_displace' ), 'Index', i ), 'Factor', TP3DMaterialMapBase( Maps[ i ]).DisplaceFactor ),
           ShaderTree.AddCopyEx( '00100_map_pass_combine' ), 'Mode', Mode[ TP3DMaterialMapBase( Maps[ i ]).Mode ]);
       end;
 
@@ -1053,14 +1069,22 @@ end;
 
 
 { TP3DMaterialModifierContainerList }
+function MaterialModifierCompare(Item1, Item2: Pointer): Integer;
+var
+  mod1, mod2: TP3DMaterialModifier;
+begin
+  mod1:= TP3DMaterialModifier( TP3DStreamableContainer( Item1 ).AsValue );
+  mod2:= TP3DMaterialModifier( TP3DStreamableContainer( Item2 ).AsValue );
+  Result:= CompareValue( mod1.GetIndex, mod2.GetIndex );
+end;
 
 procedure TP3DMaterialModifierContainerList.SortByIndex;
 
   procedure swap( a, b: Integer );
   var
-    Element: TP3DMaterialModifierContainer;
+    Element: TP3DStreamableContainer;
   begin
-    Element:= Self.FItems[ a ];
+    Element:= TP3DStreamableContainer( Self.FItems[ a ] );
     FItems[ a ]:= Self.FItems[ b ];
     FItems[ b ]:= Element;
   end;
@@ -1094,10 +1118,11 @@ procedure TP3DMaterialModifierContainerList.SortByIndex;
   end;
 
 begin
-  quicksort( 0, Count - 1 );
+  //quicksort( 0, Count - 1 );
+  FItems.Sort( @MaterialModifierCompare );
 end;
 
-procedure TP3DMaterialModifierContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
+procedure TP3DMaterialModifierContainerList.Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
 begin
   inherited Notify( ASender, AItem, AAction );
   SortByIndex;
@@ -1136,20 +1161,21 @@ end;
 
 function TP3DMaterial.GetShader: TP3DShader;
 begin
-  Result:= FShader.AsValue;
+  Result:= TP3DShader( FShader.AsValue );
 end;
 
-constructor TP3DMaterial.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DMaterial.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData);
-  //Owner.Materials.Add( Self );
+  inherited Create( AOwner );
 
   Maps:= TP3DMaterialMapContainerList.Create( 'Maps', smText );
   Maps.ParentMaterial:= Self;
   Maps.MapClass:= TP3DMaterialMap;
   Properties.Add( Maps );
-  FShader:= TP3DShaderPointer.Create( 'Shader' );
+  FShader:= TP3DStreamablePointer.Create( 'Shader', TP3DShader );
+  WriteLn( 'test start!' );
   Properties.Add( FShader );
+  WriteLn( 'test end!' );
 end;
 
 destructor TP3DMaterial.Destroy;
@@ -1180,20 +1206,9 @@ end;
 
 { TP3DMaterialMapContainerList }
 
-procedure TP3DMaterialMapContainerList.LoadFromStream(S: TStream);
-begin
-
-end;
-
-procedure TP3DMaterialMapContainerList.SaveToStream(S: TStream);
-begin
-
-end;
-
-procedure TP3DMaterialMapContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
+procedure TP3DMaterialMapContainerList.Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
 begin
   inherited Notify( ASender, AItem, AAction );
-  AItem.ParentMaterial:= ParentMaterial;
 end;
 
 

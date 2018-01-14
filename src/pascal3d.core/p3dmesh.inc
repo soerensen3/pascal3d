@@ -3,7 +3,6 @@
 {$IFDEF INTERFACE}
   type
     TP3DMesh = class;
-    TP3DMeshPointer = class;
     TP3DRenderFlag = ( rfShadowMap, rfWireFrame, rfDebugShowLocation, rfDebugShowAABB, rfDebugShowArmature );
     TP3DRenderFlags = set of TP3DRenderFlag;
 
@@ -13,7 +12,7 @@
       private
         FIndexEnd: Integer;
         FIndexStart: Integer;
-        FMaterial: TP3DMaterialPointer;
+        FMaterial: TP3DStreamablePointer;
         FParentMesh: TP3DMesh;
         FPolyEnd: Integer;
         FPolyStart: Integer;
@@ -35,21 +34,21 @@
         property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
     end;
 
-    TP3DMeshMaterialGroupContainer = specialize gP3DStreamableContainer < TP3DMeshMaterialGroup >;
+    {TP3DMeshMaterialGroupContainer = specialize gP3DStreamableContainer < TP3DMeshMaterialGroup >;
     TP3DMeshMaterialGroupPointer = specialize gP3DStreamablePointer < TP3DMeshMaterialGroup >;
     //TP3DMeshMaterialGroupContainerList = specialize gP3DStreamableContainerList < TP3DMeshMaterialGroup, TP3DMeshMaterialGroupContainer >;
     TP3DMeshMaterialGroupPointerList = specialize gP3DStreamableList < TP3DMeshMaterialGroup, TP3DMeshMaterialGroupPointer >;
-
+    }
     { TP3DMeshMaterialGroupList }
 
-    TP3DMeshMaterialGroupContainerList = class( specialize gP3DStreamableContainerList < TP3DMeshMaterialGroup, TP3DMeshMaterialGroupContainer >)
+    TP3DMeshMaterialGroupContainerList = class( specialize gP3DStreamableContainerList < TP3DMeshMaterialGroup >)
       private
         FParentMesh: TP3DMesh;
 
       public
         function Find( Material: TP3DMaterial ): Integer; overload;
         procedure Add( PolyStart: Integer; PolyEnd: Integer; Material: TP3DMaterial ); overload;
-        procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
+        procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
 
         property ParentMesh: TP3DMesh read FParentMesh;
     end;
@@ -68,7 +67,7 @@
 
     TP3DMeshModifier = class abstract( TP3DStreamable )
       private
-        FMesh: TP3DMeshPointer;
+        FMesh: TP3DStreamablePointer;
 
         function GetMesh: TP3DMesh;
         procedure SetMesh( AValue: TP3DMesh ); virtual;
@@ -84,19 +83,19 @@
         property Mesh: TP3DMesh read GetMesh write SetMesh;
     end;
 
-    TP3DMeshModifierContainer = specialize gP3DStreamableContainer < TP3DMeshModifier >;
+    {TP3DMeshModifierContainer = specialize gP3DStreamableContainer < TP3DMeshModifier >;
     TP3DMeshModifierPointer = specialize gP3DStreamablePointer < TP3DMeshModifier >;
     //TP3DMeshModifierContainerList = specialize gP3DStreamableContainerList < TP3DMeshModifier, TP3DMeshModifierContainer >;
     TP3DMeshModifierPointerList = specialize gP3DStreamableList < TP3DMeshModifier, TP3DMeshModifierPointer >;
-
+    }
     { TP3DMeshModifierList }
 
-    TP3DMeshModifierContainerList = class( specialize gP3DStreamableContainerList < TP3DMeshModifier, TP3DMeshModifierContainer > )
+    TP3DMeshModifierContainerList = class( specialize gP3DStreamableContainerList < TP3DMeshModifier >)
       private
         FParentMesh: TP3DMesh;
 
       public
-        procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
+        procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
 
         property ParentMesh: TP3DMesh read FParentMesh;
     end;
@@ -123,20 +122,20 @@
         property Index: Integer read FIndex write FIndex;
     end;
 
-    TP3DMeshWeightGroupContainer = specialize gP3DStreamableContainer < TP3DMeshWeightGroup >;
+    {TP3DMeshWeightGroupContainer = specialize gP3DStreamableContainer < TP3DMeshWeightGroup >;
     TP3DMeshWeightGroupPointer = specialize gP3DStreamablePointer < TP3DMeshWeightGroup >;
     //TP3DMeshWeightGroupContainerList = specialize gP3DNamedStreamableContainerList < TP3DMeshWeightGroup, TP3DMeshWeightGroupContainer >;
     TP3DMeshWeightGroupPointerList = specialize gP3DNamedStreamableList < TP3DMeshWeightGroup, TP3DMeshWeightGroupPointer >;
-
+    }
 
     { TP3DMeshWeightGroupList }
 
-    TP3DMeshWeightGroupContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DMeshWeightGroup, TP3DMeshWeightGroupContainer > )
+    TP3DMeshWeightGroupContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DMeshWeightGroup >)
       private
         FParentMesh: TP3DMesh;
 
       public
-        procedure Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction); override;
+        procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
 
         property ParentMesh: TP3DMesh read FParentMesh write FParentMesh;
     end;
@@ -177,7 +176,7 @@
         MaterialGroups: TP3DMeshMaterialGroupContainerList;
         WeightGroups: TP3DMeshWeightGroupContainerList;
 
-        constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+        constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
         destructor Destroy; override;
 
@@ -236,10 +235,10 @@
         //<-- IP3DCollidable
       end;
 
-    TP3DMeshContainer = specialize gP3DStreamableContainer < TP3DMesh >;
+    {TP3DMeshContainer = specialize gP3DStreamableContainer < TP3DMesh >;
     TP3DMeshPointer = class( specialize gP3DStreamablePointer < TP3DMesh >);
-    TP3DMeshContainerList = specialize gP3DNamedStreamableContainerList < TP3DMesh, TP3DMeshContainer >;
-    TP3DMeshPointerList = specialize gP3DStreamableList < TP3DMesh, TP3DMeshPointer >;
+    TP3DMeshPointerList = specialize gP3DStreamableList < TP3DMesh, TP3DMeshPointer >;}
+    TP3DMeshContainerList = specialize gP3DNamedStreamableContainerList < TP3DMesh >;
 //var
   //P3DMeshModifierClassFactory: TP3DMeshModifierClassFactory = nil;
 {$ENDIF}
@@ -355,11 +354,11 @@ begin
   UnpackBuffers;
 end;
 
-constructor TP3DMesh.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DMesh.Create(const AOwner: IP3DStreamableContainer);
 var
   PropTexCoord: TP3DPropAccessVec2BufferGLList;
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
 
   Positions:= TP3DVec3BufferGL.Create;
   PackedPositions:= TVec3List.Create;
@@ -381,7 +380,7 @@ begin
   PackedFaces:= TIntList.Create;
   TexCoords:= TP3DTexCoordList.Create;
 
-  MaterialGroups:= TP3DMeshMaterialGroupContainerList.Create( 'MaterialGroups', smText );
+  MaterialGroups:= TP3DMeshMaterialGroupContainerList.Create( 'MaterialGroups' );
   MaterialGroups.FParentMesh:= Self;
   PackedMaterialGroups:= TP3DMeshMaterialGroupContainerList.Create( 'PackedMaterialGroups', smText );
   PackedMaterialGroups.FParentMesh:= Self;
@@ -1184,6 +1183,11 @@ begin
         for i:= 0 to MaterialGroups.Count - 1 do
           begin
             mat:= MaterialGroups[ i ].Material;
+            if ( not Assigned( mat )) then
+              begin
+                MaterialGroups[ i ].Material:= PackedMaterialGroups[ i ].Material;
+                mat:= MaterialGroups[ i ].Material;
+              end;
             AList.PushRenderObject( Self, AWorld, mat );
           end
       else
@@ -1200,7 +1204,7 @@ end;
 
 function TP3DMeshMaterialGroup.GetMaterial: TP3DMaterial;
 begin
-  Result:= FMaterial.AsValue;
+  Result:= TP3DMaterial( FMaterial.AsValue );
 end;
 
 procedure TP3DMeshMaterialGroup.SetPolyEnd(AValue: Integer);
@@ -1225,7 +1229,7 @@ begin
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'PolyEnd', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'IndexStart' ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'IndexEnd' ));
-  FMaterial:= TP3DMaterialPointer.Create( 'Material', smText );
+  FMaterial:= TP3DStreamablePointer.Create( 'Material', TP3DMaterial, smText );
   Properties.Add( FMaterial );
 end;
 
@@ -1238,13 +1242,13 @@ end;
 
 function TP3DMeshModifier.GetMesh: TP3DMesh;
 begin
-  Result:= FMesh.AsValue;
+  Result:= TP3DMesh( FMesh.AsValue );
 end;
 
 constructor TP3DMeshModifier.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create;
-  FMesh:= TP3DMeshPointer.Create( 'Mesh' );
+  FMesh:= TP3DStreamablePointer.Create( 'Mesh', TP3DMesh );
   Properties.Add( FMesh );
   Properties.Add( TP3DPropAccessString.CreateGetSet( 'Type', @GetType, nil, smDoNotStore ));
 end;
@@ -1296,27 +1300,27 @@ begin
 end;
 
 
-procedure TP3DMeshMaterialGroupContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
+procedure TP3DMeshMaterialGroupContainerList.Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
 begin
   inherited Notify( ASender, AItem, AAction );
   if (( AAction = actAdd ) and Assigned( AItem )) then
-    AItem.ParentMesh:= ParentMesh;
+    TP3DMeshMaterialGroup( AItem ).ParentMesh:= ParentMesh;
 end;
 
 { TP3DMeshModifierList }
 
-procedure TP3DMeshModifierContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
+procedure TP3DMeshModifierContainerList.Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
 begin
   inherited Notify( ASender, AItem, AAction );
-  AItem.Mesh:= ParentMesh;
+  TP3DMeshModifier( AItem ).Mesh:= ParentMesh;
 end;
 
 { TP3DMeshWeightGroupList }
 
-procedure TP3DMeshWeightGroupContainerList.Notify(ASender: TObject; AItem: T; AAction: TP3DListOnChangeAction);
+procedure TP3DMeshWeightGroupContainerList.Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
 begin
   inherited Notify( ASender, AItem, AAction );
-  AItem.Mesh:= ParentMesh;
+  TP3DMeshWeightGroup( AItem ).Mesh:= ParentMesh;
 end;
 
 {$ENDIF}

@@ -284,6 +284,15 @@ begin
       end;
 end;
 
+function CompareNodes(Item1, Item2: Pointer): Integer;
+var
+  n1, n2: String;
+begin
+  n1:= TP3DNode( Item1 ).Name;
+  n2:= TP3DNode( Item2 ).Name;
+  Result:= CompareStr( n1, n2 );
+end;
+
 procedure TP3DNodeList.SortByName;
   procedure swap( a, b: Integer );
   var
@@ -322,7 +331,9 @@ procedure TP3DNodeList.SortByName;
   end;
 
 begin
-  quicksort( 0, Count - 1 );
+  FItems.Sort( @CompareNodes );
+  //quicksort( 0, Count - 1 );
+
 end;
 
 {$ENDIF}

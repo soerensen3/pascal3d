@@ -90,7 +90,6 @@ type
       function FindByName(Name: String; out Decl: TP3DShaderDecl): Boolean;
       function AddrByName( Name: String ): GLint;
       procedure Delete( Index: Integer ); override;
-      procedure Clear; override;
 
       property Names[ AName: String ]: TP3DShaderDecl read GetNames write SetNames;
   end;
@@ -110,7 +109,7 @@ type
       procedure LinkProgram;
 
     public
-      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor CreateFromVertexAndFragmentShaderFile( fnvshader, fnfshader: String; const AData: TP3DLibrary = nil );
       constructor CreateFromVertexAndFragmentShader( AVShader, AFShader: String; const AData: TP3DLibrary = nil );
       destructor Destroy; override;
@@ -136,10 +135,10 @@ type
       property FShader: String read FFShader write SetFShader;
   end;
 
-  TP3DShaderContainer = specialize gP3DStreamableContainer < TP3DShader >;
+  {TP3DShaderContainer = specialize gP3DStreamableContainer < TP3DShader >;
   TP3DShaderPointer = specialize gP3DStreamablePointer < TP3DShader >;
-  TP3DShaderContainerList = specialize gP3DNamedStreamableContainerList < TP3DShader, TP3DShaderContainer >;
-  TP3DShaderPointerList = specialize gP3DStreamableList < TP3DShader, TP3DShaderPointer >;
+  TP3DShaderPointerList = specialize gP3DStreamableList < TP3DShader, TP3DShaderPointer >;}
+  TP3DShaderContainerList = specialize gP3DNamedStreamableContainerList < TP3DShader >;
 
 
 {$ENDIF}
@@ -892,13 +891,6 @@ begin
   inherited Delete(Index);
 end;
 
-procedure TP3DShaderDeclList.Clear;
-var
-  i: Integer;
-begin
-  Count:= 0;
-end;
-
 { TP3DShader }
 
 procedure TP3DShader.SetFShader(AValue: String);
@@ -999,7 +991,7 @@ procedure TP3DShader.LinkProgram;
 var
   Res, maxLength: Integer;
   _vshader, _fshader: GLHandle;
-  isLinked: GLint = 0;
+  isLinked: ByteBool = False;
   F: TStringList;
 begin
   if ( ProgramObj > -1 ) then
@@ -1057,13 +1049,12 @@ begin
   glUseProgram( 0 );
 end;
 
-constructor TP3DShader.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DShader.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
   ProgramObj:= -1;
   FUniforms:= TP3DShaderDeclList.Create;
   FAttributes:= TP3DShaderDeclList.Create;
-  //Owner.Shaders.Add( Self );
 end;
 
 constructor TP3DShader.CreateFromVertexAndFragmentShaderFile(fnvshader, fnfshader: String; const AData: TP3DLibrary);

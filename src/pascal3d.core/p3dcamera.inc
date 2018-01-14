@@ -46,7 +46,7 @@ type
       procedure UpdateMatrices(CamObject: TP3DObject);
       procedure PassToShader;
 
-      constructor CreateBlock( const AData: TP3DLibrary = nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       property Position: TVec3 read FPosition write FPosition;
       property Forward: TVec3 read FForward;
@@ -68,10 +68,11 @@ type
       property IsoZoom: Single read FIsoZoom write FIsoZoom;
   end;
 
-  TP3DCameraContainer = specialize gP3DStreamableContainer < TP3DCamera >;
+  {TP3DCameraContainer = specialize gP3DStreamableContainer < TP3DCamera >;
   TP3DCameraPointer = specialize gP3DStreamablePointer < TP3DCamera >;
-  TP3DCameraContainerList = specialize gP3DNamedStreamableContainerList < TP3DCamera, TP3DCameraContainer >;
   TP3DCameraPointerList = specialize gP3DStreamableList < TP3DCamera, TP3DCameraPointer >;
+  }
+  TP3DCameraContainerList = specialize gP3DNamedStreamableContainerList < TP3DCamera >;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -147,9 +148,9 @@ begin
     end;
 end;
 
-constructor TP3DCamera.CreateBlock(const AData: TP3DLibrary);
+constructor TP3DCamera.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData );
+  inherited Create( AOwner );
   Aspect:= 4/3;
   FNear:= 0.1;
   FFar:= 100;

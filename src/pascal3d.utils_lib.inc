@@ -6,6 +6,10 @@
 {$INCLUDE p3dfilepointer.inc}
 {$INCLUDE p3dfiles.inc}
 {$INCLUDE p3dpropaccess.inc}
+{$INCLUDE p3dstreamable.inc}
+{$INCLUDE p3dpropaccess_jsonroot.inc}
+{$INCLUDE p3dpropaccess_basetypes.inc}
+{$INCLUDE p3dpropaccess_p3dtypes.inc}
 {$INCLUDE p3dclassfactory.inc}
 {$INCLUDE p3dtransform.inc}
 {$INCLUDE p3dfileutil.inc}
