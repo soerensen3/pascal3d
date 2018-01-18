@@ -18,7 +18,7 @@
 }
 
 
-unit pascal3d.core;
+unit p3d.core;
 {$mode objfpc}{$H+}
 {$interfaces CORBA}
 {$modeswitch nestedprocvars}
@@ -47,11 +47,11 @@ uses
 
   Math,
   p3d.math,
-  pascal3d.utils,
-  pascal3d.events;
+  p3d.utils,
+  p3d.events;
 
 {$DEFINE INTERFACE}
-  {$INCLUDE pascal3d.core_lib.inc}
+  {$INCLUDE p3d.core_lib.inc}
 {$UNDEF INTERFACE}
 
 var
@@ -73,7 +73,7 @@ procedure P3DCoreFinish;
 implementation
 
 {$DEFINE IMPLEMENTATION}
-  {$INCLUDE pascal3d.core_lib.inc}
+  {$INCLUDE p3d.core_lib.inc}
 {$UNDEF IMPLEMENTATION}
 
 procedure InitGL;
@@ -113,20 +113,17 @@ begin
                              TP3DMaterialBase, TP3DMaterialShader,
                              TP3DMesh, TP3DScene, TP3DTexture,
                              TP3DMaterialMapBase, TP3DMaterialMap,
-                             TP3DFontLetter,
+                             TP3DFontLetter, TP3DFontBmp,
                              TP3DObjectModifierArmature, TP3DMeshModifierTerrain ]);
   if ( not Assigned( P3DShaderNodeLib )) then
     P3DShaderNodeLib:= TP3DShaderNodeLibrary.Create( P3DCoreContainers );
 
   if ( TTF_Init() <> 0 ) then
     raise Exception.Create( 'Cannot initialize sdl2_text!' );
-  //if ( not Assigned( P3DFontManager )) then
-  //  P3DFontManager:= TP3DFontManager.Create;
-  //if ( not Assigned( P3DFontManagerBmp )) then
-  //  P3DFontManagerBmp:= TP3DFontManagerBmp.Create( P3DCoreContainers );
-  //if ( not Assigned( P3DMeshModifierClassFactory )) then
-  //  P3DMeshModifierClassFactory:= TP3DMeshModifierClassFactory.Create;
-  //P3DMeshModifierClassFactory.Add( TP3DMeshModifierArmature );
+  if ( not Assigned( P3DFontManager )) then
+    P3DFontManager:= TP3DFontManager.Create;
+  if ( not Assigned( P3DFontManagerBmp )) then
+    P3DFontManagerBmp:= TP3DFontManagerBmp.Create( P3DCoreContainers );
   (*{$DEFINE INITIALIZATION}
   {$INCLUDE pascal3d.core_lib.inc}
   {$UNDEF INITIALIZATION}*)
@@ -156,8 +153,6 @@ begin
     FreeAndNil( P3DDataBlockCache );
   if ( Assigned( P3DAttributes )) then
     FreeAndNil( P3DAttributes );
-//  if ( Assigned( P3DMeshModifierClassFactory )) then
-//    FreeAndNil( P3DMeshModifierClassFactory );
 end;
 
 initialization

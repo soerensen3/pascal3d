@@ -14,6 +14,14 @@ type
 
   TP3DTextureType = ( tex1D, tex2D, tex3D, texCubeMap );
 
+  TP3DCubeMapSides = ( cmsPX, //= GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                       cmsNX, //= GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                       cmsPY, //= GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+                       cmsNY, //= GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                       cmsPZ, //= GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+                       cmsNZ ); //= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z );
+
+
 
 
 const
@@ -35,30 +43,34 @@ type
       FMipMap: Boolean;
       FNumChannels: Integer;
       FWidth: Integer;
+      FTarget: GLenum;
 
       procedure SetFiltering(AValue: TP3DTextureFiltering);
       procedure SetFilteringMipMap(AValue: TP3DTextureFiltering);
       procedure SetMipMap(AValue: Boolean);
-      procedure UpdateFiltering;
-      procedure LoadFromSurface( ASurface: PSDL_Surface );
-      procedure LoadFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer );
-      procedure LoadEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType );
-      procedure LoadFromGLTexture( Tex: GLint );
+      procedure UpdateFiltering( const ATarget: GLenum = 0 );
+      function CreateNewTexAndBind( const ATarget: GLenum = 0 ): GLint;
+      procedure LoadFromSurface( ASurface: PSDL_Surface; const ATarget: GLenum = 0 );
+      procedure LoadFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const ATarget: GLenum = 0 );
+      procedure LoadEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const ATarget: GLenum = 0 );
+      procedure LoadFromGLTexture( Tex: GLint; const ATarget: GLenum = 0 );
       procedure LoadFromTextureFile( FileName: String );
       procedure FileNameChanged( Sender: TP3DFilePointer; ANewFileName: String );
+      function GetFile( FN: String ): String;
 
    public
       class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
 
     public
-      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override; overload;
       constructor CreateFromFile( AFileName: String; const AData: TP3DLibrary = nil );
       constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary = nil);
       constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DLibrary = nil );
       constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary = nil );
       constructor CreateFromGLTexture( Tex: GLint; const AData: TP3DLibrary = nil );
+      constructor CreateFromFileCube( PX, NX, PY, NY, PZ, NZ: String; const AData: TP3DLibrary = nil );
 
-      procedure LoadMipMapFromSurface( level: Integer; ASurface: PSDL_Surface );
+      procedure LoadMipMapFromSurface( level: Integer; ASurface: PSDL_Surface; const ATarget: GLenum = GL_TEXTURE_2D );
 
       procedure Bind( const Location: Integer = 0 );
       procedure Unbind();
@@ -78,6 +90,7 @@ type
       property FileWatch: TP3DFilePointer read FFileWatch write FFileWatch;
       property DataType: TP3DTextureDataType read FDataType;
       property NumChannels: Integer read FNumChannels;
+      property Target: GLenum read FTarget write FTarget;
   end;
 
   {TP3DTextureContainer = specialize gP3DStreamableContainer < TP3DTexture >;
@@ -232,27 +245,50 @@ begin
   UpdateFiltering;
 end;
 
-procedure TP3DTexture.UpdateFiltering;
+procedure TP3DTexture.UpdateFiltering(const ATarget: GLenum);
+var
+  _Target: GLenum;
 begin
-  glBindTexture( GL_TEXTURE_2D, FGLTexture ); cle( Self );
-  if ( MipMap ) then
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, P3DTextureFilteringMipMapToGL[ Filtering, FilteringMipMap ])
+  if ( ATarget = 0 ) then
+    _Target:= Target
   else
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, P3DTextureFilteringToGL[ Filtering ]);
+    _Target:= ATarget;
+  glBindTexture( _Target, FGLTexture ); cle( Self );
+  if ( MipMap ) then
+    glTexParameteri( _Target, GL_TEXTURE_MIN_FILTER, P3DTextureFilteringMipMapToGL[ Filtering, FilteringMipMap ])
+  else
+    glTexParameteri( _Target, GL_TEXTURE_MIN_FILTER, P3DTextureFilteringToGL[ Filtering ]);
   cle( Self );
 
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, P3DTextureFilteringToGL[ Filtering ]); cle( Self );
-  glBindTexture( GL_TEXTURE_2D, 0 ); cle( Self );
+  glTexParameterf( _Target, GL_TEXTURE_MAG_FILTER, P3DTextureFilteringToGL[ Filtering ]); cle( Self );
+
+  glGenerateMipmap( _Target ); cle( Self );
+  glTexParameteri( _Target, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
+  glTexParameteri( _Target, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
+
+  glBindTexture( _Target, 0 ); cle( Self );
 end;
 
-procedure TP3DTexture.LoadFromSurface(ASurface: PSDL_Surface);
+function TP3DTexture.CreateNewTexAndBind(const ATarget: GLenum): GLint;
 var
-  Tex: GLint;
-  InternalMode, Mode: GLenum;
+  _Target: GLenum;
 begin
-  glGenTextures( 1, @Tex ); cle( Self );
-  glBindTexture( GL_TEXTURE_2D, Tex ); cle( Self );
+  if ( ATarget = 0 ) then
+    _Target:= Target
+  else
+    _Target:= ATarget;
+  glGenTextures( 1, @Result ); cle( Self );
+  glBindTexture( _Target, Result ); cle( Self );
+end;
 
+procedure TP3DTexture.LoadFromSurface(ASurface: PSDL_Surface; const ATarget: GLenum);
+var
+  Mode, InternalMode, _Target: GLenum;
+begin
+  if ( ATarget = 0 ) then
+    _Target:= Target
+  else
+    _Target:= ATarget;
   case ( ASurface^.format^.BytesPerPixel ) of
     1: Mode:= GL_R;
     2: Mode:= GL_RG;
@@ -264,35 +300,24 @@ begin
 
   InternalMode:= P3DChooseFormatBySDLPixelFormat( ASurface^.format );
 
-  glTexImage2D( GL_TEXTURE_2D, 0, InternalMode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
-
-  glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
+  glTexImage2D( _Target, 0, InternalMode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
 
   FFiltering:= tfLinear;
   FFilteringMipMap:= tfLinear;
   FMipMap:= True;
-  UpdateFiltering;
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
-
-  FWidth:= ASurface^.w;
-  FHeight:= ASurface^.h;
-
-  if ( FGLTexture > 0 ) then
-    glDeleteTextures( 1, @FGLTexture ); cle( Self );
-  FGLTexture:= Tex;
 end;
 
-procedure TP3DTexture.LoadFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer);
+procedure TP3DTexture.LoadFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType;
+  ABuffer: Pointer; const ATarget: GLenum);
 var
   Mode: Integer;
   InternalMode: Integer;
-  Tex: GLint;
+  Tex, _Target: GLint;
 begin
-  glGenTextures( 1, @Tex ); cle( Self );
-  glBindTexture( GL_TEXTURE_2D, Tex ); cle( Self );
-
-  FNumChannels:= ANumChannels;
+  if ( ATarget = 0 ) then
+    _Target:= Target
+  else
+    _Target:= ATarget;
   FDataType:= ADataType;
   case ( ANumChannels ) of
     1: Mode:= GL_R;
@@ -300,38 +325,32 @@ begin
     3: Mode:= GL_RGB;
     4: Mode:= GL_RGBA;
     else
-      Mode:= NumChannels;
+      Mode:= ANumChannels;
   end;
   InternalMode:= P3DChooseFormatByType( ADataType, ANumChannels );
-  glTexImage2D( GL_TEXTURE_2D, 0, InternalMode, AWidth, AHeight, 0, Mode, GLenum( ADataType ), ABuffer ); cle( Self );
+  glTexImage2D( _Target, 0, InternalMode, AWidth, AHeight, 0, Mode, GLenum( ADataType ), ABuffer ); cle( Self );
 
-  glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
+  glGenerateMipmap( _Target ); cle( Self );
 
   FFiltering:= tfNearest;
   FFilteringMipMap:= tfNearest;
   FMipMap:= False;
   UpdateFiltering;
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
-
-  FWidth:= AWidth;
-  FHeight:= AHeight;
-
-  if ( FGLTexture > 0 ) then
-    glDeleteTextures( 1, @FGLTexture ); cle( Self );
-  FGLTexture:= Tex;
+  glTexParameteri( _Target, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
+  glTexParameteri( _Target, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
 end;
 
-procedure TP3DTexture.LoadEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType);
+procedure TP3DTexture.LoadEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType;
+  const ATarget: GLenum);
 var
   Mode: Integer;
   InternalMode: Integer;
-  Tex: GLint;
+  _Target: GLenum;
 begin
-  glGenTextures( 1, @Tex ); cle( Self );
-  glBindTexture( GL_TEXTURE_2D, Tex ); cle( Self );
-
-  FNumChannels:= ANumChannels;
+  if ( ATarget = 0 ) then
+    _Target:= Target
+  else
+    _Target:= ATarget;
   FDataType:= ADataType;
   case ( ANumChannels ) of
     1: Mode:= GL_R;
@@ -339,42 +358,38 @@ begin
     3: Mode:= GL_RGB;
     4: Mode:= GL_RGBA;
     else
-      Mode:= NumChannels;
+      Mode:= ANumChannels;
   end;
   InternalMode:= P3DChooseFormatByType( ADataType, ANumChannels );
-  glTexImage2D( GL_TEXTURE_2D, 0, InternalMode, AWidth, AHeight, 0, Mode, GLenum( ADataType ), nil ); cle( Self );
-
-  glGenerateMipmap( GL_TEXTURE_2D ); cle( Self );
+  glTexImage2D( _Target, 0, InternalMode, AWidth, AHeight, 0, Mode, GLenum( ADataType ), nil ); cle( Self );
 
   FFiltering:= tfLinear;
   FFilteringMipMap:= tfLinear;
   FMipMap:= True;
   UpdateFiltering;
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
-
-  FWidth:= AWidth;
-  FHeight:= AHeight;
-
-  if ( FGLTexture > 0 ) then
-    glDeleteTextures( 1, @FGLTexture ); cle( Self );
-  FGLTexture:= Tex;
+  glTexParameteri( _Target, GL_TEXTURE_WRAP_S, GL_REPEAT ); cle( Self );
+  glTexParameteri( _Target, GL_TEXTURE_WRAP_T, GL_REPEAT ); cle( Self );
 end;
 
-procedure TP3DTexture.LoadFromGLTexture(Tex: GLint);
+procedure TP3DTexture.LoadFromGLTexture(Tex: GLint; const ATarget: GLenum);
 var
   Filter: Integer;
+  _Target: GLenum;
 begin
+  if ( ATarget = 0 ) then
+    _Target:= Target
+  else
+    _Target:= ATarget;
   FGLTexture:= Tex;
   Bind();
-  glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, @Width ); cle( Self );
-  glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, @Height ); cle( Self );
+  glGetTexLevelParameteriv( _Target, 0, GL_TEXTURE_WIDTH, @Width ); cle( Self );
+  glGetTexLevelParameteriv( _Target, 0, GL_TEXTURE_WIDTH, @Height ); cle( Self );
   //glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, @Filter );
   //case Filter of
   //  GL_LINEAR: FFiltering:= tfLinear;
   //  GL_NEAREST: FFiltering:= tfNearest;
   //end;
-  glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, @Filter );
+  glGetTexParameteriv( _Target, GL_TEXTURE_MAG_FILTER, @Filter );
   case Filter of
     GL_LINEAR: begin FMipMap:= False; FFiltering:= tfLinear; FFilteringMipMap:= tfNearest; end;
     GL_NEAREST: begin FMipMap:= False; FFiltering:= tfNearest; FFilteringMipMap:= tfNearest; end;
@@ -400,12 +415,31 @@ begin
   WriteLn( 'Texture loaded: ' + ExtractFileName( FileName ));
   {$ENDIF}
   LoadFromSurface( FSurface );
+  UpdateFiltering;
+  FWidth:= FSurface^.w;
+  FHeight:= FSurface^.h;
+  FNumChannels:= FSurface^.format^.BytesPerPixel;
+
   SDL_FreeSurface( FSurface );
 end;
 
 procedure TP3DTexture.FileNameChanged(Sender: TP3DFilePointer; ANewFileName: String);
+var
+  Tex: GLint;
 begin
+  Tex:= CreateNewTexAndBind();
   LoadFromTextureFile( ANewFileName );
+  if ( FGLTexture > 0 ) then
+    glDeleteTextures( 1, @FGLTexture );
+  FGLTexture:= Tex;
+  UpdateFiltering();
+end;
+
+function TP3DTexture.GetFile(FN: String): String;
+begin
+  Result:= P3DSearchPaths.FindFileEx( FN, GetCurrentDirUTF8 );
+  if ( Result = '' ) then
+    Result:= FN;
 end;
 
 class function TP3DTexture.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
@@ -429,11 +463,10 @@ begin
   Properties.Add( TP3DPropAccessFilePointer.CreateField( 'File', @FFileWatch, smText, pmRelativeToJSONFile ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'DataType' ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'NumChannels' ));
+  FTarget:= GL_TEXTURE_2D;
 end;
 
 procedure TP3DTexture.LoadFromBinary(FileName: String );
-var
-  FSurface: PSDL_Surface;
 begin
   if (( FileName = FileWatch.FileName ) and ( not FileWatch.CheckForChange )) then
     begin
@@ -456,21 +489,22 @@ constructor TP3DTexture.CreateFromFile(AFileName: String; const AData: TP3DLibra
 var
   FileName: String;
 begin
-  FileName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
+  FileName:= GetFile( AFileName );
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AFileName ]));
   CreateBlock( AData );
-  LoadFromTextureFile( FileName );
+  FGLTexture:= CreateNewTexAndBind();
+  LoadFromBinary( FileName );
 end;
 
 constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary);
 begin
-  if ( not Assigned( glGenTextures )) then
-    exit;
   CreateBlock( AData );
-  //FFileWatch:= TP3DFilePointer.Create( '' );
-
+  CreateNewTexAndBind();
   LoadFromBuffer( AWidth, AHeight, ANumChannels, ADataType, ABuffer );
+  FWidth:= AWidth;
+  FHeight:= AHeight;
+  FNumChannels:= ANumChannels;
 end;
 
 constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface; const AData: TP3DLibrary);
@@ -478,8 +512,13 @@ begin
   if ( not Assigned( glGenTextures )) then
     exit;
   CreateBlock( AData );
-  //FFileWatch:= TP3DFilePointer.Create( '' );
+
+  FGLTexture:= CreateNewTexAndBind();
   LoadFromSurface( ASurface );
+  UpdateFiltering;
+  FWidth:= ASurface^.w;
+  FHeight:= ASurface^.h;
+  FNumChannels:= ASurface^.format^.BytesPerPixel;
 end;
 
 constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary);
@@ -487,25 +526,66 @@ begin
   if ( not Assigned( glGenTextures )) then
     exit;
   CreateBlock( AData );
-  //FFileWatch:= TP3DFilePointer.Create( '' );
+
+  FGLTexture:= CreateNewTexAndBind();
   LoadEmpty( AWidth, AHeight, ANumChannels, ADataType );
+
+  FWidth:= AWidth;
+  FHeight:= AHeight;
+  FNumChannels:= ANumChannels;
 end;
 
 constructor TP3DTexture.CreateFromGLTexture(Tex: GLint; const AData: TP3DLibrary);
 begin
-  if ( not Assigned( glGenTextures )) then
-    exit;
   CreateBlock( AData );
   //FFileWatch:= TP3DFilePointer.Create( '' );
   LoadFromGLTexture( Tex );
 end;
 
-procedure TP3DTexture.LoadMipMapFromSurface(level: Integer;
-  ASurface: PSDL_Surface);
+constructor TP3DTexture.CreateFromFileCube(PX, NX, PY, NY, PZ, NZ: String; const AData: TP3DLibrary);
+const
+  P3DCubeMapSideToGL: array [ TP3DCubeMapSides ] of GLenum = ( GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                                                               GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                                                               GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z );
+
+  procedure AddCubeSide( Side: TP3DCubeMapSides; FN: String );
+  var
+    FSurface: PSDL_Surface;
+  begin
+    FSurface:= IMG_Load( PChar( GetFile( FN )));
+    if ( FSurface = nil ) then
+      raise Exception.Create( Format( 'The specified file "%s" could not be loaded!', [ ExtractFileName( FN )]));
+    LoadFromSurface( FSurface, P3DCubeMapSideToGL[ side ]);
+    FWidth:= FSurface^.w;
+    FHeight:= FSurface^.h;
+    FNumChannels:= FSurface^.format^.BytesPerPixel;
+
+    SDL_FreeSurface( FSurface );
+  end;
+
+begin
+  CreateBlock( AData );
+  FTarget:= GL_TEXTURE_CUBE_MAP;
+  FGLTexture:= CreateNewTexAndBind( Target );
+
+  AddCubeSide( cmsPX, PX );
+  AddCubeSide( cmsNX, NX );
+  AddCubeSide( cmsPY, PY );
+  AddCubeSide( cmsNY, NY );
+  AddCubeSide( cmsPZ, PZ );
+  AddCubeSide( cmsNZ, NZ );
+  UpdateFiltering( Target );
+end;
+
+procedure TP3DTexture.LoadMipMapFromSurface(level: Integer; ASurface: PSDL_Surface; const ATarget: GLenum);
 var
   Mode: GLenum;
-  InternalMode: GLenum;
+  InternalMode, _Target: GLenum;
 begin
+  if ( ATarget = 0 ) then
+    _Target:= Target
+  else
+    _Target:= ATarget;
   case ( ASurface^.format^.BytesPerPixel ) of
     1: Mode:= GL_R;
     2: Mode:= GL_RG;
@@ -519,18 +599,18 @@ begin
 
   InternalMode:= P3DChooseFormatBySDLPixelFormat( ASurface^.format );
 
-  glTexImage2D( GL_TEXTURE_2D, level, InternalMode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
+  glTexImage2D( _Target, level, InternalMode, ASurface^.w, ASurface^.h, 0, Mode, GL_UNSIGNED_BYTE, ASurface^.pixels ); cle( Self );
 end;
 
 procedure TP3DTexture.Bind(const Location: Integer);
 begin
   glActiveTexture( GL_TEXTURE0 + Location );
-  glBindTexture( GL_TEXTURE_2D, GLTexture );
+  glBindTexture( Target, GLTexture );
 end;
 
 procedure TP3DTexture.Unbind();
 begin
-  glBindTexture( GL_TEXTURE_2D, 0 );
+  glBindTexture( Target, 0 );
 end;
 
 destructor TP3DTexture.Destroy;
@@ -547,7 +627,7 @@ var
   tex: Integer;
 begin
   tex:= FGLTexture;
-  //LoadFromFile( FileWatch.FileName );
+  LoadFromTextureFile( FileWatch.FileName );
   if ( Assigned( glDeleteTextures )) then
     glDeleteTextures( 1, @tex ); cle( Self );
 end;
@@ -564,7 +644,7 @@ var
 begin
   Bind();
   GetMem( Pixels, Width * Height * 4 );
-  glGetTexImage( GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels );
+  glGetTexImage( Target, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels );
   surface:= SDL_CreateRGBSurfaceFrom( Pixels, Width, Height, 32, Width * 4, $000000FF, $0000FF00, $00FF0000, $FF000000 );
   IMG_SavePNG( surface, PChar( FileName ));
   SDL_FreeSurface( surface );

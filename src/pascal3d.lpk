@@ -22,23 +22,23 @@
     </CompilerOptions>
     <Files Count="59">
       <Item1>
-        <Filename Value="pascal3d.core.pas"/>
-        <UnitName Value="pascal3d.core"/>
+        <Filename Value="p3d.core.pas"/>
+        <UnitName Value="p3d.core"/>
       </Item1>
       <Item2>
-        <Filename Value="pascal3d.core_lib.inc"/>
+        <Filename Value="p3d.core_lib.inc"/>
         <Type Value="Include"/>
       </Item2>
       <Item3>
-        <Filename Value="pascal3d.events.pas"/>
-        <UnitName Value="pascal3d.events"/>
+        <Filename Value="p3d.events.pas"/>
+        <UnitName Value="p3d.events"/>
       </Item3>
       <Item4>
-        <Filename Value="pascal3d.utils.pas"/>
-        <UnitName Value="pascal3d.utils"/>
+        <Filename Value="p3d.utils.pas"/>
+        <UnitName Value="p3d.utils"/>
       </Item4>
       <Item5>
-        <Filename Value="pascal3d.utils_lib.inc"/>
+        <Filename Value="p3d.utils_lib.inc"/>
         <Type Value="Include"/>
       </Item5>
       <Item6>

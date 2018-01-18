@@ -1,8 +1,10 @@
 {$IFDEF INTERFACE}
 
-{ TP3DControlList }
+{ TP3DGraphicControlContainerList }
 
-TP3DControlList = class( specialize gP3DNamedStreamableList < TP3DGraphicControl > )
+TP3DGraphicControlPointerList = specialize gP3DStreamablePointerList < TP3DGraphicControl >;
+
+TP3DGraphicControlContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DGraphicControl > )
   private
     FClipRect: TP3DRect;
     FFinalScroll: TVec2;
@@ -19,6 +21,7 @@ TP3DControlList = class( specialize gP3DNamedStreamableList < TP3DGraphicControl
     procedure SetPageModeY(AValue: TP3DPageMode);
     procedure SetPageRect(AValue: TP3DRect);
     procedure SetPageScroll(AValue: TVec2);
+    procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
 
   public
     procedure UpdateControls;
@@ -31,17 +34,13 @@ TP3DControlList = class( specialize gP3DNamedStreamableList < TP3DGraphicControl
     function Input: TP3DGraphicControl;
 
     function MouseRay(X, Y: Integer; const Recurse: Boolean): TP3DGraphicControl;
-    procedure Clear( const FreeObjects: Boolean = False ); override;
-    procedure Delete( Itm: TP3DGraphicControl ); overload;
-    procedure MoveTo( Index: Integer; Controls: TP3DControlList );
+    //procedure MoveTo( Index: Integer; Controls: TP3DGraphicControlContainerList );
     procedure BringToFront( Index: Integer );
     procedure SendToBack( Index: Integer );
     procedure OneLayerUp( Index: Integer );
     procedure OneLayerDown( Index: Integer );
-    function IndexOf( Name: String ): Integer; overload;
+    //function IndexOf( Name: String ): Integer; overload;
     function ChildOf( AControl: TP3DGraphicControl ): Boolean;
-
-    destructor Destroy; override;
 
     property Parent: TP3DGraphicControl read FParent;
     property PageRect: TP3DRect read FPageRect write SetPageRect;
@@ -61,43 +60,17 @@ end;
 
 {$IFDEF IMPLEMENTATION}
 
-{ TP3DControlList }
+{ TP3DGraphicControlContainerList }
 
-
-procedure TP3DControlList.Clear(const FreeObjects: Boolean);
-var
-  i: Integer;
-begin
-  for i:= Count - 1 downto 0 do
-    if ( FreeObjects ) then
-      Items[ i ].Free
-    else
-      begin
-        Items[ i ].Controls:= P3DGUIManager.Controls;
-        P3DGUIManager.Controls.Add( Items[ i ]);
-      end;
-  Count:= 0;
-end;
-
-procedure TP3DControlList.Delete(Itm: TP3DGraphicControl);
-begin
-  Delete( IndexOf( Itm ));
-end;
-
-destructor TP3DControlList.Destroy;
-begin
-  Clear( True );
-  inherited;
-end;
-
-procedure TP3DControlList.MoveTo(Index: Integer; Controls: TP3DControlList);
+{
+procedure TP3DGraphicControlContainerList.MoveTo(Index: Integer; Controls: TP3DGraphicControlContainerList);
 begin
   Controls.Add( Items[ Index ]);
   inherited Delete( Index );
 end;
-
+}
 {
-procedure TP3DControlList.Realign;
+procedure TP3DGraphicControlContainerList.Realign;
 var
   R: TP3DRect;
   Control: TP3DGraphicControl;
@@ -145,40 +118,40 @@ begin
 end;
 }
 
-procedure TP3DControlList.SetPageModeX(AValue: TP3DPageMode);
+procedure TP3DGraphicControlContainerList.SetPageModeX(AValue: TP3DPageMode);
 begin
   if ( FPageModeX = AValue ) then Exit;
   FPageModeX:= AValue;
 end;
 
-function TP3DControlList.GetPageScrollPixel: TVec2;
+function TP3DGraphicControlContainerList.GetPageScrollPixel: TVec2;
 begin
   Result:= PageScroll * max( PageSize - PageRect.WidthHeight, 0 ); //* vec2( Ord( PageModeX = pmScroll ), Ord( PageModeY = pmScroll ));
 end;
 
-function TP3DControlList.GetCanScrollX: Boolean;
+function TP3DGraphicControlContainerList.GetCanScrollX: Boolean;
 begin
   Result:= PageSize.x > PageRect.Width;
 end;
 
-function TP3DControlList.GetCanScrollY: Boolean;
+function TP3DGraphicControlContainerList.GetCanScrollY: Boolean;
 begin
   Result:= PageSize.y > PageRect.Height;
 end;
 
-procedure TP3DControlList.SetPageModeY(AValue: TP3DPageMode);
+procedure TP3DGraphicControlContainerList.SetPageModeY(AValue: TP3DPageMode);
 begin
   if ( FPageModeY = AValue ) then Exit;
   FPageModeY:= AValue;
 end;
 
-procedure TP3DControlList.SetPageRect(AValue: TP3DRect);
+procedure TP3DGraphicControlContainerList.SetPageRect(AValue: TP3DRect);
 begin
   FPageRect:=AValue;
   UpdateControls;
 end;
 
-procedure TP3DControlList.SetPageScroll(AValue: TVec2);
+procedure TP3DGraphicControlContainerList.SetPageScroll(AValue: TVec2);
 begin
   if FPageScroll=AValue then Exit;
   FPageScroll:= clamp( AValue, vec2( 0.0 ), vec2( Ord( CanScrollX ), Ord( CanScrollY )));
@@ -186,7 +159,17 @@ begin
   //PageScroll:= PageScroll * vec2( Ord( PageModeX = pmScroll ), Ord( PageModeY = pmScroll ));
 end;
 
-procedure TP3DControlList.UpdateControls;
+procedure TP3DGraphicControlContainerList.Notify(ASender: TObject; AItem: TP3DStreamable;
+  AAction: TP3DListOnChangeAction);
+begin
+  inherited Notify(ASender, AItem, AAction);
+  if (( AAction = actAdd ) and ( Context.GetInstance is TP3DGraphicControl )) then
+    TP3DGraphicControl( AItem ).FParent.AsValue:= TP3DGraphicControl( Context.GetInstance )
+  else if ( Assigned( AItem )) then
+    TP3DGraphicControl( AItem ).FParent.AsValue:= nil;
+end;
+
+procedure TP3DGraphicControlContainerList.UpdateControls;
 var
   Control: TP3DGraphicControl;
   Rect: TP3DRect;
@@ -222,7 +205,7 @@ begin
       end;
 end;
 
-procedure TP3DControlList.UpdateControlRect(Control: TP3DGraphicControl;
+procedure TP3DGraphicControlContainerList.UpdateControlRect(Control: TP3DGraphicControl;
   var TargetRect: TP3DRect);
 var
   Rect: TP3DRect;
@@ -259,7 +242,7 @@ begin
   Control.FClientRect:= P3DRect( 0, 0, Rect.Width, Rect.Height ).Inset( Control.Margin.XY, Control.Margin.ZW ); //#1
 end;
 
-procedure TP3DControlList.UpdateCanvasRect(Control: TP3DGraphicControl;
+procedure TP3DGraphicControlContainerList.UpdateCanvasRect(Control: TP3DGraphicControl;
   TargetRect: TP3DRect);
 var
   ControlRect, CtrlPageRect: TP3DRect;
@@ -290,7 +273,7 @@ begin
   //ControlRect.TopLeft:= CanvRect.TopLeft + Control.Margin.XY;
 end;
 
-function TP3DControlList.UpdatePageSize: TVec2;
+function TP3DGraphicControlContainerList.UpdatePageSize: TVec2;
 var
   Control: TP3DGraphicControl;
   P: TVec2;
@@ -307,7 +290,7 @@ begin
       end;
 end;
 
-function TP3DControlList.NeedsUpdate: Boolean;
+function TP3DGraphicControlContainerList.NeedsUpdate: Boolean;
 var
   Control: TP3DGraphicControl;
 begin
@@ -320,55 +303,46 @@ begin
       end;
 end;
 
-procedure TP3DControlList.Render();
+procedure TP3DGraphicControlContainerList.Render();
 var
   i: Integer;
 begin
   for i:= 0 to Count - 1 do
-    if ( Items[ i ].Visible ) then
-      Items[ i ].Paint;
+    if ( AsValues[ i ].Visible ) then
+      AsValues[ i ].Paint;
 end;
 
-procedure TP3DControlList.BringToFront( Index: Integer );
+procedure TP3DGraphicControlContainerList.BringToFront( Index: Integer );
 var
-  Item: TP3DGraphicControl;
+  Item: TP3DPropertyAccess;
 begin
   if ( Index + 1 = Count ) then
     exit;
+  FItems.OwnsObjects:= False;
   Item:= Items[ Index ];
-  Delete( Items[ Index ]);
-  Insert( Count, Item );
-  if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Item.NeedsUpdate:= True;
+  Delete( Index );
+  FItems.Insert( Count, Item );
+  FItems.OwnsObjects:= True;
+  if ( TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).Align in [ alLeft, alRight, alTop, alBottom ]) then
+    TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).NeedsUpdate:= True;
 end;
 
-procedure TP3DControlList.OneLayerDown( Index: Integer );
+procedure TP3DGraphicControlContainerList.OneLayerDown( Index: Integer );
 var
-  Item: TP3DGraphicControl;
+  Item: TP3DPropertyAccess;
 begin
   if ( Index = 0 ) then
     exit;
+  FItems.OwnsObjects:= False;
   Item:= Items[ Index ];
-  Delete( Items[ Index ]);
-  Insert( Index - 1, Item );
-  if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Item.NeedsUpdate:= True;
+  Delete( Index );
+  FItems.Insert( Index - 1, Item );
+  FItems.OwnsObjects:= True;
+  if ( TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).Align in [ alLeft, alRight, alTop, alBottom ]) then
+    TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).NeedsUpdate:= True;
 end;
 
-function TP3DControlList.IndexOf(Name: String): Integer;
-var
-  i: Integer;
-begin
-  Result:= -1;
-  for i:= 0 to Count - 1 do
-    if ( Items[ i ].Name = Name ) then
-      begin
-        Result:= i;
-        break;
-      end;
-end;
-
-function TP3DControlList.ChildOf(AControl: TP3DGraphicControl): Boolean;
+function TP3DGraphicControlContainerList.ChildOf(AControl: TP3DGraphicControl): Boolean;
 var
   Control: TP3DGraphicControl;
 begin
@@ -381,34 +355,38 @@ begin
       end;
 end;
 
-procedure TP3DControlList.OneLayerUp( Index: Integer );
+procedure TP3DGraphicControlContainerList.OneLayerUp( Index: Integer );
 var
-  Item: TP3DGraphicControl;
+  Item: TP3DPropertyAccess;
 begin
   if ( Index + 1 = Count ) then
     exit;
+  FItems.OwnsObjects:= False;
   Item:= Items[ Index ];
-  Delete( Items[ Index ]);
-  Insert( Index, Item );
-  if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Item.NeedsUpdate:= True;
+  Delete( Index );
+  FItems.Insert( Index, Item );
+  FItems.OwnsObjects:= True;
+  if ( TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).Align in [ alLeft, alRight, alTop, alBottom ]) then
+    TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).NeedsUpdate:= True;
 end;
 
-procedure TP3DControlList.SendToBack( Index: Integer );
+procedure TP3DGraphicControlContainerList.SendToBack( Index: Integer );
 var
-  Item: TP3DGraphicControl;
+  Item: TP3DPropertyAccess;
 begin
   if ( Index = 0 ) then
     exit;
+  FItems.OwnsObjects:= False;
   Item:= Items[ Index ];
-  Delete( Items[ Index ]);
-  Insert( 0, Item );
-  if ( Item.Align in [ alLeft, alRight, alTop, alBottom ]) then
-    Item.NeedsUpdate:= True;
+  Delete( Index );
+  FItems.Insert( 0, Item );
+  FItems.OwnsObjects:= True;
+  if ( TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).Align in [ alLeft, alRight, alTop, alBottom ]) then
+    TP3DGraphicControl( TP3DStreamableContainer( Item ).AsValue ).NeedsUpdate:= True;
 end;
 
 //Calls the keyboard and mouse input for all the controls in the list.
-function TP3DControlList.Input: TP3DGraphicControl;
+function TP3DGraphicControlContainerList.Input: TP3DGraphicControl;
 var
   Control: TP3DGraphicControl;
   mx, my: Integer;
@@ -450,19 +428,19 @@ begin
         if ( Buttons[ i ]) then //pushed
           begin
             P3DGUIManager.LastMouseDownCtrl[ i ]:= P3DGUIManager.LastMouseOverCtrl;
-            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
+            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]){ and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])}) then
               P3DGUIManager.LastMouseDownCtrl[ i ].InputState:= P3DGUIManager.LastMouseDownCtrl[ i ].InputState + BtnInpState( i );
             P3DGUIManager.FocusedControl:= P3DGUIManager.LastMouseOverCtrl;
           end
         else                    //released
           begin
-            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]) and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])) then
+            if ( Assigned( P3DGUIManager.LastMouseDownCtrl[ i ]){ and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseDownCtrl[ i ])}) then
               P3DGUIManager.LastMouseDownCtrl[ i ].InputState:= P3DGUIManager.LastMouseDownCtrl[ i ].InputState - BtnInpState( i );
             // Drag and Drop release
             if (( DragDropSrc <> nil )) then
               begin
                 Accept:= False;
-                if ( Assigned( P3DGUIManager.LastMouseOverCtrl ) and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseOverCtrl )) then
+                if ( Assigned( P3DGUIManager.LastMouseOverCtrl ){ and P3DDataBlockCache.IsValid( P3DGUIManager.LastMouseOverCtrl )}) then
                   P3DGUIManager.LastMouseOverCtrl.DragDrop( P3DGUIManager.LastMouseOverCtrl, DragDropSrc, X, Y, Accept );
                 if ( not Accept ) then
                   DragDropSrc.DragCancel( DragDropSrc, X, Y );
@@ -482,20 +460,20 @@ begin
       end;
 end;
 
-function TP3DControlList.MouseRay( X, Y: Integer; const Recurse: Boolean ): TP3DGraphicControl;
+function TP3DGraphicControlContainerList.MouseRay( X, Y: Integer; const Recurse: Boolean ): TP3DGraphicControl;
 var
   i: Integer;
 begin
   Result:= nil;
   for i:= Count - 1 downto 0 do // The Control on top of the stack is rendered last so this will be the control on top
-    if ( Items[ i ].Visible and Items[ i ].Enabled and Items[ i ].Canvas.Rect.PtInRect( vec2( X, Y ))) then
+    if ( AsValues[ i ].Visible and AsValues[ i ].Enabled and AsValues[ i ].Canvas.Rect.PtInRect( vec2( X, Y ))) then
       begin
         if ( Recurse ) then
-          Result:= Items[ i ].Controls.MouseRay( X, Y, Recurse );
+          Result:= AsValues[ i ].Controls.MouseRay( X, Y, Recurse );
 
         if ( not Assigned( Result )) then
-          if ( Items[ i ].MouseRay( X, Y )) then
-            Result:= Items[ i ]
+          if ( AsValues[ i ].MouseRay( X, Y )) then
+            Result:= AsValues[ i ]
           else
             continue;
         break;

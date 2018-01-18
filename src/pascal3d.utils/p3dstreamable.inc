@@ -89,8 +89,6 @@
       procedure Delete( Index: Integer ); virtual;
       procedure Insert( Index: Integer; Item: TP3DStreamable ); virtual;
 
-      property ItemProp: TP3DPropertyAccessClass read FItemProp;
-      property ItemClass: TP3DStreamableClass read FItemClass;
       property Items[ Index: Integer ]: TP3DPropertyAccess read GetItems;
       property AsValues[ Index: Integer ]: TP3DStreamable read GetValues write SetValues; default;
 
@@ -104,12 +102,14 @@
       function SaveToJSON: TJSONData; override;
 
       function Find( Item: TP3DStreamable ): Integer; virtual;
-      procedure Clear;
+      procedure Clear; virtual;
 
       function GetArrayItemAsProp(Idx: Integer): TP3DPropertyAccess; override;
       function IndexOf(AItem: Pointer): Integer; override;
       function GetChildPropByPath(var APath: String; out RestString: String; out LastFound: TP3DPropertyAccess ): TP3DPropertyAccess; override;
 
+      property ItemProp: TP3DPropertyAccessClass read FItemProp;
+      property ItemClass: TP3DStreamableClass read FItemClass;
       property OnChange: TStreamableNotifyEvent read FOnChange write FOnChange;
   end;
 
@@ -302,20 +302,26 @@
       property Users: TP3DUserList read FUsers;
   end;
 
+  IP3DNamedStreamableList = interface ( IP3DStreamableContainer ) ['{9B199AA9-5110-4555-94EF-42C3258D9EEC}']
+    function FindUniqueName( BaseStr: String ): String;
+    function FindByName( AName: String ): Integer;
+  end;
+
   { TP3DNamedStreamable }
 
   TP3DNamedStreamable = class ( TP3DStreamable )
-    private
+    protected
       FName: String;
+      FNamedStreamableList: IP3DNamedStreamableList;
 
-      function GetName: String;
+      function GetName: String; virtual;
 
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       procedure SetName( AValue: String ); virtual;
 
     published
-      property Name: String read FName write SetName;
+      property Name: String read GetName write SetName;
   end;
 
   { gP3DNamedStreamableList }
@@ -330,7 +336,7 @@
 
   { gP3DNamedStreamableContainerList }
 
-  generic gP3DNamedStreamableContainerList < T: TP3DNamedStreamable > = class( specialize gP3DStreamableContainerList < T > )
+  generic gP3DNamedStreamableContainerList < T: TP3DNamedStreamable > = class( specialize gP3DStreamableContainerList < T >, IP3DNamedStreamableList )
     protected
       procedure LoadItemFromJSON(Index: Integer; AData: TJSONData); override;
       function GetStrIdxOf(AIndex: Integer): String;
@@ -342,6 +348,7 @@
 
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
+      function GetByName( AName: String ): T;
   end;
 
 
@@ -1066,12 +1073,17 @@ end;
 
 function TP3DStreamableListBase.GetValues(Index: Integer): TP3DStreamable;
 begin
-  Result:= ( GetArrayItemAsProp( Index ) as IP3DPropAccessStreamable ).GetValueAsStreamable;
+  if ( InRange( Index, 0, Count - 1 )) then
+    Result:= ( GetArrayItemAsProp( Index ) as IP3DPropAccessStreamable ).GetValueAsStreamable
+  else
+    Result:= nil;
 end;
 
 procedure TP3DStreamableListBase.SetValues(Index: Integer;
   AValue: TP3DStreamable);
 begin
+  if ( not InRange( Index, 0, Count - 1 )) then
+    exit;
   Notify( Self, AsValues[ Index ], actDelete );
   if ( Find( AValue ) > -1 ) then
     Delete( Index )
@@ -1202,8 +1214,8 @@ var
 begin
   Result:= -1;
   for i:= 0 to Count - 1 do
-    if (( Assigned( Items[ i ])) and // Items[ i ] can be nil for example if many values are loaded from JSON, the count is set to the final count before it loads all the values.
-        ( Items[ i ].Name = AName )) then
+    if (( Assigned( Items[ i ])) and ( Assigned( AsValues[ i ])) and // Items[ i ] can be nil for example if many values are loaded from JSON, the count is set to the final count before it loads all the values.
+        ( TP3DNamedStreamable( AsValues[ i ]).Name = AName )) then
       begin
         Result:= i;
         break;
@@ -1311,6 +1323,17 @@ begin
       end;
 end;
 
+function gP3DNamedStreamableContainerList.GetByName(AName: String): T;
+var
+  n: Integer;
+begin
+  n:= FindByName( AName );
+  if ( n > -1 ) then
+    Result:= AsValues[ n ]
+  else
+    Result:= nil;
+end;
+
 { TP3DNamedStreamable }
 
 function TP3DNamedStreamable.GetName: String;
@@ -1321,6 +1344,7 @@ end;
 constructor TP3DNamedStreamable.Create(const AOwner: IP3DStreamableContainer);
 var
   BaseName: String;
+  obj: IP3DNamedStreamableList;
 begin
   inherited Create( AOwner );
   if ( ClassName[ 1 ] = 'T' ) then
@@ -1331,18 +1355,26 @@ begin
   //if ( not Assigned( FOwner )) then
   //  raise Exception.Create( 'Cannot create NamedStreamable because the owner is not assigned!' );
 
-  if ( Assigned( FOwner ) and ( FOwner.GetContainer is TP3DNamedStreamableList )) then
-    FName:= TP3DNamedStreamableList( FOwner.GetContainer ).FindUniqueName( BaseName )
+  if (( Assigned( AOwner )) and AOwner.GetInterface( IP3DNamedStreamableList, obj )) then
+    begin
+      FNamedStreamableList:= obj;
+      FName:= obj.FindUniqueName( BaseName )
+    end
   else
-    FName:= BaseName;
+    begin
+      FNamedStreamableList:= nil;
+      FName:= BaseName;
+    end;
   Properties.Add( TP3DPropAccessString.CreateFieldSet( 'Name', @FName, @SetName, smText ));
 end;
 
 procedure TP3DNamedStreamable.SetName(AValue: String);
+var
+  obj: IP3DNamedStreamableList;
 begin
   if FName=AValue then Exit;
 
-  if (( FOwner.GetContainer is TP3DNamedStreamableList ) and ( TP3DNamedStreamableList( FOwner.GetContainer ).FindByName( AValue ) > -1 )) then
+  if (( Assigned( FNamedStreamableList ) and ( FNamedStreamableList.FindByName( AValue ) > -1 ))) then
     raise Exception.CreateFmt( 'TP3DNamedStreamable.SetName: A value with the name "%s" already exists in the same container!', [ AValue ])
   else
     FName:= AValue;

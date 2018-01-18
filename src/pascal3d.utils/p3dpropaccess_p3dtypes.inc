@@ -47,8 +47,6 @@ type
       procedure SetFakeProp(AValue: TListData);
       function GetAsString: String; override;
       procedure SetAsString(AValue: String); override;
-      //procedure LoadFromStream(S: TStream); override;
-      //procedure SaveToStream(S: TStream); override;
       procedure SetCount(AValue: Integer); override;
       function GetCount: Integer; override;
 
@@ -199,8 +197,12 @@ begin
 end;
 
 procedure gP3DPropAccessVec.SetFakeProp(AValue: TListData);
+var
+  Vec: T;
 begin
-  AsValue[ FFakePropIdx ]:= AValue;
+  Vec:= AsValue;
+  Vec[ FFakePropIdx ]:= AValue;
+  AsValue:= Vec;
 end;
 
 function gP3DPropAccessVec.GetAsString: String;

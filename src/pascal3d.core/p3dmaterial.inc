@@ -51,6 +51,7 @@
          FMode: TP3DMapMode;
          FNormalFactor: Single;
          FSpecularFactor: Single;
+         FHardnessFactor: Single;
          FTransformDynamic: Boolean;
          FTransform: TP3DStreamableContainer;
 
@@ -61,6 +62,7 @@
          procedure SetMode(AValue: TP3DMapMode);
          procedure SetNormalFactor(AValue: Single);
          procedure SetSpecularFactor(AValue: Single);
+         procedure SetHardnessFactor(AValue: Single);
          procedure SetTexChannel(AValue: Integer); override;
          procedure SetTransformDynamic( AValue: Boolean );
 
@@ -72,6 +74,7 @@
          property AlphaFactor: Single read FAlphaFactor write SetAlphaFactor;
          property NormalFactor: Single read FNormalFactor write SetNormalFactor;
          property SpecularFactor: Single read FSpecularFactor write SetSpecularFactor;
+         property HardnessFactor: Single read FHardnessFactor write SetHardnessFactor;
          property DisplaceFactor: Single read FDisplaceFactor write SetDisplaceFactor;
          property Mode: TP3DMapMode read FMode write SetMode;
          property TransformDynamic: Boolean read FTransformDynamic write SetTransformDynamic;
@@ -99,13 +102,17 @@
          //needs map class
      end;
 
-     TP3DMaterial = class ( TP3DDataBlock )
+     TP3DMaterial = class ( TP3DDataBlock, IP3DAnimatable )
        private
          FMaps: TP3DMaterialMapContainerList;
          FShader: TP3DStreamablePointer;
          ShaderOwned: Boolean;
+         FAction: TP3DStreamablePointer;
+
+         function GetAction: TP3DAction;
 
          function GetHasTransparency: Boolean; virtual;
+         procedure SetAction(AValue: TP3DAction);
          function GetShader: TP3DShader;
          procedure SetShader( AValue: TP3DShader );
 
@@ -121,6 +128,7 @@
          property Maps: TP3DMaterialMapContainerList read FMaps write FMaps;
          property Shader: TP3DShader read GetShader write SetShader;
          property HasTransparency: Boolean read GetHasTransparency;
+         property Action: TP3DAction read GetAction write SetAction;
      end;
 
      {TP3DMaterialContainer = specialize gP3DStreamableContainer < TP3DMaterial >;
@@ -429,6 +437,14 @@ begin
     TP3DMaterialBase( ParentMaterial ).BuildShader();
 end;
 
+procedure TP3DMaterialMapBase.SetHardnessFactor(AValue: Single);
+begin
+  if FHardnessFactor= AValue then Exit;
+  FHardnessFactor:= AValue;
+  if ( Assigned( ParentMaterial )) then
+    TP3DMaterialBase( ParentMaterial ).BuildShader();
+end;
+
 procedure TP3DMaterialMapBase.SetTexChannel(AValue: Integer);
 begin
   inherited SetTexChannel(AValue);
@@ -458,6 +474,7 @@ begin
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'DiffuseFactor', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'NormalFactor', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'SpecularFactor', smText ));
+  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'HardnessFactor', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'DisplaceFactor', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'AlphaFactor', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Mode', smText ));
@@ -691,7 +708,8 @@ begin
         begin
           glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
           if ( Assigned( TP3DMaterialMap( Maps[ i ]).Map )) then
-            glBindTexture( GL_TEXTURE_2D, TP3DMaterialMap( Maps[ i ]).Map.GLTexture ); cle( Self );
+            Maps[ i ].Map.Bind( i );
+            //glBindTexture( Maps[ i ].Map.Target, Maps[ i ].Map.GLTexture ); cle( Self );
           glUniform1i( Sh.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
         end;
       for i:= 0 to Modifiers.Count - 1 do
@@ -1154,9 +1172,19 @@ begin
   Result:= ALib.Properties.GetPropByName( 'Materials' );
 end;
 
+function TP3DMaterial.GetAction: TP3DAction;
+begin
+  Result:= TP3DAction( FAction.AsValue );
+end;
+
 function TP3DMaterial.GetHasTransparency: Boolean;
 begin
   Result:= False;
+end;
+
+procedure TP3DMaterial.SetAction(AValue: TP3DAction);
+begin
+  FAction.AsValue:= AValue;
 end;
 
 function TP3DMaterial.GetShader: TP3DShader;
@@ -1198,7 +1226,7 @@ begin
       for i:= 0 to Maps.Count - 1 do
         begin
           glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-          glBindTexture( GL_TEXTURE_2D, Maps[ i ].Map.GLTexture ); cle( Self );
+          glBindTexture( Maps[ i ].Map.Target, Maps[ i ].Map.GLTexture ); cle( Self );
           glUniform1i( Shader.Uniforms.AddrByName( 'tex' + IntToStr( i )), i ); cle( Self );
         end;
     end;

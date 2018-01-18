@@ -10,7 +10,7 @@
 
 {.$DEFINE DEBUG_GUI}
 
-unit p3dgui;
+unit p3d.gui;
 
 interface
   uses
@@ -23,15 +23,15 @@ interface
     SDL2,
     LazFileUtils,
     dglOpenGL,
-    p3dMath,
-    pascal3d.utils,
-    pascal3d.events,
-    pascal3d.core,
+    p3d.math,
+    p3d.utils,
+    p3d.events,
+    p3d.core,
     typinfo;
 
   type
     TP3DGraphicControl = class;
-    TP3DControlList = class;
+    TP3DGraphicControlContainerList = class;
 
     TP3DGUIDraw       = procedure( Sender: TP3DGraphicControl; OffSetX, OffSetY, _Width, _Height: Single ) of Object;
     TP3DGUIMouseClick = procedure( Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Integer ) of Object;

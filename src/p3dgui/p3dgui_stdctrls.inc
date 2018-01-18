@@ -33,7 +33,7 @@
       procedure Insert( S: String );
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Draw(); override;
       procedure MouseDown( mb1, mb2, mb3: Boolean; X, Y: Integer ); override;
@@ -68,7 +68,7 @@
       procedure Resize;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -106,7 +106,7 @@
       class function HasShadow: Boolean; override;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -148,7 +148,7 @@
       procedure UpdateNameText(AValue: String);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -216,7 +216,7 @@
 
     private
       FEdCount: Integer;
-      FEds: array [ 0..3 ] of TP3DEventValueEdit;
+      FEds: array[ 0..3 ] of TP3DStreamablePointer;
       FGetValueEvent: TGetValue;
       FHAlignment: TP3DHorizontalAlignment;
       FSetValueEvent: TSetValue;
@@ -241,13 +241,13 @@
       procedure SetEdValue( Sender: TP3DEventValueEdit; AValue: Single );
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
       procedure Realign(); override;
 
       procedure Update;
 
-      property Editors [ Index: Integer ]: TP3DEventValueEdit read GetEd write SetEd;
+      property Eds[ Index: Integer ]: TP3DEventValueEdit read GetEd write SetEd;
       property EdCount: Integer read FEdCount write SetEdCount;
       property Value: TVec4 read GetValue write SetValue;
       property GetValueEvent: TGetValue read FGetValueEvent write FGetValueEvent;
@@ -280,7 +280,7 @@
       procedure SetPosition(AValue: Float);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -308,17 +308,20 @@
   TP3DComboBox = class ( TP3DButton )
     private
       FDownSymbol: TP3DTextBmp;
-      FDropDownMenu: TP3DPopupMenu;
+      FDropDownMenu: TP3DStreamablePointer;
       FOnChange: TP3DComboBoxChange;
 
       procedure DropDownItemClick( Sender: TP3DMenuItem );
+      function GetDropDownMenu: TP3DPopupMenu;
       function GetItems: TP3DMenuItemList;
+      procedure SetDropDownMenu(AValue: TP3DPopupMenu);
 
     protected
       procedure SetCaption( AValue: String ); override;
+      property DropDownMenu: TP3DPopupMenu read GetDropDownMenu write SetDropDownMenu;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -355,7 +358,7 @@
       procedure SetChecked( AValue: Boolean ); virtual;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -474,9 +477,9 @@ begin
   UpdateNameText( AValue );
 end;
 
-constructor TP3DCustomValueEdit.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DCustomValueEdit.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   //ValueName:= GetValueName;//Self.Name;
   UpdateValueText( Value );
   UpdateNameText( GetValueName );
@@ -627,9 +630,9 @@ begin
   Canvas.RenderText( FCaptionTxt, P );
 end;
 
-constructor TP3DLabel.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DLabel.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Font:= TP3DCanvasFont.Create;
   Font.Color:= vec4( vec3( 0 ), 1 );
   Caption:= Name;
@@ -696,9 +699,9 @@ begin
 end;
 }
 
-constructor TP3DGroupBox.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DGroupBox.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Font:= TP3DCanvasFont.Create;
   Caption:= Name;
   Color:= vec4( 1 );
@@ -726,7 +729,7 @@ begin
     Collapsed:= not Collapsed;
 end;
 
-procedure TP3DGroupBox.Draw;
+procedure TP3DGroupBox.Draw();
 var
   hw: Extended;
   pt1: TVec2;
@@ -903,9 +906,9 @@ begin
   Sel2:= Sel1;
 end;
 
-constructor TP3DEdit.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DEdit.Create(const AOwner: IP3DStreamableContainer=nil);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Text:= Name;
   PresetDown.Assign( PresetNormal );
   PresetHover.Assign( PresetNormal );
@@ -1067,9 +1070,9 @@ begin
   Percentage:= ( AValue - Min ) / Max;
 end;
 
-constructor TP3DScrollBar.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DScrollBar.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Preset:= TP3DButtonPreset.Create;
   Preset.Color:= accent50; //vec4( 225/255, 230/255, 234/255, 1 );
   Preset.OutlineColor:= accent50; //vec4( vec3( 0.2 ), 0.5 );
@@ -1152,18 +1155,18 @@ end;
 
 function TP3DVectorEdit.GetEd(Index: Integer): TP3DEventValueEdit;
 begin
-  Result:= FEds[ Index ];
+  Result:= TP3DEventValueEdit( FEds[ Index ].AsValue );
 end;
 
 function TP3DVectorEdit.GetEdValueName(Sender: TP3DEventValueEdit): String;
 begin
-  if ( Sender = Editors[ 0 ]) then
+  if ( Sender = Eds[ 0 ]) then
     Result:= Labels [ 0 ]
-  else if ( Sender = Editors[ 1 ]) then
+  else if ( Sender = Eds[ 1 ]) then
     Result:= Labels [ 1 ]
-  else if ( Sender = Editors[ 2 ]) then
+  else if ( Sender = Eds[ 2 ]) then
     Result:= Labels [ 2 ]
-  else if ( Sender = Editors[ 3 ]) then
+  else if ( Sender = Eds[ 3 ]) then
     Result:= Labels [ 3 ]
   else
     Result:= '';
@@ -1184,7 +1187,7 @@ end;
 
 procedure TP3DVectorEdit.SetEd(Index: Integer; AValue: TP3DEventValueEdit);
 begin
-  FEds[ Index ]:= AValue;
+  FEds[ Index ].AsValue:= AValue;
 end;
 
 procedure TP3DVectorEdit.SetEdCount(AValue: Integer);
@@ -1195,16 +1198,17 @@ begin
 
   for i:= EdCount to AValue - 1 do
     begin
-      Editors[ i ]:= TP3DEventValueEdit.CreateBlock( nil, Self );
-      Editors[ i ].SetValueEvent:= @SetEdValue;
-      Editors[ i ].GetValueEvent:= @GetEdValue;
-      Editors[ i ].GetValueNameEvent:= @GetEdValueName;
+      Eds[ i ]:= TP3DEventValueEdit.Create( Self.Controls );
+      Eds[ i ].SetValueEvent:= @SetEdValue;
+      Eds[ i ].GetValueEvent:= @GetEdValue;
+      Eds[ i ].GetValueNameEvent:= @GetEdValueName;
     end;
   for i:= EdCount downto AValue do
-    Editors[ i ].Free;
-  FEdCount:=AValue;
+    Eds[ i ].Free;
+  FEdCount:= AValue;
   Update;
 end;
+
 
 procedure TP3DVectorEdit.SetHAlignment(AValue: TP3DHorizontalAlignment);
 begin
@@ -1225,7 +1229,7 @@ begin
   if FStep=AValue then Exit;
   FStep:= AValue;
   for i:= 0 to EdCount - 1 do
-    Editors[ i ].Step:= AValue;
+    Eds[ i ].Step:= AValue;
 end;
 
 procedure TP3DVectorEdit.SetTransmission(AValue: Single);
@@ -1235,7 +1239,7 @@ begin
   if FTransmission=AValue then Exit;
   FTransmission:=AValue;
   for i:= 0 to EdCount - 1 do
-    Editors[ i ].Transmission:= AValue;
+    Eds[ i ].Transmission:= AValue;
 end;
 
 procedure TP3DVectorEdit.SetVAlignment(AValue: TP3DVerticalAlignment);
@@ -1256,7 +1260,7 @@ var
   i: Integer;
 begin
   for i:= 0 to EdCount do
-    if (( i < EdCount ) and ( Sender = Editors[ i ])) then
+    if (( i < EdCount ) and ( Sender = Eds[ i ])) then
       break;
   if ( i < EdCount ) then
     Result:= Value[ i ]
@@ -1270,7 +1274,7 @@ var
   Vec: TVec4;
 begin
   for i:= 0 to EdCount do
-    if (( i < EdCount ) and ( Sender = Editors[ i ])) then
+    if (( i < EdCount ) and ( Sender = Eds[ i ])) then
       break;
   if ( i < EdCount ) then
     begin
@@ -1280,14 +1284,19 @@ begin
     end;
 end;
 
-constructor TP3DVectorEdit.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DVectorEdit.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
-  EdCount:= 3;
+  inherited Create( AOwner );
   FLabels[ 0 ]:= 'X';
   FLabels[ 1 ]:= 'Y';
   FLabels[ 2 ]:= 'Z';
   FLabels[ 3 ]:= 'W';
+  FEds[ 0 ]:= TP3DStreamablePointer.Create( 'Eds[0]', TP3DEventValueEdit );
+  FEds[ 1 ]:= TP3DStreamablePointer.Create( 'Eds[1]', TP3DEventValueEdit );
+  FEds[ 2 ]:= TP3DStreamablePointer.Create( 'Eds[2]', TP3DEventValueEdit );
+  FEds[ 3 ]:= TP3DStreamablePointer.Create( 'Eds[3]', TP3DEventValueEdit );
+  Properties.Add([ FEds[ 0 ], FEds[ 1 ], FEds[ 2 ], FEds[ 3 ]]);
+  EdCount:= 3;
   HAlignment:= haRight;
   PageModeX:= pmStretch;
 end;
@@ -1297,8 +1306,7 @@ var
   i: Integer;
 begin
   for i:= 0 to EdCount - 1 do
-    if ( P3DDataBlockCache.IsValid( Editors[ i ])) then
-      Editors[ i ].Free;
+    Eds[ i ].Free;
   inherited Destroy;
 end;
 
@@ -1315,13 +1323,13 @@ begin
   PageModeX:= pmStretch;
   for i:= 0 to EdCount - 1 do
     begin
-      Editors[ i ].Width:= 50;//ClientRect.Width / EdCount;
-      Editors[ i ].Align:= alLeft;
+      Eds[ i ].Width:= 50;//ClientRect.Width / EdCount;
+      Eds[ i ].Align:= alLeft;
       //Editors[ i ].Left:= //( ClientRect.Width / EdCount ) * i;
       //Editors[ i ].Height:= ClientRect.Height;
-      Editors[ i ].HAlignment:= HAlignment;
-      Editors[ i ].VAlignment:= VAlignment;
-      Editors[ i ].NeedsUpdate:= True;
+      Eds[ i ].HAlignment:= HAlignment;
+      Eds[ i ].VAlignment:= VAlignment;
+      Eds[ i ].NeedsUpdate:= True;
     end;
 end;
 
@@ -1332,12 +1340,22 @@ procedure TP3DComboBox.DropDownItemClick(Sender: TP3DMenuItem);
 begin
   if ( Assigned( Sender )) then
     Caption:= Sender.Caption;
-  FDropDownMenu.Hide;
+  DropDownMenu.Hide;
+end;
+
+function TP3DComboBox.GetDropDownMenu: TP3DPopupMenu;
+begin
+  Result:= TP3DPopupMenu( FDropDownMenu.AsValue );
 end;
 
 function TP3DComboBox.GetItems: TP3DMenuItemList;
 begin
-  Result:= FDropDownMenu.FItems;
+  Result:= DropDownMenu.FItems;
+end;
+
+procedure TP3DComboBox.SetDropDownMenu(AValue: TP3DPopupMenu);
+begin
+  FDropDownMenu.AsValue:= AValue;
 end;
 
 procedure TP3DComboBox.SetCaption(AValue: String);
@@ -1347,11 +1365,13 @@ begin
   inherited SetCaption(AValue);
 end;
 
-constructor TP3DComboBox.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DComboBox.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
-  FDropDownMenu:= TP3DPopupMenu.CreateBlock( AData, nil );
-  FDropDownMenu.OnItemClick:= @DropDownItemClick;
+  inherited Create( AOwner );
+  FDropDownMenu:= TP3DStreamablePointer.Create( 'DropDownMenu', TP3DPopupMenu );
+  Properties.Add( FDropDownMenu );
+  DropDownMenu:= TP3DPopupMenu.Create();
+  DropDownMenu.OnItemClick:= @DropDownItemClick;
   Margin.X:= 20;
   Margin.Z:= 20;
 end;
@@ -1359,7 +1379,7 @@ end;
 destructor TP3DComboBox.Destroy;
 begin
   //if ( Assigned( FDropDownMenu ) and Assigned( Owner) and ( ParentList.IndexOf( FDropDownMenu ) > 0 )) then
-    FreeAndNil( FDropDownMenu );
+  DropDownMenu.Free;
   if ( Assigned( FDownSymbol )) then
     FreeAndNil( FDownSymbol );
   inherited Destroy;
@@ -1383,8 +1403,8 @@ end;
 
 procedure TP3DComboBox.DropDown;
 begin
-  FDropDownMenu.Width:= Width;
-  FDropDownMenu.PopUp( Canvas.Left, Canvas.Top + Canvas.Height );
+  DropDownMenu.Width:= Width;
+  DropDownMenu.PopUp( Canvas.Left, Canvas.Top + Canvas.Height );
 end;
 
 procedure TP3DComboBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Integer);
@@ -1412,9 +1432,9 @@ begin
     OnChange( Self );
 end;
 
-constructor TP3DCheckBox.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DCheckBox.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   FSymbolChecked:= TP3DTextBmp.CreateSimple( P3DSymbolCheck, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols'], Canvas.Font.Size );
 end;
 

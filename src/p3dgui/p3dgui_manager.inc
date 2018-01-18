@@ -2,11 +2,10 @@
 type
 
 { TP3DGUIManager }
-TP3DGUIManager = class ( TP3DStreamable )
+TP3DGUIManager = class ( TP3DJSONRoot )
   private
     FCanvas: TP3DCanvas2D;
-    FControlContainer: TP3DControlContainer;
-    FControls: TP3DControlList;
+    FControls: TP3DGraphicControlContainerList;
     FCursor: TP3DCursor;
     FFocusedControl: TP3DGraphicControl;
     FScrollSpeed: Single;
@@ -36,7 +35,7 @@ TP3DGUIManager = class ( TP3DStreamable )
     LastMouseDownCtrl: array[ 0..2 ] of TP3DGraphicControl;
     LastMouseOverCtrl: TP3DGraphicControl;
 
-    constructor Create;
+    constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
     destructor Destroy; override;
 
     procedure Render;
@@ -44,12 +43,11 @@ TP3DGUIManager = class ( TP3DStreamable )
     procedure UpdateExtents;
 
   published
-    property ControlContainer: TP3DControlContainer read FControlContainer write FControlContainer;
     property MouseX: Integer read GetMouseX write SetMouseX;
     property MouseY: Integer read GetMouseY write SetMouseY;
     property ScrollSpeed: Single read FScrollSpeed write FScrollSpeed;
     property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
-    property Controls: TP3DControlList read FControls write FControls;
+    property Controls: TP3DGraphicControlContainerList read FControls write FControls;
     property Cursor: TP3DCursor read FCursor write SetCursor;
     property ShowCursor: Boolean read FShowCursor write SetShowCursor;
     property FocusedControl: TP3DGraphicControl read FFocusedControl write SetFocusedControl;
@@ -61,27 +59,22 @@ end;
 
 { TP3DGUIManager }
 
-constructor TP3DGUIManager.Create;
+constructor TP3DGUIManager.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create;
 
   ScrollSpeed:= -50;
-  Controls:= TP3DControlList.Create;
+  FControls:= TP3DGraphicControlContainerList.Create( 'Controls' );
+  Properties.Add( FControls );
   ScreenCanvas:= TP3DCanvas2D.Create( nil );
   ScreenCanvas.Font.Size:= 48;
   UpdateExtents;
   Cursor:= curArrow;
   CursorOverride:= curArrow;
-  ControlContainer:= TP3DControlContainer.Create;
-  Properties.Add( TP3DPropAccessGraphicControlList.CreateField( 'Controls', @FControls ));
-  Properties.Add( TP3DPropAccessGraphicControlList.CreateField( 'ControlsContainer', @FControlContainer ));
 end;
 
 destructor TP3DGUIManager.Destroy;
 begin
-  Controls.Clear( True );
-  ControlContainer.Free;
-  Controls.Free;
   ScreenCanvas.Free;
   FCursorTxt.Free;
   FCursorOverrideTxt.Free;
@@ -125,7 +118,7 @@ begin
   OldCtrl:= FFocusedControl; //Delayed event handler prevents deadlock
   FFocusedControl:= AValue;
 
-  If ( Assigned( OldCtrl ) and P3DDataBlockCache.IsValid( OldCtrl )) then
+  If ( Assigned( OldCtrl ){ and P3DDataBlockCache.IsValid( OldCtrl )}) then
     OldCtrl.SetFocused( False );
 end;
 

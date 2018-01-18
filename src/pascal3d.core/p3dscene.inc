@@ -101,6 +101,13 @@ type
       FLights: TP3DLightRenderList;
       FOnAdd: TP3DRenderListAddCallBack;
       FTransparencyStart: Integer;
+      FIBLFactor: Float;
+      FIBLDiffuse: TP3DStreamablePointer;
+      FIBLSpecular: TP3DStreamablePointer;
+      function GetIBLDiffuse: TP3DTexture;
+      function GetIBLSpecular: TP3DTexture;
+      procedure SetIBLDiffuse(AValue: TP3DTexture);
+      procedure SetIBLSpecular(AValue: TP3DTexture);
 
     public
       constructor Create;
@@ -122,6 +129,9 @@ type
       property Lights: TP3DLightRenderList read FLights write FLights;
       property OnAdd: TP3DRenderListAddCallBack read FOnAdd write FOnAdd;
       property ActiveSubset: String read FActiveSubset write FActiveSubset;
+      property IBLDiffuse: TP3DTexture read GetIBLDiffuse write SetIBLDiffuse;
+      property IBLSpecular: TP3DTexture read GetIBLSpecular write SetIBLSpecular;
+      property IBLFactor: Float read FIBLFactor write FIBLFactor;
   end;
 
   { TP3DScene }
@@ -324,16 +334,40 @@ end;
 
 { TP3DRenderList }
 
+function TP3DRenderList.GetIBLDiffuse: TP3DTexture;
+begin
+  Result:= TP3DTexture( FIBLDiffuse.AsValue );
+end;
+
+function TP3DRenderList.GetIBLSpecular: TP3DTexture;
+begin
+  Result:= TP3DTexture( FIBLSpecular.AsValue );
+end;
+
+procedure TP3DRenderList.SetIBLDiffuse(AValue: TP3DTexture);
+begin
+  FIBLDiffuse.AsValue:= AValue;
+end;
+
+procedure TP3DRenderList.SetIBLSpecular(AValue: TP3DTexture);
+begin
+  FIBLSpecular.AsValue:= AValue;
+end;
+
 constructor TP3DRenderList.Create;
 begin
   inherited Create;
   Lights:= TP3DLightRenderList.Create;
   ActiveSubset:= '';
+  FIBLSpecular:= TP3DStreamablePointer.Create( 'IBLSpecular', TP3DTexture );
+  FIBLDiffuse:= TP3DStreamablePointer.Create( 'IBLDiffuse', TP3DTexture );
 end;
 
 destructor TP3DRenderList.Destroy;
 begin
   inherited Clear;
+  FIBLSpecular.Free;
+  FIBLDiffuse.Free;
   Lights.Clear;
   FreeAndNil( FLights );
   inherited Destroy;
@@ -465,11 +499,29 @@ begin
 end;
 
 procedure TP3DRenderList.SetupMaterial(Material: TP3DMaterial; Camera: TP3DObject; const AFlags: TP3DRenderListFlags);
+var
+  decl: TP3DShaderDecl;
 begin
   Material.PassToShader( ActiveSubset );
   TP3DCamera( Camera.Data ).PassToShader();
   if ( rlfLighting in AFlags ) then
     Lights.PassToActiveShader( TP3DCamera( Camera.Data ).View, [ liLightParams, liPosition ]);
+  if ( Assigned( IBLDiffuse ) and ( Material.Shader.Uniforms.FindByName( 'IBLDiffuse', decl ))) then
+    begin
+      //IBLDiffuse.Bind( Material.Maps.Count );
+      glActiveTexture( GL_TEXTURE0 + Material.Maps.Count );
+      glBindTexture( GL_TEXTURE_CUBE_MAP, IBLDiffuse.GLTexture );
+      decl.AsInt:= Material.Maps.Count;
+    end;
+  if ( Assigned( IBLSpecular ) and ( Material.Shader.Uniforms.FindByName( 'IBLSpecular', decl ))) then
+    begin
+      //IBLSpecular.Bind( Material.Maps.Count + 1 );
+      glActiveTexture( GL_TEXTURE0 + Material.Maps.Count + 1 );
+      glBindTexture( GL_TEXTURE_CUBE_MAP, IBLSpecular.GLTexture );
+      decl.AsInt:= Material.Maps.Count + 1;
+    end;
+  if ( Material.Shader.Uniforms.FindByName( 'IBLFactor', decl )) then
+    decl.AsFloat:= IBLFactor;
 end;
 
 procedure TP3DRenderList.RenderMesh(Idx: Integer; Camera: TP3DObject; const AFlags: TP3DRenderListFlags);

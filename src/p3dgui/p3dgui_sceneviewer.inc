@@ -29,7 +29,7 @@ type
       procedure ResetOrbit;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Paint(); override;
@@ -140,9 +140,9 @@ begin
     end;
 end;
 
-constructor TP3DSceneViewer.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DSceneViewer.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
+  inherited Create( AOwner );
   RenderFlags:= P3DRenderListFlagsDefault;
   RenderList:= TP3DRenderList.Create;
   //CamSpeed:= 0.2;

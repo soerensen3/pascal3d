@@ -1031,7 +1031,7 @@ end;
 
 class function TP3DShader.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
-  Result:= ALib.Properties.GetPropByName( 'Lights' );
+  Result:= ALib.Properties.GetPropByName( 'Shaders' );
 end;
 
 

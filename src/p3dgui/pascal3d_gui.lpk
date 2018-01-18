@@ -13,8 +13,8 @@
     </CompilerOptions>
     <Files Count="18">
       <Item1>
-        <Filename Value="p3dgui.pas"/>
-        <UnitName Value="p3dgui"/>
+        <Filename Value="p3d.gui.pas"/>
+        <UnitName Value="p3d.gui"/>
       </Item1>
       <Item2>
         <Filename Value="p3dgui_advanced.inc"/>

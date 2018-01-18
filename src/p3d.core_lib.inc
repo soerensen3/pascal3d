@@ -10,10 +10,10 @@
 {$INCLUDE p3dshaders.inc}
 {$INCLUDE p3dtexture.inc}
 {$INCLUDE p3drendertarget.inc}
-{$INCLUDE p3dmaterial.inc}
 {$INCLUDE p3danimatable.inc}
 {$INCLUDE p3drenderable.inc}
 {$INCLUDE p3dcollidable.inc}
+{$INCLUDE p3dmaterial.inc}
 {$INCLUDE p3dcamera.inc}
 {$INCLUDE p3dlight.inc}
 {$INCLUDE p3daction.inc}

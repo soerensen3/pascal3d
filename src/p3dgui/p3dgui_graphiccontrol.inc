@@ -27,7 +27,7 @@ TP3DCursor = ( curArrow = 'A', curHourGlass = 'B', curHResize = 'C', curVResize 
 //...
 
 TP3DNotifyEvent = procedure ( Sender: TP3DGraphicControl ) of object;
-TP3DGraphicControl = class ( TP3DDataBlock )
+TP3DGraphicControl = class ( TP3DNamedStreamable )
   private
     FMargin: TVec4;
     FHideChildren: Boolean;
@@ -41,6 +41,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     function GetPageModeX: TP3DPageMode;
     function GetPageModeY: TP3DPageMode;
     function GetPageSize: TVec2;
+    function GetParentCtrl: TP3DGraphicControlContainerList;
     function GetTop: Single; virtual;
     function GetTopLeft: TVec2; virtual;
     function GetWidth: Single; virtual;
@@ -50,18 +51,18 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     procedure SetLeft(AValue: Single); virtual;
     procedure SetPageModeX(AValue: TP3DPageMode);
     procedure SetPageModeY(AValue: TP3DPageMode);
+    procedure SetParentCtrl(AValue: TP3DGraphicControlContainerList);
     procedure SetTop(AValue: Single); virtual;
     procedure SetMargin(AValue: TVec4); virtual;
     procedure SetTopLeft(AValue: TVec2); virtual;
     procedure SetWidth(AValue: Single); virtual;
     procedure SetWidthHeight(AValue: TVec2); virtual;
-    class function GetContainer( ALib: TP3DLibrary ): IP3DStreamableContainer; override;
 
   protected
     FAlign: TP3DControlAlign;
     FCanvas: TP3DCanvas2D;
     FClientRect: TP3DRect;
-    FControls: TP3DControlList;
+    FControls: TP3DGraphicControlContainerList;
     FEnabled: Boolean;
     FInputState: TP3DGCInputFlags;
     FLastClick: Integer;
@@ -77,7 +78,6 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FOnMouseMove: TP3DGUIMouseEvent;
     FOnMouseUp: TP3DGUIMouseClick;
     FOnParentRealign: TNotifyEvent;
-    FOwnerCtrlBuf: TP3DControlList;
     FTag: Integer;
     FVisible: Boolean;
     FCursor: TP3DCursor;
@@ -86,6 +86,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     FMinHeight: Float;
     FMinWidth: Float;
     FBaseCanvasRect: TP3DRect;
+    FParent: TP3DStreamablePointer;
     //Various getters and setters
 
     function GetFocused: Boolean; virtual;
@@ -115,7 +116,7 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property HideChildren: Boolean read FHideChildren write FHideChildren; //Do not call children's render procedure
 
   public
-    constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl = nil ); reintroduce; virtual;
+    constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
     destructor Destroy; override;
 
     procedure BeginDrag(); virtual; //Start drag and drop with control as drag source
@@ -155,9 +156,9 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property Margin: TVec4 read FMargin write SetMargin;
     property Canvas: TP3DCanvas2D read FCanvas write FCanvas;
     property ClientRect: TP3DRect read FClientRect;
-    property Controls: TP3DControlList read FControls write FControls;
+    property Controls: TP3DGraphicControlContainerList read FControls write FControls;
     property InputState: TP3DGCInputFlags read FInputState write SetInputState;
-    property ParentCtrl: TP3DControlList read FOwnerCtrlBuf write FOwnerCtrlBuf;
+    property ParentCtrl: TP3DGraphicControlContainerList read GetParentCtrl write SetParentCtrl;
     property Scroll: TVec2 read GetScroll write SetScroll;
     property PointerTag: Pointer read FPointerTag write FPointerTag;
 
@@ -190,28 +191,25 @@ TP3DGraphicControl = class ( TP3DDataBlock )
     property NeedsUpdate: Boolean read FNeedsUpdate write FNeedsUpdate;
 end;
 
-  TP3DGraphicControlContainer = specialize gP3DStreamableContainer < TP3DGraphicControl >;
-  TP3DGraphicControlPointer = specialize gP3DStreamablePointer < TP3DGraphicControl >;
-  TP3DGraphicControlContainerList = specialize gP3DNamedStreamableList < TP3DGraphicControl, TP3DGraphicControlContainer >;
-  TP3DGraphicControlPointerList = specialize gP3DNamedStreamableList < TP3DGraphicControl, TP3DGraphicControlPointer >;
-
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
 { TP3DGraphicControl }
 
-constructor TP3DGraphicControl.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DGraphicControl.Create(const AOwner: IP3DStreamableContainer);
+var
+  _Owner: IP3DStreamableContainer;
 begin
-  inherited CreateBlock( AData );
-  Controls:= TP3DControlList.Create;
-  Controls.FParent:= Self;
-  FCanvas:= TP3DCanvas2D.Create( Self );
-  if ( Assigned( AParent )) then
-    ParentCtrl:= AParent.Controls
+  if ( Assigned( AOwner )) then
+    _Owner:= AOwner
   else
-    ParentCtrl:= P3DGUIManager.Controls;
-  ParentCtrl.Add( Self );
+    _Owner:= P3DGUIManager.Controls;
+  FParent:= TP3DStreamablePointer.Create( 'Parent', TP3DGraphicControl );
+  inherited Create( _Owner );
+  FControls:= TP3DGraphicControlContainerList.Create( 'Controls' );
+  Properties.Add([ FControls, FParent ]);
+  FCanvas:= TP3DCanvas2D.Create( Self );
 
   Visible:= True;
   Enabled:= True;
@@ -240,20 +238,17 @@ begin
                     TP3DPropAccessRTTI.Create( Self, 'Cursor', smText )],
                     'Behavior' );
 
-  Properties.Add( [ TP3DPropAccessGraphicControl.CreateGetSet( 'Parent', @GetParent, @SetParent, smText ),
+  Properties.Add( [ {TP3DPropAccessStreamable.CreateGetSet( 'Parent', @GetParent, @SetParent ),}
                     TP3DPropAccessVec2.CreateGetSet( 'Scroll', @GetScroll, @SetScroll ),
                     TP3DPropAccessRTTI.Create( Self, 'Tag', smText )],
                     'Other' );
   //Properties.Add( TP3DPropAccesslRTTI.Create( Self, 'ClientRect', smText )); //cannot be published
-  Properties.Add( TP3DPropAccessGraphicControlList.CreateField( 'Controls', @FControls, smText )); //cannot be published
   //property Controls: TP3DControlList read FControls write FControls;
 end;
 
 destructor TP3DGraphicControl.Destroy;
 begin
   P3DGUIManager.CtrlDeleteNotifier( Self );
-  ParentCtrl.Remove( Self );
-  Controls.Free;
   Canvas.Free;
   inherited;
 end;
@@ -299,6 +294,14 @@ end;
 function TP3DGraphicControl.GetPageSize: TVec2;
 begin
   Result:= Controls.PageSize;
+end;
+
+function TP3DGraphicControl.GetParentCtrl: TP3DGraphicControlContainerList;
+begin
+  if ( Assigned( Parent )) then
+    Result:= Parent.Controls
+  else
+    Result:= P3DGUIManager.Controls;
 end;
 
 function TP3DGraphicControl.GetTop: Single;
@@ -349,6 +352,11 @@ begin
   Controls.PageModeY:= AValue;
 end;
 
+procedure TP3DGraphicControl.SetParentCtrl(AValue: TP3DGraphicControlContainerList);
+begin
+  Owner:= AValue;
+end;
+
 procedure TP3DGraphicControl.SetTopLeft(AValue: TVec2);
 begin
   Rect.TopLeft:= AValue;
@@ -365,15 +373,6 @@ procedure TP3DGraphicControl.SetWidthHeight(AValue: TVec2);
 begin
   Rect.WidthHeight:= AValue;
   NeedsUpdate:= True;
-end;
-
-class function TP3DGraphicControl.GetContainer(ALib: TP3DLibrary): IP3DStreamableContainer;
-var
-  Prop: TP3DPropertyAccess;
-begin
-  Prop:= P3DGUIManager.Properties.GetPropByName( 'Controls' );
-  if ( Prop is IP3DStreamableContainer ) then
-    Result:= Prop as IP3DStreamableContainer;
 end;
 
 function TP3DGraphicControl.GetFocused: Boolean;
@@ -397,7 +396,7 @@ end;
 
 function TP3DGraphicControl.GetParent: TP3DGraphicControl;
 begin
-  Result:= ParentCtrl.Parent;
+  Result:= TP3DGraphicControl( FParent.AsValue );
 end;
 
 procedure TP3DGraphicControl.KeyDown;
@@ -486,7 +485,7 @@ begin
 
 end;
 
-procedure TP3DGraphicControl.KeyboardAction;
+procedure TP3DGraphicControl.KeyboardAction();
 var
   Ctrl: TP3DGraphicControl;
 begin
@@ -497,30 +496,30 @@ end;
 
 procedure TP3DGraphicControl.OneLayerDown;
 begin
-  FOwnerCtrlBuf.OneLayerDown( FOwnerCtrlBuf.IndexOf( Self ));
+  ParentCtrl.OneLayerDown( ParentCtrl.IndexOf( Self ));
 end;
 
 procedure TP3DGraphicControl.OneLayerUp;
 begin
-  FOwnerCtrlBuf.OneLayerUp( FOwnerCtrlBuf.IndexOf( Self ));
+  ParentCtrl.OneLayerUp( ParentCtrl.IndexOf( Self ));
 end;
 
 procedure TP3DGraphicControl.BringToFront;
 begin
-  FOwnerCtrlBuf.BringToFront( FOwnerCtrlBuf.IndexOf( Self ));
+  ParentCtrl.BringToFront( ParentCtrl.IndexOf( Self ));
 end;
 
 procedure TP3DGraphicControl.SendToBack;
 begin
-  FOwnerCtrlBuf.SendToBack( FOwnerCtrlBuf.IndexOf( Self ));
+  ParentCtrl.SendToBack( ParentCtrl.IndexOf( Self ));
 end;
 
-class function TP3DGraphicControl.IsFocusControl: Boolean;
+class function TP3DGraphicControl.IsFocusControl(): Boolean;
 begin
   Result:= False;
 end;
 
-class function TP3DGraphicControl.HasShadow: Boolean;
+class function TP3DGraphicControl.HasShadow(): Boolean;
 begin
   Result:= False;
 end;
@@ -693,13 +692,10 @@ end;
 
 procedure TP3DGraphicControl.SetParent( Value: TP3DGraphicControl );
 begin
-  if ( Value = Parent ) then
-    exit;
-  FOwnerCtrlBuf.Delete( Self );
-  if ( Value = nil ) then
-    exit;
-  Value.Controls.Add( Self );
-  FOwnerCtrlBuf:= Value.Controls;
+  if ( Assigned( Value )) then
+    Owner:= Value.Controls
+  else
+    Owner:= P3DGUIManager.Controls;
   NeedsUpdate:= True;
 end;
 
@@ -719,7 +715,7 @@ begin
  Result:= Canvas.Rect.PtInRect( vec2( X, Y ));
 end;
 
-procedure TP3DGraphicControl.BeginDrag;
+procedure TP3DGraphicControl.BeginDrag();
 begin
   DragDropSrc:= Self;
 end;

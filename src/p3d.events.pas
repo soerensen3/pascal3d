@@ -1,4 +1,4 @@
-unit pascal3d.events;
+unit p3d.events;
 
 {.$DEFINE CHECKFORERRORS} //SLOWER BUT SAFER, FOR DEBUGGING PURPOSES
 {.$DEFINE VERBOSE} //WILL OUTPUT DEBUGGING MESSAGES FOR CREATED OBJECTS
@@ -18,7 +18,7 @@ uses
   DOM,
   fpjson,
 
-  pascal3d.utils,
+  p3d.utils,
 
   SDL2
   ;
@@ -42,7 +42,7 @@ procedure P3DEventsFinish;
 
 implementation
 
-uses pascal3d.core;
+uses p3d.core;
 
 {$DEFINE IMPLEMENTATION}
 {$INCLUDE p3dlogging.inc}

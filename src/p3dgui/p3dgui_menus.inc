@@ -4,24 +4,9 @@
 {$IFDEF INTERFACE}
 
   type
-    TP3DMenuItem = class;
+    TP3DMenuItemList = class;
 
-    TP3DPopupItemClick = procedure ( Sender: TP3DMenuItem ) of object;
     TP3DPopupMenu = class;
-
-    { TP3DMenuItemList }
-
-    TP3DMenuItemList = class( specialize gP3DCustomObjectList < TP3DMenuItem > )
-      private
-        FParent: TP3DPopupMenu;
-
-      public
-        function Add( ACaption: String ): Integer; overload;
-
-        constructor Create( AParent: TP3DPopupMenu );
-        property Parent: TP3DPopupMenu read FParent write FParent;
-    end;
-
 
     { TP3DMenuItem }
 
@@ -44,7 +29,7 @@
         procedure UpdateCaption;
 
       public
-        constructor Create( AParent: TP3DPopupMenu );
+        constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
         destructor Destroy; override;
 
         property UserData: TObject read FUserData write FUserData;
@@ -60,11 +45,21 @@
         property Enabled: Boolean read FEnabled write FEnabled;
     end;
 
+    TP3DPopupItemClick = procedure ( Sender: TP3DMenuItem ) of object;
+
+    { TP3DMenuItemList }
+
+    TP3DMenuItemList = class( specialize gP3DStreamableContainerList < TP3DMenuItem > )
+      public
+        function Add( ACaption: String ): Integer; overload;
+    end;
+
+
     { TP3DCustomPopupMenu }
 
     TP3DCustomPopupMenu = class ( TP3DGraphicControl )
       public
-        constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+        constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
         class function IsFocusControl: Boolean; override;
 
@@ -84,12 +79,12 @@
         FSelectedPreset: TP3DButtonPreset;
         FSelection: TP3DMenuItem;
 
-        procedure ItemsChange( Sender: TPersistent; Item: TP3DMenuItem; Action: TP3DCustomListOnChangeAction );
-        class function HasShadow: Boolean; override;
+        procedure ItemsChange( Sender: TObject; Item: TP3DStreamable; Action: TP3DListOnChangeAction );
 
       public
-        constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-        destructor Destroy; override;
+        constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+
+        class function HasShadow: Boolean; override;
 
         procedure MouseClick( mb1, mb2, mb3: Boolean; X, Y: Integer); override;
         procedure MouseMove(X, Y: Integer); override;
@@ -116,15 +111,9 @@ function TP3DMenuItemList.Add(ACaption: String): Integer;
 var
   Itm: TP3DMenuItem;
 begin
-  Itm:= TP3DMenuItem.Create( Parent );
+  Itm:= TP3DMenuItem.Create( Self );
   Itm.Caption:= ACaption;
   Result:= Add( Itm );
-end;
-
-constructor TP3DMenuItemList.Create(AParent: TP3DPopupMenu);
-begin
-  inherited Create;
-  Parent:= AParent;
 end;
 
 { TP3DMenuItem }
@@ -155,10 +144,10 @@ begin
   Parent.Canvas.GetValidText( Caption, FCaptionTxt, P3DFontManager[ Font.Name, Font.Size ]);
 end;
 
-constructor TP3DMenuItem.Create(AParent: TP3DPopupMenu);
+constructor TP3DMenuItem.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create;
-  Parent:= AParent;
+  inherited Create( AOwner );
+  Parent:= ( AOwner.GetContainer.Context.GetInstance as TP3DPopupMenu );
   Font:= TP3DCanvasFont.Create;
   Font.Assign( Parent.Canvas.Font );
   Enabled:= True;
@@ -174,7 +163,7 @@ end;
 
 { TP3DPopupMenu }
 
-procedure TP3DPopupMenu.ItemsChange(Sender: TPersistent; Item: TP3DMenuItem; Action: TP3DCustomListOnChangeAction);
+procedure TP3DPopupMenu.ItemsChange(Sender: TObject; Item: TP3DStreamable; Action: TP3DListOnChangeAction);
 begin
   if ( Action <> actClear ) then
     Update;
@@ -213,18 +202,12 @@ begin
       end;
 end;
 
-constructor TP3DPopupMenu.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DPopupMenu.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
-  FItems:= TP3DMenuItemList.Create( Self );
+  inherited Create( AOwner );
+  FItems:= TP3DMenuItemList.Create( 'Items' );
   FItems.OnChange:= @ItemsChange;
-end;
-
-destructor TP3DPopupMenu.Destroy;
-begin
-  FItems.Clear( True );
-  FItems.Free;
-  inherited Destroy;
+  Properties.Add( FItems );
 end;
 
 procedure TP3DPopupMenu.Update;
@@ -288,9 +271,9 @@ begin
 end;
 
 
-constructor TP3DCustomPopupMenu.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DCustomPopupMenu.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Visible:= False;
 end;
 

@@ -32,7 +32,7 @@ type
     public
       procedure ShowModal;
 
-      constructor CreateBlock(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
       procedure DrawOverlay( Sender: TP3DGraphicControl; OffSetX, OffSetY, _Width, _Height: Single );
 
@@ -85,10 +85,10 @@ begin
   BringToFront;
 end;
 
-constructor TP3DModalWindow.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DModalWindow.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
-  Overlay:= TP3DGraphicControl.CreateBlock();
+  inherited Create( AOwner );
+  Overlay:= TP3DGraphicControl.Create();
   Overlay.OnDraw:= @DrawOverlay;
   Overlay.Visible:= False;
   Overlay.Align:= alClient;

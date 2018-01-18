@@ -9,22 +9,22 @@ type
   TP3DObjectInspector = class;
   TP3DOIEditorGroup = class ( TP3DGroupBox )
     private
-      FObj: TInterfacedPersistent;
+      FObj: TP3DInterfacedObject;
       FObjInsp: TP3DObjectInspector;
 
-      procedure SetObj(AValue: TInterfacedPersistent); virtual;
+      procedure SetObj(AValue: TP3DInterfacedObject); virtual;
       function AddPropertyEditor( Prop: TP3DPropertyAccess ): TP3DGraphicControl;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Update; virtual;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; virtual;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; virtual;
 
     published
-      property Obj: TInterfacedPersistent read FObj write SetObj;
+      property Obj: TP3DInterfacedObject read FObj write SetObj;
       property ObjInsp: TP3DObjectInspector read FObjInsp write FObjInsp;
   end;
 
@@ -36,34 +36,35 @@ type
 
   TP3DOIEditorPage = class ( TP3DGraphicControl )
     private
-      FButton: TP3DGroupButton;
+      FButton: TP3DStreamablePointer;
       FGroups: TP3DOIEditorList;
-      FObj: TInterfacedPersistent;
+      FObj: TP3DInterfacedObject;
       FObjInsp: TP3DObjectInspector;
 
+      function GetButton: TP3DGroupButton;
       procedure SetButton(AValue: TP3DGroupButton);
-      procedure SetObj(AValue: TInterfacedPersistent);
+      procedure SetObj(AValue: TP3DInterfacedObject);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Update; virtual;
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; virtual;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; virtual;
 
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; virtual;
       procedure UpdateButton;
 
     published
       property Groups: TP3DOIEditorList read FGroups write FGroups;
-      property Button: TP3DGroupButton read FButton write SetButton;
-      property Obj: TInterfacedPersistent read FObj write SetObj;
+      property Button: TP3DGroupButton read GetButton write SetButton;
+      property Obj: TP3DInterfacedObject read FObj write SetObj;
       property ObjInsp: TP3DObjectInspector read FObjInsp write FObjInsp;
   end;
 
   TP3DOIPageList = specialize gP3DCustomObjectList < TP3DOIEditorPage >;
 
-  TP3DObjectInspectorSetObjEvent = procedure ( Sender: TP3DObjectInspector; AValue: TInterfacedPersistent ) of object;
+  TP3DObjectInspectorSetObjEvent = procedure ( Sender: TP3DObjectInspector; AValue: TP3DInterfacedObject ) of object;
 
   { TP3DObjectInspector }
 
@@ -71,18 +72,18 @@ type
     private
       FActivePage: Integer;
       FContainer: TP3DGraphicControl;
-      FObj: TInterfacedPersistent;
+      FObj: TP3DInterfacedObject;
       FOnSetObj: TP3DObjectInspectorSetObjEvent;
       FPages: TP3DOIPageList;
       FScrollbar: TP3DScrollBar;
       FToolbar: TP3DGraphicControl;
 
       procedure SetActivePage(AValue: Integer);
-      procedure SetObj(AValue: TInterfacedPersistent);
+      procedure SetObj(AValue: TP3DInterfacedObject);
       procedure ScrollBarChange( Sender: TObject );
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       function AddPage(Page: TP3DOIEditorPage): TP3DOIEditorPage;
@@ -94,7 +95,7 @@ type
       procedure Realign(); override;
 
     published
-      property Obj: TInterfacedPersistent read FObj write SetObj;
+      property Obj: TP3DInterfacedObject read FObj write SetObj;
       property Pages: TP3DOIPageList read FPages write FPages;
       property Toolbar: TP3DGraphicControl read FToolbar write FToolbar;
       property ActivePage: Integer read FActivePage write SetActivePage;
@@ -131,7 +132,11 @@ end;
 
 function GetPropEdForProp( AProp: TP3DPropertyAccess ): TP3DGraphicControlClass;
 begin
-  if ( AProp is TP3DPropAccessObject ) then
+  if ( AProp is IP3DPropAccessStreamable ) then
+    Result:= TP3DPropertyEditorStreamable
+  else if ( AProp is TP3DStreamableListBase ) then
+    Result:= TP3DPropertyEditorStreamableList
+{  if ( AProp is TP3DPropAccessObject ) then
     Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropAccessObjectList ) then
     Result:= TP3DPropertyEditorObjectList
@@ -184,8 +189,8 @@ begin
   else if ( AProp is TP3DPropAccessScene ) then
     Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropAccessSceneList ) then
-    Result:= TP3DPropertyEditorSceneList
-  else if ( AProp is TP3DPropAccessShader ) then
+    Result:= TP3DPropertyEditorSceneList}
+  {else if ( AProp is TP3DPropAccessShader ) then
     Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropAccessShaderList ) then
     Result:= TP3DPropertyEditorShaderList
@@ -197,7 +202,7 @@ begin
   else if ( AProp is TP3DPropAccessGraphicControl ) then
     Result:= TP3DPropertyEditorInterfacedPersistent
   else if ( AProp is TP3DPropAccessGraphicControlList ) then
-    Result:= TP3DPropertyEditorGraphicControlList
+    Result:= TP3DPropertyEditorGraphicControlList}
   else if ( AProp is TP3DPropAccessFilePointer ) then
     Result:= TP3DPropertyEditorString
 
@@ -235,7 +240,7 @@ end;
 
 { TP3DOIEditorGroup }
 
-procedure TP3DOIEditorGroup.SetObj(AValue: TInterfacedPersistent);
+procedure TP3DOIEditorGroup.SetObj(AValue: TP3DInterfacedObject);
 begin
   if FObj=AValue then Exit;
   FObj:=AValue;
@@ -248,14 +253,10 @@ function TP3DOIEditorGroup.AddPropertyEditor(Prop: TP3DPropertyAccess): TP3DGrap
     Lbl: TP3DLabel;
     Owner: TP3DLibrary;
   begin
-    if ( Assigned( Parent )) then
-      Owner:= Parent.OwnerLib
-    else
-      Owner:= P3DData;
-    Result:= TP3DGraphicControl.CreateBlock( Owner, Parent );
+    Result:= TP3DGraphicControl.Create( Parent.Controls );
     Result.Align:= alTop;
     Result.Width:= 20;
-    Lbl:= TP3DLabel.CreateBlock( Owner, Result );
+    Lbl:= TP3DLabel.Create( Result.Controls );
     Lbl.Align:= alLeft;
     Lbl.Caption:= Title + ' '; //One space for safety distance - looks better!
     Lbl.AutoSize:= True;
@@ -283,7 +284,7 @@ begin
 
   Cl:= GetPropEdForProp( Prop );
 
-  Result:= Cl.CreateBlock( OwnerLib, Self );
+  Result:= Cl.Create( Self.Controls );
 
   OI:= FindObjInsp( Self );
   if ( Result is IP3DPropertyEditor ) then
@@ -299,20 +300,20 @@ begin
   Visible:= IsCompatible( Obj );
 end;
 
-constructor TP3DOIEditorGroup.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorGroup.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   PageModeY:= pmExpand;
   CanCollapse:= True;
 end;
 
 destructor TP3DOIEditorGroup.Destroy;
 begin
-  Controls.Clear( True );
+  Controls.Clear;
   inherited Destroy;
 end;
 
-class function TP3DOIEditorGroup.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorGroup.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= False;
 end;
@@ -321,32 +322,38 @@ end;
 
 procedure TP3DOIEditorPage.SetButton(AValue: TP3DGroupButton);
 begin
-  if FButton= AValue then Exit;
-  FButton:= AValue;
+  if FButton.AsValue= AValue then Exit;
+  FButton.AsValue:= AValue;
   if ( Assigned( Button )) then
     UpdateButton;
 end;
 
-procedure TP3DOIEditorPage.SetObj(AValue: TInterfacedPersistent);
+function TP3DOIEditorPage.GetButton: TP3DGroupButton;
+begin
+  Result:= TP3DGroupButton( FButton.AsValue );
+end;
+
+procedure TP3DOIEditorPage.SetObj(AValue: TP3DInterfacedObject);
 begin
   if FObj= AValue then Exit;
   FObj:= AValue;
   Update;
 end;
 
-constructor TP3DOIEditorPage.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPage.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
+  FButton:= TP3DStreamablePointer.Create( 'Button', TP3DGraphicControl );
+  Properties.Add( FButton );
   PageModeY:= pmExpand;
   Groups:= TP3DOIEditorList.Create();
 end;
 
 destructor TP3DOIEditorPage.Destroy;
 begin
-  Groups.Clear( True );
+  Groups.Clear;
   Groups.Free;
-  if ( P3DDataBlockCache.IsValid( Button )) then
-    Button.Free;
+  //if ( P3DDataBlockCache.IsValid( Button )) then
   inherited Destroy;
 end;
 
@@ -355,14 +362,14 @@ begin
   UpdateButton;
 end;
 
-class function TP3DOIEditorPage.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPage.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= False;
 end;
 
 function TP3DOIEditorPage.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
 begin
-  Result:= TP3DGroupButton.CreateBlock( nil, AParent );
+  Result:= TP3DGroupButton.Create( AParent.Controls );
   Result.Align:= alLeft;
   Result.HAlignment:= haCenter;
   Result.VAlignment:= vaCenter;
@@ -383,7 +390,7 @@ end;
 
 { TP3DObjectInspector }
 
-procedure TP3DObjectInspector.SetObj(AValue: TInterfacedPersistent);
+procedure TP3DObjectInspector.SetObj(AValue: TP3DInterfacedObject);
 begin
   if FObj=AValue then Exit;
 
@@ -416,34 +423,34 @@ begin
   UpdateScrollBar;
 end;
 
-constructor TP3DObjectInspector.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DObjectInspector.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
 
-  Toolbar:= TP3DGraphicControl.CreateBlock( AData, Self );
+  Toolbar:= TP3DGraphicControl.Create( Self.Controls );
   Toolbar.Align:= alTop;
   Toolbar.Height:= 32;
 
-  Scrollbar:= TP3DScrollBar.CreateBlock( AData, Self );
+  Scrollbar:= TP3DScrollBar.Create( Self.Controls );
   Scrollbar.Align:= alRight;
   Scrollbar.Kind:= p3dsbVertical;
   Scrollbar.Width:= 10;
   Scrollbar.OnChange:= @ScrollBarChange;
 
   Pages:= TP3DOIPageList.Create;
-  Container:= TP3DGraphicControl.CreateBlock( AData, Self );
+  Container:= TP3DGraphicControl.Create( Self.Controls );
 
   Container.Align:= alClient;
 
-  AddPage( TP3DOIEditorPageObject.CreateBlock( AData, Container ));
-  AddPage( TP3DOIEditorPageLight.CreateBlock( AData, Container ));
-  AddPage( TP3DOIEditorPageCamera.CreateBlock( AData, Container ));
-  with ( AddPage( TP3DOIEditorPageMaterial.CreateBlock( AData, Self )) as TP3DOIEditorPageMaterial ) do
-    EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.CreateBlock( AData, Container )));
-  AddPage( TP3DOIEditorPageObjectModifier.CreateBlock( AData, Container ));
-  AddPage( TP3DOIEditorPageGrid.CreateBlock( AData, Container ));
-  AddPage( TP3DOIEditorPageAction.CreateBlock( AData, Container ));
-  AddPage( TP3DOIEditorPageProperties.CreateBlock( AData, Container ));
+  AddPage( TP3DOIEditorPageObject.Create( Container.Controls ));
+  AddPage( TP3DOIEditorPageLight.Create( Container.Controls ));
+  AddPage( TP3DOIEditorPageCamera.Create( Container.Controls ));
+  with ( AddPage( TP3DOIEditorPageMaterial.Create( Container.Controls )) as TP3DOIEditorPageMaterial ) do
+    EditorPageMaps:= TP3DOIEditorPageMaps( AddPage( TP3DOIEditorPageMaps.Create( Container.Controls )));
+  AddPage( TP3DOIEditorPageObjectModifier.Create( Container.Controls ));
+  AddPage( TP3DOIEditorPageGrid.Create( Container.Controls ));
+  AddPage( TP3DOIEditorPageAction.Create( Container.Controls ));
+  AddPage( TP3DOIEditorPageProperties.Create( Container.Controls ));
 end;
 
 destructor TP3DObjectInspector.Destroy;
@@ -451,11 +458,11 @@ begin
   //Pages.Clear( True );
   Pages.Free;
   //Toolbar.Controls.Clear( True );
-  if ( P3DDataBlockCache.IsValid( Toolbar )) then
+  //if ( P3DDataBlockCache.IsValid( Toolbar )) then
     Toolbar.Free;
-  if ( P3DDataBlockCache.IsValid( Container )) then
+  //if ( P3DDataBlockCache.IsValid( Container )) then
     Container.Free;
-  if ( P3DDataBlockCache.IsValid( Scrollbar )) then
+  //if ( P3DDataBlockCache.IsValid( Scrollbar )) then
     Scrollbar.Free;
   inherited Destroy;
 end;

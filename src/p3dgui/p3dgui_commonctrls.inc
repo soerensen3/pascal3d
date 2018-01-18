@@ -103,7 +103,7 @@ type
       procedure SetScrollBarWidth(AValue: Float);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       class function IsFocusControl: Boolean; override;
@@ -143,7 +143,7 @@ type
       procedure SetSelection( AValue: TP3DTreeNode ); virtual;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       procedure Draw; override;
@@ -176,7 +176,7 @@ type
       procedure SetSelection(AValue: TP3DListItem);
 
     public
-      constructor CreateBlock( const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil ); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
       function ItemAtPos( p: TVec2 ): TP3DListItem;
@@ -214,7 +214,7 @@ type
       procedure SetSelection(AValue: TP3DTreeNode); override;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary= nil; const AParent: TP3DGraphicControl= nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update;
       function GetItemFileName( Item: TP3DTreeNode; const Relative: Boolean = False ): AnsiString;
@@ -243,7 +243,7 @@ type
       procedure SetTreeViewDirectory(AValue: TP3DTreeViewDirectory);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update;
       procedure MouseDblClick(mb1, mb2, mb3: Boolean; X, Y: Integer); override;
@@ -260,16 +260,19 @@ type
 
   TP3DTreeViewObjects = class ( TP3DTreeView )
     private
-      FObj: TPersistent;
+      FObj: TP3DStreamablePointer;
       FShowDesignerPackages: Boolean;
 
-      procedure SetObj(AValue: TPersistent);
+      function GetObj: TP3DStreamable;
+      procedure SetObj(AValue: TP3DStreamable);
 
     public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+
       procedure Update;
 
     published
-      property Obj: TPersistent read FObj write SetObj;
+      property Obj: TP3DStreamable read GetObj write SetObj;
       property ShowDesignerPackages: Boolean read FShowDesignerPackages write FShowDesignerPackages;
   end;
 
@@ -286,7 +289,7 @@ type
       procedure SetObj(AValue: TP3DStreamable);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary=nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update;
 
@@ -318,9 +321,9 @@ begin
   FPageScrollY:=AValue;
 end;
 
-constructor TP3DCustomItemView.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DCustomItemView.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   SymbolsFontName:= 'Pascal3D-Symbols';
   Font:= TP3DCanvasFont.Create;
   Font.Size:= 20;
@@ -328,11 +331,11 @@ begin
   Preset.Color:= Primary50;//vec4( vec3( 0.93 ), 1 );
   //Preset.OutlineColor:= Accent900;//vec4( 225/255, 230/255, 234/255, 1 );
   Preset.FontColor:= Accent50;//vec4( vec3( 0 ), 1 );
-  ScrollBarV:= TP3DScrollBar.CreateBlock( nil, Self );
+  ScrollBarV:= TP3DScrollBar.Create( Self.Controls );
   ScrollBarV.Kind:= p3dsbVertical;
   ScrollBarV.Align:= alRight;
   ScrollBarV.OnChange:= @OnScroll;
-  ScrollBarH:= TP3DScrollBar.CreateBlock( nil, Self );
+  ScrollBarH:= TP3DScrollBar.Create( Self.Controls );
   ScrollBarH.Kind:= p3dsbHorizontal;
   ScrollBarH.Align:= alBottom;
   ScrollBarH.OnChange:= @OnScroll;
@@ -343,10 +346,6 @@ destructor TP3DCustomItemView.Destroy;
 begin
   Font.Free;
   Preset.Free;
-  if ( P3DDataBlockCache.IsValid( ScrollBarV )) then
-    ScrollBarV.Free;
-  if ( P3DDataBlockCache.IsValid( ScrollBarH )) then
-    ScrollBarH.Free;
   inherited Destroy;
 end;
 
@@ -406,9 +405,9 @@ begin
     OnSelectionChange( AValue );
 end;
 
-constructor TP3DTreeView.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DTreeView.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Children:= TP3DTreeNodeList.Create( nil );
 
   SymbolPlus:= TP3DTextBmp.CreateSimple( P3DSymbolPlus, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols' ], Font.Size );
@@ -417,7 +416,7 @@ end;
 
 destructor TP3DTreeView.Destroy;
 begin
-  Children.Clear( True );
+  Children.Clear;
   Children.Free;
   SymbolPlus.Free;
   SymbolMinus.Free;
@@ -428,9 +427,11 @@ procedure TP3DTreeView.Draw;
   function DrawNode( p: TVec2; Node: TP3DTreeNode; var MaxX: Float ): TVec2;
   var
     Child: TP3DTreeNode;
+    LineHeight: Float;
   begin
     Result:= p;
     Node.FRenderPos:= p;
+    LineHeight:= Font.Size * 1.2;
     p-= vec2( ScrollBarH.Position, ScrollBarV.Position );
     if ( not Assigned( Node.Text )) then
       Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
@@ -438,13 +439,13 @@ procedure TP3DTreeView.Draw;
     if ( Node = DragItem ) then
       begin
         Canvas.Font.Color:= Accent50;
-        Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
+        Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + LineHeight ),
                            Secondary900, Secondary400, Secondary600, Secondary900 );
       end
     else if ( Node = Selection ) then
       begin
         Canvas.Font.Color:= Accent50;
-        Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + Node.Text.Height),
+        Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + LineHeight ),
                            Accent900, Accent400, Accent600, Accent900 );
  //Preset.OutlineColor, vec4( Preset.OutlineColor.xyz, 0 ), vec4( Preset.OutlineColor.xyz, 0 ), Preset.OutlineColor );
       end;
@@ -458,7 +459,7 @@ procedure TP3DTreeView.Draw;
     Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * ( 1.5 + Ord( ShowSymbols )));
 
     MaxX:= Max( MaxX, Node.FRenderPos.x + Font.Size * ( 1 + Ord( ShowSymbols )) + Node.Text.Width );
-    Result.y:= Result.y + Node.Text.Height;
+    Result.y:= Result.y + LineHeight;
     if ( Node.Children.Count > 0 ) then
       if ( Node.Expanded ) then
         begin
@@ -709,6 +710,9 @@ begin
 end;
 
 function TP3DTreeView.NodeAtPos(p: TVec2): TP3DTreeNode;
+var
+  LineHeight: Float;
+
   function FindNodeRecurse( NodeList: TP3DTreeNodeList ): TP3DTreeNode;
   var
     Child: TP3DTreeNode;
@@ -716,7 +720,7 @@ function TP3DTreeView.NodeAtPos(p: TVec2): TP3DTreeNode;
     Result:= nil;
     for Child in NodeList do
       if ( P3DRect( Child.FRenderPos.x, Child.FRenderPos.y,
-                    ClientRect.Width - Child.FRenderPos.x, Child.Text.Height ).PtInRect( p )) then
+                    ClientRect.Width - Child.FRenderPos.x, LineHeight ).PtInRect( p )) then
         begin
           Result:= Child;
           break;
@@ -729,6 +733,7 @@ function TP3DTreeView.NodeAtPos(p: TVec2): TP3DTreeNode;
         end;
   end;
 begin
+  LineHeight:= Font.Size * 1.2;
   Result:= FindNodeRecurse( Children );
 end;
 
@@ -756,7 +761,7 @@ end;
 
 destructor TP3DTreeNode.Destroy;
 begin
-  Children.Clear( True );
+  Children.Clear;
   Children.Free;
   inherited Destroy;
 end;
@@ -816,9 +821,9 @@ begin
     end;
 end;
 
-constructor TP3DTreeViewDirectory.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DTreeViewDirectory.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   FMask:= '*.*';
   Directory:= P3DSearchPaths.BaseDir.FileName;
 end;
@@ -870,7 +875,7 @@ procedure TP3DTreeViewDirectory.Update;
   end;
 
 begin
-  Children.Clear( True );
+  Children.Clear;
   ListFolderFiles( Directory, nil );
 end;
 
@@ -944,7 +949,7 @@ end;
 
 procedure TP3DTreeNodeList.Delete(Index: Integer);
 begin
-  AsValues[ Index ].FParent:= nil;
+  Items[ Index ].FParent:= nil;
   inherited Delete( Index );
 end;
 
@@ -1016,9 +1021,9 @@ begin
   FSelection:= AValue;
 end;
 
-constructor TP3DListView.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DListView.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   ScrollBarH.Visible:= False;
   Children:= TP3DListItemList.Create;
   Font.Size:= 32;
@@ -1026,7 +1031,7 @@ end;
 
 destructor TP3DListView.Destroy;
 begin
-  Children.Clear( True );
+  Children.Clear;
   Children.Free;
   inherited Destroy;
 end;
@@ -1303,9 +1308,9 @@ begin
     end;
 end;
 
-constructor TP3DListViewFile.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DListViewFile.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   FMask:= '*.*';
   Directory:= P3DSearchPaths.BaseDir.FileName;
 end;
@@ -1321,7 +1326,7 @@ procedure TP3DListViewFile.Update;
     F:= TStringList.Create;
     try
       F.LoadFromFile( FN );
-      json:= GetJSON( F.Text );
+      json:= fpjson.GetJSON( F.Text );
       if ( ShowFolderUp and
         ( not ( Assigned( TreeViewDirectory )
         and ( TreeViewDirectory.Directory = Directory )))) then
@@ -1380,7 +1385,7 @@ procedure TP3DListViewFile.Update;
   end;
 
 begin
-  Children.Clear( True );
+  Children.Clear;
   Selection:= nil;
   if ( DirectoryExistsUTF8( Directory )) then // is path a directory
     ListFolderFiles( Directory )
@@ -1404,16 +1409,29 @@ end;
 
 { TP3DTreeViewObjects }
 
-procedure TP3DTreeViewObjects.SetObj(AValue: TPersistent);
+function TP3DTreeViewObjects.GetObj: TP3DStreamable;
 begin
-  if FObj=AValue then Exit;
-  FObj:=AValue;
+  FObj.AsValue;
+end;
+
+procedure TP3DTreeViewObjects.SetObj(AValue: TP3DStreamable);
+begin
+  if ( FObj.AsValue = AValue ) then
+    Exit;
+  FObj.AsValue:= AValue;
   Update;
+end;
+
+constructor TP3DTreeViewObjects.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  FObj:= TP3DStreamablePointer.Create( 'Obj', TP3DStreamable );
+  Properties.Add( FObj );
 end;
 
 procedure TP3DTreeViewObjects.Update;
 
-  procedure AddObjectList( List: TP3DObjectList; Parent: TP3DTreeNodeList; const Recurse: Boolean = False );
+  {procedure AddObjectList( List: TP3DStreamableListBase; Parent: TP3DTreeNodeList; const Recurse: Boolean = False );
   var
     Item: TP3DObject;
     n: Integer;
@@ -1764,6 +1782,101 @@ procedure TP3DTreeViewObjects.Update;
 
     Node:= Parent[ Parent.Add( 'Grids', Data.Grids, False, P3DSymbolGrid )].Children;
     AddGridList( Data.Grids, Node );
+  end;}
+
+  function GetSymbolClass( Item: TP3DStreamableClass ): Char;
+  begin
+    if ( Item.InheritsFrom( TP3DObject )) then
+      Result:= P3DSymbolObject
+    else if ( Item.InheritsFrom( TP3DMesh )) then
+      Result:= P3DSymbolMesh
+    else if ( Item.InheritsFrom( TP3DCamera )) then
+      Result:= P3DSymbolCamera
+    else if ( Item.InheritsFrom( TP3DMaterial )) then
+      Result:= P3DSymbolMaterial
+    else if ( Item.InheritsFrom( TP3DScene )) then
+      Result:= P3DSymbolScene
+    else if ( Item.InheritsFrom( TP3DLight )) then
+      Result:= P3DSymbolLight
+    else if ( Item.InheritsFrom( TP3DShader )) then
+      Result:= P3DSymbolShader
+    else if ( Item.InheritsFrom( TP3DTexture )) then
+      Result:= P3DSymbolTexture
+    else if ( Item.InheritsFrom( TP3DArmature )) then
+      Result:= P3DSymbolArmature
+    else if ( Item.InheritsFrom( TP3DAction )) then
+      Result:= P3DSymbolArmature
+    else if ( Item.InheritsFrom( TP3DTileGrid )) then
+      Result:= P3DSymbolGrid
+    else if ( Item.InheritsFrom( TP3DJoint)) then
+      Result:= P3DSymbolArmature
+    else if ( Item.InheritsFrom( TP3DLibrary )) then
+      Result:= P3DSymbolLibrary
+    else if ( Item.InheritsFrom( TP3DFontBmp )) then
+      Result:= P3DSymbolFont
+    else
+      Result:= P3DSymbolFile;
+  end;
+
+  function GetSymbol( Item: TP3DStreamable ): Char;
+  begin
+    if ( Item is TP3DObject ) then
+      Result:= GetSymbol( TP3DObject( Item ).Data )
+    else if ( Item is TP3DMesh ) then
+      Result:= P3DSymbolMesh
+    else if ( Item is TP3DCamera ) then
+      Result:= P3DSymbolCamera
+    else if ( Item is TP3DMaterial ) then
+      Result:= P3DSymbolMaterial
+    else if ( Item is TP3DScene ) then
+      Result:= P3DSymbolScene
+    else if ( Item is TP3DLight ) then
+      Result:= P3DSymbolLight
+    else if ( Item is TP3DShader ) then
+      Result:= P3DSymbolShader
+    else if ( Item is TP3DTexture ) then
+      Result:= P3DSymbolTexture
+    else if ( Item is TP3DArmature ) then
+      Result:= P3DSymbolArmature
+    else if ( Item is TP3DAction ) then
+      Result:= P3DSymbolArmature
+    else if ( Item is TP3DTileGrid ) then
+      Result:= P3DSymbolGrid
+    else if ( Item is TP3DJoint) then
+      Result:= P3DSymbolArmature
+    else if ( Item is TP3DLibrary ) then
+      Result:= P3DSymbolLibrary
+    else if ( Item is TP3DFontBmp ) then
+      Result:= P3DSymbolFont
+    else
+      Result:= P3DSymbolFile;
+  end;
+
+  procedure AddStreamableList( List: TP3DStreamableListBase; Parent: TP3DTreeNodeList ); forward;
+
+  procedure AddStreamableProps( List: TP3DPropertyList; Parent: TP3DTreeNodeList);
+  var
+    Item: TP3DPropertyAccess;
+  begin
+    for Item in List do
+      if ( Item is TP3DStreamableListBase ) then
+        AddStreamableList( TP3DStreamableListBase( Item ), Parent );
+  end;
+
+  procedure AddStreamable( Item: TP3DStreamable; Parent: TP3DTreeNodeList);
+  begin
+    if ( Item is TP3DNamedStreamable ) then
+      AddStreamableProps( Item.Properties, Parent[ Parent.Add( TP3DNamedStreamable( Item ).Name, Item, False, GetSymbol( Item ))].Children );
+  end;
+
+  procedure AddStreamableList( List: TP3DStreamableListBase; Parent: TP3DTreeNodeList );
+  var
+    Item: TP3DStreamable;
+    Node: TP3DTreeNodeList;
+  begin
+    Node:= Parent[ Parent.Add( List.Name, List, False, GetSymbolClass( List.ItemClass ))].Children;
+    for Item in List do
+      AddStreamable( Item, Node );
   end;
 
 var
@@ -1778,18 +1891,11 @@ begin
   else
     SelectionData:= nil;
 
-  Children.Clear( True );
+  Children.Clear;
   if ( Assigned( Obj )) then
-    begin
-      if ( Obj is TP3DLibrary ) then
-        AddDataList( TP3DLibrary( Obj ), Children )
-      else if ( Obj is TP3DScene ) then
-        AddObjectList( TP3DScene( Obj ).Objects, Children, True )
-      else if ( Obj is TP3DObject ) then
-        AddObjectList( TP3DObject( Obj ).Children, Children, True );
-    end
+    AddStreamable( Obj, Children )
   else
-    AddDataList( P3DData, Children );
+    AddStreamable( P3DData, Children );
 
   if ( Assigned( SelectionData )) then
     Selection:= Children.FindByData( SelectionData, True );
@@ -1804,9 +1910,9 @@ begin
   Update;
 end;
 
-constructor TP3DTreeViewProperties.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DTreeViewProperties.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
+  inherited Create( AOwner );
   FMaxDepth:= 5;
 end;
 
@@ -1851,7 +1957,7 @@ procedure TP3DTreeViewProperties.Update;
   end;
 
 begin
-  Children.Clear( True );
+  Children.Clear;
   if ( Assigned( Obj )) then
     AddProps( Obj.Properties, Children, 1 )
   else

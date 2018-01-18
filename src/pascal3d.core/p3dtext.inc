@@ -89,7 +89,7 @@ type
 
   { TP3DText }
 
-  TP3DText = class ( TP3DStreamable )
+  TP3DText = class ( TPersistent )
     private
       FFont: TP3DFont;
       FHeight: Single;
@@ -109,7 +109,7 @@ type
       //function AppendLetter( L: WideChar; fs: Single; p: TVec2 ): TVec2;
 
     public
-      constructor Create( const AOwner: IP3DStreamableContainer = nil ); override;
+      constructor Create;
       destructor Destroy; override;
 
       procedure Render( p: TVec2; Color: TVec4 );
@@ -211,12 +211,11 @@ begin
   Result:= TP3DTexture( FTexture.AsValue );
 end;
 
-constructor TP3DText.Create(const AOwner: IP3DStreamableContainer);
+constructor TP3DText.Create;
 begin
-  inherited Create( AOwner );
+  inherited Create;
   LetterPosAndSize:= TVec4List.Create;
   FTexture:= TP3DStreamablePointer.Create( 'Texture', TP3DTexture );
-  Properties.Add( FTexture );
 end;
 
 destructor TP3DText.Destroy;
@@ -227,6 +226,7 @@ begin
   FIndices.Free;
   if ( Assigned( FTexture.AsValue ) and P3DDataBlockCache.IsValid( TP3DTexture( FTexture.AsValue ))) then
     FTexture.AsValue.Free;
+  FTexture.Free;
   inherited Destroy;
 end;
 

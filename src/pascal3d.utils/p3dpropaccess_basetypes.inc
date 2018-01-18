@@ -150,7 +150,8 @@ end;
 procedure TP3DPropAccessFloat.LoadJSON(AValue: TJSONData);
 begin
   if ( AValue.JSONType = jtNumber ) then
-    AsValue:= AValue.AsFloat
+    begin   WriteLn( Name, ' = ', AValue.AsFloat );
+    AsValue:= AValue.AsFloat end
   else
     raise Exception.CreateFmt( Name + ': ' + P3DERROR_JSON_WRONG_TYPE, [ 'jtNumber, ntInteger', JSONTypeName( AValue.JSONType )]);;
 end;

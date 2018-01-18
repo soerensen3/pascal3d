@@ -32,7 +32,7 @@ type
       class function GetContainer( ALib: TP3DLibrary ): TP3DPropertyAccess; virtual; abstract;
 
     public
-      constructor Create( const AOwner: IP3DStreamableContainer = nil ); override;
+      constructor Create( const AOwner: IP3DStreamableContainer = nil ); override; overload;
       constructor CreateBlock( const AData: TP3DLibrary = nil );
       destructor Destroy; override;
 
@@ -43,9 +43,9 @@ type
   TP3DDataBlockType = class of TP3DDataBlock;
 
   {TP3DDataBlockContainer = specialize gP3DStreamableContainer < TP3DDataBlock >;
-  TP3DDataBlockPointer = specialize gP3DStreamablePointer < TP3DDataBlock >;
-  TP3DDataBlockContainerList = specialize gP3DStreamableList < TP3DDataBlock, TP3DDataBlockContainer >;
-  TP3DDataBlockPointerList = specialize gP3DStreamableList < TP3DDataBlock, TP3DDataBlockPointer >;}
+  TP3DDataBlockPointer = specialize gP3DStreamablePointer < TP3DDataBlock >;}
+  TP3DDataBlockContainerList = specialize gP3DNamedStreamableContainerList < TP3DDataBlock >;
+  TP3DDataBlockPointerList = specialize gP3DStreamablePointerList < TP3DDataBlock >;
 
 {$ENDIF}
 

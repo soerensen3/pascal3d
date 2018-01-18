@@ -28,6 +28,8 @@ type
   { TP3DTransform }
 
   TP3DTransform = class( TP3DStreamable )
+  private
+    FMatrixInv: TMat4;
     protected
       FOnChange: TNotifyEvent;
       FPosition: TVec3;
@@ -66,6 +68,7 @@ type
       property Rotation: TVec3 read FRotation write SetRotation;
       property Scale: TVec3 read FScale write SetScale;
       property Matrix: TMat4 read FMatrix write SetMatrix;
+      property MatrixInv: TMat4 read FMatrixInv;
       property Quaternion: TQuat read FQuaternion write SetQuaternion;
 
     published
@@ -89,6 +92,7 @@ type
 procedure TP3DTransform.UpdateMatrix;
 begin
   FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
+  mat4inverse( FMatrix, FMatrixInv );
   if ( Assigned( FOnChange )) then
     FOnChange( Self );
 end;

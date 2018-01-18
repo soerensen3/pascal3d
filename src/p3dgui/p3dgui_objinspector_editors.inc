@@ -15,8 +15,8 @@ type
 
     public
       procedure Update; override;
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
     published
       property NameEdit: TP3DPropertyEditorString read FNameEdit write FNameEdit;
@@ -42,9 +42,9 @@ type
     public
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
     published
       property PositionEdit: TP3DVectorEdit read FPositionEdit write FPositionEdit;
@@ -58,23 +58,21 @@ type
 
   TP3DOIEditorDatablock = class ( TP3DOIEditorGroup )
     private
-      FDataEd: TP3DPropertyEditorInterfacedPersistent;
+      FDataEd: TP3DPropertyEditorStreamable;
       FNameEd: TP3DLabel;
       FTypeLbl: TP3DLabel;
-      FDataProp: TP3DPropAccessDataBlock;
 
     public
       procedure Update; override;
       procedure DataDragDrop(Sender, Source: TP3DGraphicControl; X, Y: Integer; var Accept: Boolean);
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      destructor Destroy; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
     published
       property NameEd: TP3DLabel read FNameEd write FNameEd;
       property TypeLbl: TP3DLabel read FTypeLbl write FTypeLbl;
-      property DataEd: TP3DPropertyEditorInterfacedPersistent read FDataEd write FDataEd;
+      property DataEd: TP3DPropertyEditorStreamable read FDataEd write FDataEd;
   end;
 
   { TP3DOIEditorPageObject }
@@ -86,11 +84,11 @@ type
       FEditorTransform: TP3DOIEditorTransform3D;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
 
     published
@@ -109,11 +107,11 @@ type
       //FMeshList: TP3DPropertyEditorDataBlockList;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
       procedure OnMeshSelect( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
@@ -145,9 +143,9 @@ type
     public
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
     published
       property LightTypeCombo: TP3DComboBox read FLightType write FLightType;
@@ -165,11 +163,11 @@ type
       FEditorLight: TP3DOIEditorDataLight;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
 
     published
@@ -207,9 +205,9 @@ published
     public
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
     published
       property HandednessCombo: TP3DComboBox read FCamHandednessCombo write FCamHandednessCombo;
@@ -226,11 +224,11 @@ published
       FEditorCamera: TP3DOIEditorDataCamera;
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
 
     published
@@ -254,9 +252,9 @@ published
     public
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
     published
       property PreviewImg: TP3DImage read FPreviewImg write FPreviewImg;
@@ -289,9 +287,9 @@ published
     public
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
     published
       property DiffCombo: TP3DColorRGBAComboBox read FDiffCombo write FDiffCombo;
@@ -327,8 +325,8 @@ published
 
     public
       procedure Update; override;
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      class function IsCompatible(AObj: TP3DInterfacedObject): Boolean; override;
 
     published
       //property TextureEditor: TP3DOIEditorDataTexture read FTextureEditor write FTextureEditor;
@@ -354,7 +352,7 @@ published
 
   TP3DOIEditorDataMaterialMaps = class ( TP3DOIEditorGroup )
     private
-      FMapsListView: TP3DPropertyEditorMaterialMapList;
+      FMapsListView: TP3DPropertyEditorStreamableList;
       FMaterial: TP3DMaterial;
       FOnSelectionChange: TP3DListViewSelectionChangeEvent;
 
@@ -363,11 +361,11 @@ published
 
     public
       procedure Update; override;
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-      class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      class function IsCompatible(AObj: TP3DInterfacedObject): Boolean; override;
 
     published
-      property MapsListView: TP3DPropertyEditorMaterialMapList read FMapsListView write FMapsListView;
+      property MapsListView: TP3DPropertyEditorStreamableList read FMapsListView write FMapsListView;
       property Material: TP3DMaterial read FMaterial write SetMaterial;
       property OnSelectionChange: TP3DListViewSelectionChangeEvent read FOnSelectionChange write FOnSelectionChange;
   end;
@@ -383,10 +381,10 @@ published
       procedure SetSelectionChange(AValue: TP3DListViewSelectionChangeEvent);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
-      class function IsCompatible(AObj: TInterfacedPersistent): Boolean; override;
+      class function IsCompatible(AObj: TP3DInterfacedObject): Boolean; override;
 
     published
       property MatListView: {TP3DPropertyEditorMaterialList}TP3DListView read FMatListView write FMatListView;
@@ -400,7 +398,7 @@ published
     public
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
   end;
 
 
@@ -417,11 +415,11 @@ published
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
 
     published
@@ -442,11 +440,11 @@ published
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
 
     published
@@ -461,21 +459,21 @@ published
 
   TP3DOIEditorPageObjectModifier = class ( TP3DOIEditorPage )
     private
-      FEditorObjectModifiers: TP3DPropertyEditorObjectModifierList;
+      FEditorObjectModifiers: TP3DPropertyEditorStreamableList;
       FEditorSelectedMod: TP3DOIEditorDataProperties;
 
       procedure SelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
 
     published
-      property EditorMeshModifiers: TP3DPropertyEditorObjectModifierList read FEditorObjectModifiers write FEditorObjectModifiers;
+      property EditorMeshModifiers: TP3DPropertyEditorStreamableList read FEditorObjectModifiers write FEditorObjectModifiers;
       property EditorSelectedMod: TP3DOIEditorDataProperties read FEditorSelectedMod write FEditorSelectedMod;
   end;
 
@@ -483,11 +481,9 @@ published
 
   TP3DOIEditorPageProperties = class ( TP3DOIEditorPage )
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
-
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
   end;
 
@@ -501,11 +497,11 @@ published
       procedure SetKey(AValue: TP3DActionKey);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
       property Time: TP3DPropertyEditorFloat read FTime write FTime;
       property Value: TP3DPropertyEditorFloat read FValue write FValue;
@@ -517,21 +513,21 @@ published
   TP3DOIEditorActionChannel = class ( TP3DOIEditorGroup )
     private
       FChannel: TP3DActionChannel;
-      FKeys: TP3DPropertyEditorActionKeyList;
+      FKeys: TP3DPropertyEditorStreamableList;
       FPropStr: TP3DPropertyEditorString;
       FTime: TP3DPropertyEditorFloat;
 
       procedure SetChannel(AValue: TP3DActionChannel);
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
 
       property Time: TP3DPropertyEditorFloat read FTime write FTime;
-      property Keys: TP3DPropertyEditorActionKeyList read FKeys write FKeys;
+      property Keys: TP3DPropertyEditorStreamableList read FKeys write FKeys;
       property PropStr: TP3DPropertyEditorString read FPropStr write FPropStr;
       property Channel: TP3DActionChannel read FChannel write SetChannel;
   end;
@@ -543,20 +539,20 @@ published
     private
       FAction: TP3DAction;
       FChannel: TP3DOIEditorActionChannel;
-      FChannels: TP3DPropertyEditorActionChannelList;
+      FChannels: TP3DPropertyEditorStreamableList;
       FEditorKey: TP3DOIEditorActionKey;
 
       procedure ChannelSelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
       procedure KeysSelectionChange( Sender: TP3DListView; var NewSelection: TP3DListItem );
 
     public
-      constructor CreateBlock(const AData: TP3DLibrary = nil; const AParent: TP3DGraphicControl=nil); override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
 
-      class function IsCompatible( AObj: TInterfacedPersistent ): Boolean; override;
+      class function IsCompatible( AObj: TP3DInterfacedObject ): Boolean; override;
       function CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton; override;
-      property Channels: TP3DPropertyEditorActionChannelList read FChannels write FChannels;
+      property Channels: TP3DPropertyEditorStreamableList read FChannels write FChannels;
       property Channel: TP3DOIEditorActionChannel read FChannel write FChannel;
       property Action: TP3DAction read FAction write FAction;
       property EditorKey: TP3DOIEditorActionKey read FEditorKey write FEditorKey;
@@ -625,9 +621,9 @@ begin
   Result:= ''; //We want the caption to align left
 end;
 
-constructor TP3DPropertyEditorBoolean.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DPropertyEditorBoolean.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
+  inherited Create( AOwner );
   Height:= 20;
   HAlignment:= haRight;
 end;
@@ -654,14 +650,10 @@ var
   Lbl: TP3DLabel;
   Owner: TP3DLibrary;
 begin
-  if ( Assigned( Parent )) then
-    Owner:= Parent.OwnerLib
-  else
-    Owner:= P3DData;
-  Result:= TP3DGraphicControl.CreateBlock( Owner, Parent );
+  Result:= TP3DGraphicControl.Create( Parent.Controls );
   Result.Align:= alTop;
   Result.Height:= 20;
-  Lbl:= TP3DLabel.CreateBlock( Owner, Result );
+  Lbl:= TP3DLabel.Create( Result.Controls );
   Lbl.Align:= alLeft;
   Lbl.Caption:= Title + ' '; //One space for safety distance - looks better!
   Lbl.AutoSize:= True;
@@ -694,30 +686,30 @@ begin
       end;
 end;
 
-constructor TP3DOIEditorObject.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorObject.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Object';
 
-  NameEdit:= TP3DPropertyEditorString.CreateBlock( AData, Self );
+  NameEdit:= TP3DPropertyEditorString.Create( Self.Controls );
   NameEdit.Height:= 20;
   NameEdit.Align:= alTop;
 
-  TypeLbl:= TP3DLabel.CreateBlock( AData, AddContainer( Self, 'Type ' ));
+  TypeLbl:= TP3DLabel.Create( AddContainer( Self, 'Type ' ).Controls );
   TypeLbl.Height:= 20;
   TypeLbl.Align:= alTop;
 
-  CollisionEdit:= TP3DPropertyEditorEnum.CreateBlock( AData, Self );
+  CollisionEdit:= TP3DPropertyEditorEnum.Create( Self.Controls );
   CollisionEdit.Height:= 20;
   CollisionEdit.Align:= alClient;
 
-  VisibleCheckBox:= TP3DPropertyEditorBoolean.CreateBlock( AData, Self );
+  VisibleCheckBox:= TP3DPropertyEditorBoolean.Create( Self.Controls );
   VisibleCheckBox.Height:= 20;
   VisibleCheckBox.Align:= alTop;
   VisibleCheckBox.HAlignment:= haRight;
 end;
 
-class function TP3DOIEditorObject.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
+class function TP3DOIEditorObject.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is IP3DNamedStreamable;
 end;
@@ -782,7 +774,7 @@ begin
       end
   else if ( Source is TP3DTreeViewObjects ) then
     with ( TP3DTreeViewObjects( Source )) do
-      if (( TPersistent( DragItem.Data ) is TP3DDataBlock ) and ( Self.Obj is TP3DObject )) then
+      if (( TObject( DragItem.Data ) is TP3DDataBlock ) and ( Self.Obj is TP3DObject )) then
         begin
           TP3DObject( Self.Obj ).Data:= TP3DDataBlock( DragItem.Data );
           Update; //TODO: Update whole Object Inspector from here
@@ -790,34 +782,27 @@ begin
   Accept:= False;
 end;
 
-constructor TP3DOIEditorDatablock.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDatablock.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Data';
   Height:= 60;
 
-  NameEd:= TP3DLabel.CreateBlock( nil, AddContainer( Self, 'Name ' ));
+  NameEd:= TP3DLabel.Create( AddContainer( Self, 'Name ' ).Controls );
   NameEd.Height:= 20;
   NameEd.Align:= alTop;
 
-  TypeLbl:= TP3DLabel.CreateBlock( nil, AddContainer( Self, 'Type ' ));
+  TypeLbl:= TP3DLabel.Create( AddContainer( Self, 'Type ' ).Controls );
   TypeLbl.Height:= 20;
   TypeLbl.Align:= alTop;
 
-  DataEd:= TP3DPropertyEditorInterfacedPersistent.CreateBlock( nil, Self );
+  DataEd:= TP3DPropertyEditorStreamable.Create( Self.Controls );
   DataEd.Height:= 20;
   DataEd.Align:= alTop;
-  FDataProp:= TP3DPropAccessDataBlock.Create( 'Data', smDoNotStore );
   //DataCombo.OnDragDrop:= @DataDragDrop;
 end;
 
-destructor TP3DOIEditorDatablock.Destroy;
-begin
-  FDataProp.Free;
-  inherited Destroy;
-end;
-
-class function TP3DOIEditorDatablock.IsCompatible(AObj: TInterfacedPersistent ): Boolean;
+class function TP3DOIEditorDatablock.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= ( AObj is TP3DObject ) or ( AObj is TP3DDataBlock );
 end;
@@ -887,28 +872,28 @@ begin
     end;
 end;
 
-class function TP3DOIEditorTransform3D.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
+class function TP3DOIEditorTransform3D.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is IP3DTransform;
 end;
 
-constructor TP3DOIEditorTransform3D.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorTransform3D.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Transform';
 
-  PositionEdit:= TP3DVectorEdit.CreateBlock( nil, AddContainer( Self, 'Position ' ));
+  PositionEdit:= TP3DVectorEdit.Create( AddContainer( Self, 'Position ' ).Controls );
   PositionEdit.Align:= alClient;
   PositionEdit.GetValueEvent:= @EdGetValue;
   PositionEdit.SetValueEvent:= @EdSetValue;
 
-  RotationEdit:= TP3DVectorEdit.CreateBlock( nil, AddContainer( Self, 'Rotation ' ));
+  RotationEdit:= TP3DVectorEdit.Create( AddContainer( Self, 'Rotation ' ).Controls );
   RotationEdit.Align:= alClient;
   RotationEdit.GetValueEvent:= @EdGetValue;
   RotationEdit.SetValueEvent:= @EdSetValue;
   RotationEdit.Transmission:= 5.0;
 
-  RotationMethodCombo:= TP3DComboBox.CreateBlock( nil, AddContainer( Self, 'Rotation Mode ' ));
+  RotationMethodCombo:= TP3DComboBox.Create( AddContainer( Self, 'Rotation Mode ' ).Controls );
   RotationMethodCombo.Align:= alClient;
   RotationMethodCombo.OnChange:= @ComboChange;
   RotationMethodCombo.Items.Add( 'ZYX Euler' );
@@ -919,10 +904,10 @@ begin
   RotationMethodCombo.Items.Add( 'XYZ Euler' );
   //RotationMethodCombo.Items.Add( 'Quaternion XYZW' );
 
-  QuaternionEdit:= TP3DPropertyEditorVec4.CreateBlock( nil, Self );
+  QuaternionEdit:= TP3DPropertyEditorVec4.Create( Self.Controls );
   QuaternionEdit.Align:= alTop;
 
-  ScaleEdit:= TP3DVectorEdit.CreateBlock( nil, AddContainer( Self, 'Scale ' ));
+  ScaleEdit:= TP3DVectorEdit.Create( AddContainer( Self, 'Scale ' ).Controls );
   ScaleEdit.Align:= alClient;
   ScaleEdit.GetValueEvent:= @EdGetValue;
   ScaleEdit.SetValueEvent:= @EdSetValue;
@@ -931,16 +916,16 @@ end;
 
 { TP3DOIEditorPageObject }
 
-constructor TP3DOIEditorPageObject.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageObject.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
-  EditorObject:= TP3DOIEditorObject.CreateBlock( nil, Self );
+  inherited Create( AOwner );
+  EditorObject:= TP3DOIEditorObject.Create( Self.Controls );
   EditorObject.Align:= alTop;
 
-  EditorTransform:= TP3DOIEditorTransform3D.CreateBlock( nil, Self );
+  EditorTransform:= TP3DOIEditorTransform3D.Create( Self.Controls );
   EditorTransform.Align:= alTop;
 
-  EditorData:= TP3DOIEditorDatablock.CreateBlock( nil, Self );
+  EditorData:= TP3DOIEditorDatablock.Create( Self.Controls );
   EditorData.Align:= alTop;
 end;
 
@@ -952,9 +937,9 @@ begin
   EditorData.Obj:= Obj;
 end;
 
-class function TP3DOIEditorPageObject.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageObject.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
-  Result:= AObj is TInterfacedPersistent;
+  Result:= AObj is TP3DStreamable;
 end;
 
 function TP3DOIEditorPageObject.CreateButton(AParent: TP3DGraphicControl; AMouseClick: TP3DGUIMouseClick): TP3DGroupButton;
@@ -965,18 +950,18 @@ end;
 
 { TP3DOIEditorPageGrid }
 
-constructor TP3DOIEditorPageGrid.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageGrid.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
+  inherited Create( AOwner );
   {MeshList:= TP3DPropertyEditorDataBlockList.Create( nil, Self );
   MeshList.Align:= alTop;
   MeshList.Height:= 100;
   MeshList.OnSelectionChange:= @OnMeshSelect;}
-  GridWidthEd:= TP3DPropertyEditorInt.CreateBlock( nil, AddContainer( Self, 'Width ' ));
+  GridWidthEd:= TP3DPropertyEditorInt.Create( AddContainer( Self, 'Width ' ).Controls );
   GridWidthEd.Align:= alClient;
-  GridHeightEd:= TP3DPropertyEditorInt.CreateBlock( nil, AddContainer( Self, 'Height ' ));
+  GridHeightEd:= TP3DPropertyEditorInt.Create( AddContainer( Self, 'Height ' ).Controls );
   GridHeightEd.Align:= alClient;
-  GridWorldUnitEd:= TP3DPropertyEditorFloat.CreateBlock( nil, AddContainer( Self, 'GridWorldUnit ' ));
+  GridWorldUnitEd:= TP3DPropertyEditorFloat.Create( AddContainer( Self, 'GridWorldUnit ' ).Controls );
   GridWorldUnitEd.Align:= alClient;
 end;
 
@@ -1003,7 +988,7 @@ begin
   GridWorldUnitEd.Prop:= Grid.Properties.GetPropByName( 'GridWorldUnit' );
 end;
 
-class function TP3DOIEditorPageGrid.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageGrid.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= ( AObj is TP3DTileGrid ) or (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DTileGrid ));
 end;
@@ -1092,39 +1077,39 @@ begin
     end;
 end;
 
-class function TP3DOIEditorDataLight.IsCompatible( AObj: TInterfacedPersistent ): Boolean;
+class function TP3DOIEditorDataLight.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DLight )) or ( AObj is TP3DLight );
 end;
 
-constructor TP3DOIEditorDataLight.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataLight.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Light';
 
-  LightTypeCombo:= TP3DComboBox.CreateBlock( nil, AddContainer( Self, 'Light type ' ));
+  LightTypeCombo:= TP3DComboBox.Create( AddContainer( Self, 'Light type ' ).Controls );
   LightTypeCombo.Align:= alClient;
   LightTypeCombo.Items.Add( 'Sun' );
   LightTypeCombo.Items.Add( 'Point' );
   LightTypeCombo.Items.Add( 'Spot' );
   LightTypeCombo.OnChange:= @ComboChange;
 
-  LightColorCombo:= TP3DColorRGBAComboBox.CreateBlock( nil, AddContainer( Self, 'Light color ' ));
+  LightColorCombo:= TP3DColorRGBAComboBox.Create( AddContainer( Self, 'Light color ' ).Controls );
   LightColorCombo.GetValueEvent:= @GetLightColor;
   LightColorCombo.SetValueEvent:= @SetLightColor;
   LightColorCombo.Align:= alClient;
 
-  LightLinearAttenuationEdit:= TP3DEventValueEdit.CreateBlock( nil, AddContainer( Self, 'Linear Attenuation ' ));
+  LightLinearAttenuationEdit:= TP3DEventValueEdit.Create( AddContainer( Self, 'Linear Attenuation ' ).Controls );
   LightLinearAttenuationEdit.GetValueEvent:= @GetLightAttenuation;
   LightLinearAttenuationEdit.SetValueEvent:= @SetLightAttenuation;
   LightLinearAttenuationEdit.Align:= alClient;
 
-  LightQuadraticAttenuationEdit:= TP3DEventValueEdit.CreateBlock( nil, AddContainer( Self, 'Quadratic Attenuation ' ));
+  LightQuadraticAttenuationEdit:= TP3DEventValueEdit.Create( AddContainer( Self, 'Quadratic Attenuation ' ).Controls );
   LightQuadraticAttenuationEdit.GetValueEvent:= @GetLightAttenuation;
   LightQuadraticAttenuationEdit.SetValueEvent:= @SetLightAttenuation;
   LightQuadraticAttenuationEdit.Align:= alClient;
 
-  LightEnergyEdit:= TP3DPropertyEditorFloat.CreateBlock( nil, AddContainer( Self, 'Energy ' ));
+  LightEnergyEdit:= TP3DPropertyEditorFloat.Create( AddContainer( Self, 'Energy ' ).Controls );
   LightEnergyEdit.Align:= alClient;
 end;
 
@@ -1223,24 +1208,24 @@ begin
     end;
 end;
 
-class function TP3DOIEditorDataCamera.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorDataCamera.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= ( AObj is TP3DCamera ) or (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DCamera ));
 end;
 
-constructor TP3DOIEditorDataCamera.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataCamera.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Camera';
 
-  ZoomEdit:= TP3DEventValueEdit.CreateBlock( AData, Self );
+  ZoomEdit:= TP3DEventValueEdit.Create( Self.Controls );
   ZoomEdit.GetValueEvent:= @GetCamParamF;
   ZoomEdit.SetValueEvent:= @SetCamParamF;
   ZoomEdit.GetValueNameEvent:= @GetEdValueName;
   ZoomEdit.Align:= alTop;
   ZoomEdit.Height:= 20;
 
-  ClippingEdit:= TP3DVectorEdit.CreateBlock( AData, AddContainer( Self, 'Clipping' ));
+  ClippingEdit:= TP3DVectorEdit.Create( AddContainer( Self, 'Clipping' ).Controls );
   ClippingEdit.GetValueEvent:= @GetCamParamV;
   ClippingEdit.SetValueEvent:= @SetCamParamV;
   ClippingEdit.Align:= alClient;
@@ -1248,13 +1233,13 @@ begin
   ClippingEdit.Labels[ 1 ]:= 'Far';
   ClippingEdit.EdCount:= 2;
 
-  HandednessCombo:= TP3DComboBox.CreateBlock( AData, AddContainer( Self, 'Handedness' ));
+  HandednessCombo:= TP3DComboBox.Create( AddContainer( Self, 'Handedness' ).Controls );
   HandednessCombo.Align:= alClient;
   HandednessCombo.Items.Add( 'Left' );
   HandednessCombo.Items.Add( 'Right' );
   HandednessCombo.OnChange:= @ComboChange;
 
-  CamTypeCombo:= TP3DComboBox.CreateBlock( AData, AddContainer( Self, 'Camera type' ));
+  CamTypeCombo:= TP3DComboBox.Create( AddContainer( Self, 'Camera type' ).Controls );
   CamTypeCombo.Align:= alClient;
   CamTypeCombo.Items.Add( 'Perspective' );
   CamTypeCombo.Items.Add( 'Isometric' );
@@ -1320,45 +1305,45 @@ begin
   FileNameLbl.Caption:= Format( '%s%s', [ StringOfChar( '*', Ord( Tex.FileWatch.CheckForChange )), ExtractFileName( Tex.FileWatch.FileName )]);
 end;
 
-class function TP3DOIEditorDataTexture.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorDataTexture.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is TP3DTexture;
 end;
 
-constructor TP3DOIEditorDataTexture.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataTexture.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Texture';
 
-  PreviewImg:= TP3DImage.CreateBlock( AData, Self );
+  PreviewImg:= TP3DImage.Create( Self.Controls );
   PreviewImg.Align:= alTop;
   PreviewImg.Width:= 200;
   PreviewImg.Height:= 200;
 
-  FilteringCombo:= TP3DComboBox.CreateBlock( AData, AddContainer( Self, 'Filtering ' ));
+  FilteringCombo:= TP3DComboBox.Create( AddContainer( Self, 'Filtering ' ).Controls );
   FilteringCombo.Align:= alClient;
   FilteringCombo.Items.Add( 'Nearest' );
   FilteringCombo.Items.Add( 'Linear' );
   FilteringCombo.OnChange:= @ComboChange;
 
-  FilteringMipCombo:= TP3DComboBox.CreateBlock( AData, AddContainer( Self, 'Filtering Mipmap ' ));
+  FilteringMipCombo:= TP3DComboBox.Create( AddContainer( Self, 'Filtering Mipmap ' ).Controls );
   FilteringMipCombo.Align:= alClient;
   FilteringMipCombo.Items.Add( 'Nearest' );
   FilteringMipCombo.Items.Add( 'Linear' );
   FilteringMipCombo.OnChange:= @ComboChange;
 
-  MipMappingCombo:= TP3DCheckBox.CreateBlock( AData, Self );
+  MipMappingCombo:= TP3DCheckBox.Create( Self.Controls );
   MipMappingCombo.Caption:= 'Use Mipmap';
   MipMappingCombo.Align:= alTop;
   MipMappingCombo.HAlignment:= haRight;
   MipMappingCombo.OnChange:= @CheckboxChange;
   MipMappingCombo.Height:= 20;
 
-  DimensionsLbl:= TP3DLabel.CreateBlock( AData, AddContainer( Self, 'Size ' ));
+  DimensionsLbl:= TP3DLabel.Create( AddContainer( Self, 'Size ' ).Controls );
   DimensionsLbl.Align:= alClient;
   DimensionsLbl.HAlignment:= haRight;
 
-  FileNameLbl:= TP3DLabel.CreateBlock( AData, AddContainer( Self, 'Filename ' ));
+  FileNameLbl:= TP3DLabel.Create( AddContainer( Self, 'Filename ' ).Controls );
   FileNameLbl.Align:= alClient;
   FileNameLbl.HAlignment:= haRight;
 end;
@@ -1450,54 +1435,54 @@ begin
     end;
 end;
 
-class function TP3DOIEditorDataMaterialBase.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorDataMaterialBase.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is TP3DMaterialBase;
 end;
 
-constructor TP3DOIEditorDataMaterialBase.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMaterialBase.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Material';
 
-  UseVertexColorEdit:= TP3DCheckBox.CreateBlock( nil, Self );
+  UseVertexColorEdit:= TP3DCheckBox.Create( Self.Controls );
   UseVertexColorEdit.Caption:= 'Use Vertex Colors';
   UseVertexColorEdit.Align:= alTop;
   UseVertexColorEdit.HAlignment:= haRight;
   UseVertexColorEdit.OnChange:= @CheckboxChange;
   UseVertexColorEdit.Height:= 20;
 
-  UnlitEdit:= TP3DCheckBox.CreateBlock( AData, Self );
+  UnlitEdit:= TP3DCheckBox.Create( Self.Controls );
   UnlitEdit.Caption:= 'Unlit';
   UnlitEdit.Align:= alTop;
   UnlitEdit.HAlignment:= haRight;
   UnlitEdit.OnChange:= @CheckboxChange;
   UnlitEdit.Height:= 20;
 
-  DiffCombo:= TP3DColorRGBAComboBox.CreateBlock( AData, AddContainer( Self, 'Material Diffuse' ));
+  DiffCombo:= TP3DColorRGBAComboBox.Create( AddContainer( Self, 'Material Diffuse' ).Controls );
   DiffCombo.GetValueEvent:= @GetMatColorParam;
   DiffCombo.SetValueEvent:= @SetMatColorParam;
   DiffCombo.Align:= alClient;
 
-  SpecCombo:= TP3DColorRGBAComboBox.CreateBlock( AData, AddContainer( Self, 'Material Specular' ));
+  SpecCombo:= TP3DColorRGBAComboBox.Create( AddContainer( Self, 'Material Specular' ).Controls );
   SpecCombo.GetValueEvent:= @GetMatColorParam;
   SpecCombo.SetValueEvent:= @SetMatColorParam;
   SpecCombo.Align:= alClient;
 
-  AlphaEdit:= TP3DEventValueEdit.CreateBlock( AData, AddContainer( Self, 'Alpha' ));
+  AlphaEdit:= TP3DEventValueEdit.Create( AddContainer( Self, 'Alpha' ).Controls );
   AlphaEdit.GetValueEvent:= @GetMatFloatParam;
   AlphaEdit.SetValueEvent:= @SetMatFloatParam;
   AlphaEdit.Align:= alClient;
 
-  Spec_HardnessEdit:= TP3DEventValueEdit.CreateBlock( AData, AddContainer( Self, 'Specular Hardness' ));
+  Spec_HardnessEdit:= TP3DEventValueEdit.Create( AddContainer( Self, 'Specular Hardness' ).Controls );
   Spec_HardnessEdit.GetValueEvent:= @GetMatFloatParam;
   Spec_HardnessEdit.SetValueEvent:= @SetMatFloatParam;
   Spec_HardnessEdit.Align:= alClient;
 
-  TranspModeCombo:= TP3DPropertyEditorEnum.CreateBlock( AData, AddContainer( Self, 'Transparency Mode' ));
+  TranspModeCombo:= TP3DPropertyEditorEnum.Create( AddContainer( Self, 'Transparency Mode' ).Controls );
   TranspModeCombo.Align:= alClient;
 
-  AlphaTreshHoldEdit:= TP3DPropertyEditorFloat.CreateBlock( AData, Self );
+  AlphaTreshHoldEdit:= TP3DPropertyEditorFloat.Create( Self.Controls );
   AlphaTreshHoldEdit.Height:= 20;
   AlphaTreshHoldEdit.Align:= alTop;
 end;
@@ -1518,16 +1503,10 @@ begin
   if FMaterial= AValue then Exit;
   FMaterial:= AValue;
 
-  {MapsListView.Children.Clear( True );
+  MapsListView.Children.Clear;
 
   if ( Assigned( Material )) then
-    for Map in Material.Maps do
-      if ( Assigned( Map.Map )) then
-        MapsListView.Children.Add( Map.Map.Name, Map )
-      else
-        MapsListView.Children.Add( '<Not defined>', nil );}
-  if ( Assigned( Material )) then
-    MapsListView.Prop:= TP3DPropAccessMaterialMapList( Material.Properties.GetPropByName( 'Maps' ))
+    MapsListView.Prop:= TP3DMaterialMapContainerList( Material.Properties.GetPropByName( 'Maps' ))
   else
     MapsListView.Prop:= nil;
 end;
@@ -1541,18 +1520,18 @@ begin
     Material:= nil;
 end;
 
-constructor TP3DOIEditorDataMaterialMaps.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMaterialMaps.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Material Maps';
 
-  MapsListView:= TP3DPropertyEditorMaterialMapList.CreateBlock( AData, Self );
+  MapsListView:= TP3DPropertyEditorStreamableList.Create( Self.Controls );
   MapsListView.Align:= alTop;
   MapsListView.Height:= 100;
   MapsListView.OnSelectionChange:= @SelectionChange;
 end;
 
-class function TP3DOIEditorDataMaterialMaps.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorDataMaterialMaps.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is TP3DMaterial;
 end;
@@ -1639,9 +1618,9 @@ begin
     end;
 end;
 
-constructor TP3DOIEditorDataMaterialMap.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMaterialMap.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Influence';
   //NoBounds:= True;
 
@@ -1655,38 +1634,38 @@ begin
   Influence.Height:= 5 * 20;}
   Influence:= Self;
 
-  DiffuseEdit:= TP3DEventValueEdit.CreateBlock( nil, AddContainer( Influence, 'Diffuse factor' ));
+  DiffuseEdit:= TP3DEventValueEdit.Create( AddContainer( Influence, 'Diffuse factor' ).Controls );
   DiffuseEdit.GetValueEvent:= @GetFloatParam;
   DiffuseEdit.SetValueEvent:= @SetFloatParam;
   DiffuseEdit.Align:= alClient;
   DiffuseEdit.Parent.Align:= alTop;
 
-  SpecularEdit:= TP3DEventValueEdit.CreateBlock( nil, AddContainer( Influence, 'Specular factor' ));
+  SpecularEdit:= TP3DEventValueEdit.Create( AddContainer( Influence, 'Specular factor' ).Controls );
   SpecularEdit.GetValueEvent:= @GetFloatParam;
   SpecularEdit.SetValueEvent:= @SetFloatParam;
   SpecularEdit.Align:= alClient;
   SpecularEdit.Parent.Align:= alTop;
 
-  NormalEdit:= TP3DEventValueEdit.CreateBlock( nil, AddContainer( Influence, 'Normal factor' ));
+  NormalEdit:= TP3DEventValueEdit.Create( AddContainer( Influence, 'Normal factor' ).Controls );
   NormalEdit.GetValueEvent:= @GetFloatParam;
   NormalEdit.SetValueEvent:= @SetFloatParam;
   NormalEdit.Align:= alClient;
   NormalEdit.Parent.Align:= alTop;
 
-  AlphaEdit:= TP3DEventValueEdit.CreateBlock( nil, AddContainer( Influence, 'Alpha factor' ));
+  AlphaEdit:= TP3DEventValueEdit.Create( AddContainer( Influence, 'Alpha factor' ).Controls );
   AlphaEdit.GetValueEvent:= @GetFloatParam;
   AlphaEdit.SetValueEvent:= @SetFloatParam;
   AlphaEdit.Align:= alClient;
   AlphaEdit.Parent.Align:= alTop;
 
-  DisplaceEdit:= TP3DEventValueEdit.CreateBlock( nil, AddContainer( Influence, 'Displace factor' ));
+  DisplaceEdit:= TP3DEventValueEdit.Create( AddContainer( Influence, 'Displace factor' ).Controls );
   DisplaceEdit.GetValueEvent:= @GetFloatParam;
   DisplaceEdit.SetValueEvent:= @SetFloatParam;
   DisplaceEdit.Align:= alClient;
   DisplaceEdit.Parent.Align:= alTop;
 
 
-  ModeCombo:= TP3DComboBox.CreateBlock( nil, AddContainer( Influence, 'Mix Mode' ));
+  ModeCombo:= TP3DComboBox.Create( AddContainer( Influence, 'Mix Mode' ).Controls );
   ModeCombo.OnChange:= @ComboChange;
   ModeCombo.Align:= alClient;
   ModeCombo.Items.Add( 'add' );
@@ -1695,7 +1674,7 @@ begin
   ModeCombo.Items.Add( 'mix' );
 end;
 
-class function TP3DOIEditorDataMaterialMap.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorDataMaterialMap.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is TP3DMaterialMap;
 end;
@@ -1728,22 +1707,22 @@ begin
 
   if ( not Assigned( Mesh )) then
     exit;
-  MatListView.Children.Clear( True );
+  MatListView.Children.Clear;
   for Mat in Mesh.MaterialGroups do
     MatListView.Children.Add( Mat.Material.Name, Mat.Material );
 end;
 
-constructor TP3DOIEditorDataMeshMaterial.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorDataMeshMaterial.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
   Caption:= 'Mesh Materials';
 
-  MatListView:= TP3DPropertyEditorMaterialList.CreateBlock( AData, Self );
+  MatListView:= TP3DPropertyEditorStreamableList.Create( Self.Controls );
   MatListView.Align:= alTop;
   MatListView.Height:= 100;
 end;
 
-class function TP3DOIEditorDataMeshMaterial.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorDataMeshMaterial.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= (( AObj is TP3DObject ) and ( TP3DObject( AObj ).Data is TP3DMesh )) or ( AObj is TP3DMesh );
 end;
@@ -1756,9 +1735,9 @@ procedure TP3DOIEditorPageMaterial.SelectionChange(Sender: TP3DListView;
 begin
   if ( Assigned( NewSelection )) then
     begin
-      EditorMatBase.Obj:= TInterfacedPersistent( NewSelection.Data );
+      EditorMatBase.Obj:= TP3DInterfacedObject( NewSelection.Data );
       if ( Assigned( EditorPageMaps )) then
-        EditorPageMaps.Obj:= TInterfacedPersistent( NewSelection.Data );
+        EditorPageMaps.Obj:= TP3DInterfacedObject( NewSelection.Data );
     end
   else
     begin
@@ -1768,15 +1747,15 @@ begin
     end;
 end;
 
-constructor TP3DOIEditorPageMaterial.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageMaterial.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
 
-  EditorMatMesh:= TP3DOIEditorDataMeshMaterial.CreateBlock( AData, Self );
+  EditorMatMesh:= TP3DOIEditorDataMeshMaterial.Create( AOwner );
   EditorMatMesh.Align:= alTop;
   EditorMatMesh.OnSelectionChange:= @SelectionChange;
 
-  EditorMatBase:= TP3DOIEditorDataMaterialBase.CreateBlock( AData, Self );
+  EditorMatBase:= TP3DOIEditorDataMaterialBase.Create( AOwner );
   EditorMatBase.Align:= alTop;
 end;
 
@@ -1788,7 +1767,7 @@ begin
   EditorMatBase.Obj:= Obj;
 end;
 
-class function TP3DOIEditorPageMaterial.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageMaterial.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= TP3DOIEditorDataMeshMaterial.IsCompatible( AObj ) or TP3DOIEditorDataMaterialBase.IsCompatible( AObj );
 end;
@@ -1813,7 +1792,7 @@ procedure TP3DOIEditorPageMaps.SelectionChange(Sender: TP3DListView;
 begin
   if ( Assigned( NewSelection )) then
     begin
-      MapSelectedEditor.Obj:= TP3DMaterialMap( MapsEditor.MapsListView.LProp.AsValues[ Integer( NewSelection.Data )]);
+      MapSelectedEditor.Obj:= TP3DMaterialMap( MapsEditor.MapsListView.LProp[ Integer( NewSelection.Data )]);
       if ( Assigned( MapSelectedEditor.Obj )) then
         TextureEditor.Obj:= TP3DMaterialMap( MapSelectedEditor.Obj ).Map
       else
@@ -1828,19 +1807,19 @@ begin
   TextureEditor.Visible:= Assigned( TextureEditor.Obj );
 end;
 
-constructor TP3DOIEditorPageMaps.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageMaps.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
+  inherited Create( AOwner );
 
-  MapsEditor:= TP3DOIEditorDataMaterialMaps.CreateBlock( AData, Self );
+  MapsEditor:= TP3DOIEditorDataMaterialMaps.Create( Self.Controls );
   MapsEditor.Align:= alTop;
   //MapsEditor.Height:= 100;
   MapsEditor.OnSelectionChange:= @SelectionChange;
 
-  TextureEditor:= TP3DOIEditorDataTexture.CreateBlock( AData, Self );
+  TextureEditor:= TP3DOIEditorDataTexture.Create( Self.Controls );
   TextureEditor.Align:= alTop;
 
-  MapSelectedEditor:= TP3DOIEditorDataMaterialMap.CreateBlock( AData, Self );
+  MapSelectedEditor:= TP3DOIEditorDataMaterialMap.Create( Self.Controls );
   MapSelectedEditor.Align:= alTop;
   //Height:= Controls.PageSize.Y;
   //AutoSize:= True;
@@ -1857,7 +1836,7 @@ begin
     Material:= nil;
 end;
 
-class function TP3DOIEditorPageMaps.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageMaps.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= TP3DOIEditorDataMeshMaterial.IsCompatible( AObj ) or ( AObj is TP3DMaterial ) or ( TP3DOIEditorDataTexture.IsCompatible( AObj ));
 end;
@@ -1870,10 +1849,10 @@ end;
 
 { TP3DOIEditorPageLight }
 
-constructor TP3DOIEditorPageLight.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageLight.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
-  EditorLight:= TP3DOIEditorDataLight.CreateBlock( AData, Self );
+  inherited Create( AOwner );
+  EditorLight:= TP3DOIEditorDataLight.Create( Self.Controls );
   EditorLight.Align:= alTop;
 end;
 
@@ -1883,7 +1862,7 @@ begin
   EditorLight.Obj:= Obj;
 end;
 
-class function TP3DOIEditorPageLight.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageLight.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= TP3DOIEditorDataLight.IsCompatible( AObj );
 end;
@@ -1896,10 +1875,10 @@ end;
 
 { TP3DOIEditorPageCamera }
 
-constructor TP3DOIEditorPageCamera.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageCamera.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock( AData, AParent );
-  EditorCamera:= TP3DOIEditorDataCamera.CreateBlock( AData, Self );
+  inherited Create( AOwner );
+  EditorCamera:= TP3DOIEditorDataCamera.Create( Self.Controls );
   EditorCamera.Align:= alTop;
 end;
 
@@ -1909,7 +1888,7 @@ begin
   EditorCamera.Obj:= Obj;
 end;
 
-class function TP3DOIEditorPageCamera.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageCamera.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= TP3DOIEditorDataCamera.IsCompatible( AObj );
 end;
@@ -1922,17 +1901,12 @@ end;
 
 { TP3DOIEditorPageProperties }
 
-constructor TP3DOIEditorPageProperties.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
-begin
-  inherited CreateBlock(AData, AParent);
-end;
-
 procedure TP3DOIEditorPageProperties.Update;
   function AddCategory( Prop: TP3DPropertyAccess; var Cat: TP3DOIEditorGroup ):TP3DOIEditorGroup;
   begin
     if ( not Assigned( Cat ) or ( Cat.Caption <> Prop.Category )) then
       begin
-        Cat:= TP3DOIEditorGroup.CreateBlock( OwnerLib, Self );
+        Cat:= TP3DOIEditorGroup.Create( Self.Controls );
         Cat.Align:= alTop;
         Cat.Caption:= Prop.Category;
         Cat.PageModeY:= pmExpand;
@@ -1941,13 +1915,13 @@ procedure TP3DOIEditorPageProperties.Update;
   end;
 
 var
-  _O: TInterfacedPersistent;
+  _O: TP3DInterfacedObject;
   O: TP3DStreamable absolute _O;
   Cat: TP3DOIEditorGroup;
   Prop: TP3DPropertyAccess;
 
 begin
-  Controls.Clear( True );
+  Controls.Clear;
 
   _O:= Obj;
   if ( O is TP3DStreamable ) then
@@ -1957,7 +1931,7 @@ begin
   inherited Update;
 end;
 
-class function TP3DOIEditorPageProperties.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageProperties.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is TP3DStreamable;
 end;
@@ -1975,7 +1949,7 @@ procedure TP3DOIEditorDataProperties.Update;
   begin
     if ( not Assigned( Cat ) or ( Cat.Caption <> Prop.Category )) then
       begin
-        Cat:= TP3DOIEditorGroup.CreateBlock( OwnerLib, Self );
+        Cat:= TP3DOIEditorGroup.Create( Self.Controls );
         Cat.Align:= alTop;
         Cat.Caption:= Prop.Category;
         Cat.PageModeY:= pmExpand;
@@ -1984,13 +1958,13 @@ procedure TP3DOIEditorDataProperties.Update;
   end;
 
 var
-  _O: TInterfacedPersistent;
+  _O: TP3DInterfacedObject;
   O: TP3DStreamable absolute _O;
   Cat: TP3DOIEditorGroup;
   Prop: TP3DPropertyAccess;
 
 begin
-  Controls.Clear( True );
+  Controls.Clear;
 
   _O:= Obj;
   Cat:= nil;
@@ -2001,7 +1975,7 @@ begin
   inherited Update;
 end;
 
-class function TP3DOIEditorDataProperties.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorDataProperties.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is TP3DStreamable;
 end;
@@ -2021,12 +1995,12 @@ begin
   Visible:= Assigned( Key );
 end;
 
-constructor TP3DOIEditorActionKey.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorActionKey.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
-  Time:= TP3DPropertyEditorFloat.CreateBlock( OwnerLib, Self );
+  inherited Create( AOwner );
+  Time:= TP3DPropertyEditorFloat.Create( Self.Controls );
   Time.Align:= alTop;
-  Value:= TP3DPropertyEditorFloat.CreateBlock( OwnerLib, Self );
+  Value:= TP3DPropertyEditorFloat.Create( Self.Controls );
   Value.Align:= alTop;
 end;
 
@@ -2038,7 +2012,7 @@ begin
     Key:= nil;
 end;
 
-class function TP3DOIEditorActionKey.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorActionKey.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= TP3DOIEditorPageAction.IsCompatible( AObj );
 end;
@@ -2056,12 +2030,12 @@ begin
   Visible:= Assigned( Channel );
 end;
 
-constructor TP3DOIEditorActionChannel.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorActionChannel.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
-  PropStr:= TP3DPropertyEditorString.CreateBlock( OwnerLib, Self );
+  inherited Create( AOwner );
+  PropStr:= TP3DPropertyEditorString.Create( Self.Controls );
   PropStr.Align:= alTop;
-  Keys:= TP3DPropertyEditorActionKeyList.CreateBlock( OwnerLib, Self );
+  Keys:= TP3DPropertyEditorStreamableList.Create( Self.Controls );
   Keys.Align:= alTop;
   Keys.Height:= 100;
 end;
@@ -2074,7 +2048,7 @@ begin
     Channel:= nil;
 end;
 
-class function TP3DOIEditorActionChannel.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorActionChannel.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= TP3DOIEditorPageAction.IsCompatible( AObj );
 end;
@@ -2098,17 +2072,17 @@ begin
     EditorKey.Key:= nil;
 end;
 
-constructor TP3DOIEditorPageAction.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageAction.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
-  Channels:= TP3DPropertyEditorActionChannelList.CreateBlock( OwnerLib, Self );
+  inherited Create( AOwner );
+  Channels:= TP3DPropertyEditorStreamableList.Create( Self.Controls );
   Channels.Align:= alTop;
   Channels.Height:= 100;
   Channels.OnSelectionChange:= @ChannelSelectionChange;
-  Channel:= TP3DOIEditorActionChannel.CreateBlock( OwnerLib, Self );
+  Channel:= TP3DOIEditorActionChannel.Create( Self.Controls );
   Channel.Align:= alTop;
   Channel.Keys.OnSelectionChange:= @KeysSelectionChange;
-  EditorKey:= TP3DOIEditorActionKey.CreateBlock( OwnerLib, Self );
+  EditorKey:= TP3DOIEditorActionKey.Create( Self.Controls );
   EditorKey.Align:= alTop;
   Channel.Visible:= False;
   EditorKey.Visible:= False;
@@ -2128,7 +2102,7 @@ begin
     Channels.Prop:= Action.Properties.GetPropByName( 'Channels' );
 end;
 
-class function TP3DOIEditorPageAction.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageAction.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= AObj is TP3DDataBlock;
 end;
@@ -2144,21 +2118,21 @@ end;
 procedure TP3DOIEditorPageObjectModifier.SelectionChange(Sender: TP3DListView; var NewSelection: TP3DListItem);
 begin
   if ( Assigned( NewSelection )) then
-    FEditorSelectedMod.Obj:= TP3DStreamable( FEditorObjectModifiers.LProp.AsValues[ Integer( NewSelection.Data )])
+    FEditorSelectedMod.Obj:= TP3DStreamable( FEditorObjectModifiers.LProp[ Integer( NewSelection.Data )])
   else
     FEditorSelectedMod.Obj:= nil;
 end;
 
-constructor TP3DOIEditorPageObjectModifier.CreateBlock(const AData: TP3DLibrary; const AParent: TP3DGraphicControl);
+constructor TP3DOIEditorPageObjectModifier.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited CreateBlock(AData, AParent);
+  inherited Create( AOwner );
 
-  FEditorObjectModifiers:= TP3DPropertyEditorObjectModifierList.CreateBlock( AData, Self );
+  FEditorObjectModifiers:= TP3DPropertyEditorStreamableList.Create( Self.Controls );
   FEditorObjectModifiers.Align:= alTop;
   FEditorObjectModifiers.Height:= 100;
   FEditorObjectModifiers.OnSelectionChange:= @SelectionChange;
 
-  FEditorSelectedMod:= TP3DOIEditorDataProperties.CreateBlock( AData, Self );
+  FEditorSelectedMod:= TP3DOIEditorDataProperties.Create( Self.Controls );
   FEditorSelectedMod.Borderless:= True;
   FEditorSelectedMod.Margin:= vec4( 0 );
   FEditorSelectedMod.Align:= alTop;
@@ -2175,7 +2149,7 @@ begin
   FEditorSelectedMod.Obj:= nil;
 end;
 
-class function TP3DOIEditorPageObjectModifier.IsCompatible(AObj: TInterfacedPersistent): Boolean;
+class function TP3DOIEditorPageObjectModifier.IsCompatible(AObj: TP3DInterfacedObject): Boolean;
 begin
   Result:= ( AObj is TP3DObject );
 end;

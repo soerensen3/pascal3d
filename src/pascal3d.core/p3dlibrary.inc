@@ -62,12 +62,12 @@ type
       FLastUpdate: Integer;
 
       function GetBinFile: TFileStream;
-      function GetName: String; virtual;
       procedure PerformActions(GlobalTime: Float);
       procedure SetGlobalTime(AValue: Single);
       function GetFullPath: String;
 
     protected
+      function GetName: String; override;
       procedure CreateBinFile( const AFileName: String = '' );
       procedure OpenBinFile( const AFileName: String = '' );
       procedure CloseBinFile;
@@ -139,7 +139,7 @@ type
 
       procedure ClearFields; override;
       //function IsValid(Obj: TP3DDataBlock ): Boolean; override;
-      function OpenLibrary( FileName: String ): Integer;
+      function OpenLibrary(AFileName: String): Integer;
       function CheckLastChange: Integer; override;
 
     published
@@ -185,7 +185,10 @@ type
 
 function TP3DLibrary.GetName: String;
 begin
-  Result:= ExtractFileName( JSONLoader.FileName );
+  if ( Assigned( JSONLoader )) then
+    Result:= ExtractFileName( JSONLoader.FileName )
+  else
+    Result:= '';
 end;
 
 function TP3DLibrary.GetBinFile: TFileStream;
@@ -269,46 +272,46 @@ end;
 
 procedure TP3DLibrary.CreateBinFile(const AFileName: String);
 var
-  FName: String;
+  FileName: String;
 begin
   if ( AFileName > '' ) then
-    FName:= AFileName
+    FileName:= AFileName
   else
-    FName:= ChangeFileExt( JSONLoader.FileName, '.p3dbin' );
+    FileName:= ChangeFileExt( JSONLoader.FileName, '.p3dbin' );
 
   if ( Assigned( FBinFile )) then
     FreeAndNil( FBinFile );
 
-  BinFile:= TFileStream.Create( FName, fmCreate );
+  BinFile:= TFileStream.Create( FileName, fmCreate );
 end;
 
 procedure TP3DLibrary.OpenBinFile(const AFileName: String);
 var
-  FName: String;
+  FileName: String;
 begin
   if ( AFileName > '' ) then
-    FName:= AFileName
+    FileName:= AFileName
   else
-    FName:= ChangeFileExt( JSONLoader.FileName, '.p3dbin' );
+    FileName:= ChangeFileExt( JSONLoader.FileName, '.p3dbin' );
 
   if ( Assigned( FBinFile )) then
     FreeAndNil( FBinFile );
 
-  BinFile:= TFileStream.Create( FName, fmOpenRead );
+  BinFile:= TFileStream.Create( FileName, fmOpenRead );
 end;
 
 procedure TP3DLibrary.CloseBinFile;
 var
-  FName: String;
+  FileName: String;
   Del: Boolean;
 begin
   if ( Assigned( FBinFile )) then
     begin
-      FName:= FBinFile.FileName;
+      FileName:= FBinFile.FileName;
       Del:= FBinFile.Size = 0;
       FreeAndNil( FBinFile );
       if ( Del ) then
-        DeleteFileUTF8( FName );
+        DeleteFileUTF8( FileName );
     end;
   FreeAndNil( FBinFile );
 end;
@@ -467,16 +470,15 @@ end;
 
 function TP3DLibrary.AppendFile( AFileName: String ): String;
 var
-  dir, FName: String;
-  Loader: TP3DJSONLoader;
+  FileName: String;
 begin
   Result:= '';
   P3DLog.LogInfo( Self, Format( 'Loading file "%s"', [ AFileName ]));
-  FName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
-  if ( FName = '' ) then
+  FileName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
+  if ( FileName = '' ) then
     raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ AFileName ]));
   FName:= P3DSearchPaths.FindFile( AFileName );
-  if ( not FileExists( FName )) then
+  if ( not FileExists( FileName )) then
     raise Exception.Create( ClassName + ': Cannot load scene from file "' + AFileName + '". The specified file does not exist!' );
 
   JSONLoader.FileName:= AFileName;
@@ -497,7 +499,7 @@ begin
     SetCurrentDir( dir );
   end;}
 
-  Result:= FName;
+  Result:= FileName;
 end;
 
 function TP3DLibrary.CreateNew(Tp: TP3DDataBlockType): TP3DDataBlock;
@@ -821,20 +823,18 @@ begin
       end;
 end;}
 
-function TP3DData.OpenLibrary( FileName: String ): Integer;
+function TP3DData.OpenLibrary( AFileName: String ): Integer;
 var
-  F: TP3DLibrary;
-  FName: String;
+  FileName: String;
 begin
-  FName:= P3DSearchPaths.FindFileEx( FileName, GetCurrentDir );
-  if ( FName = '' ) then
-    raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ FileName ]));
-  Result:= Libraries.FindByFileName( FName );
+  FileName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
+  if ( FileName = '' ) then
+    raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ AFileName ]));
+  Result:= Libraries.FindByFileName( FileName );
   if ( Result = -1 ) then
     begin
-      F:= TP3DLibrary.CreateFromFile( FName );
+      TP3DLibrary.CreateFromFile( FileName );
       Result:= Libraries.Count - 1;
-      Result:= Libraries.IndexOf( F );
     end;
 end;
 

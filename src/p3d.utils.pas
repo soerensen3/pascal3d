@@ -1,4 +1,4 @@
-unit pascal3d.utils;
+unit p3d.utils;
 
 {$mode objfpc}{$H+}
 {$interfaces CORBA}
@@ -24,7 +24,7 @@ uses
 
 
 {$DEFINE INTERFACE}
-  {$INCLUDE pascal3d.utils_lib.inc}
+  {$INCLUDE p3d.utils_lib.inc}
 {$UNDEF INTERFACE}
 
 
@@ -100,11 +100,8 @@ begin
   Result:= TTypedStreamableListEnumerator.Create( -1, @MoveNext );
 end;
 
-//uses pascal3d.events;
-
-
 {$DEFINE IMPLEMENTATION}
-  {$INCLUDE pascal3d.utils_lib.inc}
+  {$INCLUDE p3d.utils_lib.inc}
 {$UNDEF IMPLEMENTATION}
 
 
@@ -127,7 +124,7 @@ begin
     P3DSearchPaths:= TP3DSearchPathContainer.Create;
 
   {$DEFINE INITIALIZATION}
-    {$INCLUDE pascal3d.utils_lib.inc}
+    {$INCLUDE p3d.utils_lib.inc}
   {$UNDEF INITIALIZATION}
 end;
 
@@ -144,7 +141,7 @@ begin
   if ( Assigned( P3DClassFactory )) then
     FreeAndNil( P3DClassFactory );
   {$DEFINE FINALIZATION}
-    {$INCLUDE pascal3d.utils_lib.inc}
+    {$INCLUDE p3d.utils_lib.inc}
   {$UNDEF FINALIZATION}
 end;
 
