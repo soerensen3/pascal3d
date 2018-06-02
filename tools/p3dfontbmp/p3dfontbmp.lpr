@@ -14,13 +14,14 @@ uses
   cthreads,
   Interfaces, //crashes in linux without
   {$ENDIF}{$ENDIF}
-  pascal3d.events,
-  pascal3d.core,
-  pascal3d.utils,
+  p3d.events,
+  p3d.core,
+  p3d.utils,
+  p3d.ui,
   SDL2,
   main;
 
-type
+{type
 
   { TP3DConfig }
 
@@ -49,9 +50,10 @@ type
 
 
 var
-  config: TP3DConfig;
+  config: TP3DConfig;}
 
 { TP3DPropertyAccessConfigItem }
+  {
 
 procedure TP3DPropertyAccessConfigItem.ValueCreateNew(ClTp: TP3DInterfacedPersistentType; AContext: TP3DJSONContext);
 begin
@@ -91,7 +93,7 @@ begin
   loader.ReadFile;
   loader.Free;
 end;
-
+}
 Begin
   try
     //Initialize all the Pascal3D subsystems
@@ -115,6 +117,8 @@ Begin
     //config.LoadConfig( 'settings_default.p3d' );
     P3DConfig.LoadConfig( 'settings_default.p3d' );
 
+    P3DUIInit;
+
     //Initialize everything and run the application
     P3DApplication.Initialize;
     //config.Free;
@@ -129,6 +133,7 @@ Begin
   //Finalize Pascal3D subsystems
   //Note that this is optional (finalization section of each unit will call these functions
   //anyway) but this way we have more control in which order they are called
+  P3DUIFinish;
   P3DCoreFinish;
   P3DEventsFinish;
   P3DUtilsFinish;

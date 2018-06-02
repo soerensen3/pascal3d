@@ -1,0 +1,219 @@
+---
+type: int
+---
+
+```{ name:"constructor", type:"text", restrict:"assign" }
+$inject$
+```
+
+
+```{ name:"int", type:"text", restrict:"assign"}
+$inject$
+```
+
+```{ name:"float", type:"text", restrict:"assign"}
+int( $inject$ )
+```
+
+```{ name:"vec4", type:"text", restrict:"assign" }
+int( $inject$.x )
+```
+
+```{ name:"color4", type:"text", restrict:"assign" }
+int( $inject$.x )
+```
+
+```{ name:"vec3", type:"text", restrict:"assign" }
+int( $inject$.x )
+```
+
+```{ name:"vec2", type:"text", restrict:"assign" }
+int( $inject$.x )
+```
+
+---
+type: float
+---
+
+```{ name:"constructor", type:"text", restrict:"assign" }
+$inject$
+```
+
+
+```{ name:"vec4", type:"text", restrict:"assign" }
+$inject$.x
+```
+
+```{ name:"color4", type:"text", restrict:"assign" }
+$inject$.x
+```
+
+```{ name:"vec3", type:"text", restrict:"assign" }
+$inject$.x
+```
+
+```{ name:"vec2", type:"text", restrict:"assign" }
+$inject$.x
+```
+
+```{ name:"float", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"int", type:"text", restrict:"assign"}
+$inject$
+```
+
+---
+type: vec4
+---
+
+```{ name:"constructor", type:"text", restrict:"" }
+vec4( $inject$ )
+```
+
+
+```{ name:"vec4", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"color4", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"vec3", type:"text", restrict:"assign" }
+vec4( $inject$.xyz, 1 )
+```
+
+```{ name:"vec2", type:"text", restrict:"assign" }
+vec4( $inject$.xy, 0, 1 )
+```
+
+```{ name:"float", type:"text", restrict:"assign" }
+vec4( $inject$, 0, 0, 1 )
+```
+
+```{ name:"int", type:"text", restrict:"assign"}
+vec4( $inject$, 0, 0, 1 )
+```
+
+---
+type: vec3
+---
+
+```{ name:"constructor", type:"text", restrict:"assign" }
+vec3( $inject$ )
+```
+
+
+```{ name:"vec4", type:"text", restrict:"assign" }
+$inject$.xyz
+```
+
+```{ name:"color4", type:"text", restrict:"assign" }
+$inject$.xyz
+```
+
+```{ name:"vec3", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"vec2", type:"text", restrict:"assign" }
+vec3( $inject$.xy, 0 )
+```
+
+```{ name:"float", type:"text", restrict:"assign" }
+vec3( $inject$, 0, 0 )
+```
+
+```{ name:"int", type:"text", restrict:"assign"}
+vec3( $inject$, 0, 0 )
+```
+
+---
+type: vec2
+---
+
+```{ name:"constructor", type:"text", restrict:"assign" }
+vec2( $inject$ )
+```
+
+
+```{ name:"vec4", type:"text", restrict:"assign" }
+$inject$.xy
+```
+
+```{ name:"color4", type:"text", restrict:"assign" }
+$inject$.xy
+```
+
+```{ name:"vec3", type:"text", restrict:"assign" }
+$inject$.xy
+```
+
+```{ name:"vec2", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"float", type:"text", restrict:"assign" }
+vec2( $inject$, 0 )
+```
+
+```{ name:"int", type:"text", restrict:"assign"}
+vec2( $inject$, 0 )
+```
+
+---
+type: mat4
+---
+
+```{ name:"constructor", type:"text", restrict:"assign" }
+mat4( $inject$ )
+```
+
+
+```{ name:"mat4", type:"text", restrict:"assign"}
+mat4( $inject$ )
+```
+
+```{ name:"mat3", type:"text", restrict:"assign"}
+mat3( $inject$ )
+```
+
+```{ name:"mat2", type:"text", restrict:"assign"}
+mat2( $inject$ )
+```
+
+
+---
+type: color4
+---
+
+```{ name:"constructor", type:"text", restrict:"assign" }
+vec4( $inject$ )
+```
+
+```{ name:"color4", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"vec4", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"vec3", type:"text", restrict:"assign" }
+vec4( $inject$.xyz, 1 )
+```
+
+```{ name:"vec2", type:"text", restrict:"assign" }
+vec4( $inject$.xy, 0, 1 )
+```
+
+```{ name:"float", type:"text", restrict:"assign" }
+vec4( vec3( $inject$ ), 1 )
+```
+
+```{ name:"int", type:"text", restrict:"assign"}
+vec4( vec3( $inject$ ), 1 )
+```
+

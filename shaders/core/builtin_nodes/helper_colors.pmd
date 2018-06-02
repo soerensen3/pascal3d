@@ -1,0 +1,152 @@
+---
+node: mix
+input: { name:"Color1", type:"color4", default:"1,1,1,1" }
+input: { name:"Color2", type:"color4", default:"1,1,1,1" }
+input: { name:"Factor", type:"float", default:"0.5" }
+---
+
+``` { name:"add", type:"color4" }
+mix( $Color1:assign$, $Color1:assign$ + $Color2:assign$, $Factor:assign$ )
+```
+
+``` { name:"sub", type:"color4" }
+mix( $Color1:assign$, $Color1:assign$ - $Color2:assign$, $Factor:assign$ )
+```
+
+``` { name:"mul", type:"color4" }
+mix( $Color1:assign$, $Color1:assign$ * $Color2:assign$, $Factor:assign$ )
+```
+
+``` { name:"mix", type:"color4" }
+mix( $Color1:assign$, $Color2:assign$, $Factor:assign$ )
+```
+
+---
+node: brightness_contrast
+input: { name:"Color", type:"color4", default:"1,1,1,1" }
+input: { name:"Brightness", type:"float", default:"0" }
+input: { name:"Contrast", type:"float", default:"1" }
+---
+
+``` { name:"Color", type:"color4" }
+vec4( $Color:assign$.rgb * $Contrast:assign$ + $Brightness:assign$, $Color:assign$.a )
+```
+
+---
+node: mix_simple
+input: { name:"Color1", type:"color4", default:"1,1,1,1" }
+input: { name:"Color2", type:"color4", default:"1,1,1,1" }
+---
+
+``` { name:"add", type:"color4" }
+( $Color1:assign$ + $Color2:assign$ )
+```
+
+``` { name:"sub", type:"color4" }
+( $Color1:assign$ - $Color2:assign$ )
+```
+
+``` { name:"mul", type:"color4" }
+( $Color1:assign$ * $Color2:assign$ )
+```
+
+``` { name:"mix", type:"color4" }
+mix( $Color1:assign$, $Color2:assign$, 0.5 )
+```
+
+---
+node: mix_alpha
+input: { name:"Color1", type:"color4", default:"1,1,1,1" }
+input: { name:"Color2", type:"color4", default:"1,1,1,1" }
+---
+
+``` { name:"Color", type:"color4" }
+mix( $Color1:assign$, $Color2:assign$, $Color2:assign$.a )
+```
+
+---
+node: color_split
+input: { name:"Color", type:"color4", default:"1,1,1,1" }
+---
+
+```{ name:"R", type:"float" }
+$Color:assign$.r
+```
+
+```{ name:"G", type:"float" }
+$Color:assign$.g
+```
+
+```{ name:"B", type:"float" }
+$Color:assign$.b
+```
+
+```{ name:"A", type:"float" }
+$Color:assign$.a
+```
+
+```{ name:"RG", type:"vec2" }
+$Color:assign$.rg
+```
+
+```{ name:"GB", type:"vec2" }
+$Color:assign$.gb
+```
+
+```{ name:"RGB", type:"vec3" }
+$Color:assign$.rgb
+```
+
+---
+node: color_join
+input: { name:"R", type:"float", default:"1" }
+input: { name:"G", type:"float", default:"1" }
+input: { name:"B", type:"float", default:"1" }
+input: { name:"A", type:"float", default:"1" }
+---
+
+```{ name:"RGB", type:"color4" }
+vec4( $R:assign$, $G:assign$, $B:assign$, 1 )
+```
+
+```{ name:"RGBA", type:"color4" }
+vec4( $R:assign$, $G:assign$, $B:assign$, $A:assign$ )
+```
+
+---
+node: gamma_correction
+input: { name:"Color", type:"color4", default:"1,1,1,1" }
+input: { name:"Gamma", type:"float", default:"2.2" }
+---
+
+```{name:"Declaration", type:"color4", visible:false}
+  vec4 Gamma_Correction( vec4 Color, float Gamma ){
+    vec3 OutColor = Color.rgb / ( Color.rgb + vec3( 1.0 ));
+    return vec4( pow( OutColor, vec3( 1.0 / max( 1, Gamma ))), Color.a ); 
+  }
+```
+
+```{ name:"Color", type:"color4" }
+Gamma_Correction( $Color:assign$, $Gamma:assign$ )
+```
+
+---
+node: step
+input: { name:"Color", type:"color4", default:"1,1,1,1"}
+input: { name:"Threshhold", type:"float", default:"0.5"}
+---
+
+```{name:"Color", type:"color4" }
+step( $Threshhold:assign$, $Color:assign$ )
+```
+
+---
+node: smoothstep
+input: { name:"Color", type:"color4", default:"1,1,1,1"}
+input: { name:"Threshhold1", type:"float", default:"0.4"}
+input: { name:"Threshhold2", type:"float", default:"0.6"}
+---
+
+```{name:"Color", type:"color4" }
+smoothstep( $Threshhold1:assign$, $Threshhold2:assign$, $Color:assign$ )
+```

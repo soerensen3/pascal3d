@@ -368,10 +368,13 @@ type
   TSDL_Colour = TSDL_Color;
   PSDL_Colour = ^TSDL_Colour;
 
+  PSDL_ColorArray = ^TSDL_ColorArray;
+  TSDL_ColorArray = array[0..65000] of TSDL_Color;
+
   PSDL_Palette = ^TSDL_Palette;
   TSDL_Palette = record
     ncolors: SInt32;
-    colors: PSDL_Color;
+    colors: PSDL_ColorArray;
     version: UInt32;
     refcount: SInt32;
   end;

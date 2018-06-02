@@ -1,0 +1,229 @@
+---
+node: 01000_light_lib
+---
+```{name:"CODE", type:"text", restrict:"fshader,declaration"}
+vec3 transformToTangentSpace( vec3 v ){
+return vec3(
+  dot( v, vTangent.xyz),
+  dot( v, vCotangent.xyz),
+  dot( v, vNormal.xyz));
+}
+const int p3dltPoint = 0;
+const int p3dltSun = 1;
+const int p3dltSpot = 2;
+
+struct LightSourceParameters {
+  vec4 color;
+  vec4 position;
+  vec4 halfvector;
+  vec4 direction;
+  int type;
+//  float spotExponent;
+//  float spotCutoff; // (range: [0.0,90.0], 180.0)
+//  float spotCosCutoff; // (range: [1.0,0.0],-1.0)
+//  float constantAttenuation;
+  float linearAttenuation;
+  float quadraticAttenuation;
+};
+uniform int numLightSource;
+uniform LightSourceParameters LightSource[8];
+//uniform samplerCube IBLDiffuse;
+//uniform samplerCube IBLSpecular;
+uniform sampler2D IBLDiffuse;
+uniform sampler2D IBLSpecular;
+uniform float IBLFactor;
+
+
+//vec3 viewDir = vec3( 0, 0, -1 );
+
+vec3 fresnel_factor(in vec3 f0, in float product)
+{
+    return mix(f0, vec3(1.0), pow(1.01 - product, 5.0));
+}
+
+float calculateAttenuation(in int i, in float dist, in float light_radius )
+{
+    return(1.0 / (max( 0.01, 
+                  LightSource[i].linearAttenuation * dist +
+                  LightSource[i].quadraticAttenuation * dist * dist)));
+    return pow( clamp( 1 - pow( dist / light_radius, 4 ), 0, 1 ), 2 ) / ( pow( dist, 2) + 1 );
+    //inverse square falloff
+    
+}
+
+void util_PointLight( in int i, in float shininess,                  
+                      in vec3 N, inout vec3 diffuse, 
+                      inout vec3 specular, in vec3 viewDir )
+
+{
+    vec3 lVector = ( LightSource[ i ].position.xyz - vPosition.xyz );
+    vec3 lightDir = normalize( lVector );
+
+    // attenuation
+
+    float attenuation = calculateAttenuation( i, length( lVector ), LightSource[i].linearAttenuation ); //pointLightDistance[ i ], pointLightDecay[ i ] );
+
+    // diffuse
+
+    float cosineTerm = saturate( dot( N, lightDir ) );
+    //cosineTerm = ( smoothstep( 0.2, 0.35, cosineTerm ) + smoothstep( 0.4, 0.8, cosineTerm )) / 2;
+    diffuse += ( LightSource[ i ].color.rgb ) * attenuation * LightSource[ i ].color.a * cosineTerm;
+
+    // specular
+
+    vec3 brdf = BRDF_BlinnPhong( vec3( 1 ), shininess, N, lightDir, viewDir );
+
+    specular += brdf * LightSource[ i ].color.rgb * attenuation * LightSource[ i ].color.a * cosineTerm;
+}
+
+/*{
+    vec3 s = ( LightSource[ i ].position.xyz - vPosition.xyz );
+    float dist = length( s );
+    s = s / dist;
+    vec3 v = normalize( -vPosition.xyz );
+    vec3 r = reflect( -s, N );
+    float attenuation = calculateAttenuation(i, dist);
+    float sDotN = max( dot(s,N), 0.0 );
+
+      specular= clamp( specular + 
+      vec4( LightSource[ i ].color.rgb, 1 ) *
+         pow( dot(r,v), shininess ) * attenuation, 0.0, 1.0 );
+
+    diffuse = clamp( diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * sDotN * attenuation, 0.0, 1.0 );
+}*/
+void util_directionalLight( in int i,
+                            in float shininess,
+                            in vec3 N,
+                            inout vec3 diffuse,
+                            inout vec3 specular, 
+                            in vec3 viewDir )
+{
+/*    float nDotVP;   // normal . light direction
+    float nDotHV;   // normal . light half vector
+    float pf;   // power factor
+    
+    nDotVP = clamp( dot( N, -normalize( transformToTangentSpace( LightSource[ i ].direction.xyz ))), 0.0, 1.0 ) -0.5;
+    nDotHV = clamp( dot( N, normalize( LightSource[ i ].halfvector.xyz )), 0.0, 1.0 );
+    pf = pow( nDotHV, shininess );
+    //diffuse = clamp( diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * nDotVP, -0.5, 0.5 );
+    diffuse = diffuse + vec4( LightSource[ i ].color.rgb, 1 ) * nDotVP;
+    specular = clamp( specular + vec4( LightSource[ i ].color.rgb, 1 ) * pf, 0.0, 1.0 );*/
+
+
+    // diffuse
+
+    float cosineTerm = saturate( dot( N, LightSource[ i ].direction.xyz ));
+    //cosineTerm = ( smoothstep( 0.3, 0.35, cosineTerm ) + smoothstep( 0.7, 0.75, cosineTerm )) / 2;
+    diffuse += ( LightSource[ i ].color.rgb ) * LightSource[ i ].color.a * cosineTerm;
+
+    // specular
+
+    vec3 brdf = BRDF_BlinnPhong( LightSource[ i ].color.rgb * LightSource[ i ].color.a, shininess, N, LightSource[ i ].direction.xyz, viewDir );
+
+    specular += brdf * cosineTerm;
+}
+
+float DistributionGGX(vec3 N, vec3 H, float a)
+{
+    float a2     = a*a;
+    float NdotH  = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+	
+    float nom    = a2;
+    float denom  = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom        = PI * denom * denom;
+	
+    return nom / denom;
+}
+
+float GeometrySchlickGGX(float NdotV, float k)
+{
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+	
+    return nom / denom;
+}
+  
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float k)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx1 = GeometrySchlickGGX(NdotV, k);
+    float ggx2 = GeometrySchlickGGX(NdotL, k);
+	
+    return ggx1 * ggx2;
+}
+
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+const vec2 invAtan = vec2(0.1591, 0.3183);
+vec2 SampleSphericalMap(vec3 v)
+{
+  vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+  uv *= invAtan;
+  uv += 0.5;
+  return uv;
+}
+
+```
+#uniform samplerCube IBLDiffuse;
+#uniform samplerCube IBLSpecular;
+#uniform float IBLFactor;
+---
+node: 01000_light_pass_calc_lighting
+---
+```{name:"CODE", type:"shader", restrict:"fshader,main"}
+  vec3 shadow = vec3( 0 );
+  vec3 spec = vec3( 0 );
+  //Normal = Normal * sign( dot( Normal, vPosition )); //Flip normal for backsided polygons
+  Normal = gl_FrontFacing ? Normal : -Normal;
+  objNormal = gl_FrontFacing ? objNormal : -objNormal;
+  //Specular = vec4( 1 );
+ 
+  vec3 IBLDiff = texture2D( IBLDiffuse, SampleSphericalMap( objNormal.xyz ), 0 ).rgb;
+  vec3 V = normalize( -vPosition.xyz );//;
+  V = transpose( mat3( view )) * V;
+  vec3 IBLSpec = texture2D( IBLSpecular, SampleSphericalMap( normalize( reflect( V.xyz, objNormal.xyz ))), ( 1 - mat_hardness / 512 ) * 5 ).rgb;
+  
+  /*float ambientColor = IBLFactor; //1.5;
+  
+  float brightness = clamp(ambientColor, 0.0, 1.0);
+  float darknessCutoff = clamp((ambientColor - 1.0) * 0.1, 0.0, 0.25);
+
+  const float hdrMaxBrightness = 5.0;
+  vec3 hdrCube = pow(IBLSpec + darknessCutoff, vec3(max(1.0, ambientColor)));
+  hdrCube += max(vec3(0.0), hdrCube - vec3(1.0)) * hdrMaxBrightness;
+
+  vec3 hdrCubeD = pow(IBLDiff + darknessCutoff, vec3(max(1.0, ambientColor)));
+  hdrCubeD += max(vec3(0.0), hdrCubeD - vec3(1.0)) * hdrMaxBrightness; */
+  
+  shadow += IBLDiff * IBLFactor;
+  spec += IBLSpec * IBLFactor;
+  
+  //spec += BRDF_BlinnPhong( textureCube( envLight, objNormal.xzy, 0 ).rgb * envLightMulti, Hardness, Normal.xyz, -Normal.xyz, viewDir );
+  //Color.rgb = textureCube( envLight, objNormal.xzy, 0 ).rgb;//vec4( 1 );
+  //shadow = vec3( 1 );
+  
+  for ( int i=0; i < numLightSource; i++ ) {
+    if ( LightSource[ i ].type == p3dltPoint )
+      util_PointLight( i, mat_hardness, Normal.xyz, shadow, spec, -normalize( vPosition ).xyz );
+    if ( LightSource[ i ].type == p3dltSun )
+      util_directionalLight( i, mat_hardness, Normal.xyz, shadow, spec, -normalize( vPosition ).xyz );
+  }
+  //shadow *= vec3( smoothstep( 0.28, 0.3, dot( Normal.xyz, viewDir )));
+  //shadow = vec3( 1 );
+  //spec = vec3( 0 );
+  //Color = vec4(( Normal.xyz + 1 )/2, 1 );
+  //Color = vec4( vTangent.xyz, 1 );
+```
+
+---
+node: 01000_light_pass_unlit
+---
+```{name:"CODE", type:"shader", restrict:"fshader,main"}
+  vec3 shadow = vec3( 1 );
+  vec3 spec = vec3( 0 );
+```

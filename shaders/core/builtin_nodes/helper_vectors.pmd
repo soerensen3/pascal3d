@@ -1,0 +1,44 @@
+---
+node: vector_math
+input: { name:"Vector1", type:"vec4", default:"1,1,1,1" }
+input: { name:"Vector2", type:"vec4", default:"1,1,1,1" }
+input: { name:"Factor", type:"float", default:"0.5" }
+---
+
+``` { name:"add", type:"vec4" }
+mix( $Vector1:assign$, $Vector1:assign$ + $Vector2:assign$, $Factor:assign$ )
+```
+
+``` { name:"sub", type:"vec4" }
+mix( $Vector1:assign$, $Vector1:assign$ - $Vector2:assign$, $Factor:assign$ )
+```
+
+``` { name:"mul", type:"vec4" }
+mix( $Vector1:assign$, $Vector1:assign$ * $Vector2:assign$, $Factor:assign$ )
+```
+
+``` { name:"mix", type:"vec4" }
+mix( $Vector1:assign$, $Vector2:assign$, $Factor:assign$ )
+```
+
+---
+node: vector_math_simple
+input: { name:"Vector1", type:"vec4", default:"1,1,1,1" }
+input: { name:"Vector2", type:"vec4", default:"1,1,1,1" }
+---
+
+``` { name:"add", type:"vec4" }
+( $Vector1:assign$ + $Vector2:assign$ )
+```
+
+``` { name:"sub", type:"vec4" }
+( $Vector1:assign$ - $Vector2:assign$ )
+```
+
+``` { name:"mul", type:"vec4" }
+( $Vector1:assign$ * $Vector2:assign$ )
+```
+
+``` { name:"mix", type:"vec4" }
+mix( $Vector1:assign$, $Vector2:assign$, 0.5 )
+```

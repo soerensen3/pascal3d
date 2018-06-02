@@ -38,7 +38,7 @@ def vec_roll_to_quat( vec, roll ):
     q_roll = Quaternion( vec, roll )
     return q_roll * q
 
-indexedprop = "{}[\"{}\"]" #name["index"]
+indexedprop = ".{}[\"{}\"]" #name["index"]
 dict_export_class = {}
 
 def find_export_class( obj ):
@@ -75,7 +75,7 @@ def export_data_path( block, root, obj = None ):
     if ( data ):
         return data.DataPath
     else:
-        return 'None'
+        return None
 
 def get_bone_local_transform( bone ):
     if ( bone.bone.parent ):

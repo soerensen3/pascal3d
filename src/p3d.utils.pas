@@ -40,6 +40,7 @@ var
 
 implementation
 
+
 { gP3DStreamablePointerList }
 
 function gP3DStreamablePointerList.GetAsValues( Index: Integer ): T;
@@ -111,6 +112,8 @@ begin
 
   if ( not Assigned( P3DClassFactory )) then
     P3DClassFactory:= TP3DClassFactory.Create;
+
+  P3DClassFactory.AddArray([ TP3DStreamable, TP3DNamedStreamable ]);
 
   if ( not Assigned( P3DConfig )) then
     P3DConfig:= TP3DConfig.Create;

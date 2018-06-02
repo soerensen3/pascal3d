@@ -1,0 +1,25 @@
+---
+node: TexCoord4
+input: { name:"inject", type:"text"}
+---
+
+```{ name:"declaration", type:"text", restrict:"vshader" }
+IN vec4 TexCoord$inject$;
+OUT vec4 vTexCoord$inject$;
+
+```
+
+```{ restrict:"fshader" }
+IN vec4 vTexCoord$inject$;
+
+```
+
+```{ name:"initialization", type:"text", restrict:"vshader" }
+  vTexCoord$inject$ = TexCoord$inject$;
+
+```
+
+```{ restrict:"assign" }
+vTexCoord$inject$
+```
+

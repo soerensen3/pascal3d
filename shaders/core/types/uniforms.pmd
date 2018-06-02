@@ -1,0 +1,110 @@
+---
+node: uniform_vec4
+input: { name:"Value", type:"vec4" }
+input: { name:"UnName", type:"text" }
+---
+
+```{ name:"Declaration", type:"text", visible:false }
+uniform vec4 $UnName$;
+
+```
+
+```{ name:"Vector", type:"vec4", restrict:"assign" }
+$UnName$
+```
+
+---
+node: uniform_vec3
+input: { name:"Value", type:"vec3" }
+input: { name:"UnName", type:"text" }
+---
+
+```{ name:"Declaration", type:"text", visible:false }
+uniform vec3 $UnName$;
+
+```
+
+```{ name:"Vector", type:"vec3", restrict:"assign" }
+$UnName$
+```
+
+
+---
+node: uniform_vec2
+input: { name:"Value", type:"vec2" }
+input: { name:"UnName", type:"text" }
+---
+
+```{ name:"Declaration", type:"text", visible:false }
+uniform vec2 $UnName$;
+
+```
+
+```{ name:"Vector", type:"vec2", restrict:"assign" }
+$UnName$
+```
+
+---
+node: uniform_color4
+input: { name:"Value", type:"color4"}
+input: { name:"UnName", type:"text" }
+---
+
+```{ name:"Declaration", type:"vec4", visible:false }
+uniform vec4 $UnName$;
+
+```
+
+```{ name:"Color", type: "color4", restrict:"assign" }
+$UnName$
+```
+
+
+---
+node: uniform_float
+input: { name:"Value", type:"float"}
+input: { name:"UnName", type:"text" }
+---
+
+```{ name:"Declaration", type:"text", visible:false }
+uniform float $UnName$;
+
+```
+
+```{ name:"Value", type:"float", restrict:"assign" }
+$UnName$
+```
+
+
+---
+node: uniform_int
+input: { name:"Value", type:"int"}
+input: { name:"UnName", type:"text" }
+---
+
+```{ name:"Declaration", type:"text", visible:false }
+uniform int $UnName$;
+
+```
+
+```{ name:"Value", type:"int", restrict:"assign" }
+$UnName$
+```
+
+---
+type: sampler2D
+---
+
+```{ name:"Declaration", type:"text", visible:false }
+uniform sampler2D tex$inject$;
+
+```
+
+```{ name:"constructor", type:"text", restrict:"assign", visible:false }
+tex$inject$
+```
+
+```{ name:"sampler2D", type:"text", restrict:"assign" }
+$inject$
+```
+

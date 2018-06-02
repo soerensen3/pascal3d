@@ -1,0 +1,90 @@
+---
+node: geometry
+---
+
+#Position
+#```{name:"Position", type:"vec4", restrict:"vshader,declaration"}
+#IN vec4 Position;
+#OUT vec4 vPosition;
+#```
+
+```{name:"Position", type:"vec3", restrict:"fshader,assign"}
+vPosition
+```
+
+```{name:"ScreenPosition", type:"vec2", restrict:"fshader,assign"}
+vScreenPosition
+```
+
+```{name:"ObjectPosition", type:"vec3", restrict:"fshader,assign"}
+vObjectPosition
+```
+
+```{name:"WorldPosition", type:"vec3", restrict:"fshader,assign"}
+vWorldPosition
+```
+
+```{name:"Color", type:"color4", restrict:"fshader,assign"}
+vColor
+```
+
+#Normal
+#```{name:"Normal", type:"vec4", restrict:"vshader,declaration", single:"yes"}
+#IN vec4 Normal;
+#OUT vec4 vNormal;
+#
+#```
+
+#```{restrict:"vshader,initialization", single:"yes"}
+#  vNormal = view * world * vec4( Normal.xyz, 0 );
+#
+#```
+
+#```{restrict:"fshader,declaration", single:"yes"}
+#IN vec4 vNormal;
+
+#```
+
+```{name:"Normal", type:"vec3", restrict:"fshader,assign"}
+vNormal
+```
+
+
+```{name:"WorldNormal", type:"vec3", restrict:"fshader,assign"}
+vWorldNormal
+```
+
+```{name:"Tangent", type:"vec3", restrict:"fshader,assign"}
+vTangent
+```
+
+```{name:"Cotangent", type:"vec3", restrict:"fshader,assign"}
+vCotangent
+```
+
+---
+node: texcoord
+input: {name:"Index", type:"int"}
+---
+
+```{name:"Declaration", type:"text", restrict:"vshader", visible:false}
+IN vec2 TexCoord$Index: assign$;
+OUT vec2 vTexCoord$Index: assign$;
+
+```
+
+```{restrict:"fshader"}
+IN vec2 vTexCoord$Index: assign$;
+
+```
+
+```{name:"Initialization", type:"text", restrict:"vshader", visible:false}
+  vTexCoord$Index: assign$ = TexCoord$Index: assign$;
+
+```
+
+
+```{name:"UV", type:"vec2", restrict:"assign"}
+vTexCoord$Index: assign$
+```
+

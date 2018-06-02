@@ -13,7 +13,7 @@ begin
   if ( FileExists( FN2 )) then
     DeleteFile( FN2 );
   fnt:= P3DFontManagerBmp.FontsByP3DFont[ TP3DFont.Create( FN, round( P3DFontManagerBmp.DefaultTextSize ))];
-  fnt.Owner.SaveToFile();
+  fnt.OwnerLib.SaveToFile();
   //fnt.Owner.Free;
   {loader:= TP3DJSONLoader.Create( ChangeFileExt( FN, '.p3d' ), fnt );
   loader.WriteFile;
@@ -75,10 +75,17 @@ begin
     //Do some OpenGL initializations
     InitGL;
     ParseParams;
-    ActiveFont:= P3DFontManagerBmp.Items[ 0 ];
+    ActiveFont:= P3DFontManagerBmp.Items[ P3DFontManagerBmp.Count - 1 ];
     Canvas:= TP3DCanvas2D.Create( Self );
     //Canvas.Material:= P3DFontManager.Material;
     Canvas.WidthHeight:= vec2( P3DViewports.Screen.Width, P3DViewports.Screen.Height );
+
+    with ( TP3DEdit.Create( P3DUI.Viewer.Controls )) do begin
+      Font.Name:= ActiveFont.Name;
+      Align:= alBottom;
+      Text:= '';
+      //Text:= 'Pack my box with five dozen liquor jugs';
+    end;
 
   except
     on E: Exception do

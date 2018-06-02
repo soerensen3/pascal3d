@@ -9,7 +9,7 @@ end;
 procedure TP3DFontBitmap.SetOffSet(AValue: TVec2);
 begin
   if FOffSet=AValue then Exit;
-  FOffSet:= clamp( AValue, vec2( 1 ), vec2( 0 ));
+  FOffSet:= clamp( AValue, vec2( 0 ), vec2( 1 ));
 end;
 
 procedure TP3DFontBitmap.Events;
@@ -17,6 +17,7 @@ type
   KeyState = array of PUInt8;
 var
   Keys: PUInt8;
+  Ctrl: TP3DGraphicControl;
 
   function KeyPressed( Key: Integer ): Boolean;
   begin
@@ -28,11 +29,11 @@ const speed = 0.1;
 begin
   inherited Events;
 
-  {$IFDEF GUI}
   // Update the input of the GUI
-  if ( not CatchMouse ) then
-    P3DGUIManager.Input;
-  {$ENDIF}
+  Ctrl:= P3DUI.Viewer.Controls.MouseRay( P3DUI.Viewer.MouseX, P3DUI.Viewer.MouseY, True );
+  P3DUI.LastMouseOverCtrl:= Ctrl;
+  P3DUI.Events;
+  P3DUI.Input;
 end;
 
 
@@ -59,7 +60,7 @@ end;
 procedure TP3DFontBitmap.MouseMotion(Event: TSDL_MouseMotionEvent);
 begin
   if ( P3DInput.Mouse.Buttons[ 1 ]) then
-    OffSet:= OffSet + ( -vec2( P3DInput.Mouse.DX, P3DInput.Mouse.DY ) / Zoom / 10 );
+    OffSet:= OffSet - ( vec2( P3DInput.Mouse.DX, P3DInput.Mouse.DY ) / Zoom / 10 );
   inherited MouseMotion(Event);
 end;
 

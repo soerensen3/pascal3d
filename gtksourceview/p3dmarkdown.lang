@@ -463,9 +463,15 @@ http://www.opengl.org/registry/doc/GLSLangSpec.4.00.7.pdf
     <context id="markdown-types" style-ref="type">
       <keyword>int</keyword>  
       <keyword>text</keyword>
+      <keyword>shader</keyword>
       <keyword>float</keyword>
+      <keyword>color[3-4]</keyword>
       <keyword>vec[2-4]</keyword>
       <keyword>mat[2-4]</keyword>
+      <keyword>dvec[2-4]</keyword>
+      <keyword>dmat[2-4]</keyword>
+      <keyword>ivec[2-4]</keyword>
+      <keyword>imat[2-4]</keyword>
     </context>
     
     <context id="markdown-string" end-at-line-end="true" style-ref="string">
@@ -488,6 +494,8 @@ http://www.opengl.org/registry/doc/GLSLangSpec.4.00.7.pdf
           <keyword>name</keyword>  
           <keyword>type</keyword>
           <keyword>restrict</keyword>
+          <keyword>visible</keyword>
+          <keyword>default</keyword>
         </context>
         <context ref="markdown-string"/>
       </include>

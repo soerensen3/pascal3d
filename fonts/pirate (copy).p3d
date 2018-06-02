@@ -1,0 +1,65 @@
+{
+  "ClassName" : "TP3DLibrary",
+  "Cameras" : [
+  ],
+  "Joints" : [
+  ],
+  "Lights" : [
+  ],
+  "Materials" : [
+  ],
+  "Meshes" : [
+  ],
+  "Objects" : [
+  ],
+  "Scenes" : [
+  ],
+  "Shaders" : [
+  ],
+  "Textures" : [
+    {
+      "ClassName" : "TP3DTexture",
+      "Name" : "P3DTexture1",
+      "Filtering" : "tfLinear",
+      "FilteringMipMap" : "tfLinear",
+      "MipMap" : 1,
+      "File" : "fonts\/pirate.png"
+    }
+  ],
+  "Armatures" : [
+  ],
+  "Actions" : [
+  ],
+  "Fonts" : [
+    {
+      "ClassName" : "TP3DFontBmp",
+      "Name" : "pirate",
+      "SizeFactor" : 1,
+      "MipMapLoadBias" : 0,
+      "Texture" : "Textures[ \"P3DTexture1\" ]",
+      "Margin" : 2.3437500000000000E-002,
+      "Letters" : [
+        {
+          "ClassName" : "TP3DFontLetter",
+          "Letter" : "A",
+          "uv1" : [
+            0,
+            0
+          ],
+          "uv2" : [
+            1,
+            1
+          ],
+          "uv1_metrics" : [
+            0,
+            0
+          ],
+          "uv2_metrics" : [
+            1,
+            1
+          ]
+        }     
+      ]
+    }
+  ]
+}

@@ -117,53 +117,56 @@ class P3DMesh( p3ddatablock.P3DDataBlock ):
         self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Meshes', self.Name ), obj )
         self.ClassName = 'TP3DMesh'
+        bpy.ops.object.mode_set(mode='OBJECT')
+        root.createBinFile()
+        print( repr( root.BinFile ))
+
+        arm = obj.find_armature()
+        if arm and root.Exporter.ExportArmatures and hasattr( arm.data, 'pose_position' ):
+            pose = arm.data.pose_position
+            arm.data.pose_position = 'REST'
+            root.ActiveScene.update()
+        else:
+            arm = None
+            root.Exporter.report({ 'INFO' }, 'Mesh "{}" does not have a pose_position'.format( block.name ))
+
+        if root.Exporter.ApplyModifiers:
+            mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
+        else:
+            mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
+
+        self.PackedPositions = '@' + str( self.ExportPositions( mesh, root ))
+        self.PackedNormals = '@' + str( self.ExportNormals( mesh, root ))
+        self.Loops = '@' + str( self.ExportLoops( mesh, root ))
+        self.Edges = '@' + str( self.ExportEdges( mesh, root ))
+        self.PackedFaces = '@' + str( self.ExportFaces( mesh, root ))
+        if ( mesh.uv_layers ):
+            self.PackedTangents = '@' + str( self.ExportTangents( mesh, root ))
+            self.PackedCotangents = '@' + str( self.ExportCotangents( mesh, root ))
+            self.TexCoords = []
+            index = 0
+            for uv in mesh.uv_layers:
+                self.TexCoords.append( '@' + str( self.ExportUVs( mesh, root, index )))
+                index += 1
+        if ( obj ):
+            grps = self.ExportVertexGroups( obj )
+            if ( grps ):
+                self.WeightGroups = grps
+                self.PackedVertexWeights, self.PackedVertexWeightIndices = self.ExportWeights( mesh, root, self.WeightGroups )
+        self.ExportModifiers( block, root, obj )
         if ( block.materials ):
-            bpy.ops.object.mode_set(mode='OBJECT')
-            root.createBinFile()
-            print( repr( root.BinFile ))
 
-            arm = obj.find_armature()
-            if arm and root.Exporter.ExportArmatures and hasattr( arm.data, 'pose_position' ):
-                pose = arm.data.pose_position
-                arm.data.pose_position = 'REST'
-                root.ActiveScene.update()
-            else:
-                arm = None
-                root.Exporter.report({ 'INFO' }, 'Mesh "{}" does not have a pose_position'.format( block.name ))
-
-            if root.Exporter.ApplyModifiers:
-                mesh = obj.to_mesh( bpy.context.scene, True, 'PREVIEW', True )
-            else:
-                mesh = obj.to_mesh( bpy.context.scene, False, 'PREVIEW', True )
-
-            self.PackedPositions = '@' + str( self.ExportPositions( mesh, root ))
-            self.PackedNormals = '@' + str( self.ExportNormals( mesh, root ))
-            self.Loops = '@' + str( self.ExportLoops( mesh, root ))
-            self.Edges = '@' + str( self.ExportEdges( mesh, root ))
-            self.PackedFaces = '@' + str( self.ExportFaces( mesh, root ))
-            if ( mesh.uv_layers ):
-                self.PackedTangents = '@' + str( self.ExportTangents( mesh, root ))
-                self.PackedCotangents = '@' + str( self.ExportCotangents( mesh, root ))
-                self.TexCoords = []
-                index = 0
-                for uv in mesh.uv_layers:
-                    self.TexCoords.append( '@' + str( self.ExportUVs( mesh, root, index )))
-                    index += 1
-            if ( obj ):
-                grps = self.ExportVertexGroups( obj )
-                if ( grps ):
-                    self.WeightGroups = grps
-                    self.PackedVertexWeights, self.PackedVertexWeightIndices = self.ExportWeights( mesh, root, self.WeightGroups )
             if ( len( block.materials ) > 1 ):
                 root.Exporter.report({ 'WARNING' }, 'Mesh "{}" has multiple materials. This is not supported by the exporter yet. Only the first material is exported for the whole mesh. Please separate the mesh by materials'.format( block.name ))
-            self.PackedMaterialGroups = [ { "PolyStart": 0, "PolyEnd": len( mesh.polygons ) - 1,  "Material": p3dexporthelper.export_data_path( block.materials[ 0 ], root, block )}]
-            self.ExportModifiers( block, root, obj )
-            bpy.data.meshes.remove( mesh )
-            if arm:
-                arm.data.pose_position = pose
-                root.ActiveScene.update()
+            #self.PackedMaterialGroups = [ { "PolyStart": 0, "PolyEnd": len( mesh.polygons ) - 1,  "Material": p3dexporthelper.export_data_path( block.materials[ 0 ], root, block )}]
+            self.Material = p3dexporthelper.export_data_path( block.materials[ 0 ], root, block )
         else:
-            root.Exporter.report({ 'ERROR' }, 'Mesh "{}" does not have a material'.format( block.name ))
+            self.Material = None
+
+        bpy.data.meshes.remove( mesh )
+        if arm:
+            arm.data.pose_position = pose
+            root.ActiveScene.update()
 
     @staticmethod
     def find_storage( root ):

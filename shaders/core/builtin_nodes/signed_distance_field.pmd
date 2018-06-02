@@ -1,0 +1,129 @@
+---
+node: signed_distance_field_compatibility
+input: { name: "texture", type: "sampler2D" }
+input: { name: "uv", type: "vec4" }
+input: { name: "color", type: "color4", default: "1,1,1,1" }
+---
+
+```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
+uniform float sdf_bias = -0.12;
+uniform float sdf_smoothing = 1.0/256.0;
+uniform float sdf_basealpha = 1.0;
+
+float contour(in float d, in float w) {
+    // smoothstep(lower edge0, upper edge1, x)
+    return smoothstep(0.5 + sdf_bias - w, 0.5 + sdf_bias + w, d ) * sdf_basealpha;
+}
+
+float samp(in vec2 uv, float w) {
+    return contour( texture2D( $texture:assign$, uv.xy ).a, w);
+}
+
+
+```
+
+```{name:"Initialization", restrict:"fshader", visible:false}
+  vec4 sdf_col = $color:assign$;
+  vec2 uv = $uv:assign$.st;
+  float dist = texture2D( $texture:assign$, uv ).a;
+  float width = fwidth( dist );
+  sdf_col.a = contour( dist, sdf_smoothing ); 
+  float dscale = 0.354; // half of 1/sqrt2; you can play with this
+  vec2 duv = dscale * ( dFdx( uv ) + dFdy( uv ));
+  vec4 box = vec4( uv.st - duv, uv + duv );
+
+  float asum = samp( box.xy, width )
+             + samp( box.zw, width )
+             + samp( box.xw, width )
+             + samp( box.zy, width );
+
+  // weighted average, with 4 extra points having 0.5 weight each,
+  // so 1 + 0.5*4 = 3 is the divisor
+  sdf_col.a = ( sdf_col.a + 0.5 * asum ) / 3.0;
+```
+
+```{name:"Color", type:"color4", restrict:"fshader"}
+sdf_col
+```
+
+
+---
+node: signed_distance_field
+input: { name: "texture", type: "sampler2D" }
+input: { name: "uv", type: "vec4" }
+input: { name: "color", type: "color4", default: "1,1,1,1" }
+input: { name: "sdf_bias", type: "float", default: "-0.12" }
+input: { name: "sdf_smoothing", type: "float", default: "0.004" }
+input: { name: "sdf_basealpha", type: "float", default: "1.0" }
+---
+
+```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
+
+#ifndef sdf_lib
+#define sdf_lib
+
+float contour(in float d, in float w, in float bias, in float alpha) {
+    // smoothstep(lower edge0, upper edge1, x)
+    return smoothstep(0.5 + bias - w, 0.5 + bias + w, d ) * alpha;
+}
+
+float samp(in vec2 uv, in float w, in sampler2D tex, in float bias, in float alpha ) {
+    return contour( texture2D( tex, uv.xy ).a, w, bias, alpha );
+}
+
+vec4 sdf( in vec4 col, in vec2 uv, in sampler2D tex, in float bias, in float smoothing, in float basealpha ){
+    float dist = texture2D( tex, uv ).a;
+    float width = fwidth( dist );
+    col.a = contour( dist, smoothing, bias, basealpha ); 
+    float dscale = 0.354; // half of 1/sqrt2; you can play with this
+    vec2 duv = dscale * ( dFdx( uv ) + dFdy( uv ));
+    vec4 box = vec4( uv.st - duv, uv + duv );
+
+    float asum = samp( box.xy, width, tex, bias, basealpha )
+               + samp( box.zw, width, tex, bias, basealpha )
+               + samp( box.xw, width, tex, bias, basealpha )
+               + samp( box.zy, width, tex, bias, basealpha );
+
+    // weighted average, with 4 extra points having 0.5 weight each,
+    // so 1 + 0.5*4 = 3 is the divisor
+    col.a = ( col.a + 0.5 * asum ) / 3.0;
+    return col;
+}
+
+#endif
+
+```
+
+```{name:"Initialization", type:"text", restrict:"fshader", visible:false}
+//vec4 sdf_col = sdf( $color:assign$, $uv:assign$.st, $texture:assign$, $sdf_bias:assign$, $sdf_smoothing:assign$, $sdf_basealpha:assign$ );
+
+```
+```{name:"Color", type:"color4", restrict:"fshader"}
+//sdf_col
+sdf( $color:assign$, $uv:assign$.st, $texture:assign$, $sdf_bias:assign$, $sdf_smoothing:assign$, $sdf_basealpha:assign$ )
+```
+
+---
+node: signed_distance_field_calculate
+input: { name: "texture", type: "int" }
+input: { name: "uv", type: "vec4" }
+input: { name: "levels", type: "int", default: "10" }
+---
+
+```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
+
+#ifndef sdf_approximate_lib
+#define sdf_approximate_lib
+float approximate_sdf( in sampler2D tex, in vec2 uv, in int levels ){
+  float col = 0;
+  for ( int i = 0; i < levels; i++ )
+    col += texture2D( tex, vec2( uv.s - i / 10, uv.t )).a;// * ( 1 - i / levels )/* * ( levels - i ) / levels*/;
+  return col;// / levels;
+}
+#endif
+```
+
+```{name:"Color", type:"color4", restrict:"fshader"}
+vec4( 1,1,1, approximate_sdf( $texture:assign$, $uv:assign$.st, $levels:assign$ ))
+```
+

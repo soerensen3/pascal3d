@@ -1,0 +1,117 @@
+#input: { name:"OceanColor", type:"color4", default:"0.05, 0.05, 0.2, 1.0" }
+
+#contrast: 2.7 brightness: -0.2
+---
+node: material_ocean
+input: { name:"UV", type:"vec2" }
+input: { name:"TexNormalBase", type:"sampler2D" }
+input: { name:"TexNormalDetail", type:"sampler2D" }
+input: { name:"TexFoam", type:"sampler2D" }
+input: { name:"TexFoamStrength", type:"sampler2D" }
+input: { name:"ScalNormBase", type:"float", default: "17" }
+input: { name:"ScalNormDetail", type:"float", default: "206.7" }
+input: { name:"ScalFoam", type:"float", default: "799.52" }
+input: { name:"ScalFoamStrength", type:"float", default: "17" }
+input: { name:"MixNormal", type:"float", default: "0.1" }
+input: { name:"Time", type:"float" }
+input: { name:"UVDispl", type:"float", default: "0.1" }
+---
+
+```{name:"Declaration", restrict:"fshader", type:"text", visible:false}
+float foam_bias = -0.8;
+float foam_smoothing = 1.0/3;
+float foam_basealpha = 1.0;
+
+float contour(in float d, in float w) {
+    // smoothstep(lower edge0, upper edge1, x)
+    return smoothstep(0.5 + foam_bias - w, 0.5 + foam_bias + w, d ) * foam_basealpha;
+}
+/*
+float samp(in vec2 uv, float w) {
+    return contour(texture2D(tex0, vTexCoord0.xy).a, w);
+}
+*/
+float foam_alpha( in float foam_tex_alpha ) {
+  //float width = fwidth( foam_tex_alpha );
+  float result = contour( foam_tex_alpha, foam_smoothing ); 
+
+  /*float dscale = 0.354; // half of 1/sqrt2; you can play with this
+  vec2 duv = dscale * (dFdx(uv.st) + dFdy(uv.st));
+  vec4 box = vec4(uv.st-duv, uv.st+duv);
+
+  float asum = samp( box.xy, width )
+             + samp( box.zw, width )
+             + samp( box.xw, width )
+             + samp( box.zy, width );
+
+  // weighted average, with 4 extra points having 0.5 weight each,
+  // so 1 + 0.5*4 = 3 is the divisor
+  return = ( result + 0.5 * asum) / 3.0;*/
+  return result;
+}
+
+```
+
+```{name:"Initialization", type:"text", visible:false}
+
+  const float ocean_wave_height = 4;
+  //uv
+  vec2 ocean_uv = $UV:assign$.xy;
+  vec2 ocean_shift = vec2( - $Time:assign$ / 100 );
+  ocean_shift.xy += .05*sin( 5.*( ocean_uv.x+ocean_uv.y ));
+```
+
+```{restrict:"vshader"}
+  //displace
+  vec4 ocean_displace = texture2DLod( $TexNormalBase:assign$, ocean_uv * $ScalNormBase:assign$ + ocean_shift, 1.7 );
+  ocean_displace = vec4( 2.0 * ocean_displace.rgb - vec3( 1.0, 1.0, 1.0 ), 1 );
+  ocean_displace.z = ( ocean_displace.z ) * ocean_wave_height - ocean_wave_height / 2;
+```
+
+```{restrict:"fshader"}
+  //normal
+  vec4 ocean_normal_base = texture2D( $TexNormalBase:assign$, ocean_uv * $ScalNormBase:assign$ + ocean_shift );
+  ocean_normal_base = vec4( 2.0 * ocean_normal_base.rgb - vec3( 1.0, 1.0, 1.0 ), 0 );
+  ocean_normal_base.z = ocean_normal_base.z * ocean_wave_height;
+  ocean_normal_base = normalize( ocean_normal_base );
+  vec4 ocean_normal_detail = texture2D( $TexNormalDetail:assign$, ocean_uv * $ScalNormDetail:assign$ - ocean_shift );
+  ocean_normal_detail = vec4( 2.0 * ocean_normal_detail.rgb - vec3( 1.0, 1.0, 1.0 ), 0 );
+  vec4 ocean_normal = mix( ocean_normal_base, ocean_normal_detail, $MixNormal:assign$ );
+
+  //float dot_normal = dot( ocean_normal, view[ 2 ]);
+  //ocean_normal = mix( ocean_normal, vec4( 0, 0, 1, 0 ), pow( dot_normal, 64 ));
+  //ocean_normal = normalize( pow( ocean_normal, vec4( 1 + 0.5 * sin( $Time:assign$ / 2 ))));
+
+  //displace uv's by normal
+  ocean_shift += ocean_normal.xy * $UVDispl:assign$;
+
+  //foam
+  const vec3 ocean_color = vec3( 0.16 );//vec3( 0.1, 0.25, 0.3 );//vec3( 0.8, 0.95, 1.0 );//OceanColor:assign.rgb;
+  vec4 ocean_foam = texture2D( $TexFoam:assign$, ocean_uv * $ScalFoam:assign$ - ocean_shift );
+  //ocean_foam.rgb *= 4;
+  float ocean_foam_strength = texture2D( $TexFoamStrength:assign$, ocean_uv * $ScalFoamStrength:assign$ + ocean_shift ).r;
+  ocean_foam.a = foam_alpha( ocean_foam.a * ocean_foam_strength ) * ocean_foam_strength;
+  vec4 ocean_albedo = vec4( ocean_color + ocean_foam.rgb * ocean_foam.a, 1 );
+  float ocean_roughness = ocean_foam.a;
+  
+  float ocean_metalness = 0;//step( 0.99, 1-ocean_roughness );
+  //ocean_roughness = smoothstep( 0.1, 1, ocean_roughness )+0.001;
+
+```
+
+```{name:"Albedo", type:"color4", restrict:"fshader,assign"}
+ocean_albedo
+```
+
+```{name:"Normal", type:"vec4", restrict:"assign"}
+ocean_normal
+```
+
+```{name:"Roughness", type:"float", restrict:"fshader,assign"}
+ocean_roughness
+```
+
+```{name:"Displace", type:"vec4", restrict:"vshader,assign"}
+ocean_displace
+```
+

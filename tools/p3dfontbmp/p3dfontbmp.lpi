@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="11"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
@@ -24,23 +24,33 @@
     </PublishOptions>
     <RunParams>
       <local>
-        <FormatVersion Value="1"/>
-        <CommandLineParams Value="--tex-size 2048 2048 --font-size 96 --from-file Cabin-Regular.ttf"/>
+        <CommandLineParams Value="--tex-size 2048 2048 --font-size 192 --from-file Pascal3D-Symbols.ttf"/>
       </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default">
+          <local>
+            <CommandLineParams Value="--tex-size 2048 2048 --font-size 192 --from-file Pascal3D-Symbols.ttf"/>
+          </local>
+        </Mode0>
+      </Modes>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="pascal3d_gui"/>
+        <PackageName Value="pascal3d_ide"/>
       </Item1>
       <Item2>
-        <PackageName Value="pascal3d"/>
+        <PackageName Value="pascal3d_ui"/>
       </Item2>
       <Item3>
-        <PackageName Value="libsdl2"/>
+        <PackageName Value="pascal3d"/>
       </Item3>
       <Item4>
-        <PackageName Value="pl_opengl"/>
+        <PackageName Value="libsdl2"/>
       </Item4>
+      <Item5>
+        <PackageName Value="pl_opengl"/>
+      </Item5>
     </RequiredPackages>
     <Units Count="6">
       <Unit0>

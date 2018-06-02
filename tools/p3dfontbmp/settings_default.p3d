@@ -1,39 +1,35 @@
 {
-  "ClassName" : "TP3DConfig",
-  "Config" : [
-    {
-      "ClassName" : "TP3DSearchPathContainer",
-      "BaseDir" : "../../",
-      "Paths" : [
-        "assets",
-        "fonts"
-      ]
-    },
-    {
-      "ClassName" : "TP3DLogger",
-      "FileWatch" : "p3dfontbmp.html"
-    },
-    {
-      "ClassName" : "TP3DShaderNodeLibrary",
-      "Paths" : [
-        "shaders"
-      ]
-    },
-    {
-      "ClassName" : "TP3DFontBitmap",
-      "Windows" : [
-        {
-          "ClassName" : "TP3DWindow",
-          "Width" : 800,
-          "Height" : 600,
-          "Visible" : 1,
-          "Left" : 100,
-          "Height" : 600,
-          "ShowBorder" : 0,
-          "FullScreen" : 0,
-          "Title" : "p3dfontbmp"
-        }
-      ]
-    }
-  ]
+	"P3DSearchPaths": {
+	  "ClassName" : "TP3DSearchPathContainer",
+	  "BaseDir" : ".\/",
+	  "Paths" : [
+		"..\/..\/fonts\/"
+	  ]
+	},
+	"P3DLogger": {
+	  "ClassName" : "TP3DLogger",
+	  "FileWatch" : "ShaderEditor.html"
+	},
+	"P3DShaderNodeLib": {
+	  "ClassName" : "TP3DShaderNodeLibrary",
+	  "Paths" : [
+		"..\/..\/shaders\/"
+	  ]
+	},
+	"P3DApplication": {
+	  "ClassName" : "TP3DSceneApplication",
+	  "Windows" : [
+		{
+		  "ClassName" : "TP3DWindow",
+		  "Width" : 800,
+		  "Height" : 600,
+		  "Visible" : 1,
+		  "Left" : 100,
+		  "Height" : 600,
+		  "ShowBorder" : 0,
+		  "FullScreen" : 0,
+		  "Title" : "Shader Editor"
+		}
+	  ]
+	}
 }

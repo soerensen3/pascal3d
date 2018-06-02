@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="pascal3d_ui"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <IncludeFiles Value=".;pascal3d.ui"/>
+        <OtherUnitFiles Value="."/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files Count="15">
+      <Item1>
+        <Filename Value="p3d.ui.pas"/>
+        <UnitName Value="p3d.ui"/>
+      </Item1>
+      <Item2>
+        <Filename Value="p3d.ui_lib.inc"/>
+        <Type Value="Include"/>
+      </Item2>
+      <Item3>
+        <Filename Value="pascal3d.ui/p3d.ui_advanced.inc"/>
+        <Type Value="Include"/>
+      </Item3>
+      <Item4>
+        <Filename Value="pascal3d.ui/p3d.ui_buttons.inc"/>
+        <Type Value="Include"/>
+      </Item4>
+      <Item5>
+        <Filename Value="pascal3d.ui/p3d.ui_colors.inc"/>
+        <Type Value="Include"/>
+      </Item5>
+      <Item6>
+        <Filename Value="pascal3d.ui/p3d.ui_commonctrls.inc"/>
+        <Type Value="Include"/>
+      </Item6>
+      <Item7>
+        <Filename Value="pascal3d.ui/p3d.ui_controllist.inc"/>
+        <Type Value="Include"/>
+      </Item7>
+      <Item8>
+        <Filename Value="pascal3d.ui/p3d.ui_dialogs.inc"/>
+        <Type Value="Include"/>
+      </Item8>
+      <Item9>
+        <Filename Value="pascal3d.ui/p3d.ui_forms.inc"/>
+        <Type Value="Include"/>
+      </Item9>
+      <Item10>
+        <Filename Value="pascal3d.ui/p3d.ui_graphiccontrol.inc"/>
+        <Type Value="Include"/>
+      </Item10>
+      <Item11>
+        <Filename Value="pascal3d.ui/p3d.ui_manager.inc"/>
+        <Type Value="Include"/>
+      </Item11>
+      <Item12>
+        <Filename Value="pascal3d.ui/p3d.ui_menus.inc"/>
+        <Type Value="Include"/>
+      </Item12>
+      <Item13>
+        <Filename Value="pascal3d.ui/p3d.ui_stdctrls.inc"/>
+        <Type Value="Include"/>
+      </Item13>
+      <Item14>
+        <Filename Value="pascal3d.ui/p3d.ui_viewer.inc"/>
+        <Type Value="Include"/>
+      </Item14>
+      <Item15>
+        <Filename Value="pascal3d.ui/p3d.ui_toolbar.inc"/>
+        <Type Value="Include"/>
+      </Item15>
+    </Files>
+    <RequiredPkgs Count="3">
+      <Item1>
+        <PackageName Value="pascal3d_math"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="pascal3d"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="libsdl2"/>
+      </Item3>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

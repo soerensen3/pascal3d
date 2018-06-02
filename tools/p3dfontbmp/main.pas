@@ -10,15 +10,14 @@ uses
   SDL2, //EXTERNAL LIBS SDL2 AND OPENGL - These are only needed if we access OpenGL or SDL directly
   dglOpenGL,
 
-  pascal3d.events,
-  pascal3d.core,
-  pascal3d.utils,
-  p3dMath, //P3DMath unit that provides vector and matrix types and functions
+  p3d.events,
+  p3d.core,
+  p3d.utils,
+  p3d.ui,
+  p3d.Math, //P3DMath unit that provides vector and matrix types and functions
   Math;
 
 type
-
-  { TP3Dp3dfontbmpApplication }
 
   { TP3DFontBitmap }
 

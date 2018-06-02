@@ -1,0 +1,159 @@
+---
+node: output
+input: {name:"Version", type:"int", visible:false}
+input: {name:"Color", type:"color4"}
+input: {name:"Displacement", type:"vec3"}
+---
+#version $Version:assign$
+```{name:"vshader", type:"text", visible:false}
+#version 130
+
+#if (__VERSION__ > 120)
+# define IN in
+# define OUT out
+# define texture1D texture
+# define texture2D texture
+# define texture3D texture
+#else
+# define IN attribute
+# define OUT varying
+#endif
+
+IN vec3 Position;
+IN vec3 Normal;
+IN vec4 Color;
+OUT vec3 vPosition;
+OUT vec3 vWorldPosition;
+OUT vec2 vScreenPosition;
+OUT vec3 vWorldNormal;
+OUT vec3 vNormal;
+OUT vec3 vObjectPosition;
+OUT vec4 vColor;
+
+uniform mat4 world;
+uniform mat4 view;
+uniform mat4 proj;
+uniform vec3 vCamPos;
+
+$all Declaration: vshader,declaration$
+
+void main(){
+  vObjectPosition = Position;
+  vWorldPosition = ( world * vec4( vObjectPosition, 1 )).xyz;
+  vPosition = ( view * vec4( vWorldPosition, 1 )).xyz;
+  vWorldNormal = ( world * vec4( Normal.xyz, 0 )).xyz;
+  vNormal = ( view * vec4( vWorldNormal.xyz, 0 )).xyz;
+  vColor = Color;
+$all Initialization: vshader,initialization$
+  vec3 displace = $Displacement:vshader,assign$;
+  vObjectPosition = vObjectPosition.xyz + displace;
+  vPosition = ( view * world * vec4( vObjectPosition, 1 )).xyz;
+  vec4 ScreenPosition = proj * vec4( vPosition, 1 );
+  gl_Position = ScreenPosition;
+  vScreenPosition = ( ScreenPosition / ScreenPosition.w ).xy;
+}
+```
+
+```{name:"fshader", type:"text", visible:false}
+#version 130
+
+#if (__VERSION__ > 120)
+# define IN in
+# define OUT out
+#else
+# define IN varying
+# define OUT  
+#endif
+
+uniform mat4 world;
+uniform mat4 view;
+uniform mat4 proj;
+uniform vec3 vCamPos;
+
+
+IN vec3 vPosition;
+IN vec3 vWorldPosition;
+IN vec2 vScreenPosition;
+IN vec3 vNormal;
+IN vec3 vWorldNormal;
+IN vec3 vObjectPosition;
+IN vec4 vColor;
+
+
+$all Declaration: fshader,declaration$
+
+void main(){
+$all Initialization: fshader,initialization$
+  vec4 color = $Color: fshader,assign$;
+  
+  gl_FragColor = color;
+}
+```
+
+---
+node: output_canvas
+input: {name:"Version", type:"int", visible:false}
+input: {name:"Color", type:"color4", default:"1,1,1,1"}
+input: {name:"ClipRect", type:"vec4", default:"0,0,400,400"}
+---
+#version $Version:assign$
+```{name:"vshader", type:"text", visible:false}
+#version 130
+
+#if (__VERSION__ > 120)
+# define IN in
+# define OUT out
+#else
+# define IN attribute
+# define OUT varying
+#endif
+
+IN vec4 Position;
+IN vec4 Color;
+OUT vec4 vPosition;
+OUT vec4 vColor;
+
+uniform mat4 view;
+uniform mat4 proj;
+
+$all Library: vshader,library$
+
+$all Declaration: vshader,library$
+
+void main(){
+  vPosition = view * Position;
+  vColor = Color;
+$all Initialization: vshader,initialization$
+  gl_Position = proj * vPosition;
+}
+```
+
+```{name:"fshader", type:"text", visible:false}
+#version 130
+
+#if (__VERSION__ > 120)
+# define IN in
+# define OUT out
+#else
+# define IN varying
+# define OUT  
+#endif
+
+uniform mat4 proj;
+
+
+IN vec4 vPosition;
+IN vec4 vColor;
+
+$all Library: fshader,library$
+
+$all Declaration: fshader,library$
+
+void main(){
+$all Initialization: fshader,initialization$
+  vec4 ClipRect = $ClipRect:assign$;
+  float clip = 1-clamp( 0, 1, dot( vec2( 1 ), step( ClipRect.zw, vPosition.xy )));
+  clip *= 1-clamp( 0, 1, dot( vec2( 1 ), 1-step( ClipRect.xy, vPosition.xy )));
+  gl_FragColor = clip * $Color: fshader,assign$;
+}
+```

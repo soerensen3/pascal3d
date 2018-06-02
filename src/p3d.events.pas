@@ -24,10 +24,10 @@ uses
   ;
 
 {$DEFINE INTERFACE}
-{$INCLUDE p3dlogging.inc}
-{$INCLUDE p3dinput.inc}
-{$INCLUDE p3dwindow.inc}
-{$INCLUDE p3dapplication.inc}
+{$INCLUDE p3d.events.logging.inc}
+{$INCLUDE p3d.events.input.inc}
+{$INCLUDE p3d.events.window.inc}
+{$INCLUDE p3d.events.application.inc}
 {$UNDEF INTERFACE}
 
 var
@@ -45,10 +45,10 @@ implementation
 uses p3d.core;
 
 {$DEFINE IMPLEMENTATION}
-{$INCLUDE p3dlogging.inc}
-{$INCLUDE p3dinput.inc}
-{$INCLUDE p3dwindow.inc}
-{$INCLUDE p3dapplication.inc}
+{$INCLUDE p3d.events.logging.inc}
+{$INCLUDE p3d.events.input.inc}
+{$INCLUDE p3d.events.window.inc}
+{$INCLUDE p3d.events.application.inc}
 {$UNDEF IMPLEMENTATION}
 
 
@@ -74,6 +74,8 @@ begin
     FreeAndNil( P3DApplication );
   if ( Assigned( P3DEventsContainers )) then
     FreeAndNil( P3DEventsContainers );
+  if ( Assigned( P3DLog )) then
+    FreeAndNil( P3DLog );
 end;
 
 finalization

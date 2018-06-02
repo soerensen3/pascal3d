@@ -6,9 +6,10 @@ type
 
   { TP3DShaderNodeSocketShader }
 
-  TP3DShaderNodeSocketShader = class ( TP3DShaderNodeSocket )
+  TP3DShaderNodeSocketString = class ( TP3DNodeSocketClone )
     protected
       FValue: String;
+
       class function GetSocketType: String; static; override;
 
     public
@@ -19,7 +20,7 @@ type
 
   { TP3DShaderNodeSocketInt }
 
-  TP3DShaderNodeSocketInt = class ( TP3DShaderNodeSocket )
+  TP3DNodeSocketInt = class ( TP3DNodeSocketClone )
     protected
       FValue: Integer;
 
@@ -28,8 +29,7 @@ type
       procedure SetValue(AValue: Integer);
 
     public
-      constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection ); override;
-      destructor Destroy; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       function GetOutput( Buffer: TP3DShaderBuffer ): String; override;
 
@@ -38,7 +38,7 @@ type
 
   { TP3DShaderNodeSocketFloat }
 
-  TP3DShaderNodeSocketFloat = class ( TP3DShaderNodeSocket )
+  TP3DShaderNodeSocketFloat = class ( TP3DNodeSocketClone )
     protected
       FValue: Single;
 
@@ -47,8 +47,7 @@ type
       procedure SetValue(AValue: Single);
 
     public
-      constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection ); override;
-      destructor Destroy; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       function GetOutput( Buffer: TP3DShaderBuffer ): String; override;
 
@@ -58,7 +57,7 @@ type
 
   { TP3DShaderNodeSocketVector }
 
-  TP3DShaderNodeSocketVector = class ( TP3DShaderNodeSocket )
+  TP3DShaderNodeSocketVector = class ( TP3DNodeSocketClone )
     protected
       FNumFields: Integer;
       FValue: TVec4;
@@ -66,8 +65,7 @@ type
       procedure SetValue(AValue: TVec4);
 
     public
-      constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection ); override;
-      destructor Destroy; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       class function GetSocketType: String; static; override;
       function GetOutput( Buffer: TP3DShaderBuffer ): String; override;
@@ -78,7 +76,7 @@ type
 
   { TP3DShaderNodeSocketMatrix }
 
-  TP3DShaderNodeSocketMatrix = class ( TP3DShaderNodeSocket )
+  TP3DShaderNodeSocketMatrix = class ( TP3DNodeSocketClone )
     protected
       FNumFields: Integer;
       FValue: TMat4;
@@ -86,8 +84,7 @@ type
       procedure SetValue(AValue: TMat4);
 
     public
-      constructor Create( ANode: TP3DNode; ADirecton: TP3DNodeSocketDirection ); override;
-      destructor Destroy; override;
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       class function GetSocketType: String; static; override;
 
@@ -115,25 +112,23 @@ begin
   FValue:=AValue;
 end;
 
-constructor TP3DShaderNodeSocketVector.Create(ANode: TP3DNode;
-			ADirecton: TP3DNodeSocketDirection);
+constructor TP3DShaderNodeSocketVector.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited;
+  inherited Create( AOwner );
   NumFields:= 4;
   Value:= vec4( 0, 0, 0, 1 );
 end;
 
-destructor TP3DShaderNodeSocketVector.Destroy;
-begin
-  inherited Destroy;
-end;
-
 function TP3DShaderNodeSocketVector.GetOutput(Buffer: TP3DShaderBuffer): String;
+var
+  n: Integer;
 begin
-  if (( Direction = nsdOutput ) or Assigned( Connected )) then
-    Result:= inherited GetOutput(Buffer)
+  if (( Direction = nsdOutput ) or Assigned( CloneSocket.Connected )) then
+    Result:= inherited GetOutput( Buffer, CloneSocket )
+  else if ( Buffer.Defines.Find( 'assign', n ) or Buffer.Defines.Find( 'main', n )) then
+    Result:= 'vec4( ' + Value.ToString( 4 ) + ')'
   else
-    Result:= 'vec4( ' + Value.ToString(-1) + ')';
+    Result:= '';
 end;
 
 { TP3DShaderNodeSocketFloat }
@@ -149,22 +144,18 @@ begin
   FValue:=AValue;
 end;
 
-constructor TP3DShaderNodeSocketFloat.Create(ANode: TP3DNode;
-  ADirecton: TP3DNodeSocketDirection);
+constructor TP3DShaderNodeSocketFloat.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create(ANode, ADirecton);
+  inherited Create( AOwner );
   Value:= 0;
 end;
 
-destructor TP3DShaderNodeSocketFloat.Destroy;
-begin
-  inherited Destroy;
-end;
-
 function TP3DShaderNodeSocketFloat.GetOutput(Buffer: TP3DShaderBuffer): String;
+var
+  n: Integer;
 begin
-  if (( Direction = nsdOutput ) or Assigned( Connected )) then
-    Result:= inherited GetOutput(Buffer)
+  if (( Direction = nsdOutput ) or Assigned( CloneSocket.Connected )) then
+    Result:= inherited GetOutput( Buffer, CloneSocket )
   else
     Result:= FloatToStr( Value ) + 'f';
 end;
@@ -182,24 +173,23 @@ begin
   FValue:=AValue;
 end;
 
-constructor TP3DShaderNodeSocketInt.Create(ANode: TP3DNode;
-  ADirecton: TP3DNodeSocketDirection);
+constructor TP3DShaderNodeSocketInt.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create(ANode, ADirecton);
+  inherited Create( AOwner );
   Value:= 0;
 end;
 
-destructor TP3DShaderNodeSocketInt.Destroy;
-begin
-  inherited Destroy;
-end;
-
 function TP3DShaderNodeSocketInt.GetOutput(Buffer: TP3DShaderBuffer): String;
+var
+  n: Integer;
 begin
-  if (( Direction = nsdOutput ) or Assigned( Connected )) then
-    Result:= inherited GetOutput(Buffer)
+  if ( Buffer.Defines.Find( 'assign', n ) or Buffer.Defines.Find( 'main', n )) then
+    if (( Direction = nsdOutput ) or Assigned( CloneSocket.Connected )) then
+      Result:= inherited GetOutput( Buffer, CloneSocket )
+    else
+      Result:= IntToStr( Value )
   else
-    Result:= IntToStr( Value );
+    Result:= '';
 end;
 
 { TP3DShaderNodeSocketMatrix }
@@ -215,25 +205,24 @@ begin
   FValue:=AValue;
 end;
 
-constructor TP3DShaderNodeSocketMatrix.Create(ANode: TP3DNode;
-  ADirecton: TP3DNodeSocketDirection);
+constructor TP3DShaderNodeSocketMatrix.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create(ANode, ADirecton);
+  inherited Create( AOwner );
   NumFields:= 4;
   Value:= Mat4Identity;
 end;
 
-destructor TP3DShaderNodeSocketMatrix.Destroy;
-begin
-  inherited Destroy;
-end;
-
 function TP3DShaderNodeSocketMatrix.GetOutput(Buffer: TP3DShaderBuffer): String;
+var
+  n: Integer;
 begin
-  if (( Direction = nsdOutput ) or Assigned( Connected )) then
-    Result:= inherited GetOutput(Buffer)
+  if ( Buffer.Defines.Find( 'assign', n ) or Buffer.Defines.Find( 'main', n )) then
+    if (( Direction = nsdOutput ) or Assigned( CloneSocket.Connected )) then
+      Result:= inherited GetOutput( Buffer, CloneSocket )
+    else
+      Result:= 'mat4( ' + Value.ToString(False, 8) + ')'
   else
-    Result:= 'mat4( ' + Value.ToString(False, 8) + ')';
+    Result:= '';
 end;
 
 

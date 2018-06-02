@@ -1,0 +1,42 @@
+---
+node: test
+input: { name:"test1", type:"text" }
+---
+
+```{ name:"test_output", type:"shader" }
+this is a test output!
+
+Here we want test1 to appear:
+$test1:assign$
+
+Should list test declaration
+$all declaration:assign$
+```
+
+
+---
+node: test_input1
+input: { name:"nested_input", type:"text" }
+---
+
+```{ name:"declaration", type:"shader"}
+Test Declaration
+```
+
+```{ name:"test_output", type:"shader"}
+Test Input 1 Works!
+$nested_input:assign$
+```
+
+---
+node: test_input2_nested
+---
+
+```{ name:"declaration", type:"shader" }
+Nested Declaration
+```
+
+```{ name:"test_output" }
+Test Input 2 Works!
+
+```

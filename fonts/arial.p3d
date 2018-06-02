@@ -2,8 +2,6 @@
   "ClassName" : "TP3DLibrary",
   "Cameras" : [
   ],
-  "Joints" : [
-  ],
   "Lights" : [
   ],
   "Materials" : [
@@ -23,7 +21,7 @@
       "Filtering" : "tfLinear",
       "FilteringMipMap" : "tfLinear",
       "MipMap" : 1,
-      "File" : "..\/..\/fonts\/arial.png"
+      "File" : "arial.png"
     }
   ],
   "Armatures" : [
@@ -36,7 +34,7 @@
       "Name" : "arial",
       "SizeFactor" : 1.0498050000000000E-001,
       "MipMapLoadBias" : 0,
-      "Texture" : "Textures[ \"P3DTexture1\" ]",
+      "Texture" : ".Textures[ \"P3DTexture1\" ]",
       "Margin" : 2.3437500000000000E-002,
       "Letters" : [
         {

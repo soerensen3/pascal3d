@@ -1,9 +1,6 @@
 {
   "ClassName" : "TP3DLibrary",
-  "FileWatch" : "fonts\/DejaVuSans.p3d",
   "Cameras" : [
-  ],
-  "Joints" : [
   ],
   "Lights" : [
   ],
@@ -24,7 +21,7 @@
       "Filtering" : "tfLinear",
       "FilteringMipMap" : "tfLinear",
       "MipMap" : 1,
-      "File" : "fonts\/DejaVuSans.png"
+      "File" : "DejaVuSans.png"
     }
   ],
   "Armatures" : [
@@ -37,7 +34,7 @@
       "Name" : "DejaVuSans",
       "SizeFactor" : 5.5175780000000001E-002,
       "MipMapLoadBias" : 0,
-      "Texture" : "Textures[ \"P3DTexture1\" ]",
+      "Texture" : ".Textures[ \"P3DTexture1\" ]",
       "Margin" : 2.3437500000000000E-002,
       "Letters" : [
         {
