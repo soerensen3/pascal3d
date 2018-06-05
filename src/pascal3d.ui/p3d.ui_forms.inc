@@ -78,10 +78,10 @@ begin
   if ( Borderless ) then
     exit;
   Canvas.RenderRect( vec2( 0, 0 ), WidthHeight, Color[ cp300 ]);
-  Canvas.RenderLine( vec2( 0, 1 ), vec2( CanvasRect.Width, 1 ), Color[ cp200 ]);
-  Canvas.RenderLine( vec2( 0, CanvasRect.Height ), CanvasRect.WidthHeight, Color[ cp400 ]);
+  Canvas.RenderLine( vec2( 0, 1 ), vec2( ClippedRect.Width, 1 ), Color[ cp200 ]);
+  Canvas.RenderLine( vec2( 0, ClippedRect.Height ), ClippedRect.WidthHeight, Color[ cp400 ]);
 
-  Canvas.RenderRect( vec2( 0, 3 ), vec2( CanvasRect.Width, FCaptionTxt.Height + 3 ), Color[ cp800 ]);
+  Canvas.RenderRect( vec2( 0, 3 ), vec2( ClippedRect.Width, FCaptionTxt.Height + 3 ), Color[ cp800 ]);
   Canvas.GetValidText( Caption, FCaptionTxt,
     P3DFontManager[ Canvas.Font.Name, Canvas.Font.Size ]);
   if ( not Assigned( FCaptionTxt  )) then
@@ -132,7 +132,7 @@ begin
   if ( mb1 and ( gcisMouseOver in InputState )) then
     begin
       BringToFront;
-      FMouseDownPos:= vec2( X, Y );//P3DUI.Viewer.Mouse - TopLeft;
+      FMouseDownPos:= UIViewer.Mouse - TopLeft;
     end;
 end;
 
@@ -140,9 +140,9 @@ procedure TP3DForm.MouseMove(X, Y: Float);
 begin
   inherited MouseMove( X, Y );
 
-  P3DApplication.MainWindow.Title:= vec2( X, Y ).ToString() + ' / ' + UIViewer.Mouse.ToString() + ' - [' + UIViewer.ViewRect.ToString + ']';
+  P3DApplication.MainWindow.Title:= vec2( X, Y ).ToString() + ' (' + FMouseDownPos.ToString() + ') / ' + UIViewer.Mouse.ToString() + ' - [' + UIViewer.ViewRect.ToString + ']';
   if ( gcisMouseBtn1Down in InputState ) then begin
-    MoveWindowTo( vec2( X, Y ) - FMouseDownPos {P3DUI.Viewer.Mouse - FMouseDownPos - UIViewer.Position}{ - P3DUIViewerActive.Position });
+    MoveWindowTo( {vec2( X, Y ) - FMouseDownPos }UIViewer.Mouse - FMouseDownPos{ - UIViewer.Position} );//}{ - P3DUIViewerActive.Position });
     //P3DApplication.MainWindow.Title:= APos.ToString();
   end;
 end;

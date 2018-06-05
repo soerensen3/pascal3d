@@ -210,6 +210,7 @@ type
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       procedure Paint(); override;
+      procedure Logic(); override;
 
       procedure KeyboardAction(); override;
       procedure MouseAction(X, Y: Float; mb1, mb2, mb3, dmb1, dmb2, dmb3: Boolean); override;
@@ -667,7 +668,7 @@ begin
   BorderColor:= vec4( 0, 0, 0, 0.2 );
   FColorPicker:= TP3DStreamablePointer.Create( 'ColorPicker', TP3DColorRGBAPicker );
   Properties.Add( FColorPicker );
-  ColorPicker:= TP3DColorRGBAPicker.Create();
+  ColorPicker:= TP3DColorRGBAPicker.Create( UIViewer.Controls );
   ColorPicker.Visible:= False;
 end;
 
@@ -684,8 +685,9 @@ end;
 
 procedure TP3DColorRGBAComboBox.DropDown;
 begin
-  ColorPicker.TopLeft:= min( UIViewer.ScreenCanvas.WidthHeight - ColorPicker.WidthHeight, vec2( CanvasRect.Left, CanvasRect.Top + Height ));
+  ColorPicker.TopLeft:= min( UIViewer.ScreenCanvas.WidthHeight - ColorPicker.WidthHeight, vec2( ClippedRect.Left, ClippedRect.Top + Height ));
   ColorPicker.Visible:= True;
+  ColorPicker.BringToFront;
 end;
 
 procedure TP3DColorRGBAComboBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float);
@@ -702,8 +704,8 @@ begin
   inherited MouseAction(X, Y, mb1, mb2, mb3, dmb1, dmb2, dmb3);
   if ( ColorPicker.Visible ) then
     begin
-      r:= P3DRectEx( min( ColorPicker.CanvasRect.TopLeft, CanvasRect.TopLeft ) - 10,
-                     max( ColorPicker.CanvasRect.BottomRight, CanvasRect.BottomRight ) + 10 );
+      r:= P3DRectEx( min( ColorPicker.ClippedRect.TopLeft, ClippedRect.TopLeft ) - 10,
+                     max( ColorPicker.ClippedRect.BottomRight, ClippedRect.BottomRight ) + 10 );
       if ( not r.PtInRect( vec2( UIViewer.MouseX, UIViewer.MouseY ))) then
         ColorPicker.Visible:= False;
     end;
@@ -899,7 +901,7 @@ procedure TP3DPanel.Draw;
 begin
   inherited Draw;
   if ( Color.a <> 0 ) then
-    Canvas.RenderRect( vec2( 0 ), CanvasRect.WidthHeight, Color );
+    Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight, Color );
 end;
 
 { TP3DFrame }
@@ -911,8 +913,8 @@ end;
 
 procedure TP3DFrame.KeyboardAction();
 begin
-  UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
-  UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position + CanvasRect.TopLeft * P3DUIViewerActive.Zoom;
+  //UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
+  //UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position + ClippedRect.TopLeft * P3DUIViewerActive.Zoom;
   UIViewerFrame.Activate;
   inherited KeyboardAction();
   UIViewerFrame.Deactivate;
@@ -922,8 +924,8 @@ procedure TP3DFrame.MouseAction(X, Y: Float; mb1, mb2, mb3, dmb1, dmb2, dmb3: Bo
 var
   p: TVec2;
 begin
-  UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
-  UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position + CanvasRect.TopLeft * P3DUIViewerActive.Zoom;
+  //UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
+  //UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position + ClippedRect.TopLeft * P3DUIViewerActive.Zoom;
   UIViewerFrame.Activate;
   //p:= UIViewerFrame.TransformCoord( vec2( X, Y ));
   inherited MouseAction( X, Y, {X - Position.X, Y - Position.Y, }mb1, mb2, mb3, dmb1, dmb2, dmb3);
@@ -936,8 +938,8 @@ function TP3DFrame.ChildrenMouseRay(X, Y: Float; const Recurse: Boolean): TP3DGr
 var
   p: TVec2;
 begin
-  UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
-  UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position + CanvasRect.TopLeft * P3DUIViewerActive.Zoom;
+  //UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
+  //UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position + ClippedRect.TopLeft * P3DUIViewerActive.Zoom;
 
   p:= UIViewerFrame.TransformCoord( vec2( X, Y ));
   //P3DApplication.MainWindow.Title:= vec2( X, Y ).ToString() + ' => ' + p.ToString();
@@ -950,15 +952,13 @@ begin
   FUIViewerFrame:= TP3DStreamableContainer.Create( 'UIViewerFrame', TP3DUIViewerBase );
   Properties.Add( FUIViewerFrame );
   TP3DUIViewerBase.Create( FUIViewerFrame );
+  UIViewerFrame.Controls:= Controls;
   Zoom:= 1.0;
   Controls.FUIViewer.AsValue:= UIViewerFrame;
 end;
 
 procedure TP3DFrame.Paint();
 begin
-  UIViewerFrame.ViewRect:= CanvasRect * UIViewer.Zoom - UIViewer.Position;
-  UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
-  UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position + CanvasRect.TopLeft * P3DUIViewerActive.Zoom;
   UIViewerFrame.Activate;
   UIViewerFrame.PrepareRender;
   //inherited Paint();
@@ -967,6 +967,16 @@ begin
   P3DViewports.Pop;
   UIViewerFrame.Deactivate;
   //UIViewer.Render;
+end;
+
+procedure TP3DFrame.Logic();
+begin
+  inherited Logic();
+  UIViewerFrame.ViewRect:= ClippedRect * UIViewer.Zoom - UIViewer.Position;
+  UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
+  UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position {+ ClippedRect.TopLeft * UIViewer.Zoom};
+  Controls.ClipRect:= UIViewerFrame.ViewRect - Position;
+  Controls.PageRect:= P3DRect( vec2( 0 ), UIViewerFrame.ViewRect.WidthHeight );
 end;
 
 

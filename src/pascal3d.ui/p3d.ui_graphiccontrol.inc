@@ -30,14 +30,17 @@ TP3DNotifyEvent = procedure ( Sender: TP3DGraphicControl ) of object;
 TP3DUI = class;
 TP3DUIViewerBase = class;
 
+TP3DGraphicControlUpdateRequest = ( urNone, urClippedRect, urChildren, urParentCtrls );
+
 TP3DGraphicControl = class ( TP3DNamedStreamable )
   private
-    FCanvasRect: TP3DRect;
-    FCanvasRectScreen: TP3DRect;
+    FClippedRect: TP3DRect;
+    FClippedRectScreen: TP3DRect;
     FMargin: TVec4;
     FHideChildren: Boolean;
     FPointerTag: Pointer;
     FRect: TP3DRect;
+    FUpdateRequested: TP3DGraphicControlUpdateRequest;
 
     function GetBottomRight: TVec2; virtual;
     function GetHeight: Single; virtual;
@@ -56,6 +59,7 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     procedure SetPageModeX(AValue: TP3DPageMode);
     procedure SetPageModeY(AValue: TP3DPageMode);
     procedure SetParentCtrl(AValue: TP3DGraphicControlContainerList);
+    procedure SetRect(AValue: TP3DRect);
     procedure SetTop(AValue: Single); virtual;
     procedure SetMargin(AValue: TVec4); virtual;
     procedure SetTopLeft(AValue: TVec2); virtual;
@@ -90,7 +94,7 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     FMaxWidth: Float;
     FMinHeight: Float;
     FMinWidth: Float;
-    FBaseCanvasRect: TP3DRect;
+    FBaseClippedRect: TP3DRect;
     FParent: TP3DStreamablePointer;
     FUIViewer: TP3DStreamablePointer;
     //Various getters and setters
@@ -106,6 +110,7 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     procedure SetParent( Value: TP3DGraphicControl);
     procedure SetScroll(AValue: TVec2);
     procedure SetVisible( Value: Boolean ); virtual;
+    procedure RequestUpdate( AUpdateRequest: TP3DGraphicControlUpdateRequest );
 
     procedure DragCancel( Sender: TP3DGraphicControl; X, Y: Float ); virtual; //Cancel dragging.
     procedure DragDrop( Sender, Source: TP3DGraphicControl; X, Y: Float; var Accept: Boolean ); virtual; //This procedure is called internally when the mouse is released on the control during dragging. It can be overriden to make this control a drag target.
@@ -118,7 +123,7 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     function CalculatePosition( AMaxSize: TVec2 ): TVec2;
     function CalculatePageSize(): TVec2;
     function CalculateWidthHeight( AMaxSize: TVec2 ): TVec2;
-    function CalculateCanvasRect(): TP3DRect;}
+    function CalculateClippedRect(): TP3DRect;}
 
   public
     constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
@@ -150,9 +155,9 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     class function IsFocusControl(): Boolean; virtual;
     class function HasShadow(): Boolean; virtual;
 
-    property Rect: TP3DRect read FRect write FRect;
-    property CanvasRect: TP3DRect read FCanvasRect write FCanvasRect;
-    property CanvasRectScreen: TP3DRect read FCanvasRectScreen write FCanvasRectScreen;
+    property Rect: TP3DRect read FRect write SetRect;
+    property ClippedRect: TP3DRect read FClippedRect write FClippedRect;
+    property ClippedRectScreen: TP3DRect read FClippedRectScreen write FClippedRectScreen;
     property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
     property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
     property WidthHeight: TVec2 read GetWidthHeight write SetWidthHeight;
@@ -202,7 +207,7 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     property OnMouseUp: TP3DGUIMouseClick read FOnMouseUp write FOnMouseUp;
     property OnParentRealign: TNotifyEvent read FOnParentRealign write FOnParentRealign;
     property Cursor: TP3DCursor read FCursor write SetCursor;
-    property NeedsUpdate: Boolean read FNeedsUpdate write SetNeedsUpdate;
+    property UpdateRequested: TP3DGraphicControlUpdateRequest read FUpdateRequested write FUpdateRequested;
 end;
 
 {$ENDIF}
@@ -279,14 +284,14 @@ end;
 procedure TP3DGraphicControl.Draw;
 begin
   if ( Assigned( FOnDraw )) then
-    FOnDraw( Self, CanvasRect.Left, CanvasRect.Top, CanvasRect.Width, CanvasRect.Height );
+    FOnDraw( Self, ClippedRect.Left, ClippedRect.Top, ClippedRect.Width, ClippedRect.Height );
 end;
 
 procedure TP3DGraphicControl.SetMargin(AValue: TVec4);
 begin
   if FMargin=AValue then Exit;
   FMargin:=AValue;
-  NeedsUpdate:= True;
+  ParentCtrl.UpdateControls;
 end;
 
 function TP3DGraphicControl.GetBottomRight: TVec2;
@@ -349,30 +354,31 @@ end;
 
 procedure TP3DGraphicControl.SetBottomRight(AValue: TVec2);
 begin
-  Rect.BottomRight:= AValue;
-  NeedsUpdate:= True;
+  Rect:= P3DRectEx( Rect.TopLeft, AValue );
+  //NeedsUpdate:= True;
 end;
 
 procedure TP3DGraphicControl.SetHeight(AValue: Single);
 begin
-  Rect.Height:= AValue;
-  NeedsUpdate:= True;
+  Rect:= P3DRect( Rect.Left, Rect.Top, Rect.Width, AValue );
 end;
 
 procedure TP3DGraphicControl.SetLeft(AValue: Single);
 begin
-  Rect.Left:= AValue;
-  NeedsUpdate:= True;
+  Rect:= P3DRect( AValue, Rect.Top, Rect.Width, Rect.Height );
+  //NeedsUpdate:= True;
 end;
 
 procedure TP3DGraphicControl.SetPageModeX(AValue: TP3DPageMode);
 begin
   Controls.PageModeX:= AValue;
+  RequestUpdate( urChildren );
 end;
 
 procedure TP3DGraphicControl.SetPageModeY(AValue: TP3DPageMode);
 begin
   Controls.PageModeY:= AValue;
+  RequestUpdate( urChildren );
 end;
 
 procedure TP3DGraphicControl.SetParentCtrl(AValue: TP3DGraphicControlContainerList);
@@ -380,22 +386,47 @@ begin
   Owner:= AValue;
 end;
 
+procedure TP3DGraphicControl.SetRect(AValue: TP3DRect);
+var
+  OldRect: TP3DRect;
+  Control: TP3DGraphicControl;
+begin
+  if FRect=AValue then Exit;
+
+  OldRect:= FRect;
+
+  FRect:= AValue;
+
+  if ( OldRect.WidthHeight <> Rect.WidthHeight ) then
+    RequestUpdate( urParentCtrls )
+  else if ( OldRect.TopLeft <> Rect.TopLeft ) then
+    RequestUpdate( urChildren )
+  Else
+    Exit;
+
+  RequestUpdate( urClippedRect );
+end;
+
 procedure TP3DGraphicControl.SetTopLeft(AValue: TVec2);
 begin
-  Rect.TopLeft:= AValue;
-  NeedsUpdate:= True;
+  Rect:= P3DRect( AValue, Rect.WidthHeight );
+end;
+
+procedure TP3DGraphicControl.RequestUpdate(AUpdateRequest: TP3DGraphicControlUpdateRequest);
+begin
+  if ( UpdateRequested >= AUpdateRequest ) then
+    exit;
+  FUpdateRequested:= AUpdateRequest;
 end;
 
 procedure TP3DGraphicControl.SetWidth(AValue: Single);
 begin
-  Rect.Width:= AValue;
-  NeedsUpdate:= True;
+  Rect:= P3DRect( Rect.Left, Rect.Top, AValue, Rect.Height );
 end;
 
 procedure TP3DGraphicControl.SetWidthHeight(AValue: TVec2);
 begin
-  Rect.WidthHeight:= AValue;
-  NeedsUpdate:= True;
+    Rect:= P3DRect( Rect.TopLeft, AValue );
 end;
 
 function TP3DGraphicControl.GetUIViewer: TP3DUIViewerBase;
@@ -439,7 +470,7 @@ end;
 
 procedure TP3DGraphicControl.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float);
 begin
-  if (( X >= 0 ) and ( Y >= 0 ) and ( X <= CanvasRect.Width ) and ( Y <= CanvasRect.Height )) then
+  if (( X >= 0 ) and ( Y >= 0 ) and ( X <= ClippedRect.Width ) and ( Y <= ClippedRect.Height )) then
     if ( Assigned( FOnMouseClick )) then
       FOnMouseClick( Self, mb1, mb2, mb3, X, Y );
   if ( not Assigned( Self )) then
@@ -586,8 +617,8 @@ var
 begin
   if FInputState=AValue then Exit;
 
-  mx:= UIViewer.MouseX - CanvasRect.Left;
-  my:= UIViewer.MouseY - CanvasRect.Top;
+  mx:= UIViewer.MouseX - ClippedRect.Left;
+  my:= UIViewer.MouseY - ClippedRect.Top;
 
   DIS:= AValue >< InputState;
 
@@ -616,8 +647,8 @@ end;
 
 procedure TP3DGraphicControl.SetTop(AValue: Single);
 begin
-  Rect.Top:= AValue;
-  NeedsUpdate:= True;
+  Rect:= P3DRect( Rect.Left, AValue, Rect.Width, Rect.Height );
+  //NeedsUpdate:= True;
 end;
 
 
@@ -631,36 +662,36 @@ var
   {$ENDIF}
   p: TVec2;
 begin
-  if ( CanvasRect.Width * CanvasRect.Height = 0 ) then
+  if ( ClippedRect.Width * ClippedRect.Height = 0 ) then
     exit;
 
   if ( not Assigned( UIViewer )) then
     exit;
 
-  CanvasRectScreen:= CanvasRect;
-  CanvasRectScreen:= CanvasRectScreen * UIViewer.Zoom - UIViewer.Position;
+  ClippedRectScreen:= ClippedRect;
+  ClippedRectScreen:= ClippedRectScreen * UIViewer.Zoom - UIViewer.Position;
   if ( Assigned( Parent ) and ( Parent.UIViewer = UIViewer )) then
-    CanvasRectScreen:= CanvasRectScreen.Clip( Parent.CanvasRectScreen );
+    ClippedRectScreen:= ClippedRectScreen.Clip( Parent.ClippedRectScreen );
 //  else
-//    CanvasRectScreen:= CanvasRectScreen.Clip( UIViewer.ViewRect );
+//    ClippedRectScreen:= ClippedRectScreen.Clip( UIViewer.ViewRect );
 
-  Canvas.Rect:= CanvasRectScreen;
+  Canvas.Rect:= ClippedRectScreen;
   Canvas.Zoom:= UIViewer.Zoom;
 
   if ( HasShadow()) then
     begin
-      p:= CanvasRect.TopLeft + 2;
+      p:= ClippedRect.TopLeft + 2;
       UIViewer.ScreenCanvas.Lock;
-      UIViewer.ScreenCanvas.RenderRectShadow( p, p + CanvasRect.WidthHeight, 10, vec4( 0, 0, 0, 0.05 ));
+      UIViewer.ScreenCanvas.RenderRectShadow( p, p + ClippedRect.WidthHeight, 10, vec4( 0, 0, 0, 0.05 ));
       UIViewer.ScreenCanvas.Unlock();
     end;
 
   OldScroll:= Canvas.Scroll;
 
-  Canvas.Scroll:= -( Controls.FinalScroll + ( 1 / UIViewer.Zoom ) * ( Canvas.Rect.TopLeft - CanvasRectScreen.TopLeft ));
+  Canvas.Scroll:= -( Controls.FinalScroll + ( 1 / UIViewer.Zoom ) * ( Canvas.Rect.TopLeft - ClippedRectScreen.TopLeft ));
   Canvas.Lock;
   //if ( Assigned( Parent )) then
-  //  R:= R.Clip( Parent.CanvasRect );
+  //  R:= R.Clip( Parent.ClippedRect );
 
   //Canvas.ScreenColor:= vec4( 1 * Ord( gcisMouseBtn1Down in InputState ), 1 * Ord( gcisMouseBtn2Down in InputState ), 1 * Ord( gcisMouseBtn3Down in InputState ), 0.25 + 0.75 * Ord( gcisMouseOver in InputState ) + 0.25 * Ord( gcisMouseOverOccl in InputState ));
 
@@ -670,47 +701,22 @@ begin
   Canvas.Scroll:= OldScroll;
   if ( not HideChildren ) then
     Controls.Render();
-  //UI.ScreenCanvas.Lock;
-  //UI.ScreenCanvas.RenderLineRect( R.TopLeft, R.BottomRight - 1, Red500.Fade( 0.5 ));
-  //UI.ScreenCanvas.Unlock();
-  {$IFDEF DEBUG_GUI}
-  UI.ScreenCanvas.Lock;
-  UI.ScreenCanvas.Font.Size:= 12;
-  UI.ScreenCanvas.Font.Color:= Red300;
-  UI.ScreenCanvas.GetValidText( IntToStr( ParentCtrl.IndexOf( Self )), UI.DebugText );
-  UI.ScreenCanvas.RenderText( UI.DebugText, CanvasRect.TopLeft );
-  UI.ScreenCanvas.Font.Color:= Black;
-  if ( Self = UI.LastMouseOverCtrl ) then
-    begin
-      //UI.ScreenCanvas.RenderRect( vec2( CanvasRect.Left + ClientRect.Left, CanvasRect.Top + ClientRect.Top ), vec2( Canvas.Left + ClientRect.Left + ClientRect.Right, Canvas.Top + ClientRect.Top + ClientRect.Bottom ), vec4( 1, 1, 1, 0.2 ));
-      UI.ScreenCanvas.RenderRect( CanvasRect.TopLeft, CanvasRect.BottomRight, vec4( 0, 0, 0, 0.5 ));
-
-      UI.ScreenCanvas.Font.Size:= 24;
-      UI.ScreenCanvas.GetValidText( Format( '%s [%dx%d]', [ UI.LastMouseOverCtrl.Name, round( UI.LastMouseOverCtrl.Width ), round( UI.LastMouseOverCtrl.Height )]), UI.DebugText );
-      UI.DebugTextPos:= vec2( CanvasRect.Left, CanvasRect.Top + CanvasRect.Height - 20 );
-      UI.ScreenCanvas.RenderLineRect( Controls.PageRect.TopLeft, Controls.PageRect.BottomRight, Red500.Fade( 0.5 ));
-
-      //UI.ScreenCanvas.RenderText( txt, p );
-      //txt.Free;
-    end;
-  for i:= 0 to 2 do
-    if ( Self = UI.LastMouseDownCtrl[ i ]) then
-      begin
-        UI.ScreenCanvas.RenderRect( CanvasRect.TopLeft, CanvasRect.BottomRight, vec4( Ord( i = 0 ), Ord( i = 1 ), Ord( i = 2 ), 0.2 ));
-      end;
-  UI.ScreenCanvas.Unlock();
-  {$ENDIF}
 end;
 
 procedure TP3DGraphicControl.Logic();
 begin
+  case UpdateRequested of
+    urClippedRect: ParentCtrl.UpdateClippedRect( Self, ParentCtrl.ClipRect );
+    urChildren: Controls.UpdateControls;
+    urParentCtrls: ParentCtrl.UpdateControls;
+  end;
   Controls.Logic();
 end;
 
 procedure TP3DGraphicControl.TriggerMouseAction;
 begin
   with P3DInput.Mouse do
-    MouseAction( UIViewer.MouseX - CanvasRect.Left, UIViewer.MouseY - CanvasRect.Top, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
+    MouseAction( UIViewer.MouseX - ClippedRect.Left, UIViewer.MouseY - ClippedRect.Top, Buttons[ 0 ], Buttons[ 1 ], Buttons[ 2 ], DButtons[ 0 ], DButtons[ 1 ], DButtons[ 2 ]);
 end;
 
 {#1
@@ -740,7 +746,7 @@ begin
   if FAlign=AValue then Exit;
   FAlign:=AValue;
   if ( Visible ) then
-    NeedsUpdate:= True;
+    RequestUpdate( urParentCtrls );
 end;
 
 procedure TP3DGraphicControl.SetParent( Value: TP3DGraphicControl );
@@ -749,7 +755,7 @@ begin
     Owner:= Value.Controls
   else if ( UIViewer is TP3DUIViewer ) then
     Owner:= TP3DUIViewer( UIViewer ).Controls;
-  NeedsUpdate:= True;
+  RequestUpdate( urParentCtrls );
 end;
 
 
@@ -759,13 +765,13 @@ begin
     begin
       FVisible:= Value;
       //if ( Align <> alNone ) then
-        NeedsUpdate:= True;
+      RequestUpdate( urParentCtrls );
     end;
 end;
 
 function TP3DGraphicControl.MouseRay(X, Y: Float): Boolean;
 begin
-  Result:= CanvasRect.PtInRect( vec2( X, Y ));
+  Result:= ClippedRect.PtInRect( vec2( X, Y ));
 end;
 
 function TP3DGraphicControl.ChildrenMouseRay(X, Y: Float; const Recurse: Boolean): TP3DGraphicControl;
@@ -786,7 +792,7 @@ end;
 
 procedure TP3DGraphicControl.Realign();
 begin
-
+  FUpdateRequested:= urNone;
 end;
 
 procedure TP3DGraphicControl.DragCancel(Sender: TP3DGraphicControl; X, Y: Float);

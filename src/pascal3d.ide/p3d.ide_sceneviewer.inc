@@ -182,10 +182,10 @@ end;
 procedure TP3DSceneViewer.PushVPClientRect;
 begin
   if ( Borderless ) then
-    P3DViewports.Push( Round( CanvasRect.Left ), Round( P3DViewports.Screen.Height - CanvasRect.Top - CanvasRect.Height ),
-                       Round( CanvasRect.Width ), Round( CanvasRect.Height ))
+    P3DViewports.Push( Round( ClippedRect.Left ), Round( P3DViewports.Screen.Height - ClippedRect.Top - ClippedRect.Height ),
+                       Round( ClippedRect.Width ), Round( ClippedRect.Height ))
   else
-    P3DViewports.Push( Round( CanvasRect.Left + ClientRect.Left ), Round( P3DViewports.Screen.Height - ( CanvasRect.Top + ClientRect.Top ) - Round( ClientRect.Height )),
+    P3DViewports.Push( Round( ClippedRect.Left + ClientRect.Left ), Round( P3DViewports.Screen.Height - ( ClippedRect.Top + ClientRect.Top ) - Round( ClientRect.Height )),
                        Round( ClientRect.Width ), Round( ClientRect.Height ));
 end;
 

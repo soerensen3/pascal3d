@@ -402,13 +402,13 @@ begin
   inherited Draw;
   with ( PresetNormal ) do
     begin
-      Canvas.RenderRect( Controls.PageScrollPixel, CanvasRect.WidthHeight - 1 + Controls.PageScrollPixel, Color[ cp50 ], Color[ cp100 ], Color[ cp100 ], Color[ cp200 ]);
-      Canvas.RenderLineRect( Controls.PageScrollPixel, CanvasRect.WidthHeight - 1 + Controls.PageScrollPixel, FontColor, FontColor, FontColor, FontColor );
-      Canvas.RenderRectShadowInner( Controls.PageScrollPixel, CanvasRect.WidthHeight - 1 + Controls.PageScrollPixel, 2, 5, vec4( Color[ cp900 ].xyz, 0.05 ));
+      Canvas.RenderRect( Controls.PageScrollPixel, ClippedRect.WidthHeight - 1 + Controls.PageScrollPixel, Color[ cp50 ], Color[ cp100 ], Color[ cp100 ], Color[ cp200 ]);
+      Canvas.RenderLineRect( Controls.PageScrollPixel, ClippedRect.WidthHeight - 1 + Controls.PageScrollPixel, FontColor, FontColor, FontColor, FontColor );
+      Canvas.RenderRectShadowInner( Controls.PageScrollPixel, ClippedRect.WidthHeight - 1 + Controls.PageScrollPixel, 2, 5, vec4( Color[ cp900 ].xyz, 0.05 ));
     end;
 
   if ( Focused ) then
-    Canvas.RenderLineRect( vec2( 4 ) + Controls.PageScrollPixel, CanvasRect.WidthHeight - 4 + Controls.PageScrollPixel, vec4( 0.5, 0.5, 0.5, 0.5 ));
+    Canvas.RenderLineRect( vec2( 4 ) + Controls.PageScrollPixel, ClippedRect.WidthHeight - 4 + Controls.PageScrollPixel, vec4( 0.5, 0.5, 0.5, 0.5 ));
 end;
 
 procedure TP3DCustomItemView.OnScroll(Sender: TObject);
@@ -582,7 +582,7 @@ end;
 procedure TP3DTreeView.BeginDrag;
 begin
   inherited BeginDrag();
-  FDragItem:= NodeAtPos( vec2( UIViewer.MouseX, UIViewer.MouseY ) - vec2( CanvasRect.Left, CanvasRect.Top ) + vec2( ScrollBarH.Position, ScrollBarV.Position ));//NodeAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ) + Canvas.Scroll );
+  FDragItem:= NodeAtPos( vec2( UIViewer.MouseX, UIViewer.MouseY ) - vec2( ClippedRect.Left, ClippedRect.Top ) + vec2( ScrollBarH.Position, ScrollBarV.Position ));//NodeAtPos( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) - vec2( Canvas.Left, Canvas.Top ) + Canvas.Scroll );
 end;
 
 procedure TP3DTreeView.DragCancel(Sender: TP3DGraphicControl; X, Y: Float);
@@ -1237,7 +1237,7 @@ end;
 procedure TP3DListView.BeginDrag;
 begin
   inherited BeginDrag;
-  FDragItem:= ItemAtPos( vec2( UIViewer.MouseX, UIViewer.MouseY ) + vec2( ScrollBarH.Position - CanvasRect.Left, ScrollBarV.Position - CanvasRect.Top ) + Canvas.Scroll );
+  FDragItem:= ItemAtPos( vec2( UIViewer.MouseX, UIViewer.MouseY ) + vec2( ScrollBarH.Position - ClippedRect.Left, ScrollBarV.Position - ClippedRect.Top ) + Canvas.Scroll );
 end;
 
 procedure TP3DListView.DragCancel(Sender: TP3DGraphicControl; X, Y: Float);

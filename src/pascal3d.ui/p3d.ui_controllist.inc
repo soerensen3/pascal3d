@@ -34,7 +34,7 @@ TP3DGraphicControlContainerList = class( specialize gP3DNamedStreamableContainer
 
     procedure UpdateControls;
     procedure UpdateControlRect( Control: TP3DGraphicControl; var TargetRect: TP3DRect );
-    procedure UpdateCanvasRect(Control: TP3DGraphicControl; TargetRect: TP3DRect);
+    procedure UpdateClippedRect( Control: TP3DGraphicControl; TargetRect: TP3DRect );
     function UpdatePageSize: TVec2;
     function NeedsUpdate: Boolean;
 
@@ -209,9 +209,9 @@ begin
   Rect:= PageRect;
   Rect.TopLeft:= vec2( 0 );
 
-  FPageSize:= UpdatePageSize; //workaround
+  FPageSize:= UpdatePageSize;
 
-  for Control in Self do //alLeft, alTop
+  for Control in Self do //alLeft, alTop, alRight, alBottom
     if (( Control.Visible ) and ( Control.Align in [ alLeft, alTop, alRight, alBottom, alNone ])) then
       UpdateControlRect( Control, Rect );
 
@@ -219,7 +219,7 @@ begin
     if (( Control.Visible ) and ( Control.Align in [ alLeft, alTop ])) then
       UpdateControlRect( Control, Rect );
 
-  for Control in Self.Reversed() do //alLeft, alBottom;
+  for Control in Self.Reversed() do //alRight, alBottom;
     if (( Control.Visible ) and ( Control.Align in [ alRight, alBottom ])) then
       UpdateControlRect( Control, Rect );}
 
@@ -231,7 +231,7 @@ begin
   for Control in Self do
     if ( Control.Visible ) then
       begin
-        UpdateCanvasRect( Control, ClipRect );
+        UpdateClippedRect( Control, ClipRect );
         Control.Realign();
         Control.FNeedsUpdate:= False;
       end;
@@ -274,7 +274,7 @@ begin
   Control.FClientRect:= P3DRect( 0, 0, Rect.Width, Rect.Height ).Inset( Control.Margin.XY, Control.Margin.ZW ); //#1
 end;
 
-procedure TP3DGraphicControlContainerList.UpdateCanvasRect(Control: TP3DGraphicControl;
+procedure TP3DGraphicControlContainerList.UpdateClippedRect(Control: TP3DGraphicControl;
   TargetRect: TP3DRect);
 var
   ControlRect, CtrlPageRect: TP3DRect;
@@ -294,13 +294,14 @@ begin
       ControlRect.Top:= ControlRect.Top * ratio;
       ControlRect.Height:= ControlRect.Height * ratio;
     end;
+  //if ( Control.UIViewer = UIViewer ) then
   ControlRect.TopLeft:= ControlRect.TopLeft + PageRect.TopLeft - GetPageScrollPixel;// + FFinalScroll; // calculate unclipped screen rect
   Origin:= ControlRect.TopLeft; // store origin for later use
   CtrlPageRect:= P3DRectEx( Origin + Control.Margin.XY, ControlRect.BottomRight - Control.Margin.ZW ); // calculate unclipped screen page rect for controls' childs
 
   if ( Assigned( Parent )) then
     ControlRect:= ControlRect.Clip( TargetRect ); // clip the control to the target rect of the parent to get the controls canvas rect
-  Control.CanvasRect:= ControlRect; // <-- assign the final canvas rect
+  Control.ClippedRect:= ControlRect; // <-- assign the final canvas rect
 
   // assign the canvas scroll if origin is out of target rect
   Control.Controls.FFinalScroll:= abs( ControlRect.TopLeft - Origin );
@@ -308,7 +309,15 @@ begin
     Control.Controls.ClipRect:= CtrlPageRect.Clip( TargetRect ) // <-- assign clipped page rect
   else
     Control.Controls.ClipRect:= CtrlPageRect;
+  if ( Control.Controls.UIViewer <> UIViewer ) then begin
+    CtrlPageRect.TopLeft:= vec2( 0 );
+  end;
+
   Control.Controls.PageRect:= CtrlPageRect; // <-- assign page rect
+  {if ( Control.Controls.UIViewer <> UIViewer ) then begin
+    Control.Controls.ClipRect.TopLeft:= vec2( 0 );
+    Control.Controls.PageRect.TopLeft:= vec2( 0 );
+  end;}
 end;
 
 function TP3DGraphicControlContainerList.UpdatePageSize: TVec2;
@@ -448,7 +457,7 @@ begin
   Result:= nil;
   for i:= Count - 1 downto 0 do // The control on top of the stack is rendered last so this will be the control in front layer
     begin
-      //WriteLn( AsValues[ i ].Name, ' TopLeft: ', AsValues[ i ].CanvasRect.TopLeft.ToString(), 'BottomRight: ', AsValues[ i ].CanvasRect.BottomRight.ToString());
+      //WriteLn( AsValues[ i ].Name, ' TopLeft: ', AsValues[ i ].ClippedRect.TopLeft.ToString(), 'BottomRight: ', AsValues[ i ].ClippedRect.BottomRight.ToString());
     if ( AsValues[ i ].Visible and AsValues[ i ].Enabled ) then
       begin
         Result:= nil;

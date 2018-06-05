@@ -542,18 +542,18 @@ begin
         Preset:= PresetHover
       else
         Preset:= PresetNormal;
-      Canvas.RenderRect( vec2( 0 ), CanvasRect.WidthHeight - 1, Preset.Color[ cp100 ]);
-      Canvas.RenderRectShadowInner( vec2( 0 ), CanvasRect.WidthHeight, 2, 5, vec4( 0, 0, 0, 0.1 ));
+      Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight - 1, Preset.Color[ cp100 ]);
+      Canvas.RenderRectShadowInner( vec2( 0 ), ClippedRect.WidthHeight, 2, 5, vec4( 0, 0, 0, 0.1 ));
       Canvas.RenderLineRect( vec2( 0 ), WidthHeight - 1, Preset.Color[ cp600 ], Preset.Color[ cp700 ], Preset.Color[ cp700 ], Preset.Color[ cp900 ] );
 
       if ( GetValueName + ':' <> FValueNameText.Text ) then
         UpdateNameText( GetValueName );
       if ( GetValue <> FValueCached ) then
         UpdateValueText( GetValue );
-      tp:= vec2( 5, CanvasRect.WidthHeight.y / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
+      tp:= vec2( 5, ClippedRect.WidthHeight.y / 2 ) - vec2( 0, FCaptionTxt.Height / 2 );
       Canvas.Font.Color:= Font.Color;
       Canvas.RenderText( FValueNameText, tp );
-      Canvas.RenderText( FValueText, tp + vec2( CanvasRect.WidthHeight.x - 5 - FValueText.Width, 0 ));
+      Canvas.RenderText( FValueText, tp + vec2( ClippedRect.WidthHeight.x - 5 - FValueText.Width, 0 ));
     end;
 end;
 
@@ -771,7 +771,7 @@ begin
 
   if ( mb1 and CanCollapse and P3DRect( 3, 3, FCollapseSymbolTxt.Width, FCollapseSymbolTxt.Height ).PtInRect( vec2( X, Y ))) then
     Collapsed:= not Collapsed;
-  if ( mb1 and CanClose and P3DRect( vec2( CanvasRect.Width - FCloseSymbolTxt.Width - 3, 3 ), vec2( FCloseSymbolTxt.Width, FCloseSymbolTxt.Height )).PtInRect( vec2( X, Y ))) then
+  if ( mb1 and CanClose and P3DRect( vec2( ClippedRect.Width - FCloseSymbolTxt.Width - 3, 3 ), vec2( FCloseSymbolTxt.Width, FCloseSymbolTxt.Height )).PtInRect( vec2( X, Y ))) then
     Close;
 end;
 
@@ -872,7 +872,7 @@ end;
 function TP3DEdit.GetPageScrollXPixel: Float;
 begin
   if ( Assigned( FCaptionTxt )) then
-    Result:= max( 0, FCaptionTxt.Width - CanvasRect.Width ) * ( 1 - PageScrollX );
+    Result:= max( 0, FCaptionTxt.Width - ClippedRect.Width ) * ( 1 - PageScrollX );
 end;
 
 function TP3DEdit.GetSelStart(): Integer;
@@ -922,7 +922,7 @@ begin
     exit;
   p:= FCaptionTxt.WidthFromTo( 0, Sel1 );
   t:= GetPixelScrollPosition( p.z );
-  page:= GetPixelScrollPosition( FCaptionTxt.Width - CanvasRect.Width ) / 2;
+  page:= GetPixelScrollPosition( FCaptionTxt.Width - ClippedRect.Width ) / 2;
 
   if ( not InRange( t, PageScrollX - page, PageScrollX + page )) then
     if ( PageScrollX > t ) then
@@ -933,7 +933,7 @@ end;
 
 function TP3DEdit.GetPixelScrollPosition(X: Float): Float;
 begin
-  Result:= X / max( 1, FCaptionTxt.Width - CanvasRect.Width );
+  Result:= X / max( 1, FCaptionTxt.Width - ClippedRect.Width );
 end;
 
 procedure TP3DEdit.SetFocused(AValue: Boolean);
@@ -991,8 +991,8 @@ begin
     Preset:= PresetNormal;
 
 
-  Canvas.RenderRect( vec2( 0 ), CanvasRect.WidthHeight - 1, Preset.Color[ cp50 ], Preset.Color[ cp100 ], Preset.Color[ cp100 ], Preset.Color[ cp100 ] );
-  Canvas.RenderRectShadowInner( vec2( 0 ), CanvasRect.WidthHeight, 2, 5, vec4( 0, 0, 0, 0.1 ));
+  Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight - 1, Preset.Color[ cp50 ], Preset.Color[ cp100 ], Preset.Color[ cp100 ], Preset.Color[ cp100 ] );
+  Canvas.RenderRectShadowInner( vec2( 0 ), ClippedRect.WidthHeight, 2, 5, vec4( 0, 0, 0, 0.1 ));
   Canvas.RenderLineRect( vec2( 0 ), WidthHeight - 1, Preset.Color[ cp600 ], Preset.Color[ cp700 ], Preset.Color[ cp700 ], Preset.Color[ cp900 ] );
 
   Canvas.Font.Color:= Preset.FontColor;
@@ -1012,7 +1012,7 @@ begin
     end;
 
   if ( Assigned( FOnDraw )) then
-    FOnDraw( Self, CanvasRect.Left, CanvasRect.Top, CanvasRect.Width, CanvasRect.Height );
+    FOnDraw( Self, ClippedRect.Left, ClippedRect.Top, ClippedRect.Width, ClippedRect.Height );
 end;
 
 procedure TP3DEdit.MouseDown(mb1, mb2, mb3: Boolean; X, Y: Float);
@@ -1161,7 +1161,7 @@ const
   sb = 3;
 begin
   inherited Draw;
-  Canvas.RenderRect( vec2( 0 ), CanvasRect.WidthHeight, Preset.Color[ cp50 ]);
+  Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight, Preset.Color[ cp50 ]);
   case Kind of
     p3dsbHorizontal:
       begin
@@ -1473,7 +1473,7 @@ begin
   inherited Draw;
 
   if ( Assigned( FDownSymbol )) then
-    P:= vec2( CanvasRect.Width - FDownSymbol.Width, ( CanvasRect.Height - FDownSymbol.Height ) / 2 )
+    P:= vec2( ClippedRect.Width - FDownSymbol.Width, ( ClippedRect.Height - FDownSymbol.Height ) / 2 )
   else
     P:= vec2( 0 );
 
@@ -1485,7 +1485,7 @@ end;
 procedure TP3DComboBox.DropDown;
 begin
   DropDownMenu.Width:= Width;
-  DropDownMenu.PopUp( CanvasRectScreen.Left, CanvasRectScreen.Top + CanvasRectScreen.Height );
+  DropDownMenu.PopUp( ClippedRectScreen.Left, ClippedRectScreen.Top + ClippedRectScreen.Height );
 end;
 
 procedure TP3DComboBox.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float);

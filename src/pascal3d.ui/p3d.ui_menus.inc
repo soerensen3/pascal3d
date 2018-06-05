@@ -284,7 +284,7 @@ procedure TP3DPopupMenu.Draw;
   var
     r: TP3DRect;
   begin
-    r:= P3DRect( 0, Itm.Top, CanvasRect.Width, Itm.Height );
+    r:= P3DRect( 0, Itm.Top, ClippedRect.Width, Itm.Height );
     Canvas.RenderRect( r.TopLeft, r.BottomRight, C1, C2, C3, C4 );
     Canvas.RenderLineRect( r.TopLeft, r.BottomRight, CE1, CE2, CE3, CE4 );
   end;
@@ -308,8 +308,8 @@ begin
 
       case Alignment of
         haLeft: Canvas.RenderText( Itm.FCaptionTxt, vec2( Itm.Left, Itm.Top ));
-        haCenter: Canvas.RenderText( Itm.FCaptionTxt, vec2(( CanvasRect.Width - Itm.Width ) / 2, Itm.Top ));
-        haRight: Canvas.RenderText( Itm.FCaptionTxt, vec2( CanvasRect.Width - Itm.Width, Itm.Top ));
+        haCenter: Canvas.RenderText( Itm.FCaptionTxt, vec2(( ClippedRect.Width - Itm.Width ) / 2, Itm.Top ));
+        haRight: Canvas.RenderText( Itm.FCaptionTxt, vec2( ClippedRect.Width - Itm.Width, Itm.Top ));
       end;
     end;
 end;
@@ -355,7 +355,7 @@ end;
 procedure TP3DCustomPopupMenu.Draw;
 begin
   inherited Draw;
-  Canvas.RenderRect( vec2( 0 ), CanvasRect.WidthHeight, vec4( PresetNormal.Color[ cp100 ].xyz, 0.9 ));
+  Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight, vec4( PresetNormal.Color[ cp100 ].xyz, 0.9 ));
 end;
 
 procedure TP3DCustomPopupMenu.PopUp(X, Y: Float);

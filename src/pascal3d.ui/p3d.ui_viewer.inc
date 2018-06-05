@@ -6,6 +6,7 @@ TP3DUIViewerBase = class ( TP3DStreamable )
   private
     FAutoViewRect: Boolean;
     FCanvas: TP3DCanvas2D;
+    FControls: TP3DPropertyPointer;
     FPosition: TVec2;
     FScrollSpeed: Single;
     FViewRect: TP3DRect;
@@ -16,6 +17,7 @@ TP3DUIViewerBase = class ( TP3DStreamable )
     DebugTextPos: TVec2;
     {$ENDIF}
 
+    function GetControls: TP3DGraphicControlContainerList;
     function GetMouse: TVec2;
     function GetMouseD: TVec2;
     function GetMouseDX: Float;
@@ -23,6 +25,7 @@ TP3DUIViewerBase = class ( TP3DStreamable )
     function GetMouseX: Float;
     function GetMouseY: Float;
     procedure SetAutoViewRect(AValue: Boolean);
+    procedure SetControls(AValue: TP3DGraphicControlContainerList);
     procedure SetMouse(AValue: TVec2);
     procedure SetMouseX( const Value: Float );
     procedure SetMouseY( const Value: Float );
@@ -55,11 +58,12 @@ TP3DUIViewerBase = class ( TP3DStreamable )
     property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
 
     property AutoViewRect: Boolean read FAutoViewRect write SetAutoViewRect;
+    property Controls: TP3DGraphicControlContainerList read GetControls write SetControls;
 end;
 
 TP3DUIViewer = class ( TP3DUIViewerBase )
   protected
-    FControls: TP3DGraphicControlContainerList;
+    FViewerControls: TP3DGraphicControlContainerList;
 
   public
     constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
@@ -67,8 +71,6 @@ TP3DUIViewer = class ( TP3DUIViewerBase )
     procedure Render;
     procedure Input;
     procedure UpdateExtents; override;
-
-    property Controls: TP3DGraphicControlContainerList read FControls write FControls;
 end;
 
 { TP3DUIViewerBaseStack }
@@ -91,6 +93,7 @@ var
   i: Integer;
 begin
   inherited Create( AOwner );
+  FControls:= TP3DPropertyPointer.Create;
 
   ScrollSpeed:= -50;
 
@@ -102,6 +105,7 @@ end;
 
 destructor TP3DUIViewerBase.Destroy;
 begin
+  FControls.Free;
   ScreenCanvas.Free;
   inherited;
 end;
@@ -147,6 +151,11 @@ begin
   Result:= ( 1 / Zoom ) * ( vec2( P3DInput.Mouse.X, P3DInput.Mouse.Y ) + Position - ViewRect.TopLeft );
 end;
 
+function TP3DUIViewerBase.GetControls: TP3DGraphicControlContainerList;
+begin
+  Result:= TP3DGraphicControlContainerList( FControls.Prop );
+end;
+
 function TP3DUIViewerBase.GetMouseD: TVec2;
 begin
   Result:= ( 1 / Zoom ) * vec2( P3DInput.Mouse.DX, P3DInput.Mouse.DY );
@@ -172,6 +181,14 @@ begin
   if FAutoViewRect=AValue then Exit;
   FAutoViewRect:=AValue;
   UpdateExtents;
+end;
+
+procedure TP3DUIViewerBase.SetControls(AValue: TP3DGraphicControlContainerList);
+begin
+  if FControls.Prop=AValue then Exit;
+  FControls.Prop:= AValue;
+  if ( Assigned( Controls )) then
+    Controls.FUIViewer.AsValue:= Self;
 end;
 
 procedure TP3DUIViewerBase.SetMouse(AValue: TVec2);
@@ -262,10 +279,10 @@ end;
 
 constructor TP3DUIViewer.Create(const AOwner: IP3DStreamableContainer);
 begin
-  FControls:= TP3DGraphicControlContainerList.Create( 'Controls' );
+  FViewerControls:= TP3DGraphicControlContainerList.Create( 'Controls' );
   inherited Create(AOwner);
-  FControls.FUIViewer.AsValue:= Self;
-  Properties.Add( FControls );
+  Controls:= FViewerControls;
+  Properties.Add( FViewerControls );
 end;
 
 procedure TP3DUIViewer.Input;
@@ -279,8 +296,10 @@ end;
 procedure TP3DUIViewer.UpdateExtents;
 begin
   inherited UpdateExtents;
-  Controls.ClipRect:= ScreenCanvas.Rect - Position;
-  Controls.PageRect:= ScreenCanvas.Rect;
+  if ( Assigned( Controls )) then begin
+    Controls.ClipRect:= ScreenCanvas.Rect - Position;
+    Controls.PageRect:= P3DRect( vec2( 0 ), ScreenCanvas.Rect.WidthHeight );
+  end;
 end;
 
 procedure TP3DUIViewer.Render;

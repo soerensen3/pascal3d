@@ -28,6 +28,7 @@ TP3DUI = class ( TP3DJSONRoot )
     function GetFocusedControl: TP3DGraphicControl;
     function GetLastMouseDownCtrl( AIndex: Integer ): TP3DGraphicControl;
     function GetLastMouseOverCtrl: TP3DGraphicControl;
+    function GetScreenCanvas: TP3DCanvas2D;
     function GetViewer: TP3DUIViewer;
     procedure SetCursor(AValue: TP3DCursor);
     procedure SetDragDropSrc(AValue: TP3DGraphicControl);
@@ -55,7 +56,7 @@ TP3DUI = class ( TP3DJSONRoot )
     property LastMouseOverCtrl: TP3DGraphicControl read GetLastMouseOverCtrl write SetLastMouseOverCtrl;
 
   published
-    property ScreenCanvas: TP3DCanvas2D read FCanvas write FCanvas;
+    property ScreenCanvas: TP3DCanvas2D read GetScreenCanvas;
     property Viewer: TP3DUIViewer read GetViewer write SetViewer;
     property Cursor: TP3DCursor read FCursor write SetCursor;
     property ShowCursor: Boolean read FShowCursor write SetShowCursor;
@@ -101,16 +102,16 @@ begin
   FDragDropSrc:= TP3DStreamablePointer.Create( 'DragDropSrc', TP3DGraphicControl );
   Properties.Add( FDragDropSrc );
 
-  ScreenCanvas:= TP3DCanvas2D.Create( nil );
+  {ScreenCanvas:= TP3DCanvas2D.Create( nil );
   ScreenCanvas.Font.Size:= 48;
-  UpdateExtents;
+  UpdateExtents;}
   Cursor:= curArrow;
   CursorOverride:= curArrow;
 end;
 
 destructor TP3DUI.Destroy;
 begin
-  ScreenCanvas.Free;
+  //ScreenCanvas.Free;
   FCursorTxt.Free;
   FCursorOverrideTxt.Free;
   inherited;
@@ -148,6 +149,11 @@ end;
 function TP3DUI.GetLastMouseOverCtrl: TP3DGraphicControl;
 begin
   Result:= TP3DGraphicControl( FLastMouseOverCtrl.AsValue );
+end;
+
+function TP3DUI.GetScreenCanvas: TP3DCanvas2D;
+begin
+  Result:= Viewer.ScreenCanvas;
 end;
 
 function TP3DUI.GetViewer: TP3DUIViewer;
@@ -206,6 +212,7 @@ end;
 procedure TP3DUI.Logic;
 begin
   Viewer.Controls.Logic();
+  UpdateExtents;
 end;
 
 procedure TP3DUI.Events;
@@ -223,16 +230,12 @@ procedure TP3DUI.Events;
 var
   i: Integer;
   Accept: Boolean;
-  //my, mx: Float;
 begin
   if ( not Assigned( LastMouseOverCtrl ) and ( Cursor <> curArrow )) then
     Cursor:= curArrow
   else if (( Assigned( LastMouseOverCtrl )) and ( LastMouseOverCtrl.Cursor <> Cursor )) then
     Cursor:= LastMouseOverCtrl.Cursor;
 
-  //mx:= 0; P3DUIViewerActive.MouseX;
-  //my:= 0; P3DUIViewerActive.MouseY;
-  // Find a way to fix this
   for i:= 0 to 2 do
     if ( P3DInput.Mouse.DButtons[ i ]) then
       if ( P3DInput.Mouse.Buttons[ i ]) then // mouse button pressed
@@ -263,6 +266,7 @@ end;
 procedure TP3DUI.Render;
 var
   DrawCursor: TP3DTextBmp;
+  i: Integer;
 begin
   glDisable( GL_DEPTH_TEST ); cle( Self );
 
@@ -292,6 +296,35 @@ begin
       ScreenCanvas.RenderText( DrawCursor, vec2( MouseX, MouseY ));
       ScreenCanvas.Unlock();
     end;}
+
+    {$IFDEF DEBUG_GUI}
+    ScreenCanvas.Lock;
+    ScreenCanvas.Font.Size:= 12;
+    ScreenCanvas.Font.Color:= Red300;
+    ScreenCanvas.Font.Color:= Black;
+    if ( Assigned( LastMouseOverCtrl )) then
+      with ( LastMouseOverCtrl ) do
+        begin
+          //UI.ScreenCanvas.RenderRect( vec2( ClippedRect.Left + ClientRect.Left, ClippedRect.Top + ClientRect.Top ), vec2( Canvas.Left + ClientRect.Left + ClientRect.Right, Canvas.Top + ClientRect.Top + ClientRect.Bottom ), vec4( 1, 1, 1, 0.2 ));
+          ScreenCanvas.RenderRect( ClippedRect.TopLeft, ClippedRect.BottomRight, vec4( 0, 0, 0, 0.5 ));
+
+          ScreenCanvas.Font.Size:= 24;
+          ScreenCanvas.GetValidText( Format( '%s @[%dx%d] wh[%dx%d]', [ LastMouseOverCtrl.Name, LastMouseOverCtrl.Rect.LeftI, LastMouseOverCtrl.Rect.TopI, LastMouseOverCtrl.Rect.WidthI, LastMouseOverCtrl.Rect.HeightI ]), DebugText );
+          DebugTextPos:= vec2( ClippedRect.Left, ClippedRect.Top + ClippedRect.Height - 20 );
+          ScreenCanvas.RenderText( DebugText, DebugTextPos );
+          ScreenCanvas.RenderLineRect( Controls.PageRect.TopLeft, Controls.PageRect.BottomRight, Red500.Fade( 0.5 ));
+          //ScreenCanvas.GetValidText( IntToStr( ParentCtrl.IndexOf( LastMouseOverCtrl )), DebugText );
+          //ScreenCanvas.RenderText( DebugText, ClippedRect.TopLeft );
+
+          //UI.ScreenCanvas.RenderText( txt, p );
+          //txt.Free;
+        end;
+    for i:= 0 to 2 do
+      if ( Assigned( LastMouseDownCtrl[ i ])) then
+        with ( LastMouseDownCtrl[ i ]) do
+          P3DUI.ScreenCanvas.RenderRect( ClippedRect.TopLeft, ClippedRect.BottomRight, vec4( Ord( i = 0 ), Ord( i = 1 ), Ord( i = 2 ), 0.2 ));
+    ScreenCanvas.Unlock();
+    {$ENDIF}
 end;
 
 procedure TP3DUI.CtrlDeleteNotifier(Ctrl: TP3DGraphicControl);
@@ -308,8 +341,8 @@ end;
 
 procedure TP3DUI.UpdateExtents;
 begin
-  Viewer.UpdateExtents;
-  ScreenCanvas.WidthHeight:= vec2( P3DViewports.Screen.Width, P3DViewports.Screen.Height );
+  //Viewer.UpdateExtents;
+  //ScreenCanvas.WidthHeight:= vec2( P3DViewports.Screen.Width, P3DViewports.Screen.Height );
 end;
 
 

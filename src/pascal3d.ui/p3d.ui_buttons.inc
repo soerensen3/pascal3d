@@ -140,19 +140,19 @@ procedure TP3DButton.RenderButton(C1, C2, C3, C4, CE1, CE2, CE3, CE4: TP3DColorR
 var
   clf: TVec4;
 begin
-  Canvas.RenderRect( vec2( 0 ), CanvasRect.WidthHeight +  - 1, C1, C2, C3, C4 );
-  Canvas.RenderLineRect( vec2( 0 ), CanvasRect.WidthHeight - 1, CE1, CE2, CE3, CE4 );
+  Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight +  - 1, C1, C2, C3, C4 );
+  Canvas.RenderLineRect( vec2( 0 ), ClippedRect.WidthHeight - 1, CE1, CE2, CE3, CE4 );
 
   if ( Focused ) then
     begin
       clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
-      Canvas.RenderLineRect( vec2( 4 ), CanvasRect.WidthHeight - 4, clf, clf, clf, clf );
+      Canvas.RenderLineRect( vec2( 4 ), ClippedRect.WidthHeight - 4, clf, clf, clf, clf );
     end;
 end;
 
 function TP3DButton.RenderButtonText(C: TP3DColorRGBA): TVec2;
 begin
-  {Result:= }RenderButtonText( P3DRect( Margin.XY, CanvasRect.WidthHeight - Margin.ZW ), C ); //Internal Error?
+  {Result:= }RenderButtonText( P3DRect( Margin.XY, ClippedRect.WidthHeight - Margin.ZW ), C ); //Internal Error?
 end;
 
 function TP3DButton.RenderButtonText(R: TP3DRect; C: TP3DColorRGBA): TVec2;
@@ -336,6 +336,14 @@ end;
 procedure TP3DSplitter.MouseMove(X, Y: Float);
 var
   Ctrl1, Ctrl2: TP3DGraphicControl;
+  vMax: TVec2;
+
+  function Subtract( var s: Float; Value: Float ): Float;
+  begin
+    Result:= Value;
+    s:= s - Value;;
+  end;
+
 begin
   inherited MouseMove(X, Y);
 
@@ -343,32 +351,40 @@ begin
     exit;
 
   GetControls( Ctrl1, Ctrl2 );
+  if ( not Assigned( Ctrl1 ) or not Assigned( Ctrl2 )) then
+    exit;
+  vMax:= Ctrl1.ClippedRect.TopLeft + Ctrl2.ClippedRect.BottomRight;//ParentCtrl.PageSize;
 
-  if ( Assigned( Ctrl1 )) then
+  //if ( Assigned( Ctrl1 )) then
+  P3DApplication.MainWindow.Title:= Ctrl1.Name + ' <--> ' + Ctrl2.Name + ' [' + vMax.ToString() + ']';
+  if ( Ctrl1.Align <> alClient ) then
     begin
       if ( Align in [ alLeft, alRight ]) then
-        Ctrl1.Width:= UIViewer.MouseX - Ctrl1.CanvasRect.Left
+        Ctrl1.Width:= Subtract( vMax.Ptr[ 0 ], {clamp( }UIViewer.MouseX - Ctrl1.ClippedRect.Left{, 1, vMax.X - 1 )})
       else if ( Align in [ alTop, alBottom ]) then
-        Ctrl1.Height:= UIViewer.MouseY - Ctrl1.CanvasRect.Top;
+        Ctrl1.Height:= Subtract( vMax.Ptr[ 1 ], {clamp( }UIViewer.MouseY - Ctrl1.ClippedRect.Top{, 1, vMax.Y - 1 )});
     end;
-  if ( Assigned( Ctrl2 )) then
+  //if ( Assigned( Ctrl2 )) then
+  if ( Ctrl2.Align <> alClient ) then
     begin
       if ( Align in [ alLeft, alRight ]) then
-        Ctrl2.Width:= Ctrl2.CanvasRect.Right - UIViewer.MouseX
+        Ctrl2.Width:= {vMax.X }Ctrl2.ClippedRect.Right - UIViewer.MouseX
       else if ( Align in [ alTop, alBottom ]) then
-        Ctrl2.Height:= Ctrl2.CanvasRect.Bottom - UIViewer.MouseY;
+        Ctrl2.Height:= {vMax.Y;} Ctrl2.ClippedRect.Bottom - UIViewer.MouseY;
     end;
 end;
 
 procedure TP3DSplitter.GetControls(out Ctrl1, Ctrl2: TP3DGraphicControl);
-  function FindNext( idx: Integer; incr: Integer ): TP3DGraphicControl;
+type TAlignSet = set of TP3DControlAlign;
+
+  function FindNext( idx: Integer; incr: Integer; Allowed: TAlignSet ): TP3DGraphicControl;
   var
     n: Integer;
   begin
     n:= idx + incr;
     Result:= ParentCtrl[ n ];
     while ( Assigned( Result )) do
-      if ( Result.Align = Align ) then
+      if ( Result.Align in Allowed ) then
         break
       else
         begin
@@ -378,22 +394,31 @@ procedure TP3DSplitter.GetControls(out Ctrl1, Ctrl2: TP3DGraphicControl);
   end;
 
 var
-  idx: Integer;
+  idx, n1, n2: Integer;
+  Allowed: TAlignSet;
 begin
   idx:= ParentCtrl.IndexOf( Self );
 
   Ctrl1:= nil;
   Ctrl2:= nil;
-  if ( Align in [ alLeft, alTop ]) then
-    begin
-      Ctrl1:= FindNext( idx, -1 );
-      Ctrl2:= FindNext( idx,  1 );
-    end
-  else if ( Align in [ alRight, alBottom ]) then
-    begin
-      Ctrl1:= FindNext( idx,  1 );
-      Ctrl2:= FindNext( idx, -1 );
-    end;
+  if ( Align in [ alLeft, alTop ]) then begin
+    n1:= -1;
+    n2:= 1;
+  end else if ( Align in [ alRight, alBottom ]) then begin
+    n1:= 1;
+    n2:= -1;
+  end;
+
+  Ctrl1:= FindNext( idx, n1, [ Align, alClient ]);
+  if ( Assigned( Ctrl1 )) then
+    if ( Ctrl1.Align = alClient ) then
+      Allowed:= [ alLeft, alTop, alRight, alBottom ]
+    else
+      Allowed:= [ Ctrl1.Align, alClient ]
+  else
+    Allowed:= [ Align ];
+
+  Ctrl2:= FindNext( idx,  n2, Allowed );
 end;
 
 procedure TP3DSplitter.SetAlign(const AValue: TP3DControlAlign);

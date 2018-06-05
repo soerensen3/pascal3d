@@ -63,6 +63,7 @@ operator - ( R: TP3DRect; v: TVec2 ): TP3DRect;
 operator * ( m: TMat4; R: TP3DRect ): TP3DRect;
 operator * ( R: TP3DRect; S: Float ): TP3DRect;
 operator / ( R: TP3DRect; S: Float ): TP3DRect;
+operator = ( R1, R2: TP3DRect ): Boolean;
 
 
 {$ENDIF}
@@ -226,6 +227,11 @@ operator/(R: TP3DRect; S: Float): TP3DRect;
 begin
   Result.TopLeft:= R.TopLeft / S;
   Result.BottomRight:= R.BottomRight / S;
+end;
+
+operator=(R1, R2: TP3DRect): Boolean;
+begin
+  Result:= ( R1.TopLeft = R2.TopLeft ) and ( R1.WidthHeight = R2.WidthHeight );
 end;
 
 function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;

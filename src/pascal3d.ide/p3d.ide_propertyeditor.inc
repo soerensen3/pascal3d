@@ -455,7 +455,7 @@ begin
   Height:= 20;
   FDropDown:= TP3DStreamablePointer.Create( 'DropDown', TP3DCustomPopupMenu );
   Properties.Add( FDropDown );
-  DropDown:= TP3DCustomPopupMenu.Create();
+  DropDown:= TP3DCustomPopupMenu.Create( UIViewer.Controls );
   DropDown.Visible:= False;
   DropDown.PageModeY:= pmExpand;
   FVecEdit:= TP3DStreamablePointer.Create( 'VecEdit', TP3DVectorEdit );
@@ -495,8 +495,8 @@ end;
 procedure gP3DPropertyEditorVector.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float);
 begin
   inherited MouseClick(mb1, mb2, mb3, X, Y);
-  DropDown.Width:= CanvasRect.Width;
-  DropDown.PopUp( CanvasRect.Left, CanvasRect.Top + CanvasRect.Height );
+  DropDown.Width:= ClippedRect.Width;
+  DropDown.PopUp( ClippedRect.Left, ClippedRect.Top + ClippedRect.Height );
 end;
 
 
@@ -989,7 +989,7 @@ begin
   Properties.Add( FOptionsPopup );
   FDialogAdd:= TP3DStreamablePointer.Create( 'DialogAdd', TP3DModalWindow );
   Properties.Add( FDialogAdd );
-  OptionsPopup:= TP3DPopupMenu.Create();
+  OptionsPopup:= TP3DPopupMenu.Create( UIViewer.Controls );
   OptionsPopup.Items.Add( 'Select' );
   OptionsPopup.Items.Add( 'Delete' );
   OptionsPopup.Items.Add( 'Clear' );
@@ -1007,17 +1007,17 @@ end;
 
 procedure gP3DPropertyEditorStreamableList.MouseUp(mb1, mb2, mb3: Boolean; X, Y: Float);
 begin
-  if (( Assigned( Selection ) and ( P3DRect( CanvasRect.Width - FOptionsSymbol.Width - ScrollBarV.Width, Selection.RenderPos.Y - ScrollBarV.Position,
+  if (( Assigned( Selection ) and ( P3DRect( ClippedRect.Width - FOptionsSymbol.Width - ScrollBarV.Width, Selection.RenderPos.Y - ScrollBarV.Position,
                           FOptionsSymbol.Width, FOptionsSymbol.Height ).PtInRect( vec2( X, Y ))))) then
     begin // Options
-      OptionsPopup.Width:= CanvasRect.Width;
-      OptionsPopup.PopUp( CanvasRect.Left, CanvasRect.Top + Selection.RenderPos.Y - ScrollBarV.Position + FOptionsSymbol.Height );
+      OptionsPopup.Width:= ClippedRect.Width;
+      OptionsPopup.PopUp( ClippedRect.Left, ClippedRect.Top + Selection.RenderPos.Y - ScrollBarV.Position + FOptionsSymbol.Height );
     end
-  else if ( P3DRect( CanvasRect.Width - FOptionsSymbol.Width, 0,
+  else if ( P3DRect( ClippedRect.Width - FOptionsSymbol.Width, 0,
                      FOptionsSymbol.Width, FOptionsSymbol.Height ).PtInRect( vec2( X, Y ))) then
     begin // Options
-      OptionsPopup.Width:= CanvasRect.Width;
-      OptionsPopup.PopUp( CanvasRect.Left, CanvasRect.Top + FOptionsSymbol.Height );
+      OptionsPopup.Width:= ClippedRect.Width;
+      OptionsPopup.PopUp( ClippedRect.Left, ClippedRect.Top + FOptionsSymbol.Height );
     end
   else
     inherited MouseUp(mb1, mb2, mb3, X, Y);
@@ -1275,7 +1275,7 @@ begin
   Button.Caption:= '...';
   Button.Align:= alRight;
   Button.OnMouseClick:= @ButtonClick;
-  Popup:= TP3DPopupMenu.Create();
+  Popup:= TP3DPopupMenu.Create( UIViewer.Controls );
   Popup.AutoWidth:= False;
   Popup.Alignment:= haRight;
   Popup.Items.Add( 'Select' );
@@ -1299,8 +1299,8 @@ end;
 
 procedure TP3DPropertyEditorStreamable.ButtonClick(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Float);
 begin
-  Popup.Width:= CanvasRect.Width;
-  Popup.PopUp( CanvasRect.Left, CanvasRect.Top + CanvasRect.Height );
+  Popup.Width:= ClippedRect.Width;
+  Popup.PopUp( ClippedRect.Left, ClippedRect.Top + ClippedRect.Height );
 end;
 
 procedure TP3DPropertyEditorStreamable.PopupClick(Sender: TP3DMenuItem);

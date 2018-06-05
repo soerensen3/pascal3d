@@ -122,9 +122,9 @@ begin
     end;
   //if ( not Assigned( Socket.Connected )) then
   //  cl:= cl.fade( 0.37 );
-  Btn.Canvas.RenderCircle( Btn.CanvasRect.WidthHeight / 2 + 1, 5, 16, Black.fade( 0.05 ) );
-  Btn.Canvas.RenderCircle( Btn.CanvasRect.WidthHeight / 2, 5, 16, Grey200 );
-  Btn.Canvas.RenderCircle( Btn.CanvasRect.WidthHeight / 2, 3, 16, cl );
+  Btn.Canvas.RenderCircle( Btn.ClippedRect.WidthHeight / 2 + 1, 5, 16, Black.fade( 0.05 ) );
+  Btn.Canvas.RenderCircle( Btn.ClippedRect.WidthHeight / 2, 5, 16, Grey200 );
+  Btn.Canvas.RenderCircle( Btn.ClippedRect.WidthHeight / 2, 3, 16, cl );
 end;
 
 function TP3DNodeSocketControl.GetBtn: TP3DGraphicControl;
@@ -213,9 +213,9 @@ procedure TP3DNodeSocketControl.Draw;
     if ( not Assigned( Socket.CloneOf )) then
       exit;
     if ( Socket.CloneOf.Direction = nsdOutput ) then
-      S:= vec2( CanvasRect.Left + CanvasRect.Width + 5, CanvasRect.Top + CanvasRect.Height / 2 )
+      S:= vec2( ClippedRect.Left + ClippedRect.Width + 5, ClippedRect.Top + ClippedRect.Height / 2 )
     else
-      S:= vec2( CanvasRect.Left - 5, CanvasRect.Top + CanvasRect.Height / 2 );
+      S:= vec2( ClippedRect.Left - 5, ClippedRect.Top + ClippedRect.Height / 2 );
 
     if ( Editing ) then
       begin
@@ -241,7 +241,7 @@ procedure TP3DNodeSocketControl.Draw;
           Connected:= TP3DNodeSocketControl( Socket.Connected.UserData );
           if ( not Assigned( Connected )) then
             exit;
-          E:= vec2( Connected.CanvasRect.Left + Connected.CanvasRect.Width + 5, Connected.CanvasRect.Top + Connected.CanvasRect.Height / 2 );
+          E:= vec2( Connected.ClippedRect.Left + Connected.ClippedRect.Width + 5, Connected.ClippedRect.Top + Connected.ClippedRect.Height / 2 );
           d:= ( S - E ).length();
           M1:= vec2( S.X - d / 3, S.Y );
           M2:= vec2( E.X + d / 3, E.Y );
@@ -332,8 +332,8 @@ procedure TP3DNodeSocketPropEdit.MouseClick(mb1, mb2, mb3: Boolean; X,
   Y: Float);
 begin
   inherited MouseClick(mb1, mb2, mb3, X, Y);
-  {DropDown.Width:= CanvasRect.Width;
-  DropDown.PopUp( CanvasRect.Left, CanvasRect.Top + CanvasRect.Height );}
+  {DropDown.Width:= ClippedRect.Width;
+  DropDown.PopUp( ClippedRect.Left, ClippedRect.Top + ClippedRect.Height );}
 end;
 
 
