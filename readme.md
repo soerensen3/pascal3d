@@ -1,4 +1,4 @@
-![Logo](pascal3d/art/icons/mipmap-xxxhdpi/ic_launcher.png)
+![Logo](https://github.com/soerensen3/pascal3d/blob/master/art/icons/mipmap-xxxhdpi/ic_launcher.png)
 # What is Pascal3D
 ## Pascal3D (p3d) is a open source game engine for Free Pascal/Lazarus
 
