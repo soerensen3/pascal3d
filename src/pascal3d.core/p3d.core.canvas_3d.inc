@@ -201,19 +201,31 @@ end;
 procedure TP3DCanvas3D.PassToShader;
 var
   Uniform: TP3DShaderDecl;
+  u: TP3DNodeClone;
 begin
   if ( Assigned( Material )) then
     begin
-      Material.PassToShader();
       if ( Assigned( Material.Shader )) then
         begin
+          if ( Material.Shader <> P3DShaderActive ) then
+            Material.Shader.Enable;
           if ( Material.Shader.Uniforms.FindByName( 'proj', Uniform )) then
             Uniform.AsMat4:= Proj;
           if ( Material.Shader.Uniforms.FindByName( 'view', Uniform )) then
             Uniform.AsMat4:= View;
           if ( Material.Shader.Uniforms.FindByName( 'world', Uniform )) then
             Uniform.AsMat4:= Mat4Identity;
+          if ( Material is TP3DMaterialNode ) then
+            begin
+              u:= TP3DMaterialNode( Material ).FindUniform( 'ClippingRect' );
+              if ( Assigned( u )) then
+                u.FindInput( 'Value' ).ValueProp.AsString:= vec4( TopLeft, BottomRight ).ToString();
+            end
+          else if ( Material.Shader.Uniforms.FindByName( 'ClippingRect', Uniform )) then
+            Uniform.AsVec4:= vec4( vec2( 0 ) - TopLeft, vec2( 0 ) - BottomRight );
         end;
+      Material.PassToShader();
+      //WriteLn( Material.Shader.DumpUniforms );
     end;
 end;
 

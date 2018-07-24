@@ -4,12 +4,12 @@
 
 { TP3DRect }
 
-TP3DRect = object
+TP3DRect = packed object
   private
-    FHeight: Float;
-    FTop: Float;
     FLeft: Float;
+    FTop: Float;
     FWidth: Float;
+    FHeight: Float;
 
     function GetBottom: Float;
     function GetBottomI: Integer;

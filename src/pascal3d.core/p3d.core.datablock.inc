@@ -3,11 +3,11 @@
 {$IFDEF INTERFACE}
 
 type
-  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors, rlfWireFrame, rlfDepthTest, rlfLighting, rlfRenderEdges, rlfObjects, rlfMeshes, rlfScenes, rlfTileGrids, rlfJoints );
+  TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors, rlfWireFrame, rlfDepthTest, rlfLighting, rlfRenderEdges, rlfObjects, rlfNonShadowCasters, rlfShadowCasters, rlfShadowReceivers, rlfMeshes, rlfScenes, rlfTileGrids, rlfJoints );
   TP3DRenderListFlags = set of TP3DRenderListFlag;
 
  const
-   P3DRenderListFlagsDefault = [ rlfMaterials, rlfDepthTest, rlfLighting, rlfMeshes, rlfScenes, rlfTileGrids ];
+   P3DRenderListFlagsDefault = [ rlfMaterials, rlfDepthTest, rlfLighting, rlfMeshes, rlfScenes, rlfTileGrids, rlfShadowCasters, rlfShadowReceivers, rlfNonShadowCasters ];
 
 type
   TP3DRenderList = class;
@@ -70,6 +70,7 @@ begin
   inherited Create( AOwner );
   FOwnerLib:= TP3DStreamablePointer.Create( 'OwnerLib', TP3DLibrary );
   FOwnerLib.AsValue:= TP3DStreamable( Owner.GetRoot.GetInstance );
+  FOwnerLib.PathAbsolute:= True;
 
   Properties.Add( FOwnerLib );
 end;

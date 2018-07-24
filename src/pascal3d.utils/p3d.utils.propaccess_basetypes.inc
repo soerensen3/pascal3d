@@ -33,6 +33,17 @@ type
       function GetAsJSON: TJSONData; override;
   end;
 
+  { TP3DPropAccessBoolean }
+
+  TP3DPropAccessBoolean = class ( specialize gP3DPropAccess < Boolean >)
+    protected
+      function GetAsString: String; override;
+      procedure SetAsString(AValue: String); override;
+      procedure LoadJSON( AValue: TJSONData ); override;
+      function GetAsJSON: TJSONData; override;
+  end;
+
+
   { TP3DPropAccessRTTI }
 
   TP3DPropAccessRTTI = class( TP3DPropertyAccess )
@@ -111,6 +122,7 @@ begin
   Result:= TJSONString.Create( AsValue );
 end;
 
+
   { TP3DPropAccessInt }
 
 function TP3DPropAccessInt.GetAsString: String;
@@ -135,6 +147,32 @@ function TP3DPropAccessInt.GetAsJSON: TJSONData;
 begin
   Result:= TJSONIntegerNumber.Create( AsValue );
 end;
+
+{ TP3DPropAccessBoolean }
+
+function TP3DPropAccessBoolean.GetAsString: String;
+begin
+  Result:= IntToStr( Integer( AsValue ));
+end;
+
+procedure TP3DPropAccessBoolean.SetAsString(AValue: String);
+begin
+  AsValue:= Boolean( StrToInt( AValue ));
+end;
+
+procedure TP3DPropAccessBoolean.LoadJSON(AValue: TJSONData);
+begin
+  if ( AValue.JSONType = jtBoolean ) then
+    AsValue:= AValue.AsBoolean
+  else
+    raise Exception.CreateFmt( Name + ': ' + P3DERROR_JSON_WRONG_TYPE, [ 'jtBoolean, ntInteger', JSONTypeName( AValue.JSONType )]);;
+end;
+
+function TP3DPropAccessBoolean.GetAsJSON: TJSONData;
+begin
+  Result:= TJSONBoolean.Create( AsValue );
+end;
+
 
 { TP3DPropAccessFloat }
 
@@ -370,7 +408,7 @@ end;
 
 function TP3DPropAccessRTTI.ValueIsDefault: Boolean;
 begin
-  Result:= IsStoredProp( FOwner, PropInfo );
+  Result:= not IsStoredProp( FOwner, PropInfo );
 end;
 
 function TP3DPropAccessRTTI.GetNames: TStringList;
@@ -393,6 +431,12 @@ begin
         end;
 
         Result.Delete( Result.Count - 1 ); // Last line is the unit name
+      end;
+    tkSet:
+      with GetTypeData(GetTypeData( FPropInfo^.PropType )^.CompType )^ do begin
+        Result:= TStringList.Create;
+        for I := MinValue to MaxValue do
+          Result.Add( GetEnumName( GetTypeData( FPropInfo^.PropType )^.CompType, I ));
       end;
     tkBool: begin
       Result:= TStringList.Create;

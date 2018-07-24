@@ -71,6 +71,7 @@ var
           CreateSocketFromType( GlobalActiveNode, nsdInput, SocketType, SocketName, False, SocketVisible, SocketDefault );
           SocketName:= '';
           SocketType:= '';
+          SocketDefault:= '';
           SocketVisible:= True;
         end
       else

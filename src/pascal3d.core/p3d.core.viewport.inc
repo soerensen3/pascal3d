@@ -13,15 +13,19 @@
 
   TP3DViewportStack = class
     private
+      FDoScissor: Boolean;
       FScreen: TP3DViewport;
       VPs: array of TP3DViewport;
       function GetCount: Integer;
       function GetVP( Index: Integer ): TP3DViewport;
+      procedure SetDoScissor(AValue: Boolean);
       procedure SetScreen(AValue: TP3DViewport);
       procedure SetVP( Index: Integer ; AValue: TP3DViewport);
       procedure ApplyVP( VP: TP3DViewport );
 
     public
+      constructor Create;
+
       function Push( Left, Top, Width, Height: Integer ): Integer;
       function Push( R: TP3DRect ): Integer;
       function Push( VP: TP3DViewport ): Integer;
@@ -33,10 +37,12 @@
       property VP[ Index: Integer ]: TP3DViewport read GetVP write SetVP; default;
       property Count: Integer read GetCount;
       property Screen: TP3DViewport read FScreen write SetScreen;
+      property DoScissor: Boolean read FDoScissor write SetDoScissor;
   end;
 
 function P3DViewport( Left, Top, Width, Height: Integer ): TP3DViewport; inline;
 function P3DViewportClipMatrix( X, Y, Width, Height: Float ; VP: TP3DViewport): TMat4;
+function P3DRect( VP: TP3DViewport ): TP3DRect;
 
 
 {$ENDIF}
@@ -53,6 +59,17 @@ end;
 function TP3DViewportStack.GetVP( Index: Integer ): TP3DViewport;
 begin
   Result:= VPs[ Index ];
+end;
+
+procedure TP3DViewportStack.SetDoScissor(AValue: Boolean);
+begin
+  if FDoScissor=AValue then Exit;
+  FDoScissor:=AValue;
+  if ( DoScissor ) then
+    glEnable( GL_SCISSOR_TEST )
+  else
+    glDisable( GL_SCISSOR_TEST );
+  cle( Self );
 end;
 
 procedure TP3DViewportStack.SetScreen(AValue: TP3DViewport);
@@ -73,6 +90,13 @@ procedure TP3DViewportStack.ApplyVP(VP: TP3DViewport);
 begin
   cle( Self, 'Error before...' );
   glViewport( VP.Left, {VPs[ 0 ].Height-}VP.Top{-VP.Height}, VP.Width, VP.Height ); cle( Self );
+  glScissor( VP.Left, {VPs[ 0 ].Height-}VP.Top{-VP.Height}, VP.Width, VP.Height ); cle( Self );
+end;
+
+constructor TP3DViewportStack.Create;
+begin
+  inherited Create;
+  DoScissor:= True;
 end;
 
 function TP3DViewportStack.Push(Left, Top, Width, Height: Integer): Integer;
@@ -154,6 +178,11 @@ begin
   Result:= mat4( mat2scale( s ));
   Result._30:= t.x;
   Result._31:= t.y;
+end;
+
+function P3DRect(VP: TP3DViewport): TP3DRect;
+begin
+  Result:= P3DRect( VP.Left, VP.Top, VP.Width, VP.Height );
 end;
 
 {$ENDIF}

@@ -290,6 +290,38 @@ type
        property Preview: TP3DImage read GetPreview;
    end;
 
+   { TP3DPropertyEditorSet }
+
+   TP3DPropertyEditorSet = class ( TP3DButton, IP3DPropertyEditor )
+     private
+       FProp: TP3DPropertyPointer;
+       FLabel: TP3DTextBmp;
+       FDropDown: TP3DStreamablePointer;
+       FEditSet: TP3DStreamablePointer;
+
+       function GetDropDown: TP3DCustomPopupMenu;
+       function GetEditSet: TP3DCheckList;
+       procedure SetDropDown(AValue: TP3DCustomPopupMenu);
+       procedure SetEditSet(AValue: TP3DCheckList);
+       procedure SetProp( AValue: TP3DPropertyAccess );
+       function GetProp: TP3DPropertyAccess;
+       procedure UpdateEdit;
+       procedure UpdateEditChecked;
+       procedure EditSetCheck( AItem: TP3DListItem; AItemIndex: Integer; AChecked: Boolean );
+
+     public
+       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+       destructor Destroy; override;
+
+       procedure Draw; override;
+       procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float); override;
+
+     published
+       property Prop: TP3DPropertyAccess read GetProp write SetProp;
+       property DropDown: TP3DCustomPopupMenu read GetDropDown write SetDropDown;
+       property EditSet: TP3DCheckList read GetEditSet write SetEditSet;
+   end;
+
   { gP3DPropertyEditorList }
 
   generic gP3DPropertyEditorList < TListProp > = class ( TP3DListView, IP3DPropertyEditor )
@@ -1504,6 +1536,138 @@ begin
   Edit.Parent:= Container;
 
   PageModeY:= pmExpand;
+end;
+
+
+{ TP3DPropertyEditorSet }
+
+function TP3DPropertyEditorSet.GetDropDown: TP3DCustomPopupMenu;
+begin
+  Result:= TP3DCustomPopupMenu( FDropDown.AsValue );
+end;
+
+function TP3DPropertyEditorSet.GetEditSet: TP3DCheckList;
+begin
+  Result:= TP3DCheckList( FEditSet.AsValue );
+end;
+
+procedure TP3DPropertyEditorSet.SetDropDown(AValue: TP3DCustomPopupMenu);
+begin
+  FDropDown.AsValue:= AValue;
+end;
+
+procedure TP3DPropertyEditorSet.SetEditSet(AValue: TP3DCheckList);
+begin
+  FEditSet.AsValue:= AValue;
+end;
+
+procedure TP3DPropertyEditorSet.SetProp(AValue: TP3DPropertyAccess);
+begin
+  if ( FProp.Prop = AValue ) then Exit;
+  FProp.Prop:= AValue;
+
+  UpdateEdit;
+end;
+
+function TP3DPropertyEditorSet.GetProp: TP3DPropertyAccess;
+begin
+  Result:= FProp.Prop;
+end;
+
+procedure TP3DPropertyEditorSet.UpdateEdit;
+var
+  lst: TStringList;
+  S: String;
+begin
+  EditSet.Children.Clear;
+  if ( Prop is TP3DPropAccessRTTI ) then begin
+    lst:= TP3DPropAccessRTTI( Prop ).GetNames;
+    for S in lst do
+      EditSet.Children.Add( S, nil );
+    lst.Free;
+  end;
+end;
+
+procedure TP3DPropertyEditorSet.UpdateEditChecked;
+var
+  S: TIntegerSet;
+  i: Integer;
+begin
+  if ( Prop is TP3DPropAccessRTTI ) then begin
+    Integer( S ):= GetOrdProp( TP3DPropAccessRTTI( Prop ).Owner, TP3DPropAccessRTTI( Prop ).PropInfo );
+    with ( GetTypeData(GetTypeData( TP3DPropAccessRTTI( Prop ).PropInfo^.PropType )^.CompType )^) do
+      for i:= MinValue to MaxValue do
+        EditSet.Checked[ i - MinValue ]:= ( i in S );
+  end;
+end;
+
+procedure TP3DPropertyEditorSet.EditSetCheck(AItem: TP3DListItem; AItemIndex: Integer; AChecked: Boolean);
+var
+  S: TIntegerSet;
+  minval: LongInt;
+begin
+  if ( Prop is TP3DPropAccessRTTI ) then begin
+    Integer( S ):= GetOrdProp( TP3DPropAccessRTTI( Prop ).Owner, TP3DPropAccessRTTI( Prop ).PropInfo );
+    WriteLn( AItem.Caption );
+    minval:= GetTypeData(GetTypeData( TP3DPropAccessRTTI( Prop ).PropInfo^.PropType )^.CompType )^.MinValue;
+    if ( AChecked ) then
+      Include( S, minval + AItemIndex )
+    else
+      Exclude( S, minval + AItemIndex );
+    SetOrdProp( TP3DPropAccessRTTI( Prop ).Owner, TP3DPropAccessRTTI( Prop ).PropInfo, Integer( S ));
+  end;
+end;
+
+constructor TP3DPropertyEditorSet.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  Height:= 20;
+  FDropDown:= TP3DStreamablePointer.Create( 'DropDown', TP3DCustomPopupMenu );
+  Properties.Add( FDropDown );
+  DropDown:= TP3DCustomPopupMenu.Create( UIViewer.Controls );
+  DropDown.Visible:= False;
+  DropDown.PageModeY:= pmExpand;
+  FEditSet:= TP3DStreamablePointer.Create( 'EditSet', TP3DCheckList );
+  Properties.Add( FEditSet );
+  EditSet:= TP3DCheckList.Create( DropDown.Controls );
+  EditSet.Align:= alTop;
+  EditSet.Font.Size:= 16;
+  EditSet.Height:= 200;
+  EditSet.OnSetChecked:= @EditSetCheck;
+  //EditSet.GetValueEvent:= @GetValue;
+  //EditSet.SetValueEvent:= @SetValue;
+  FProp:= TP3DPropertyPointer.Create;
+end;
+
+destructor TP3DPropertyEditorSet.Destroy;
+begin
+  FreeAndNil( FProp );
+  FreeAndNil( FLabel );
+  inherited Destroy;
+end;
+
+procedure TP3DPropertyEditorSet.Draw;
+begin
+  //inherited Draw;
+  with ( P3DThemeDefault ) do
+    begin
+      if ( Assigned( Prop )) then
+        Canvas.GetValidText( Prop.Name + ': ' + Prop.AsString, FLabel )
+      else
+        Canvas.GetValidText( '<noprop>', FLabel );
+
+      Canvas.RenderRect( vec2( 0 ), vec2( Width, Height ) - 1, Accent[ cp50 ]);
+      Canvas.RenderLineRect( vec2( 0 ), vec2( Width, Height ) - 1, Accent[ cp900 ]);
+      Canvas.RenderText( FLabel, vec2( 0, 0 ));
+    end;
+end;
+
+procedure TP3DPropertyEditorSet.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float);
+begin
+  inherited MouseClick(mb1, mb2, mb3, X, Y);
+  UpdateEditChecked;
+  DropDown.Width:= ClippedRect.Width;
+  DropDown.PopUp( ClippedRect.Left, ClippedRect.Top + ClippedRect.Height );
 end;
 
 

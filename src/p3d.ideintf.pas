@@ -9,8 +9,10 @@ uses
   SysUtils,
   LazMethodList,
   math, fpjson,
+  fgl,
   p3d.core,
-  p3d.utils;
+  p3d.utils,
+  p3d.ui;
 
 
 {$DEFINE INTERFACE}
@@ -36,6 +38,21 @@ begin
   P3DMainIntf.Free;
   P3DMainIntf:= nil;
 end;
+
+{ TP3DPopupDictionary }
+
+function TP3DPopupDictionary.FindClassPopup(AClass: TClass; var APopup: TP3DPopupMenu): Boolean;
+var
+  C: TClass;
+begin
+  C:= AClass;
+  APopup:= nil;
+  while Assigned( C ) and not TryGetData( C.ClassName, APopup ) do
+    C:= C.ClassParent;
+  Result:= Assigned( APopup );
+end;
+
+
 
 
 {$DEFINE IMPLEMENTATION}

@@ -445,7 +445,10 @@ begin
       Mode:= ANumChannels;
   end;
   InternalMode:= P3DChooseFormatByType( ADataType, ANumChannels );
-  glTexImage2D( _Target, 0, InternalMode, AWidth, AHeight, 0, Mode, GLenum( ADataType ), nil ); cle( Self );
+  if ( ADataType = dtDouble ) then
+    glTexImage2D( _Target, 0, InternalMode, AWidth, AHeight, 0, Mode, GL_FLOAT, nil )
+  else
+    glTexImage2D( _Target, 0, InternalMode, AWidth, AHeight, 0, Mode, GLenum( ADataType ), nil ); cle( Self );
 
   FFiltering:= tfLinear;
   FFilteringMipMap:= tfLinear;

@@ -153,6 +153,7 @@ var
   i, j: Integer;
   l: String;
   pos: TVec4;
+  mat: TMat4;
   obj: TP3DDataBlock;
 
 begin
@@ -197,6 +198,7 @@ begin
               glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.worlddirection' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
               pos:= normalize( -pos + vec4( 0, 0, 1, 0 ));
               glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.halfvector' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
+              glUniformMatrix4fv( P3DShaderActive.Uniforms.AddrByName( 'LightMat' + IntToStr( numLights )), 1, False, @FLightMatrix );
               //light_vect = light_position - face_center_position
               //cam_vect = cam_position - face_center_position
               //halfangle_vect = (light_vect.normal() + cam_vect.normal()).normal()
@@ -440,9 +442,8 @@ begin
 
   for i:= 0 to Count - 1 do
     if ( Items[ i ].Data is TP3DMesh ) then
-      begin
-        RenderMesh( i, Camera, AFlags );
-      end;
+      RenderMesh( i, Camera, AFlags );
+
   if ( Assigned( P3DShaderActive ) and P3DShaderActive.Attributes.FindByName( 'instanceID', decl )) then
     begin
       glVertexAttrib1f( decl.Addr, 0.0 );

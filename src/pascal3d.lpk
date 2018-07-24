@@ -22,7 +22,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="68">
+    <Files Count="69">
       <Item1>
         <Filename Value="p3d.core.pas"/>
         <UnitName Value="p3d.core"/>
@@ -292,9 +292,13 @@
         <Type Value="Include"/>
       </Item67>
       <Item68>
-        <Filename Value="pascal3d.core\p3d.core.genibl.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shadow.inc"/>
         <Type Value="Include"/>
       </Item68>
+      <Item69>
+        <Filename Value="pascal3d.core\p3d.core.effect.inc"/>
+        <Type Value="Include"/>
+      </Item69>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>

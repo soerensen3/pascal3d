@@ -101,7 +101,9 @@
         constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
         procedure MouseClick( mb1, mb2, mb3: Boolean; X, Y: Float); override;
+        procedure PopUp(X, Y: Float); override;
         procedure MouseMove(X, Y: Float); override;
+        procedure Realign(); override;
         procedure Update; override;
         procedure Draw; override;
 
@@ -224,6 +226,11 @@ begin
     OnItemClick( Selection );
 end;
 
+procedure TP3DPopupMenu.PopUp(X, Y: Float);
+begin
+  inherited PopUp(X, Y);
+end;
+
 procedure TP3DPopupMenu.MouseMove(X, Y: Float);
 var
   Itm: TP3DMenuItem;
@@ -245,6 +252,12 @@ begin
       end;
 end;
 
+procedure TP3DPopupMenu.Realign();
+begin
+  inherited Realign();
+  Update;
+end;
+
 constructor TP3DPopupMenu.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
@@ -263,7 +276,7 @@ var
   Line: Float;
 begin
   MinSize:= 50;
-  Line:= 0;
+  Line:= 5;
   for Itm in Items do
     begin
       //Ctrl.OnMouseClick:= @ItemMouseClick;
@@ -274,7 +287,7 @@ begin
   if ( Items.Count > 0 ) then
     Height:= Line;
   if ( AutoWidth ) then
-    Width:= Min( Width, MinSize );
+    Width:= Max( Width, MinSize );
   inherited Update;
   FNeedsUpdate:= True;
 end;
@@ -292,7 +305,7 @@ var
   Itm: TP3DMenuItem;
 begin
   inherited Draw;
-  Update;
+  //Update;
   for Itm in Items do
     begin
       if (( Itm.Enabled ) and ( Itm = Selection )) then
@@ -355,7 +368,9 @@ end;
 procedure TP3DCustomPopupMenu.Draw;
 begin
   inherited Draw;
-  Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight, vec4( PresetNormal.Color[ cp100 ].xyz, 0.9 ));
+  Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight, vec4( PresetNormal.Color[ cp100 ].RGB, 0.9 ));
+  Canvas.RenderLine( vec2( 0, 1 ), vec2( ClippedRect.Width, 1 ), vec4( PresetNormal.Color[ cp50 ].rgb, 0.9 ));
+  Canvas.RenderLine( vec2( 0, ClippedRect.Height ), ClippedRect.WidthHeight, vec4( PresetNormal.Color[ cp400 ].rgb, 0.9 ));
 end;
 
 procedure TP3DCustomPopupMenu.PopUp(X, Y: Float);

@@ -14,9 +14,9 @@ type
   { TP3DRenderCommandContainerList }
 
   TP3DRenderCommandContainerList = class ( specialize gP3DStreamableContainerList < TP3DRenderCommand >)
-      public
-        procedure Execute;
-    end;
+    public
+      procedure Execute;
+  end;
 
   { TP3DRenderCommandRenderList }
 
@@ -45,6 +45,8 @@ type
       property RenderList: TP3DRenderList read FRenderList;
       property Scene: TP3DScene read GetScene write SetScene;
       property CameraObj: TP3DObject read GetCameraObj write SetCameraObj;
+
+    published
       property Flags: TP3DRenderListFlags read FFlags write SetFlags;
   end;
 
@@ -62,12 +64,15 @@ type
       FClearFlags: TP3DRenderCommandClearFlags;
 
     public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor Create( AClearFlags: TP3DRenderCommandClearFlags; AClearColor: TP3DColorRGBA; AOwner: IP3DStreamableContainer=nil);
 
       procedure Execute; override;
 
-      property ClearFlags: TP3DRenderCommandClearFlags read FClearFlags write FClearFlags;
       property ClearColor: TP3DColorRGBA read FClearColor write FClearColor;
+
+    published
+      property ClearFlags: TP3DRenderCommandClearFlags read FClearFlags write FClearFlags;
   end;
 
   { TP3DRenderCommandFramebuffer }
@@ -77,6 +82,7 @@ type
       FFramebuffer: TP3DFrameBuffer;
 
     public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor Create( AFramebuffer: TP3DFrameBuffer; const AOwner: IP3DStreamableContainer=nil);
 
       procedure Execute; override;
@@ -94,6 +100,7 @@ type
       FTargetIndex: Integer;
 
     public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor Create( AFramebuffer: TP3DFrameBuffer; ATargetIndex: Integer; const AOwner: IP3DStreamableContainer=nil);
 
       procedure Execute; override;
@@ -105,15 +112,19 @@ type
   { TP3DRenderCommandFramebufferUnbind }
 
   TP3DRenderCommandFramebufferUnbind = class ( TP3DRenderCommand )
+  private
+    FUpdateMipMaps: Boolean;
     protected
       FFramebuffer: TP3DFrameBuffer;
 
     public
-      constructor Create( AFramebuffer: TP3DFrameBuffer; const AOwner: IP3DStreamableContainer=nil);
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      constructor Create( AFramebuffer: TP3DFrameBuffer; const AOwner: IP3DStreamableContainer=nil; const AUpdateMipMaps: Boolean = False );
 
       procedure Execute; override;
 
       property Framebuffer: TP3DFrameBuffer read FFramebuffer write FFramebuffer;
+      property UpdateMipMaps: Boolean read FUpdateMipMaps write FUpdateMipMaps;
   end;
 
   { TP3DRenderCommandPushVP }
@@ -123,6 +134,7 @@ type
       FRect: TP3DRect;
 
     public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       constructor Create( ARect: TP3DRect; AOwner: IP3DStreamableContainer=nil );
 
       procedure Execute; override;
@@ -196,7 +208,7 @@ begin
   FRenderList:= TP3DRenderList.Create;
   FCameraObj:= TP3DStreamablePointer.Create( 'CameraObj', TP3DObject, smText );
   FScene:= TP3DStreamablePointer.Create( 'Scene', TP3DScene, smText );
-  Properties.Add([ FScene, FCameraObj ]);
+  Properties.Add([ FScene, FCameraObj, TP3DPropAccessRTTI.Create( Self, 'Flags', smText )]);
 end;
 
 constructor TP3DRenderCommandRenderList.Create(AScene: TP3DScene; ACameraObj: TP3DObject; AFlags: TP3DRenderListFlags;
@@ -237,10 +249,17 @@ end;
 
 { TP3DRenderCommandClear }
 
+constructor TP3DRenderCommandClear.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  Properties.Add([ TP3DPropAccessColorRGBA.CreateField( 'ClearColor', @FClearColor, smText ),
+                   TP3DPropAccessRTTI.Create( Self, 'ClearFlags', smText )]);
+end;
+
 constructor TP3DRenderCommandClear.Create(AClearFlags: TP3DRenderCommandClearFlags; AClearColor: TP3DColorRGBA;
   AOwner: IP3DStreamableContainer);
 begin
-  inherited Create( AOwner );
+  Create( AOwner );
   ClearFlags:= AClearFlags;
   ClearColor:= AClearColor;
 end;
@@ -261,9 +280,15 @@ end;
 
 { TP3DRenderCommandFramebuffer }
 
+constructor TP3DRenderCommandFramebuffer.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  //Properties.Add( TP3DPropAccessStreamable ); //Framebuffer
+end;
+
 constructor TP3DRenderCommandFramebuffer.Create(AFramebuffer: TP3DFrameBuffer; const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create( AOwner );
+  Create( AOwner );
   Framebuffer:= AFramebuffer;
 end;
 
@@ -275,10 +300,16 @@ end;
 
 { TP3DRenderCommandFramebufferTarget }
 
+constructor TP3DRenderCommandFramebufferTarget.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  Properties.Add( TP3DPropAccessInt.CreateField( 'TargetIndex', @FTargetIndex, smText ));
+end;
+
 constructor TP3DRenderCommandFramebufferTarget.Create(AFramebuffer: TP3DFrameBuffer; ATargetIndex: Integer;
   const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create( AOwner );
+  Create( AOwner );
   Framebuffer:= AFramebuffer;
   TargetIndex:= ATargetIndex;
 end;
@@ -309,17 +340,29 @@ end;
 
 { TP3DRenderCommandFramebufferUnbind }
 
-constructor TP3DRenderCommandFramebufferUnbind.Create(AFramebuffer: TP3DFrameBuffer;
-  const AOwner: IP3DStreamableContainer);
+constructor TP3DRenderCommandFramebufferUnbind.Create(const AOwner: IP3DStreamableContainer);
 begin
-  inherited Create( AOwner );
+  inherited Create(AOwner);
+end;
+
+constructor TP3DRenderCommandFramebufferUnbind.Create(AFramebuffer: TP3DFrameBuffer;
+  const AOwner: IP3DStreamableContainer; const AUpdateMipMaps: Boolean);
+begin
+  Create( AOwner );
   Framebuffer:= AFramebuffer;
+  FUpdateMipMaps:= AUpdateMipMaps;
 end;
 
 procedure TP3DRenderCommandFramebufferUnbind.Execute;
+var
+  i: Integer;
 begin
-  if ( Assigned( Framebuffer )) then
+  if ( Assigned( Framebuffer )) then begin
     Framebuffer.Unbind();
+    if ( UpdateMipMaps ) then
+      for i:= 0 to Framebuffer.Maps.Count - 1 do
+        Framebuffer.Maps[ i ].UpdateMipMaps;
+  end;
 end;
 
 
@@ -350,7 +393,8 @@ end;
 
 procedure TP3DRenderCommandSetActiveMat.Execute;
 begin
-  Material.PassToShader();
+  if ( Assigned( Material )) then
+    Material.PassToShader();
 end;
 
 { TP3DRenderCommandPopVP }
@@ -362,9 +406,15 @@ end;
 
 { TP3DRenderCommandPushVP }
 
+constructor TP3DRenderCommandPushVP.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  Properties.Add( TP3DPropAccessVec4.CreateField( 'Rect', @FRect, smText ));
+end;
+
 constructor TP3DRenderCommandPushVP.Create(ARect: TP3DRect; AOwner: IP3DStreamableContainer);
 begin
-  inherited Create( AOwner );
+  Create( AOwner );
   FRect:= ARect;
 end;
 

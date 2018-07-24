@@ -11,17 +11,21 @@
     * Garbage collector
     * Scenes that can be rendered separately
     * Instancing
-    * Properties will be saved automatically
+    * Properties are streamed from/to file automatically
 * Materials
-    * Base Materials with Blinn/Phong Shading
-    * Custom Shader Materials with GLSL
-    * Node Based Materials using P3D Markdown with GLSL
+    * Custom Shader Materials with GLSL (very basic)
+    * Node Based Materials 
+        * You can define your own nodes in P3D Markdown with GLSL
+        * PBR and Blinn/Phong nodes
+        * Image based lightning - can be generated from environment maps on the fly
+        * Simple ocean shader
 * Graphical User Interface
     * A GUI similar to Lazarus' LCL
-* Bitmap and Native fonts
+* Prerendered bitmap texts and SDF fonts
     * Signed distance field for Bitmap Fonts
-    * Fonts can be easily converted to Bitmap Fonts
-* Works with OpenGL 2.1+
+    * TTF fonts can be easily converted to Bitmap Fonts
+    * Editor library for creating an IDE to edit p3d files
+* Works with OpenGL 2.1+ (Some functions like PBR need OpenGL 3.3)
 
 # Pascal3D License #
 
@@ -72,7 +76,7 @@ You can get Lazarus from http://www.lazarus-ide.org/ or (Linux) from the reposit
 
 ## Pascal3DMath
 
-For Pascal3D you need Math3D which is a opensource math library you can find here:
+For Pascal3D you need Math3D which is an opensource math library you can find here:
 https://bitbucket.org/soerensen3/math3d
 
 ## dglOpenGL
@@ -98,7 +102,7 @@ Before you can compile any Pascal3D you have to first register the packages in L
 The easiest way is to open the project in Lazarus and compile there. You can however also compile from commandline using lazbuild. You will find the project for the official p3dscene editor in ./editor/p3dscene.lpi
 
 # TODO List
-* Object inspector
-  * dynamic pages that uses property editors and categories (partly implemented)
-  * make new spatial object, that can be used by other classes than TP3DActor (for example for joints and pose joints) and be selected and edited in the viewer
+* A lot of bugfixing - Making pascal3d more stable
+* Add shadow maps
+* Add octrees
 

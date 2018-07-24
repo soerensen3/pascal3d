@@ -1,0 +1,42 @@
+---
+node: two_pass_blur
+input: { name: "Radius", type: "int", default: "5" }
+input: { name: "Resolution", type: "int", default: "1024" }
+input: { name: "Map", type: "sampler2D" }
+input: { name: "UV", type: "vec2" }
+---
+
+```{ name: "Declaration", type: "text", visible: false, restrict: "fshader" }
+vec4 hblur( float Radius, float Resolution, sampler2D Map, vec2 UV ){
+  float blur_step = 1 / Resolution;
+  vec4 sum = texture2D( Map, UV );
+  for ( float x = 1; x <= Radius; x++ ){ 
+    sum+= texture2D( Map, UV + vec2( x*blur_step, 0 ));
+    sum+= texture2D( Map, UV - vec2( x*blur_step, 0 ));
+  }
+  sum /= ( 2.0 * Radius + 1.0 );
+  return sum;
+}
+
+vec4 vblur( float Radius, float Resolution, sampler2D Map, vec2 UV ){
+  float blur_step = 1 / Resolution;
+  vec4 sum = texture2D( Map, UV );
+  for ( float y = 1; y <= Radius; y++ ){ 
+    sum+= texture2D( Map, UV + vec2( 0, y*blur_step ));
+    sum+= texture2D( Map, UV - vec2( 0, y*blur_step ));
+  }
+  sum /= ( 2.0 * Radius + 1.0 );
+  return sum;
+}
+
+```
+
+
+```{ name: "hblur", type: "color4" }
+hblur( $Radius$, $Resolution$, $Map$, $UV$ )
+```
+
+```{ name: "vblur", type: "color4" }
+vblur( $Radius$, $Resolution$, $Map$, $UV$ )
+```
+

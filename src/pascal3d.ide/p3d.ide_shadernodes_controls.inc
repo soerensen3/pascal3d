@@ -260,6 +260,7 @@ procedure TP3DNodeSocketControl.Draw;
       end;
   end;
 begin
+  if ( not ( Assigned( Socket ) and ( Socket.CloneOf.Direction = nsdInput ) and not Assigned( Socket.Connected ))) then
   inherited Draw;
 
   if (( gcisMouseOver in InputState ) and ( P3DUI.DragDropSrc <> nil )) then

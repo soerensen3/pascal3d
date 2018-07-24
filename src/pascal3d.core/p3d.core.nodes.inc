@@ -95,7 +95,7 @@ type
 
   { TP3DNodeSocketCloneContainerList }
 
-  TP3DNodeSocketCloneContainerList = class ( specialize gP3DStreamableContainerList < TP3DNodeSocketClone >)
+  TP3DNodeSocketCloneContainerList = class ( specialize gP3DNamedStreamableContainerList < TP3DNodeSocketClone >)
     public
       function SaveToJSON: TJSONData; override;
       procedure LoadJSON(AValue: TJSONData); override;
@@ -493,7 +493,7 @@ end;
 
 function TP3DNodeSocketClone.GetName: String;
 begin
-  if ( Assigned( CloneOf )) then
+  if ( Assigned( FCloneOf ) and  Assigned( CloneOf )) then
     Result:= CloneOf.Name
   else
     Result:= 'Untitled';
@@ -547,6 +547,9 @@ procedure TP3DNodeSocketClone.SetConnected(AValue: TP3DNodeSocketClone);
 begin
   if ( FConnected.AsValue = AValue ) then
     Exit;
+  if ( Assigned( AValue ) and ( AValue.NodeMaster <> Self.NodeMaster )) then
+    raise Exception.CreateFmt( 'Trying to connect two sockets (%s.%s to %s.%s) from different materials!',
+          [ CloneOf.Node.Name, CloneOf.Name, AValue.CloneOf.Node.Name, AValue.CloneOf.Name ]);
   if ( Assigned( AValue ) and ( CloneOf.Direction = nsdOutput )) then
     AValue.Connected:= Self
   else
@@ -606,7 +609,12 @@ begin
       end;
       Properties.Add( ValueProp );
       if ( CloneOf.Default > '' ) then
-        ValueProp.AsString:= CloneOf.Default;
+        try
+          ValueProp.AsString:= CloneOf.Default;
+        except
+          On E: Exception do
+            P3DLog.LogException( Self, Format( 'Error setting default value of %s.%s (%s) <= %s: "%s"', [ Node.CloneOf.Name, CloneOf.Name, CloneOf.SocketType, CloneOf.Default, E.Message ]));
+        end;
     end;
   if ( Assigned( Node )) then
     Node.NeedsUpdate:= True;
@@ -671,6 +679,58 @@ begin
   FItems.Sort( @CompareNodes );
   //quicksort( 0, Count - 1 );
 
+end;
+
+{ TP3DNodeSocketCloneContainerList }
+
+function TP3DNodeSocketCloneContainerList.SaveToJSON: TJSONData;
+var
+  a: TJSONArray;
+  i: Integer;
+  json: TJSONData;
+begin
+  case StoreMode of
+    smText:
+      begin
+        a:= TJSONArray.Create();
+        for i:= 0 to Count - 1 do
+          begin
+            if ( not AsValues[ i ].IsDefault ) then begin
+              json:= GetArrayItemAsProp( i ).SaveToJSON;
+              if ( Assigned( json )) then
+                a.Add( json );
+            end;
+          end;
+        Result:= a;
+      end
+    else
+      Result:= nil;
+  end;
+end;
+
+procedure TP3DNodeSocketCloneContainerList.LoadJSON(AValue: TJSONData);
+var
+  i: Integer;
+  Item: TJSONData;
+begin
+  if ( AValue.JSONType = jtArray ) then begin
+    for i:= 0 to TJSONArray( AValue ).Count - 1 do
+      LoadItemFromJSON( 0, AValue.Items[ i ]);
+  end else
+    raise Exception.CreateFmt( P3DERROR_JSON_WRONG_TYPE, [ 'jtArray', JSONTypeName( AValue.JSONType )]);
+end;
+
+procedure TP3DNodeSocketCloneContainerList.LoadItemFromJSON(Index: Integer; AData: TJSONData);
+var
+  PropName: TJSONStringType;
+  i: Integer;
+begin
+  PropName:= AData.FindPath( 'Name' ).AsString;
+  for i:= 0 to Count - 1 do
+    if ( AsValues[ i ].Name = PropName ) then begin
+      AsValues[ i ].AsJSON:= AData;
+      break;
+    end;
 end;
 
 {$ENDIF}

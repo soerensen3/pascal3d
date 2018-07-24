@@ -8,23 +8,23 @@ node: geometry
 #OUT vec4 vPosition;
 #```
 
-```{name:"Position", type:"vec3", restrict:"fshader,assign"}
+```{name:"Position", type:"vec3", restrict:"assign"}
 vPosition
 ```
 
-```{name:"ScreenPosition", type:"vec2", restrict:"fshader,assign"}
+```{name:"ScreenPosition", type:"vec2", restrict:"assign"}
 vScreenPosition
 ```
 
-```{name:"ObjectPosition", type:"vec3", restrict:"fshader,assign"}
+```{name:"ObjectPosition", type:"vec3", restrict:"assign"}
 vObjectPosition
 ```
 
-```{name:"WorldPosition", type:"vec3", restrict:"fshader,assign"}
+```{name:"WorldPosition", type:"vec3", restrict:"assign"}
 vWorldPosition
 ```
 
-```{name:"Color", type:"color4", restrict:"fshader,assign"}
+```{name:"Color", type:"color4", restrict:"assign"}
 vColor
 ```
 
@@ -45,20 +45,20 @@ vColor
 
 #```
 
-```{name:"Normal", type:"vec3", restrict:"fshader,assign"}
+```{name:"Normal", type:"vec3", restrict:"assign"}
 vNormal
 ```
 
 
-```{name:"WorldNormal", type:"vec3", restrict:"fshader,assign"}
+```{name:"WorldNormal", type:"vec3", restrict:"assign"}
 vWorldNormal
 ```
 
-```{name:"Tangent", type:"vec3", restrict:"fshader,assign"}
+```{name:"Tangent", type:"vec3", restrict:"assign"}
 vTangent
 ```
 
-```{name:"Cotangent", type:"vec3", restrict:"fshader,assign"}
+```{name:"Cotangent", type:"vec3", restrict:"assign"}
 vCotangent
 ```
 

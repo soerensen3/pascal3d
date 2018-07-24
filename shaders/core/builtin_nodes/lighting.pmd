@@ -25,6 +25,8 @@ struct LightSourceParameters {
   float linearAttenuation;
   float quadraticAttenuation;
 };
+
+
 uniform int numLightSource;
 uniform LightSourceParameters LightSource[8];
 //uniform samplerCube IBLDiffuse;

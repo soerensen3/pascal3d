@@ -124,10 +124,12 @@ type
       FMaterial: TP3DStreamablePointer;
       FNodeEditor: TP3DStreamablePointer;
       FNodeList: TP3DStreamablePointer;
+      FPopup: TP3DStreamablePointer;
       //FToolbar: TP3DStreamablePointer;
 
       function GetMaterial: TP3DMaterialNode;
       function GetNodeEditor: TP3DFrame;
+      function GetPopup: TP3DPopupMenu;
       //function GetToolbar: TP3DToolbar;
       procedure OnUniformsChange(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
       procedure SetMaterial(AValue: TP3DMaterialNode);
@@ -141,6 +143,7 @@ type
       procedure MouseWheel(deltax: Integer; deltay: Integer); override;
       procedure NodeEditorMouseMove( Sender: TP3DGraphicControl; X, Y: Float);
       procedure NodeEditorMouseWheel( Sender: TP3DGraphicControl; X, Y: Float);
+      procedure NodeEditorMouseDown(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Float );
       procedure OnIntfSetSelection( Sender: TObject );
       //procedure SetToolbar(AValue: TP3DToolbar);
 
@@ -171,6 +174,7 @@ type
       function FindControl( AOwner: TP3DGraphicControl; ANode: TP3DNodeClone ): Integer;
       function GetControl( ANode: TP3DNodeClone ): TP3DNodeControl;
       procedure AlignConnected(ANodeCtrl: TP3DNodeControl; ARecurse: Boolean; AMargin: TVec2);
+      procedure PopupClick( Sender: TP3DMenuItem );
 
       procedure Logic(); override;
       procedure Draw; override;
@@ -181,6 +185,7 @@ type
       property NodeList: TP3DTreeViewObjects read GetNodeList write SetNodeList;
       //property Toolbar: TP3DToolbar read GetToolbar write SetToolbar;
       property EventHandler: TP3DNodeEventHandler read FEventHandler;
+      property Popup: TP3DPopupMenu read GetPopup;
   end;
 
 {$ENDIF}
@@ -571,8 +576,8 @@ begin
             begin
               //n.Update;
               //n.TopLeft:= vec2( x, y );
-              n.X:= x;
-              n.Y:= y;
+              n.X:= NodeEditor.UIViewerFrame.MouseX;
+              n.Y:= NodeEditor.UIViewerFrame.MouseY;
             end;
         end;
     end;
@@ -594,6 +599,16 @@ procedure TP3DShaderNodeEditor.NodeEditorMouseWheel(Sender: TP3DGraphicControl; 
 begin
   if ( NodeEditor.MouseRay( P3DUI.Viewer.Mouse.X, P3DUI.Viewer.Mouse.Y )) then
     TP3DFrame( NodeEditor ).Zoom:= clamp( TP3DFrame( NodeEditor ).Zoom + y * 0.2, 0.2, 5 );
+end;
+
+procedure TP3DShaderNodeEditor.NodeEditorMouseDown(Sender: TP3DGraphicControl; mb1, mb2, mb3: Boolean; X, Y: Float);
+var
+  m: TVec2;
+begin
+  if ( mb3 ) then begin
+    m:= NodeEditor.UIViewerFrame.Mouse;
+    Popup.PopUp( m.X, m.Y );
+  end;
 end;
 
 procedure TP3DShaderNodeEditor.OnIntfSetSelection(Sender: TObject);
@@ -764,6 +779,11 @@ begin
   Result:= TP3DFrame( FNodeEditor.AsValue );
 end;
 
+function TP3DShaderNodeEditor.GetPopup: TP3DPopupMenu;
+begin
+  Result:= TP3DPopupMenu( FPopup.AsValue );
+end;
+
 {function TP3DShaderNodeEditor.GetToolbar: TP3DToolbar;
 begin
   Result:= TP3DToolbar( FToolbar.AsValue );
@@ -879,6 +899,8 @@ var
     Ctrl: TP3DNodeControl;
   begin
     Ctrl:= GetControl( Node );
+    if ( not Assigned( Ctrl )) then
+      exit;
     Ctrl.Left:= ANodeCtrl.Left - Ctrl.Width - AMargin.x;
     Ctrl.Top:= LineTop;
     LineTop:= LineTop + Ctrl.Height + AMargin.y;
@@ -892,6 +914,14 @@ begin
   for Socket in ANodeCtrl.Node.Inputs do
     if ( Assigned( Socket.Connected )) then
       Align( Socket.Connected.Node );
+end;
+
+procedure TP3DShaderNodeEditor.PopupClick(Sender: TP3DMenuItem);
+begin
+  if ( Sender.Caption = 'Sort Nodes' ) then
+    if ( Assigned( Material ) and ( Assigned( Material.RootNode ))) then
+      AlignConnected( GetControl( Material.RootNode ), True, vec2( 30, 50 ));
+  Popup.Hide;
 end;
 
 procedure TP3DShaderNodeEditor.Logic();
@@ -933,15 +963,6 @@ begin
                      P3DSymbolOptions  + P3DSymbolArrowRight + P3DSymbolShader;
     end;}
 
-  FNodeEditor:= TP3DStreamablePointer.Create( 'NodeEditor', TP3DFrame );
-  Properties.Add( FNodeEditor );
-  NodeEditor:= TP3DFrame.Create( Controls );//TP3DGraphicControl.Create( Controls );
-  NodeEditor.Align:= alClient;
-  NodeEditor.OnDragDrop:= @NodeEditorDragDrop;
-  NodeEditor.OnMouseMove:= @NodeEditorMouseMove;
-  NodeEditor.OnMouseWheel:= @NodeEditorMouseWheel;
-  NodeEditor.PageModeX:= pmScroll;
-
   {FBuiltInLeft:= TP3DStreamablePointer.Create( 'BuiltInLeft', TP3DGraphicControl );
   Properties.Add( FBuiltInLeft );
   BuiltInLeft:= TP3DGraphicControl.Create( Controls );
@@ -961,6 +982,15 @@ begin
       AllowDrag:= True;
     end;
   TP3DSplitter.Create( Controls ).Align:= alRight;
+  FNodeEditor:= TP3DStreamablePointer.Create( 'NodeEditor', TP3DFrame );
+  Properties.Add( FNodeEditor );
+  NodeEditor:= TP3DFrame.Create( Controls );//TP3DGraphicControl.Create( Controls );
+  NodeEditor.Align:= alClient;
+  NodeEditor.OnDragDrop:= @NodeEditorDragDrop;
+  NodeEditor.OnMouseMove:= @NodeEditorMouseMove;
+  NodeEditor.OnMouseWheel:= @NodeEditorMouseWheel;
+  NodeEditor.OnMouseClick:= @NodeEditorMouseDown;
+  NodeEditor.PageModeX:= pmScroll;
 
   {FBuiltInRight:= TP3DStreamablePointer.Create( 'BuiltInRight', TP3DGraphicControl );
   Properties.Add( FBuiltInRight );
@@ -973,6 +1003,12 @@ begin
 
   if ( Assigned( P3DMainIntf )) then
     P3DMainIntf.AddSetActiveMaterialHandler( @OnIntfSetSelection );
+
+  FPopup:= TP3DStreamablePointer.Create( 'Popup', TP3DPopupMenu );
+  Properties.Add( FPopup );
+  FPopup.AsValue:= TP3DPopupMenu.Create( NodeEditor.Controls );
+  Popup.Items.Add( 'Sort Nodes' );
+  Popup.OnItemClick:= @PopupClick;
 end;
 
 destructor TP3DShaderNodeEditor.Destroy;
@@ -988,7 +1024,7 @@ end;
 
 procedure TP3DShaderNodeEditor.Draw;
 begin
-  //Canvas.RenderRect( vec2( 0 ), ClientRect.WidthHeight, Red900 );
+  Canvas.RenderRect( vec2( 0 ), ClippedRect.WidthHeight, P3DThemeDefault.Accent[ cp500 ]);
   inherited Draw;
 end;
 
@@ -1012,10 +1048,13 @@ procedure TP3DShaderNodeEditor.Update;
 
 var
   Node: TP3DNodeClone;
-  n: Integer;
+  n, i: Integer;
   LastTop: Single = 0;
 begin
-  NodeEditor.Controls.Clear;
+  //NodeEditor.Controls.Clear;
+  for i:= NodeEditor.Controls.Count - 1 downto 0 do
+    if ( NodeEditor.Controls[ i ] is TP3DNodeControl ) then
+      NodeEditor.Controls[ i ].Free;
 
   if ( not Assigned( Material )) then
     exit;

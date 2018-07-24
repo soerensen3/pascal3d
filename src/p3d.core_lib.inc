@@ -31,6 +31,7 @@
 {$INCLUDE p3d.core.armature.inc}
 {$INCLUDE p3d.core.terrain.inc}
 {$INCLUDE p3d.core.grids.inc}
+{$INCLUDE p3d.core.effect.inc}
 {$INCLUDE p3d.core.library.inc}
-{$INCLUDE p3d.core.genibl.inc}
+{$INCLUDE p3d.core.shadow.inc}
 

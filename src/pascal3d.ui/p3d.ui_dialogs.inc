@@ -139,8 +139,6 @@ begin
     end;
 end;
 
-{ TP3DDialogStreamableBrowseInstances }
-
 function TP3DDialogStreamableBrowseInstances.GetObjects: TP3DTreeViewObjects;
 begin
   Result:= TP3DTreeViewObjects( FObjects.AsValue );
@@ -266,18 +264,17 @@ begin
   FOkBtn:= TP3DStreamablePointer.Create( 'OkBtn', TP3DButton );
   Properties.Add([ FOkBtn, FDirectories, FFiles ]);
 
-  with ( TP3DGraphicControl.Create( Controls )) do
-    begin
-      Align:= alBottom;
-      PageModeX:= pmStretch;
-      OkBtn:= TP3DButton.Create( Controls );
-      OkBtn.Caption:= 'OK';
-      OkBtn.OnMouseClick:= @ButtonClick;
-      CancelBtn:= TP3DButton.Create( Controls );
-      CancelBtn.Caption:= 'Cancel';
-      CancelBtn.Left:= OkBtn.Width;
-      CancelBtn.OnMouseClick:= @ButtonClick;
-    end;
+  with ( TP3DGraphicControl.Create( Controls )) do begin
+    Align:= alBottom;
+    PageModeX:= pmStretch;
+    OkBtn:= TP3DButton.Create( Controls );
+    OkBtn.Caption:= 'OK';
+    OkBtn.OnMouseClick:= @ButtonClick;
+    CancelBtn:= TP3DButton.Create( Controls );
+    CancelBtn.Caption:= 'Cancel';
+    CancelBtn.Left:= OkBtn.Width;
+    CancelBtn.OnMouseClick:= @ButtonClick;
+  end;
 
   Directories:= TP3DTreeViewDirectory.Create( Controls );
   Directories.Align:= alLeft;

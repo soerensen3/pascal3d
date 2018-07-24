@@ -141,6 +141,8 @@ type
   TP3DListViewStyle = ( vsList, vsIcon );
   TP3DTreeViewSelectionChangeEvent = procedure ( var NewSelection: TP3DTreeNode ) of object;
   TP3DTreeView = class( TP3DCustomItemView )
+  private
+    FSymbolColor: TP3DColorRGBA;
     protected
       FChildren: TP3DTreeNodeList;
       FDragItem: TP3DTreeNode;
@@ -166,6 +168,8 @@ type
 
       function NodeAtPos(p: TVec2): TP3DTreeNode;
 
+      property SymbolColor: TP3DColorRGBA read FSymbolColor write FSymbolColor;
+
     published
       property Children: TP3DTreeNodeList read FChildren write FChildren;
       property Selection: TP3DTreeNode read FSelection write SetSelection;
@@ -184,6 +188,7 @@ type
       FOnSelectionChange: TP3DListViewSelectionChangeEvent;
       FSelection: TP3DListItem;
       FViewStyle: TP3DListViewStyle;
+
       procedure SetSelection(AValue: TP3DListItem);
 
     public
@@ -524,12 +529,6 @@ begin
         Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + LineHeight ),
                            Color[ cp900 ], Color[ cp400 ], Color[ cp600 ], Color[ cp900 ]);
       end;
-  if ( ShowSymbols ) then
-    begin
-      if ( not Assigned( Node.Symbol )) then
-        Canvas.GetValidText( Node.SymbolText, Node.Symbol, P3DFontManager[ SymbolsFontName, Font.Size ]);
-      Canvas.RenderText( Node.Symbol, p + vec2( Font.Size, 0 ));
-    end;
 
   Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * ( 1.5 + Ord( ShowSymbols )));
 
@@ -544,6 +543,14 @@ begin
       end
     else
       Canvas.RenderText( SymbolPlus, p );
+
+  if ( ShowSymbols ) then
+    begin
+      Canvas.Font.Color:= SymbolColor;
+      if ( not Assigned( Node.Symbol )) then
+        Canvas.GetValidText( Node.SymbolText, Node.Symbol, P3DFontManager[ SymbolsFontName, Font.Size ]);
+      Canvas.RenderText( Node.Symbol, p + vec2( Font.Size, 0 ));
+    end;
 end;
 
 procedure TP3DTreeView.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float);
@@ -1110,7 +1117,7 @@ function TP3DListView.ItemAtPos(p: TVec2): TP3DListItem;
         if ( not Assigned( Child.Text )) then
           Canvas.GetValidText( Child.Caption, Child.FText, P3DFontManager[ Font.Name, Font.Size ]);
         if ( P3DRect( Child.FRenderPos.x, Child.FRenderPos.y,
-                      ClientRect.Width - Child.FRenderPos.x, Child.Text.Height ).PtInRect( p )) then
+                      ClientRect.Width - Child.FRenderPos.x, Font.Size * 1.2 ).PtInRect( p )) then
           begin
             Result:= Child;
             break;
@@ -1122,42 +1129,6 @@ begin
 end;
 
 procedure TP3DListView.Draw;
-  function DrawList( p: TVec2; Node: TP3DListItem; var MaxX: Float ): TVec2;
-  var
-    LineHeight: Float;
-  begin
-    Result:= p;
-    LineHeight:= Font.Size * 1.2;
-    Node.FRenderPos:= p;
-    p-= vec2( ScrollBarH.Position, ScrollBarV.Position );
-    if ( not Assigned( Node.Text )) then
-      Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
-    Canvas.Font.Color:= PresetNormal.Color[ cp900 ];
-    if ( Node = DragItem ) then
-      with ( PresetDrag ) do
-        begin
-          Canvas.Font.Color:= Color[ cp50 ];
-          Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + LineHeight ),
-                             Color[ cp900 ], Color[ cp400 ], Color[ cp600 ], Color[ cp900 ]);
-        end
-    else if ( Node = Selection ) then
-      with ( PresetSelection ) do
-        begin
-          Canvas.Font.Color:= Color[ cp50 ];
-          Canvas.RenderRect( p, vec2( ClientRect.Right - ScrollBarWidth, p.y + LineHeight ),
-                             Color[ cp900 ], Color[ cp400 ], Color[ cp600 ], Color[ cp900 ]);
-        end;
-    if ( ShowSymbols ) then
-      begin
-        if ( not Assigned( Node.Symbol )) then
-          Canvas.GetValidText( Node.SymbolText, Node.Symbol, P3DFontManager[ SymbolsFontName, Font.Size ]);
-        Canvas.RenderText( Node.Symbol, p );
-      end;
-    Canvas.RenderText( Node.Text, p + vec2( Font.Size, 0 ) * Ord( ShowSymbols ));
-    MaxX:= Max( MaxX, p.x + Font.Size * Ord( ShowSymbols ) + Node.Text.Width );
-    Result.y:= Result.y + Node.Text.Height;
-  end;
-
 var
   Child: TP3DListItem;
   p, p2: TVec2;

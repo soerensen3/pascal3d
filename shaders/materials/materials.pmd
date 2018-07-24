@@ -4,6 +4,7 @@ input: {name:"Albedo", type:"color4", default:"1,1,1,1"}
 input: {name:"WorldNormal", type:"vec3", default:"0,0,1"}
 input: {name:"Metalness", type:"float", default:"0"}
 input: {name:"Roughness", type:"float", default:"0"}
+input: {name:"Occlusion", type:"float", default:"0"}
 ---
 
 #Normal in tangent space, view or object space?
@@ -253,7 +254,7 @@ void util_directionalLight( in int i,
                     0, 1, 0 );
   vec3 irradiance = vec3( 0 );
    
-  vec3 frag_normal_obj = $WorldNormal:assign$.xyz;
+  vec3 frag_normal_obj = normalize( $WorldNormal:assign$.xyz );
   float frag_metalness = clamp( $Metalness:assign$, 0.0, 1.0 );
   float frag_roughness = clamp( $Roughness:assign$, 0.01, 1.0 );
   vec4 frag_albedo = $Albedo:assign$;
@@ -294,11 +295,12 @@ void util_directionalLight( in int i,
   
   irradiance = IBLDiff * frag_albedo.rgb + IBLSpec;
      
+  float occlusion = 1-clamp( $Occlusion:assign$, 0, 1 );
   for ( int i=0; i < numLightSource; i++ ) {
     if ( LightSource[ i ].type == p3dltPoint )
-      irradiance += util_PointLightPBR( i, frag_albedo.rgb, frag_roughness, frag_metalness, frag_normal_obj );
+      irradiance += occlusion * util_PointLightPBR( i, frag_albedo.rgb, frag_roughness, frag_metalness, frag_normal_obj );
     if ( LightSource[ i ].type == p3dltSun )
-      irradiance += util_directionalLightPBR( i, frag_albedo.rgb, frag_roughness, frag_metalness, frag_normal_obj );
+      irradiance += occlusion * util_directionalLightPBR( i, frag_albedo.rgb, frag_roughness, frag_metalness, frag_normal_obj );
   }
   //vec3 tmp = vec3( max( dot( frag_normal_obj, V ), 0.0 ), frag_roughness, 0.0 );
   //vec3 tmp = vec3( brdf, 0 );//texture2D( IBLIntegrateBRDF, vTexCoord0.xy ).rgb;

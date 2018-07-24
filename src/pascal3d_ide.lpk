@@ -10,7 +10,7 @@
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="15">
+    <Files Count="16">
       <Item1>
         <Filename Value="p3d.ide.pas"/>
         <UnitName Value="p3d.ide"/>
@@ -71,6 +71,10 @@
         <Filename Value="pascal3d.ide/p3d.ide_libinspector.inc"/>
         <Type Value="Include"/>
       </Item15>
+      <Item16>
+        <Filename Value="pascal3d.ide/p3d.ide_editoreffect.inc"/>
+        <Type Value="Include"/>
+      </Item16>
     </Files>
     <RequiredPkgs Count="4">
       <Item1>

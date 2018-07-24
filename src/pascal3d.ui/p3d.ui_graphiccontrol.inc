@@ -116,6 +116,9 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     procedure DragDrop( Sender, Source: TP3DGraphicControl; X, Y: Float; var Accept: Boolean ); virtual; //This procedure is called internally when the mouse is released on the control during dragging. It can be overriden to make this control a drag target.
     procedure Realign(); virtual; //Realign the control. Is called from TP3DControlList when parent changes
     procedure Paint(); virtual; //Prepare the canvas for drawing and call draw procedure.
+    {$IFDEF DEBUG_GUI}
+    //procedure DebugPaint(); virtual; //Prepare the canvas for drawing and call draw procedure.
+    {$ENDIF}
     procedure Logic(); virtual;
     procedure TriggerMouseAction;
 
@@ -210,6 +213,7 @@ TP3DGraphicControl = class ( TP3DNamedStreamable )
     property UpdateRequested: TP3DGraphicControlUpdateRequest read FUpdateRequested write FUpdateRequested;
 end;
 
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -273,6 +277,7 @@ begin
 
   //Properties.Add( TP3DPropAccesslRTTI.Create( Self, 'ClientRect', smText )); //cannot be published
   //property Controls: TP3DControlList read FControls write FControls;
+  FUpdateRequested:= urParentCtrls;
 end;
 
 destructor TP3DGraphicControl.Destroy;
@@ -389,7 +394,6 @@ end;
 procedure TP3DGraphicControl.SetRect(AValue: TP3DRect);
 var
   OldRect: TP3DRect;
-  Control: TP3DGraphicControl;
 begin
   if FRect=AValue then Exit;
 
@@ -400,7 +404,7 @@ begin
   if ( OldRect.WidthHeight <> Rect.WidthHeight ) then
     RequestUpdate( urParentCtrls )
   else if ( OldRect.TopLeft <> Rect.TopLeft ) then
-    RequestUpdate( urChildren )
+    RequestUpdate( urClippedRect )
   Else
     Exit;
 
@@ -416,7 +420,10 @@ procedure TP3DGraphicControl.RequestUpdate(AUpdateRequest: TP3DGraphicControlUpd
 begin
   if ( UpdateRequested >= AUpdateRequest ) then
     exit;
-  FUpdateRequested:= AUpdateRequest;
+  if ( Assigned( Controls ) and ( Assigned( Parent ) and (( Parent.PageModeX <> pmScroll ) or ( Parent.PageModeY <> pmScroll )))) then
+    Parent.RequestUpdate( urParentCtrls )
+  else
+    FUpdateRequested:= AUpdateRequest;
 end;
 
 procedure TP3DGraphicControl.SetWidth(AValue: Single);
@@ -680,9 +687,9 @@ begin
 
   if ( HasShadow()) then
     begin
-      p:= ClippedRect.TopLeft + 2;
+      p:= ClippedRect.TopLeft + 1;
       UIViewer.ScreenCanvas.Lock;
-      UIViewer.ScreenCanvas.RenderRectShadow( p, p + ClippedRect.WidthHeight, 10, vec4( 0, 0, 0, 0.05 ));
+      UIViewer.ScreenCanvas.RenderRectShadow( p, p + ClippedRect.WidthHeight, 5, vec4( 0, 0, 0, 0.1 ));
       UIViewer.ScreenCanvas.Unlock();
     end;
 
@@ -710,6 +717,7 @@ begin
     urChildren: Controls.UpdateControls;
     urParentCtrls: ParentCtrl.UpdateControls;
   end;
+  FUpdateRequested:= urNone;
   Controls.Logic();
 end;
 
@@ -800,5 +808,8 @@ begin
   if ( Assigned( FOnDragDropCancel )) then
     FOnDragDropCancel( Sender, X, Y );
 end;
+
+
+
 
 {$ENDIF}

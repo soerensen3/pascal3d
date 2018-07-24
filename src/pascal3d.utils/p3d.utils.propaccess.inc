@@ -193,6 +193,10 @@
 
         procedure Assign( AProp: TP3DPropertyAccess ); override;
 
+        class operator Implicit( AValue:T ): TProp;
+        class operator Implicit( Prop: TProp ): T;
+
+
         property AsValue: T read GetAsValue write SetAsValue;
 
         property Getter: TGetter read FGetter write FGetter;
@@ -605,20 +609,21 @@ var
   ArrayIdx: LongInt;
   List: TP3DPropertyAccessArray absolute Result;
 begin
+  //WriteLn( APropPath );
   PropName:= PathGetNextFragment( APropPath, ArrayStr );
 
   Result:= GetPropByName( PropName );
   if ( Assigned( Result )) then
     LastFound:= Result;
 
-  if (( Result is TP3DPropertyAccessArray ) and ( ArrayStr > '' )) then
-    begin
-      ArrayIdx:= List.GetArrayIdxByString( ArrayStr );
-      if ( ArrayIdx < 0 ) then
-        Result:= nil
-      else
-        Result:= List.GetArrayItemAsProp( ArrayIdx );
-    end;
+  if (( Result is TP3DPropertyAccessArray ) and ( ArrayStr > '' )) then begin
+    ArrayIdx:= List.GetArrayIdxByString( ArrayStr );
+    //WriteLn( ArrayStr, '<=>', ArrayIdx );
+    if ( ArrayIdx < 0 ) then
+      Result:= nil
+    else
+      Result:= List.GetArrayItemAsProp( ArrayIdx );
+  end;
   if ( Assigned( Result ) and ( APropPath > '' )) then
     Result:= Result.GetChildPropByPath( APropPath, RestString, LastFound );
   if ( Assigned( Result )) then
@@ -651,6 +656,16 @@ begin
       AsValue:= TProp( AProp ).AsValue
     else
       inherited Assign( AProp );
+end;
+
+class operator gP3DPropAccess.Implicit(AValue: T): TProp;
+begin
+
+end;
+
+class operator gP3DPropAccess.Implicit(Prop: TProp): T;
+begin
+
 end;
 
 procedure gP3DPropAccess.SetAsValue( AValue: T );

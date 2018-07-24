@@ -701,16 +701,21 @@ end;
 
 procedure TP3DGroupBox.UpdateCollapsed;
 begin
-  if ( CanCollapse and Collapsed ) then
-    begin
-      FCollapseSymbol:= P3DSymbolTriangleRight;
-      HideChildren:= True;
-    end
-  else
-    begin
-      FCollapseSymbol:= P3DSymbolTriangleDown;
-      HideChildren:= False;
-    end;
+  if ( CanCollapse and Collapsed ) then begin
+    FCollapseSymbol:= P3DSymbolTriangleRight;
+    HideChildren:= True;
+    FStoredHeight:= Height;
+    Rect.Height:= Margin.Y + Margin.Z;
+    RequestUpdate( urParentCtrls );
+    MaxHeight:= Rect.Height;
+  end else begin
+    FCollapseSymbol:= P3DSymbolTriangleDown;
+    HideChildren:= False;
+    if ( FStoredHeight > 0 ) then
+      Rect.Height:= FStoredHeight;
+    RequestUpdate( urParentCtrls );
+    MaxHeight:= 0;
+  end;
 end;
 
 class function TP3DGroupBox.HasShadow: Boolean;
@@ -727,9 +732,10 @@ end;
 
 procedure TP3DGroupBox.SetHeight( AValue: Float );
 begin
-  inherited SetHeight( AValue );
-  if ( not ( CanCollapse and Collapsed )) then
-    FStoredHeight:= AValue;
+  if ( CanCollapse and Collapsed ) then
+    FStoredHeight:= AValue
+  else
+    inherited SetHeight( AValue );
 end;
 {
 procedure TP3DGroupBox.Realign(var ClientArea: TP3DRect);
@@ -1659,6 +1665,7 @@ begin
   if ( mb1 ) then
     Checked:= not Checked;
 end;
+
 
 
 { TP3DComboBoxDataBlock }

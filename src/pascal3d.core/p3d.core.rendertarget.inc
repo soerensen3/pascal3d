@@ -3,14 +3,14 @@ type
 
   { TP3DRenderBuffer }
 
-  TP3DRenderBuffer = class ( TPersistent )
+  TP3DRenderBuffer = class ( TP3DStreamable )
     private
       FHeight: Integer;
       FRBO: GLint;
       FWidth: Integer;
 
     public
-      constructor Create(AWidth, AHeight: Integer);
+      constructor Create(AWidth, AHeight: Integer; AOwner: IP3DStreamableContainer );
       destructor Destroy; override;
 
     published
@@ -21,16 +21,24 @@ type
 
   { TP3DFrameBuffer }
 
-  TP3DFrameBuffer = class ( TPersistent )
-    private
+  TP3DFrameBuffer = class ( TP3DStreamable )
+    protected
       FAutoViewPort: Boolean;
+      FMaps: specialize gP3DStreamablePointerList<TP3DTexture>;
+      FRenderbuffer: TP3DStreamableContainer;
       FViewPortIdx: Integer;
       FTexCount: Byte;
       FFBO: GLint;
       FWidthHeight: TIVec2;
 
+      function GetRenderbuffer: TP3DRenderBuffer;
+      procedure MapsChange( ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction );
+      procedure SetRenderbuffer(AValue: TP3DRenderBuffer);
+
+      procedure RenderBufferChange(ANewValue: TP3DStreamable);
+
     public
-      constructor Create();
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy(); override;
 
       procedure Bind( Index: Integer );
@@ -42,17 +50,21 @@ type
         ADepth: Boolean; ANames: array of String; const AData: TP3DLibrary = nil);
       procedure AttachColor( Tex: TP3DTexture; const MipLevel: Integer = 0 );
       procedure AttachDepth( Tex: TP3DTexture );
-      procedure AttachDepth( RB: TP3DRenderBuffer );
+      procedure AttachDepth( AWidth, AHeight: Integer );
       procedure AttachStencil( Tex: TP3DTexture );
       procedure DetachAll();
 
-      procedure CheckFBO;
+      function CheckFBO( const RaiseException: Boolean = True ): Boolean;
 
       property FBO: GLint read FFBO;
       property TexCount: Byte read FTexCount;
       property AutoViewPort: Boolean read FAutoViewPort write FAutoViewPort;
       property WidthHeight: TIVec2 read FWidthHeight write FWidthHeight;
+      property Maps: specialize gP3DStreamablePointerList < TP3DTexture > read FMaps;
+      property Renderbuffer: TP3DRenderBuffer read GetRenderbuffer write SetRenderbuffer;
   end;
+
+  TP3DFrameBufferContainerList = specialize gP3DStreamableContainerList < TP3DFrameBuffer >;
 
 
 {$ENDIF}
@@ -60,9 +72,9 @@ type
 {$IFDEF IMPLEMENTATION}
 { TP3DRenderBuffer }
 
-constructor TP3DRenderBuffer.Create( AWidth, AHeight: Integer );
+constructor TP3DRenderBuffer.Create(AWidth, AHeight: Integer; AOwner: IP3DStreamableContainer);
 begin
-  inherited Create;
+  inherited Create( AOwner );
   glGenRenderbuffers( 1, @FRBO );
   glBindRenderbuffer( GL_RENDERBUFFER, FRBO );
   glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH_COMPONENT, AWidth, AHeight );
@@ -77,13 +89,50 @@ end;
 
 { TP3DFrameBuffer }
 
-constructor TP3DFrameBuffer.Create();
+procedure TP3DFrameBuffer.MapsChange(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction);
 begin
-  inherited Create;
+  if ( AAction = actAdd ) then
+    AttachColor( TP3DTexture( AItem ));
+end;
+
+function TP3DFrameBuffer.GetRenderbuffer: TP3DRenderBuffer;
+begin
+  Result:= TP3DRenderBuffer( FRenderbuffer.AsValue );
+end;
+
+procedure TP3DFrameBuffer.SetRenderbuffer(AValue: TP3DRenderBuffer);
+begin
+  FRenderbuffer.AsValue:= AValue;
+end;
+
+procedure TP3DFrameBuffer.RenderBufferChange(ANewValue: TP3DStreamable);
+begin
+  if ( Assigned( ANewValue )) then with ( ANewValue as TP3DRenderBuffer ) do begin
+    glBindFramebuffer( GL_FRAMEBUFFER, FBO );
+    glBindRenderbuffer( GL_RENDERBUFFER, RBO );
+    glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RBO );
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+  end else begin
+    glBindFramebuffer( GL_FRAMEBUFFER, FBO );
+    glBindRenderbuffer( GL_RENDERBUFFER, 0 );
+    glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0 );
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+  end;
+end;
+
+constructor TP3DFrameBuffer.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create( AOwner );
   glGenFramebuffers( 1, @FBO );
   FTexCount:= 0;
   FAutoViewPort:= True;
   FViewPortIdx:= -1;
+  Properties.Add([ TP3DPropAccessBoolean.CreateField( 'AutoViewPort', @FAutoViewPort, smText )]);
+  FMaps:= ( specialize gP3DStreamablePointerList < TP3DTexture >).Create( 'Maps', smText );
+  FMaps.OnChange:= @MapsChange;
+  FRenderbuffer:= TP3DStreamableContainer.Create( 'Renderbuffer', TP3DRenderBuffer, smText );
+  FRenderbuffer.OnChange:=@RenderBufferChange;
+  Properties.Add([ FMaps, FRenderbuffer ]);
 end;
 
 destructor TP3DFrameBuffer.Destroy();
@@ -139,7 +188,7 @@ begin
     AttachColor( Tx );
   end;
   if ( ADepth ) then
-    AttachDepth( TP3DRenderBuffer.Create( AWidth, AHeight ));
+    AttachDepth( AWidth, AHeight );
 end;
 
 procedure TP3DFrameBuffer.AttachColor(Tex: TP3DTexture; const MipLevel: Integer);
@@ -159,6 +208,7 @@ end;
 
 procedure TP3DFrameBuffer.AttachDepth(Tex: TP3DTexture);
 begin
+  Renderbuffer:= nil;
   glBindFramebuffer( GL_FRAMEBUFFER, FBO );
   glFramebufferTexture2D( GL_FRAMEBUFFER,                // 1. fbo target: GL_FRAMEBUFFER
                           GL_DEPTH,                      // 2. attachment point
@@ -169,11 +219,16 @@ begin
   glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 end;
 
-procedure TP3DFrameBuffer.AttachDepth(RB: TP3DRenderBuffer);
+procedure TP3DFrameBuffer.AttachDepth(AWidth, AHeight: Integer);
 begin
   glBindFramebuffer( GL_FRAMEBUFFER, FBO );
-  glBindRenderbuffer( GL_RENDERBUFFER, RB.RBO );
-  glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RB.RBO );
+  TP3DRenderBuffer.Create( AWidth, AHeight, FRenderbuffer );
+  glFramebufferRenderbuffer( GL_FRAMEBUFFER,                // 1. fbo target: GL_FRAMEBUFFER
+                             GL_DEPTH_ATTACHMENT,           // 2. attachment point
+                             GL_RENDERBUFFER,               // 3. renderbuffer target: GL_RENDERBUFFER
+                             Renderbuffer.RBO );            // 4. renderbuffer ID
+
+  cle( Self, 'Error while attaching renderbuffer to frame buffer: ' );
   glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 end;
 
@@ -198,28 +253,30 @@ begin
   FTexCount:= 0;
 end;
 
-procedure TP3DFrameBuffer.CheckFBO;
+function TP3DFrameBuffer.CheckFBO(const RaiseException: Boolean): Boolean;
 var
   error: GlEnum;
 begin
   error := glCheckFramebufferStatus(GL_FRAMEBUFFER); cle( Self, 'Error while checking frame buffer status: ' );
-  case error of
-    GL_FRAMEBUFFER_COMPLETE:
-      Exit;
-    GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-      raise Exception.Create('Incomplete attachment');
-    GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-      raise Exception.Create('Missing attachment');
-    GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-      raise Exception.Create('Incomplete dimensions');
-    GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-      raise Exception.Create('Incomplete formats');
-    GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-      raise Exception.Create('Incomplete draw buffer');
-    GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-      raise Exception.Create('Incomplete read buffer');
-    GL_FRAMEBUFFER_UNSUPPORTED:
-      raise Exception.Create('Framebufferobjects unsupported');
-  end;
+  Result:= error = GL_FRAMEBUFFER_COMPLETE;
+  if ( RaiseException ) then
+    case error of
+      GL_FRAMEBUFFER_COMPLETE:
+        Exit;
+      GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        raise Exception.Create('Incomplete attachment');
+      GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        raise Exception.Create('Missing attachment');
+      GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+        raise Exception.Create('Incomplete dimensions');
+      GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+        raise Exception.Create('Incomplete formats');
+      GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+        raise Exception.Create('Incomplete draw buffer');
+      GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+        raise Exception.Create('Incomplete read buffer');
+      GL_FRAMEBUFFER_UNSUPPORTED:
+        raise Exception.Create('Framebufferobjects unsupported');
+    end;
 end;
 {$ENDIF}

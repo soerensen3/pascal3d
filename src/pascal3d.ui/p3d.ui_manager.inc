@@ -76,6 +76,7 @@ end;
 constructor TP3DUI.Create(const AOwner: IP3DStreamableContainer);
 var
   i: Integer;
+  P: TP3DStreamablePointer;
 begin
   inherited Create;
   FViewerStack:= TP3DUIViewerStack.Create( 'ViewerStack' );
@@ -107,6 +108,10 @@ begin
   UpdateExtents;}
   Cursor:= curArrow;
   CursorOverride:= curArrow;
+
+  P:= TP3DStreamablePointer.Create( 'UI', TP3DUI );
+  P3DData.Properties.Add( P );
+  P.AsValue:= Self;
 end;
 
 destructor TP3DUI.Destroy;
@@ -306,7 +311,8 @@ begin
       with ( LastMouseOverCtrl ) do
         begin
           //UI.ScreenCanvas.RenderRect( vec2( ClippedRect.Left + ClientRect.Left, ClippedRect.Top + ClientRect.Top ), vec2( Canvas.Left + ClientRect.Left + ClientRect.Right, Canvas.Top + ClientRect.Top + ClientRect.Bottom ), vec4( 1, 1, 1, 0.2 ));
-          ScreenCanvas.RenderRect( ClippedRect.TopLeft, ClippedRect.BottomRight, vec4( 0, 0, 0, 0.5 ));
+          ScreenCanvas.RenderRect( ClippedRect.TopLeft, ClippedRect.BottomRight, vec4( 1, 1, 1, 0.5 ));
+          ScreenCanvas.RenderRect( ParentCtrl.PageRect.TopLeft, ParentCtrl.PageRect.BottomRight, vec4( 0, 0.5, 0, 0.5 ));
 
           ScreenCanvas.Font.Size:= 24;
           ScreenCanvas.GetValidText( Format( '%s @[%dx%d] wh[%dx%d]', [ LastMouseOverCtrl.Name, LastMouseOverCtrl.Rect.LeftI, LastMouseOverCtrl.Rect.TopI, LastMouseOverCtrl.Rect.WidthI, LastMouseOverCtrl.Rect.HeightI ]), DebugText );

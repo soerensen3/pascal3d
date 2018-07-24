@@ -9,6 +9,7 @@
       FLightType: TP3DLightType;
       FLinearAttenuation: Float;
       FQuadraticAttenuation: Float;
+      FLightMatrix: TMat4;
 
       function GetLightRange: Float;
 
@@ -20,6 +21,7 @@
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
 
       property Color: TP3DColorRGB read FColor write FColor;
+      property LightMatrix: TMat4 read FLightMatrix write FLightMatrix;
 
     published
       property Energy: Float read FEnergy write FEnergy;

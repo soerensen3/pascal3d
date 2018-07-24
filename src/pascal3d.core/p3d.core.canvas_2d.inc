@@ -74,6 +74,9 @@ type
       property Zoom: Float read FZoom write FZoom;
   end;
 
+//function CreateRectMesh: TP3DMesh;
+
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -600,6 +603,7 @@ begin
             Uniform.AsVec4:= vec4( vec2( 0 ) - TopLeft, vec2( 0 ) - BottomRight );
         end;
       Mat.PassToShader();
+      //WriteLn( Mat.Shader.DumpUniforms );
     end;
 end;
 
@@ -645,11 +649,12 @@ begin
     _TopLeft:= FScroll + TopLeft {+ vec2( P3DViewports.Peek.Left, P3DViewports.Peek.Top + P3DViewports.Peek.Height - P3DViewports.Screen.Height )};
 
   _WidthHeight:= vec2( P3DViewports.Peek.Width, P3DViewports.Peek.Height );
-  Proj:=  mat4orthoRH( 0, _WidthHeight.X, 0, _WidthHeight.Y );
+  Proj:=  mat4orthoRH( 0, _WidthHeight.X, 0, _WidthHeight.Y, 0, 1 );
   FView:= mat4translate( vec3( _TopLeft, 0 )) * mat4( Zoom );
   PassToShader( MaterialText );
   PassToShader( MaterialTexture );
   PassToShader( Material );
+  //WriteLn( Material.Shader.DumpUniforms );
 end;
 
 procedure TP3DCanvas2D.UpdateParams;

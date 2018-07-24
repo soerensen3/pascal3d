@@ -75,16 +75,20 @@ type
       property ParentObject: TP3DObject read FParentObject;
   end;
 
+  TP3DObjectShadowModes = ( osShadowCaster, osShadowReceiver );
+  TP3DObjectShadow = set of TP3DObjectShadowModes;
+
   TP3DObject = class ( TP3DDataBlock, IP3DTransform, IP3DRenderable, IP3DCollidable, IP3DAnimatable )
     protected
       FChildren: TP3DObjectPointerList;
       FCollision: TP3DObjectCollision;
       FData: TP3DStreamablePointer;
       FMatrixFinal: TMat4;
+      FModifiers: TP3DObjectModifierContainerList;
       FParent: TP3DDataBlock;
       FScene: TP3DScene;
+      FShadow: TP3DObjectShadow;
       FVisible: Boolean;
-      FModifiers: TP3DObjectModifierContainerList;
 
       function GetData: TP3DDataBlock;
       procedure SetData( AValue: TP3DDataBlock );
@@ -110,6 +114,7 @@ type
       property Parent: TP3DDataBlock read FParent;
       property Collision: TP3DObjectCollision read FCollision write FCollision;
       property Modifiers: TP3DObjectModifierContainerList read FModifiers write FModifiers;
+      property Shadow: TP3DObjectShadow read FShadow write FShadow;
 
       // IP3DRenderable -->
     public
@@ -265,6 +270,7 @@ begin
 
   Properties.Add([ TP3DPropAccessRTTI.Create( Self, 'Visible', smText ),
                    TP3DPropAccessRTTI.Create( Self, 'Collision', smText ),
+                   TP3DPropAccessRTTI.Create( Self, 'Shadow', smText ),
                    FData,
                    FChildren,
                    FModifiers,
@@ -461,6 +467,14 @@ begin
 end;
 
 procedure TP3DObject.AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
+
+  function CheckShadowAgainstFlags: Boolean;
+  begin
+    Result:= (( Shadow = []) and ( rlfNonShadowCasters in AFlags )) or
+             (( osShadowReceiver in Shadow ) and ( rlfShadowReceivers in AFlags )) or
+             (( osShadowCaster in Shadow ) and ( rlfShadowCasters in AFlags ));
+  end;
+
 var
   mat: TMat4;
 begin
@@ -469,10 +483,12 @@ begin
   mat:= AWorld * Transform.Matrix;
   FMatrixFinal:= mat;
   AList.ActiveSubset:= Owner.GetFullPath;
-  if ( rlfObjects in AFlags ) then
-    AList.PushRenderObject( Self, mat, P3DMaterialActive );
-  if ( Assigned( Data )) then
-    AList.Add( Data, mat, ARootScene, AFlags );
+  if (( CheckShadowAgainstFlags ) or ( Data is TP3DScene )) then begin
+    if ( rlfObjects in AFlags ) then
+      AList.PushRenderObject( Self, mat, P3DMaterialActive );
+    if ( Assigned( Data )) then
+      AList.Add( Data, mat, ARootScene, AFlags );
+  end;
   Children.MakeRenderList( ARootScene, mat, AList, AFlags );
 end;
 

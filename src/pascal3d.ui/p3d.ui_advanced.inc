@@ -223,6 +223,38 @@ type
       property UIViewerFrame: TP3DUIViewerBase read GetUIViewerFrame;
   end;
 
+  { TP3DCheckList }
+
+  TP3DCheckList = class ( TP3DListView )
+    protected type
+      TOnSetChecked = procedure ( AItem: TP3DListItem; AItemIndex: Integer; AChecked: Boolean ) of object;
+    protected
+      FHAlignment: TP3DHorizontalAlignment;
+      FVAlignment: TP3DVerticalAlignment;
+      FSymbolChecked: TP3DTextBmp;
+      FOnSetChecked: TOnSetChecked;
+
+      function GetChecked( Index: Integer ): Boolean;
+      procedure SetChecked( Index: Integer ; AValue: Boolean);
+
+      property PresetSelection;
+
+    public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      destructor Destroy; override;
+
+      function DrawListItem(p: TVec2; Node: TP3DListItem): TVec2; override;
+      procedure MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float); override;
+
+      property Checked[ Index: Integer ]: Boolean read GetChecked write SetChecked;
+      property PresetHover: TP3DButtonPreset read FPresetSelection write FPresetSelection;
+      property PresetDown: TP3DButtonPreset read FPresetDrag write FPresetDrag;
+      property HAlignment: TP3DHorizontalAlignment read FHAlignment write FHAlignment;
+      property VAlignment: TP3DVerticalAlignment read FVAlignment write FVAlignment;
+      property OnSetChecked: TOnSetChecked read FOnSetChecked write FOnSetChecked;
+  end;
+
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -975,9 +1007,135 @@ begin
   UIViewerFrame.ViewRect:= ClippedRect * UIViewer.Zoom - UIViewer.Position;
   UIViewerFrame.Zoom:= Zoom * UIViewer.Zoom;
   UIViewerFrame.Position:= {P3DUIViewerActive.Position + }Position {+ ClippedRect.TopLeft * UIViewer.Zoom};
-  Controls.ClipRect:= UIViewerFrame.ViewRect - Position;
-  Controls.PageRect:= P3DRect( vec2( 0 ), UIViewerFrame.ViewRect.WidthHeight );
+  //Controls.ClipRect:= UIViewerFrame.ViewRect - Position;
+  //Controls.PageRect:= P3DRect( vec2( 0 ), UIViewerFrame.ViewRect.WidthHeight );
 end;
+
+
+{ TP3DCheckList }
+
+function TP3DCheckList.GetChecked( Index: Integer ): Boolean;
+begin
+  Result:= Boolean( Children[ Index ].Data );
+end;
+
+procedure TP3DCheckList.SetChecked( Index: Integer ; AValue: Boolean);
+begin
+  Children[ Index ].Data:= Pointer( Integer( AValue ));
+end;
+
+constructor TP3DCheckList.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  HAlignment:= haRight;
+  VAlignment:= vaCenter;
+  FSymbolChecked:= TP3DTextBmp.CreateSimple( P3DSymbolCheck, P3DFontManagerBmp.Fonts[ 'Pascal3D-Symbols'], Canvas.Font.Size );
+  PresetNormal.Color:= P3DThemeDefault.Accent;
+  PresetNormal.FontColor:= P3DThemeDefault.Accent[ cp900 ];
+  PresetHover.Color:= P3DThemeDefault.Accent;
+  PresetHover.FontColor:= P3DThemeDefault.Accent[ cp700 ];
+  PresetDown.Color:= P3DThemeDefault.Accent;
+  PresetDown.FontColor:= P3DThemeDefault.Accent[ cp50 ];
+end;
+
+destructor TP3DCheckList.Destroy;
+begin
+  FreeAndNil( FSymbolChecked );
+  inherited Destroy;
+end;
+
+function TP3DCheckList.DrawListItem(p: TVec2; Node: TP3DListItem): TVec2;
+var
+  Preset: TP3DButtonPreset;
+  LineHeight: Float;
+  CheckBoxWidth, OffSet: Single;
+  R, RText, RCheckBox: TP3DRect;
+
+  procedure RenderBtn;
+  begin
+    Canvas.Font.Size:= Font.Size;
+    Canvas.Font.Name:= Font.Name;
+    if (( Enabled ) and ( gcisMouseOver in InputState ) and ( R.PtInRect( UIViewer.Mouse - ClippedRect.TopLeft ))) then begin
+      if ( gcisMouseBtn1Down in InputState ) then
+        with ( PresetDown ) do begin
+          RenderButton( Canvas, R, False, Color[ cp900 ], Color[ cp400 ], Color[ cp600 ], Color[ cp900 ], Color[ cp900 ], Color[ cp900 ], Color[ cp900 ], Color[ cp900 ]);
+          Canvas.Font.Color:= FontColor;
+        end
+      else
+        with ( PresetHover ) do begin
+          RenderButton( Canvas, R, False, Color[ cp100 ], vec4( 1 ), Color[ cp50 ], Color[ cp100 ], Color[ cp900 ], Color[ cp900 ], Color[ cp900 ], Color[ cp900 ]);
+          Canvas.Font.Color:= FontColor;
+        end;
+      exit;
+    end;
+    with ( PresetNormal ) do begin
+      RenderButton( Canvas, R, False, Color[ cp200 ], Color[ cp100 ], Color[ cp200 ], Color[ cp200 ], Color[ cp900 ], Color[ cp900 ], Color[ cp900 ], Color[ cp900 ]);
+      Canvas.Font.Color:= FontColor;
+    end;
+  end;
+
+begin
+  LineHeight:= Font.Size * 1.2;
+  Node.FRenderPos:= p;
+  p-= vec2( ScrollBarH.Position, ScrollBarV.Position );
+
+  if ( not Assigned( Node.Text )) then
+    Canvas.GetValidText( Node.Caption, Node.FText, P3DFontManager[ Font.Name, Font.Size ]);
+
+  if ( gcisMouseBtn1Down in InputState ) then
+    Preset:= PresetDown
+  else if ( gcisMouseOver in InputState ) then
+    Preset:= PresetHover
+  else
+    Preset:= PresetNormal;
+
+  R:= P3DRect( p, vec2( ClippedRect.Width - ScrollBarWidth, LineHeight ));
+
+  RenderBtn;
+
+  R:= R.Inset( vec2( 10, 0 ), vec2( 10, 0 ));
+  CheckBoxWidth:= Font.Size;
+  OffSet:= CheckBoxWidth + 10;
+  RText:= P3DRect( R.Left + OffSet, R.Top, R.Width - OffSet, R.Height );
+  RCheckBox:= P3DAlignInRect( R, vec2( CheckBoxWidth ), HAlignment, VAlignment );
+  RText:= P3DAlignInRect( R, vec2( Node.Text.Width, Node.Text.Height ), HAlignment, VAlignment );
+  case HAlignment of
+    haLeft: RText.Left:= RText.Left + OffSet;
+    haCenter: RText.Left:= RText.Left + OffSet;
+    haRight: RText.Left:= RText.Left - OffSet;
+  end;
+
+  Canvas.RenderText( Node.Caption, RText.TopLeft, Node.FText );
+
+  Canvas.RenderRectShadow( RCheckBox.TopLeft + 1, RCheckBox.BottomRight + 1, 2, vec4( 0, 0, 0, 0.1 ));
+
+  with ( PresetNormal ) do
+    begin
+      if ( Assigned( Node.Data )) then // if Checked
+        Canvas.RenderRect( RCheckBox.TopLeft, RCheckBox.BottomRight, Color[ cp900 ], Color[ cp400 ], Color[ cp600 ], Color[ cp900 ])
+      else
+        Canvas.RenderRect( RCheckBox.TopLeft, RCheckBox.BottomRight, Color[ cp400 ], Color[ cp200 ], Color[ cp300 ], Color[ cp400 ]);
+      if ( Assigned( Node.Data )) then // if Checked
+        RenderButtonText( Canvas, FSymbolChecked.Text, FSymbolChecked, RCheckBox, haCenter, vaCenter, Color[ cp50 ]);
+    end;
+
+  Result.x:= Node.FRenderPos.x + Node.Text.Width;
+  Result.y:= Node.FRenderPos.y + R.Height;
+end;
+
+procedure TP3DCheckList.MouseClick(mb1, mb2, mb3: Boolean; X, Y: Float);
+begin
+  inherited MouseClick(mb1, mb2, mb3, X, Y);
+  if ( Assigned( Selection )) then begin
+    if ( Assigned( Selection.Data )) then
+      Selection.Data:= nil
+    else
+      Selection.Data:= Pointer( 1 );
+    if ( Assigned( FOnSetChecked )) then
+      FOnSetChecked( Selection, Children.IndexOf( Selection ), Assigned( Selection.Data ));
+  end
+end;
+
 
 
 {$ENDIF}

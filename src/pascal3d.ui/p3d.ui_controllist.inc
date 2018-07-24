@@ -166,6 +166,8 @@ end;
 
 procedure TP3DGraphicControlContainerList.SetPageRect(AValue: TP3DRect);
 begin
+  if ( FPageRect = AValue ) then
+    exit;
   FPageRect:=AValue;
   UpdateControls;
 end;
@@ -183,9 +185,15 @@ procedure TP3DGraphicControlContainerList.Notify(ASender: TObject; AItem: TP3DSt
 begin
   inherited Notify(ASender, AItem, AAction);
   if (( AAction = actAdd ) and ( Context.GetInstance is TP3DGraphicControl )) then
-    TP3DGraphicControl( AItem ).FParent.AsValue:= TP3DGraphicControl( Context.GetInstance )
-  else if ( Assigned( AItem )) then
+    begin
+      TP3DGraphicControl( AItem ).FParent.AsValue:= TP3DGraphicControl( Context.GetInstance );
+      TP3DGraphicControl( AItem ).RequestUpdate( urParentCtrls );
+    end
+  else if ( Assigned( AItem )) then begin
     TP3DGraphicControl( AItem ).FParent.AsValue:= nil;
+    if ( Context.GetInstance is TP3DGraphicControl ) then
+      TP3DGraphicControl( AItem ).RequestUpdate( urParentCtrls );
+  end;
 end;
 
 constructor TP3DGraphicControlContainerList.Create(AName: String; const AStoreMode: TP3DPropertyAccessStoreMode);
@@ -233,7 +241,7 @@ begin
       begin
         UpdateClippedRect( Control, ClipRect );
         Control.Realign();
-        Control.FNeedsUpdate:= False;
+        Control.FUpdateRequested:= urNone;
       end;
 end;
 
@@ -256,6 +264,11 @@ begin
 
   if ( Control.Align in [ alLeft, alRight, alClient ]) then
     Rect.Height:= TargetRect.Height; // change height to client rect's size
+
+  if ( Control.MaxWidth > 0 ) then
+    Rect.Width:= min( Control.MaxWidth, Rect.Width );
+  if ( Control.MaxHeight > 0 ) then
+    Rect.Height:= min( Control.MaxHeight, Rect.Height );
 
   if ( Control.Align in [ alLeft, alTop, alBottom, alClient ]) then
     Rect.Left:= TargetRect.Left
@@ -318,6 +331,7 @@ begin
     Control.Controls.ClipRect.TopLeft:= vec2( 0 );
     Control.Controls.PageRect.TopLeft:= vec2( 0 );
   end;}
+  Control.FUpdateRequested:= urNone;
 end;
 
 function TP3DGraphicControlContainerList.UpdatePageSize: TVec2;
@@ -444,8 +458,8 @@ procedure TP3DGraphicControlContainerList.Logic();
 var
   i: Integer;
 begin
-  if ( NeedsUpdate ) then
-    UpdateControls;
+  //if ( NeedsUpdate ) then
+  //  UpdateControls;
   for i:= 0 to Count - 1 do
     AsValues[ i ].Logic;
 end;

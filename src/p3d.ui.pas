@@ -50,6 +50,11 @@ type
   {$INCLUDE p3d.ui_lib.inc}
   {$UNDEF INTERFACE}
 
+
+  procedure RenderButton(Canvas: TP3DCanvas2D; Rect: TP3DRect; Focused: Boolean; C1, C2, C3, C4, CE1, CE2, CE3, CE4: TP3DColorRGBA);
+  function RenderButtonText( Canvas: TP3DCanvas2D; Caption: String; var CacheObject: TP3DTextBmp;  R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment; C: TP3DColorRGBA ): TVec2;
+  function P3DAlignInRect( R:TP3DRect; AlignWidthHeight: TVec2; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment ): TP3DRect;
+
   //IMPLEMENT UI-Master
   {
     UIMaster for each Viewer
@@ -112,10 +117,58 @@ begin
     end;
 end;
 
+procedure RenderButton(Canvas: TP3DCanvas2D; Rect: TP3DRect; Focused: Boolean; C1, C2, C3, C4, CE1, CE2, CE3, CE4: TP3DColorRGBA);
+var
+  clf: TVec4;
+begin
+  Canvas.RenderRect( Rect.TopLeft, Rect.BottomRight +  - 1, C1, C2, C3, C4 );
+  Canvas.RenderLineRect( Rect.TopLeft, Rect.BottomRight - 1, CE1, CE2, CE3, CE4 );
+
+  if ( Focused ) then
+    begin
+      clf:= vec4( 0.5, 0.5, 0.5, 0.5 );
+      Canvas.RenderLineRect( Rect.TopLeft + 4, Rect.BottomRight - 4, clf, clf, clf, clf );
+    end;
+end;
+
+function RenderButtonText( Canvas: TP3DCanvas2D; Caption: String; var CacheObject: TP3DTextBmp;  R: TP3DRect; HAlignment: TP3DHorizontalAlignment; VAlignment: TP3DVerticalAlignment; C: TP3DColorRGBA ): TVec2;
+var
+  P: TVec2;
+begin
+  if ( Caption > '' ) then
+    begin
+      if ( not Assigned( CacheObject )) then
+        CacheObject:= TP3DTextBmp.CreateSimple( Caption, P3DFontManagerBmp.Fonts[ Canvas.Font.Name ], Canvas.Font.Size );
+
+      P:= Canvas.CalcAlignedTextRect( CacheObject, R, HAlignment, VAlignment );
+
+      Canvas.Font.Color:= C;
+      Canvas.RenderText( Caption, P, CacheObject );
+      Result:= P;
+    end
+  else
+    Result:= vec2( 0 );
+end;
+
+function P3DAlignInRect(R: TP3DRect; AlignWidthHeight: TVec2; HAlignment: TP3DHorizontalAlignment;
+  VAlignment: TP3DVerticalAlignment): TP3DRect;
+begin
+  case HAlignment of
+    haLeft: Result.Left:= R.Left;
+    haCenter: Result.Left:= R.Left + ( R.Width - AlignWidthHeight.X ) / 2;
+    haRight: Result.Left:= R.Left + R.Width - AlignWidthHeight.X;
+  end;
+  case VAlignment of
+    vaTop: Result.Top:= R.Top;
+    vaCenter: Result.Top:= R.Top + ( R.Height - AlignWidthHeight.Y ) / 2;
+    vaBottom: Result.Top:= R.Top + R.Height - AlignWidthHeight.Y;
+  end;
+  Result.WidthHeight:= AlignWidthHeight;
+end;
+
+
 finalization
   P3DUtilsFinish;
-
-
 
 end.
 

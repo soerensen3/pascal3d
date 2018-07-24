@@ -807,9 +807,10 @@ function TP3DFontManagerBmp.GetMaterial: TP3DMaterial;
     ClipRect, SDF: TP3DNodeClone;
   begin
     Result:= TP3DMaterialNode.CreateBlock();
+    Result.Name:= 'P3DFontManagerBmpMaterial';
     Result.MakeRootNode( 'output_canvas' );
     ClipRect:= Result.Uniforms.AddCopy( 'uniform_vec4' );
-    ClipRect.FindInput( 'UnName' ).ValueProp.AsString:= 'ClipRect';
+    ClipRect.FindInput( 'UnName' ).ValueProp.AsString:= 'ClippingRect';
     ClipRect.FindOutput( 'Vector' ).Connected:= Result.RootNode.FindInput( 'ClipRect' );
     SDF:= Result.NodeTree.AddCopy( 'signed_distance_field' );
     SDF.FindInput( 'texture' ).ValueProp.AsString:= '0';

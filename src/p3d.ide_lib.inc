@@ -7,6 +7,7 @@
 {$INCLUDE p3d.ide_editormaterial.inc}
 {$INCLUDE p3d.ide_editortexture.inc}
 {$INCLUDE p3d.ide_editormesh.inc}
+{$INCLUDE p3d.ide_editoreffect.inc}
 {$INCLUDE p3d.ide_libinspector.inc}
 {$INCLUDE p3d.ide_objectinspector.inc}
 {$INCLUDE p3d.ide_objectinspector_editors.inc}

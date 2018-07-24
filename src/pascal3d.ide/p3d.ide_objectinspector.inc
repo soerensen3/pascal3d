@@ -19,6 +19,7 @@ type
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       procedure Update; override;
+      procedure Draw(); override;
 
       class function IsCompatible( AObj: TP3DStreamable ): Boolean; virtual;
 
@@ -126,7 +127,7 @@ begin
     tkVariant: Result := TP3DPropertyEditorString;
     tkInt64: Result := TP3DPropertyEditorInt;
     tkString: Result := TP3DPropertyEditorString;
-//    tkSet: Result := TP3DPropertyEditorString;
+    tkSet: Result := TP3DPropertyEditorSet;
     tkClass: Result := TP3DPropertyEditorString;
     tkBool: Result := TP3DPropertyEditorBoolean;
   end;
@@ -216,6 +217,8 @@ begin
     Result:= TP3DPropertyEditorFloat
   else if ( AProp is TP3DPropAccessInt ) then
     Result:= TP3DPropertyEditorInt
+  else if ( AProp is TP3DPropAccessBoolean ) then
+    Result:= TP3DPropertyEditorBoolean
   else if ( AProp is TP3DPropAccessQuat ) then
     Result:= TP3DPropertyEditorVec4
   else if ( AProp is TP3DPropAccessQuatList ) then
@@ -283,8 +286,11 @@ begin
   //Cnt:= AddContainer( Self, Prop.Name );
 
   Cl:= GetPropEdForProp( Prop );
-
-  Result:= Cl.Create( Self.Controls );
+  if ( not Assigned( Cl )) then begin
+    Result:= TP3DButton.Create( Self.Controls );
+    TP3DButton( Result ).Caption:= 'No property editor found for prop "' + Prop.Name + ': ' + Prop.ClassName + '"';
+  end else
+    Result:= Cl.Create( Self.Controls );
 
   if ( Result is IP3DPropertyEditor ) then
     ( Result as IP3DPropertyEditor ).Prop:= Prop;
@@ -297,9 +303,49 @@ begin
   inherited Update;
 end;
 
+procedure TP3DOIEditorGroup.Draw();
+var
+  hw: Float;
+  r: TP3DRect;
+begin
+  Canvas.RenderRect( vec2( 0, 0 ), WidthHeight, Color[ cp300 ]);
+  Canvas.GetValidText( Caption, FCaptionTxt,
+    P3DFontManager[ Canvas.Font.Name, Canvas.Font.Size ]);
+  if ( not Assigned( FCaptionTxt  )) then
+    hw:= 0
+  else
+    hw:= FCaptionTxt.Height / 2;
+  Canvas.Font.Assign( Font );
+  Canvas.RenderText( FCaptionTxt, vec2( hw * 2, 2 ));
+
+  if ( CanCollapse ) then
+    begin
+      Canvas.GetValidText( FCollapseSymbol, FCollapseSymbolTxt, P3DFontManager[ P3DSymbolFontName, Canvas.Font.Size ]);
+      if ( P3DRect( 3, 3, FCollapseSymbolTxt.Width, FCollapseSymbolTxt.Height ).PtInRect( vec2( UIViewer.MouseX, UIViewer.MouseY ) - Canvas.TopLeft )) then
+        Canvas.Font.Color:= P3DThemeDefault.Accent[ cp500 ]
+      else
+        Canvas.Font.Color:= P3DThemeDefault.Primary[ cp500 ];
+      Canvas.RenderText(
+        FCollapseSymbolTxt, vec2( 3 ));
+    end;
+  if ( CanClose ) then
+    begin
+      Canvas.GetValidText( FCloseSymbol, FCloseSymbolTxt,
+                P3DFontManager[ P3DSymbolFontName, Canvas.Font.Size ]);
+      r:= P3DRect( vec2( Width - FCloseSymbolTxt.Width - 3, 3 ), vec2( FCloseSymbolTxt.Width, FCloseSymbolTxt.Height ));
+      if ( r.PtInRect( vec2( UIViewer.MouseX, UIViewer.MouseY ) - Canvas.TopLeft )) then
+        Canvas.Font.Color:= P3DThemeDefault.Accent[ cp500 ]
+      else
+        Canvas.Font.Color:= P3DThemeDefault.Primary[ cp500 ];
+      Canvas.RenderRectShadow( r.TopLeft, r.BottomRight, 5, Color[ cp500 ]);
+      Canvas.RenderText( FCloseSymbolTxt, vec2( Width - FCloseSymbolTxt.Width - 3, 3 ));
+    end;
+end;
+
 constructor TP3DOIEditorGroup.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
+  Margin:= vec4( 2, 18, 2, 2 );
   FObj:= TP3DStreamablePointer.Create( 'Obj', TP3DStreamable );
   Properties.Add( FObj );
   PageModeY:= pmExpand;

@@ -66,6 +66,16 @@ begin
   FItemProp:= TP3DStreamablePointer;
 end;
 
+function gP3DStreamablePointerList.First(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited First( AClassType ));
+end;
+
+function gP3DStreamablePointerList.Last(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited Last( AClassType ));
+end;
+
 function gP3DStreamablePointerList.GetEnumerator: TTypedStreamableListEnumerator;
 begin
   Result:= TTypedStreamableListEnumerator.Create( -1, @MoveNext );
@@ -94,6 +104,16 @@ constructor gP3DStreamableContainerList.Create(AName: String;
   const AStoreMode: TP3DPropertyAccessStoreMode);
 begin
   inherited Create(AName, T {!}, AStoreMode);
+end;
+
+function gP3DStreamableContainerList.First(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited First( AClassType ));
+end;
+
+function gP3DStreamableContainerList.Last(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited Last( AClassType ));
 end;
 
 function gP3DStreamableContainerList.GetEnumerator: TTypedStreamableListEnumerator;

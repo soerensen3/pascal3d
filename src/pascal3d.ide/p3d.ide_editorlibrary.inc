@@ -6,14 +6,11 @@ type
   { TP3DEditorLibrary }
 
   TP3DEditorLibrary = class ( TP3DEditor )
-  private
     protected
       FFileOpenDlg: TP3DStreamablePointer;
       FPopup: TP3DStreamablePointer;
       FPopupList: TP3DStreamablePointer;
 
-      function GetPopup: TP3DPopupMenu;
-      function GetPopupList: TP3DPopupMenu;
       function GetFileOpenDlg: TP3DDialogFile;
       procedure OnFileOpenDlg( Sender: TObject );
       procedure FileOpenDlgCallback( Sender: TP3DModalWindow; Result: TP3DModalResult );
@@ -21,17 +18,16 @@ type
       function GetProperty: TP3DStreamable; override;
       procedure SetProperty(AValue: TP3DStreamable); override;
       procedure PopupClick( Sender: TP3DMenuItem );
+      function GetPopupMenu: TP3DPopupMenu;
+      function GetPopupMenuList: TP3DPopupMenu;
 
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
-      function GetPopupMenu: TP3DStreamable; override;
-      function GetPopupMenuList: TP3DStreamable; override;
-
       property FileOpenDlg: TP3DDialogFile read GetFileOpenDlg;
-      property Popup: TP3DPopupMenu read GetPopup;
-      property PopupList: TP3DPopupMenu read GetPopupList;
+      property Popup: TP3DPopupMenu read GetPopupMenu;
+      property PopupList: TP3DPopupMenu read GetPopupMenuList;
   end;
 
 {$ENDIF}
@@ -52,12 +48,11 @@ begin
 
   FFileOpenDlg:= TP3DStreamablePointer.Create( 'FileOpenDlg', TP3DDialogFile );
   Properties.Add( FFileOpenDlg );
-  FFileOpenDlg.AsValue:= TP3DDialogFile.Create();
+  FFileOpenDlg.AsValue:= TP3DDialogFile.Create( P3DUI.Viewer.Controls );
   FileOpenDlg.Files.ShowSymbols:= True;
   FileOpenDlg.Directories.ShowSymbols:= True;
   FileOpenDlg.Files.Mask:= '*.p3d';
 
-  P3DMainIntf.AddFileOpenDlgHandler( @OnFileOpenDlg );
   FProp:= TP3DStreamablePointer.CreateGetSet( 'Active Library', @GetProperty, @SetProperty );
   FProp.FItemClass:= TP3DLibrary;
 
@@ -74,6 +69,8 @@ begin
   Popup.Items.Add( 'New Scene' );
   Popup.Items.Add( 'New Node Material' );
   Popup.Items.Add( 'New Texture' );
+  Popup.Items.Add( 'New Effect' );
+  Popup.Items.Add( 'New Camera' );
 
   FPopupList:= TP3DStreamablePointer.Create( 'PopupList', TP3DPopupMenu );
   Properties.Add( FPopupList );
@@ -81,23 +78,22 @@ begin
   PopupList.AutoWidth:= True;
   PopupList.Items.Add( 'New Library' );
   PopupList.Items.Add( 'Open Library' );
+
+  if ( Assigned( P3DMainIntf )) then begin
+    P3DMainIntf.AddFileOpenDlgHandler( @OnFileOpenDlg );
+    P3DMainIntf.RegisterPopup( TP3DLibrary, Popup );
+    P3DMainIntf.RegisterPopup( TP3DLibraryContainerList, PopupList );
+  end;
 end;
 
 destructor TP3DEditorLibrary.Destroy;
 begin
-  if ( Assigned( P3DMainIntf )) then
+  if ( Assigned( P3DMainIntf )) then begin
+    P3DMainIntf.UnregisterPopup( TP3DLibrary );
+    P3DMainIntf.UnregisterPopup( TP3DLibraryContainerList );
     P3DMainIntf.RemoveFileOpenDlgHandler( @OnFileOpenDlg );
+  end;
   inherited Destroy;
-end;
-
-function TP3DEditorLibrary.GetPopupList: TP3DPopupMenu;
-begin
-  Result:= TP3DPopupMenu( FPopupList.AsValue );
-end;
-
-function TP3DEditorLibrary.GetPopup: TP3DPopupMenu;
-begin
-  Result:= TP3DPopupMenu( FPopup.AsValue );
 end;
 
 function TP3DEditorLibrary.GetFileOpenDlg: TP3DDialogFile;
@@ -144,20 +140,22 @@ begin
       'Close': ;
       'New Object': P3DMainIntf.ActiveLibrary.CreateNew( TP3DObject );
       'New Scene': P3DMainIntf.ActiveLibrary.CreateNew( TP3DScene );
+      'New Effect': P3DMainIntf.ActiveLibrary.CreateNew( TP3DEffect );
       'New Node Material': P3DMainIntf.ActiveLibrary.CreateNew( TP3DMaterialNode );
       'New Texture': ;
+      'New Camera': P3DMainIntf.ActiveLibrary.CreateNew( TP3DCamera );
     end;
   Popup.Hide;
 end;
 
-function TP3DEditorLibrary.GetPopupMenu: TP3DStreamable;
+function TP3DEditorLibrary.GetPopupMenu: TP3DPopupMenu;
 begin
-  Result:= FPopup.AsValue;
+  Result:= TP3DPopupMenu( FPopup.AsValue );
 end;
 
-function TP3DEditorLibrary.GetPopupMenuList: TP3DStreamable;
+function TP3DEditorLibrary.GetPopupMenuList: TP3DPopupMenu;
 begin
-  Result:= FPopupList.AsValue;
+  Result:= TP3DPopupMenu( FPopupList.AsValue );
 end;
 
 

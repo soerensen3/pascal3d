@@ -61,57 +61,5 @@ begin
     end;
 end;
 
-{ TP3DNodeSocketCloneContainerList }
-
-function TP3DNodeSocketCloneContainerList.SaveToJSON: TJSONData;
-var
-  a: TJSONArray;
-  i: Integer;
-  json: TJSONData;
-begin
-  case StoreMode of
-    smText:
-      begin
-        a:= TJSONArray.Create();
-        for i:= 0 to Count - 1 do
-          begin
-            if ( not AsValues[ i ].IsDefault ) then begin
-              json:= GetArrayItemAsProp( i ).SaveToJSON;
-              if ( Assigned( json )) then
-                a.Add( json );
-            end;
-          end;
-        Result:= a;
-      end
-    else
-      Result:= nil;
-  end;
-end;
-
-procedure TP3DNodeSocketCloneContainerList.LoadJSON(AValue: TJSONData);
-var
-  i: Integer;
-  Item: TJSONData;
-begin
-  if ( AValue.JSONType = jtArray ) then begin
-    for i:= 0 to TJSONArray( AValue ).Count - 1 do
-      LoadItemFromJSON( 0, AValue.Items[ i ]);
-  end else
-    raise Exception.CreateFmt( P3DERROR_JSON_WRONG_TYPE, [ 'jtArray', JSONTypeName( AValue.JSONType )]);
-end;
-
-procedure TP3DNodeSocketCloneContainerList.LoadItemFromJSON(Index: Integer; AData: TJSONData);
-var
-  PropName: TJSONStringType;
-  i: Integer;
-begin
-  PropName:= AData.FindPath( 'Name' ).AsString;
-  for i:= 0 to Count - 1 do
-    if ( AsValues[ i ].Name = PropName ) then begin
-      AsValues[ i ].AsJSON:= AData;
-      break;
-    end;
-end;
-
 
 {$ENDIF}

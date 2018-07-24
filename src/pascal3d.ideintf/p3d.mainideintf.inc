@@ -11,6 +11,7 @@ type
     mihtActiveMaterialChange,
     mihtActiveEditorChange,
     mihtActiveTextureChange,
+    mihtActiveEffectChange,
     mihtEditorsChange,
     mihtFileOpenDlg,
     mihtFileSaveDlg,
@@ -19,6 +20,10 @@ type
     mihtMaterialDelete,
     mihtMaterialMapNew,
     mihtMeshAssignMaterial,
+    mihtTextureNew,
+    mihtTextureDelete,
+    mihtEffectNew,
+    mihtEffectDelete,
     mihtLibraryChange,
     mihtSceneChange,
     mihtObjectChange,
@@ -26,6 +31,12 @@ type
     mihtTextureChange,
     mihtMaterialChange
   );
+
+  { TP3DPopupDictionary }
+
+  TP3DPopupDictionary = class( specialize TFPGMap < String, TP3DPopupMenu > )
+    function FindClassPopup( AClass: TClass; var APopup: TP3DPopupMenu ): Boolean;
+  end;
 
   { TP3DEditor }
 
@@ -42,13 +53,30 @@ type
     public
       procedure ToolbarBtnClick( AButtonIdx: Integer; AButtonCaption: String ); virtual;
 
-      function GetPopupMenu: TP3DStreamable; virtual; abstract;
-      function GetPopupMenuList: TP3DStreamable; virtual; abstract;
-
       property Name: String read FName;
       property Caption: String read FCaption;
       property Buttons: String read FButtons;
       property Prop: TP3DStreamablePointer read FProp;
+  end;
+
+  { gP3DEditor }
+
+  generic gP3DEditor < T: TP3DStreamable > = class ( TP3DEditor )
+    protected
+      FPopup: TP3DStreamablePointer;
+      FPopupList: TP3DStreamablePointer;
+
+      function GetPopup: TP3DPopupMenu;
+      function GetPopupList: TP3DPopupMenu;
+      procedure PopupClick( Sender: TP3DMenuItem ); virtual;
+      procedure PopupListClick( Sender: TP3DMenuItem ); virtual;
+
+    public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      destructor Destroy; override;
+
+      property Popup: TP3DPopupMenu read GetPopup;
+      property PopupList: TP3DPopupMenu read GetPopupList;
   end;
 
   TP3DEditorContainerList = specialize gP3DStreamableContainerList < TP3DEditor >;
@@ -56,9 +84,8 @@ type
   { TP3DMainIntf }
 
   TP3DMainIntf = class ( TP3DJSONRoot )
-  private
-    function GetActiveTexture: TP3DTexture;
     protected
+      FPopups: TP3DPopupDictionary;
       FHandlers: array[ TP3DMainIntfHandlerType ] of TMethodList;
       FSelection: TP3DStreamablePointer;
       FActiveDataBlock: TP3DStreamablePointer;
@@ -67,6 +94,7 @@ type
       FActiveMesh: TP3DStreamablePointer;
       FActiveMaterial: TP3DStreamablePointer;
       FActiveTexture: TP3DStreamablePointer;
+      FActiveEffect: TP3DStreamablePointer;
 
       FActiveEditor: Integer;
       FEditors: TP3DEditorContainerList;
@@ -77,11 +105,13 @@ type
                                const AMethod: TMethod );
       procedure DoCallNotifyHandler( HandlerType: TP3DMainIntfHandlerType;
                                      ASender: TObject);
+      function GetActiveTexture: TP3DTexture;
       function GetSelection: TP3DStreamable;
       function GetActiveLibrary: TP3DLibrary;
       function GetActiveMesh: TP3DMesh;
       function GetActiveMaterial: TP3DMaterial;
       function GetActiveScene: TP3DScene;
+      function GetActiveEffect: TP3DEffect;
 
       procedure EditorChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
 
@@ -112,6 +142,10 @@ type
       procedure AddSetActiveTextureHandler( const AHandler: TNotifyEvent; AsLast: Boolean = False );
       procedure RemoveSetActiveTextureHandler( const AHandler: TNotifyEvent );
       procedure SetActiveTexture( ASender: TObject; AValue: TP3DStreamable);
+
+      procedure AddSetActiveEffectHandler( const AHandler: TNotifyEvent; AsLast: Boolean = False );
+      procedure RemoveSetActiveEffectHandler( const AHandler: TNotifyEvent );
+      procedure SetActiveEffect( ASender: TObject; AValue: TP3DStreamable);
 
       procedure AddSetActiveEditorHandler( const AHandler: TNotifyEvent; AsLast: Boolean = False );
       procedure RemoveSetActiveEditorHandler( const AHandler: TNotifyEvent );
@@ -144,14 +178,31 @@ type
       procedure RemoveMeshAssignMaterialHandler( const AHandler: TNotifyEvent );
       procedure AssignMeshMaterial( ASender: TObject );
 
+      procedure AddTextureNewHandler( const AHandler: TNotifyEvent; AsLast: Boolean = False );
+      procedure RemoveTextureNewHandler( const AHandler: TNotifyEvent );
+      procedure NewTexture( ASender: TObject );
+
+      procedure AddEffectNewHandler( const AHandler: TNotifyEvent; AsLast: Boolean = False );
+      procedure RemoveEffectNewHandler( const AHandler: TNotifyEvent );
+      procedure NewEffect( ASender: TObject; AEffect: TP3DEffect );
+
+      procedure AddEffectDeleteHandler( const AHandler: TNotifyEvent; AsLast: Boolean = False );
+      procedure RemoveEffectDeleteHandler( const AHandler: TNotifyEvent );
+      procedure DeleteEffect( ASender: TObject );
+
+      procedure RegisterPopup( AClass: TClass; APopup: TP3DPopupMenu );
+      procedure UnregisterPopup( AClass: TClass );
+
       property Selection: TP3DStreamable read GetSelection;
       property ActiveMesh: TP3DMesh read GetActiveMesh;
       property ActiveMaterial: TP3DMaterial read GetActiveMaterial;
       property ActiveTexture: TP3DTexture read GetActiveTexture;
       property ActiveScene: TP3DScene read GetActiveScene;
       property ActiveLibrary: TP3DLibrary read GetActiveLibrary;
+      property ActiveEffect: TP3DEffect read GetActiveEffect;
       property ActiveEditor: Integer read FActiveEditor;
       property Editors: TP3DEditorContainerList read FEditors;
+      property Popups: TP3DPopupDictionary read FPopups write FPopups;
   end;
 
 {$ENDIF}
@@ -267,6 +318,26 @@ begin
   FActiveTexture.AsValue:= AValue;
 
   DoCallNotifyHandler( mihtActiveTextureChange, ASender );
+end;
+
+procedure TP3DMainIntf.AddSetActiveEffectHandler(const AHandler: TNotifyEvent; AsLast: Boolean);
+begin
+  AddHandler( mihtActiveEffectChange, TMethod( AHandler ), AsLast );
+end;
+
+procedure TP3DMainIntf.RemoveSetActiveEffectHandler(const AHandler: TNotifyEvent);
+begin
+  RemoveHandler( mihtActiveEffectChange, TMethod( AHandler ));
+end;
+
+procedure TP3DMainIntf.SetActiveEffect(ASender: TObject; AValue: TP3DStreamable);
+begin
+  if (( not Assigned( FActiveEffect )) or ( FActiveEffect.AsValue = AValue )) then
+    Exit;
+
+  FActiveEffect.AsValue:= AValue;
+
+  DoCallNotifyHandler( mihtActiveEffectChange, ASender );
 end;
 
 procedure TP3DMainIntf.AddSetActiveEditorHandler(const AHandler: TNotifyEvent; AsLast: Boolean);
@@ -404,6 +475,69 @@ begin
     ActiveMesh.Material:= ActiveMaterial;
 end;
 
+procedure TP3DMainIntf.AddTextureNewHandler(const AHandler: TNotifyEvent; AsLast: Boolean);
+begin
+
+end;
+
+procedure TP3DMainIntf.RemoveTextureNewHandler(const AHandler: TNotifyEvent);
+begin
+
+end;
+
+procedure TP3DMainIntf.NewTexture(ASender: TObject);
+begin
+
+end;
+
+procedure TP3DMainIntf.AddEffectNewHandler(const AHandler: TNotifyEvent; AsLast: Boolean);
+begin
+  AddHandler( mihtEffectNew, TMethod( AHandler ), AsLast );
+end;
+
+procedure TP3DMainIntf.RemoveEffectNewHandler(const AHandler: TNotifyEvent);
+begin
+  RemoveHandler( mihtEffectNew, TMethod( AHandler ));
+end;
+
+procedure TP3DMainIntf.NewEffect(ASender: TObject; AEffect: TP3DEffect);
+var
+  Effect: TP3DDataBlock;
+begin
+  DoCallNotifyHandler( mihtEffectNew, ASender );
+  if ( Assigned( ActiveLibrary )) then begin
+    SetSelection( Self, AEffect );
+    SetActiveEffect( Self, AEffect );
+  end;
+end;
+
+procedure TP3DMainIntf.AddEffectDeleteHandler(const AHandler: TNotifyEvent; AsLast: Boolean);
+begin
+  AddHandler( mihtEffectDelete, TMethod( AHandler ), AsLast );
+end;
+
+procedure TP3DMainIntf.RemoveEffectDeleteHandler(const AHandler: TNotifyEvent);
+begin
+  RemoveHandler( mihtEffectDelete, TMethod( AHandler ));
+end;
+
+procedure TP3DMainIntf.DeleteEffect(ASender: TObject);
+begin
+  DoCallNotifyHandler( mihtEffectDelete, ASender );
+  if ( Assigned( ActiveEffect )) then
+    ActiveEffect.Free;
+end;
+
+procedure TP3DMainIntf.RegisterPopup(AClass: TClass; APopup: TP3DPopupMenu);
+begin
+  Popups.Add( AClass.ClassName, APopup );
+end;
+
+procedure TP3DMainIntf.UnregisterPopup(AClass: TClass);
+begin
+  Popups.Remove( AClass.ClassName );
+end;
+
 
 
 function TP3DMainIntf.GetSelection: TP3DStreamable;
@@ -442,6 +576,14 @@ begin
     Result:= nil;
 end;
 
+function TP3DMainIntf.GetActiveEffect: TP3DEffect;
+begin
+  if ( Assigned( FActiveEffect )) then
+    Result:= TP3DEffect( FActiveEffect.AsValue )
+  else
+    Result:= nil;
+end;
+
 procedure TP3DMainIntf.AddHandler(HandlerType: TP3DMainIntfHandlerType; const AMethod: TMethod; AsLast: Boolean);
 begin
   if ( FHandlers[ HandlerType ] = nil ) then
@@ -476,14 +618,18 @@ begin
   FActiveMaterial:= TP3DStreamablePointer.Create( 'ActiveMaterial', TP3DMaterial );
   FActiveTexture:= TP3DStreamablePointer.Create( 'ActiveTexture', TP3DTexture );
   FActiveLibrary:= TP3DStreamablePointer.Create( 'ActiveLibrary', TP3DLibrary );
+  FActiveEffect:= TP3DStreamablePointer.Create( 'ActiveEffect', TP3DEffect );
   FActiveEditor:= 0;
-  Properties.Add([ FSelection, FActiveScene, FActiveMesh, FActiveMaterial, FActiveTexture, FActiveLibrary ]);
+  FPopups:= TP3DPopupDictionary.Create;
+  FPopups.Sorted:= True;
+  Properties.Add([ FSelection, FActiveScene, FActiveMesh, FActiveMaterial, FActiveTexture, FActiveLibrary, FActiveEffect ]);
 end;
 
 destructor TP3DMainIntf.Destroy;
 var
   h: TP3DMainIntfHandlerType;
 begin
+  FPopups.Free;
   for h:= Low( FHandlers ) to High( FHandlers ) do
     FreeAndNil( FHandlers[ h ]);
   inherited Destroy;
@@ -504,5 +650,48 @@ begin
 
 end;
 
+{ gP3DEditor }
+
+function gP3DEditor.GetPopup: TP3DPopupMenu;
+begin
+  Result:= TP3DPopupMenu( FPopup.AsValue );
+end;
+
+function gP3DEditor.GetPopupList: TP3DPopupMenu;
+begin
+  Result:= TP3DPopupMenu( FPopupList.AsValue );
+end;
+
+procedure gP3DEditor.PopupClick(Sender: TP3DMenuItem);
+begin
+
+end;
+
+procedure gP3DEditor.PopupListClick(Sender: TP3DMenuItem);
+begin
+
+end;
+
+constructor gP3DEditor.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+
+  FPopup:= TP3DStreamablePointer.Create( 'Popup', TP3DPopupMenu );
+  Properties.Add( FPopup );
+  FPopup.AsValue:= TP3DPopupMenu.Create();
+  Popup.OnItemClick:= @PopupClick;
+  Popup.AutoWidth:= True;
+
+  FPopupList:= TP3DStreamablePointer.Create( 'PopupList', TP3DPopupMenu );
+  Properties.Add( FPopupList );
+  FPopupList.AsValue:= TP3DPopupMenu.Create();
+  PopupList.AutoWidth:= True;
+  PopupList.OnItemClick:= @PopupListClick;
+end;
+
+destructor gP3DEditor.Destroy;
+begin
+  inherited Destroy;
+end;
 {$ENDIF}
 

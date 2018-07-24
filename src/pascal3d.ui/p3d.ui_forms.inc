@@ -118,11 +118,12 @@ begin
       Canvas.GetValidText( FCloseSymbol, FCloseSymbolTxt,
                 P3DFontManager[ P3DSymbolFontName, Canvas.Font.Size ]);
       r:= P3DRect( vec2( Width - FCloseSymbolTxt.Width - 3, 3 ), vec2( FCloseSymbolTxt.Width, FCloseSymbolTxt.Height ));
-      if ( r.PtInRect( vec2( UIViewer.MouseX, UIViewer.MouseY ) - Canvas.TopLeft )) then
+      if ( r.PtInRect( vec2( UIViewer.MouseX, UIViewer.MouseY ) - ClippedRect.TopLeft )) then
         Canvas.Font.Color:= P3DThemeDefault.Accent[ cp500 ]
       else
         Canvas.Font.Color:= P3DThemeDefault.Primary[ cp500 ];
       //Canvas.RenderRectShadow( r.TopLeft, r.BottomRight, 5, Color );
+      Canvas.RenderTextShadow( FCloseSymbolTxt, vec2( Width - FCloseSymbolTxt.Width - 2, 4 ), 1, Black.fade( 0.5 ));
       Canvas.RenderText( FCloseSymbolTxt, vec2( Width - FCloseSymbolTxt.Width - 3, 3 ));
     end;
 end;

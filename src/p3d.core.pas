@@ -15,6 +15,29 @@
   THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+
+                               ''''''''''''''             ''
+                              ':oddddddddddo:'          ',;;,
+                              'lk000000KXWWKo'         ':lol;
+                              ',;;;;;;cd0NNOl         ',cdo:,
+                                      :dKN0d;        ',:odc,
+                                     'l0WNx;         ';ldo:
+            '',;;;;;;;;;;,,,;:clllllloONWKo' ,,,,,,,,;cdoc,
+           ',:odoooooodddc;:lx0KKKKKXNWWXxc,:odoooooodddl;'
+          ',:ldoc;;,;clddc,',:cllcclkXWNOl::ldl:;;;;coddc'
+          ';loo:     ;lol;         ,dXWXd;;lol;     :odl;
+          ':odo;    'cooc;'''''',,;cONNOl,:ool;'  ',cdo:,
+         ';ldxdl:;:clddc;:oxkkkkOO0KNN0o:;cdxdllccloddc,
+        ',:odolccccccc:,';oxkkkkkOOOkxc,',:cllcccclcc:,
+        ':ldo;
+       ',cdoc,
+      ',:ldl,
+      ';coo:
+      ';:c:'
+       '''
+
+
+
 }
 
 
@@ -96,6 +119,8 @@ var
   P3DAttributes: TP3DAttributeList = nil;
   P3DCoreContainers: TP3DJSONRootContainerList;
 
+function P3DCalcNDCBoundingBox( NDC: TP3DCameraFrustumCube ): TP3DAABB;
+function P3DTransformNDC( Matrix: TMat4; NDC: TP3DCameraFrustumCube): TP3DCameraFrustumCube;
 procedure P3DCoreInit;
 procedure P3DCoreFinish;
 
@@ -119,6 +144,34 @@ begin
   glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST ); cle( nil );
   glEnable( GL_BLEND ); cle( nil );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); cle( nil );
+end;
+
+function P3DCalcNDCBoundingBox(NDC: TP3DCameraFrustumCube): TP3DAABB;
+var
+  i: Integer;
+begin
+  Result.Max:= NDC[ 0 ];
+  Result.Min:= NDC[ 0 ];
+  for i:= 1 to high( NDC ) do begin
+    Result.Min:= min( Result.Min, NDC[ i ]);
+    Result.Max:= max( Result.Max, NDC[ i ]);
+  end;
+  Result.Position:= ( Result.Min + Result.Max ) / 2;
+end;
+
+function P3DTransformNDC( Matrix: TMat4; NDC: TP3DCameraFrustumCube): TP3DCameraFrustumCube;
+  function TransformPoint( v: TVec4 ): TVec3;
+  var
+    p: TVec4;
+  begin
+    p:= Matrix * v;
+    Result:= p.XYZ / p.W;
+  end;
+var
+  i: Integer;
+begin
+  for i:= low( NDC ) to high( NDC ) do
+    Result[ i ]:= TransformPoint( vec4( NDC[ i ], 1 ));
 end;
 
 procedure P3DCoreInit;

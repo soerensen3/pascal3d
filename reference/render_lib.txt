@@ -1,0 +1,50 @@
+---
+Main RenderList
+  Render to Textures
+---
+
+---
+Main Renderlist
+  Render to Shadows
+---
+
+---
+Final RenderList
+  Render to Screen (Deferred)
+--
+
+
+
+try
+  Tex.RenderToTexture;
+  // Render code here
+finally
+  Tex.StopRenderToTexture;
+end;
+
+try
+  Textures.RenderToTexture([ 0, 1, 2 ]);
+finally
+  Textures.StopRenderToTexture;
+end;
+
+
+or
+
+Tex.RenderToTexture(
+  P3DClear([ cmDepth, cmColor ], Black ) +
+  P3DRenderScene( Scene, CamObj )
+);
+
+Textures.RenderToTexture([ 0, 1, 2 ],
+  P3DClear([ cmDepth, cmColor ], Black ) +
+  P3DRenderScene( Scene, CamObj )
+);
+
+
+operator + ( a, b: TP3DRenderCommand ): TP3DRenderCommandList;
+operator + ( a: TP3DRenderCommandList; b: TP3DRenderCommand ): TP3DRenderCommandList;
+operator + ( a: TP3DRenderCommand; b: TP3DRenderCommandList ): TP3DRenderCommandList;
+operator + ( a, b: TP3DRenderCommandList ): TP3DRenderCommandList;
+operator := ( b: TP3DRenderCommand ): TP3DRenderCommandList;
+

@@ -217,3 +217,35 @@ vec4( vec3( $inject$ ), 1 )
 vec4( vec3( $inject$ ), 1 )
 ```
 
+---
+type: bool
+---
+
+```{ name:"constructor", type:"text", restrict:"assign" }
+$inject$
+```
+
+```{ name:"color4", type:"text", restrict:"assign" }
+bool( $inject$.r )
+```
+
+```{ name:"vec4", type:"text", restrict:"assign" }
+bool( $inject$.x )
+```
+
+```{ name:"vec3", type:"text", restrict:"assign" }
+bool( $inject$.x )
+```
+
+```{ name:"vec2", type:"text", restrict:"assign" }
+bool( $inject$.x )
+```
+
+```{ name:"float", type:"text", restrict:"assign" }
+bool( $inject$ )
+```
+
+```{ name:"int", type:"text", restrict:"assign"}
+bool( $inject$ )
+```
+

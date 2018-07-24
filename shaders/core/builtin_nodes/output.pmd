@@ -24,7 +24,7 @@ IN vec3 Normal;
 IN vec4 Color;
 OUT vec3 vPosition;
 OUT vec3 vWorldPosition;
-OUT vec2 vScreenPosition;
+OUT vec3 vScreenPosition;
 OUT vec3 vWorldNormal;
 OUT vec3 vNormal;
 OUT vec3 vObjectPosition;
@@ -50,7 +50,7 @@ $all Initialization: vshader,initialization$
   vPosition = ( view * world * vec4( vObjectPosition, 1 )).xyz;
   vec4 ScreenPosition = proj * vec4( vPosition, 1 );
   gl_Position = ScreenPosition;
-  vScreenPosition = ( ScreenPosition / ScreenPosition.w ).xy;
+  vScreenPosition = ( ScreenPosition / ScreenPosition.w ).xyz;
 }
 ```
 
@@ -73,7 +73,7 @@ uniform vec3 vCamPos;
 
 IN vec3 vPosition;
 IN vec3 vWorldPosition;
-IN vec2 vScreenPosition;
+IN vec3 vScreenPosition;
 IN vec3 vNormal;
 IN vec3 vWorldNormal;
 IN vec3 vObjectPosition;
@@ -152,8 +152,9 @@ $all Declaration: fshader,library$
 void main(){
 $all Initialization: fshader,initialization$
   vec4 ClipRect = $ClipRect:assign$;
-  float clip = 1-clamp( 0, 1, dot( vec2( 1 ), step( ClipRect.zw, vPosition.xy )));
-  clip *= 1-clamp( 0, 1, dot( vec2( 1 ), 1-step( ClipRect.xy, vPosition.xy )));
+  float clip = 1.0-dot( vec2( 1.0 ), step( ClipRect.zw, vPosition.xy ));
+  clip *= 1-dot( vec2( 1 ), 1-step( ClipRect.xy, vPosition.xy ));
+  clip = clamp( 1, 0, clip );
   gl_FragColor = clip * $Color: fshader,assign$;
 }
 ```

@@ -48,6 +48,8 @@ begin
   TP3DEditorMaterial.Create( P3DMainIntf.Editors );
   TP3DEditorTexture.Create( P3DMainIntf.Editors );
   TP3DEditorMesh.Create( P3DMainIntf.Editors );
+  TP3DEditorEffect.Create( P3DMainIntf.Editors );
+  TP3DEditorRenderCommand.Create( P3DMainIntf.Editors );
   P3DClassFactory.AddArray([ TP3DNodeControl, TP3DObjectInspector, TP3DSceneViewer, TP3DShaderNodeEditor ]);
 end;
 

@@ -97,7 +97,7 @@
         procedure Clear; virtual;
         procedure Insert( Index: Integer; Item: T ); virtual;
 
-        function IndexOf(AItem: Pointer): Integer; virtual;
+        function IndexOf( AItem: T ): Integer; virtual;
 
         property Items[ Index: Integer ]: T read GetItems write SetItems; default;
         property OnChange: TListNotifyEvent read FOnChange write FOnChange;
@@ -340,12 +340,9 @@ begin
   Notify( Self, Item, actAdd );
 end;
 
-function gP3DCustomObjectList.IndexOf(AItem: Pointer): Integer;
+function gP3DCustomObjectList.IndexOf(AItem: T): Integer;
 begin
-  if ( Assigned( AItem )) then
-    Result:= FItems.IndexOf( TObject( AItem^ ))
-  else
-    Result:= FItems.IndexOf( nil );
+  Result:= FItems.IndexOf( AItem );
 end;
 
 

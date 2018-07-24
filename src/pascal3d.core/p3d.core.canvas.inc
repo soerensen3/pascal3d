@@ -71,8 +71,6 @@ type
   { TP3DCanvas }
 
   TP3DCanvas = class ( TPersistent )
-  private
-    FMaterialTextureManMip: TP3DMaterial;
     protected
       FFont: TP3DCanvasFont;
       FLockID: Integer;
@@ -83,6 +81,7 @@ type
       FScreenColor: TVec4;
       FMaterialText: TP3DMaterial;
       FMaterialTexture: TP3DMaterial;
+      FMaterialTextureManMip: TP3DMaterial;
 
       function GetBottomRight: TVec2;
       function GetExtent(AIndex: Integer): Integer;
@@ -136,14 +135,11 @@ procedure InitDefaultMat;
     Result:= TP3DMaterialNode.CreateBlock();
     Result.Name:= 'P3DCanvasMaterialDefault';
     Result.MakeRootNode( 'output_canvas' );
-    with ( Result.RootNode.AsJSON ) do begin
-      WriteLn( AsJSON );
-      Free;
-    end;
     ClipRect:= Result.Uniforms.AddCopy( 'uniform_vec4' );
     ClipRect.FindInput( 'UnName' ).ValueProp.AsString:= 'ClippingRect';
     ClipRect.FindOutput( 'Vector' ).Connected:= Result.RootNode.FindInput( 'ClipRect' );
     Result.GeometryNode.FindOutput( 'Color' ).Connected:= Result.RootNode.FindInput( 'Color' );
+    Result.BuildShader;
   end;
 begin
   if ( not Assigned( P3DCanvasMaterialDefault )) then

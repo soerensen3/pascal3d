@@ -16,6 +16,7 @@ type
       FAfterRender: TNotifyEvent;
       FBeforeRender: TNotifyEvent;
       FCommandList: TP3DRenderCommandContainerList;
+      FEffect: TP3DStreamablePointer;
       FOrbitCamera: Boolean;
       FOrbitCenter: TVec3;
       FOrbitDistance: Single;
@@ -24,8 +25,10 @@ type
       FZoomSpeed: Single;
 
       function GetCamObject: TP3DObject;
+      function GetEffect: TP3DEffect;
       function GetScene: TP3DScene;
       procedure SetCamObject(AValue: TP3DObject);
+      procedure SetEffect(AValue: TP3DEffect);
       procedure SetOrbitCamera(AValue: Boolean);
       procedure SetOrbitDistance(AValue: Single);
       procedure SetScene(AValue: TP3DScene);
@@ -50,7 +53,7 @@ type
       property BeforeRender: TNotifyEvent read FBeforeRender write FBeforeRender;
       property AfterRender: TNotifyEvent read FAfterRender write FAfterRender;
       //property RenderList: TP3DRenderList read FRenderList write FRenderList;
-      property CommandList: TP3DRenderCommandContainerList read FCommandList write FCommandList;
+      property Effect: TP3DEffect read GetEffect write SetEffect;
       property CamObject: TP3DObject read GetCamObject write SetCamObject;
       //property RenderFlags: TP3DRenderListFlags read FRenderFlags write FRenderFlags;
       //property OverrideMaterial: TP3DMaterial read FOverrideMaterial write FOverrideMaterial;
@@ -127,6 +130,11 @@ begin
   Result:= TP3DObject( FCamObject.AsValue );
 end;
 
+function TP3DSceneViewer.GetEffect: TP3DEffect;
+begin
+  Result:= TP3DEffect( FEffect.AsValue );
+end;
+
 function TP3DSceneViewer.GetScene: TP3DScene;
 begin
   Result:= TP3DScene( FScene.AsValue );
@@ -135,6 +143,11 @@ end;
 procedure TP3DSceneViewer.SetCamObject(AValue: TP3DObject);
 begin
   FCamObject.AsValue:= AValue;
+end;
+
+procedure TP3DSceneViewer.SetEffect(AValue: TP3DEffect);
+begin
+  FEffect.AsValue:= AValue;
 end;
 
 procedure TP3DSceneViewer.SetOrbitDistance(AValue: Single);
@@ -158,11 +171,10 @@ procedure TP3DSceneViewer.ResetOrbit;
 begin
   OrbitDistance:= 10;
   OrbitCenter:= vec3( 0 );
-  if ( Assigned( CamObject )) then
-    begin
-      CamObject.Transform.Position:= vec3( 0 );
-      CamObject.Transform.Rotation:= vec3( 0 );
-    end;
+  if ( Assigned( CamObject )) then begin
+    CamObject.Transform.Position:= vec3( 0 );
+    CamObject.Transform.Rotation:= vec3( 0 );
+  end;
 end;
 
 constructor TP3DSceneViewer.Create(const AOwner: IP3DStreamableContainer);
@@ -175,7 +187,8 @@ begin
   ZoomSpeed:= 0.2;
   FCamObject:= TP3DStreamablePointer.Create( 'CamObject', TP3DObject );
   FScene:= TP3DStreamablePointer.Create( 'Scene', TP3DScene );
-  Properties.Add([ FCamObject, FScene ]);
+  FEffect:= TP3DStreamablePointer.Create( 'Effect', TP3DEffect, smText );
+  Properties.Add([ FCamObject, FScene, FEffect ]);
   //ZoomSpeed:= 1;
 end;
 
@@ -197,7 +210,7 @@ begin
   //Canvas.Lock;
   PushVPClientRect;
 
-  if ( Assigned( CommandList ) and ( ClientRect.Width * ClientRect.Height > 0 )) then begin
+  if ( Assigned( Effect ) and ( ClientRect.Width * ClientRect.Height > 0 )) then begin
     //if ({( not Assigned( Scene.Cam )) and }( not Assigned( CamObject ))) then
     //  exit;
 
@@ -221,7 +234,7 @@ begin
       RenderList.Render( CamObject, RenderFlags );
     end else
       RenderList.Render( Scene.Cam, RenderFlags );}
-    CommandList.Execute;
+    Effect.Render;
 
     if ( Assigned( AfterRender )) then
       AfterRender( Self );
@@ -269,8 +282,10 @@ procedure TP3DSceneViewer.MouseWheel(deltax, deltay: Integer);
 begin
   inherited MouseWheel( deltax, deltay );
   if ( OrbitCamera and ( gcisMouseOver in InputState )) then
-    if ( TP3DCamera( CamObject.Data ).IsIsometric ) then
-      TP3DCamera( CamObject.Data ).IsoZoom:= Max( 0.1, TP3DCamera( CamObject.Data ).IsoZoom - deltay * ZoomSpeed / 10 )
+    if ( TP3DCamera( CamObject.Data ).IsIsometric ) then begin
+      Caption:= 'Zoom: ' + TP3DCamera( CamObject.Data ).IsoZoom.ToString();
+      TP3DCamera( CamObject.Data ).IsoZoom:= Max( 0.0001, TP3DCamera( CamObject.Data ).IsoZoom - deltay * ZoomSpeed * TP3DCamera( CamObject.Data ).IsoZoom )
+    end
     else
       OrbitDistance:= Max( 0.1, OrbitDistance - deltay * ZoomSpeed );
 end;

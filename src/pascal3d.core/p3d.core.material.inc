@@ -446,6 +446,8 @@ end;
 procedure TP3DMaterialNode.NodeChange(ANewValue: TP3DStreamable);
 begin
   FNeedsUpdate:= True;
+  if ( ANewValue is TP3DNodeClone ) then
+    TP3DNodeClone( ANewValue ).NodeMaster:= NodeMaster;
 end;
 
 procedure TP3DMaterialNode.UpdateTexNodes;

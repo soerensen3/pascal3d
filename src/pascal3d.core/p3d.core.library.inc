@@ -51,6 +51,9 @@ type
     lhAddCamera,
     lhRemoveCamera,
     lhChangeCamera,
+    lhAddEffect,
+    lhRemoveEffect,
+    lhChangeEffect,
     lhAddFont,
     lhRemoveFont,
     lhChangeFont,
@@ -115,6 +118,9 @@ type
       procedure AddCamera( ASender: TP3DDatablock );
       procedure RemoveCamera( ASender: TP3DDatablock );
       procedure ChangeCamera( ASender: TP3DDatablock );
+      procedure AddEffect( ASender: TP3DDatablock );
+      procedure RemoveEffect( ASender: TP3DDatablock );
+      procedure ChangeEffect( ASender: TP3DDatablock );
       procedure AddFont( ASender: TP3DDatablock );
       procedure RemoveFont( ASender: TP3DDatablock );
       procedure ChangeFont( ASender: TP3DDatablock );
@@ -143,6 +149,7 @@ type
       procedure ActionsChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
       procedure ArmaturesChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
       procedure CamerasChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
+      procedure EffectsChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
       procedure FontsChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
       procedure GridsChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
       procedure LightsChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
@@ -157,6 +164,7 @@ type
       FActions: TP3DActionContainerList;
       FArmatures: TP3DArmatureContainerList;
       FCameras: TP3DCameraContainerList;
+      FEffects: TP3DEffectContainerList;
       FFonts: TP3DFontBmpContainerList;
       FGrids: TP3DTileGridContainerList;
       FLights: TP3DLightContainerList;
@@ -203,6 +211,7 @@ type
       property Actions: TP3DActionContainerList read FActions write FActions;
       property Armatures: TP3DArmatureContainerList read FArmatures write FArmatures;
       property Cameras: TP3DCameraContainerList read FCameras write FCameras;
+      property Effects: TP3DEffectContainerList read FEffects write FEffects;
       property Fonts: TP3DFontBmpContainerList read FFonts write FFonts;
       property Grids: TP3DTileGridContainerList read FGrids write FGrids;
       property Lights: TP3DLightContainerList read FLights write FLights;
@@ -395,6 +404,24 @@ begin
   DoCallDatablockHandlers( lhChangeDatablock, ASender );
 end;
 
+procedure TP3DLibrary.AddEffect(ASender: TP3DDatablock);
+begin
+  DoCallDatablockHandlers( lhAddEffect, ASender );
+  DoCallDatablockHandlers( lhAddDatablock, ASender );
+end;
+
+procedure TP3DLibrary.RemoveEffect(ASender: TP3DDatablock);
+begin
+  DoCallDatablockHandlers( lhRemoveEffect, ASender );
+  DoCallDatablockHandlers( lhRemoveDatablock, ASender );
+end;
+
+procedure TP3DLibrary.ChangeEffect(ASender: TP3DDatablock);
+begin
+  DoCallDatablockHandlers( lhChangeEffect, ASender );
+  DoCallDatablockHandlers( lhChangeDatablock, ASender );
+end;
+
 procedure TP3DLibrary.AddFont(ASender: TP3DDatablock);
 begin
   DoCallDatablockHandlers( lhAddFont, ASender );
@@ -563,6 +590,14 @@ begin
   end;
 end;
 
+procedure TP3DLibrary.EffectsChange(ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction);
+begin
+  case Action of
+    actAdd: AddEffect( TP3DDataBlock( AItem ));
+    else RemoveEffect( TP3DDataBlock( AItem ));
+  end;
+end;
+
 procedure TP3DLibrary.FontsChange(ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction);
 begin
   case Action of
@@ -662,10 +697,12 @@ begin
   FActions.OnChange:= @ActionsChange;
   FFonts:= TP3DFontBmpContainerList.Create( 'Fonts', smText );
   FFonts.OnChange:= @FontsChange;
+  FEffects:= TP3DEffectContainerList.Create( 'Effects', smText );
+  FEffects.OnChange:= @EffectsChange;
 
   //Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Name', smDoNotStore ));
 
-  Properties.Add([ FCameras, FGrids, FLights, FMaterials, FMeshes, FObjects, FScenes, {FShaders, }FTextures, FArmatures, FActions, FFonts ]);
+  Properties.Add([ FCameras, FGrids, FLights, FMaterials, FMeshes, FObjects, FScenes, {FShaders, }FTextures, FArmatures, FActions, FFonts, FEffects ]);
 
   if ( not Assigned( Owner ) and not ( Self is TP3DData )) then
     P3DData.Libraries.Add( Self );

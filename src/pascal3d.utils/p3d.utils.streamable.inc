@@ -167,6 +167,9 @@
     public
       constructor Create( AName: String; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore ); override;
 
+      function First( const AClassType: TP3DStreamableClass = nil ): T;
+      function Last( const AClassType: TP3DStreamableClass = nil ): T;
+
       function GetEnumerator: TTypedStreamableListEnumerator;
 
       property AsValues[ Index: Integer ]: T read GetAsValues write SetAsValues; default;
@@ -298,6 +301,9 @@
     public
       constructor Create( AName: String; const AStoreMode: TP3DPropertyAccessStoreMode = smDoNotStore ); override;
 
+      function First( const AClassType: TP3DStreamableClass = nil ): T;
+      function Last( const AClassType: TP3DStreamableClass = nil ): T;
+
       function GetEnumerator: TTypedStreamableListEnumerator;
       function GetArrayItemAsProp(Idx: Integer): TP3DPropertyAccess; override;
 
@@ -340,6 +346,7 @@
       procedure Update; virtual;
 
       function SaveToJSON: TJSONData;
+      function GetAsString: String; virtual;
 
       property Properties: TP3DPropertyList read FProperties;
       property Owner: IP3DStreamableContainer read FOwner write SetOwner;
@@ -363,6 +370,7 @@
       FNamedStreamableList: IP3DNamedStreamableList;
 
       function GetName: String; virtual;
+      function GetAsString: String; override;
 
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
@@ -453,6 +461,11 @@ begin
   else
     raise Exception.CreateFmt( 'Owner for class %s can only be nil for classes that implement IP3DJSONStream!', [ ClassName ]);
   FOwner:= AValue;
+end;
+
+function TP3DStreamable.GetAsString: String;
+begin
+  Result:= ClassName;
 end;
 
 constructor TP3DStreamable.CreateFromJSON(AJSON: TJSONData; const AOwner: IP3DStreamableContainer);
@@ -589,7 +602,10 @@ end;
 
 function TP3DPropAccessStreamable.GetAsString: String;
 begin
-  Result:= ItemClass.ClassName;
+  if ( Assigned( FAsValue )) then
+    Result:= FAsValue.GetAsString
+  else
+    Result:= '<None>: ' + ItemClass.ClassName;
 end;
 
 procedure TP3DPropAccessStreamable.SetAsString(AValue: String);
@@ -863,6 +879,8 @@ begin
     end;
   //WriteLn( AJSON.AsJSON );
   Result:= Tp.CreateFromJSON( AJSON, Self );
+  if ( Assigned( OnChange )) then
+    OnChange( Result );
 end;
 
 function TP3DStreamableContainer.GetValueAsStreamable: TP3DStreamable;
@@ -1613,6 +1631,11 @@ end;
 function TP3DNamedStreamable.GetName: String;
 begin
   Result:= FName;
+end;
+
+function TP3DNamedStreamable.GetAsString: String;
+begin
+  Result:= Name + ': ' + inherited GetAsString;
 end;
 
 constructor TP3DNamedStreamable.Create(const AOwner: IP3DStreamableContainer);
