@@ -154,6 +154,8 @@ var
   i: Integer;
   Buffers: array [ 0..255 ] of GLint;
 begin
+  if ( FViewPortIdx >= P3DViewports.Count ) then
+    FViewPortIdx:= -1;
   if (( AutoViewPort ) and ( WidthHeight.x * WidthHeight.y > 0 ) and ( FViewPortIdx = -1 )) then
     FViewPortIdx:= P3DViewports.Push( 0, 0, WidthHeight.x, WidthHeight.Y );
   glBindFramebuffer( GL_FRAMEBUFFER, FFBO ); cle( Self, 'Error while binding frame buffer: ' );

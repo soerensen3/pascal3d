@@ -5,7 +5,7 @@ type
   { TP3DScene }
 
   TP3DSceneRenderCallback = procedure ( world: TMat4; AObject: TP3DObject ) of object;
-  TP3DScene = class( TP3DDataBlock, IP3DRenderable )
+  TP3DScene = class( TP3DDataBlock, IP3DRenderable, IP3DPlottableLayer )
     private
       FCam: TP3DStreamablePointer;
       FIsDesignTime: Boolean;
@@ -15,11 +15,14 @@ type
       FActiveCam: TP3DObject;
       FOnRenderCallback: TP3DSceneRenderCallback;
       FRootScene: TP3DScene;
+      FPlotList: TP3DPlotListLayer;
+      FLightList: TP3DPlotListSetting;
 
       function GetCam: TP3DObject;
       procedure SetCam( AValue: TP3DObject );
       procedure RenderCallback( world: TMat4; AObject: TP3DObject ); virtual;
       procedure OnObjChange( Sender: TObject; Item: TP3DStreamable; AAction: TP3DListOnChangeAction );
+      procedure UpdatePlotList;
 
     protected
       property ActiveCam: TP3DObject read FActiveCam write FActiveCam;
@@ -30,10 +33,9 @@ type
       class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       //constructor Create( AFileName: String; const AWatchFileForChanges: Boolean = False; const AData: TP3DLibrary = nil );
+      destructor Destroy; override;
 
       procedure UpdateLights;
-
-      procedure Clear;
 
 //      function Debug: String;
 
@@ -52,6 +54,11 @@ type
       property Cam: TP3DObject read GetCam write SetCam;
       property IsDesignTime: Boolean read FIsDesignTime write FIsDesignTime;
       property OnRenderCallback: TP3DSceneRenderCallback read FOnRenderCallback write FOnRenderCallback;
+
+      //IP3DPlottableLayer -->
+    public
+      function GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+      //<-- IP3DPlottableLayer
   end;
 
   {TP3DSceneContainer = specialize gP3DStreamableContainer < TP3DScene >;
@@ -84,6 +91,14 @@ end;
 procedure TP3DScene.OnObjChange(Sender: TObject; Item: TP3DStreamable; AAction: TP3DListOnChangeAction );
 begin
   P3DData.ChangeScene( Self );
+  if ( AAction = actClear ) then
+    if ( Assigned( FPlotList )) then
+      FPlotList.Clear
+  else begin
+    UpdatePlotList;
+    if ( Assigned( Sender ) and ( Sender is TP3DLight )) then
+      UpdateLights;
+  end;
   {if ( AAction = actAdd ) then
     begin
       Item.AddUser( Self );
@@ -96,6 +111,15 @@ begin
       Item.FScene:= nil;
       Item.FParent:= nil;
     end;}
+end;
+
+procedure TP3DScene.UpdatePlotList;
+var
+  Obj: TP3DObject;
+begin
+  FPlotList.Clear;
+  for Obj in Objects do
+    FPlotList.Append( Obj.GetLayer( nil ));
 end;
 
 class function TP3DScene.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
@@ -115,6 +139,15 @@ begin
   Properties.Add( FCam );
   Properties.Add( FObjects );
   Properties.Add( FLights );
+  FPlotList:= TP3DPlotListLayer.Create();
+  FLightList:= TP3DPlotListSetting.Create();
+end;
+
+destructor TP3DScene.Destroy;
+begin
+  inherited Destroy;
+  FreeAndNil( FPlotList );
+  FreeAndNil( FLightList );
 end;
 
 {
@@ -133,10 +166,12 @@ var
   light: TP3DLight;
 begin
   Lights.Clear();
+  FLightList.Clear;
   for Obj in Objects do
-    if ( Obj.Data is TP3DLight ) then
-      Lights.Add( TP3DLight( Obj.Data ))
-    else if ( Obj.Data is TP3DScene ) then
+    if ( Obj.Data is TP3DLight ) then begin
+      Lights.Add( TP3DLight( Obj.Data ));
+      FLightList.Append( uniform_light( Obj ));
+    end else if ( Obj.Data is TP3DScene ) then
       begin
         TP3DScene( Obj.Data ).UpdateLights;
         for light in TP3DScene( Obj.Data ).Lights do
@@ -148,10 +183,6 @@ begin
   WriteLn( '-------------------' );}
 end;
 
-
-procedure TP3DScene.Clear;
-begin
-end;
 
 procedure TP3DScene.Render(world: TMat4; Scene: TP3DScene;
   RenderObject: TP3DObject);
@@ -254,6 +285,11 @@ begin
           //LightList.PassToActiveShader( TP3DCamera( ActiveCam.Data ).View, [ liPosition, liLightParams ]);
         end;
     end;
+end;
+
+function TP3DScene.GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+begin
+  Result:= TP3DPlotCommandScene.Create( Self );
 end;
 
 {

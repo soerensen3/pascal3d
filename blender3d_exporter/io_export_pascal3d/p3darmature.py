@@ -62,9 +62,9 @@ class P3DArmature( p3ddatablock.P3DDataBlock ):
                  'TransformLocal' : {
                      'Quaternion': p3dexporthelper.swap_quat( rot_local ),
                      'Position' : list( pos_local ), },
-                 'Parent' : path % bone.parent.name if ( bone.parent ) else 'None',
+                 'Parent' : path % bone.parent.name if ( bone.parent ) else None,
                  'Children': [ path % child.name for child in bone.children ],
-                 'Tail' : list( bone.tail ),
+                 'Tail' : list( bone.tail - bone.head ),
                  'ClassName': 'TP3DRestJoint' }
 
 

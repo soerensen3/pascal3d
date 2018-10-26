@@ -8,7 +8,7 @@ type
 
   TP3DEffect = class ( TP3DDataBlock )
     protected
-      FCommandList: TP3DRenderCommandContainerList;
+      FCommandList: TP3DPlotListLayer;
 
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
@@ -17,7 +17,7 @@ type
 
       class function GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess; override;
 
-      property CommandList: TP3DRenderCommandContainerList read FCommandList;
+      property CommandList: TP3DPlotListLayer read FCommandList;
   end;
 
   { TP3DEffectCustom }
@@ -71,8 +71,8 @@ end;
 constructor TP3DEffect.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create(AOwner);
-  FCommandList:= TP3DRenderCommandContainerList.Create( 'CommandList', smText );
-  Properties.Add( FCommandList );
+  //FCommandList:= TP3DPlotList.Create( 'CommandList', smText );
+  //Properties.Add( FCommandList );
 end;
 
 procedure TP3DEffect.Render;

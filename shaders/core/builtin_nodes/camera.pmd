@@ -1,0 +1,20 @@
+---
+node: camera
+---
+```{name: "Declaration", type: "text"}
+#define mat_view
+uniform mat4 view = mat4( 1 );
+
+```
+
+```{name: "Initialization", type: "text", restrict: "vshader"}
+  //view space
+  vPosition = ( view * vec4( vWorldPosition, 1 )).xyz;
+  vNormal = ( view * vec4( vWorldNormal.xyz, 0 )).xyz;
+
+```
+
+```{name: "View", type: "text", restrict: "vshader"}
+view
+```
+

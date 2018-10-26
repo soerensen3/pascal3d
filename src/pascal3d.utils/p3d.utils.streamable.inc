@@ -672,6 +672,12 @@ begin
   if (( AsValue = Old ) and ( Old <> New )) then
     begin {$IFDEF VERBOSE}WriteLn( 'updating user ' + Name + ' from ' + IntToHex( Int64( Old ), 8  ) + ' to ' + IntToHex( Int64( New ), 8 )); {$ENDIF}
       AsValue:= New;
+      {Write( 'Updating user:', GetFullPath );
+      if ( Old is TP3DNamedStreamable ) then
+        Write( ' from: ', TP3DNamedStreamable( Old ).Name );
+      if ( New is TP3DNamedStreamable ) then
+        Write( ' to:', TP3DNamedStreamable( New ).Name );
+      WriteLn();}
     end;
 end;
 
@@ -897,7 +903,7 @@ function TP3DStreamableContainer.GetChildPropByPath(var APath: String; out RestS
   LastFound: TP3DPropertyAccess): TP3DPropertyAccess;
 begin
   if ( Assigned( AsValue )) then begin
-    if ( AsValue is TP3DNamedStreamable ) then WriteLn( TP3DNamedStreamable( AsValue ).Name );
+    //if ( AsValue is TP3DNamedStreamable ) then WriteLn( TP3DNamedStreamable( AsValue ).Name );
     Result:= AsValue.Properties.GetPropByPath( APath, RestString, LastFound )
   end else
     Result:= nil;
@@ -1388,12 +1394,19 @@ end;
 procedure TP3DStreamableListBase.LoadItemFromJSON(Index: Integer; AData: TJSONData);
 var
   Prop: TP3DPropertyAccess;
+  Item: TP3DStreamable;
 begin
   Prop:= GetArrayItemAsProp( Index );
   if ( Assigned( Prop )) then
-    Prop.AsJSON:= AData;
-  Notify( Self, AsValues[ Index ], actAdd );
-  NotifyAfter( Self, AsValues[ Index ], actAdd );
+    Prop.AsJSON:= AData
+  else
+    exit;
+  Item:= ( Prop as IP3DPropAccessStreamable ).GetValueAsStreamable;
+  if ( Assigned( Item )) then begin
+    Notify( Self, Item, actAdd );
+    NotifyAfter( Self, Item, actAdd );
+  end else
+    WriteLn( 'Could not load from data ' + AData.AsJSON );
 end;
 
 
@@ -1545,6 +1558,7 @@ begin
       if ( AData is TJSONObject ) then
         Prop.Name:= Name + '[ "' + TJSONObject( AData ).Get( 'Name', '' ) + '" ]';
       Prop.AsJSON:= AData;
+      Notify( Self, ( Prop as IP3DPropAccessStreamable ).GetValueAsStreamable, actAdd );
       //WriteLn( 'LoadItemFromJSON: ' + Prop.Name + ' = ' + AData.AsJSON );
     end;
 end;
@@ -1666,8 +1680,6 @@ begin
 end;
 
 procedure TP3DNamedStreamable.SetName(AValue: String);
-var
-  obj: IP3DNamedStreamableList;
 begin
   if FName=AValue then Exit;
 

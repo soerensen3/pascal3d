@@ -104,6 +104,7 @@ vec3 CalcBumpedNormal( vec3 Normal, vec3 Tangent, vec3 Cotangent, vec3 BumpMapNo
 ```
 
 ```{restrict:"vshader"}
+#define tangent
 IN vec4 Tangent;
 IN vec4 Cotangent;
 OUT vec4 vTangent;
@@ -115,6 +116,7 @@ OUT vec4 vWorldCotangent;
 ```
 
 ```{restrict:"fshader"}
+#define tangent
 IN vec4 vTangent;
 IN vec4 vCotangent;
 IN vec4 vWorldTangent;

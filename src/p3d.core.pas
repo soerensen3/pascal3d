@@ -45,6 +45,7 @@ unit p3d.core;
 {$mode objfpc}{$H+}
 {$interfaces CORBA}
 {$modeswitch nestedprocvars}
+{$ModeSwitch advancedrecords}
 
 {.$DEFINE DEBUG_DATABLOCKS}
 {.$DEFINE VERBOSE}
@@ -95,6 +96,7 @@ uses
   LazUTF8Classes,
   LazMethodList,
 
+  autoobj,
   Math,
   p3d.math,
   p3d.utils,

@@ -37,6 +37,7 @@ type
       FMatrix: TMat4;
       FMatrixInv: TMat4;
       FRotationOrder: TRotationOrder;
+      FLastChanged: QWord;
 
       function GetDirection: TVec3;
       function GetMatrix: TMat4;
@@ -53,6 +54,7 @@ type
       procedure SetScale( AValue: TVec3 );
       procedure UpdateMatrix;
       procedure UpdateEuler;
+      procedure TransformChanged;
 
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
@@ -69,6 +71,7 @@ type
       property Matrix: TMat4 read FMatrix write SetMatrix;
       property MatrixInv: TMat4 read FMatrixInv;
       property Quaternion: TQuat read FQuaternion write SetQuaternion;
+      property LastChanged: QWord read FLastChanged;
 
     published
       property RotationOrder: TRotationOrder read GetRotationOrder write SetRotationOrder;
@@ -92,13 +95,18 @@ procedure TP3DTransform.UpdateMatrix;
 begin
   FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion )) * mat4scale( vec4( Scale, 1 ));
   mat4inverse( FMatrix, FMatrixInv );
-  if ( Assigned( FOnChange )) then
-    FOnChange( Self );
+  TransformChanged;
 end;
 
 procedure TP3DTransform.UpdateEuler;
 begin
   FRotation:= QuatToEuler( Quaternion, deg2rad * Rotation, RotationOrder ) / deg2rad;
+  TransformChanged;
+end;
+
+procedure TP3DTransform.TransformChanged;
+begin
+  FLastChanged:= GetTickCount64;
   if ( Assigned( FOnChange )) then
     FOnChange( Self );
 end;
@@ -150,8 +158,7 @@ begin
   FQuaternion:= EulerToQuat( Rotation * deg2rad, RotationOrder );
   FScale:= mat3toScale( mat3( FMatrix ));
   mat4inverse( FMatrix, FMatrixInv );
-  if ( Assigned( FOnChange )) then
-    FOnChange( Self );
+  TransformChanged;
 end;
 
 function TP3DTransform.GetDirection: TVec3;

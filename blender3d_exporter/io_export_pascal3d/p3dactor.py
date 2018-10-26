@@ -5,10 +5,10 @@ class P3DObject( p3ddatablock.P3DDataBlock ):
     def ExportModifiers( self, root, obj ):
         self.Modifiers = []
         root.Exporter.report({ 'INFO' }, str( obj ))
-        if root.Exporter.ExportArmatures and obj:
-            armature = obj.find_armature()
-            if ( armature ):
-                self.Modifiers = [{ "ClassName" : "TP3DObjectModifierArmature", "Armature": "Armatures[\"" + armature.data.name + "\"]" }]
+        #if root.Exporter.ExportArmatures and obj:
+        #    armature = obj.find_armature()
+        #    if ( armature ):
+        #        self.Modifiers = [{ "ClassName" : "TP3DObjectModifierArmature", "Armature": "Armatures[\"" + armature.data.name + "\"]" }]
 
 
     def __init__( self, block, root = None, path='', obj = None ): # obj = scene

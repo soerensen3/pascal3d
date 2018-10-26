@@ -119,7 +119,6 @@ function TP3DPropAccessFilePointer.GetAsString: String;
   function GetJSONFilePath: String;
   begin
     Result:= ExtractFilePath( Root.GetJSONLoader().FileName );
-    WriteLn( AsValue.FileName, ': ', Result );
   end;
 
 var

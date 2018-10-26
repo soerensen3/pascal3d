@@ -151,6 +151,18 @@ type
 
 {$IFDEF IMPLEMENTATION}
 
+operator:=(a: TP3DPlotCommandSetting): TP3DPlotListSetting;
+begin
+  initialize( Result );
+  Result.Append( a );
+end;
+
+operator:=(a: TP3DPlotCommandLayer): TP3DPlotListLayer;
+begin
+  initialize( Result );
+  Result.Append( a );
+end;
+
 function p3dTextSimple( AText: String; AFont: TP3DFont ): TP3DText;
 var
   cl: TSDL_Color;

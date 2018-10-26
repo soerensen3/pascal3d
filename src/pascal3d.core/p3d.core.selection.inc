@@ -93,25 +93,7 @@ begin
 end;
 
 
-function P3DMeshCreatePlane(ASize: TVec2; const AData: TP3DLibrary): TP3DMesh;
-var
-  hSize: TVec3;
-  n: TVec3;
-begin
-  Result:= TP3DMesh.CreateBlock( AData );
-  hSize:= vec3( ASize / 2, 0 );
-  n:= vec3( -1, 0, 1 );
-  Result.PackedPositions.AddArray([ -hSize, vec3( hSize.X, -hSize.Y, 0 ), vec3( -hSize.X, hSize.Y, 0 ), hSize ]);
-  Result.PackedFaces.Add( 0 );
-  Result.Edges.AddArray([ 0, 1, 1, 2, 2, 3, 3, 0 ]);
-  Result.Loops.AddArray([ 0, 1, 3, 2 ]);
-  Result.PackedNormals.AddArray([ n.YYZ, n.YYZ, n.YYZ, n.YYZ ]);
-  Result.PackedTangents.AddArray([ n.ZYY, n.ZYY, n.ZYY, n.ZYY ]);
-  Result.PackedCotangents.AddArray([ n.YZY, n.YZY, n.YZY, n.YZY ]);
-  Result.TexCoords.Add( TP3DVec2BufferGL.Create );
-  Result.TexCoords[ 0 ].AddArray([ vec2( 0, 1 ), vec2( 1, 1 ), vec2( 1, 0 ), vec2( 0, 0 )]);
-  Result.UnpackBuffers;
-end;
+
 
 
 {$ENDIF}

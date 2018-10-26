@@ -12,7 +12,7 @@ type
   TP3DCameraFrustumCorners = array[ 0..3 ] of TVec3;
   TP3DCameraFrustumCube = array[ 0..7 ] of TVec3;
 
-  TP3DCamera = class ( TP3DDataBlock, IP3DAnimatable )
+  TP3DCamera = class ( TP3DDataBlock, IP3DAnimatable, IP3DPlottableSettings )
     private
       FAspect: Single;
       FFar: Single;
@@ -64,6 +64,10 @@ type
       function CalculateCameraFrustumCornersNDCView: TP3DCameraFrustumCube;
       function CalculateCameraFrustumCornersNDCWorld: TP3DCameraFrustumCube;
       function CalculateCameraFrustumCornersNDCTransform( Matrix: TMat4 ): TP3DCameraFrustumCube;
+
+      //IP3DPlottableSettings -->
+      function GetSettings: TP3DPlotListSetting;
+      //<-- IP3DPlottableSettings
 
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
@@ -326,6 +330,11 @@ begin
   Result[ 5 ]:= TransformPoint( vec4(  1, -1, -1, 1 ));
   Result[ 6 ]:= TransformPoint( vec4( -1,  1, -1, 1 ));
   Result[ 7 ]:= TransformPoint( vec4(  1,  1, -1, 1 ));
+end;
+
+function TP3DCamera.GetSettings: TP3DPlotListSetting;
+begin
+  Result:= settings( TP3DPlotCommandCamera.Create( Self ));
 end;
 
 constructor TP3DCamera.Create(const AOwner: IP3DStreamableContainer);

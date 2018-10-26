@@ -107,7 +107,6 @@
         //function Add( AItems: array of T ): Integer; overload;
     end;
 
-
     generic gP3DBufferObjectGL < T > = class ( specialize gP3DList < T > )
       private
         FBufferObject: GLuint;
@@ -233,17 +232,21 @@
     {$DEFINE TP3DBufferObjectGL:= TP3DMat4BufferGL}
     {$INCLUDE p3dbuffers_bufferobjectgl.inc}*)
 
-    TP3DIntBufferGLList = specialize gP3DCustomObjectList < TP3DIntBufferGL >;
-    TP3DFloatBufferGLList = specialize gP3DCustomObjectList < TP3DFloatBufferGL >;
-    TP3DVec2BufferGLList = specialize gP3DCustomObjectList < TP3DVec2BufferGL >;
-    TP3DVec3BufferGLList = specialize gP3DCustomObjectList < TP3DVec3BufferGL >;
-    TP3DVec4BufferGLList = specialize gP3DCustomObjectList < TP3DVec4BufferGL >;
-    TP3DIVec2BufferGLList = specialize gP3DCustomObjectList < TP3DIVec2BufferGL >;
-    TP3DIVec3BufferGLList = specialize gP3DCustomObjectList < TP3DIVec3BufferGL >;
-    TP3DIVec4BufferGLList = specialize gP3DCustomObjectList < TP3DIVec4BufferGL >;
-    TP3DMat2BufferGLList = specialize gP3DCustomObjectList < TP3DMat2BufferGL >;
-    TP3DMat3BufferGLList = specialize gP3DCustomObjectList < TP3DMat3BufferGL >;
-    TP3DMat4BufferGLList = specialize gP3DCustomObjectList < TP3DMat4BufferGL >;
+    //TP3DIntBufferGLList = specialize TFPGList < specialize TAuto < TP3DIntBufferGL >>;
+    //TP3DFloatBufferGLList = specialize TFPGList < specialize TAuto < TP3DFloatBufferGL >>;
+    TP3DVec2BufferGLAuto = specialize TAuto < TP3DVec2BufferGL >;
+    TP3DVec3BufferGLAuto = specialize TAuto < TP3DVec3BufferGL >;
+    TP3DVec4BufferGLAuto = specialize TAuto < TP3DVec4BufferGL >;
+    TP3DVec2BufferGLList = specialize TFPGList < TP3DVec2BufferGLAuto >;
+    TP3DIntBufferGLAuto =  specialize TAuto < TP3DIntBufferGL >;
+    //TP3DVec3BufferGLList = specialize TFPGList < specialize TAuto < TP3DVec3BufferGL >>;
+    //TP3DVec4BufferGLList = specialize TFPGList < specialize TAuto < TP3DVec4BufferGL >>;
+    //TP3DIVec2BufferGLList = specialize TFPGList < specialize TAuto < TP3DIVec2BufferGL >>;
+    //TP3DIVec3BufferGLList = specialize TFPGList < specialize TAuto < TP3DIVec3BufferGL >>;
+    //TP3DIVec4BufferGLList = specialize TFPGList < specialize TAuto < TP3DIVec4BufferGL >>;
+    //TP3DMat2BufferGLList = specialize TFPGList < specialize TAuto < TP3DMat2BufferGL >>;
+    //TP3DMat3BufferGLList = specialize TFPGList < specialize TAuto < TP3DMat3BufferGL >>;
+    //TP3DMat4BufferGLList = specialize TFPGList < specialize TAuto < TP3DMat4BufferGL >>;
 
     { gP3DPropAccessBufferGLList }
     type
@@ -273,14 +276,14 @@
 //    TP3DPropAccessMat3BufferGL = specialize gP3DPropAccessBufferGL < TP3DMat3BufferGL, TMat3, TP3DPropAccessMat3 >;
 //    TP3DPropAccessMat4BufferGL = specialize gP3DPropAccessBufferGL < TP3DMat4BufferGL, TMat4, TP3DPropAccessMat4 >;
 
-    TP3DPropAccessIntBufferGLList   = specialize gP3DPropAccessList < TP3DIntBufferGLList, TP3DIntBufferGL, TP3DPropAccessIntBufferGL >;
-    TP3DPropAccessFloatBufferGLList = specialize gP3DPropAccessList < TP3DFloatBufferGLList, TP3DFloatBufferGL, TP3DPropAccessFloatBufferGL >;
+    //TP3DPropAccessIntBufferGLList   = specialize gP3DPropAccessList < TP3DIntBufferGLList, TP3DIntBufferGL, TP3DPropAccessIntBufferGL >;
+    //TP3DPropAccessFloatBufferGLList = specialize gP3DPropAccessList < TP3DFloatBufferGLList, TP3DFloatBufferGL, TP3DPropAccessFloatBufferGL >;
     TP3DPropAccessVec2BufferGLList  = specialize gP3DPropAccessList < TP3DVec2BufferGLList, TP3DVec2BufferGL, TP3DPropAccessVec2BufferGL >;
-    TP3DPropAccessVec3BufferGLList  = specialize gP3DPropAccessList < TP3DVec3BufferGLList, TP3DVec3BufferGL, TP3DPropAccessVec3BufferGL >;
-    TP3DPropAccessVec4BufferGLList  = specialize gP3DPropAccessList < TP3DVec4BufferGLList, TP3DVec4BufferGL, TP3DPropAccessVec4BufferGL >;
-    TP3DPropAccessIVec2BufferGLList = specialize gP3DPropAccessList < TP3DIVec2BufferGLList, TP3DIVec2BufferGL, TP3DPropAccessIVec2BufferGL >;
-    TP3DPropAccessIVec3BufferGLList = specialize gP3DPropAccessList < TP3DIVec3BufferGLList, TP3DIVec3BufferGL, TP3DPropAccessIVec3BufferGL >;
-    TP3DPropAccessIVec4BufferGLList = specialize gP3DPropAccessList < TP3DIVec4BufferGLList, TP3DIVec4BufferGL, TP3DPropAccessIVec4BufferGL >;
+    //TP3DPropAccessVec3BufferGLList  = specialize gP3DPropAccessList < TP3DVec3BufferGLList, TP3DVec3BufferGL, TP3DPropAccessVec3BufferGL >;
+    //TP3DPropAccessVec4BufferGLList  = specialize gP3DPropAccessList < TP3DVec4BufferGLList, TP3DVec4BufferGL, TP3DPropAccessVec4BufferGL >;
+    //TP3DPropAccessIVec2BufferGLList = specialize gP3DPropAccessList < TP3DIVec2BufferGLList, TP3DIVec2BufferGL, TP3DPropAccessIVec2BufferGL >;
+    //TP3DPropAccessIVec3BufferGLList = specialize gP3DPropAccessList < TP3DIVec3BufferGLList, TP3DIVec3BufferGL, TP3DPropAccessIVec3BufferGL >;
+    //TP3DPropAccessIVec4BufferGLList = specialize gP3DPropAccessList < TP3DIVec4BufferGLList, TP3DIVec4BufferGL, TP3DPropAccessIVec4BufferGL >;
 
 {$ENDIF}
 
@@ -496,13 +499,16 @@ end;
 
 procedure gP3DBufferObjectGL.GenBufferObject;
 begin
-  glGenBuffers( 1, @FBufferObject );// cle( Self );
+  if ( Assigned( glGenBuffers )) then
+    glGenBuffers( 1, @FBufferObject );// cle( Self );
 end;
 
 procedure gP3DBufferObjectGL.DeleteBufferObject;
 begin
-  glBindBuffer( GL_ARRAY_BUFFER, FBufferObject );// cle( Self );
-  glDeleteBuffers( 1, @FBufferObject );// cle( Self );
+  if ( Assigned( glDeleteBuffers )) then begin
+    glBindBuffer( GL_ARRAY_BUFFER, FBufferObject );// cle( Self );
+    glDeleteBuffers( 1, @FBufferObject );// cle( Self );
+  end
 end;
 
 procedure gP3DBufferObjectGL.SetStatic(AValue: Boolean);
@@ -568,7 +574,8 @@ begin
         glVertexAttribDivisor( FIdx, 0 );
       glDisableVertexAttribArray( Fidx ); //cle( Self );
       FIdx:= -1;
-      P3DAttributes.Remove( Self );
+      if ( Assigned( P3DAttributes )) then
+        P3DAttributes.Remove( Self );
     end;
 end;
 

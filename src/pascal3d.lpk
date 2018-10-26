@@ -9,8 +9,19 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="pascal3d.core;pascal3d.utils;pascal3d.events"/>
+        <OtherUnitFiles Value="pascal3d.events"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <CodeGeneration>
+        <Optimizations>
+          <OptimizationLevel Value="0"/>
+        </Optimizations>
+      </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <DebugInfoType Value="dsDwarf2Set"/>
+        </Debugging>
+      </Linking>
       <Other>
         <Verbosity>
           <ShoLineNum Value="True"/>
@@ -22,7 +33,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="69">
+    <Files Count="77">
       <Item1>
         <Filename Value="p3d.core.pas"/>
         <UnitName Value="p3d.core"/>
@@ -288,7 +299,7 @@
         <Type Value="Include"/>
       </Item66>
       <Item67>
-        <Filename Value="pascal3d.core\p3d.core.rendercommand.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot.inc"/>
         <Type Value="Include"/>
       </Item67>
       <Item68>
@@ -299,10 +310,43 @@
         <Filename Value="pascal3d.core\p3d.core.effect.inc"/>
         <Type Value="Include"/>
       </Item69>
+      <Item70>
+        <Filename Value="pascal3d.core\p3d.base.plot.inc"/>
+        <Type Value="Include"/>
+      </Item70>
+      <Item71>
+        <Filename Value="pascal3d.core\p3d.core.plot_advanced.inc"/>
+        <Type Value="Include"/>
+      </Item71>
+      <Item72>
+        <Filename Value="pascal3d.core\p3d.core.plot_attributes.inc"/>
+        <Type Value="Include"/>
+      </Item72>
+      <Item73>
+        <Filename Value="pascal3d.core\p3d.core.plot_base.inc"/>
+        <Type Value="Include"/>
+      </Item73>
+      <Item74>
+        <Filename Value="pascal3d.core\p3d.core.plot_primitives.inc"/>
+        <Type Value="Include"/>
+      </Item74>
+      <Item75>
+        <Filename Value="pascal3d.core\p3d.core.plot_uniforms.inc"/>
+        <Type Value="Include"/>
+      </Item75>
+      <Item76>
+        <Filename Value="pascal3d.core\p3d.core.plot_constructors.inc"/>
+        <Type Value="Include"/>
+      </Item76>
+      <Item77>
+        <Filename Value="pascal3d.events\p3d.events.logger.inc"/>
+        <Type Value="Include"/>
+        <AddToUsesPkgSection Value="True"/>
+      </Item77>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>
-        <PackageName Value="laz_opengl"/>
+        <PackageName Value="pl_opengl"/>
       </Item1>
       <Item2>
         <PackageName Value="LazUtils"/>

@@ -6,11 +6,12 @@ type
   TP3DRenderListFlag = ( rlfMaterials, rlfIndexColors, rlfWireFrame, rlfDepthTest, rlfLighting, rlfRenderEdges, rlfObjects, rlfNonShadowCasters, rlfShadowCasters, rlfShadowReceivers, rlfMeshes, rlfScenes, rlfTileGrids, rlfJoints );
   TP3DRenderListFlags = set of TP3DRenderListFlag;
 
- const
-   P3DRenderListFlagsDefault = [ rlfMaterials, rlfDepthTest, rlfLighting, rlfMeshes, rlfScenes, rlfTileGrids, rlfShadowCasters, rlfShadowReceivers, rlfNonShadowCasters ];
+const
+  P3DRenderListFlagsDefault = [ rlfMaterials, rlfDepthTest, rlfLighting, rlfMeshes, rlfScenes, rlfTileGrids, rlfShadowCasters, rlfShadowReceivers, rlfNonShadowCasters ];
 
 type
   TP3DRenderList = class;
+  TP3DLibrary = class;
   //TP3DAction = class;
 
   { TP3DDataBlock
@@ -94,7 +95,7 @@ end;
 
 destructor TP3DDataBlock.Destroy;
 begin
-  WriteLn( 'Free datablock: ' + Name );
+  //WriteLn( 'Free datablock: ' + Name );
   inherited Destroy;
 end;
 

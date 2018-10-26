@@ -31,7 +31,7 @@ const
 type
   { TP3DTexture }
 
-  TP3DTexture = class ( TP3DDataBlock )
+  TP3DTexture = class ( TP3DDataBlock, IP3DPlottableLayer )
     private
       FDataType: TP3DTextureDataType;
       FFileWatch: TP3DFilePointer;
@@ -87,6 +87,10 @@ type
       procedure SaveToFile;
       procedure SaveToFile( FileName: String );
       procedure UpdateMipMaps( const ATarget: GLenum = 0 );
+
+      //IP3DPlottable -->
+      function GetLayer( ASettings: TP3DPlotListSetting ): TP3DPlotCommandLayer;
+      //<-- IP3DPlottable
 
     published
       property Width: Integer read FWidth;
@@ -358,6 +362,7 @@ begin
     _Target:= Target
   else
     _Target:= ATarget;
+  cle( Self );
   glGenTextures( 1, @Result ); cle( Self );
   glBindTexture( _Target, Result ); cle( Self );
 end;
@@ -590,7 +595,7 @@ end;
 constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary);
 begin
   CreateBlock( AData );
-  CreateNewTexAndBind();
+  FGLTexture:= CreateNewTexAndBind();
   LoadFromBuffer( AWidth, AHeight, ANumChannels, ADataType, ABuffer );
   FWidth:= AWidth;
   FHeight:= AHeight;
@@ -849,6 +854,8 @@ procedure TP3DTexture.UpdateMipMaps(const ATarget: GLenum);
 var
   _Target: GLenum;
 begin
+  if ( FGLTexture = 0 ) then
+    exit;
   if ( ATarget = 0 ) then
     _Target:= Target
   else
@@ -858,6 +865,24 @@ begin
   glGenerateMipmap( _Target ); cle( Self, 'generating mip map failed with target: ' + IntToHex( _Target, 4 ));
 
   glBindTexture( _Target, 0 ); cle( Self );
+end;
+
+function TP3DTexture.GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+var
+  indices: TP3DIntBufferGLAuto;
+begin
+  indices:= TP3DIntBufferGL.Create;
+  indices.I.AddArray([ 0, 2, 1, 1, 2, 3 ]);
+  indices.I.PushData;                     //[ vec3( -hSize.X, hSize.Y, 0 ), hSize, -hSize, vec3( hSize.X, -hSize.Y, 0 )]
+  Result:= geom_polygon([ vec3( -1, 1, 0 ), vec3( 1, 1, 0 ), vec3( -1, -1, 0 ), vec3( 1, -1, 0 )], indices,
+                          settings_join([ ASettings,
+                            settings([
+                              attrib( P3DAttribNormal, [ vec3( 0, 0, 1 ), vec3( 0, 0, 1 ), vec3( 0, 0, 1 ), vec3( 0, 0, 1 )]),
+                              attrib( 'TexCoord0', [ vec2( 0, 1 ), vec2( 1, 1 ), vec2( 0, 0 ), vec2( 1, 0 )]),
+                              uniform( 'tex0', Self )
+                            ])
+                          ])
+                        );
 end;
 
 {$ENDIF}

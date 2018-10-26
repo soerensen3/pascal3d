@@ -100,6 +100,8 @@ type
       function SaveToJSON: TJSONData; override;
       procedure LoadJSON(AValue: TJSONData); override;
       procedure LoadItemFromJSON(Index: Integer; AData: TJSONData); override;
+
+      procedure DisconnectAll;
   end;
   TP3DNodeSocketClonePointerList = specialize gP3DStreamablePointerList < TP3DNodeSocketClone >;
 
@@ -613,7 +615,8 @@ begin
           ValueProp.AsString:= CloneOf.Default;
         except
           On E: Exception do
-            P3DLog.LogException( Self, Format( 'Error setting default value of %s.%s (%s) <= %s: "%s"', [ Node.CloneOf.Name, CloneOf.Name, CloneOf.SocketType, CloneOf.Default, E.Message ]));
+          log_exception( message_header( Self ) + Format( 'Error setting default value of %s.%s (%s) <= %s: "%s"', [ Node.CloneOf.Name, CloneOf.Name, CloneOf.SocketType, CloneOf.Default, E.Message ]));
+            //P3DLog.LogException( Self, Format( 'Error setting default value of %s.%s (%s) <= %s: "%s"', [ Node.CloneOf.Name, CloneOf.Name, CloneOf.SocketType, CloneOf.Default, E.Message ]));
         end;
     end;
   if ( Assigned( Node )) then
@@ -731,6 +734,14 @@ begin
       AsValues[ i ].AsJSON:= AData;
       break;
     end;
+end;
+
+procedure TP3DNodeSocketCloneContainerList.DisconnectAll;
+var
+  i: Integer;
+begin
+  for i:= 0 to Count - 1 do
+    AsValues[ i ].Connected:= nil;
 end;
 
 {$ENDIF}

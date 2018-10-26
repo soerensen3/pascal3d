@@ -31,7 +31,7 @@ def vec_roll_to_quat( vec, roll ):
         theta = target.angle( vec )
         q = Quaternion( axis, theta )
     else:
-        if ( target.dot( axis, vec ) > 0 ):
+        if ( dot( axis, vec ) > 0 ):
             q = Quaternion()
         else:
             q = Quaternion(( 0, 0, 0, 1 ))

@@ -128,6 +128,7 @@
          procedure BuildShader; override;
          procedure PassToShader(const ActiveSubset: String=''); override;
          function FindUniform( AName: String ): TP3DNodeClone;
+         function AddMap( ATexture: TP3DTexture; ATexChannel: Integer ): TP3DMaterialMap;
 
          property RootNode: TP3DNodeClone read GetRootNode write SetRootNode;
          property GeometryNode: TP3DNodeClone read GetGeometryNode write SetGeometryNode;
@@ -284,7 +285,7 @@ end;
 destructor TP3DMaterial.Destroy;
 begin
   //Owner.Materials.Remove( Self );
-  WriteLn( 'Destroying Material: ' + Name );
+  //WriteLn( 'Destroying Material: ' + Name );
   inherited Destroy;
 end;
 
@@ -375,6 +376,8 @@ begin
 end;
 
 procedure TP3DMaterialNode.SetupRootNode;
+var
+  p: TP3DNodeSocketClone;
 begin
   if ( Assigned( RootNode )) then
     begin
@@ -382,6 +385,9 @@ begin
       if ( not Assigned( GeometryNode )) then
         P3DData.P3DShaderNodeLib.FindNode( 'geometry' ).Clone( FGeometryNode );
       GeometryNode.NodeMaster:= NodeMaster;
+      p:= RootNode.FindInput( 'VertexPosition' );
+      if ( Assigned( p )) then
+        p.Connected:= GeometryNode.FindOutput( 'Attribute' );
     end;
 end;
 
@@ -527,6 +533,13 @@ begin
     end;
 end;
 
+function TP3DMaterialNode.AddMap(ATexture: TP3DTexture; ATexChannel: Integer): TP3DMaterialMap;
+begin
+  Result:= Maps.AddCopy( 'texture2D' );
+  Result.Map:= ATexture;
+  Result.TexChannel:= ATexChannel;
+end;
+
 constructor TP3DMaterialNode.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create(AOwner);
@@ -607,11 +620,11 @@ begin
             Buffer.Name:= Socket.CloneOf.Name;
             Buffer.Code:= TP3DShaderNodeSocketClone( Socket ).GetOutput( Buffer );
             sh.Buffers.Add( Buffer );
-            P3DLog.LogInfoXML( Self, '<details><summary>Built ' + Buffer.Name + ' from chunks <br/></summary><pre><code class="glsl">' + P3DTextToHTML( Buffer.Code ) + '</code></pre></details>' );
+            log_info( message_header( Self ) + '<details><summary>Built ' + Buffer.Name + ' from chunks <br/></summary><pre><code class="glsl">' + P3DTextToHTML( Buffer.Code ) + '</code></pre></details>' );
           end;
   except
     on E: Exception do
-      P3DLog.LogException( Self, E );
+      log_exception( message_header( Self ) + E.Message );
   end;
   FNeedsUpdate:= False;
   //for i:= 0 to sh.Buffers.Count - 1 do

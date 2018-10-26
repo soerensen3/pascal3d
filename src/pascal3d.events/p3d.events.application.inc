@@ -93,7 +93,7 @@ const
 
 procedure TP3DApplication.SetMainWindow(AValue: TP3DWindow);
 begin
-  P3DLog.LogInfo( Self, 'SetMainWindow').AttribStrings['function']:= 'SetMainWindow';         ;
+  log_info( message_header( Self ) + 'SetMainWindow', attributes([ attribute( 'function', 'SetMainWindow' )]));
   if FMainWindow=AValue then Exit;
   FMainWindow:=AValue;
   ActiveWindow:= AValue;
@@ -249,7 +249,7 @@ begin
       SDL_TEXTINPUT, SDL_TEXTEDITING:
         TextInput( event.text );
       SDL_RENDER_TARGETS_RESET:
-        P3DLog.LogInfo( Self, 'The render targets have been reset and their contents need to be updated!' );{;
+        log_info( message_header( Self ) + 'The render targets have been reset and their contents need to be updated!' );{;
       SDL_RENDER_DEVICE_RESET:
         P3DLog.LogInfo( Self, 'The device has been reset and all textures need to be recreated' )}
       SDL_DROPFILE:
@@ -367,7 +367,7 @@ end;
 
 procedure TP3DApplication.Initialize;
 begin
-  P3DLog.LogInfo( Self, 'initializing application' ).AttribStrings['function']:= 'Initialize';
+  log_info( message_header( Self ) + 'initializing application', attributes([ attribute( 'function', 'Initialize' )]));
   if ( not SDLInitialized ) then
     InitSDL;
   if ( Assigned( OnInit )) then
@@ -382,7 +382,8 @@ end;
 procedure TP3DApplication.Run;
 begin
   try
-    P3DLog.LogInfo( Self, 'Running application' ).AttribStrings['function']:= 'Run';
+    log_info( message_header( Self ) + 'Running application', attributes([ attribute( 'function', 'Run' )]));
+
     Running := True;
     while Running do
       begin                // Mainloop
@@ -398,10 +399,10 @@ begin
       end;
   except
     on E: Exception do
-      P3DLog.LogException( Self, E.Message );
+      log_exception( message_header( Self ) + E.Message, attributes([ attribute( 'function', 'Run' )]));
   end;
   AfterRun;
-  P3DLog.LogInfo( Self, 'exit mainloop' ).AttribStrings[ 'function' ]:= 'Run';
+  log_info( message_header( Self ) + 'exit mainloop', attributes([ attribute( 'function', 'Run' )]));
   // Resourcen freigeben
   if ( Assigned( OnDeinit )) then
     OnDeinit( Self );

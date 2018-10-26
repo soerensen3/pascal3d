@@ -526,9 +526,91 @@ type
   TP3DPropAccessColorRGBA = specialize gP3DPropAccessVec < TP3DColorRGBA, Float, TP3DPropAccessFloat >;
   TP3DPropAccessColorRGB = specialize gP3DPropAccessVec < TP3DColorRGB, Float, TP3DPropAccessFloat >;
 
+  function P3DRGBToHSV( RGB: TP3DColorRGB ): TVec3;
+  function P3DHSVToRGB( HSV: TVec3 ): TP3DColorRGB;
+
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
+
+{
+Original source for color conversion by
+William Egge, public@eggcentric.com
+http://www.eggcentric.com
+}
+
+function P3DHSVToRGB(HSV: TVec3): TP3DColorRGB;
+const
+  SectionSize = 60/360;
+var
+  Section: Single;
+  SectionIndex: Integer;
+  f: single;
+  p, q, t: Single;
+begin
+  if ( HSV[ 0 ] < 0 ) then
+    Result:= vec3( HSV[ 2 ])
+  else
+    begin
+      Section:= HSV[ 0 ] / SectionSize;
+      SectionIndex:= Floor( Section );
+      f:= Section - SectionIndex;
+      p:= HSV[ 2 ] * ( 1 - HSV[ 1 ]);
+      q:= HSV[ 2 ] * ( 1 - HSV[ 1 ] * f );
+      t:= HSV[ 2 ] * ( 1 - HSV[ 1 ] * ( 1 - f ) );
+      case SectionIndex of
+        0: Result:= vec3( HSV[ 2 ], t, p );
+        1: Result:= vec3( q, HSV[ 2 ], p );
+        2: Result:= vec3( p, HSV[ 2 ], t );
+        3: Result:= vec3( p, q, HSV[ 2 ]);
+        4: Result:= vec3( t, p, HSV[ 2 ]);
+        else Result:= vec3( HSV[ 2 ], p, q );
+      end;
+    end;
+end;
+
+function P3DRGBToHSV(RGB: TP3DColorRGB): TVec3;
+var
+  MinIndex, MaxIndex: Integer;
+  Range: Single;
+begin
+  MinIndex:= 0;
+  if ( RGB.G < RGB.R  ) then
+    MinIndex:= 1;
+
+  if ( RGB.B < RGB[ MinIndex ]) then
+    MinIndex:= 2;
+
+  MaxIndex:= 0;
+  if ( RGB.G > RGB.R ) then
+    MaxIndex:= 1;
+
+  if ( RGB.B > RGB[ MaxIndex ]) then
+    MaxIndex:= 2;
+
+  Range:= RGB[ MaxIndex ] - RGB[ MinIndex ];
+
+  // Check for a gray level
+  if ( Range = 0 ) then
+    Result:= vec3(
+      -1, // Can't determine on greys, so set to -1
+      0, // Gray is at the center;
+      RGB.R ) // could choose R, G, or B because they are all the same value.
+  else
+    begin
+      case MaxIndex of
+        0: Result[ 0 ]:= ( RGB.G - RGB.B ) / Range;
+        1: Result[ 0 ]:= 2 + ( RGB.B - RGB.R ) / Range;
+        2: Result[ 0 ]:= 4 + ( RGB.R - RGB.G ) / Range;
+      end;
+      Result[ 1 ]:= Range/RGB[MaxIndex];
+      Result[ 2 ]:= RGB[MaxIndex];
+      Result[ 0 ]:= Result[ 0 ] * ( 1 / 6 );
+      if ( Result[ 0 ] < 0 ) then
+        Result[ 0 ]:= 1 + Result[ 0 ];
+    end;
+end;
 
 { TP3DColorRGBA }
 {

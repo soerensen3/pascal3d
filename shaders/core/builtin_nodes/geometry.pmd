@@ -8,6 +8,10 @@ node: geometry
 #OUT vec4 vPosition;
 #```
 
+```{name:"Attribute", type:"vec3", restrict:"assign"}
+Position
+```
+
 ```{name:"Position", type:"vec3", restrict:"assign"}
 vPosition
 ```

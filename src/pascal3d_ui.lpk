@@ -73,16 +73,19 @@
         <Type Value="Include"/>
       </Item15>
     </Files>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="4">
       <Item1>
-        <PackageName Value="pascal3d_math"/>
+        <PackageName Value="LCL"/>
       </Item1>
       <Item2>
-        <PackageName Value="pascal3d"/>
+        <PackageName Value="pascal3d_math"/>
       </Item2>
       <Item3>
-        <PackageName Value="libsdl2"/>
+        <PackageName Value="pascal3d"/>
       </Item3>
+      <Item4>
+        <PackageName Value="libsdl2"/>
+      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

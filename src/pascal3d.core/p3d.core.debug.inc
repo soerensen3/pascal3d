@@ -18,7 +18,8 @@ begin
   debuginfo+= '<br /><span>GL version</span>' + glGetString( GL_VERSION );
   debuginfo+= '<br /><span>GLSL version</span>' + glGetString( GL_SHADING_LANGUAGE_VERSION );
   debuginfo+= '<br /><details><summary>Extensions</summary><div class="whitebox">' + glGetString( GL_EXTENSIONS ) + '</div></details>';
-  P3DLog.LogInfoXML( nil, 'Initialized OpenGL <p class="messageheader">' + debuginfo + '</p>');
+  log_info( 'Initialized OpenGL <p class="messageheader">' + debuginfo + '</p>' );
+  //P3DLog.LogInfoXML( nil, 'Initialized OpenGL <p class="messageheader">' + debuginfo + '</p>');
 end;
 
 procedure cle( Sender: TObject; const AddMsg: String = ''  ); inline;
@@ -32,7 +33,8 @@ var
 
 procedure P3DAssert(const M, F: ShortString; L: LongInt; E: Pointer);
 begin
-  P3DLog.LogException( P3DAssertSender, Format( '%s(%d): %s', [F,L,M]));
+  //P3DLog.LogException( P3DAssertSender, Format( '%s(%d): %s', [F,L,M]));
+  log_exception( message_header( P3DAssertSender ) + Format( '%s(%d): %s', [F,L,M]));
 end;
 
 
@@ -60,6 +62,22 @@ begin
       AssertErrorProc := S;
     end;
 end;
+
+{ TP3DPlotCommandScene }
+
+constructor TP3DPlotCommandScene.Create(AScene: TP3DScene);
+begin
+  inherited Create;
+  FScene:= AScene;
+end;
+
+procedure TP3DPlotCommandScene.Execute(AContext: TP3DPlotCommandContext);
+begin
+  //inherited Execute(AContext);
+  if ( Assigned( FScene )) then
+    FScene.FPlotList.Execute( AContext );
+end;
+
 
 
 {$ENDIF}

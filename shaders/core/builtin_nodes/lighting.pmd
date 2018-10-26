@@ -14,7 +14,21 @@ const float PI = 3.14159265359;
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
-struct LightSourceParameters {
+struct DirectionalLight {
+  vec4 Direction;
+  vec4 WorldDirection;
+  vec4 Color;
+}
+
+struct PointLight {
+  vec4 Position;
+  vec4 WorldPosition;
+  vec4 Color;
+  float linearAttenuation;
+  float quadraticAttenuation;
+}
+
+/*struct LightSourceParameters {
   vec4 color;
   vec4 position;
   vec4 worldposition;
@@ -28,7 +42,12 @@ struct LightSourceParameters {
 
 
 uniform int numLightSource;
-uniform LightSourceParameters LightSource[8];
+uniform LightSourceParameters LightSource[8];*/
+
+uniform int numDirectionalLights;
+uniform DirectionLights DirectionalLight[ 2 ];
+uniform int numPointLights;
+uniform PointLights PointLight[ 8 ];
 //uniform samplerCube IBLDiffuse;
 //uniform samplerCube IBLSpecular;
 uniform sampler2D IBLDiffuse;

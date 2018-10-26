@@ -1,0 +1,50 @@
+---
+node: test_node
+input: vec4 test_input = "0.1,0.1,0.1,1.0"
+input: text test_input2 { visible: false } = "0.1,0.1,0.1,1.0" # visible is the only flag allowed for inputs
+lib: lib_light.shadow_maps
+---
+
+#hidden outputs
+output: vec4 test_output { visible: false }
+# variant 2 
+output: vec4 __test_output__
+# variant 3 
+hidden output: vec4 test_output
+
+ifdef "assign" #or ifndef
+```
+// shader comment (not parsed by the markdown compiler)
+
+$test_input:assign,other_define$ 
+// include value of test_input or value of connected element if there is one
+// defines are made locally only for the succeding elements
+glsl shader code here
+```
+endif
+
+ifconn "test_input" # or ifnconn
+
+```
+```
+
+else
+
+```
+```
+
+endif
+
+---
+lib: shadow_maps
+# no inputs or libs allowed
+---
+
+...
+
+---
+type: vec4
+# no inputs or libs allowed
+---
+
+... various type conversions

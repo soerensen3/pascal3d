@@ -87,7 +87,9 @@ type
 
     public
       function FindByName( Name: String ): Integer;
-      function FindByName(Name: String; out Decl: TP3DShaderDecl): Boolean;
+      function FindByAddr( Addr: GLint ): Integer;
+      function FindByName( Name: String; out Decl: TP3DShaderDecl): Boolean;
+      function FindByAddr( Addr: GLint; out Decl: TP3DShaderDecl): Boolean;
       function AddrByName( Name: String ): GLint;
       procedure Delete( Index: Integer ); override;
 
@@ -635,7 +637,8 @@ begin
       FName:= FileName;
     end
   else
-    P3DLog.LogException( Nil, 'Error: Shader source does not exist: "' + FName + '"' );
+    //P3DLog.LogException( Nil, 'Error: Shader source does not exist: "' + FName + '"' );
+    log_exception( 'Error: Shader source does not exist: "' + FName + '"' );
 end;
 
 procedure DeleteProgram( Shader: GLHandle );
@@ -751,14 +754,16 @@ begin
     begin
       glGetBooleanv( GL_SHADER_COMPILER, @Success ); cle( nil );
       if ( not Success ) then
-        P3DLog.LogInfo( nil, 'Warning: Shader compiler not supported! Please make sure you have the latest driver installed and your video card supports shaders.' );
+        //P3DLog.LogInfo( nil, 'Warning: Shader compiler not supported! Please make sure you have the latest driver installed and your video card supports shaders.' );
+      log_info( 'Warning: Shader compiler not supported! Please make sure you have the latest driver installed and your video card supports shaders.' );
 
       case SType of
         GL_VERTEX_SHADER: typeN:= 'Vertex Shader';
         GL_FRAGMENT_SHADER: typeN:= 'Fragment Shader';
         GL_GEOMETRY_SHADER: typeN:= 'Geometry Shader';
       end;
-      P3DLog.LogExceptionXML( nil, Format( 'Compilation failed (%s): '+LineEnding+'%s', [ typeN, Trim( ShaderCheckForErrors( shader, Source ))]));
+      //P3DLog.LogExceptionXML( nil, Format( 'Compilation failed (%s): '+LineEnding+'%s', [ typeN, Trim( ShaderCheckForErrors( shader, Source ))]));
+      log_exception( Format( 'Compilation failed (%s): '+LineEnding+'%s', [ typeN, Trim( ShaderCheckForErrors( shader, Source ))]));
       glDeleteShader( shader ); cle( nil );
     end
   else
@@ -870,10 +875,35 @@ begin
   //  Result:= glGetAttribLocation( P3DShaderActive.ProgramObj, PChar( Name )); cle( Self );
 end;
 
+function TP3DShaderDeclList.FindByAddr(Addr: GLint): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= 0 to Count - 1 do
+    if ( Addr = Items[ i ].Addr ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
 function TP3DShaderDeclList.FindByName(Name: String; out Decl: TP3DShaderDecl ): Boolean;
 begin
   Decl:= Names[ Name ];
   Result:= Assigned( Decl );
+end;
+
+function TP3DShaderDeclList.FindByAddr(Addr: GLint; out Decl: TP3DShaderDecl): Boolean;
+var
+  n: Integer;
+begin
+  n:= FindByAddr( Addr );
+  Result:= n > -1;
+  if ( Result ) then
+    Decl:= Items[ n ]
+  else
+    Decl:= nil;
 end;
 
 function TP3DShaderDeclList.AddrByName(Name: String): GLint;
@@ -986,13 +1016,14 @@ begin
         {$ENDIF}
         msg+=  LineEnding + '<span>uniform</span>' + GLAttrTypeToStr( VarType ) + ' ' + Name + ' @' + IntToStr( Addr );
       end;
-  P3DLog.LogInfoXML( Self, 'Shader successfully linked <p class="messageheader">' + Trim( msg ) + '</p>' );
+  //P3DLog.LogInfoXML( Self, 'Shader successfully linked <p class="messageheader">' + Trim( msg ) + '</p>' );
+  log_info( message_header( Self ) + 'Shader successfully linked <p class="messageheader">' + Trim( msg ) + '</p>' );
 end;
 
 procedure TP3DShader.LinkProgram;
 var
   _vshader, _fshader: GLHandle;
-  _isLinked: int64;
+  _isLinked: ByteBool;
   F: TStringList;
 begin
   if ( ProgramObj > -1 ) then
@@ -1016,7 +1047,8 @@ begin
   glDetachShader( ProgramObj, _fshader );
 
   if ( _isLinked = GL_FALSE ) then
-    P3DLog.LogInfoXML( Self, 'Shader could not be linked <p class="messageheader">' + Trim( P3DTextToHTML( ProgramCheckForErrors( ProgramObj ))) + '</p>' )
+    log_info( message_header( Self ) + 'Shader could not be linked <p class="messageheader">' + Trim( P3DTextToHTML( ProgramCheckForErrors( ProgramObj ))) + '</p>' )
+    //P3DLog.LogInfoXML( Self, 'Shader could not be linked <p class="messageheader">' + Trim( P3DTextToHTML( ProgramCheckForErrors( ProgramObj ))) + '</p>' )
   else
     ScanShaderObjects;
 

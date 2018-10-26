@@ -15,7 +15,7 @@ uses
   Math,
   fpjson,
   jsonparser,
-  jsonscanner,
+  //jsonscanner,
   typinfo,
   //SDL2,
   //LazUTF8Classes,

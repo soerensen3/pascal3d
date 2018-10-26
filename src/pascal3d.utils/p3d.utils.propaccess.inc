@@ -193,8 +193,8 @@
 
         procedure Assign( AProp: TP3DPropertyAccess ); override;
 
-        class operator Implicit( AValue:T ): TProp;
-        class operator Implicit( Prop: TProp ): T;
+        //class operator Implicit( AValue:T ): TProp;
+        //class operator Implicit( Prop: TProp ): T;
 
 
         property AsValue: T read GetAsValue write SetAsValue;
@@ -493,19 +493,22 @@ begin
   if ( AValue.JSONType = jtObject ) then
     for Item in AValue do
       begin
-        KeyS:= JSONStringToString( Item.Key );
-        if ( KeyS = 'ClassName' ) then
-          Continue;
-        if ( KeyS = 'DataPath' ) then
-          Continue;
-        n:= FindByName( KeyS );
-        if ( n < 0 ) then
-          raise Exception.CreateFmt( 'Failed to load object from JSON Data: The specified property "%s" was not found in the object of type "%s"', [ KeyS, Context.ClassName ]);
-        if ( not Assigned( Items[ n ])) then
-          raise Exception.CreateFmt( 'Failed to load object from JSON Data: The specified property "%s" was found but is empty', [ KeyS ]);
-        if ( not Assigned( Item.Value )) then
-          WriteLN( 'Error!' );
-        Items[ n ].AsJSON:= Item.Value;
+        try
+          KeyS:= JSONStringToString( Item.Key );
+          if ( KeyS = 'ClassName' ) then
+            Continue;
+          if ( KeyS = 'DataPath' ) then
+            Continue;
+          n:= FindByName( KeyS );
+          if ( n < 0 ) then
+            raise Exception.CreateFmt( 'Failed to load object from JSON Data: The specified property "%s" was not found in the object of type "%s"', [ KeyS, Context.ClassName ]);
+          if ( not Assigned( Items[ n ])) then
+            raise Exception.CreateFmt( 'Failed to load object from JSON Data: The specified property "%s" was found but is empty', [ KeyS ]);
+          if ( not Assigned( Item.Value )) then
+            WriteLN( 'Error!' );
+          Items[ n ].AsJSON:= Item.Value;
+        finally
+        end;
       end
   else
     raise Exception.CreateFmt( P3DERROR_JSON_WRONG_TYPE, [ JSONTypeName( jtObject ), JSONTypeName( AValue.JSONType )]);
@@ -542,6 +545,8 @@ function TP3DPropertyList.Add(Item: TP3DPropertyAccess): Integer;
 begin
   if ( not Assigned( Item )) then
     Exception.Create( 'Cannot add property because it is not assigned!' );
+  if ( FindByName( Item.Name ) > -1 ) then
+    Exception.Create( 'Cannot add property because a property with the same name already exists!' );
   Result:= inherited Add( Item );
   Item.Context:= Context;
   Item.Root:= Context.Root;
@@ -658,7 +663,7 @@ begin
       inherited Assign( AProp );
 end;
 
-class operator gP3DPropAccess.Implicit(AValue: T): TProp;
+{class operator gP3DPropAccess.Implicit(AValue: T): TProp;
 begin
 
 end;
@@ -666,7 +671,7 @@ end;
 class operator gP3DPropAccess.Implicit(Prop: TProp): T;
 begin
 
-end;
+end;}
 
 procedure gP3DPropAccess.SetAsValue( AValue: T );
 begin
@@ -1128,6 +1133,9 @@ end;
 procedure TP3DJSONLoader.SetJSON(AValue: TJSONData);
 begin
   if FJSON=AValue then Exit;
+  if ( Assigned( JSON )) then
+    JSON.Free;
+
   FJSON:= AValue;
   FFileAge:= GetTickCount64;
 end;

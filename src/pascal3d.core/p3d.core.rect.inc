@@ -1,57 +1,57 @@
 { p3drect.inc }
 
 {$IFDEF INTERFACE}
+type
+  { TP3DRect }
 
-{ TP3DRect }
+  TP3DRect = packed object
+    private
+      FLeft: Float;
+      FTop: Float;
+      FWidth: Float;
+      FHeight: Float;
 
-TP3DRect = packed object
-  private
-    FLeft: Float;
-    FTop: Float;
-    FWidth: Float;
-    FHeight: Float;
+      function GetBottom: Float;
+      function GetBottomI: Integer;
+      function GetBottomRight: TVec2;
+      function GetHeightI: Integer;
+      function GetLeftI: Integer;
+      function GetRight: Float;
+      function GetRightI: Integer;
+      function GetTopI: Integer;
+      function GetTopLeft: TVec2;
+      function GetWidthHeight: TVec2;
+      function GetWidthI: Integer;
+      procedure SetBottom(AValue: Float);
+      procedure SetBottomRight(AValue: TVec2);
+      procedure SetRight(AValue: Float);
+      procedure SetTopLeft(AValue: TVec2);
+      procedure SetWidthHeight(AValue: TVec2);
 
-    function GetBottom: Float;
-    function GetBottomI: Integer;
-    function GetBottomRight: TVec2;
-    function GetHeightI: Integer;
-    function GetLeftI: Integer;
-    function GetRight: Float;
-    function GetRightI: Integer;
-    function GetTopI: Integer;
-    function GetTopLeft: TVec2;
-    function GetWidthHeight: TVec2;
-    function GetWidthI: Integer;
-    procedure SetBottom(AValue: Float);
-    procedure SetBottomRight(AValue: TVec2);
-    procedure SetRight(AValue: Float);
-    procedure SetTopLeft(AValue: TVec2);
-    procedure SetWidthHeight(AValue: TVec2);
+    public
+      function PtInRect( P: TVec2 ): Boolean;
+      function RectCollision( R: TP3DRect ): Boolean;
+      function Clip( R: TP3DRect ): TP3DRect;
+      function Inset( ATopLeft, ABottomRight: TVec2 ): TP3DRect;
+      function ToString: String;
+      function Transform( Matrix: TMat4 ): TP3DRect;
 
-  public
-    function PtInRect( P: TVec2 ): Boolean;
-    function RectCollision( R: TP3DRect ): Boolean;
-    function Clip( R: TP3DRect ): TP3DRect;
-    function Inset( ATopLeft, ABottomRight: TVec2 ): TP3DRect;
-    function ToString: String;
-    function Transform( Matrix: TMat4 ): TP3DRect;
-
-    property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
-    property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
-    property WidthHeight: TVec2 read GetWidthHeight write SetWidthHeight;
-    property Left: Float read FLeft write FLeft;
-    property Top: Float read FTop write FTop;
-    property Width: Float read FWidth write FWidth;
-    property Height: Float read FHeight write FHeight;
-    property Bottom: Float read GetBottom write SetBottom;
-    property Right: Float read GetRight write SetRight;
-    property LeftI: Integer read GetLeftI;
-    property TopI: Integer read GetTopI;
-    property WidthI: Integer read GetWidthI;
-    property HeightI: Integer read GetHeightI;
-    property RightI: Integer read GetRightI;
-    property BottomI: Integer read GetBottomI;
-  end;
+      property TopLeft: TVec2 read GetTopLeft write SetTopLeft;
+      property BottomRight: TVec2 read GetBottomRight write SetBottomRight;
+      property WidthHeight: TVec2 read GetWidthHeight write SetWidthHeight;
+      property Left: Float read FLeft write FLeft;
+      property Top: Float read FTop write FTop;
+      property Width: Float read FWidth write FWidth;
+      property Height: Float read FHeight write FHeight;
+      property Bottom: Float read GetBottom write SetBottom;
+      property Right: Float read GetRight write SetRight;
+      property LeftI: Integer read GetLeftI;
+      property TopI: Integer read GetTopI;
+      property WidthI: Integer read GetWidthI;
+      property HeightI: Integer read GetHeightI;
+      property RightI: Integer read GetRightI;
+      property BottomI: Integer read GetBottomI;
+    end;
 
 function P3DRect( Left, Top, Width, Height: Float ): TP3DRect;
 function P3DRect(TopLeft, WidthHeight: TVec2): TP3DRect;

@@ -941,7 +941,7 @@ var
   FileName: String;
 begin
   Result:= '';
-  P3DLog.LogInfo( Self, Format( 'Loading file "%s"', [ AFileName ]));
+  log_info( message_header( Self ) + Format( 'Loading file "%s"', [ AFileName ]));
   FileName:= P3DSearchPaths.FindFileEx( AFileName, GetCurrentDir );
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'Cannot load library! The specified file "%s" was not found!', [ AFileName ]));
@@ -958,11 +958,13 @@ begin
   if ( FileExistsUTF8( ChangeFileExt( JSONLoader.FileName, '.p3dbin' ))) then
     OpenBinFile();
 
+  //WriteLn( JSONLoader.JSON.FormatJSON());
+
   JSONLoader.ReadJSON;
 
   except
     on E: Exception do
-      P3DLog.LogException( Self, E.Message );
+      log_exception( message_header( Self ) + E.Message );
   end;
 
   Result:= FileName;

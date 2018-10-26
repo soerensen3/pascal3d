@@ -78,7 +78,7 @@ type
   TP3DObjectShadowModes = ( osShadowCaster, osShadowReceiver );
   TP3DObjectShadow = set of TP3DObjectShadowModes;
 
-  TP3DObject = class ( TP3DDataBlock, IP3DTransform, IP3DRenderable, IP3DCollidable, IP3DAnimatable )
+  TP3DObject = class ( TP3DDataBlock, IP3DTransform, IP3DRenderable, IP3DCollidable, IP3DAnimatable, IP3DPlottableLayer )
     protected
       FChildren: TP3DObjectPointerList;
       FCollision: TP3DObjectCollision;
@@ -170,6 +170,11 @@ type
       property Transform: TP3DTransform read GetTransform write SetTransform;
 
       //<-- IP3DTransform
+
+      //IP3DPlottableLayer -->
+    public
+      function GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+      //<-- IP3DPlottableLayer
   end;
 
 
@@ -207,6 +212,8 @@ type
 procedure TP3DObject.OnObjChange(ASender: TObject; AItem: TP3DStreamable;
   AAction: TP3DListOnChangeAction);
 begin
+  if ( not Assigned( AItem )) then
+    exit;
   if ( AAction = actAdd ) then
     TP3DObject( AItem ).FParent:= Self
   else
@@ -459,6 +466,13 @@ end;
 procedure TP3DObject.SetTransform(AValue: TP3DTransform);
 begin
   FTransform.AsValue:= AValue;
+end;
+
+function TP3DObject.GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+begin
+  if ( Data is IP3DPlottableLayer ) then begin
+    Result:= ( Data as IP3DPlottableLayer ).GetLayer( settings_join([ settings( uniform( 'world', Transform )), ASettings ]));
+  end;
 end;
 
 procedure TP3DObject.Render( AWorld: TMat4; AScene: TP3DScene; ARenderObject: TP3DObject);

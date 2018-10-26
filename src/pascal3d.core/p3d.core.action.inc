@@ -180,7 +180,7 @@ function TP3DActionChannel.GetFrameCount: Float;
 var
   Key: TP3DActionKey;
 begin
-  Key:= Keys[ -1 ];
+  Key:= Keys.Last;
   if( Assigned( Key )) then
     Result:= Key.Time
   else
@@ -245,7 +245,7 @@ end;
 
 destructor TP3DActionChannel.Destroy;
 begin
-  FreeAndNil( FKeys );
+  //FreeAndNil( FKeys );
   inherited Destroy;
 end;
 
@@ -290,7 +290,7 @@ end;
 
 destructor TP3DAction.Destroy;
 begin
-  FreeAndNil( FChannels );
+  //FreeAndNil( FChannels );
   inherited Destroy;
 end;
 
@@ -322,11 +322,15 @@ procedure TP3DActionContainerList.PerformActions(GlobalTime: Float);
 var
   Action: TP3DAction;
   Block: IP3DStreamableUser;
+  user: TObject;
 begin
-  for Action in Self do
-    for Block in Action.Users do
-      if ( Block.GetUser is TP3DDataBlock ) then
-        Action.Perform( GlobalTime, TP3DDataBlock( Block.GetUser ));
+  for Action in Self do begin
+    for Block in Action.Users do begin
+      user:= TP3DPropertyAccess( Block.GetInstance ).Context.GetInstance;
+      if ( user is TP3DDataBlock ) then
+        Action.Perform( GlobalTime, TP3DDataBlock( user ));
+    end;
+  end;
 end;
 
 {$ENDIF}

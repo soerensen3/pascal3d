@@ -24,14 +24,15 @@ uses
   ;
 
 {$DEFINE INTERFACE}
-{$INCLUDE p3d.events.logging.inc}
+{.$INCLUDE p3d.events.logging.inc}
+{$INCLUDE p3d.events.logger.inc}
 {$INCLUDE p3d.events.input.inc}
 {$INCLUDE p3d.events.window.inc}
 {$INCLUDE p3d.events.application.inc}
 {$UNDEF INTERFACE}
 
 var
-  P3DLog: TP3DLogger;
+  //P3DLog: TP3DLogger;
   P3DInput: TP3DInputManager;
   P3DApplication: TP3DApplication;
   P3DEventsContainers: TP3DJSONRootContainerList = nil;
@@ -45,7 +46,8 @@ implementation
 uses p3d.core;
 
 {$DEFINE IMPLEMENTATION}
-{$INCLUDE p3d.events.logging.inc}
+{.$INCLUDE p3d.events.logging.inc}
+{$INCLUDE p3d.events.logger.inc}
 {$INCLUDE p3d.events.input.inc}
 {$INCLUDE p3d.events.window.inc}
 {$INCLUDE p3d.events.application.inc}
@@ -56,8 +58,8 @@ procedure P3DEventsInit;
 begin
 //  if ( not Assigned( P3DEventsContainers )) then
 //    P3DEventsContainers:= TP3DJSONRootContainerList.Create( 'P3DEventsContainers' );
-  if ( not Assigned( P3DLog )) then
-    P3DLog:= TP3DLogger.Create();
+  //if ( not Assigned( P3DLog )) then
+  //  P3DLog:= TP3DLogger.Create();
   //if ( not Assigned( P3DApplication )) then
   //  P3DApplication:= TP3DApplication.Create;
   if ( not Assigned( P3DInput )) then
@@ -74,8 +76,9 @@ begin
     FreeAndNil( P3DApplication );
   if ( Assigned( P3DEventsContainers )) then
     FreeAndNil( P3DEventsContainers );
-  if ( Assigned( P3DLog )) then
-    FreeAndNil( P3DLog );
+  log_file_close;
+  //if ( Assigned( P3DLog )) then
+  //  FreeAndNil( P3DLog );
 end;
 
 finalization

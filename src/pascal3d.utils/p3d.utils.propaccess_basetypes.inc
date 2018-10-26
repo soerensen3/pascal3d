@@ -31,6 +31,7 @@ type
       procedure SetAsString(AValue: String); override;
       procedure LoadJSON( AValue: TJSONData ); override;
       function GetAsJSON: TJSONData; override;
+      procedure SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode); override;
   end;
 
   { TP3DPropAccessBoolean }
@@ -198,6 +199,25 @@ end;
 function TP3DPropAccessFloat.GetAsJSON: TJSONData;
 begin
   Result:= TJSONFloatNumber.Create( AsValue );
+end;
+
+procedure TP3DPropAccessFloat.SetInterpolate(Value1, Value2: String; AMix: Float; AInterpolationMode: TP3DPropertyAccessInterpolationMode);
+var
+  v1, v2: Float;
+  a: Float;
+begin
+  if ( AInterpolationMode = imConstant ) then
+    inherited SetInterpolate(Value1, Value2, AMix, AInterpolationMode)
+  else
+    begin
+      v1:= Float.Parse( Value1 );
+      v2:= Float.Parse( Value2 );
+      case AInterpolationMode of
+        imInterpolate: a:= clamp( AMix, 0, 1 );
+        imExtrapolate: a:= AMix;
+      end;
+      AsValue:= ( v1 * ( 1 - a ) + v2 * a );
+    end;
 end;
 
 { TP3DPropAccessRTTI }

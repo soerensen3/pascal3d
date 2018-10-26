@@ -130,6 +130,8 @@
 
     { TP3DMeshWeightGroupList }
 
+    { TP3DMeshWeightGroupContainerList }
+
     TP3DMeshWeightGroupContainerList = class( specialize gP3DNamedStreamableContainerList < TP3DMeshWeightGroup >)
       private
         FParentMesh: TP3DMesh;
@@ -142,8 +144,8 @@
 
     { TP3DMesh }
     //TP3DCustomMeshRenderable = specialize gP3DRenderable < TP3DDataBlock >;
-    TP3DTexCoordList = specialize gP3DCustomObjectList < TP3DVec2BufferGL >;
-    TP3DMesh = class( TP3DDataBlock, IP3DRenderable, IP3DCollidable )
+    TP3DTexCoordList = TP3DVec2BufferGLList;//specialize TFPGList < TP3DVec2BufferGL >>;
+    TP3DMesh = class( TP3DDataBlock, IP3DRenderable, IP3DCollidable, IP3DPlottableLayer )
       protected
         FFileWatch: TP3DFilePointer;
         FMaterial: TP3DStreamablePointer;
@@ -164,17 +166,17 @@
         procedure SetMaterial(AValue: TP3DMaterial);
 
       public
-        VertexWeights: TP3DVec4BufferGL;
-        VertexWeightIndices: TP3DVec4BufferGL; //Must be float because passing ivec attributes is not allowed in GLSL (though some vendors support it)
-        Positions: TP3DVec3BufferGL;
-        Normals: TP3DVec3BufferGL;
-        Tangents: TP3DVec3BufferGL;
-        Cotangents: TP3DVec3BufferGL;
+        VertexWeightsAuto: specialize TAuto< TP3DVec4BufferGL >;
+        VertexWeightIndicesAuto: specialize TAuto< TP3DVec4BufferGL >; //Must be float because passing ivec attributes is not allowed in GLSL (though some vendors support it)
+        PositionsAuto: specialize TAuto< TP3DVec3BufferGL >;
+        NormalsAuto: specialize TAuto< TP3DVec3BufferGL >;
+        TangentsAuto: specialize TAuto< TP3DVec3BufferGL >;
+        CotangentsAuto: specialize TAuto< TP3DVec3BufferGL >;
         Faces: TP3DFaceList;
         TexCoords: TP3DTexCoordList;
-        Edges: TP3DIntBufferGL;
+        EdgesAuto: specialize TAuto< TP3DIntBufferGL >;
 
-        Indices: TP3DIntBufferGL;
+        IndicesAuto: specialize TAuto< TP3DIntBufferGL >;
         VBArray: TP3DVertexBufferArray;
         //MaterialGroups: TP3DMeshMaterialGroupContainerList;
         WeightGroups: TP3DMeshWeightGroupContainerList;
@@ -189,11 +191,14 @@
 
         //procedure LoadFromJSONContext( AContext: TP3DJSONContext ); override;
 
-        //IP3DRenderable
+        //IP3DPlottableLayer -->
+        function GetLayer( ASettings: TP3DPlotListSetting ): TP3DPlotCommandLayer;
+        //<-- IP3DPlottableLayer
+
+        //IP3DRenderable -->
         procedure Render( world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject );
         procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
 
-        procedure RenderInstanced( world: TMat4List; Scene: TP3DScene; RenderObject: TP3DObject );
         procedure RenderSimple;
 {        procedure RenderMaterialGroup( world: TMat4; Idx: Integer; Scene: TP3DScene );
         procedure RenderMaterialGroupInstanced( world: TMat4List; Idx: Integer; Scene: TP3DScene );
@@ -210,6 +215,15 @@
         procedure CalcCotangentsFromTangents;
         procedure Calc_Tangents_Cotangents;
 
+        property VertexWeights: TP3DVec4BufferGL read VertexWeightsAuto.FInstance;
+        property VertexWeightIndices: TP3DVec4BufferGL read VertexWeightIndicesAuto.FInstance;
+        property Positions: TP3DVec3BufferGL read PositionsAuto.FInstance;
+        property Normals: TP3DVec3BufferGL read NormalsAuto.FInstance;
+        property Tangents: TP3DVec3BufferGL read TangentsAuto.FInstance;
+        property Cotangents: TP3DVec3BufferGL read CotangentsAuto.FInstance;
+        property Edges: TP3DIntBufferGL read EdgesAuto.FInstance;
+        property Indices: TP3DIntBufferGL read IndicesAuto.FInstance;
+
         //        procedure ClearChildren;
         property Modifiers: TP3DMeshModifierContainerList read FModifiers write FModifiers;
         property Material: TP3DMaterial read GetMaterial write SetMaterial;
@@ -219,7 +233,7 @@
         FAABB: TP3DAABB;
         FSphere: TP3DSphere;
 
-        function  GetAABB(): TP3DAABB;
+        function GetAABB(): TP3DAABB;
         function GetSphere: TP3DSphere;
         procedure SetAABB( AValue: TP3DAABB );
         procedure SetSphere( AValue: TP3DSphere );
@@ -300,20 +314,20 @@ var
 begin
   inherited Create( AOwner );
 
-  Positions:= TP3DVec3BufferGL.Create;
+  PositionsAuto:= TP3DVec3BufferGL.Create;
   PackedPositions:= TVec3List.Create;
-  Normals:= TP3DVec3BufferGL.Create;
+  NormalsAuto:= TP3DVec3BufferGL.Create;
   PackedNormals:= TVec3List.Create;
-  Cotangents:= TP3DVec3BufferGL.Create;
+  CotangentsAuto:= TP3DVec3BufferGL.Create;
   PackedCotangents:= TVec3List.Create;
-  Tangents:= TP3DVec3BufferGL.Create;
+  TangentsAuto:= TP3DVec3BufferGL.Create;
   PackedTangents:= TVec3List.Create;
-  Indices:= TP3DIntBufferGL.Create;
-  Edges:= TP3DIntBufferGL.Create;
+  IndicesAuto:= TP3DIntBufferGL.Create;
+  EdgesAuto:= TP3DIntBufferGL.Create;
   Loops:= TIntList.Create;
-  VertexWeightIndices:= TP3DVec4BufferGL.Create;
+  VertexWeightIndicesAuto:= TP3DVec4BufferGL.Create;
   PackedVertexWeightIndices:= TIVec4List.Create;
-  VertexWeights:= TP3DVec4BufferGL.Create;
+  VertexWeightsAuto:= TP3DVec4BufferGL.Create;
   PackedVertexWeights:= TVec3List.Create;
   VBArray:= TP3DVertexBufferArray.Create;
   Faces:= TP3DFaceList.Create;
@@ -362,23 +376,22 @@ end;
 
 destructor TP3DMesh.Destroy;
 begin
-  Positions.Free;
-  PackedPositions.Free;
-  Normals.Free;
-  PackedNormals.Free;
-  Cotangents.Free;
-  PackedCotangents.Free;
-  Tangents.Free;
-  PackedTangents.Free;
-  Indices.Free;
-  Edges.Free;
-  Loops.Free;
-  VertexWeights.Free;
-  PackedVertexWeights.Free;
-  VertexWeightIndices.Free;
-  PackedVertexWeightIndices.Free;
-  Faces.Free;
-  PackedFaces.Free;
+  PositionsAuto.I:= nil;
+  NormalsAuto.I:= nil;
+  TangentsAuto.I:= nil;
+  CotangentsAuto.I:= nil;
+  EdgesAuto.I:= nil;
+  VertexWeightsAuto.I:= nil;
+  VertexWeightIndicesAuto.I:= nil;
+  FreeAndNil( PackedPositions );
+  FreeAndNil( PackedNormals );
+  FreeAndNil( PackedCotangents );
+  FreeAndNil( PackedTangents );
+  FreeAndNil( Loops );
+  FreeAndNil( PackedVertexWeights );
+  FreeAndNil( PackedVertexWeightIndices );
+  FreeAndNil( Faces );
+  FreeAndNil( PackedFaces );
 
   VBArray.Free;
   //FileWatch.Free;
@@ -387,7 +400,7 @@ begin
 
   inherited Destroy;
   TexCoords.Clear;
-  TexCoords.Free;
+  FreeAndNil( TexCoords );
 end;
 
 {
@@ -416,11 +429,6 @@ begin
     RenderMaterialGroup( world, i, Scene );}
 end;
 
-procedure TP3DMesh.RenderInstanced( world: TMat4List; Scene: TP3DScene; RenderObject: TP3DObject );
-begin
-
-end;
-
 procedure TP3DMesh.RenderSimple;
 var
   i: Integer;
@@ -436,7 +444,7 @@ begin
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to TexCoords.Count - 1 do
     if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
-      decl.AsVec2List:= TexCoords[ i ];
+      decl.AsVec2List:= TexCoords[ i ].I;
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
@@ -674,7 +682,7 @@ begin
     begin
       decl:= P3DShaderActive.Attributes.GetNames( 'TexCoord' + IntToStr( i ));
       if ( Assigned( decl )) then
-        decl.AsVec2List:= TexCoords[ i ];
+        decl.AsVec2List:= TexCoords[ i ].I;
     end;
   //  VBArray.Bind;
 
@@ -704,7 +712,7 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.UnsetAttribArray();
   for i:= 0 to TexCoords.Count - 1 do
-    TexCoords[ i ].UnsetAttribArray();
+    TexCoords[ i ].I.UnsetAttribArray();
 end;
 
 procedure TP3DMesh.RenderEdgesInstanced(numInstance: Integer);
@@ -724,7 +732,7 @@ begin
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to TexCoords.Count -1 do
     if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
-      decl.AsVec2List:= TexCoords[ i ];
+      decl.AsVec2List:= TexCoords[ i ].I;
   //  VBArray.Bind;
 
   decl:= P3DShaderActive.Attributes.Names[ 'fjointID' ];
@@ -752,7 +760,7 @@ begin
   if ( Tangents.Count > 0 ) then
     Tangents.UnsetAttribArray();
   for i:= 0 to TexCoords.Count - 1 do
-    TexCoords[ i ].UnsetAttribArray();
+    TexCoords[ i ].I.UnsetAttribArray();
 end;
 
 procedure TP3DMesh.RenderEdges(world: TMat4; Scene: TP3DScene;
@@ -776,7 +784,7 @@ begin
     Tangents.SetAttribArray( P3DAttribTangent );
   for i:= 0 to TexCoords.Count - 1 do
     if ( P3DShaderActive.Attributes.FindByName( 'TexCoord' + IntToStr( i ), decl )) then
-      decl.AsVec2List:= TexCoords[ i ];
+      decl.AsVec2List:= TexCoords[ i ].I;
   Edges.Bind( GL_ELEMENT_ARRAY_BUFFER );
 
   glDrawElements( GL_LINES, Edges.Count, GL_UNSIGNED_INT, Pointer( 0 )); cle( Self );
@@ -957,6 +965,19 @@ begin
   CalcSphere();
 end;
 
+function TP3DMesh.GetLayer( ASettings: TP3DPlotListSetting ): TP3DPlotCommandLayer;
+var
+  i: Integer;
+  newSettings: TP3DPlotListSetting;
+begin
+  newSettings:= settings([ uniform_material( Material ), attrib( P3DAttribNormal, Normals )]);
+  for i:= 0 to TexCoords.Count - 1 do
+    newSettings.Append( attrib( 'TexCoord' + i.ToString, TexCoords[ i ]));
+  WriteLn( ASettings.Debug );
+
+  Result:= geom_polygon( Positions, Indices, settings_join([ newSettings, ASettings ]));
+end;
+
 procedure TP3DMesh.ClearVBO;
 begin
   VBArray.Free;
@@ -1000,8 +1021,8 @@ begin
       //VertexWeights.SetAttribArray(  );
     end;
   for i:= 0 to TexCoords.Count - 1 do
-    if ( TexCoords[ i ].Count > 0 ) then
-      TexCoords[ i ].PushData;
+    if ( TexCoords[ i ].I.Count > 0 ) then
+      TexCoords[ i ].I.PushData;
 
   Indices.Bind( GL_ELEMENT_ARRAY_BUFFER );
   Indices.PushData;
@@ -1154,7 +1175,7 @@ begin
   FAABB:= AValue;
 end;
 
-function TP3DMesh.GetSphere(): TP3DSphere;
+function TP3DMesh.GetSphere: TP3DSphere;
 begin
   Result:= FSphere;
 end;
@@ -1261,9 +1282,9 @@ end;
 constructor TP3DMeshWeightGroup.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
-  Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Name', smText ));
   Properties.Add( TP3DPropAccessRTTI.Create( Self, 'Index', smText ));
 end;
+
 
 
 { TP3DMeshMaterialGroupList }
@@ -1316,5 +1337,24 @@ begin
   TP3DMeshWeightGroup( AItem ).Mesh:= ParentMesh;
 end;
 
+function P3DMeshCreatePlane(ASize: TVec2; const AData: TP3DLibrary): TP3DMesh;
+var
+  hSize: TVec3;
+  n: TVec3;
+begin
+  Result:= TP3DMesh.CreateBlock( AData );
+  hSize:= vec3( ASize / 2, 0 );
+  n:= vec3( -1, 0, 1 );
+  Result.PackedPositions.AddArray([ vec3( -hSize.X, hSize.Y, 0 ), hSize, -hSize, vec3( hSize.X, -hSize.Y, 0 )]);
+  Result.PackedFaces.Add( 0 );
+  Result.Edges.AddArray([ 0, 1, 1, 2, 2, 3, 3, 0 ]);
+  Result.Loops.AddArray([ 0, 1, 3, 2 ]);
+  Result.PackedNormals.AddArray([ n.YYZ, n.YYZ, n.YYZ, n.YYZ ]);
+  Result.PackedTangents.AddArray([ n.ZYY, n.ZYY, n.ZYY, n.ZYY ]);
+  Result.PackedCotangents.AddArray([ n.YZY, n.YZY, n.YZY, n.YZY ]);
+  Result.TexCoords.Add( TP3DVec2BufferGL.Create );
+  Result.TexCoords[ 0 ].I.AddArray([ vec2( 0, 1 ), vec2( 1, 1 ), vec2( 1, 0 ), vec2( 0, 0 )]);
+  Result.UnpackBuffers;
+end;
 {$ENDIF}
 

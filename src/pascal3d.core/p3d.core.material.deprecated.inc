@@ -495,7 +495,7 @@ var
           extensions:= '';
           for n:= 0 to Passes.Count - 1 do
             extensions += Passes[ n ].CloneOf.Name + LineEnding;
-          P3DLog.LogInfoXML( Self, '<details><summary>Built ' + Buffer.Name +
+          log_info( message_header( Self ) + '<details><summary>Built ' + Buffer.Name +
             ' from chunks <br/></summary> <details><summary>Loaded extensions</summary><div class="whitebox">' +
             extensions + '</div></details><pre><code class="glsl">' + P3DTextToHTML( Buffer.Code ) +
             '</code></pre></details>' );

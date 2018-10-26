@@ -236,7 +236,7 @@ begin
         Buffer.Name:= Socket.CloneOf.Name;
         Buffer.Code:= TP3DShaderNodeSocketClone( Socket ).GetOutput( Buffer );
         Shader.Buffers.Add( Buffer );
-        P3DLog.LogInfoXML( Self, '<details><summary>Built ' + Buffer.Name + ' from chunks <br/></summary><pre><code class="glsl">' + P3DTextToHTML( Buffer.Code ) + '</code></pre></details>' );
+        log_info( message_header( Self ) + '<details><summary>Built ' + Buffer.Name + ' from chunks <br/></summary><pre><code class="glsl">' + P3DTextToHTML( Buffer.Code ) + '</code></pre></details>' );
       end;
 end;
 

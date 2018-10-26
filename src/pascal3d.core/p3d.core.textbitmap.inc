@@ -526,10 +526,10 @@ constructor TP3DFontBmp.CreateByFont(AFont: TP3DFont; AWidth, AHeight, AMargin: 
         begin
           PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + y * Surface^.pitch ))^:= Max( low( SmallInt ), Min( high( SmallInt ), Value[ 0 ]));
           PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + 2 + y * Surface^.pitch ))^:= Max( low( SmallInt ), Min( high( SmallInt ), Value[ 1 ]));
-          if (( Value[ 0 ] <> ( PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + y * Surface^.pitch ))^)) or
-              ( Value[ 1 ] <> ( PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + 2 + y * Surface^.pitch )))^)) then
-            WriteLn( Value[ 0 ], ' / ', PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + y * Surface^.pitch ))^, ', ',
-                     Value[ 1 ], ' / ', PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + 2 + y * Surface^.pitch ))^ );
+          //if (( Value[ 0 ] <> ( PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + y * Surface^.pitch ))^)) or
+          //    ( Value[ 1 ] <> ( PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + 2 + y * Surface^.pitch )))^)) then;
+          //  WriteLn( Value[ 0 ], ' / ', PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + y * Surface^.pitch ))^, ', ',
+          //           Value[ 1 ], ' / ', PSmallInt( Pointer( DWord( Surface^.pixels ) + x * 4 + 2 + y * Surface^.pitch ))^ );
         end;
     end;
 
@@ -884,7 +884,8 @@ end;
 
 destructor TP3DFontManagerBmp.Destroy;
 begin
-  Material.Free;
+  if ( Assigned( FMaterial )) then
+    FMaterial.AsValue.Free;
   inherited Destroy;
 end;
 
