@@ -14,6 +14,7 @@ type
 
   TP3DPlotCommandUniformFloat = class ( specialize TP3DPlotCommandShaderDecl < Float >)
     procedure Execute( AContext: TP3DPlotCommandContext ); override;
+    procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
     function Clone: TP3DPlotCommandSetting; override;
   end;
 
@@ -73,11 +74,19 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
   glUniform1f( FLocation, FValue );
+end;
+
+procedure TP3DPlotCommandUniformFloat.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+begin
+  inherited MakeShaderModifications(ASender, ASenderIdx, ABuilder);
+  FShaderNode:= ABuilder.NodeTree.AddCopy( 'uniform_float' );
+  FShaderNode.Inputs.GetByName( 'UnName' ).ValueProp.AsString:= Name;
+  FShaderNode.Inputs.GetByName( 'Value' ).ValueProp.AsString:= FloatToStr( Value );
 end;
 
 function TP3DPlotCommandUniformFloat.Clone: TP3DPlotCommandSetting;
@@ -92,7 +101,7 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
@@ -112,7 +121,7 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
@@ -131,7 +140,7 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
@@ -150,7 +159,7 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
@@ -169,7 +178,7 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
@@ -188,7 +197,7 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
@@ -207,7 +216,7 @@ var
   decl: TP3DShaderDecl;
 begin
   if ( Location < 0 ) then
-    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+    if ( AContext.Shader.Uniforms.FindByName( Name, decl )) then
       FLocation:= decl.Addr
     else
       exit;
@@ -245,6 +254,41 @@ begin
   Result:= TP3DPlotCommandUniformTexture.Create( FLocation, FValue );
 end;
 
+function TP3DPlotCommandUniformSampleTexture.GetShaderNode: TP3DNodeClone;
+begin
+  Result:= FShaderNode;
+end;
+
+procedure TP3DPlotCommandUniformSampleTexture.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer;
+  ABuilder: TP3DShaderBuilder);
+var
+  setting: TP3DPlotCommandSetting;
+  Outp: TP3DNodeSocketClone;
+begin
+  if ( Name > '' ) then begin
+    with ( ABuilder.Uniforms.AddCopy( 'uniform_sampler2D' )) do begin
+      FindInput( 'UnName' ).ValueProp.AsString:= Name;
+      FShaderNode:= ABuilder.Uniforms.AddCopy( 'texture2D' );
+      FShaderNode.FindInput( 'Map' ).Connected:= FindOutput( 'Value' );
+      setting:= ASender.Items[ ASender.FindLast( ASenderIdx, 'texcoord' )];
+      if (( setting is IP3DPlotCommandSettingNode ) and
+        ( Assigned(( setting as IP3DPlotCommandSettingNode ).ShaderNode ))) then begin
+        Outp:= ( setting as IP3DPlotCommandSettingNode ).ShaderNode.FindOutputFirst([ 'UV', 'Value', 'Vector' ]);
+
+        if ( Assigned( Outp )) then
+          FShaderNode.FindInput( 'UV' ).Connected:= Outp;
+      end;
+
+      //with ( ABuilder.Uniforms.AddCopy( 'texcoord' )) do begin
+      //  FShaderNode.FindInput( 'UV' ).Connected:= FindOutput( 'UV' );
+      //end;
+
+      if ( not NoConnectToColor ) then
+        FShaderNode.FindOutput( 'Color' ).Connected:= ABuilder.RootNode.FindInput( 'Color' );
+    end;
+  end;
+end;
+
 { TP3DPlotCommandUniformTransform }
 
 procedure TP3DPlotCommandUniformTransform.Execute(AContext: TP3DPlotCommandContext);
@@ -275,7 +319,7 @@ var
   Light: TP3DLight;
   Index: Integer;
 begin
-  if ( not Assigned( Value ) or ( not ( Value.Data is TP3DLight ))) then
+  if ( not Assigned( Value ) or ( not ( Value.Data is TP3DLight )) or not Assigned( P3DShaderActive )) then
     exit;
   Light:= TP3DLight( Value.Data );
   case Light.LightType of

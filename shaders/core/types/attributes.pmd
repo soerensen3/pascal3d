@@ -1,25 +1,149 @@
 ---
-node: TexCoord4
-input: { name:"inject", type:"text"}
+node TexCoord4
+input text inject
 ---
 
-```{ name:"declaration", type:"text", restrict:"vshader" }
-IN vec4 TexCoord$inject$;
-OUT vec4 vTexCoord$inject$;
+output text __Declaration
+ifdef "vshader"
+'
+IN vec4 TexCoord'select inject';
+OUT vec4 vTexCoord'select inject';
 
-```
+'
+endif
 
-```{ restrict:"fshader" }
-IN vec4 vTexCoord$inject$;
+ifdef "fshader"
+'
+IN vec4 vTexCoord'select inject';
+'
+endif 
 
-```
 
-```{ name:"initialization", type:"text", restrict:"vshader" }
-  vTexCoord$inject$ = TexCoord$inject$;
+output text __Initialization
+ifdef "vshader"
+'
+  vTexCoord$inject$ = TexCoord'select inject';
 
-```
+'
+endif 
 
-```{ restrict:"assign" }
-vTexCoord$inject$
-```
+ifdef "assign"
+select inject
+endif
+
+
+---
+node attrib_vec4
+input vec4 Value
+input text Name
+---
+
+output text __Declaration
+ifdef "vshader"
+'
+IN vec4 'select Name';
+OUT vec4 v'select Name';
+
+'
+endif
+
+ifdef "fshader"
+'
+IN vec4 v'select Name';
+
+'
+endif
+
+output text __Initialization
+ifdef "vshader"
+'
+  v'select Name' = 'select Name';
+
+'
+endif 
+
+output vec4 Vector
+ifdef "assign"
+ifdef fshader
+'v'
+endif
+select Name
+endif
+
+---
+node attrib_vec3
+input vec3 Value
+input text Name
+---
+output text __Declaration
+ifdef "vshader"
+'
+IN vec3 'select Name';
+OUT vec3 v'select Name';
+
+'
+endif
+
+ifdef "fshader"
+'
+IN vec3 v'select Name';
+
+'
+endif
+
+output text __Initialization
+ifdef "vshader"
+'
+  v'select Name' = 'select Name';
+
+'
+endif 
+
+output vec3 Vector
+ifdef "assign"
+ifdef fshader
+'v'
+endif
+select Name
+endif
+
+
+---
+node attrib_vec2
+input vec2 Value
+input text Name
+---
+
+output text __Declaration
+ifdef "vshader"
+'
+IN vec2 'select Name';
+OUT vec2 v'select Name';
+
+'
+endif
+
+ifdef "fshader"
+'
+IN vec2 v'select Name';
+
+'
+endif
+
+output text __Initialization
+ifdef "vshader"
+'
+  v'select Name' = 'select Name';
+
+'
+endif 
+
+output vec2 Vector
+
+ifdef "assign"
+ifdef fshader
+'v'
+endif
+select Name
+endif
 

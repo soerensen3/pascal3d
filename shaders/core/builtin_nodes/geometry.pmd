@@ -1,5 +1,5 @@
 ---
-node: geometry
+node geometry
 ---
 
 #Position
@@ -8,29 +8,36 @@ node: geometry
 #OUT vec4 vPosition;
 #```
 
-```{name:"Attribute", type:"vec3", restrict:"assign"}
-Position
-```
+output vec3 Attribute
+ifdef "assign"
+'Position'
+endif
 
-```{name:"Position", type:"vec3", restrict:"assign"}
-vPosition
-```
+output vec3 Position
+ifdef "assign"
+'vPosition'
+endif
 
-```{name:"ScreenPosition", type:"vec2", restrict:"assign"}
-vScreenPosition
-```
+output vec2 ScreenPosition
+ifdef "assign"
+'vScreenPosition'
+endif
 
-```{name:"ObjectPosition", type:"vec3", restrict:"assign"}
-vObjectPosition
-```
+output vec3 ObjectPosition
+ifdef "assign"
+'vObjectPosition'
+endif
 
-```{name:"WorldPosition", type:"vec3", restrict:"assign"}
-vWorldPosition
-```
+output vec3 WorldPosition
+ifdef "assign"
+'vWorldPosition'
+endif
 
-```{name:"Color", type:"color4", restrict:"assign"}
-vColor
-```
+output color4 Color
+ifdef "assign"
+'vColor'
+endif
+
 
 #Normal
 #```{name:"Normal", type:"vec4", restrict:"vshader,declaration", single:"yes"}
@@ -49,46 +56,57 @@ vColor
 
 #```
 
-```{name:"Normal", type:"vec3", restrict:"assign"}
-vNormal
-```
+output vec3 Normal
+ifdef "assign"
+'vNormal'
+endif
 
+output vec3 WorldNormal
+ifdef "assign"
+'vWorldNormal'
+endif
 
-```{name:"WorldNormal", type:"vec3", restrict:"assign"}
-vWorldNormal
-```
+output vec3 Tangent
+ifdef "assign"
+'vTangent'
+endif
 
-```{name:"Tangent", type:"vec3", restrict:"assign"}
-vTangent
-```
-
-```{name:"Cotangent", type:"vec3", restrict:"assign"}
-vCotangent
-```
+output vec3 Cotangent
+ifdef "assign"
+'vCotangent'
+endif
 
 ---
-node: texcoord
-input: {name:"Index", type:"int"}
+node texcoord
+input int Index
 ---
 
-```{name:"Declaration", type:"text", restrict:"vshader", visible:false}
-IN vec2 TexCoord$Index: assign$;
-OUT vec2 vTexCoord$Index: assign$;
+output text __Declaration
+ifdef "vshader"
+'
+IN vec2 TexCoord'select Index: assign';
+OUT vec2 vTexCoord'select Index: assign';
 
-```
+'
+endif
 
-```{restrict:"fshader"}
-IN vec2 vTexCoord$Index: assign$;
+ifdef "fshader"
+'
+IN vec2 vTexCoord'select Index: assign';
 
-```
+'
+endif
 
-```{name:"Initialization", type:"text", restrict:"vshader", visible:false}
-  vTexCoord$Index: assign$ = TexCoord$Index: assign$;
+output text __Initialization
+ifdef "vshader"
+'
+  vTexCoord'select Index: assign' = TexCoord'select Index: assign';
 
-```
+'
+endif
 
 
-```{name:"UV", type:"vec2", restrict:"assign"}
-vTexCoord$Index: assign$
-```
-
+output vec2 UV
+ifdef "assign"
+'vTexCoord'select Index: assign
+endif

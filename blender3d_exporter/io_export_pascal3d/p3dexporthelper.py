@@ -3,9 +3,11 @@ from mathutils import Matrix, Vector, Quaternion
 
 def swap_quat( quat ):
     return [ quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ]]
+    #return [ quat[ 1 ], quat[ 2 ], quat[ 3 ], quat[ 0 ]]
 
 def swap_quat_bone( quat ):
-    return Quaternion(( quat[ 0 ], quat[ 1 ], -quat[ 3 ], quat[ 2 ]))
+    return [ quat[ 0 ], quat[ 1 ], quat[ 2 ], quat[ 3 ]]
+    #return Quaternion(( quat[ 0 ], quat[ 1 ], -quat[ 3 ], quat[ 2 ]))
 
 # Generating a 3x3 "lookat" matrix pointing at the direction of the bone
 # It would be possible to apply the roll of the bone as well but I don't
@@ -78,14 +80,20 @@ def export_data_path( block, root, obj = None ):
         return None
 
 def get_bone_local_transform( bone ):
-    if ( bone.bone.parent ):
-        #self.location = bone.bone.head_local - bone.bone.parent.head_local
-        location = bone_quat( bone.parent ).inverted() * ( bone.head - bone.parent.head )
+    if bone.parent:
+        location = bone.parent.matrix.inverted() * bone.head
     else:
         location = bone.head
+    #if ( bone.bone.parent ):
+    #    location = bone.bone.parent.matrix_local.inverted() * bone.bone.head_local
+    #    #self.location = bone.bone.head_local - bone.bone.parent.head_local
+    #    #location = bone_quat( bone.parent ).inverted() * ( loc )
+    #else:
+    #    location = bone.bone.head_local
 
-    if bone.parent: # We want to get the rotation relative to the parent bone or to the armature in case there is no parent
-        quat = ( bone_quat( bone.parent ).inverted() * bone_quat( bone ))
-    else:
-        quat = bone_quat( bone )
+    #if bone.parent: # We want to get the rotation relative to the parent bone or to the armature in case there is no parent
+    #    quat = bone.rotation_quaternion #bone.parent.matrix.quaternion.inverted() * bone.quaternion#( bone_quat( bone.parent ).inverted() * bone_quat( bone ))
+    #else:
+    #    quat = bone.matrix.to_quaternion()#bone_quat( bone )
+    quat = bone.rotation_quaternion
     return quat, location

@@ -74,8 +74,10 @@
          constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
          destructor Destroy; override;
 
-         procedure PassToShader( const ActiveSubset: String = '' ); virtual;
-         procedure BuildShader; virtual; abstract;
+         procedure PassToActiveShader; virtual;
+         procedure PassToShader( const ActiveSubset: String='' );
+         procedure BuildShader( AOwner: TP3DStreamableContainer ); virtual; abstract; overload;
+         procedure BuildShader; overload;
 
        published
          property Maps: TP3DMaterialMapContainerList read FMaps write FMaps;
@@ -106,6 +108,7 @@
          FGeometryNode: TP3DStreamableContainer;
          FNodeTree: TP3DShaderNodeTree;
          FUniforms: TP3DShaderNodeTree;
+         FLibraries: TP3DShaderNodeTree;
 
          function GetGeometryNode: TP3DNodeClone;
          procedure SetGeometryNode(AValue: TP3DNodeClone);
@@ -125,8 +128,8 @@
 
          procedure MakeRootNode( AName: String );
          procedure MakeRootNode( ANode: TP3DNode );
-         procedure BuildShader; override;
-         procedure PassToShader(const ActiveSubset: String=''); override;
+         procedure BuildShader( AOwner: TP3DStreamableContainer ); override;
+         procedure PassToActiveShader; override;
          function FindUniform( AName: String ): TP3DNodeClone;
          function AddMap( ATexture: TP3DTexture; ATexChannel: Integer ): TP3DMaterialMap;
 
@@ -135,6 +138,7 @@
          //property TexNodes: TP3DShaderNodeTree read FTexNodes;
          property NodeTree: TP3DShaderNodeTree read FNodeTree;
          property Uniforms: TP3DShaderNodeTree read FUniforms;
+         property Libraries: TP3DShaderNodeTree read FLibraries;
          property NodeMaster: TP3DNodeMaster read FNodeMaster;
          property AutoRecompile: Boolean read FAutoRecompile write FAutoRecompile;
          property OnPassUniform: TOnPassUniform read FOnPassUniform write FOnPassUniform;
@@ -205,18 +209,6 @@ begin
 
   Properties.Add([ FParentMaterial, FMap ]);
 end;
-
-{
-function TP3DMaterialMap.SaveToDOM(AParent: TDOMElement): TDOMElement;
-var
-  i: Integer;
-begin
-  Result:= AParent.OwnerDocument.CreateElement( 'map' );
-  AParent.AppendChild( Result );
-  for i:= 0 to Properties.Count - 1 do
-    Result.SetAttribute( Properties[ i ].Name, Properties[ i ].AsString );
-end;
-}
 
 destructor TP3DMaterialMap.Destroy;
 begin
@@ -289,41 +281,54 @@ begin
   inherited Destroy;
 end;
 
-procedure TP3DMaterial.PassToShader(const ActiveSubset: String);
+procedure TP3DMaterial.PassToActiveShader;
 var
   i: Integer;
   decl: TP3DShaderDecl;
   S: TP3DNodeSocketClone;
   n: LongInt;
 begin
+
+  for i:= 0 to Maps.Count - 1 do
+    if ( Shader.Uniforms.FindByName( 'tex' + IntToStr( i ), decl )) then
+      begin
+        glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
+        {glBindTexture( Maps[ i ].Map.Target, Maps[ i ].Map.GLTexture ); cle( Self );}
+        S:= Maps[ i ].FindInput( 'Map' );
+        if ( Assigned( Maps[ i ].Map ) and Assigned( S )) then begin
+          n:= StrToInt( S.ValueProp.AsString );
+          Maps[ i ].Map.Bind( n );
+          decl.AsInt:= n;
+        end else begin
+          glBindTexture( GL_TEXTURE_2D, 0 );
+          decl.AsInt:= i;
+        end;
+      end;
+  Inc( i );
+  while ( Shader.Uniforms.FindByName( 'tex' + IntToStr( i ), decl )) do
+    begin
+      glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
+      glBindTexture( GL_TEXTURE_2D, 0 );
+      decl.AsInt:= i;
+    end;
+end;
+
+procedure TP3DMaterial.PassToShader(const ActiveSubset: String);
+begin
   P3DMaterialActive:= Self;
   if ( Assigned( Shader )) then
     begin
       Shader.Enable;
-
-      for i:= 0 to Maps.Count - 1 do
-        if ( Shader.Uniforms.FindByName( 'tex' + IntToStr( i ), decl )) then
-          begin
-            glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-            {glBindTexture( Maps[ i ].Map.Target, Maps[ i ].Map.GLTexture ); cle( Self );}
-            S:= Maps[ i ].FindInput( 'Map' );
-            if ( Assigned( Maps[ i ].Map ) and Assigned( S )) then begin
-              n:= StrToInt( S.ValueProp.AsString );
-              Maps[ i ].Map.Bind( n );
-              decl.AsInt:= n;
-            end else begin
-              glBindTexture( GL_TEXTURE_2D, 0 );
-              decl.AsInt:= i;
-            end;
-          end;
-      Inc( i );
-      while ( Shader.Uniforms.FindByName( 'tex' + IntToStr( i ), decl )) do
-        begin
-          glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-          glBindTexture( GL_TEXTURE_2D, 0 );
-          decl.AsInt:= i;
-        end;
+      PassToActiveShader();
     end;
+end;
+
+procedure TP3DMaterial.BuildShader;
+begin
+  BuildShader( FShader );
+  if ( not Assigned( FShader.AsValue )) then
+    raise Exception.Create( 'Failed to build shader!' );
+  FNeedsUpdate:= False;
 end;
 
 { TP3DMaterialMapContainerList }
@@ -388,6 +393,9 @@ begin
       p:= RootNode.FindInput( 'VertexPosition' );
       if ( Assigned( p )) then
         p.Connected:= GeometryNode.FindOutput( 'Attribute' );
+      p:= RootNode.FindInput( 'Color' );
+      if ( Assigned( p )) then
+        p.Connected:= GeometryNode.FindOutput( 'Color' );
     end;
 end;
 
@@ -508,7 +516,7 @@ end;
 function TP3DMaterialNode.GetShader: TP3DShader;
 begin
   if ( NeedsUpdate ) then
-    BuildShader;
+    inherited BuildShader;
   Result:= inherited GetShader;
 end;
 
@@ -602,7 +610,7 @@ begin
     raise Exception.Create( 'Cannot make copy to material root node. The passed node was not assigned!' );
 end;
 
-procedure TP3DMaterialNode.BuildShader;
+procedure TP3DMaterialNode.BuildShader(AOwner: TP3DStreamableContainer);
 var
   sh: TP3DShaderCompiled;
   i: Integer;
@@ -626,81 +634,78 @@ begin
     on E: Exception do
       log_exception( message_header( Self ) + E.Message );
   end;
-  FNeedsUpdate:= False;
   //for i:= 0 to sh.Buffers.Count - 1 do
   //  P3DSaveStringToFile( '/tmp/' + sh.Buffers[ i ].Name + '.glsl', sh.Buffers[ i ].Code );
 
   try
-    frag:= sh.FindBuffer( 'fshader' );
-    vert:= sh.FindBuffer( 'vshader' );
+    frag:= sh.FindBuffer( '__fshader' );
+    vert:= sh.FindBuffer( '__vshader' );
     if ( Assigned( frag ) and Assigned( vert )) then
-      TP3DShader.CreateFromVertexAndFragmentShader( vert.Code, frag.Code, FShader );
+      TP3DShader.CreateFromVertexAndFragmentShader( vert.Code, frag.Code, AOwner );
   finally
     sh.Free;
   end;
 end;
 
-procedure TP3DMaterialNode.PassToShader(const ActiveSubset: String);
+procedure TP3DMaterialNode.PassToActiveShader;
 var
   Node: TP3DNodeClone;
   UnName: String;
   UnValue: TP3DPropertyAccess;
   decl: TP3DShaderDecl;
 begin
-  inherited PassToShader(ActiveSubset);
-  if ( FNeedsUpdate ) then
-    BuildShader;
-  if ( Assigned( Shader )) then
-    for Node in Uniforms do
-      begin
-        if ( Assigned( FOnPassUniform )) then
-          FOnPassUniform( Self, Node );
-        UnName:= Node.FindInput( 'UnName' ).ValueProp.AsString;
-        UnValue:= Node.FindInput( 'Value' ).ValueProp;
-        if ( Shader.Uniforms.FindByName( UnName, decl )) then
-          begin
-            case decl.VarType of
-              GL_INT,
-              GL_SAMPLER_1D,
-              GL_SAMPLER_2D,
-              GL_SAMPLER_3D,
-              GL_SAMPLER_CUBE:
-                if ( UnValue is TP3DPropAccessInt ) then
-                  decl.AsInt:= TP3DPropAccessInt( UnValue ).AsValue
-                else
-                  decl.AsInt:= StrToInt( UnValue.AsString );
-              GL_FLOAT:
-                if ( UnValue is TP3DPropAccessFloat ) then
-                  decl.AsFloat:= TP3DPropAccessFloat( UnValue ).AsValue
-                else
-                  decl.AsFloat:= StrToFloat( UnValue.AsString );
-              GL_FLOAT_VEC2:
-                if ( UnValue is TP3DPropAccessVec2 ) then
-                  decl.AsVec2:= TP3DPropAccessVec2( UnValue ).AsValue
-                else
-                  decl.AsVec2:= vec2( UnValue.AsString );
-              GL_FLOAT_VEC3:
-                if ( UnValue is TP3DPropAccessVec3 ) then
-                  decl.AsVec3:= TP3DPropAccessVec3( UnValue ).AsValue
-                else
-                  decl.AsVec3:= vec3( UnValue.AsString );
-              GL_FLOAT_VEC4:
-                if ( UnValue is TP3DPropAccessVec4 ) then
-                  decl.AsVec4:= TP3DPropAccessVec4( UnValue ).AsValue
-                else
-                  decl.AsVec4:= vec4( UnValue.AsString );
-              {GL_FLOAT_MAT2: Result:= 'mat2';
-              GL_FLOAT_MAT3: Result:= 'mat3';
-              GL_FLOAT_MAT4: Result:= 'mat4';
-              GL_FLOAT_MAT2x3: Result:= 'mat2x3';
-              GL_FLOAT_MAT2x4: Result:= 'mat2x3';
-              GL_FLOAT_MAT3x2: Result:= 'mat3x2';
-              GL_FLOAT_MAT3x4: Result:= 'mat3x4';
-              GL_FLOAT_MAT4x2: Result:= 'mat4x2';
-              GL_FLOAT_MAT4x3: Result:= 'mat4x3';}
-            end;
+  inherited PassToActiveShader;
+
+  for Node in Uniforms do
+    begin
+      if ( Assigned( FOnPassUniform )) then
+        FOnPassUniform( Self, Node );
+      UnName:= Node.FindInput( 'UnName' ).ValueProp.AsString;
+      UnValue:= Node.FindInput( 'Value' ).ValueProp;
+      if ( Shader.Uniforms.FindByName( UnName, decl )) then
+        begin
+          case decl.VarType of
+            GL_INT,
+            GL_SAMPLER_1D,
+            GL_SAMPLER_2D,
+            GL_SAMPLER_3D,
+            GL_SAMPLER_CUBE:
+              if ( UnValue is TP3DPropAccessInt ) then
+                decl.AsInt:= TP3DPropAccessInt( UnValue ).AsValue
+              else
+                decl.AsInt:= StrToInt( UnValue.AsString );
+            GL_FLOAT:
+              if ( UnValue is TP3DPropAccessFloat ) then
+                decl.AsFloat:= TP3DPropAccessFloat( UnValue ).AsValue
+              else
+                decl.AsFloat:= StrToFloat( UnValue.AsString );
+            GL_FLOAT_VEC2:
+              if ( UnValue is TP3DPropAccessVec2 ) then
+                decl.AsVec2:= TP3DPropAccessVec2( UnValue ).AsValue
+              else
+                decl.AsVec2:= vec2( UnValue.AsString );
+            GL_FLOAT_VEC3:
+              if ( UnValue is TP3DPropAccessVec3 ) then
+                decl.AsVec3:= TP3DPropAccessVec3( UnValue ).AsValue
+              else
+                decl.AsVec3:= vec3( UnValue.AsString );
+            GL_FLOAT_VEC4:
+              if ( UnValue is TP3DPropAccessVec4 ) then
+                decl.AsVec4:= TP3DPropAccessVec4( UnValue ).AsValue
+              else
+                decl.AsVec4:= vec4( UnValue.AsString );
+            {GL_FLOAT_MAT2: Result:= 'mat2';
+            GL_FLOAT_MAT3: Result:= 'mat3';
+            GL_FLOAT_MAT4: Result:= 'mat4';
+            GL_FLOAT_MAT2x3: Result:= 'mat2x3';
+            GL_FLOAT_MAT2x4: Result:= 'mat2x3';
+            GL_FLOAT_MAT3x2: Result:= 'mat3x2';
+            GL_FLOAT_MAT3x4: Result:= 'mat3x4';
+            GL_FLOAT_MAT4x2: Result:= 'mat4x2';
+            GL_FLOAT_MAT4x3: Result:= 'mat4x3';}
           end;
-      end;
+        end;
+    end;
 end;
 
 

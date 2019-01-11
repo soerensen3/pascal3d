@@ -13,6 +13,7 @@ type
       constructor Create( ACamera: TP3DCamera );
 
       procedure Execute( AContext: TP3DPlotCommandContext ); override;
+      procedure GetExtensions(Extension: TStringList); override;
       function Clone: TP3DPlotCommandSetting; override;
 
       property Camera: TP3DCamera read FCamera write FCamera;
@@ -70,6 +71,20 @@ type
     function Clone: TP3DPlotCommandSetting; override;
   end;
 
+  { TP3DPlotCommandUniformSampleTexture }
+
+  TP3DPlotCommandUniformSampleTexture = class ( TP3DPlotCommandUniformTexture, IP3DPlotCommandSettingNode )
+    protected
+      FNoConnectToColor: Boolean;
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder ); override;
+
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+      property NoConnectToColor: Boolean read FNoConnectToColor write FNoConnectToColor;
+  end;
+
   { TP3DPlotCommandUniformLight }
 
   TP3DPlotCommandUniformLight = class ( specialize TP3DPlotCommandShaderDecl < TP3DObject >)
@@ -85,7 +100,7 @@ type
 
   { TP3DPlotCommandMaterial }
 
-  TP3DPlotCommandMaterial = class ( TP3DPlotCommandSetting )
+  TP3DPlotCommandMaterial = class ( TP3DPlotCommandSettingShader )
     private
       FMaterial: TP3DMaterial;
 
@@ -94,6 +109,9 @@ type
 
       property Material: TP3DMaterial read FMaterial write FMaterial;
       procedure Execute( AContext: TP3DPlotCommandContext ); override;
+
+      procedure BuildShader(AOwner: TP3DStreamableContainer); override;
+
       function Clone: TP3DPlotCommandSetting; override;
   end;
 
@@ -109,6 +127,95 @@ type
       property Scene: TP3DScene read FScene write FScene;
       procedure Execute( AContext: TP3DPlotCommandContext ); override;
   end;
+
+  { TP3DPlotCommandSDF }
+
+  TP3DPlotCommandSDF = class ( TP3DPlotCommandSettingShader )
+    private
+      FBaseAlpha: Float;
+      FBias: Float;
+      FColor: TP3DPlotCommandSetting;
+      FSmoothing: Float;
+      FUV: TP3DPlotCommandSetting;
+
+    public
+      constructor Create( const Color: TP3DPlotCommandSetting = nil; const UV: TP3DPlotCommandSetting = nil; const sdf_bias: Float = -0.12; const sdf_smoothing: Float = -0.004; const sdf_basealpha: Float = -1.0 );
+
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+
+      property Bias: Float read FBias write FBias;
+      property Smoothing: Float read FSmoothing write FSmoothing;
+      property BaseAlpha: Float read FBaseAlpha write FBaseAlpha;
+      property Color: TP3DPlotCommandSetting read FColor write FColor;
+      property UV: TP3DPlotCommandSetting read FUV write FUV;
+  end;
+
+  { TP3DPlotCommandMaterialPBR }
+
+  TP3DPlotCommandMaterialPBR = class ( TP3DPlotCommandSetting )
+    public
+      constructor Create();
+
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+      procedure Execute(AContext: TP3DPlotCommandContext); override;
+  end;
+
+  { TP3DPlotCommandTexCoord }
+
+  generic TP3DPlotCommandTexCoord < T; VecArray > = class ( specialize TP3DPlotCommandAttribArray < T, VecArray >, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
+  { TP3DPlotCommandTexCoordVec2 }
+
+  TP3DPlotCommandTexCoordVec2 = class ( TP3DPlotCommandAttribVec2Array, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
+  { TP3DPlotCommandTexCoordVec3 }
+
+  TP3DPlotCommandTexCoordVec3 = class ( TP3DPlotCommandAttribVec3Array, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
+  { TP3DPlotCommandTexCoordVec4 }
+
+  TP3DPlotCommandTexCoordVec4 = class ( TP3DPlotCommandAttribVec4Array, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
+
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -179,6 +286,12 @@ begin
     FCamera.PassToShader;
 end;
 
+procedure TP3DPlotCommandCamera.GetExtensions(Extension: TStringList);
+begin
+  inherited GetExtensions(Extension);
+  Extension.Add( 'camera' );
+end;
+
 function TP3DPlotCommandCamera.Clone: TP3DPlotCommandSetting;
 begin
   Result:= TP3DPlotCommandCamera.Create( FCamera );
@@ -189,18 +302,25 @@ end;
 constructor TP3DPlotCommandMaterial.Create(AMaterial: TP3DMaterial);
 begin
   inherited Create;
+  if ( not Assigned( AMaterial )) then
+    raise Exception.Create( 'Can''t create material plot command with null material.' );
   FMaterial:= AMaterial;
 end;
 
 procedure TP3DPlotCommandMaterial.Execute(AContext: TP3DPlotCommandContext );
 begin
   if ( Assigned( Material )) then begin
-    AContext.Shader:= Material.Shader;
-    AContext.Shader.Enable;
+//    AContext.Shader:= Material.Shader;
+//    AContext.Shader.Enable;
     Material.PassToShader();
     if ( Assigned( AContext.LayerDefault )) then
       AContext.LayerDefault.Execute( AContext );
   end;
+end;
+
+procedure TP3DPlotCommandMaterial.BuildShader(AOwner: TP3DStreamableContainer);
+begin
+  Material.BuildShader( AOwner );
 end;
 
 function TP3DPlotCommandMaterial.Clone: TP3DPlotCommandSetting;

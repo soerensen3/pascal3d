@@ -197,7 +197,7 @@ TP3DMaterialBase = class ( TP3DMaterial )
    procedure AddPasses(ShaderTree: TP3DShaderNodeTree; const AModifiers: TP3DObjectModifierContainerList = nil ); virtual;
    procedure BuildShaderForSubset( AModifiers: TP3DObjectModifierContainerList; AOwner: IP3DStreamableContainer ); virtual;
    procedure BuildShader;
-   procedure PassToShader( const ActiveSubset: String = '' ); override;
+   procedure PassToActiveShader; override;
 
    procedure BeginUpdate;
    procedure EndUpdate;
@@ -540,11 +540,12 @@ begin
   BuildShaderForSubset( nil, FShader );
 end;
 
-procedure TP3DMaterialBase.PassToShader(const ActiveSubset: String);
+procedure TP3DMaterialBase.PassToActiveShader;
 var
   i: Integer;
   Sh: TP3DShader;
 begin
+  {
   if ( not Assigned( Shader )) then
     BuildShader();
   if ( Assigned( Shader )) then
@@ -573,7 +574,7 @@ begin
         end;
       for i:= 0 to Modifiers.Count - 1 do
         TP3DMaterialModifier( Modifiers[ i ]).PassToShader( Self );
-    end;
+    end;}
 end;
 
 {

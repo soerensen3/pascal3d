@@ -4,11 +4,14 @@ type
 
   { TP3DPlotCommandShaderDecl }
 
-  generic TP3DPlotCommandShaderDecl < T > = class ( TP3DPlotCommandSetting )
+  generic TP3DPlotCommandShaderDecl < T > = class ( TP3DPlotCommandSetting, IP3DPlotCommandSettingNode )
     private
       FLocation: GLint;
       FName: String;
       FValue: T;
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
 
     public
       constructor Create( ALocation: GLint; AValue: T );
@@ -17,6 +20,7 @@ type
       property Value: T read FValue write FValue;
       property Location: GLint read FLocation write FLocation;
       property Name: String read FName write FName;
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
   end;
 
   TP3DPlotCommandClearFlag = (
@@ -39,6 +43,23 @@ type
 
       property ClearColor: TP3DColorRGBA read FClearColor write FClearColor;
       property ClearFlags: TP3DPlotCommandClearFlags read FClearFlags write FClearFlags;
+  end;
+
+  { TP3DPlotCommandExtensions }
+
+  TP3DPlotCommandExtensions = class ( TP3DPlotCommandSetting )
+    private
+      FExtensions: TStringList;
+
+    public
+      constructor Create( AExtensions: array of String );
+      destructor Destroy; override;
+
+      procedure GetExtensions(Extension: TStringList); override;
+
+      procedure Execute(AContext: TP3DPlotCommandContext); override;
+
+      property Extensions: TStringList read FExtensions;
   end;
 
 {$ENDIF}
@@ -128,6 +149,11 @@ end;
 
 { TP3DPlotCommandShaderDecl }
 
+function TP3DPlotCommandShaderDecl.GetShaderNode: TP3DNodeClone;
+begin
+  Result:= FShaderNode;
+end;
+
 constructor TP3DPlotCommandShaderDecl.Create(ALocation: GLint; AValue: T);
 begin
   inherited Create;
@@ -142,6 +168,7 @@ begin
   FName:= AName;
   FLocation:= -1;
 end;
+
 
 {$ENDIF}
 

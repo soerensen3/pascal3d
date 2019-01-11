@@ -14,13 +14,6 @@ type
 
   TP3DCustomShaderNodeSocketList = specialize gP3DCustomObjectList < TP3DShaderNodeSocket >;
 
-  {{ TP3DShaderNodeSocketList }
-
-  TP3DShaderNodeSocketList = class ( TP3DCustomShaderNodeSocketList )
-    function GetStringOutput(Buffer: TP3DShaderBuffer): String;
-    function FindSocketByName( Name: String ): Integer;
-  end;}
-
   {$INCLUDE p3d.core.shadernodes_fragments.inc}
   { TP3DShaderNodeSocket }
 
@@ -34,12 +27,10 @@ type
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
-      //function GetMainOutput( Buffer: TP3DShaderBuffer ): String; virtual;
-      //function GetDeclarationOutput( Buffer: TP3DShaderBuffer ): String; virtual;
       function GetOutput( Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone ): String; virtual;
-      function GetOutputAll( Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone; Filter: String ): String;
+      //function GetOutputAll( Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone; Filter: String ): String;
       function GetOutputAsType( Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone ): String; virtual;
-      procedure GetAllInputs( Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone; Filter: String; Inputs: TP3DNodeSocketClonePointerList; Types: TP3DNodeSocketClonePointerList );
+      procedure GetAllInputs( Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone; AFilter: String; AInputs: TP3DNodeSocketClonePointerList; ATypes: TP3DNodeSocketClonePointerList; ALibs: TP3DNodeSocketPointerList ); virtual;
 
     published
       property Fragments: TP3DShaderNodeFragmentList read FFragments write FFragments;
@@ -50,8 +41,8 @@ type
   TP3DShaderNodeSocketClone = class ( TP3DNodeSocketClone )
     public
       function GetOutput( Buffer: TP3DShaderBuffer ): String; virtual;
-      function GetOutputAll( Buffer: TP3DShaderBuffer; Filter: String ): String;
-      procedure GetAllInputs( Buffer: TP3DShaderBuffer; Filter: String; Inputs, Types: TP3DNodeSocketClonePointerList );
+      //function GetOutputAll( Buffer: TP3DShaderBuffer; Filter: String ): String;
+      procedure GetAllInputs( Buffer: TP3DShaderBuffer; Filter: String; Inputs, Types: TP3DNodeSocketClonePointerList; ALibs: TP3DNodeSocketPointerList );
   end;
 
   { TP3DShaderNodeType }
@@ -88,7 +79,7 @@ type
       property ShaderLib: TP3DShaderNodeLibrary read GetShaderLib;
   end;
 
-  TP3DMarkdownFileContainerList = specialize gP3DStreamableContainerList < TP3DMarkdownFile >;
+  TP3DMarkdownFileContainerList = specialize gP3DNamedStreamableContainerList < TP3DMarkdownFile >;
 
   TP3DShaderNodeTypeContainerList = specialize gP3DNamedStreamableContainerList < TP3DShaderNodeType >;
 
@@ -177,14 +168,88 @@ type
     public
       function AddCopy( AItem: TP3DNode): T; virtual;
       function AddCopy( AName: String ): T; virtual;
+      function FindByName( AName: String ): T;
 
       function Compile( const ARootNode: TP3DNodeClone = nil ): TP3DShaderCompiled;
       procedure SortByName;
       property NodeMaster: TP3DNodeMaster read FNodeMaster write FNodeMaster;
-      //function CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
   end;
 
   TP3DShaderNodeTree = class( specialize gP3DShaderNodeTree < TP3DNodeClone >);
+
+
+  {TP3DShaderNodeMaster = class ( TP3DNodeMaster )
+    protected
+      FAutoRecompile: Boolean;
+      FRootNode: TP3DStreamableContainer;
+      FGeometryNode: TP3DStreamableContainer;
+      FNodeTree: TP3DShaderNodeTree;
+      FUniforms: TP3DShaderNodeTree;
+
+      function GetGeometryNode: TP3DNodeClone;
+      procedure SetGeometryNode(AValue: TP3DNodeClone);
+      function GetRootNode: TP3DNodeClone;
+      procedure SetRootNode(AValue: TP3DNodeClone);
+      procedure SetupRootNode;
+      procedure MapsChange( ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction );
+      procedure NodesChange( ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction );
+      procedure NodeChange( ANewValue: TP3DStreamable );
+      procedure UpdateTexNodes;
+      function GetShader: TP3DShader; override;
+      procedure SocketHandler( Sender: TP3DNodeSocketClone );
+
+    public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+      destructor Destroy; override;
+
+      procedure MakeRootNode( AName: String );
+      procedure MakeRootNode( ANode: TP3DNode );
+      procedure BuildShader; override;
+      procedure PassToShader(const ActiveSubset: String=''); override;
+      function FindUniform( AName: String ): TP3DNodeClone;
+      function AddMap( ATexture: TP3DTexture; ATexChannel: Integer ): TP3DMaterialMap;
+
+      property RootNode: TP3DNodeClone read GetRootNode write SetRootNode;
+      property GeometryNode: TP3DNodeClone read GetGeometryNode write SetGeometryNode;
+      property NodeTree: TP3DShaderNodeTree read FNodeTree;
+      property Uniforms: TP3DShaderNodeTree read FUniforms;
+      property Libraries: TP3DShaderNodeTree read FLibraries;
+      property AutoRecompile: Boolean read FAutoRecompile write FAutoRecompile;
+      property OnPassUniform: TOnPassUniform read FOnPassUniform write FOnPassUniform;
+  end;}
+
+
+  { TP3DShaderBuilder }
+
+  TP3DShaderBuilder = class ( TPersistent )
+    private
+      FLibraries: TP3DShaderNodeTree;
+      FNodeMaster: TP3DNodeMaster;
+      FRootNode: TP3DStreamableContainer;
+      FGeometryNode: TP3DStreamableContainer;
+      FNodeTree: TP3DShaderNodeTree;
+      FUniforms: TP3DShaderNodeTree;
+      function GetGeometryNode: TP3DNodeClone;
+      function GetRootNode: TP3DNodeClone;
+      procedure SetGeometryNode(AValue: TP3DNodeClone);
+      procedure SetRootNode(AValue: TP3DNodeClone);
+      procedure SetupRootNode;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      procedure MakeRootNode( AName: String );
+      procedure MakeRootNode( ANode: TP3DNode );
+      procedure BuildShader( AExtensions: TStringList; AOwner: TP3DStreamableContainer );
+
+      property RootNode: TP3DNodeClone read GetRootNode write SetRootNode;
+      property GeometryNode: TP3DNodeClone read GetGeometryNode write SetGeometryNode;
+      property NodeTree: TP3DShaderNodeTree read FNodeTree;
+      property Uniforms: TP3DShaderNodeTree read FUniforms;
+      property Libraries: TP3DShaderNodeTree read FLibraries;
+      property NodeMaster: TP3DNodeMaster read FNodeMaster;
+  end;
 
   {$INCLUDE p3d.core.shadernodes_markdown.inc}
   {.$INCLUDE p3dshadernodes_core.inc}
@@ -262,41 +327,6 @@ begin
   //FItems.Sort( @CompareShaderNode );
 end;
 
-{
-function gP3DShaderNodeTree.CompileToBuffer( Definitions: TStringList ): TP3DShaderBuffer;
-var
-  s, declaration, extensions: String;
-begin
-  Result:= TP3DShaderBuffer.Create;
-
-  for Socket in Node.Outputs do
-    if ( Socket.SocketType = 'shader' ) then
-      begin
-        F.Text:= TP3DShaderNodeSocket( Socket ).GetOutput( Result );
-        Result.RegisterSocket( TP3DShaderNodeSocket( Socket ));
-        F.SaveToFile( '/tmp/' + Socket.Name + '.glsl' );
-      end;
-  {Result.Defines.Text:= Definitions.Text;
-  Result.Defines.Add( 'main' );
-  s:= GetShaderOutputFromNodes( Result );
-
-
-  Result.Defines.Text:= Definitions.Text;
-  Result.Defines.Add( 'extensions' );
-  extensions:= Result.Declarations.GetStringOutput( Result );
-
-  Result.Defines.Text:= Definitions.Text;
-  Result.Defines.Add( 'declaration' );
-  declaration:= Result.Declarations.GetStringOutput( Result );
-
-  Result.Code:= '#version ' + P3DGLSLVersion + LineEnding
-                + extensions + LineEnding + declaration
-                + 'void main(){' + LineEnding
-                + s + '}';}
-  P3DLog.LogInfo( Self, 'Built shader from chunks &gt;'  + LineEnding + Result.Code + LineEnding + '&lt; End of Shader' );
-end;
-}
-
 function gP3DShaderNodeTree.AddCopy(AItem: TP3DNode): T;
 begin
   Result:= T( AItem.Clone( Self, TP3DNodeCloneClass( ItemClass )));
@@ -312,39 +342,18 @@ begin
   Result:= AddCopy( Node );
 end;
 
-
-{
-{ TP3DShaderNodeSocketList }
-
-function TP3DShaderNodeSocketList.GetStringOutput( Buffer: TP3DShaderBuffer ): String;
+function gP3DShaderNodeTree.FindByName(AName: String): T;
 var
-  Socket: TP3DShaderNodeSocket;
-  noduplicate: Boolean;
-  S: String;
+  Item: T;
 begin
-  Result:= '';
-  noduplicate:= ( Buffer.Defines.IndexOf( 'declaration' ) > -1 ) or ( Buffer.Defines.IndexOf( 'extensions' ) > -1 );
-  for Socket in Self do
-    begin
-      S:= Socket.GetOutput( Buffer, Socket as TP3DNodeClone );
-      if (( noduplicate ) and ( Pos( S, Result ) = 0 )) then
-        Result+= S;
+  Result:= default( T );
+  for Item in Self do
+    if ( Item.CloneOf.Name = AName ) then begin
+      Result:= Item;
+      break;
     end;
 end;
 
-function TP3DShaderNodeSocketList.FindSocketByName(Name: String): Integer;
-var
-  i: Integer;
-begin
-  Result:= -1;
-  for i:= 0 to Count - 1 do
-    if ( Items[ i ].Name = Name ) then
-      begin
-        Result:= i;
-        break;
-      end;
-end;
-}
 { TP3DShaderBuffer }
 
 constructor TP3DShaderBuffer.Create;
@@ -426,26 +435,6 @@ procedure TP3DShaderNodeLibrary.LoadLibrary(FileName: String);
 begin
   ParseMarkdownFileAppend( FileName, Self );
 end;
-
-{
-//XML deprecated
-var
-  F: TXMLDocument;
-  i: Integer;
-  Node: TP3DShaderNode;
-begin
-  XMLRead.ReadXMLFile( F, FileName );
-
-  for i:= 0 to F.DocumentElement.ChildNodes.Count - 1 do
-    if ( F.DocumentElement.ChildNodes[ i ].NodeName = 'node' ) then
-      begin
-        Node:= TP3DShaderNode.CreateFromDOM( TDOMElement( F.DocumentElement.ChildNodes[ i ]));
-        Nodes.Add( Node );
-      end;
-
-  F.Free;
-end;
-}
 
 procedure TP3DShaderNodeLibrary.LoadLibraryPath( PathName: String; const Ext: String );
 var
@@ -535,9 +524,9 @@ function TP3DShaderNodeLibrary.DebugOutput: String;
           Result += TP3DShaderNodeFragmentInline( Fragment ).Text
         else if ( Fragment is TP3DShaderNodeFragmentIfDef ) then
           Result += ProcessFragments( Socket, TP3DShaderNodeFragmentIfDef( Fragment ).Fragments, restrictions )
-        else if ( Fragment is TP3DShaderNodeFragmentInput ) then
-          Result += Format( '$%s: %s$', [ TP3DShaderNodeFragmentInput( Fragment ).InputName,
-                                          TP3DShaderNodeFragmentInput( Fragment ).Defines.CommaText ]);
+        else if ( Fragment is TP3DShaderNodeFragmentSelector ) then
+          Result += Format( '$%s: %s$', [ TP3DShaderNodeFragmentSelector( Fragment ).InputName,
+                                          TP3DShaderNodeFragmentSelector( Fragment ).Defines.CommaText ]);
     end;
   end;
 
@@ -608,37 +597,16 @@ var
 begin
   Result:= '';
 
-  {Write( Name, ' Direction=Input: ', Direction = nsdInput );
-  if Assigned( ACloneSocket.Connected ) then WriteLn( ' connected: ' + ACloneSocket.Connected.CloneOf.Name )
-  else WriteLn();
-  WriteLn( 'Defines: ' + Buffer.Defines.CommaText );}
   if (( Direction = nsdOutput ) or ( not Assigned( ACloneSocket.Connected ))) then
     begin
-      //WriteLn( 'Printing fragments...' );
       if ( Direction = nsdOutput ) then
-        for i:= 0 to Fragments.Count - 1 do
-          begin //WriteLn( Fragments[ i ].ClassName, ' - ', Fragments[ i ].VarType );
-            //if ( Fragments[ i ] is TP3DShaderNodeFragmentInline ) then WriteLn( TP3DShaderNodeFragmentInline( Fragments[ i ]).Text );
-          Result+= Fragments[ i ].GetStringOutput( ACloneSocket, Buffer );
-          //P3DLog.LogInfo( Self, 'getting fragment output of: ' + ACloneSocket.Node.CloneOf.Name + '.' + ACloneSocket.CloneOf.Name + ' = "' + Result + '"' );
-          end
+        Result:= Fragments.GetStringOutput( ACloneSocket, Buffer )
       else case ( SocketType ) of
-        'text': begin
+        'text':
           Result:= ACloneSocket.ValueProp.AsString
-          //;P3DLog.LogInfo( Self, 'getting text output of: ' + ACloneSocket.Node.CloneOf.Name + '.' + ACloneSocket.CloneOf.Name + ' = "' + Result + '"' );
-        end else
-          begin
-            Result:= P3DData.P3DShaderNodeLib.GetOutputAsType( Buffer, ACloneSocket );
-            {if ( not Assigned( Nd )) then
-              raise Exception.Create( 'Could not find node for socket type!' );
-            Socket:= TP3DShaderNodeSocket( Nd.Outputs.GetByName( 'fromvalue' ));
-            if ( not Assigned( Socket )) then
-              raise Exception.Create( 'Could not find output fromvalue!' );
-            Result:= Socket.GetOutputAsType( Buffer, ACloneSocket );}
-            //P3DLog.LogInfo( Self, 'injecting ' + ACloneSocket.Node.CloneOf.Name + '.' + ACloneSocket.CloneOf.Name + ' into output of: ' + Nd.Name + '.' + Socket.Name + ' = "' + Result + '"' );
-          end;
+        else
+          Result:= P3DData.P3DShaderNodeLib.GetOutputAsType( Buffer, ACloneSocket );
       end;
-      //WriteLn( 'Result = "', Result, '"' );
     end
   else if ( Assigned( ACloneSocket.Connected )) then begin
     if ( ACloneSocket.Connected.CloneOf.SocketType = 'text' ) then begin
@@ -648,31 +616,10 @@ begin
         raise Exception.CreateFmt( 'Cannot get output of socket "%s". The connected socket is not inherited from TP3DShaderNodeSocket!', [ Name ]);
     end else begin
       Result:= P3DData.P3DShaderNodeLib.GetOutputAsType( Buffer, ACloneSocket, ACloneSocket.Connected.CloneOf.SocketType );
-      {Nd:= P3DData.P3DShaderNodeLib.FindType( ACloneSocket.Connected.CloneOf.SocketType );
-      if ( not Assigned( Nd )) then
-        raise Exception.CreateFmt( 'Could not find node for socket type "%s" of socket: "%s"!',
-                                   [ ACloneSocket.Connected.CloneOf.SocketType,
-                                     ACloneSocket.Connected.Node.CloneOf.Name + '.' + ACloneSocket.Connected.CloneOf.Name ]);
-
-      {if ( ACloneSocket.Connected.CloneOf is TP3DShaderNodeSocket ) then
-        Result:= TP3DShaderNodeSocket( ACloneSocket.Connected.CloneOf ).GetOutput( Buffer, ACloneSocket.Connected )
-      else
-        raise Exception.CreateFmt( 'Cannot get output of socket "%s". The connected socket is not inherited from TP3DShaderNodeSocket!', [ Name ]);}
-
-      Socket:= TP3DShaderNodeSocket( Nd.Outputs.GetByName( SocketType ));
-      if ( not Assigned( Socket )) then
-        raise Exception.CreateFmt( 'Could not find output "%s"!', [ SocketType ]);
-      Result:= Socket.GetOutputAsType( Buffer, ACloneSocket.Connected );}
-      //P3DLog.LogInfo( Self, 'getting connected output of: ' + ACloneSocket.Node.CloneOf.Name + '.' + ACloneSocket.CloneOf.Name + ' = "' + Result + '"' );
     end;
   end;
-      {if ( ACloneSocket.Connected.CloneOf is TP3DShaderNodeSocket ) then
-        Result:= TP3DShaderNodeSocket( ACloneSocket.Connected.CloneOf ).GetOutput( Buffer, ACloneSocket.Connected )
-      else
-        raise Exception.CreateFmt( 'Cannot get output of socket "%s". The connected socket is not inherited from TP3DShaderNodeSocket!', [ Name ]);}
-  //WriteLn( 'Getting socket output: "', Result, '"' );
 end;
-
+{
 function TP3DShaderNodeSocket.GetOutputAll(Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone; Filter: String ): String;
 {  procedure FindAllSockets( Node: TP3DNodeClone );
   var
@@ -710,26 +657,19 @@ begin
       Result += TP3DShaderNodeSocket( Sock.CloneOf ).GetOutput( Buffer, Sock );
     end;}
 end;
-
+}
 function TP3DShaderNodeSocket.GetOutputAsType(Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone): String;
 var
   i: Integer;
 begin
   Result:= '';
   if ( Direction = nsdOutput ) then
-    begin
-      //P3DLog.LogInfo( Self, 'injecting ' + ACloneSocket.Node.CloneOf.Name + '.' + ACloneSocket.CloneOf.Name + ' into ' + Node.Name + '.' + Name );
-      for i:= 0 to Fragments.Count - 1 do
-        {if ( Fragments[ i ] is TP3DShaderNodeFragmentInput ) then
-          with ( TP3DShaderNodeFragmentInput( Fragments[ i ])) do
-            Input:=;}
-        Result+= Fragments[ i ].GetStringOutput( ACloneSocket, Buffer );
-      //P3DLog.LogInfo( Self, 'injected ' + ACloneSocket.Node.CloneOf.Name + '.' + ACloneSocket.CloneOf.Name + ' into ' + Node.Name + '.' + Name + ' = "' + Result + '"' );
-    end;
+    for i:= 0 to Fragments.Count - 1 do
+      Result+= Fragments[ i ].GetStringOutput( ACloneSocket, Buffer );
 end;
 
-procedure TP3DShaderNodeSocket.GetAllInputs(Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone;
-  Filter: String; Inputs: TP3DNodeSocketClonePointerList; Types: TP3DNodeSocketClonePointerList);
+procedure TP3DShaderNodeSocket.GetAllInputs(Buffer: TP3DShaderBuffer; ACloneSocket: TP3DNodeSocketClone; AFilter: String;
+  AInputs: TP3DNodeSocketClonePointerList; ATypes: TP3DNodeSocketClonePointerList; ALibs: TP3DNodeSocketPointerList);
 
   procedure CheckAddType( Socket: TP3DNodeSocketClone );
   var
@@ -738,37 +678,17 @@ procedure TP3DShaderNodeSocket.GetAllInputs(Buffer: TP3DShaderBuffer; ACloneSock
   begin
     T:= P3DData.P3DShaderNodeLib.FindType( Socket.CloneOf.SocketType );
     if ( Assigned( T )) then begin
-      S:= TP3DShaderNodeSocket( T.Outputs.GetByName( filter ));
+      S:= TP3DShaderNodeSocket( T.Outputs.GetByName( AFilter ));
       if ( Assigned( S )) then
-        Types.Add( Socket );
-    end;
-  end;
-
-  procedure FindAllSockets( Node: TP3DNodeClone );
-  var
-    Sock, S: TP3DNodeSocketClone;
-  begin
-    if ( Filter > '' ) then begin
-      S:= Node.FindOutput( Filter );
-      if ( Assigned( S )) then begin
-        Inputs.Add( S );
-      end;
-    end else
-      for Sock in Node.Outputs do
-        Inputs.Add( Sock );
-    for Sock in Node.Inputs do begin
-      if ( not Assigned( Sock.Connected )) then
-        CheckAddType( Sock )
-      else if ( Assigned( Sock.Connected ) and ( Sock.Connected.CloneOf.Direction = nsdOutput )) then
-        FindAllSockets( Sock.Connected.Node );
+        ATypes.Add( Socket );
     end;
   end;
 
 begin
   if ( Assigned( ACloneSocket.Connected ) and ( ACloneSocket.Connected.CloneOf.Direction = nsdOutput )) then
-    FindAllSockets( ACloneSocket.Connected.Node )
+    ACloneSocket.Connected.Node.FindAllSockets( AFilter, AInputs, ATypes, ALibs )
   else if ( not Assigned( ACloneSocket.Connected ) and ( ACloneSocket.CloneOf.Direction = nsdInput )) then
-    CheckAddType( ACloneSocket );
+    CheckAddType( ACloneSocket );  //Maybe check for Libs?
 end;
 
 { TP3DShaderNodeSocketShader }
@@ -824,9 +744,6 @@ begin
     Result:= TP3DShaderNodeSocket( o ).GetOutputAsType( Buffer, ACloneSocket )
   else
     raise Exception.CreateFmt( 'Cannot find type conversion "%s" for node %s with type %s!', [ ATypeCast, ACloneSocket.Node.CloneOf.Name + '.' + ACloneSocket.CloneOf.Name, ACloneSocket.CloneOf.SocketType ]);
-  //self.inputs[ "inject" ] = socket
-  //self.inputs[ "inject" ].type = text
-  //return getattr( self, typecast )( defs )
 end;
 
 
@@ -953,6 +870,7 @@ begin
     Result:= ValueProp.AsString;
 end;
 
+{
 function TP3DShaderNodeSocketClone.GetOutputAll(Buffer: TP3DShaderBuffer; Filter: String ): String;
 begin
   if ( CloneOf is TP3DShaderNodeSocket ) then
@@ -960,14 +878,16 @@ begin
   else
     Result:= ValueProp.AsString;
 end;
+}
 
-procedure TP3DShaderNodeSocketClone.GetAllInputs(Buffer: TP3DShaderBuffer; Filter: String; Inputs,
-  Types: TP3DNodeSocketClonePointerList);
+procedure TP3DShaderNodeSocketClone.GetAllInputs(Buffer: TP3DShaderBuffer; Filter: String; Inputs, Types: TP3DNodeSocketClonePointerList;
+  ALibs: TP3DNodeSocketPointerList);
 begin
-  if ( CloneOf is TP3DShaderNodeSocket ) then
-    TP3DShaderNodeSocket( CloneOf ).GetAllInputs( Buffer, Self, Filter, Inputs, Types );
+  if ( CloneOf is TP3DShaderNodeSocket ) then begin
+    TP3DShaderNodeSocket( CloneOf ).GetAllInputs( Buffer, Self, Filter, Inputs, Types, ALibs );
+    Node.FindLibsOutput( Filter, ALibs );
+  end;
 end;
-
 
 
 {.$INCLUDE p3dshadernodes_core.inc}

@@ -1,16 +1,19 @@
 ---
-node: armature
-input: {name:"numJoints", type:"int"}
-input: {name:"Position", type:"vec3"}
+node armature
+input int numJoints
+input vec3 Position
 ---
-```{name:"Declaration", type:"text", restrict:"vshader,declaration"}
+
+output text __Declaration
+ifdef "vshader,declaration"
+'
 uniform sampler2D jointTex;
 uniform int jointTexWidth;
 uniform int jointTexHeight;
 uniform float time;
 
 
-void NormalizeDualQuat( inout vec4 real, inout vec4 dual )
+/*void NormalizeDualQuat( inout vec4 real, inout vec4 dual )
 {
   real = normalize( real );
   dual -= real * dot( real, dual );
@@ -23,12 +26,34 @@ void getJointTransform( const in float i, out vec4 quat, out vec4 trans ) {
   quat = normalize( texture2D( jointTex, vec2( dx * ( i * 2.0 + 1.5 ), time )));
   NormalizeDualQuat( quat, trans );
   
+}*/
+
+
+mat4 getJointTransform( const in float i ) {
+
+  float j = i * 4.0;
+  float x = mod( j, float( jointTexWidth ) );
+  float y = floor( j / float( jointTexHeight ) );
+
+  float dx = 1.0 / float( jointTexWidth );
+  float dy = 1.0 / float( jointTexHeight );
+
+  y = dy * ( y + 0.5 );
+
+  vec4 v1 = texture2D( jointTex, vec2( dx * ( x + 0.5 ), y ));
+  vec4 v2 = texture2D( jointTex, vec2( dx * ( x + 1.5 ), y ));
+  vec4 v3 = texture2D( jointTex, vec2( dx * ( x + 2.5 ), y ));
+  vec4 v4 = texture2D( jointTex, vec2( dx * ( x + 3.5 ), y ));
+
+  mat4 bone = mat4( v1, v2, v3, v4 );
+
+  return bone;
 }
 
 IN vec3 jointWeight;
 IN vec4 fjointID;
 
-vec3 transformNormal(in vec3 normal, in vec4 real )
+/*vec3 transformNormal(in vec3 normal, in vec4 real )
 {
   return normal + 2.0*cross(real.xyz, cross(real.xyz, normal) + real.w*normal);
 }
@@ -57,66 +82,15 @@ void getTransform( out vec4 quat, out vec4 trans )
        + trans3 * jointWeight3;
   //NormalizeDualQuat( quat, trans );
   
-}
-```
-
-```{name:"TransformObject", type:"text", restrict:"vshader,initialization"}
-  vec4 quat;
-  vec4 trans;
-  getTransform( quat, trans );
-  vNormal.xyz = transformNormal( vNormal.xyz, quat );
-  #ifdef tangent
-  vTangent.xyz = transformNormal( vTangent.xyz, quat );
-  vCotangent.xyz = transformNormal( vCotangent.xyz, quat );
-  #endif
-  vObjectPosition.xyz = transformPosition( vObjectPosition.xyz, quat, trans );
-```
-
-```{name:"Position", type:"vec3", restrict:"vshader,assign"}
-$Position$
-```
----
-node: 00025_pass_armature_matrix
-input: {name:"numJoints", type:"int"}
----
-
-```{name:"CODE", type:"text", restrict:"vshader,declaration"}
-uniform sampler2D jointTex;
-uniform int jointTexWidth;
-uniform int jointTexHeight;
-uniform float time;
-uniform mat4 to_arm;
-
-mat4 getJointTransform( const in float i ) {
-
-  float j = i * 4.0;
-  float x = mod( j, float( jointTexWidth ) );
-  float y = 0.5;//floor( j / float( jointTexHeight ) );
-
-  float dx = 1.0 / float( jointTexWidth );
-  float dy = 1.0 / float( jointTexHeight );
-
-  y = time;//dy * ( y + 0.5 );
-
-  vec4 v1 = texture2D( jointTex, vec2( dx * ( x + 0.5 ), y ));
-  vec4 v2 = texture2D( jointTex, vec2( dx * ( x + 1.5 ), y ));
-  vec4 v3 = texture2D( jointTex, vec2( dx * ( x + 2.5 ), y ));
-  vec4 v4 = texture2D( jointTex, vec2( dx * ( x + 3.5 ), y ));
-
-  mat4 bone = mat4( v1, v2, v3, v4 );
-
-  return bone;
-
-}
-
-IN vec4 jointWeight;
-IN vec4 fjointID;
+}*/
 
 mat4 boneMatX;
 mat4 boneMatY;
 mat4 boneMatZ;
 mat4 boneMatW;
 mat4 skinMatrix;
+
+float jointWeight3 = 1-( jointWeight[ 0 ] + jointWeight[ 1 ] + jointWeight[ 2 ]);
 
 void getTransform()
 {
@@ -125,32 +99,47 @@ void getTransform()
   boneMatZ = getJointTransform( fjointID[ 2 ]);
   boneMatW = getJointTransform( fjointID[ 3 ]);
   
-  //skinMatrix = mat4( 1 );
+  skinMatrix = mat4( 1 );
   skinMatrix = mat4( 0.0 );
   skinMatrix += jointWeight[ 0 ] * boneMatX;
   skinMatrix += jointWeight[ 1 ] * boneMatY;
   skinMatrix += jointWeight[ 2 ] * boneMatZ; 
-  skinMatrix += jointWeight[ 3 ] * boneMatW;
+  skinMatrix += jointWeight3 * boneMatW;
 }
 
 vec3 transformPosition( in vec3 v ) {
   vec4 skinned = vec4( 0.0 );
+  
   skinned += boneMatX * vec4( v, 1 ) * jointWeight[ 0 ];
   skinned += boneMatY * vec4( v, 1 ) * jointWeight[ 1 ]; 
   skinned += boneMatZ * vec4( v, 1 ) * jointWeight[ 2 ];
-  skinned += boneMatW * vec4( v, 1 ) * jointWeight[ 3 ];
+  skinned += boneMatW * vec4( v, 1 ) * jointWeight3;
   return skinned.xyz;
 }
 
 vec3 transformNormal( in vec3 n ) {
   return ( skinMatrix * vec4( n, 0.0 )).xyz;
 }
-```
+'
+endif
 
-```{restrict:"vshader,main"}
-  getTransform();
-  vNormal.xyz = transformNormal( /*mat3( to_arm ) * */vNormal.xyz );
-  vTangent.xyz = transformNormal( /*mat3( to_arm ) * */vTangent.xyz );
-  vCotangent.xyz = transformNormal( /*mat3( to_arm ) * */vCotangent.xyz );
-  vPosition.xyz = transformPosition(/*( to_arm **/ ( vPosition ).xyz );
-```
+output text __TransformObject
+ifdef "vshader,initialization"
+'
+  vec4 quat;
+  vec4 trans;
+  getTransform();//( quat, trans );
+  vNormal.xyz = transformNormal( vNormal.xyz );//, quat );
+  #ifdef tangent
+  vTangent.xyz = transformNormal( vTangent.xyz );//, quat );
+  vCotangent.xyz = transformNormal( vCotangent.xyz );//, quat );
+  #endif
+  vObjectPosition.xyz = transformPosition( vObjectPosition.xyz );//, quat, trans );
+
+'
+endif
+
+output vec3 Position
+ifdef "vshader,assign"
+select Position
+endif

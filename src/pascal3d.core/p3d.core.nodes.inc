@@ -6,7 +6,7 @@ type
 
   {$MACRO ON}
 
-  TP3DNodeSocketDirection = ( nsdInput, nsdOutput );
+  TP3DNodeSocketDirection = ( nsdInput, nsdOutput, nsdLib );
   TP3DNode = class;
   TP3DNodeSocketClone = class;
   TP3DNodeMaster = class;
@@ -40,7 +40,7 @@ type
       property Node: TP3DNode read FNode write SetNode;
 
     published
-      property Direction: TP3DNodeSocketDirection read FDirection; // Either input or output
+      property Direction: TP3DNodeSocketDirection read FDirection; // Either input, output or lib
       property Visible: Boolean read FVisible write FVisible; // Is used by the node editor only.
       property Default: String read FDefault write FDefault; // Is used by the node editor only.
       property SocketType: String read FSocketType;
@@ -90,6 +90,25 @@ type
       property IsDefault: Boolean read GetIsDefault;
   end;
 
+  { TP3DShaderNodeSocketCloneLib }
+
+  TP3DNodeSocketCloneLib = class ( TP3DNodeSocketClone )
+    private
+      FLibName: String;
+      FLibNode: TP3DStreamablePointer;
+
+      function GetLibNode: TP3DNode;
+
+    public
+      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
+
+      property LibNode: TP3DNode read GetLibNode;
+
+    published
+      property LibName: String read FLibName write FLibName;
+  end;
+
+
   TP3DNodeSocketContainerList = specialize gP3DNamedStreamableContainerList < TP3DNodeSocket >;
   TP3DNodeSocketPointerList = specialize gP3DStreamablePointerList < TP3DNodeSocket >;
 
@@ -103,6 +122,7 @@ type
 
       procedure DisconnectAll;
   end;
+
   TP3DNodeSocketClonePointerList = specialize gP3DStreamablePointerList < TP3DNodeSocketClone >;
 
   TP3DNodeCloneClass = class of TP3DNodeClone;
@@ -111,9 +131,7 @@ type
     protected
       FInputs: TP3DNodeSocketContainerList;
       FOutputs: TP3DNodeSocketContainerList;
-
-      property Inputs: TP3DNodeSocketContainerList read FInputs;
-      property Outputs: TP3DNodeSocketContainerList read FOutputs;
+      FLibs: TP3DNodeSocketContainerList;
 
       procedure SocketsChange( ASender: TObject; AItem: TP3DStreamable; Action: TP3DListOnChangeAction );
 
@@ -121,6 +139,10 @@ type
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
 
       function Clone( AOwner: IP3DStreamableContainer; const AClass: TP3DNodeCloneClass = nil ): TP3DNodeClone; virtual;
+
+      property Inputs: TP3DNodeSocketContainerList read FInputs;
+      property Outputs: TP3DNodeSocketContainerList read FOutputs;
+      property Libs: TP3DNodeSocketContainerList read FLibs;
   end;
 
   { TP3DNodeClone }
@@ -130,6 +152,7 @@ type
       FNodeMaster: TP3DNodeMaster;
       FInputs: TP3DNodeSocketCloneContainerList;
       FOutputs: TP3DNodeSocketCloneContainerList;
+      FLibs: TP3DNodeSocketCloneContainerList;
 
       FUserData: Pointer;
       FX: Single;
@@ -152,11 +175,18 @@ type
       procedure ConnectToNodeSocket(ANode: TP3DNodeClone; SrcSocket, DestSocket: String);
       function FindInput( AName: String ): TP3DNodeSocketClone;
       function FindInputIndex( AName: String ): Integer;
+      function FindInputFirst( ANames: array of String ): TP3DNodeSocketClone;
       function FindOutput( AName: String ): TP3DNodeSocketClone;
+      function FindLib( AName: String ): TP3DNodeSocket;
       function FindOutputIndex( AName: String ): Integer;
+      function FindOutputFirst( ANames: array of String ): TP3DNodeSocketClone;
+      procedure FindAllSockets( AFilter: String; AInputs: TP3DNodeSocketClonePointerList; ATypes: TP3DNodeSocketClonePointerList; ALibs: TP3DNodeSocketPointerList );
+      procedure FindLibsOutput( AFilter: String; ALibs: TP3DNodeSocketPointerList );
+      procedure AddLib( ALibName: String );
 
       property Inputs: TP3DNodeSocketCloneContainerList read FInputs;
       property Outputs: TP3DNodeSocketCloneContainerList read FOutputs;
+      property Libs: TP3DNodeSocketCloneContainerList read FLibs;
   //- Sockets for Inputs and Outputs
       property OnChange: TNotifyEvent read FOnChange write FOnChange;
       property UserData: Pointer read FUserData write FUserData;
@@ -207,10 +237,12 @@ constructor TP3DNode.Create(const AOwner: IP3DStreamableContainer);
 begin
   FInputs:= TP3DNodeSocketContainerList.Create( 'Inputs', smText );
   FOutputs:= TP3DNodeSocketContainerList.Create( 'Outputs', smText );
+  FLibs:= TP3DNodeSocketContainerList.Create( 'Libs', smText );
   inherited Create( AOwner );
   FInputs.OnChange:= @SocketsChange;
   FOutputs.OnChange:= @SocketsChange;
-  Properties.Add([ FInputs, FOutputs ]);
+  FLibs.OnChange:= @SocketsChange;
+  Properties.Add([ FInputs, FOutputs, FLibs ]);
 end;
 
 function TP3DNode.Clone(AOwner: IP3DStreamableContainer; const AClass: TP3DNodeCloneClass): TP3DNodeClone;
@@ -228,12 +260,14 @@ constructor TP3DNodeClone.Create(const AOwner: IP3DStreamableContainer);
 begin
   FInputs:= TP3DNodeSocketCloneContainerList.Create( 'Inputs', smText );
   FOutputs:= TP3DNodeSocketCloneContainerList.Create( 'Outputs' );
+  FLibs:= TP3DNodeSocketCloneContainerList.Create( 'Libs', smText );
   FCloneOf:= TP3DStreamablePointer.Create( 'CloneOf', TP3DNode, smText );
   FCloneOf.OnChange:= @ChangeCloneOf;
   inherited Create( AOwner );
-  Properties.Add([ FInputs, FOutputs ]);
+  Properties.Add([ FInputs, FOutputs, FLibs ]);
   FInputs.OnChange:= @SocketsChange;
   FOutputs.OnChange:= @SocketsChange;
+  FLibs.OnChange:= @SocketsChange;
   Properties.Add( FCloneOf );
   Properties.Add([ TP3DPropAccessRTTI.Create( Self, 'X', smText ), TP3DPropAccessRTTI.Create( Self, 'Y', smText )]);
   if ( Assigned( CloneOf )) then
@@ -310,6 +344,21 @@ begin
       end;
 end;
 
+function TP3DNodeClone.FindInputFirst(ANames: array of String): TP3DNodeSocketClone;
+var
+  n: Integer;
+begin
+  n:= 0;
+  Result:= nil;
+  if ( Length( ANames ) > 0 ) then
+    repeat
+      Result:= FindInput( ANames[ n ]);
+      Inc( n );
+      if ( n = Length( ANames )) then
+        break;
+    until ( Assigned( Result ));
+end;
+
 function TP3DNodeClone.FindOutput(AName: String): TP3DNodeSocketClone;
 var
   i: Integer;
@@ -323,6 +372,40 @@ begin
       end;
 end;
 
+function TP3DNodeClone.FindLib(AName: String): TP3DNodeSocket;
+var
+  i: Integer;
+begin
+  Result:= nil;
+  for i:= 0 to CloneOf.Libs.Count - 1 do
+    if ( CloneOf.Libs[ i ].Name = AName ) then
+      begin
+        Result:= CloneOf.Libs[ i ];
+        break;
+      end;
+end;
+
+procedure TP3DNodeClone.FindLibsOutput(AFilter: String; ALibs: TP3DNodeSocketPointerList);
+var
+  Lib: TP3DNodeSocketClone;
+    o: TP3DNodeSocket;
+begin
+  for Lib in Libs do begin
+    //WriteLn( TP3DShaderNodeSocketLib( Lib ).LibNode.Name );
+    o:= TP3DNodeSocketCloneLib( Lib ).LibNode.Outputs.GetByName( AFilter );
+    if ( Assigned( o )) then
+      ALibs.Add( o );
+  end;
+end;
+
+procedure TP3DNodeClone.AddLib(ALibName: String);
+begin
+  if ( not Assigned( FindLib( ALibName ))) then
+    with ( TP3DNodeSocketCloneLib.Create( Libs )) do
+      LibName:= ALibName;
+end;
+
+
 function TP3DNodeClone.FindOutputIndex(AName: String): Integer;
 var
   i: Integer;
@@ -334,6 +417,61 @@ begin
         Result:= i;
         break;
       end;
+end;
+
+function TP3DNodeClone.FindOutputFirst(ANames: array of String): TP3DNodeSocketClone;
+var
+  n: Integer;
+begin
+  n:= 0;
+  Result:= nil;
+  if ( Length( ANames ) > 0 ) then
+    repeat
+      Result:= FindOutput( ANames[ n ]);
+      Inc( n );
+      if ( n = Length( ANames )) then
+        break;
+    until ( Assigned( Result ));
+end;
+
+procedure TP3DNodeClone.FindAllSockets(AFilter: String; AInputs: TP3DNodeSocketClonePointerList; ATypes: TP3DNodeSocketClonePointerList;
+  ALibs: TP3DNodeSocketPointerList);
+
+  procedure CheckAddType( Socket: TP3DNodeSocketClone );
+  var
+    T: TP3DShaderNodeType;
+    S: TP3DShaderNodeSocket;
+  begin
+    T:= P3DData.P3DShaderNodeLib.FindType( Socket.CloneOf.SocketType );
+
+    WriteLn( Socket.CloneOf.SocketType );
+    if ( Assigned( T )) then begin
+      S:= TP3DShaderNodeSocket( T.Outputs.GetByName( AFilter ));
+      if ( Assigned( S )) then
+        ATypes.Add( Socket )
+    end;
+  end;
+
+var
+  Sock, S: TP3DNodeSocketClone;
+  Lib: TP3DNodeSocket;
+  S2: TP3DNodeSocket;
+begin
+  if ( AFilter > '' ) then begin
+    S:= FindOutput( AFilter );
+    if ( Assigned( S )) then
+      AInputs.Add( S );
+
+    FindLibsOutput( AFilter, ALibs );
+  end else
+    for Sock in Outputs do
+      AInputs.Add( Sock );
+  for Sock in Inputs do begin
+    if ( not Assigned( Sock.Connected )) then
+      CheckAddType( Sock )
+    else if ( Assigned( Sock.Connected ) and ( Sock.Connected.CloneOf.Direction = nsdOutput )) then
+      Sock.Connected.Node.FindAllSockets( AFilter, AInputs, ATypes, ALibs );
+  end;
 end;
 
 function TP3DNodeClone.GetCloneOf: TP3DNode;
@@ -364,6 +502,8 @@ begin
     begin
       for Socket in TP3DNode( ANewValue ).Inputs do
         Socket.Clone( Inputs ).FNode.AsValue:= Self;
+      for Socket in TP3DNode( ANewValue ).Libs do
+        Socket.Clone( Libs ).FNode.AsValue:= Self;
 
       Marker:= Outputs.Count;
       for Socket in TP3DNode( ANewValue ).Outputs do begin
@@ -451,12 +591,13 @@ begin
   inherited Create( AOwner );
 
   Cnt:= AOwner.GetContainer;
-  if ( Cnt.Name = 'Inputs' ) then
-    FDirection:= nsdInput
-  else if ( Cnt.Name = 'Outputs' ) then
-    FDirection:= nsdOutput
+  case Cnt.Name of
+    'Inputs': FDirection:= nsdInput;
+    'Libs': FDirection:= nsdLib;
+    'Outputs': FDirection:= nsdOutput;
   else
     raise Exception.Create( 'Cannot detect node direction!' );
+  end;
 
   Nd:= Cnt.Context.GetInstance;
   if ( Nd is TP3DNode ) then
@@ -469,10 +610,16 @@ end;
 
 function TP3DNodeSocket.Clone(AOwner: IP3DStreamableContainer): TP3DNodeSocketClone;
 begin
-  Result:= GetSocketClass.Create( AOwner );
-  Result.FUpdating:= True;
-  Result.FCloneOf.AsValue:= Self;
-  Result.FUpdating:= False;
+  if ( Direction = nsdLib ) then begin
+    Result:= TP3DNodeSocketCloneLib.Create( AOwner );
+    TP3DNodeSocketCloneLib( Result ).LibName:= Name;
+  end
+  else begin
+    Result:= GetSocketClass.Create( AOwner );
+    Result.FUpdating:= True;
+    Result.FCloneOf.AsValue:= Self;
+    Result.FUpdating:= False;
+  end;
 end;
 
 { TP3DNodeSocketClone }
@@ -499,6 +646,7 @@ begin
     Result:= CloneOf.Name
   else
     Result:= 'Untitled';
+  FName:= Result;
 end;
 
 procedure TP3DNodeSocketClone.SetName(AValue: String);
@@ -521,8 +669,7 @@ end;
 constructor TP3DNodeSocketClone.CreateFromJSON(AJSON: TJSONData; const AOwner: IP3DStreamableContainer);
 var
   path: TJSONUnicodeStringType;
-  prop, O: TP3DPropertyAccess;
-  obj: TObject;
+  prop: TP3DPropertyAccess;
 begin
   Create( AOwner );
   if ( AJSON is TJSONObject ) then begin
@@ -572,7 +719,7 @@ begin
   if ( Assigned( FValueProp )) then
     FValueProp.OnChange:= nil;
 
-  FValueProp:=AValue;
+  FValueProp:= AValue;
 
   if ( Assigned( FValueProp ) and ( CloneOf.Node.Name[1..8] <> 'uniform_' )) then
     FValueProp.OnChange:= @ChangePropValue;
@@ -628,6 +775,24 @@ begin
   Result:= TP3DNodeSocket( FCloneOf.AsValue );
 end;
 
+
+{ TP3DNodeSocketCloneLib }
+
+function TP3DNodeSocketCloneLib.GetLibNode: TP3DNode;
+begin
+  Result:= TP3DNode( FLibNode.AsValue );
+  if ( not Assigned( Result )) then begin
+    Result:= P3DData.P3DShaderNodeLib.FindNode( LibName );
+    FLibNode.AsValue:= Result;
+  end;
+end;
+
+constructor TP3DNodeSocketCloneLib.Create(const AOwner: IP3DStreamableContainer);
+begin
+  inherited Create(AOwner);
+  FLibNode:= TP3DStreamablePointer.Create( 'LibNode', TP3DNode, smText );
+  Properties.Add([ FLibNode, TP3DPropAccessRTTI.Create( Self, 'LibName', smText )]);
+end;
 
 
 { TP3DNodeList }

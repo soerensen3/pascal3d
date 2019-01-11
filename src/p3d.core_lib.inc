@@ -5,6 +5,10 @@
 {$INCLUDE p3d.core.shaders.inc}
 {$INCLUDE p3d.core.colors.inc}
 
+{$INCLUDE p3d.core.nodes.inc}
+{$INCLUDE p3d.core.nodemaster.inc}
+{$INCLUDE p3d.core.shadernodes.inc}
+
 {$INCLUDE p3d.core.plot.inc}
 {$INCLUDE p3d.core.plot_base.inc}
 {$INCLUDE p3d.core.plot_primitives.inc}
@@ -16,12 +20,9 @@
 {$INCLUDE p3d.core.datablock.inc}
 {$INCLUDE p3d.core.texture.inc}
 {$INCLUDE p3d.core.rendertarget.inc}
-{$INCLUDE p3d.core.nodes.inc}
-{$INCLUDE p3d.core.nodemaster.inc}
 {$INCLUDE p3d.core.collision.inc}
 {$INCLUDE p3d.core.rect.inc}
 {$INCLUDE p3d.core.viewport.inc}
-{$INCLUDE p3d.core.shadernodes.inc}
 //{$IFDEF INTERFACE}type TP3DLibrary = class;{$ENDIF}
 {$INCLUDE p3d.core.animatable.inc}
 {$INCLUDE p3d.core.renderable.inc}
@@ -46,5 +47,6 @@
 {$INCLUDE p3d.core.plot_constructors.inc}
 
 {$INCLUDE p3d.base.plot.inc}
+{$INCLUDE p3d.base.plot_constructors.inc}
 {.$INCLUDE p3d.core.shadow.inc}
 

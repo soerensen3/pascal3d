@@ -1,110 +1,135 @@
 ---
-node: uniform_vec4
-input: { name:"Value", type:"vec4" }
-input: { name:"UnName", type:"text" }
+node uniform_vec4
+input vec4 Value
+input text UnName
 ---
 
-```{ name:"Declaration", type:"text", visible:false }
-uniform vec4 $UnName$;
+output text __Declaration
+'
+uniform vec4 'select UnName';
+'
 
-```
-
-```{ name:"Vector", type:"vec4", restrict:"assign" }
-$UnName$
-```
-
----
-node: uniform_vec3
-input: { name:"Value", type:"vec3" }
-input: { name:"UnName", type:"text" }
----
-
-```{ name:"Declaration", type:"text", visible:false }
-uniform vec3 $UnName$;
-
-```
-
-```{ name:"Vector", type:"vec3", restrict:"assign" }
-$UnName$
-```
-
+output vec4 Vector
+ifdef "assign"
+select UnName
+endif
 
 ---
-node: uniform_vec2
-input: { name:"Value", type:"vec2" }
-input: { name:"UnName", type:"text" }
+node uniform_vec3
+input vec3 Value
+input text UnName
 ---
+output text __Declaration
+'
+uniform vec3 'select UnName';
+'
 
-```{ name:"Declaration", type:"text", visible:false }
-uniform vec2 $UnName$;
-
-```
-
-```{ name:"Vector", type:"vec2", restrict:"assign" }
-$UnName$
-```
-
----
-node: uniform_color4
-input: { name:"Value", type:"color4"}
-input: { name:"UnName", type:"text" }
----
-
-```{ name:"Declaration", type:"vec4", visible:false }
-uniform vec4 $UnName$;
-
-```
-
-```{ name:"Color", type: "color4", restrict:"assign" }
-$UnName$
-```
+output vec3 Vector
+ifdef "assign"
+select UnName
+endif
 
 
 ---
-node: uniform_float
-input: { name:"Value", type:"float"}
-input: { name:"UnName", type:"text" }
+node uniform_vec2
+input vec2 Value
+input text UnName
 ---
 
-```{ name:"Declaration", type:"text", visible:false }
-uniform float $UnName$;
+output text __Declaration
+'
+uniform vec2 'select UnName';
 
-```
+'
 
-```{ name:"Value", type:"float", restrict:"assign" }
-$UnName$
-```
+output vec2 Vector
+ifdef "assign"
+select UnName
+endif
+
+---
+node uniform_color4
+input color4 Value
+input text UnName
+---
+
+output text __Declaration
+'
+uniform color4 'select UnName';
+
+'
+
+output color4 Color
+ifdef "assign"
+select UnName
+endif
 
 
 ---
-node: uniform_int
-input: { name:"Value", type:"int"}
-input: { name:"UnName", type:"text" }
+node uniform_float
+input float Value
+input text UnName
 ---
 
-```{ name:"Declaration", type:"text", visible:false }
-uniform int $UnName$;
+output text __Declaration
+'
+uniform float 'select UnName';
 
-```
+'
 
-```{ name:"Value", type:"int", restrict:"assign" }
-$UnName$
-```
+output float Value
+ifdef "assign"
+select UnName
+endif
 
 ---
-type: sampler2D
+node uniform_int
+input int Value
+input text UnName
 ---
 
-```{ name:"Declaration", type:"text", visible:false }
-uniform sampler2D tex$inject$;
+output text __Declaration
+'
+uniform int 'select UnName';
 
-```
+'
 
-```{ name:"constructor", type:"text", restrict:"assign", visible:false }
-tex$inject$
-```
+output int Value
+ifdef "assign"
+select UnName
+endif
 
-```{ name:"sampler2D", type:"text", restrict:"assign" }
-$inject$
-```
+---
+node uniform_sampler2D
+input text UnName
+---
+
+output text __Declaration
+'
+uniform sampler2D 'select UnName';
+
+'
+
+output sampler2D Value
+ifdef "assign"
+select UnName
+endif
+
+---
+type sampler2D
+---
+
+output sampler2D sampler2D
+select inject
+
+output text __Declaration
+'
+uniform sampler2D tex'select inject';
+
+'
+
+output sampler2D constructor
+ifdef "assign"
+'tex'select inject
+endif
 

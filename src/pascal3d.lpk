@@ -33,7 +33,7 @@
         </OtherDefines>
       </Other>
     </CompilerOptions>
-    <Files Count="77">
+    <Files Count="78">
       <Item1>
         <Filename Value="p3d.core.pas"/>
         <UnitName Value="p3d.core"/>
@@ -55,294 +55,298 @@
         <Type Value="Include"/>
       </Item5>
       <Item6>
-        <Filename Value="pascal3d.core\p3d.core.action.inc"/>
+        <Filename Value="pascal3d.core\p3d.base.plot.inc"/>
         <Type Value="Include"/>
       </Item6>
       <Item7>
-        <Filename Value="pascal3d.core\p3d.core.animatable.inc"/>
+        <Filename Value="pascal3d.core\p3d.base.plot_constructors.inc"/>
         <Type Value="Include"/>
       </Item7>
       <Item8>
-        <Filename Value="pascal3d.core\p3d.core.armature.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.action.inc"/>
         <Type Value="Include"/>
       </Item8>
       <Item9>
-        <Filename Value="pascal3d.core\p3d.core.arrays.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.animatable.inc"/>
         <Type Value="Include"/>
       </Item9>
       <Item10>
-        <Filename Value="pascal3d.core\p3d.core.buffers.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.armature.inc"/>
         <Type Value="Include"/>
       </Item10>
       <Item11>
-        <Filename Value="pascal3d.core\p3d.core.camera.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.arrays.inc"/>
         <Type Value="Include"/>
       </Item11>
       <Item12>
-        <Filename Value="pascal3d.core\p3d.core.canvas.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.buffers.inc"/>
         <Type Value="Include"/>
       </Item12>
       <Item13>
-        <Filename Value="pascal3d.core\p3d.core.canvas_2d.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.camera.inc"/>
         <Type Value="Include"/>
       </Item13>
       <Item14>
-        <Filename Value="pascal3d.core\p3d.core.canvas_3d.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.canvas.inc"/>
         <Type Value="Include"/>
       </Item14>
       <Item15>
-        <Filename Value="pascal3d.core\p3d.core.collidable.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.canvas_2d.inc"/>
         <Type Value="Include"/>
       </Item15>
       <Item16>
-        <Filename Value="pascal3d.core\p3d.core.collision.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.canvas_3d.inc"/>
         <Type Value="Include"/>
       </Item16>
       <Item17>
-        <Filename Value="pascal3d.core\p3d.core.colors.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.collidable.inc"/>
         <Type Value="Include"/>
       </Item17>
       <Item18>
-        <Filename Value="pascal3d.core\p3d.core.datablock.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.collision.inc"/>
         <Type Value="Include"/>
       </Item18>
       <Item19>
-        <Filename Value="pascal3d.core\p3d.core.debug.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.colors.inc"/>
         <Type Value="Include"/>
       </Item19>
       <Item20>
-        <Filename Value="pascal3d.core\p3d.core.grids.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.datablock.inc"/>
         <Type Value="Include"/>
       </Item20>
       <Item21>
-        <Filename Value="pascal3d.core\p3d.core.library.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.debug.inc"/>
         <Type Value="Include"/>
       </Item21>
       <Item22>
-        <Filename Value="pascal3d.core\p3d.core.light.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.effect.inc"/>
         <Type Value="Include"/>
       </Item22>
       <Item23>
-        <Filename Value="pascal3d.core\p3d.core.material.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.grids.inc"/>
         <Type Value="Include"/>
       </Item23>
       <Item24>
-        <Filename Value="pascal3d.core\p3d.core.material.deprecated.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.library.inc"/>
         <Type Value="Include"/>
       </Item24>
       <Item25>
-        <Filename Value="pascal3d.core\p3d.core.mesh.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.light.inc"/>
         <Type Value="Include"/>
       </Item25>
       <Item26>
-        <Filename Value="pascal3d.core\p3d.core.nodemaster.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.material.inc"/>
         <Type Value="Include"/>
       </Item26>
       <Item27>
-        <Filename Value="pascal3d.core\p3d.core.nodes.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.material.deprecated.inc"/>
         <Type Value="Include"/>
       </Item27>
       <Item28>
-        <Filename Value="pascal3d.core\p3d.core.object.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.mesh.inc"/>
         <Type Value="Include"/>
       </Item28>
       <Item29>
-        <Filename Value="pascal3d.core\p3d.core.rect.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.nodemaster.inc"/>
         <Type Value="Include"/>
       </Item29>
       <Item30>
-        <Filename Value="pascal3d.core\p3d.core.renderable.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.nodes.inc"/>
         <Type Value="Include"/>
       </Item30>
       <Item31>
-        <Filename Value="pascal3d.core\p3d.core.renderlist.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.object.inc"/>
         <Type Value="Include"/>
       </Item31>
       <Item32>
-        <Filename Value="pascal3d.core\p3d.core.rendertarget.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot.inc"/>
         <Type Value="Include"/>
       </Item32>
       <Item33>
-        <Filename Value="pascal3d.core\p3d.core.scene.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot_advanced.inc"/>
         <Type Value="Include"/>
       </Item33>
       <Item34>
-        <Filename Value="pascal3d.core\p3d.core.selection.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot_attributes.inc"/>
         <Type Value="Include"/>
       </Item34>
       <Item35>
-        <Filename Value="pascal3d.core\p3d.core.shadernodes.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot_base.inc"/>
         <Type Value="Include"/>
       </Item35>
       <Item36>
-        <Filename Value="pascal3d.core\p3d.core.shadernodes_fragments.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot_constructors.inc"/>
         <Type Value="Include"/>
       </Item36>
       <Item37>
-        <Filename Value="pascal3d.core\p3d.core.shadernodes_markdown.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot_primitives.inc"/>
         <Type Value="Include"/>
       </Item37>
       <Item38>
-        <Filename Value="pascal3d.core\p3d.core.shadernodes_markdown_parser.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.plot_uniforms.inc"/>
         <Type Value="Include"/>
       </Item38>
       <Item39>
-        <Filename Value="pascal3d.core\p3d.core.shadernodes_markdown_utils.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.rect.inc"/>
         <Type Value="Include"/>
       </Item39>
       <Item40>
-        <Filename Value="pascal3d.core\p3d.core.shaders.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.renderable.inc"/>
         <Type Value="Include"/>
       </Item40>
       <Item41>
-        <Filename Value="pascal3d.core\p3d.core.terrain.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.renderlist.inc"/>
         <Type Value="Include"/>
       </Item41>
       <Item42>
-        <Filename Value="pascal3d.core\p3d.core.text.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.rendertarget.inc"/>
         <Type Value="Include"/>
       </Item42>
       <Item43>
-        <Filename Value="pascal3d.core\p3d.core.textbitmap.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.scene.inc"/>
         <Type Value="Include"/>
       </Item43>
       <Item44>
-        <Filename Value="pascal3d.core\p3d.core.texture.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.selection.inc"/>
         <Type Value="Include"/>
       </Item44>
       <Item45>
-        <Filename Value="pascal3d.core\p3d.core.viewport.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shadernodes.inc"/>
         <Type Value="Include"/>
       </Item45>
       <Item46>
-        <Filename Value="pascal3d.events\p3d.events.application.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shadernodes_fragments.inc"/>
         <Type Value="Include"/>
       </Item46>
       <Item47>
-        <Filename Value="pascal3d.events\p3d.events.input.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shadernodes_markdown.inc"/>
         <Type Value="Include"/>
       </Item47>
       <Item48>
-        <Filename Value="pascal3d.events\p3d.events.input_scancodes.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shadernodes_markdown_parser.inc"/>
         <Type Value="Include"/>
       </Item48>
       <Item49>
-        <Filename Value="pascal3d.events\p3d.events.logging.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shadernodes_markdown_utils.inc"/>
         <Type Value="Include"/>
       </Item49>
       <Item50>
-        <Filename Value="pascal3d.events\p3d.events.window.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shaders.inc"/>
         <Type Value="Include"/>
       </Item50>
       <Item51>
-        <Filename Value="pascal3d.utils\p3d.utils.classfactory.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.shadow.inc"/>
         <Type Value="Include"/>
       </Item51>
       <Item52>
-        <Filename Value="pascal3d.utils\p3d.utils.config.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.terrain.inc"/>
         <Type Value="Include"/>
       </Item52>
       <Item53>
-        <Filename Value="pascal3d.utils\p3d.utils.filepointer.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.text.inc"/>
         <Type Value="Include"/>
       </Item53>
       <Item54>
-        <Filename Value="pascal3d.utils\p3d.utils.files.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.textbitmap.inc"/>
         <Type Value="Include"/>
       </Item54>
       <Item55>
-        <Filename Value="pascal3d.utils\p3d.utils.fileutil.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.texture.inc"/>
         <Type Value="Include"/>
       </Item55>
       <Item56>
-        <Filename Value="pascal3d.utils\p3d.utils.generics.inc"/>
+        <Filename Value="pascal3d.core\p3d.core.viewport.inc"/>
         <Type Value="Include"/>
       </Item56>
       <Item57>
-        <Filename Value="pascal3d.utils\p3d.utils.interfaces.inc"/>
+        <Filename Value="pascal3d.events\p3d.events.application.inc"/>
         <Type Value="Include"/>
       </Item57>
       <Item58>
-        <Filename Value="pascal3d.utils\p3d.utils.propaccess.inc"/>
+        <Filename Value="pascal3d.events\p3d.events.input.inc"/>
         <Type Value="Include"/>
       </Item58>
       <Item59>
-        <Filename Value="pascal3d.utils\p3d.utils.propaccess_basetypes.inc"/>
+        <Filename Value="pascal3d.events\p3d.events.input_scancodes.inc"/>
         <Type Value="Include"/>
       </Item59>
       <Item60>
-        <Filename Value="pascal3d.utils\p3d.utils.propaccess_jsonroot.inc"/>
-        <Type Value="Include"/>
-      </Item60>
-      <Item61>
-        <Filename Value="pascal3d.utils\p3d.utils.propaccess_p3dtypes.inc"/>
-        <Type Value="Include"/>
-      </Item61>
-      <Item62>
-        <Filename Value="pascal3d.utils\p3d.utils.simpletypes.inc"/>
-        <Type Value="Include"/>
-      </Item62>
-      <Item63>
-        <Filename Value="pascal3d.utils\p3d.utils.streamable.inc"/>
-        <Type Value="Include"/>
-      </Item63>
-      <Item64>
-        <Filename Value="pascal3d.utils\p3d.utils.strutils.inc"/>
-        <Type Value="Include"/>
-      </Item64>
-      <Item65>
-        <Filename Value="pascal3d.utils\p3d.utils.transform.inc"/>
-        <Type Value="Include"/>
-      </Item65>
-      <Item66>
-        <Filename Value="pascal3d.utils\p3d.utils.xmlutils.inc"/>
-        <Type Value="Include"/>
-      </Item66>
-      <Item67>
-        <Filename Value="pascal3d.core\p3d.core.plot.inc"/>
-        <Type Value="Include"/>
-      </Item67>
-      <Item68>
-        <Filename Value="pascal3d.core\p3d.core.shadow.inc"/>
-        <Type Value="Include"/>
-      </Item68>
-      <Item69>
-        <Filename Value="pascal3d.core\p3d.core.effect.inc"/>
-        <Type Value="Include"/>
-      </Item69>
-      <Item70>
-        <Filename Value="pascal3d.core\p3d.base.plot.inc"/>
-        <Type Value="Include"/>
-      </Item70>
-      <Item71>
-        <Filename Value="pascal3d.core\p3d.core.plot_advanced.inc"/>
-        <Type Value="Include"/>
-      </Item71>
-      <Item72>
-        <Filename Value="pascal3d.core\p3d.core.plot_attributes.inc"/>
-        <Type Value="Include"/>
-      </Item72>
-      <Item73>
-        <Filename Value="pascal3d.core\p3d.core.plot_base.inc"/>
-        <Type Value="Include"/>
-      </Item73>
-      <Item74>
-        <Filename Value="pascal3d.core\p3d.core.plot_primitives.inc"/>
-        <Type Value="Include"/>
-      </Item74>
-      <Item75>
-        <Filename Value="pascal3d.core\p3d.core.plot_uniforms.inc"/>
-        <Type Value="Include"/>
-      </Item75>
-      <Item76>
-        <Filename Value="pascal3d.core\p3d.core.plot_constructors.inc"/>
-        <Type Value="Include"/>
-      </Item76>
-      <Item77>
         <Filename Value="pascal3d.events\p3d.events.logger.inc"/>
         <Type Value="Include"/>
         <AddToUsesPkgSection Value="True"/>
+      </Item60>
+      <Item61>
+        <Filename Value="pascal3d.events\p3d.events.logging.inc"/>
+        <Type Value="Include"/>
+      </Item61>
+      <Item62>
+        <Filename Value="pascal3d.events\p3d.events.window.inc"/>
+        <Type Value="Include"/>
+      </Item62>
+      <Item63>
+        <Filename Value="pascal3d.utils\p3d.utils.classfactory.inc"/>
+        <Type Value="Include"/>
+      </Item63>
+      <Item64>
+        <Filename Value="pascal3d.utils\p3d.utils.config.inc"/>
+        <Type Value="Include"/>
+      </Item64>
+      <Item65>
+        <Filename Value="pascal3d.utils\p3d.utils.filepointer.inc"/>
+        <Type Value="Include"/>
+      </Item65>
+      <Item66>
+        <Filename Value="pascal3d.utils\p3d.utils.files.inc"/>
+        <Type Value="Include"/>
+      </Item66>
+      <Item67>
+        <Filename Value="pascal3d.utils\p3d.utils.fileutil.inc"/>
+        <Type Value="Include"/>
+      </Item67>
+      <Item68>
+        <Filename Value="pascal3d.utils\p3d.utils.generics.inc"/>
+        <Type Value="Include"/>
+      </Item68>
+      <Item69>
+        <Filename Value="pascal3d.utils\p3d.utils.interfaces.inc"/>
+        <Type Value="Include"/>
+      </Item69>
+      <Item70>
+        <Filename Value="pascal3d.utils\p3d.utils.propaccess.inc"/>
+        <Type Value="Include"/>
+      </Item70>
+      <Item71>
+        <Filename Value="pascal3d.utils\p3d.utils.propaccess_basetypes.inc"/>
+        <Type Value="Include"/>
+      </Item71>
+      <Item72>
+        <Filename Value="pascal3d.utils\p3d.utils.propaccess_jsonroot.inc"/>
+        <Type Value="Include"/>
+      </Item72>
+      <Item73>
+        <Filename Value="pascal3d.utils\p3d.utils.propaccess_p3dtypes.inc"/>
+        <Type Value="Include"/>
+      </Item73>
+      <Item74>
+        <Filename Value="pascal3d.utils\p3d.utils.simpletypes.inc"/>
+        <Type Value="Include"/>
+      </Item74>
+      <Item75>
+        <Filename Value="pascal3d.utils\p3d.utils.streamable.inc"/>
+        <Type Value="Include"/>
+      </Item75>
+      <Item76>
+        <Filename Value="pascal3d.utils\p3d.utils.strutils.inc"/>
+        <Type Value="Include"/>
+      </Item76>
+      <Item77>
+        <Filename Value="pascal3d.utils\p3d.utils.transform.inc"/>
+        <Type Value="Include"/>
       </Item77>
+      <Item78>
+        <Filename Value="pascal3d.utils\p3d.utils.xmlutils.inc"/>
+        <Type Value="Include"/>
+      </Item78>
     </Files>
     <RequiredPkgs Count="5">
       <Item1>

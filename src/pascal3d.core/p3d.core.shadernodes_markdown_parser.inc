@@ -9,73 +9,81 @@
 procedure ParseNode;
 var
   NameSet: Boolean = False;
-  SocketName: String = '';
-  SocketType: String = '';
-  SocketDefault: String = '';
-  SocketVisible: Boolean = True;
   breakat: SizeInt;
 
-  procedure SocketCallback( Name, Value: String; ValueStart: Integer );
+  procedure ParseInput;
+  var
+    SocketName: String = '';
+    SocketType: String = '';
+    SocketDefault: String = '';
+    SocketVisible: Boolean = True;
+    symb: String;
+    IsString: Boolean;
   begin
-    case Name of
-      'name':
-        SocketName:= Value;
-      'type':
-        SocketType:= Value;
-      'default':
-        SocketDefault:= Value;
-      'visible':
-        SocketVisible:= StrToBool( Value );
-      else
-        Error( 'Unknown socket attribute: "' + Name + '"' );
-    end;
+    SocketType:= ParseWord;
+    SocketName:= ParseWord;
+    symb:= ParseSymbol();
+    if ( symb = '=' ) then begin
+      SocketDefault:= ParseString( IsString );
+    end else if ( symb <> '' ) then
+      Error( 'Unexpected symbol in input statement!' );
+
+    if ( GlobalActiveNode is TP3DShaderNodeType ) then
+      Error( 'Cannot define inputs for types!' );
+
+    SocketVisible:= SocketName[ 1..2 ] = '__';
+
+    CreateSocketFromType( GlobalActiveNode, nsdInput, SocketType, SocketName, False, SocketVisible, SocketDefault );
   end;
 
-  procedure NodeCallback( Name, Value: String; ValueStart: Integer );
+  procedure ParseLib;
   var
-    EOF_Value: Integer;
+    SocketName: String = '';
   begin
-    if (( Name = 'node' ) or ( Name = 'type' )) then
-      NameSet:= True;
-    if ( not NameSet ) then
-      Error( 'Either node or type has to be the first node''s attribute' );
-    case Name of
-      'type':
-        begin
-          if ( GlobalLibrary.Types.FindByName( Value ) > -1 ) then
-            Error( 'A type with the name ' + Value + ' already exists!' );
-          GlobalActiveNode:= TP3DShaderNodeType.Create( GlobalLibrary.Types );
-          GlobalMarkdown.Types.Add( GlobalActiveNode );
-          GlobalActiveNode.Name:= Value;
-          GlobalActiveOutput:= nil;
-          CreateSocketFromType( GlobalActiveNode, nsdInput, 'text', 'inject', False, False, '' );
-        end;
-      'node':
-        begin
-          if ( GlobalLibrary.Nodes.FindByName( Value ) > -1 ) then
-            Error( 'A node with the name ' + Value + ' already exists!' );
-          GlobalActiveNode:= TP3DNode.Create( GlobalLibrary.Nodes );
-          GlobalMarkdown.Nodes.Add( GlobalActiveNode );
-          GlobalActiveNode.Name:= Value;
-          GlobalActiveOutput:= nil;
-        end;
-      'input':
-        begin
-          if ( GlobalActiveNode is TP3DShaderNodeType ) then
-            Error( 'Cannot define inputs for types!' );
-          EOF_Value:= GlobalCursor;
-          GlobalCursor:= ValueStart;
-          //while ( GlobalCursor < EOF_Value - 1 ) do
-          ParseNameValuePairs( ',', ':', @SocketCallback, EOF_Value - 1 );
-          GlobalCursor:= EOF_Value;
-          CreateSocketFromType( GlobalActiveNode, nsdInput, SocketType, SocketName, False, SocketVisible, SocketDefault );
-          SocketName:= '';
-          SocketType:= '';
-          SocketDefault:= '';
-          SocketVisible:= True;
-        end
-      else
-        Error( 'Unknown node attribute' );
+    SocketName:= ParseWord;
+    CreateSocketFromType( GlobalActiveNode, nsdLib, 'text', SocketName, False, False );
+  end;
+
+  procedure ParseNode;
+  var
+    name: String;
+  begin
+    name:= ParseWord( True );
+
+    if ( GlobalLibrary.Nodes.FindByName( name ) > -1 ) then
+      Error( 'A node with the name ' + name + ' already exists!' );
+    GlobalActiveNode:= TP3DNode.Create( GlobalLibrary.Nodes );
+    GlobalMarkdown.Nodes.Add( GlobalActiveNode );
+    GlobalActiveNode.Name:= name;
+    GlobalActiveOutput:= nil;
+  end;
+
+  procedure ParseType;
+  var
+    name: String;
+  begin
+    name:= ParseWord( True );
+
+    if ( GlobalLibrary.Types.FindByName( name ) > -1 ) then
+      Error( 'A type with the name ' + name + ' already exists!' );
+    GlobalActiveNode:= TP3DShaderNodeType.Create( GlobalLibrary.Types );
+    GlobalMarkdown.Types.Add( GlobalActiveNode );
+    GlobalActiveNode.Name:= name;
+    GlobalActiveOutput:= nil;
+    CreateSocketFromType( GlobalActiveNode, nsdInput, 'text', 'inject', False, False, '' );
+  end;
+
+  procedure NodeCase( Name: String );
+  begin
+    WriteLn( Name );
+    SkipChars();
+    case ( Name ) of
+      'node': ParseNode;
+      'input': ParseInput;
+      'type': ParseType;
+      'lib': ParseLib;
+    else
+      Error( 'Unknown node attribute: "' + Name + '"' );
     end;
   end;
 
@@ -94,19 +102,16 @@ var
   end;
 
 begin
-  Inc( GlobalCursor, Length( '---' ));
-  SkipChars( False );
-  if ( not ( EOL )) then
-    Error( 'invalid argument to unary operator' )
-  else
+  //Inc( GlobalCursor, Length( '---' ));
+  if ( Length( IfStack ) > 0 ) then
+    Error( 'Missing EndIf(''s): level = ' + IntToStr( Length( IfStack )));
+  SkipChars();
+  breakat:= PosEx( '---', GlobalFile, GlobalCursor );
+  while ( not CompWordAtCursor( '---' )) do
     begin
+      NodeCase( ParseWord );
+      //ParseNameValuePairs( LineEnding, ':', @NodeCallback, breakat, '{', '}' );
       SkipChars();
-      breakat:= PosEx( '---', GlobalFile, GlobalCursor );
-      //while ( not CompWordAtCursor( '---' )) do
-        begin
-          ParseNameValuePairs( LineEnding, ':', @NodeCallback, breakat, '{', '}' );
-          //SkipChars();
-        end;
     end;
   Inc( GlobalCursor, Length( '---' ));
 end;
@@ -118,127 +123,14 @@ end;
 
 procedure ParseChunk;
 var
-  TopFragments: TP3DShaderNodeFragmentList = nil;
   EndChunk: Integer;
-
-  procedure ParseChunkOptions;
-  var
-    ChunkName: String = '';
-    ChunkType: String = '';
-    ChunkRestrict: String = '';
-    ChunkVisible: Boolean = True;
-    ChunkSingleOnly: Boolean = False;
-
-    procedure Callback( Name, Value: String; ValueStart: Integer );
-    begin
-      case Name of
-        'name':
-          ChunkName:= Value;
-        'type':
-          ChunkType:= Value;
-        'restrict':
-          ChunkRestrict:= Value;
-        'single':
-          ChunkSingleOnly:= StrToBool( Value );
-        'visible':
-          ChunkVisible:= StrToBool( Value );
-        else
-          Error( 'Unknown node attribute' );
-      end;
-    end;
-
-  var
-    idx: Integer;
-    breakat: SizeInt;
-
-    procedure CreateSingleOnly;
-    var
-      single: TP3DShaderNodeFragmentSingleOnly;
-    begin
-      single:= TP3DShaderNodeFragmentSingleOnly.Create;
-      TopFragments.Add( single );
-      TopFragments:= single.Fragments;
-    end;
-
-    procedure CreateRestrictions;
-    var
-      i, LocalCursor: Integer;
-      ifdef: TP3DShaderNodeFragmentIfDef;
-    begin
-      LocalCursor:= 1;
-      if ( Trim( ChunkRestrict ) > '' ) then
-        begin
-          ifdef:= TP3DShaderNodeFragmentIfDef.Create;
-          ifdef.CheckDefs.CommaText:= ChunkRestrict;
-          TopFragments.Add( ifdef );
-          TopFragments:= ifdef.Fragments;
-        end;
-      {for i:= 1 to WordCount( ChunkRestrict, [ ',' ]) do
-        begin
-          ifdef:= TP3DShaderNodeFragmentIfDef.Create;
-          ifdef.Caption:= Trim( ExtractSubstr( ChunkRestrict, LocalCursor, [ ',' ]));
-          TopFragments.Add( ifdef );
-          TopFragments:= ifdef.Fragments;
-        end;}
-    end;
-
-  begin
-    SkipChars( False );
-    if (( Ch = '{' ) and before( '}', LineEnding )) then
-      begin
-        Inc( GlobalCursor );
-        breakat:= PosEx( '}', GlobalFile, GlobalCursor );
-        //while ( not CompWordAtCursor( '}' )) do
-        ParseNameValuePairs( ',', ':', @Callback, breakat );
-
-        if ( ChunkName = '' ) then
-          begin
-            if ( GlobalActiveOutput = nil ) then
-              Error( GlobalActiveNode.Name + ': First chunk in node has to have a name!' );
-          end
-        else
-          begin
-            idx:= GlobalActiveNode.Outputs.FindByName( ChunkName );
-            if ( idx >= 0 ) then
-              GlobalActiveOutput:= TP3DShaderNodeSocket( GlobalActiveNode.Outputs[ idx ])
-            else
-              GlobalActiveOutput:= CreateSocketFromType( GlobalActiveNode, nsdOutput, ChunkType, ChunkName, ChunkSingleOnly, ChunkVisible );
-          end;
-
-        TopFragments:= GlobalActiveOutput.Fragments;
-        if ( ChunkSingleOnly ) then
-          CreateSingleOnly;
-        CreateRestrictions;
-      end;
-    //GlobalCursor:= PosEx( LineEnding, GlobalFile, GlobalCursor ) + 1;
-    Inc( GlobalCursor );
-    SkipChars( False );
-    if ( CompWordAtCursor( LineEnding )) then
-      Inc( GlobalCursor, Length( LineEnding ));
-  end;
-
-  function ChunkDebugOutput: String;
-  var
-    socket: TP3DNodeSocket;
-  begin
-    if ( not Assigned( GlobalActiveNode )) then
-      begin
-        Result:= 'Error: Node not Assigned';
-        exit;
-      end;
-    Result:= '';
-    for socket in GlobalActiveNode.Outputs do
-      Result+= 'output: ' + socket.Name + ' : ' + socket.SocketType + LineEnding;
-  end;
-
-  procedure ProcessChunkOutput;
 
     procedure AddInline( S: String; Trim: Boolean );
     var
       chunk: TP3DShaderNodeFragmentInline;
     begin
       chunk:= TP3DShaderNodeFragmentInline.Create;
-      TopFragments.Add( chunk );
+      GlobalActiveFragments.Add( chunk );
 
       if ( Trim ) then
         if ( RightStr( S, Length( LineEnding )) = LineEnding ) then
@@ -250,98 +142,198 @@ var
       chunk.Text:= S;
     end;
 
-    procedure AddInput( S, defs: String );
-      function GetNextDef( out ADef: String ): Boolean;
-      begin
-        ADef:= Trim( Copy2SymbDel( defs, ',' ));
-        Result:= ADef > '';
-      end;
-
-    var
-      chunk: TP3DShaderNodeFragmentInput;
-      def: String;
-    begin
-      chunk:= TP3DShaderNodeFragmentInput.Create;
-      while GetNextDef( def ) do
-        chunk.Defines.Add( def );
-      TopFragments.Add( chunk );
-      chunk.InputName:= S;
-    end;
-
-    procedure GetInputNameDef( S: String; out AName, ADefs: String );
-    begin
-      AName:= Trim( Copy2SymbDel( S, ':' ));
-      ADefs:= Trim( S );
-    end;
-
-  var
-    p2, p3, inp: Integer;
-    name, defs: String;
-  begin
-    p2:= GlobalCursor;
-    while (( p2 > 0 ) and ( p2 < EndChunk )) do
-      begin
-        p2:= PosEx( ChunkInpDelim, GlobalFile, p2 );
-        if (( p2 = 0 ) or ( p2 > EndChunk )) then
-          AddInline( CopyBetween( GlobalCursor, EndChunk ), True )
-        else
-          begin
-            p3:= PosEx( ChunkInpDelim, GlobalFile, p2 + Length( ChunkInpDelim ));
-            if ( p3 < EndChunk ) then
-              begin
-                GetInputNameDef( CopyBetween( p2 + Length( ChunkInpDelim ), p3 ), name, defs );
-
-                inp:= GlobalActiveNode.Inputs.FindByName( name );
-                if (( inp >= 0 ) or ( ExtractWord( 1, name, SkippingChars ) = 'all' )) then
-                  begin
-                    if ( p2 > GlobalCursor ) then
-                      AddInline( CopyBetween( GlobalCursor, p2 ), False );
-                    AddInput( name, defs );
-                    p2:= p3 + Length( ChunkInpDelim );
-                    GlobalCursor:= p2;
-                  end
-                else
-                  Error( Format( 'Cannot find input of name "%s" in node "%s".', [ name, GlobalActiveNode.Name ]));
-                  //p2:= p3 + Length( ChunkInpDelim );
-              end
-            else
-              Error( 'Unterminated input!' );
-          end;
-      end;
-  end;
-
 begin
   if ( not Assigned( GlobalActiveNode )) then
     Error( 'Cannot define chunk. You have to define a node first!' );
-  Inc( GlobalCursor, Length( '```' ));
-  EndChunk:= PosEx( '```', GlobalFile, GlobalCursor );
+  if ( not Assigned( GlobalActiveOutput )) then
+    Error( 'Cannot define chunk. You have to define an output first!' );
+
+  //Inc( GlobalCursor, Length( ChunkDelim ));
+  EndChunk:= PosEx( ChunkDelim, GlobalFile, GlobalCursor );
   if ( EndChunk = 0 ) then
     Error( 'Unterminated Chunk' );
-  ParseChunkOptions;
-  ProcessChunkOutput;
 
-  //TODO: ReplaceInputs;
-  GlobalCursor:= EndChunk + Length( '```' );
+  AddInline( CopyBetween( GlobalCursor, EndChunk ), False );
+
+  GlobalCursor:= EndChunk + Length( ChunkDelim );
+end;
+
+procedure ParseOutput;
+var
+  SocketName: String = '';
+  SocketType: String = '';
+  SocketVisible: Boolean = True;
+begin
+  if ( not Assigned( GlobalActiveNode )) then
+    Error( 'Cannot define output before defining a node first!' );
+  if ( Length( IfStack ) > 0 ) then
+    Error( 'Missing EndIf(''s): level = ' + IntToStr( Length( IfStack )));
+  SocketType:= ParseWord;
+  SocketName:= ParseWord;
+
+  SocketVisible:= SocketName[ 1..2 ] = '__';
+
+  GlobalActiveOutput:= CreateSocketFromType( GlobalActiveNode, nsdOutput, SocketType, SocketName, False, SocketVisible );
+  GlobalActiveFragments:= GlobalActiveOutput.Fragments;
+end;
+
+procedure ParseSelector;
+var
+  SocketName: String = '';
+  OutputOverride: String = '';
+  IsSymbol, Stop: Boolean;
+  FirstWord: String;
+  chunk: TP3DShaderNodeFragmentSelector;
+begin
+  if ( not Assigned( GlobalActiveNode )) then
+    Error( 'Cannot use select before defining a node first!' );
+  if ( not Assigned( GlobalActiveFragments )) then
+    Error( 'Cannot use select before defining a node''s output first!' );
+
+  SocketName:= ParseWord( Identifier + [ '*' ]);
+
+  SkipChars();
+  if ( Ch = '.' ) then begin
+    Inc( GlobalCursor );
+    OutputOverride:= ParseWord;
+    SkipChars();
+  end;
+
+  chunk:= TP3DShaderNodeFragmentSelector.Create;
+  if ( Ch = ':' ) then begin
+    Inc( GlobalCursor );
+    FirstWord:= ParseWord();
+    SkipChars();
+    Stop:= False;
+    if ( FirstWord > '' ) then
+      repeat
+        if ( FirstWord > '' ) then
+          chunk.Defines.Add( FirstWord )
+        else
+          Error( 'Identifier expected' );
+
+        Stop:= not CompWordAtCursor( ',' );
+        if ( not Stop ) then begin
+          Inc( GlobalCursor );
+          FirstWord:= ParseWord();
+        end;
+      until stop;
+  end;
+  if ( Pos( '*', SocketName ) = 0 ) then
+    if ( GlobalActiveNode.Inputs.FindByName( SocketName ) < 0 ) then
+      Error( Format( 'Select with non existing input "%s" found in "%s"', [ SocketName, GlobalActiveNode.Name ]));
+  GlobalActiveFragments.Add( chunk );
+  chunk.InputName:= SocketName;
+  chunk.OutputOverride:= OutputOverride;
+end;
+
+{procedure AddInput( S, defs: String );
+  function GetNextDef( out ADef: String ): Boolean;
+  begin
+    ADef:= Trim( Copy2SymbDel( defs, ',' ));
+    Result:= ADef > '';
+  end;
+
+var
+  chunk: TP3DShaderNodeFragmentInput;
+  def: String;
+begin
+  chunk:= TP3DShaderNodeFragmentInput.Create;
+  while GetNextDef( def ) do
+    chunk.Defines.Add( def );
+  TopFragments.Add( chunk );
+  chunk.InputName:= S;
+end;}
+
+procedure ParseIfDef( Negate: Boolean );
+var
+  IsString: Boolean;
+  IfDefs: String;
+  IfDef: TP3DShaderNodeFragmentIfDef;
+begin
+  IfDefs:= ParseString( IsString );
+  if ( not Assigned( GlobalActiveFragments )) then
+    Error( 'Cannot define ifdef before defining an output!' );
+
+  IfDef:= TP3DShaderNodeFragmentIfDef.Create;
+  IfDef.CheckDefs.Text:= ReplaceStr( IfDefs, ',', LineEnding );
+  IfDef.FInvert:= Negate;
+
+  SetLength( IfStack, Length( IfStack ) + 1 );
+  IfStack[ high( IfStack )]:= IfDef;
+  GlobalActiveFragments.Add( IfDef );
+  GlobalActiveFragments:= IfDef.Fragments;
+end;
+
+procedure ParseIfConn( Negate: Boolean );
+var
+  IsString: Boolean;
+  IfConnS: String;
+  IfConn: TP3DShaderNodeFragmentIfConn;
+begin
+  IfConnS:= ParseString( IsString );
+  if ( not Assigned( GlobalActiveFragments )) then
+    Error( 'Cannot define ifconn before defining an output!' );
+
+  IfConn:= TP3DShaderNodeFragmentIfConn.Create;
+  IfConn.FInputName:= IfConnS;
+  IfConn.FInvert:= Negate;
+
+  SetLength( IfStack, Length( IfStack ) + 1 );
+  IfStack[ high( IfStack )]:= IfConn;
+  GlobalActiveFragments.Add( IfConn );
+  GlobalActiveFragments:= IfConn.Fragments;
+end;
+
+procedure ParseEndIf;
+var
+  l: Integer;
+begin
+  l:= Length( IfStack ) - 1;
+  if ( l < 0 ) then
+    Error( 'endif without matching if!' )
+  else begin
+    SetLength( IfStack, l );
+    Dec( l );
+    if ( l >= 0 ) then
+      GlobalActiveFragments:= IfStack[ l ].Fragments
+    else
+      GlobalActiveFragments:= GlobalActiveOutput.Fragments;
+  end;
 end;
 
 procedure Parse;
+var
+  FirstWord: String;
 begin
   GlobalCursor:= 1;
   GlobalActiveNode:= nil;
+  SetLength( IfStack, 0 );
 
   while ( GlobalCursor < EOF ) do
     begin
+      if ( Ch in Identifier ) then begin
+        FirstWord:= ParseWord();
+        case( FirstWord ) of
+          'output': ParseOutput;
+          'select': ParseSelector;
+          'ifdef': ParseIfDef( False );
+          'ifndef': ParseIfDef( True );
+          'ifconn': ParseIfConn( False );
+          'ifnconn': ParseIfConn( True );
+          'endif': ParseEndIf;
+          else Error( 'Unknown identifier found: "' + FirstWord + '"' );
+        end;
+      end else begin
+        FirstWord:= ParseWord([ ChunkDelim, NodeDelim[ 1 ], StartCommentDelim ]);
+        case( FirstWord ) of
+          NodeDelim: ParseNode;
+          ChunkDelim: ParseChunk;
+          StartCommentDelim: ParseComment;
+          else Error( 'Unknown symbol found: "' + FirstWord + '"' );
+        end;
+      end;
       SkipChars();
-      if ( GlobalCursor >= EOF ) then
-        break;
-      if ( CompWordAtCursor( '---' )) then
-        ParseNode
-      else if ( CompWordAtCursor( '```' )) then
-        ParseChunk
-      else if ( CompWordAtCursor( StartCommentDelim )) then
-        ParseComment
-      else
-        Error( 'Syntax Error! Only ---, ``` or # allowed outside of chunks and nodes' );
     end;
 end;
 

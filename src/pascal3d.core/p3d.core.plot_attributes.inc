@@ -6,6 +6,13 @@ type
   TVec3Array = array of TVec3;
   TVec4Array = array of TVec4;
 
+  { TP3DPlotCommandAttribFloat }
+
+  TP3DPlotCommandAttribFloat = class ( specialize TP3DPlotCommandShaderDecl < Float >)
+    procedure Execute( AContext: TP3DPlotCommandContext ); override;
+    function Clone: TP3DPlotCommandSetting; override;
+  end;
+
   { TP3DPlotCommandAttribVec2 }
 
   TP3DPlotCommandAttribVec2 = class ( specialize TP3DPlotCommandShaderDecl < TVec2 >)
@@ -59,6 +66,25 @@ type
 
 {$IFDEF IMPLEMENTATION}
 
+{ TP3DPlotCommandAttribFloat }
+
+procedure TP3DPlotCommandAttribFloat.Execute(AContext: TP3DPlotCommandContext);
+var
+  decl: TP3DShaderDecl;
+begin
+  if ( Location < 0 ) then
+    if ( AContext.Shader.Attributes.FindByName( Name, decl )) then
+      FLocation:= decl.Addr
+    else
+      exit;
+  glDisableVertexAttribArray( FLocation );
+  glVertexAttrib1f( FLocation, FValue );
+end;
+
+function TP3DPlotCommandAttribFloat.Clone: TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandAttribFloat.Create( FLocation, FValue );
+end;
 
 
 { TP3DPlotCommandAttribVec2 }

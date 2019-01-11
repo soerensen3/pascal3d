@@ -17,7 +17,7 @@ type
 
   { TP3DEditorRenderCommand }
 
-  TP3DEditorRenderCommand = class ( specialize gP3DEditor < TP3DRenderCommand >)
+  {TP3DEditorRenderCommand = class ( specialize gP3DEditor < TP3DRenderCommand >)
     protected
       procedure PopupClick(Sender: TP3DMenuItem); override;
       procedure PopupListClick(Sender: TP3DMenuItem); override;
@@ -25,7 +25,7 @@ type
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
-  end;
+  end;}
 
 
 {$ENDIF}

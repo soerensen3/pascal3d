@@ -35,9 +35,12 @@
     function Add: TP3DPropertyAccess;
   end;
 
+  { gP3DStreamableListEnumerator }
+
   generic gP3DStreamableListEnumerator < T: TP3DStreamable > = class
     private type
       TMoveNext = function ( var AIndex: Integer; out AItem: TP3DStreamable ): Boolean of object;
+      TEnumerator = specialize gP3DStreamableListEnumerator < T >;
     private
       FCurrent: T;
       FCurrentIdx: Integer;
@@ -46,6 +49,8 @@
     public
       constructor Create( AStartIndex: Integer; AMoveNext: TMoveNext );
       function MoveNext: Boolean;
+      function GetEnumerator: TEnumerator;
+
       property Current: T read FCurrent;
       property CurrentIdx: Integer read FCurrentIdx;
   end;
@@ -104,7 +109,7 @@
       function GetRelativePath: String; override;
 
       function GetEnumerator: TStreamableListEnumerator;
-      function GetReverseEnumerator: TStreamableListEnumerator;
+      function Reversed: TStreamableListEnumerator;
       function SaveToJSON: TJSONData; override;
 
       function Find( Item: TP3DStreamable ): Integer; virtual;
@@ -171,6 +176,7 @@
       function Last( const AClassType: TP3DStreamableClass = nil ): T;
 
       function GetEnumerator: TTypedStreamableListEnumerator;
+      function Reversed: TTypedStreamableListEnumerator;
 
       property AsValues[ Index: Integer ]: T read GetAsValues write SetAsValues; default;
   end;
@@ -305,6 +311,7 @@
       function Last( const AClassType: TP3DStreamableClass = nil ): T;
 
       function GetEnumerator: TTypedStreamableListEnumerator;
+      function Reversed: TTypedStreamableListEnumerator;
       function GetArrayItemAsProp(Idx: Integer): TP3DPropertyAccess; override;
 
       property AsValues[ Index: Integer ]: T read GetAsValues write SetAsValues; default;
@@ -371,10 +378,10 @@
 
       function GetName: String; virtual;
       function GetAsString: String; override;
+      procedure SetName( AValue: String ); virtual;
 
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
-      procedure SetName( AValue: String ); virtual;
 
     published
       property Name: String read GetName write SetName;
@@ -390,9 +397,35 @@
       //function Add( Item: T ): Integer; override;
   end;
 
+
+  { gP3DNamedStreamableListEnumerator }
+
+  generic gP3DNamedStreamableListEnumerator < T: TP3DStreamable > = class
+    private type
+      TMoveNext = function ( var AIndex: Integer; out AItem: TP3DNamedStreamable; AFilter: String ): Boolean of object;
+      TEnumerator = specialize gP3DNamedStreamableListEnumerator < T >;
+    private
+      FCurrent: T;
+      FCurrentIdx: Integer;
+      FFilter: String;
+      FMoveNext: TMoveNext;
+
+    public
+      constructor Create( AStartIndex: Integer; AMoveNext: TMoveNext; AFilter: String );
+      function MoveNext: Boolean;
+      function GetEnumerator: TEnumerator;
+
+      property Current: T read FCurrent;
+      property CurrentIdx: Integer read FCurrentIdx;
+      property Filter: String read FFilter;
+  end;
+
   { gP3DNamedStreamableContainerList }
 
   generic gP3DNamedStreamableContainerList < T: TP3DNamedStreamable > = class( specialize gP3DStreamableContainerList < T >, IP3DNamedStreamableList )
+    public
+      type TNamedStreamableListEnumerator = specialize gP3DNamedStreamableListEnumerator < T >;
+
     protected
       procedure LoadItemFromJSON(Index: Integer; AData: TJSONData); override;
       function GetStrIdxOf(AIndex: Integer): String;
@@ -405,6 +438,9 @@
       function FindUniqueName( BaseStr: String ): String;
       function FindByName( AName: String ): Integer;
       function GetByName( AName: String ): T;
+
+      function EnumerateWildcard( AWildCard: String ): TNamedStreamableListEnumerator;
+      function MoveNextFilter( var AIndex: Integer; out AItem: TP3DNamedStreamable; AFilter: String ): Boolean;
   end;
 
   TP3DNamedStreamableContainerList = specialize gP3DNamedStreamableContainerList < TP3DNamedStreamable >;
@@ -1030,6 +1066,13 @@ begin
   Result:= FMoveNext( FCurrentIdx, FCurrent );
 end;
 
+function gP3DStreamableListEnumerator.GetEnumerator: TEnumerator;
+begin
+  Result:= Self;
+  // Class needs this method when constructor for enumerator in enumerated class
+  // is not named GetEnumerator (E.g. reversed, filtered, ...)
+end;
+
 { TP3DStreamableListBase }
 
 function TP3DStreamableListBase.GetChildPropByPath(var APath: String; out
@@ -1131,7 +1174,7 @@ begin
   Result:= TStreamableListEnumerator.Create( -1, @MoveNext );
 end;
 
-function TP3DStreamableListBase.GetReverseEnumerator: TStreamableListEnumerator;
+function TP3DStreamableListBase.Reversed: TStreamableListEnumerator;
 begin
   Result:= TStreamableListEnumerator.Create( Count, @MoveLast );
 end;
@@ -1309,7 +1352,7 @@ end;
 function TP3DStreamableListBase.MoveLast(var AIndex: Integer; out AItem: TP3DStreamable): Boolean;
 begin
   Dec( AIndex );
-  Result:= AIndex > 0;
+  Result:= AIndex >= 0;
   if ( Result ) then
     AItem:= AsValues[ AIndex ]
   else
@@ -1620,13 +1663,15 @@ var
   i: Integer;
 begin
   Result:= -1;
-  for i:= 0 to Count - 1 do
+  for i:= 0 to Count - 1 do begin
+    //WriteLn( AsValues[ i ].Name );
     if ( Assigned( AsValues[ i ]) and // Items[ i ] can be nil for example if many values are loaded from JSON, the count is set to the final count before it loads all the values.
         ( AsValues[ i ].Name = AName )) then
       begin
         Result:= i;
         break;
       end;
+  end;
 end;
 
 function gP3DNamedStreamableContainerList.GetByName(AName: String): T;
@@ -1638,6 +1683,29 @@ begin
     Result:= AsValues[ n ]
   else
     Result:= Default( T );
+end;
+
+function gP3DNamedStreamableContainerList.EnumerateWildcard(AWildCard: String): TNamedStreamableListEnumerator;
+begin
+  Result:= TNamedStreamableListEnumerator.Create( -1, @MoveNextFilter, AWildCard );
+end;
+
+function gP3DNamedStreamableContainerList.MoveNextFilter(var AIndex: Integer; out AItem: TP3DNamedStreamable; AFilter: String): Boolean;
+var
+  C: Integer;
+begin
+  C:= Count;
+  while ( AIndex < C ) do begin
+    Inc( AIndex );
+    AItem:= AsValues[ AIndex ];
+    if ( Assigned( AItem ) and ( IsWild( AItem.Name, AFilter, False ))) then
+      break;
+  end;
+
+  Result:= AIndex < C;
+
+  if ( not Result ) then
+    AItem:= nil;
 end;
 
 { TP3DNamedStreamable }
@@ -1687,6 +1755,119 @@ begin
     raise Exception.CreateFmt( 'TP3DNamedStreamable.SetName: A value with the name "%s" already exists in the same container!', [ AValue ])
   else
     FName:= AValue;
+end;
+
+{ gP3DNamedStreamableListEnumerator }
+
+constructor gP3DNamedStreamableListEnumerator.Create(AStartIndex: Integer; AMoveNext: TMoveNext; AFilter: String);
+begin
+  inherited Create;
+  FillByte( FCurrent, SizeOf( FCurrent ), 0 );
+  FCurrentIdx:= AStartIndex;
+  FMoveNext:= AMoveNext;
+  FFilter:= AFilter;
+end;
+
+function gP3DNamedStreamableListEnumerator.MoveNext: Boolean;
+begin
+  if ( Assigned( FMoveNext )) then
+    Result:= FMoveNext( FCurrentIdx, FCurrent, FFilter );
+end;
+
+function gP3DNamedStreamableListEnumerator.GetEnumerator: TEnumerator;
+begin
+  Result:= Self; //Stupid but does not get recognized as an enumerator otherwise
+end;
+
+
+{ gP3DStreamablePointerList }
+
+function gP3DStreamablePointerList.GetAsValues( Index: Integer ): T;
+var
+  Prop: TP3DPropertyAccess;
+begin
+  Prop:= GetArrayItemAsProp( Index );
+  Result:= T( TP3DStreamablePointer( Prop ).AsValue );
+end;
+
+procedure gP3DStreamablePointerList.SetAsValues( Index: Integer ; AValue: T);
+var
+  Prop: TP3DPropertyAccess;
+begin
+  Prop:= GetArrayItemAsProp( Index );
+  TP3DStreamablePointer( Prop ).AsValue:= AValue;
+end;
+
+constructor gP3DStreamablePointerList.Create(AName: String;
+  const AStoreMode: TP3DPropertyAccessStoreMode);
+begin
+  inherited Create( AName, T {!}, AStoreMode );
+  FItemProp:= TP3DStreamablePointer;
+end;
+
+function gP3DStreamablePointerList.First(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited First( AClassType ));
+end;
+
+function gP3DStreamablePointerList.Last(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited Last( AClassType ));
+end;
+
+function gP3DStreamablePointerList.GetEnumerator: TTypedStreamableListEnumerator;
+begin
+  Result:= TTypedStreamableListEnumerator.Create( -1, @MoveNext );
+end;
+
+function gP3DStreamablePointerList.Reversed: TTypedStreamableListEnumerator;
+begin
+  Result:= TTypedStreamableListEnumerator.Create( Count, @MoveLast );
+end;
+
+function gP3DStreamablePointerList.GetArrayItemAsProp(Idx: Integer): TP3DPropertyAccess;
+begin
+  Result:=inherited GetArrayItemAsProp(Idx);
+  if ( Result is TP3DPropAccessStreamable ) then
+    TP3DPropAccessStreamable( Result ).FItemClass:= T;
+end;
+
+{ gP3DStreamableContainerList }
+
+function gP3DStreamableContainerList.GetAsValues( Index: Integer ): T;
+begin
+  Result:= T( GetValues( Index ));
+end;
+
+procedure gP3DStreamableContainerList.SetAsValues( Index: Integer ; AValue: T);
+begin
+  SetValues( Index, AValue );
+end;
+
+constructor gP3DStreamableContainerList.Create(AName: String;
+  const AStoreMode: TP3DPropertyAccessStoreMode);
+begin
+  inherited Create(AName, T {!}, AStoreMode);
+end;
+
+function gP3DStreamableContainerList.First(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited First( AClassType ));
+end;
+
+function gP3DStreamableContainerList.Last(const AClassType: TP3DStreamableClass): T;
+begin
+  Result:= T( inherited Last( AClassType ));
+end;
+
+function gP3DStreamableContainerList.GetEnumerator: TTypedStreamableListEnumerator;
+begin
+  Result:= TTypedStreamableListEnumerator.Create( -1, @MoveNext );
+end;
+
+function gP3DStreamableContainerList.Reversed: TTypedStreamableListEnumerator;
+begin
+  Result:= TTypedStreamableListEnumerator.Create( Count, @MoveLast );
 end;
 
 

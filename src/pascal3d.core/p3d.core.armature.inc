@@ -11,7 +11,7 @@ type
     protected
       FArmature: TP3DArmature;
       FLength: Float;
-      FMatrixInv: TMat4;
+      //FMatrixInv: TMat4;
       FTransform: TP3DStreamableContainer;
       FTail: TVec3;
 
@@ -30,7 +30,7 @@ type
       //procedure AddToRenderList(ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags);
 
       property Armature: TP3DArmature read FArmature write SetArmature;
-      property MatrixInv: TMat4 read FMatrixInv;
+      //property MatrixInv: TMat4 read FMatrixInv;
       property Transform: TP3DTransform read GetTransform;
       property Tail: TVec3 read FTail write SetTail;
 
@@ -137,30 +137,21 @@ type
       FRotations: TQuatList;
       FTransformMethod: TP3DArmatureTransformMethod;
       FTranslations: TVec3List;
-      OwnsJointTex: Boolean;
-      FJointTex: TP3DStreamablePointer;
-      LinesAuto: specialize TAuto< TP3DVec3BufferGL >;
 
-      function GetJointTex: TP3DTexture;
-      procedure SetJointTex(AValue: TP3DTexture);
-      function CalculateJointMatrix( AJoint: TP3DJoint; InvMatrix: TMat4 ): TMat4;
+      function CalculateJointMatrix( AJoint: TP3DPoseJoint; InvMatrix: TMat4 ): TMat4;
       function GetObjArmatureModifier( AObj: TP3DObject ): TP3DObjectModifierArmature;
 
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
       destructor Destroy; override;
 
-      procedure UpdateJointTex( ARoot: TP3DObject );
-      procedure UpdateLines(ARoot: TP3DObject);
       class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
       // IP3DRenderable
       procedure Render(world: TMat4; Scene: TP3DScene; RenderObject: TP3DObject);
       procedure AddToRenderList( ARootScene: TP3DScene; AWorld: TMat4; AList: TP3DRenderList; AFlags: TP3DRenderListFlags );
 
     published
-      property Lines: TP3DVec3BufferGL read LinesAuto.FInstance;
       property Joints: TP3DRestJointContainerList read FJoints;
-      property JointTex: TP3DTexture read GetJointTex;
       property Translations: TVec3List read FTranslations write FTranslations;
       property Rotations: TQuatList read FRotations write FRotations;
       property TransformMethod: TP3DArmatureTransformMethod read FTransformMethod write FTransformMethod;
@@ -218,11 +209,17 @@ type
 
   { TP3DObjectModifierArmature }
 
-  TP3DObjectModifierArmature = class ( TP3DObjectModifier )
+  TP3DObjectModifierArmature = class ( TP3DObjectModifier, IP3DPlottableSettings )
     private
       FArmature: TP3DStreamablePointer;
       FInitialized: Boolean;
       FPose: TP3DPoseJointContainerList;
+      OwnsJointTex: Boolean;
+      FJointTex: TP3DStreamablePointer;
+      LinesAuto: specialize TAuto< TP3DVec3BufferGL >;
+
+      function GetJointTex: TP3DTexture;
+      procedure SetJointTex(AValue: TP3DTexture);
       function GetArmature: TP3DArmature;
       procedure SetArmature( AValue: TP3DArmature );
       procedure SetObj( AValue: TP3DObject ); override;
@@ -234,10 +231,17 @@ type
       procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); override;
       procedure AddPass(ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase); override;
 
+      procedure UpdateJointTex( ARoot: TP3DObject );
+      procedure UpdateLines(ARoot: TP3DObject);
+
+      function GetSettings: TP3DPlotListSetting;
+
       property Initialized: Boolean read FInitialized;
 
     published
       property Armature: TP3DArmature read GetArmature write SetArmature;
+      property Lines: TP3DVec3BufferGL read LinesAuto.FInstance;
+      property JointTex: TP3DTexture read GetJointTex;
       property Pose: TP3DPoseJointContainerList read FPose;
   end;
 
@@ -426,7 +430,7 @@ end;
 procedure TP3DJoint.UpdateMatrix;
 begin
   //FMatrix:= mat4translate( vec4( Position, 1 )) * mat4( mat3( Quaternion ));
-  mat4inverse( Transform.Matrix, FMatrixInv );
+  //mat4inverse( Transform.Matrix, FMatrixInv );
 end;
 
 procedure TP3DJoint.OnTransformChange(Sender: TObject);
@@ -475,137 +479,30 @@ end;
 }
 { TP3DArmature }
 
-procedure TP3DArmature.SetJointTex(AValue: TP3DTexture);
-begin
-  FJointTex.AsValue:=AValue;
-  OwnsJointTex:= False;
-end;
-
 class function TP3DArmature.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
 begin
   Result:= ALib.Properties.GetPropByName( 'Armatures' );
 end;
 
-function TP3DArmature.GetJointTex: TP3DTexture;
-begin
-  Result:= TP3DTexture( FJointTex.AsValue );
-end;
-
-procedure TP3DArmature.UpdateJointTex(ARoot: TP3DObject);
+function TP3DArmature.CalculateJointMatrix(AJoint: TP3DPoseJoint; InvMatrix: TMat4): TMat4;
 var
-  Buffer: TVec4List;
-  i, j, w, h, n: Integer;
-  m: TMat4;
-  q: TQuat;
-  t: TVec4;
-  rlist: TP3DRenderList;
-  Capt: String;
-  Joint: TP3DJoint;
-  JointObj: TP3DObject;
-
-  function getNextPower2( AValue: Integer ): Integer;
-  begin
-    Result:= 2;
-    while Result < AValue do
-      Result:= sqr( Result );
-  end;
-
-begin
-  {if ( Assigned( FJointTex.AsValue )) then
-    begin
-      if ( OwnsJointTex ) then
-        FJointTex.AsValue.Free
-      else
-        FJointTex.AsValue:= nil;
-    end;}
-
-  rlist:= TP3DRenderList.Create;
-  ARoot.AddToRenderList( nil, Mat4Identity, rlist, [ rlfJoints ]);
-  Buffer:= TVec4List.Create;
-  w:= getNextPower2( Joints.Count );
-  h:= 1;
-  for i:= 0 to h - 1 do
-    for j:= 0 to w - 1 do
-      if ( j >= Joints.Count ) then
-        Buffer.AddArray([ vec4( 1, 0, 0, 0 ), vec4( 0, 1, 0, 0 ), vec4( 0, 0, 1, 0 ), vec4( 0, 0, 0, 1 )])
-      else
-        begin
-          //n:= rlist.Find( Joints.Items[ j ], nil );
-
-          Joint:= Joints.AsValues[ j ];
-          //JointObj:= TP3DObject( Joint.Users[ 0 ]);
-          case TransformMethod of
-            atmMatrix:
-              begin
-                //if ( Assigned( JointObj )) then
-                  m:= CalculateJointMatrix( Joint, -( ARoot.CalculateParentMatrix * ARoot.Transform.Matrix ))
-                //else
-                //  m:= Mat4Identity;
-                ;
-                Buffer.AddArray([ m.Row[ 0 ], m.Row[ 1 ], m.Row[ 2 ], m.Row[ 3 ]]);
-              end;
-            {atmDualQuaternion: //only half implemented
-              begin
-                if ( n > -1 ) then
-                  q:= -Joints.NamedItems[ j ].Quaternion * quat( rlist[ n ].Rotations[ 0 ])
-                else
-                  m:= Mat4Identity;
-
-                Buffer.Add([ q, t ]);
-              end;}
-          end;
-        end;
-  ;
-  //for i:= 0 to Buffer.Count - 1 do
-  //  WriteLn( Buffer[ i ].ToString());
-  if ( Assigned( FJointTex.AsValue )) then
-    JointTex.LoadFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr )
-  else
-    FJointTex.AsValue:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr, OwnerLib );
-  OwnsJointTex:= True;
-  //FJointTex.SaveToFile( '/tmp/jointtex' + FJointTex.Name + '.png' );
-  Buffer.Free;
-  rlist.Free;
-end;
-
-procedure TP3DArmature.UpdateLines(ARoot: TP3DObject);
-var
-  Joint: TP3DRestJoint;
-  m: TMat4;
-  p1, p2: TVec3;
-begin
-  Lines.Count:= 0; //Joints.Count * 2;
-  for Joint in Joints do begin
-    m:= {ARoot.CalculateParentMatrix * ARoot.Transform.Matrix;//} CalculateJointMatrix( Joint, ( ARoot.CalculateParentMatrix * ARoot.Transform.Matrix ));
-    //p1:= vec3( m._30, m._31, m._32 );
-    //Joint.Transform;
-    //Lines.Add( p1 );
-    //Lines.Add( p1 + mat3( m ) * Joint.Tail );
-    p1:= vec3( m._30, m._31, m._32 );
-    //p1:= ( m * vec4( vec3( 0 ), 1 )).xyz;
-    p2:= p1 + ( m * vec4( Joint.Tail, 1 )).xyz;
-    Lines.Add( p1 );
-    Lines.Add( p2 );
-  end;
-  Lines.PushData;
-end;
-
-function TP3DArmature.CalculateJointMatrix(AJoint: TP3DJoint; InvMatrix: TMat4): TMat4;
-var
-  Joint: TP3DJoint;
-  Modifier: TP3DObjectModifierArmature;
+  Joint: TP3DPoseJoint;
 begin
   Result:= Mat4Identity;
   Joint:= AJoint;
   while Assigned( Joint ) do
     begin
-      //Result:= ( Result * mat4( mat3( Obj.Quaternion ))) * mat4translate( vec4( Obj.Position, 1 ));
-      Result:= ( mat4translate( vec4( Joint.Transform.Position, 1 )) * mat4( mat3( Joint.Transform.Quaternion ))) * Result;
+      //Result:= Joint.Transform.Matrix * Result;//( mat4( mat3( Joint.Transform.Quaternion ))) * mat4translate( vec4( Joint.Transform.Position, 1 )) * Result;
+//      Result:= Joint.Transform.Matrix * Joint.RestJoint.TransformLocal.Matrix * Result;
+      Result:= ( Joint.RestJoint.TransformLocal.Matrix * Joint.Transform.Matrix ) * Result;
+
+      //( mat4translate( vec4( Joint.Transform.Position, 1 )) * mat4( mat3( Joint.Transform.Quaternion ))) *
+               //( mat4translate( vec4( Joint.RestJoint.Transform.Position, 1 )) * mat4( mat3( Joint.RestJoint.Transform.Quaternion ))) * Result;
       //Result:= mat4( mat3( Obj.Quaternion )) * mat4translate( vec4( Obj.Position, 1 )) * Result;
 
-      Joint:= Joint.GetJointParent;
+      Joint:= TP3DPoseJoint( Joint.GetJointParent );
     end;
-  Result:= InvMatrix * Result;
+  Result:= {InvMatrix * }Result;
   {Modifier:= ObjGetArmatureModifier( AObj );
   if ( Assigned( AObj ) and ( AObj.Data is TP3DJoint )) then
     Result:= Result * TP3DJoint( AObj.Data ).MatrixInv;}
@@ -629,11 +526,9 @@ begin
   inherited Create( AOwner );
   FJoints:= TP3DRestJointContainerList.Create( 'Joints', smText );
   FJoints.Armature:= Self;
-  FJointTex:= TP3DStreamablePointer.Create( 'JointTex', TP3DTexture, smText );
-  LinesAuto:= TP3DVec3BufferGL.Create;
   FRotations:= TQuatList.Create;
   FTranslations:= TVec3List.Create;
-  Properties.Add([ FJointTex, FJoints ]);
+  Properties.Add([ FJoints ]);
   //MaterialModifier:= TP3DMaterialModifierArmature.Create( Self );
 end;
 
@@ -665,11 +560,30 @@ begin
 end;
 
 procedure TP3DObjectModifierArmature.SetArmature(AValue: TP3DArmature);
+var
+  Joint: TP3DPoseJoint;
+  i: Integer;
+  p: TP3DRestJoint;
 begin
   if ( FArmature.AsValue = AValue ) then
     exit;
 
   FArmature.AsValue:= AValue;
+  Pose.Clear;
+  if ( Assigned( AValue )) then
+  for i:= 0 to Armature.Joints.Count - 1 do begin
+    Joint:= TP3DPoseJoint.Create( Pose );
+    Joint.RestJoint:= Armature.Joints[ i ];
+    //Joint.Transform.Matrix:= Joint.RestJoint.TransformLocal.Matrix;
+    Joint.Name:= Joint.RestJoint.Name;
+  end;
+
+  for Joint in Pose do begin
+    p:= Joint.RestJoint.Parent;
+    if ( Assigned( p )) then
+      Joint.FParent:= Pose.GetByName( p.Name );
+  end;
+
   UpdateMaterials;
 end;
 
@@ -683,10 +597,151 @@ constructor TP3DObjectModifierArmature.Create(const AOwner: IP3DStreamableContai
 begin
   inherited Create( AOwner );
   FPose:= TP3DPoseJointContainerList.Create( 'Pose', smText );
-  Properties.Add( FPose );
   FArmature:= TP3DStreamablePointer.Create( 'Armature', TP3DArmature, smText );
-  Properties.Add( FArmature );
+  FJointTex:= TP3DStreamablePointer.Create( 'JointTex', TP3DTexture, smText );
+  LinesAuto:= TP3DVec3BufferGL.Create;
+  Properties.Add([ FPose, FJointTex, FArmature ]);
 end;
+
+procedure TP3DObjectModifierArmature.SetJointTex(AValue: TP3DTexture);
+begin
+  FJointTex.AsValue:=AValue;
+  OwnsJointTex:= False;
+end;
+
+function TP3DObjectModifierArmature.GetJointTex: TP3DTexture;
+begin
+  Result:= TP3DTexture( FJointTex.AsValue );
+end;
+
+procedure TP3DObjectModifierArmature.UpdateJointTex(ARoot: TP3DObject);
+var
+  Buffer: TVec4List;
+  i, j, w, h, n: Integer;
+  m: TMat4;
+  q: TQuat;
+  t: TVec4;
+
+  Joint: TP3DPoseJoint;
+
+
+  function getNextPower2( AValue: Integer ): Integer;
+  begin
+    Result:= 2;
+    while Result < AValue do
+      Result:= sqr( Result );
+  end;
+
+begin
+  {if ( Assigned( FJointTex.AsValue )) then
+    begin
+      if ( OwnsJointTex ) then
+        FJointTex.AsValue.Free
+      else
+        FJointTex.AsValue:= nil;
+    end;}
+
+  //rlist:= TP3DRenderList.Create;
+  //ARoot.AddToRenderList( nil, Mat4Identity, rlist, [ rlfJoints ]);
+
+  Buffer:= TVec4List.Create;
+  w:= getNextPower2( Pose.Count );
+  h:= 1;
+  for i:= 0 to h - 1 do
+    for j:= 0 to w - 1 do
+      if ( j >= Pose.Count ) then
+        Buffer.AddArray([ vec4( 1, 0, 0, 0 ), vec4( 0, 1, 0, 0 ), vec4( 0, 0, 1, 0 ), vec4( 0, 0, 0, 1 )])
+      else
+        begin
+          //n:= rlist.Find( Joints.Items[ j ], nil );
+
+          Joint:= Pose[ j ];
+          //JointObj:= TP3DObject( Joint.Users[ 0 ]);
+          case Armature.TransformMethod of
+            atmMatrix:
+              begin
+                //if ( Assigned( JointObj )) then
+                  m:= Armature.CalculateJointMatrix( Joint, -( ARoot.CalculateParentMatrix * ARoot.Transform.Matrix )) * Joint.RestJoint.Transform.MatrixInv
+                //else
+                //  m:= Mat4Identity;
+                ;
+                //Buffer.AddArray([ m.Col[ 0 ], m.Col[ 1 ], m.Col[ 2 ], m.Col[ 3 ]]);
+                Buffer.AddArray([ m.Row[ 0 ], m.Row[ 1 ], m.Row[ 2 ], m.Row[ 3 ]]);
+              end;
+            {atmDualQuaternion: //only half implemented
+              begin
+                if ( n > -1 ) then
+                  q:= -Joints.NamedItems[ j ].Quaternion * quat( rlist[ n ].Rotations[ 0 ])
+                else
+                  m:= Mat4Identity;
+
+                Buffer.Add([ q, t ]);
+              end;}
+          end;
+        end;
+  ;
+  //for i:= 0 to Buffer.Count - 1 do
+  //  WriteLn( Buffer[ i ].ToString());
+  if ( Assigned( FJointTex.AsValue )) then begin
+    JointTex.Bind();
+    JointTex.LoadFromBuffer( w * ( 2 + Ord( Armature.TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr )
+  end else
+    FJointTex.AsValue:= TP3DTexture.CreateFromBuffer( w * ( 2 + Ord( Armature.TransformMethod = atmMatrix ) * 2 ), h, 4, dtFloat, Buffer.Ptr, Armature.OwnerLib );
+  OwnsJointTex:= True;
+  JointTex.MipMap:= False;
+  //FJointTex.SaveToFile( '/tmp/jointtex' + FJointTex.Name + '.png' );
+  Buffer.Free;
+  //rlist.Free;
+end;
+
+procedure TP3DObjectModifierArmature.UpdateLines(ARoot: TP3DObject);
+  {function GetArmModifier: TP3DObjectModifierArmature;
+  var
+    m: TP3DObjectModifier;
+  begin
+    for m in ARoot.Modifiers do
+      if (( m is TP3DObjectModifierArmature ) and ( TP3DObjectModifierArmature( m ).Armature = Self )) then begin
+        Result:= TP3DObjectModifierArmature( m );
+        break;
+      end;
+  end;}
+
+var
+  Joint: TP3DPoseJoint;
+  m: TMat4;
+  p1, p2: TVec3;
+begin
+  Lines.Count:= 0; //Joints.Count * 2;
+
+  for Joint in Pose do begin
+    //m:= {ARoot.CalculateParentMatrix * ARoot.Transform.Matrix;//} CalculateJointMatrix( Joint, ( ARoot.CalculateParentMatrix * ARoot.Transform.Matrix ));
+    m:= Armature.CalculateJointMatrix( Joint, -( ARoot.CalculateParentMatrix * ARoot.Transform.Matrix )) * Joint.RestJoint.Transform.MatrixInv;
+
+    //p1:= vec3( m._30, m._31, m._32 );
+    //Joint.Transform;
+    //Lines.Add( p1 );
+    //Lines.Add( p1 + mat3( m ) * Joint.Tail );
+    //p1:= vec3( m._30, m._31, m._32 );
+    //p1:= ( m * vec4( vec3( 0 ), 1 )).xyz;
+    //p2:= p1 + ( m * vec4( Joint.Tail, 1 )).xyz;
+    p1:= Joint.RestJoint.Transform.Position;
+    p2:= p1 + ( Joint.RestJoint.Transform.Matrix * vec4( Joint.RestJoint.Tail, 1 )).xyz;
+    Lines.Add(( m * vec4( p1, 1 )).xyz );
+    Lines.Add(( m * vec4( p2, 1 )).xyz );
+  end;
+  Lines.PushData;
+end;
+
+function TP3DObjectModifierArmature.GetSettings: TP3DPlotListSetting;
+begin
+  Result:= settings([
+    extensions([ 'armature' ]),
+    uniform( 'jointTexWidth', JointTex.Width ),
+    uniform( 'jointTexHeight', JointTex.Height ),
+    TP3DPlotCommandUniformTexture.Create( 'jointTex', JointTex )
+  ]);
+end;
+
 
 procedure TP3DObjectModifierArmature.UpdateMaterials;
 var
@@ -760,17 +815,17 @@ begin
       //Armature.UpdateJointTex( TP3DObject( Armature.Users.Items[ 0 ]));
       i:= Material.Maps.Count;
       glActiveTexture( GL_TEXTURE0 + i ); cle( Self );
-      glBindTexture( GL_TEXTURE_2D, Armature.JointTex.GLTexture ); cle( Self );
+      glBindTexture( GL_TEXTURE_2D, JointTex.GLTexture ); cle( Self );
 
       decl:= P3DShaderActive.Uniforms.Names[ 'jointTex' ];
       if ( Assigned( decl )) then
         decl.AsInt:= i;
       decl:= P3DShaderActive.Uniforms.Names[ 'jointTexWidth' ];
       if ( Assigned( decl )) then
-        decl.AsInt:= Armature.JointTex.Width;
+        decl.AsInt:= JointTex.Width;
       decl:= P3DShaderActive.Uniforms.Names[ 'jointTexHeight' ];
       if ( Assigned( decl )) then
-        decl.AsInt:= Armature.JointTex.Height;
+        decl.AsInt:= JointTex.Height;
       decl:= P3DShaderActive.Uniforms.Names[ 'to_arm' ];
       if ( Assigned( decl )) then
         decl.AsMat4:= Mat4Identity;
@@ -826,7 +881,6 @@ class function TP3DMaterialModifierArmature.GetIndex: Integer;
 begin
   Result:= 25;
 end;
-
 
 { TP3DPoseJoint }
 

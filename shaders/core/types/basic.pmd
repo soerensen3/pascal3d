@@ -1,251 +1,304 @@
 ---
-type: int
+type int
 ---
 
-```{ name:"constructor", type:"text", restrict:"assign" }
-$inject$
-```
+output text constructor
+ifdef "assign"
+select inject
+endif
 
 
-```{ name:"int", type:"text", restrict:"assign"}
-$inject$
-```
+output text int
+ifdef "assign"
+select inject
+endif
 
-```{ name:"float", type:"text", restrict:"assign"}
-int( $inject$ )
-```
+output text float
+ifdef "assign"
+'int( 'select inject' )'
+endif
 
-```{ name:"vec4", type:"text", restrict:"assign" }
-int( $inject$.x )
-```
+output text vec4
+ifdef "assign"
+'int( 'select inject'.x )'
+endif
 
-```{ name:"color4", type:"text", restrict:"assign" }
-int( $inject$.x )
-```
+output text color4
+ifdef "assign"
+'int( 'select inject'.x )'
+endif
 
-```{ name:"vec3", type:"text", restrict:"assign" }
-int( $inject$.x )
-```
+output text vec3
+ifdef "assign"
+'int( 'select inject'.x )'
+endif
 
-```{ name:"vec2", type:"text", restrict:"assign" }
-int( $inject$.x )
-```
-
----
-type: float
----
-
-```{ name:"constructor", type:"text", restrict:"assign" }
-$inject$
-```
-
-
-```{ name:"vec4", type:"text", restrict:"assign" }
-$inject$.x
-```
-
-```{ name:"color4", type:"text", restrict:"assign" }
-$inject$.x
-```
-
-```{ name:"vec3", type:"text", restrict:"assign" }
-$inject$.x
-```
-
-```{ name:"vec2", type:"text", restrict:"assign" }
-$inject$.x
-```
-
-```{ name:"float", type:"text", restrict:"assign" }
-$inject$
-```
-
-```{ name:"int", type:"text", restrict:"assign"}
-$inject$
-```
+output text vec2
+ifdef "assign"
+'int( 'select inject'.x )'
+endif
 
 ---
-type: vec4
+type float
 ---
 
-```{ name:"constructor", type:"text", restrict:"" }
-vec4( $inject$ )
-```
+output text constructor
+ifdef "assign"
+select inject
+endif
 
+output text vec4
+ifdef "assign"
+select inject'.x'
+endif
 
-```{ name:"vec4", type:"text", restrict:"assign" }
-$inject$
-```
+output text color4
+ifdef "assign"
+select inject'.x'
+endif
 
-```{ name:"color4", type:"text", restrict:"assign" }
-$inject$
-```
+output text vec3
+ifdef "assign"
+select inject'.x'
+endif
 
-```{ name:"vec3", type:"text", restrict:"assign" }
-vec4( $inject$.xyz, 1 )
-```
+output text vec2
+ifdef "assign"
+select inject'.x'
+endif
 
-```{ name:"vec2", type:"text", restrict:"assign" }
-vec4( $inject$.xy, 0, 1 )
-```
+output text int
+ifdef "assign"
+select inject
+endif
 
-```{ name:"float", type:"text", restrict:"assign" }
-vec4( $inject$, 0, 0, 1 )
-```
-
-```{ name:"int", type:"text", restrict:"assign"}
-vec4( $inject$, 0, 0, 1 )
-```
-
----
-type: vec3
----
-
-```{ name:"constructor", type:"text", restrict:"assign" }
-vec3( $inject$ )
-```
-
-
-```{ name:"vec4", type:"text", restrict:"assign" }
-$inject$.xyz
-```
-
-```{ name:"color4", type:"text", restrict:"assign" }
-$inject$.xyz
-```
-
-```{ name:"vec3", type:"text", restrict:"assign" }
-$inject$
-```
-
-```{ name:"vec2", type:"text", restrict:"assign" }
-vec3( $inject$.xy, 0 )
-```
-
-```{ name:"float", type:"text", restrict:"assign" }
-vec3( $inject$, 0, 0 )
-```
-
-```{ name:"int", type:"text", restrict:"assign"}
-vec3( $inject$, 0, 0 )
-```
+output text float
+ifdef "assign"
+select inject
+endif
 
 ---
-type: vec2
+type vec4
 ---
 
-```{ name:"constructor", type:"text", restrict:"assign" }
-vec2( $inject$ )
-```
+output text constructor
+ifdef "assign"
+'vec4( 'select inject' )'
+endif
 
+output text vec4
+ifdef "assign"
+select inject
+endif
 
-```{ name:"vec4", type:"text", restrict:"assign" }
-$inject$.xy
-```
+output text color4
+ifdef "assign"
+select inject
+endif
 
-```{ name:"color4", type:"text", restrict:"assign" }
-$inject$.xy
-```
+output text vec3
+ifdef "assign"
+'vec4( 'select inject'.xyz, 1 )'
+endif
 
-```{ name:"vec3", type:"text", restrict:"assign" }
-$inject$.xy
-```
+output text vec2
+ifdef "assign"
+'vec4( 'select inject'.xy, 0, 1 )'
+endif
 
-```{ name:"vec2", type:"text", restrict:"assign" }
-$inject$
-```
+output text float
+ifdef "assign"
+'vec4( 'select inject', 0, 0, 1 )'
+endif
 
-```{ name:"float", type:"text", restrict:"assign" }
-vec2( $inject$, 0 )
-```
-
-```{ name:"int", type:"text", restrict:"assign"}
-vec2( $inject$, 0 )
-```
-
----
-type: mat4
----
-
-```{ name:"constructor", type:"text", restrict:"assign" }
-mat4( $inject$ )
-```
-
-
-```{ name:"mat4", type:"text", restrict:"assign"}
-mat4( $inject$ )
-```
-
-```{ name:"mat3", type:"text", restrict:"assign"}
-mat3( $inject$ )
-```
-
-```{ name:"mat2", type:"text", restrict:"assign"}
-mat2( $inject$ )
-```
-
+output text int
+ifdef "assign"
+'vec4( 'select inject', 0, 0, 1 ))'
+endif
 
 ---
-type: color4
+type vec3
 ---
 
-```{ name:"constructor", type:"text", restrict:"assign" }
-vec4( $inject$ )
-```
+output text constructor
+ifdef "assign"
+'vec3( 'select inject' )'
+endif
 
-```{ name:"color4", type:"text", restrict:"assign" }
-$inject$
-```
+output text vec4
+ifdef "assign"
+select inject'.xyz'
+endif
 
-```{ name:"vec4", type:"text", restrict:"assign" }
-$inject$
-```
+output text color4
+ifdef "assign"
+select inject'.rgb'
+endif
 
-```{ name:"vec3", type:"text", restrict:"assign" }
-vec4( $inject$.xyz, 1 )
-```
+output text vec3
+ifdef "assign"
+select inject
+endif
 
-```{ name:"vec2", type:"text", restrict:"assign" }
-vec4( $inject$.xy, 0, 1 )
-```
+output text vec2
+ifdef "assign"
+'vec3( 'select inject'.xy, 0 )'
+endif
 
-```{ name:"float", type:"text", restrict:"assign" }
-vec4( vec3( $inject$ ), 1 )
-```
+output text float
+ifdef "assign"
+'vec3( 'select inject', 0, 0 )'
+endif
 
-```{ name:"int", type:"text", restrict:"assign"}
-vec4( vec3( $inject$ ), 1 )
-```
+output text int
+ifdef "assign"
+'vec3( 'select inject', 0, 0 )'
+endif
 
 ---
-type: bool
+type vec2
 ---
 
-```{ name:"constructor", type:"text", restrict:"assign" }
-$inject$
-```
+output text constructor
+ifdef "assign"
+'vec2( 'select inject' )'
+endif
 
-```{ name:"color4", type:"text", restrict:"assign" }
-bool( $inject$.r )
-```
+output text vec4
+ifdef "assign"
+select inject'.xy'
+endif
 
-```{ name:"vec4", type:"text", restrict:"assign" }
-bool( $inject$.x )
-```
+output text color4
+ifdef "assign"
+select inject'.xy'
+endif
 
-```{ name:"vec3", type:"text", restrict:"assign" }
-bool( $inject$.x )
-```
+output text vec3
+ifdef "assign"
+select inject'.xy'
+endif
 
-```{ name:"vec2", type:"text", restrict:"assign" }
-bool( $inject$.x )
-```
+output text vec2
+ifdef "assign"
+'vec2( 'select inject' )'
+endif
 
-```{ name:"float", type:"text", restrict:"assign" }
-bool( $inject$ )
-```
+output text float
+ifdef "assign"
+'vec2( 'select inject', 0 )'
+endif
 
-```{ name:"int", type:"text", restrict:"assign"}
-bool( $inject$ )
-```
+output text int
+ifdef "assign"
+'vec2( 'select inject', 0 )'
+endif
+
+---
+type mat4
+---
+
+output text constructor
+ifdef "assign"
+'mat4( 'select inject' )'
+endif
+
+output text mat4
+ifdef "assign"
+select inject
+endif
+
+output text mat3
+ifdef "assign"
+'mat3( 'select inject' )'
+endif
+
+output text mat2
+ifdef "assign"
+'mat2( 'select inject' )'
+endif
+
+---
+type color4
+---
+
+output text constructor
+ifdef "assign"
+'vec4( 'select inject' )'
+endif
+
+output text color4
+ifdef "assign"
+select inject
+endif
+
+output text vec4
+ifdef "assign"
+select inject
+endif
+
+output text vec3
+ifdef "assign"
+'vec4( 'select inject'.xyz, 1 )'
+endif
+
+output text vec2
+ifdef "assign"
+'vec4( 'select inject'.xy, 0, 1 )'
+endif
+
+output text float
+ifdef "assign"
+'vec4( vec3( 'select inject' ), 1 )'
+endif
+
+output text int
+ifdef "assign"
+'vec4( vec3( 'select inject' ), 1 )'
+endif
+
+---
+type bool
+---
+
+output text constructor
+ifdef "assign"
+select inject
+endif
+
+output text bool
+ifdef "assign"
+select inject
+endif
+
+output text color4
+ifdef "assign"
+'bool( 'select inject'.x )'
+endif
+
+output text vec3
+ifdef "assign"
+'bool( 'select inject'.x )'
+endif
+
+output text vec2
+ifdef "assign"
+'bool( 'select inject'.x )'
+endif
+
+output text vec4
+ifdef "assign"
+'bool( 'select inject'.x )'
+endif
+
+output text int
+ifdef "assign"
+'bool( 'select inject' )'
+endif
+
+output text float
+ifdef "assign"
+'bool( 'select inject' )'
+endif
+
 

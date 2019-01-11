@@ -1,12 +1,14 @@
 ---
-node: two_pass_blur
-input: { name: "Radius", type: "int", default: "5" }
-input: { name: "Resolution", type: "int", default: "1024" }
-input: { name: "Map", type: "sampler2D" }
-input: { name: "UV", type: "vec2" }
+node two_pass_blur
+input int Radius = "5"
+input int Resolution = "1024"
+input sampler2D Map
+input vec2 UV
 ---
 
-```{ name: "Declaration", type: "text", visible: false, restrict: "fshader" }
+output text __Declaration
+ifdef "fshader"
+'
 vec4 hblur( float Radius, float Resolution, sampler2D Map, vec2 UV ){
   float blur_step = 1 / Resolution;
   vec4 sum = texture2D( Map, UV );
@@ -29,23 +31,23 @@ vec4 vblur( float Radius, float Resolution, sampler2D Map, vec2 UV ){
   return sum;
 }
 
-```
+'
+endif
 
+output color4 hblur
+'hblur( 'select Radius', 'select Resolution', 'select Map', 'select UV' )'
 
-```{ name: "hblur", type: "color4" }
-hblur( $Radius$, $Resolution$, $Map$, $UV$ )
-```
-
-```{ name: "vblur", type: "color4" }
-vblur( $Radius$, $Resolution$, $Map$, $UV$ )
-```
+output color4 vblur
+'vblur( 'select Radius', 'select Resolution', 'select Map', 'select UV' )'
 
 ---
-node: grayscale
-input: { name: "Color", type: "color4" }
+node grayscale
+input color4 Color
 ---
 
-```{ name: "Declaration", type: "text", visible: false, restrict: "fshader" }
+output text __Declaration
+ifdef "fshader"
+'
 vec4 grayscale( vec4 Color ){
   vec3 g = vec3( dot( Color.rgb, vec3( 1 )));
 
@@ -66,37 +68,35 @@ vec4 luminosity( vec4 Color ){
   return vec4( vec3( l ), Color.a );
 }
 
-```
+'
+endif
 
-```{ name: "Grayscale", type: "color4" }
-grayscale( $Color:assign$ )
-```
 
-```{ name: "Sepia", type: "color4" }
-sepia( $Color:assign$ )
-```
+output color4 Grayscale
+'grayscale( 'select Color:assign' )'
 
-```{ name: "Luminosity", type: "color4" }
-luminosity( $Color:assign$ )
-```
+output color4 Sepia
+'sepia( 'select Color:assign' )'
+
+output color4 Luminosity
+'luminosity( 'select Color:assign' )'
 
 ---
-node: hatch
-input: { name: "Intensity", type: "float" }
-input: { name: "UV", type: "vec2" }
+node hatch
+input float Intensity
+input vec2 UV
 ---
 
 
-```{ name: "Declaration", type: "text", visible: false, restrict: "fshader" }
+output text __Declaration
+ifdef "fshader"
+'
 #define tangent
 IN vec4 vTangent;
 IN vec4 vCotangent;
 IN vec4 vWorldTangent;
 IN vec4 vWorldCotangent;
 
-```
-
-```{restrict:"fshader"}
 uniform sampler2D _Hatch0;
 uniform sampler2D _Hatch1;
 
@@ -125,11 +125,12 @@ vec3 hatch(vec2 _uv, float _intensity){
 
     return hatching;
 }
+'
+endif
 
 
-```
-
-```{restrict:"vshader"}
+ifdef "vshader"
+'
 #define tangent
 IN vec4 Tangent;
 IN vec4 Cotangent;
@@ -138,10 +139,9 @@ OUT vec4 vCotangent;
 OUT vec4 vWorldTangent;
 OUT vec4 vWorldCotangent;
 
+'
+endif 
 
-```
-
-```{ name: "Hatch", type: "color4" }
-vec4( hatch( $UV:assign$, $Intensity:assign$ ), 1 )
-```
+output color4 Hatch
+'vec4( hatch( 'select UV:assign', 'select Intensity:assign' ), 1 )'
 

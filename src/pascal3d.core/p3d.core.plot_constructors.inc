@@ -26,10 +26,18 @@ function geom_polygon(APoints: TVec3Array; AIndices: TP3DIntBufferGL; ASettings:
 function geom_polygon(APoints: TP3DVec3BufferGL; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode = pmTriangles ): TP3DPlotCommandLayer;
 function geom_polygon(APoints: TP3DVec3BufferGL; AIndices: TP3DIntBufferGL; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode = pmTriangles ): TP3DPlotCommandLayer;
 
+function geom_polygon(APoints: TVec2Array; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode = pmTriangles ): TP3DPlotCommandLayer;
+function geom_polygon(APoints: TVec2Array; AIndices: TP3DIntBufferGL; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode = pmTriangles ): TP3DPlotCommandLayer;
+function geom_polygon(APoints: TP3DVec2BufferGL; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode = pmTriangles ): TP3DPlotCommandLayer;
+function geom_polygon(APoints: TP3DVec2BufferGL; AIndices: TP3DIntBufferGL; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode = pmTriangles ): TP3DPlotCommandLayer;
+
 function command_clear( AClearFlags: TP3DPlotCommandClearFlags; AClearColor: TP3DColorRGBA ): TP3DPlotCommandLayer;
 function command_render_to_texture( ATexture: TP3DTexture; ALayers: TP3DPlotListLayer ): TP3DPlotCommandLayer;
 function command_restore_fb(): TP3DPlotCommandLayer;
+function extensions( AExtensions: array of String ): TP3DPlotCommandSetting;
 
+function attrib( ALocation: Integer; AAttrib: Float ): TP3DPlotCommandSetting;
+function attrib( AName: String; AAttrib: Float ): TP3DPlotCommandSetting;
 function attrib( ALocation: Integer; AAttrib: TVec2 ): TP3DPlotCommandSetting;
 function attrib( AName: String; AAttrib: TVec2 ): TP3DPlotCommandSetting;
 function attrib( ALocation: Integer; AAttrib: TVec3 ): TP3DPlotCommandSetting;
@@ -71,6 +79,19 @@ function uniform( AName: String; AValue: TMat3 ): TP3DPlotCommandSetting;
 function uniform( ALocation: GLint; AValue: TMat4 ): TP3DPlotCommandSetting;
 function uniform( AName: String; AValue: TMat4 ): TP3DPlotCommandSetting;
 
+function sample( AName: String; ATexture: TP3DTexture ): TP3DPlotCommandSetting;
+
+function texcoord( AName: String; AAttrib: TP3DVec2BufferGL ): TP3DPlotCommandSetting;
+function texcoord( AName: String; AAttrib: TVec2Array ): TP3DPlotCommandSetting;
+function texcoord( AName: String; AAttrib: TP3DVec3BufferGL ): TP3DPlotCommandSetting;
+function texcoord( AName: String; AAttrib: TVec3Array ): TP3DPlotCommandSetting;
+function texcoord( AName: String; AAttrib: TP3DVec4BufferGL ): TP3DPlotCommandSetting;
+function texcoord( AName: String; AAttrib: TVec4Array ): TP3DPlotCommandSetting;
+function normal( AName: String; AAttrib: TP3DVec2BufferGL ): TP3DPlotCommandSetting;
+function normal( AName: String; AAttrib: TVec2Array ): TP3DPlotCommandSetting;
+function normal( AName: String; AAttrib: TP3DVec3BufferGL ): TP3DPlotCommandSetting;
+function normal( AName: String; AAttrib: TVec3Array ): TP3DPlotCommandSetting;
+function sample_normal( AName: String; ATexture: TP3DTexture ): TP3DPlotCommandSetting;
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -97,7 +118,7 @@ var
 begin
   Result:= TP3DPlotListLayer.Create( False );
   for i:= low( lists ) to high( lists ) do begin
-    Result.Append( lists[ i ]);
+    Result.AppendList( lists[ i ]);
     lists[ i ].CheckDestroy;
   end;
 end;
@@ -127,7 +148,7 @@ begin
   Result:= TP3DPlotListSetting.Create( False );
   for i:= low( lists ) to high( lists ) do
     if ( Assigned( lists[ i ])) then begin
-      Result.Append( lists[ i ]);
+      Result.AppendList( Result.TPlotList( lists[ i ]));
       lists[ i ].CheckDestroy;
     end;
 end;
@@ -167,6 +188,41 @@ begin
                 ASettings ]));
 end;
 
+function geom_polygon(APoints: TVec2Array; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode): TP3DPlotCommandLayer;
+begin
+  Result:= TP3DPlotCommandPrimitive.Create( PrimitiveMode, Length( APoints ),
+              settings_join([
+                settings( TP3DPlotCommandAttribVec2Array.CreateArray( P3DAttribPosition, APoints )),
+                ASettings ]));
+end;
+
+function geom_polygon(APoints: TVec2Array; AIndices: TP3DIntBufferGL; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode
+  ): TP3DPlotCommandLayer;
+begin
+  Result:= TP3DPlotCommandPrimitiveIndexed.Create( PrimitiveMode, AIndices,
+              settings_join([
+                settings( TP3DPlotCommandAttribVec2Array.CreateArray( P3DAttribPosition, APoints )),
+                ASettings ]));
+end;
+
+function geom_polygon(APoints: TP3DVec2BufferGL; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode
+  ): TP3DPlotCommandLayer;
+begin
+  Result:= TP3DPlotCommandPrimitive.Create( PrimitiveMode, APoints.Count,
+              settings_join([
+                settings( TP3DPlotCommandAttribVec2Array.Create( P3DAttribPosition, APoints )),
+                ASettings ]));
+end;
+
+function geom_polygon(APoints: TP3DVec2BufferGL; AIndices: TP3DIntBufferGL; ASettings: TP3DPlotListSetting;
+  const PrimitiveMode: TP3DPrimitiveMode): TP3DPlotCommandLayer;
+begin
+  Result:= TP3DPlotCommandPrimitiveIndexed.Create( PrimitiveMode, AIndices,
+              settings_join([
+                settings( TP3DPlotCommandAttribVec2Array.Create( P3DAttribPosition, APoints )),
+                ASettings ]));
+end;
+
 function command_clear(AClearFlags: TP3DPlotCommandClearFlags; AClearColor: TP3DColorRGBA): TP3DPlotCommandLayer;
 begin
   Result:= TP3DPlotCommandClear.Create( AClearFlags, AClearColor );
@@ -180,6 +236,11 @@ end;
 function command_restore_fb(): TP3DPlotCommandLayer;
 begin
   Result:= TP3DPlotCommandRestoreFB.Create();
+end;
+
+function extensions(AExtensions: array of String): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandExtensions.Create( AExtensions );
 end;
 
 function layer_default(Settings: TP3DPlotListSetting): TP3DPlotCommandLayer;
@@ -225,6 +286,16 @@ begin
               settings_join([
                 settings( TP3DPlotCommandAttribVec3Array.Create( P3DAttribPosition, APoints )),
                 ASettings ]));
+end;
+
+function attrib(ALocation: Integer; AAttrib: Float): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandAttribFloat.Create( ALocation, AAttrib );
+end;
+
+function attrib(AName: String; AAttrib: Float): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandAttribFloat.Create( AName, AAttrib );
 end;
 
 function attrib(ALocation: Integer; AAttrib: TVec2): TP3DPlotCommandSetting;
@@ -420,6 +491,78 @@ end;
 function uniform(AName: String; AValue: TMat4): TP3DPlotCommandSetting;
 begin
   Result:= TP3DPlotCommandUniformMat4.Create( AName, AValue );
+end;
+
+function sample(AName: String; ATexture: TP3DTexture): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandUniformSampleTexture.Create( AName, ATexture );
+end;
+
+function texcoord(AName: String; AAttrib: TP3DVec2BufferGL): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec2.Create( AName, AAttrib );
+  Result.FCategory:= 'texcoord';
+end;
+
+function texcoord(AName: String; AAttrib: TVec2Array): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec2.CreateArray( AName, AAttrib );
+  Result.FCategory:= 'texcoord';
+end;
+
+function texcoord(AName: String; AAttrib: TP3DVec3BufferGL): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec3.Create( AName, AAttrib );
+  Result.FCategory:= 'texcoord';
+end;
+
+function texcoord(AName: String; AAttrib: TVec3Array): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec3.CreateArray( AName, AAttrib );
+  Result.FCategory:= 'texcoord';
+end;
+
+function texcoord(AName: String; AAttrib: TP3DVec4BufferGL): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec4.Create( AName, AAttrib );
+  Result.FCategory:= 'texcoord';
+end;
+
+function texcoord(AName: String; AAttrib: TVec4Array): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec4.CreateArray( AName, AAttrib );
+  Result.FCategory:= 'texcoord';
+end;
+
+function normal(AName: String; AAttrib: TP3DVec2BufferGL): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec2.Create( AName, AAttrib );
+  Result.FCategory:= 'normals';
+end;
+
+function normal(AName: String; AAttrib: TVec2Array): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec2.CreateArray( AName, AAttrib );
+  Result.FCategory:= 'normals';
+end;
+
+function normal(AName: String; AAttrib: TP3DVec3BufferGL): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec3.Create( AName, AAttrib );
+  Result.FCategory:= 'normals';
+end;
+
+function normal(AName: String; AAttrib: TVec3Array): TP3DPlotCommandSetting;
+begin
+  Result:= TP3DPlotCommandTexCoordVec3.CreateArray( AName, AAttrib );
+  Result.FCategory:= 'normals';
+end;
+
+function sample_normal(AName: String; ATexture: TP3DTexture): TP3DPlotCommandSetting;
+begin
+  Result:= sample( AName, ATexture );
+  TP3DPlotCommandUniformSampleTexture( Result ).NoConnectToColor:= True;
+  Result.FCategory:= 'normal_map';
 end;
 
 {$ENDIF}

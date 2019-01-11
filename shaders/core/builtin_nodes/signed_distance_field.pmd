@@ -1,11 +1,13 @@
 ---
-node: signed_distance_field_compatibility
-input: { name: "texture", type: "sampler2D" }
-input: { name: "uv", type: "vec4" }
-input: { name: "color", type: "color4", default: "1,1,1,1" }
+node signed_distance_field_compatibility
+input sampler2D texture
+input vec2 uv
+input color4 color = "1,1,1,1"
 ---
 
-```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
+output text __Declaration
+ifdef "fshader"
+'
 uniform float sdf_bias = -0.12;
 uniform float sdf_smoothing = 1.0/256.0;
 uniform float sdf_basealpha = 1.0;
@@ -16,16 +18,19 @@ float contour(in float d, in float w) {
 }
 
 float samp(in vec2 uv, float w) {
-    return contour( texture2D( $texture:assign$, uv.xy ).a, w);
+    return contour( texture2D( 'select texture:assign', uv.xy ).a, w);
 }
 
 
-```
+'
+endif
 
-```{name:"Initialization", restrict:"fshader", visible:false}
-  vec4 sdf_col = $color:assign$;
-  vec2 uv = $uv:assign$.st;
-  float dist = texture2D( $texture:assign$, uv ).a;
+output text __Initialization
+ifdef "fshader"
+'
+  vec4 sdf_col = 'select color:assign';
+  vec2 uv = 'select uv:assign';
+  float dist = texture2D( 'select texture:assign', uv ).a;
   float width = fwidth( dist );
   sdf_col.a = contour( dist, sdf_smoothing ); 
   float dscale = 0.354; // half of 1/sqrt2; you can play with this
@@ -39,25 +44,24 @@ float samp(in vec2 uv, float w) {
 
   // weighted average, with 4 extra points having 0.5 weight each,
   // so 1 + 0.5*4 = 3 is the divisor
-  sdf_col.a = ( sdf_col.a + 0.5 * asum ) / 3.0;
-```
+  sdf_col = texture2D( 'select texture:assign', uv );//vec4( vPosition.xy / vec2( 600, 50 ), 0, 1 );//texture2D( 'select texture:assign', uv );
+  //sdf_col.a = dist;//( sdf_col.a + 0.5 * asum ) / 3.0;
+'
+endif
 
-```{name:"Color", type:"color4", restrict:"fshader"}
-sdf_col
-```
 
+output color4 Color
+ifdef "fshader"
+'sdf_col'
+endif
 
 ---
-node: signed_distance_field
-input: { name: "texture", type: "sampler2D" }
-input: { name: "uv", type: "vec4" }
-input: { name: "color", type: "color4", default: "1,1,1,1" }
-input: { name: "sdf_bias", type: "float", default: "-0.12" }
-input: { name: "sdf_smoothing", type: "float", default: "0.004" }
-input: { name: "sdf_basealpha", type: "float", default: "1.0" }
+node lib_sdf
 ---
 
-```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
+output text __Declaration
+ifdef "fshader"
+'
 
 #ifndef sdf_lib
 #define sdf_lib
@@ -92,25 +96,49 @@ vec4 sdf( in vec4 col, in vec2 uv, in sampler2D tex, in float bias, in float smo
 
 #endif
 
-```
+'
+endif
 
-```{name:"Initialization", type:"text", restrict:"fshader", visible:false}
+
+---
+node signed_distance_field
+input sampler2D texture
+input vec4 uv
+input color4 color = "1,1,1,1"
+input float sdf_bias = "-0.12"
+input float sdf_smoothing = "0.004"
+input float sdf_basealpha = "1.0"
+lib lib_sdf
+---
+
+
+output text __Initialization
+ifdef "fshader"
+'
 //vec4 sdf_col = sdf( $color:assign$, $uv:assign$.st, $texture:assign$, $sdf_bias:assign$, $sdf_smoothing:assign$, $sdf_basealpha:assign$ );
 
-```
-```{name:"Color", type:"color4", restrict:"fshader"}
+'
+endif
+
+output color4 Color
+ifdef "fshader"
+'
 //sdf_col
-sdf( $color:assign$, $uv:assign$.st, $texture:assign$, $sdf_bias:assign$, $sdf_smoothing:assign$, $sdf_basealpha:assign$ )
-```
+sdf( 'select color:assign', 'select uv:assign'.st, 'select texture:assign', 'select sdf_bias:assign', 'select sdf_smoothing:assign', 'select sdf_basealpha:assign' )
+'
+endif
+
 
 ---
-node: signed_distance_field_calculate
-input: { name: "texture", type: "int" }
-input: { name: "uv", type: "vec4" }
-input: { name: "levels", type: "int", default: "10" }
+node signed_distance_field_calculate
+input sampler2D texture
+input vec2 uv
+input int levels = "10"
 ---
 
-```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
+output text __Declaration
+ifdef "fshader"
+'
 
 #ifndef sdf_approximate_lib
 #define sdf_approximate_lib
@@ -121,9 +149,13 @@ float approximate_sdf( in sampler2D tex, in vec2 uv, in int levels ){
   return col;// / levels;
 }
 #endif
-```
+'
+endif
 
-```{name:"Color", type:"color4", restrict:"fshader"}
-vec4( 1,1,1, approximate_sdf( $texture:assign$, $uv:assign$.st, $levels:assign$ ))
-```
+
+output color4 Color
+ifdef "fshader"
+'vec4( 1,1,1, approximate_sdf( 'select texture:assign', 'select uv:assign'.st, 'select levels:assign' ))'
+endif
+
 

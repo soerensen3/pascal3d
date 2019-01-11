@@ -153,15 +153,15 @@ end;
 
 { TP3DTextBmp }
 
-TP3DTextBmp = class ( TPersistent )
+TP3DTextBmp = class ( TPersistent, IP3DPlottableLayer )
   private
     FFont: TP3DStreamablePointer;
     FHeight: Single;
-    FIndices: TP3DIntBufferGL;
+    FIndicesAuto: specialize TAuto< TP3DIntBufferGL >;
     FLetterPosAndSize: TVec4List;
-    FTexCoords: TP3DVec2BufferGL;
+    FTexCoordsAuto: specialize TAuto< TP3DVec2BufferGL >;
     FText: String;
-    FVertices: TP3DVec2BufferGL;
+    FVerticesAuto: specialize TAuto< TP3DVec2BufferGL >;
     FWidth: Single;
 
     function AppendLetter( L: WideChar; fs: Single; p: TVec2 ): TVec2;
@@ -178,13 +178,17 @@ TP3DTextBmp = class ( TPersistent )
 
     function WidthFromTo( idx1: Integer; idx2: Integer ): TVec4;
 
+    //IP3DPlottableLayer -->
+    function GetLayer( ASettings: TP3DPlotListSetting ): TP3DPlotCommandLayer;
+    //<-- IP3DPlottableLayer
+
     property Text: String read FText;
     property Width: Single read FWidth;
     property Height: Single read FHeight;
     property Font: TP3DFontBmp read GetFont;
-    property Vertices: TP3DVec2BufferGL read FVertices write FVertices;
-    property TexCoords: TP3DVec2BufferGL read FTexCoords write FTexCoords;
-    property Indices: TP3DIntBufferGL read FIndices write FIndices;
+    property Vertices: TP3DVec2BufferGL read FVerticesAuto.FInstance;
+    property TexCoords: TP3DVec2BufferGL read FTexCoordsAuto.FInstance;
+    property Indices: TP3DIntBufferGL read FIndicesAuto.FInstance;
     property LetterPosAndSize: TVec4List read FLetterPosAndSize write FLetterPosAndSize;
 end;
 
@@ -235,10 +239,10 @@ constructor TP3DTextBmp.Create;
 begin
   inherited;
   FFont:= TP3DStreamablePointer.Create( 'Font', TP3DFontBmp );
-  Vertices:= TP3DVec2BufferGL.Create;
+  FVerticesAuto:= TP3DVec2BufferGL.Create;
   Vertices.SetAttribArray( P3DAttribPosition );
-  TexCoords:= TP3DVec2BufferGL.Create;
-  Indices:= TP3DIntBufferGL.Create;
+  FTexCoordsAuto:= TP3DVec2BufferGL.Create;
+  FIndicesAuto:= TP3DIntBufferGL.Create;
   LetterPosAndSize:= TVec4List.Create;
 end;
 
@@ -270,10 +274,10 @@ end;
 destructor TP3DTextBmp.Destroy;
 begin
   FFont.Free;
-  Vertices.Free;
-  Indices.Free;
+  //Vertices.Free;
+  //Indices.Free;
   LetterPosAndSize.Free;
-  TexCoords.Free;
+  //TexCoords.Free;
 
   inherited;
 end;
@@ -340,6 +344,20 @@ begin
   p1:= GetP( idx1 );
   p2:= GetP( idx2 );
   Result:= vec4( p1.XY, p2.XY - p1.XY + vec2( 0, p2.W ));
+end;
+
+function TP3DTextBmp.GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+var
+  newSettings: TP3DPlotListSetting;
+begin
+  newSettings:=
+    settings([
+      //uniform_material( P3DFontManagerBmp.Material ),
+      sample( 'tex0', Font.Texture ),
+      attrib( 'TexCoord0', TexCoords )
+    ]);
+
+  Result:= geom_polygon( Vertices, Indices, settings_join([ newSettings, ASettings ]));
 end;
 
 {
@@ -812,9 +830,9 @@ function TP3DFontManagerBmp.GetMaterial: TP3DMaterial;
     ClipRect:= Result.Uniforms.AddCopy( 'uniform_vec4' );
     ClipRect.FindInput( 'UnName' ).ValueProp.AsString:= 'ClippingRect';
     ClipRect.FindOutput( 'Vector' ).Connected:= Result.RootNode.FindInput( 'ClipRect' );
-    SDF:= Result.NodeTree.AddCopy( 'signed_distance_field' );
+    SDF:= Result.NodeTree.AddCopy( 'signed_distance_field_compatibility' );
     SDF.FindInput( 'texture' ).ValueProp.AsString:= '0';
-    SDF.FindInput( 'uv' ).Connected:= Result.GeometryNode.FindOutput( 'UV' );
+    SDF.FindInput( 'uv' ).Connected:= Result.NodeTree.AddCopy( 'texcoord' ).FindOutput( 'UV' );
     SDF.FindInput( 'color' ).Connected:= Result.GeometryNode.FindOutput( 'Color' );
     SDF.FindOutput( 'Color' ).Connected:= Result.RootNode.FindInput( 'Color' );
   end;
@@ -906,6 +924,7 @@ begin
         begin
           n:= P3DData.OpenLibrary( FN );
           Fnt:= P3DData.Libraries[ n ].Fonts.GetByName( Font.FontName );
+          Fnt.Texture.SaveToFile( '/tmp/' + Fnt.Name + '.png' );
           {with ( Fnt.AsJSON ) do
             begin
               WriteLn( FormatJSON());

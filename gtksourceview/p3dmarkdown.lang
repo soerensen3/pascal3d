@@ -44,8 +44,7 @@ http://www.opengl.org/registry/doc/GLSLangSpec.4.00.7.pdf
     <style id="builtin-function"  _name="Builtin Function"      map-to="def:builtin"/>
     <style id="builtin-constant"  _name="Builtin Constant"      map-to="def:constant"/>
     <style id="builtin-variable"  _name="Builtin Variable"      map-to="def:statement"/>
-    <style id="chunk"             _name="GLSL-Chunk"            map-to="def:identifier"/>
-    <style id="chunkvar"          _name="Chunk Variable"        map-to="def:note"/>
+    <style id="chunk"             _name="GLSL-Chunk"            map-to="def:string"/>
     <style id="node"              _name="Node"                  map-to="def:shebang"/>
     <style id="future-use"        _name="Reserved Keywords"/>
     <style id="string"            _name="String"                map-to="def:string"/>
@@ -460,10 +459,9 @@ http://www.opengl.org/registry/doc/GLSLangSpec.4.00.7.pdf
       <keyword>gl_Fog</keyword>
     </context>
     
-    <context id="markdown-types" style-ref="type">
+    <context id="markdown-type" style-ref="type">
       <keyword>int</keyword>  
       <keyword>text</keyword>
-      <keyword>shader</keyword>
       <keyword>float</keyword>
       <keyword>color[3-4]</keyword>
       <keyword>vec[2-4]</keyword>
@@ -472,41 +470,18 @@ http://www.opengl.org/registry/doc/GLSLangSpec.4.00.7.pdf
       <keyword>dmat[2-4]</keyword>
       <keyword>ivec[2-4]</keyword>
       <keyword>imat[2-4]</keyword>
+      <keyword>sampler[1-3]D</keyword>
     </context>
     
     <context id="markdown-string" end-at-line-end="true" style-ref="string">
       <start>"</start>   
       <end>"</end>
-      <include>
-        <context ref="markdown-types"/>
-      </include>     
-    </context>
-
-    <context id="glsl-chunk-var" style-ref="chunkvar">
-      <start>\$</start>
-      <end>\$</end>
     </context>
     
-    <context id="glsl-chunk-options" first-line-only="true">
-      <start>{</start>
-      <include>
-        <context style-ref="keyword">
-          <keyword>name</keyword>  
-          <keyword>type</keyword>
-          <keyword>restrict</keyword>
-          <keyword>visible</keyword>
-          <keyword>default</keyword>
-        </context>
-        <context ref="markdown-string"/>
-      </include>
-    </context>
-
     <context id="glsl-chunk" style-ref="chunk">
-      <start>```</start>
-      <end>```</end>
+      <start>'</start>
+      <end>'</end>
       <include>
-        <context ref="glsl-chunk-options"/>
-        <context ref="glsl-chunk-var"/>
         <context ref="def:c-like-comment"/>
         <context ref="def:c-like-comment-multiline"/>
         <context ref="def:c-like-close-comment-outside-comment"/>
@@ -528,29 +503,44 @@ http://www.opengl.org/registry/doc/GLSLangSpec.4.00.7.pdf
       </include>
     </context>
 
+    <context id="markdown-keyword" style-ref="keyword">
+      <keyword>output</keyword>
+      <keyword>select</keyword>
+      <keyword>ifdef</keyword>
+      <keyword>ifndef</keyword>
+      <keyword>ifconn</keyword>
+      <keyword>ifnconn</keyword>
+      <keyword>else</keyword>
+      <keyword>endif</keyword>
+    </context>
 
-        
-    <context id="node" style-ref="node">
-      <start>---</start>
-      <end>---</end>
-      <include>
-        <context ref="markdown-string"/>
-        <context style-ref="keyword">
-          <keyword>node</keyword>  
-          <keyword>input</keyword>
-          <keyword>name</keyword>  
-          <keyword>type</keyword>
-        </context>
-      </include>                        
+    <context id="markdown-node-keyword" style-ref="keyword">
+      <keyword>node</keyword>  
+      <keyword>type</keyword>
+      <keyword>lib</keyword>
+      <keyword>input</keyword>
     </context>
 
     <context id="markdown-comment" style-ref="def:comment" end-at-line-end="true">
       <start>#</start>
     </context>
     
+    <context id="markdown-node" style-ref="node">
+      <start>---</start>
+      <end>---</end>
+      <include>
+        <context ref="markdown-string"/>
+        <context ref="markdown-type"/>
+        <context ref="markdown-comment"/>
+        <context ref="markdown-node-keyword"/>
+      </include>
+    </context>
+    
     <context id="p3dmd">
       <include>
-        <context ref="node"/>
+        <context ref="markdown-node"/>
+        <context ref="markdown-keyword"/>
+        <context ref="markdown-type"/>
         <context ref="markdown-comment"/>
         <context ref="glsl-chunk"/>
       </include>

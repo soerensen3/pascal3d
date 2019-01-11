@@ -18,6 +18,7 @@ type
   TP3DPlotCommand = class ( TPersistent )
     private
       RefCount: Integer;
+      FCategory: String;
 
       procedure AddRef;
       procedure Release;
@@ -27,6 +28,7 @@ type
       destructor Destroy; override;
       procedure Execute( AContext: TP3DPlotCommandContext ); virtual; abstract;
       function Debug: String; virtual abstract;
+      property Category: String read FCategory write FCategory;
   end;
 
   { gP3DPlotList }
@@ -83,9 +85,11 @@ type
       function Debug: String;
       procedure Execute;
       procedure Execute( AContext: TP3DPlotCommandContext );
-      procedure Append( Item: T );
-      procedure Append( List: TPlotList );
-      procedure Clear;
+      procedure Append( Item: T ); virtual;
+      procedure AppendList( List: TPlotList );
+      function FindLast( Start: Integer; Category: String ): Integer;
+      function FindNext( Start: Integer; Category: String ): Integer;
+      procedure Clear; virtual;
 
       property Count: Integer read GetCount;
       property Items[ AIndex: Integer ]: T read GetItems;
@@ -94,16 +98,56 @@ type
 
   { TP3DPlotCommandSetting }
 
+  TP3DPlotListSetting = class;
+
   TP3DPlotCommandSetting = class ( TP3DPlotCommand )
     public
       function Debug: String; override;
+      procedure GetExtensions( Extension: TStringList ); virtual;
+      procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder ); virtual;
 
       function Clone: TP3DPlotCommandSetting; virtual; abstract;
   end;
 
+  { TP3DPlotCommandSettingShader }
+
+  TP3DPlotCommandSettingShader = class ( TP3DPlotCommandSetting )
+    procedure BuildShader( AOwner: TP3DStreamableContainer ); virtual; abstract;
+  end;
+
+  { TP3DPlotCommandSettingNode }
+
+  { IP3DPlotCommandSettingNode }
+
+  IP3DPlotCommandSettingNode = interface
+    ['{CCFBAF96-E769-4B2C-B306-37B615C9A7B6}']
+
+    function GetShaderNode: TP3DNodeClone;
+    property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
   { TP3DPlotListSetting }
 
-  TP3DPlotListSetting = specialize gP3DPlotList < TP3DPlotCommandSetting >;
+  TP3DPlotListSetting = class( specialize gP3DPlotList < TP3DPlotCommandSetting >)
+    private
+      FBuildShader: TP3DPlotCommandSettingShader;
+      FShader: TP3DStreamableContainer;
+
+      function GetShader: TP3DShader;
+
+    public
+      constructor Create(const AOwnedByUser: Boolean=True);
+      destructor Destroy; override;
+
+      procedure Append(Item: TP3DPlotCommandSetting); override;
+      procedure Clear; override;
+      procedure UpdateShader;
+      procedure Execute(AContext: TP3DPlotCommandContext);
+
+      property BuildShader: TP3DPlotCommandSettingShader read FBuildShader;
+      property Shader: TP3DShader read GetShader;
+  end;
+
 
   { TP3DPlotCommandLayer }
   TP3DPlotCommandLayer = class ( TP3DPlotCommand )
@@ -155,438 +199,10 @@ type
     GlobalPlotCount: Integer = 0;
     GlobalPlotListCount: Integer = 0;
 
-
-  { TP3DPlotCommandRenderList }
-  {
-  TP3DPlotCommandRenderList = class ( TP3DPlotCommand )
-    private
-      FFlags: TP3DRenderListFlags;
-      FRenderList: TP3DRenderList;
-      FCameraObj: TP3DStreamablePointer;
-      FScene: TP3DStreamablePointer;
-
-      function GetCameraObj: TP3DObject;
-      function GetScene: TP3DScene;
-      procedure SetCameraObj(AValue: TP3DObject);
-      procedure SetFlags(AValue: TP3DRenderListFlags);
-      procedure SetScene(AValue: TP3DScene);
-
-    public
-      constructor Create; override;
-      constructor Create( AScene: TP3DScene; ACameraObj: TP3DObject; AFlags: TP3DRenderListFlags; const AOwner: IP3DStreamableContainer=nil);
-      destructor Destroy; override;
-
-      procedure Execute; override;
-      procedure Refresh; override;
-      procedure UpdateRenderList;
-
-      property RenderList: TP3DRenderList read FRenderList;
-      property Scene: TP3DScene read GetScene write SetScene;
-      property CameraObj: TP3DObject read GetCameraObj write SetCameraObj;
-
-    published
-      property Flags: TP3DRenderListFlags read FFlags write SetFlags;
-  end;
-
-  TP3DPlotCommandClearFlag = (
-    rccmDepth,
-    rccmColor );
-
-  TP3DPlotCommandClearFlags = set of TP3DPlotCommandClearFlag;
-
-  { TP3DPlotCommandClear }
-
-  TP3DPlotCommandClear = class ( TP3DPlotCommand )
-    private
-      FClearColor: TP3DColorRGBA;
-      FClearFlags: TP3DPlotCommandClearFlags;
-
-    public
-      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
-      constructor Create( AClearFlags: TP3DPlotCommandClearFlags; AClearColor: TP3DColorRGBA; AOwner: IP3DStreamableContainer=nil);
-
-      procedure Execute; override;
-
-      property ClearColor: TP3DColorRGBA read FClearColor write FClearColor;
-
-    published
-      property ClearFlags: TP3DPlotCommandClearFlags read FClearFlags write FClearFlags;
-  end;
-
-  { TP3DPlotCommandFramebuffer }
-
-  TP3DPlotCommandFramebuffer = class ( TP3DPlotCommand )
-    private
-      FFramebuffer: TP3DFrameBuffer;
-
-    public
-      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
-      constructor Create( AFramebuffer: TP3DFrameBuffer; const AOwner: IP3DStreamableContainer=nil);
-
-      procedure Execute; override;
-
-      property Framebuffer: TP3DFrameBuffer read FFramebuffer write FFramebuffer;
-  end;
-
-  { TP3DPlotCommandFramebuffer }
-
-  { TP3DPlotCommandFramebufferTarget }
-
-  TP3DPlotCommandFramebufferTarget = class ( TP3DPlotCommand )
-    private
-      FFramebuffer: TP3DFrameBuffer;
-      FTargetIndex: Integer;
-
-    public
-      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
-      constructor Create( AFramebuffer: TP3DFrameBuffer; ATargetIndex: Integer; const AOwner: IP3DStreamableContainer=nil);
-
-      procedure Execute; override;
-
-      property Framebuffer: TP3DFrameBuffer read FFramebuffer write FFramebuffer;
-      property TargetIndex: Integer read FTargetIndex write FTargetIndex;
-  end;
-
-  { TP3DPlotCommandFramebufferUnbind }
-
-  TP3DPlotCommandFramebufferUnbind = class ( TP3DPlotCommand )
-  private
-    FUpdateMipMaps: Boolean;
-    protected
-      FFramebuffer: TP3DFrameBuffer;
-
-    public
-      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
-      constructor Create( AFramebuffer: TP3DFrameBuffer; const AOwner: IP3DStreamableContainer=nil; const AUpdateMipMaps: Boolean = False );
-
-      procedure Execute; override;
-
-      property Framebuffer: TP3DFrameBuffer read FFramebuffer write FFramebuffer;
-      property UpdateMipMaps: Boolean read FUpdateMipMaps write FUpdateMipMaps;
-  end;
-
-  { TP3DPlotCommandPushVP }
-
-  TP3DPlotCommandPushVP = class ( TP3DPlotCommand )
-    private
-      FRect: TP3DRect;
-
-    public
-      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
-      constructor Create( ARect: TP3DRect; AOwner: IP3DStreamableContainer=nil );
-
-      procedure Execute; override;
-
-      property Rect: TP3DRect read FRect write FRect;
-  end;
-
-  { TP3DPlotCommandPopVP }
-
-  TP3DPlotCommandPopVP = class ( TP3DPlotCommand )
-    public
-      procedure Execute; override;
-  end;
-
-  { TP3DPlotCommandSetActiveMat }
-
-  TP3DPlotCommandSetActiveMat = class ( TP3DPlotCommand )
-    protected
-      FMaterial: TP3DStreamablePointer;
-
-      function GetMaterial: TP3DMaterial;
-      procedure SetMaterial(AValue: TP3DMaterial);
-
-    public
-      constructor Create(const AOwner: IP3DStreamableContainer=nil); override;
-      constructor Create( AMaterial: TP3DMaterial; const AOwner: IP3DStreamableContainer=nil );
-
-      procedure Execute; override;
-
-      property Material: TP3DMaterial read GetMaterial write SetMaterial;
-  end;
-  }
-
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
 
-
-
-
-{ TP3DPlotCommandRenderList }
-{
-function TP3DPlotCommandRenderList.GetCameraObj: TP3DObject;
-begin
-  Result:= TP3DObject( FCameraObj.AsValue );
-end;
-
-function TP3DPlotCommandRenderList.GetScene: TP3DScene;
-begin
-  Result:= TP3DScene( FScene.AsValue );
-end;
-
-procedure TP3DPlotCommandRenderList.SetCameraObj(AValue: TP3DObject);
-begin
-  FCameraObj.AsValue:= AValue;
-end;
-
-procedure TP3DPlotCommandRenderList.SetFlags(AValue: TP3DRenderListFlags);
-begin
-  if FFlags=AValue then Exit;
-  FFlags:=AValue;
-  UpdateRenderList;
-end;
-
-procedure TP3DPlotCommandRenderList.SetScene(AValue: TP3DScene);
-begin
-  FScene.AsValue:= AValue;
-  UpdateRenderList;
-end;
-
-constructor TP3DPlotCommandRenderList.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-  FRenderList:= TP3DRenderList.Create;
-  FCameraObj:= TP3DStreamablePointer.Create( 'CameraObj', TP3DObject, smText );
-  FScene:= TP3DStreamablePointer.Create( 'Scene', TP3DScene, smText );
-  Properties.Add([ FScene, FCameraObj, TP3DPropAccessRTTI.Create( Self, 'Flags', smText )]);
-end;
-
-constructor TP3DPlotCommandRenderList.Create(AScene: TP3DScene; ACameraObj: TP3DObject; AFlags: TP3DRenderListFlags;
-  const AOwner: IP3DStreamableContainer);
-begin
-  Create( AOwner );
-  Scene:= AScene;
-  CameraObj:= ACameraObj;
-  Flags:= AFlags;
-end;
-
-destructor TP3DPlotCommandRenderList.Destroy;
-begin
-  FRenderList.Free;
-  inherited Destroy;
-end;
-
-procedure TP3DPlotCommandRenderList.Execute;
-begin
-  Refresh;
-  FRenderList.Render( CameraObj, Flags );
-end;
-
-procedure TP3DPlotCommandRenderList.Refresh;
-begin
-  UpdateRenderList;
-  if ( Assigned( CameraObj ) and ( CameraObj.Data is TP3DCamera )) then
-    TP3DCamera( CameraObj.Data ).UpdateMatrices( CameraObj );
-end;
-
-procedure TP3DPlotCommandRenderList.UpdateRenderList;
-begin
-  RenderList.Clear;
-  if ( Assigned( Scene )) then
-    Scene.MakeRenderList( Scene, Mat4Identity, FRenderList, Flags );
-end;
-
-
-{ TP3DPlotCommandClear }
-
-constructor TP3DPlotCommandClear.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-  Properties.Add([ TP3DPropAccessColorRGBA.CreateField( 'ClearColor', @FClearColor, smText ),
-                   TP3DPropAccessRTTI.Create( Self, 'ClearFlags', smText )]);
-end;
-
-constructor TP3DPlotCommandClear.Create(AClearFlags: TP3DPlotCommandClearFlags; AClearColor: TP3DColorRGBA;
-  AOwner: IP3DStreamableContainer);
-begin
-  Create( AOwner );
-  ClearFlags:= AClearFlags;
-  ClearColor:= AClearColor;
-end;
-
-procedure TP3DPlotCommandClear.Execute;
-var
-  Mask: GLuint;
-begin
-  Mask:= 0;
-  glClearColor( ClearColor.R, ClearColor.G, ClearColor.B, ClearColor.A );
-  if ( rccmColor in ClearFlags ) then
-    Mask:= GL_COLOR_BUFFER_BIT;
-  if ( rccmDepth in ClearFlags ) then
-    Mask:= Mask or GL_DEPTH_BUFFER_BIT;
-  glClear( Mask ); cle( Self );
-end;
-
-
-{ TP3DPlotCommandFramebuffer }
-
-constructor TP3DPlotCommandFramebuffer.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-  //Properties.Add( TP3DPropAccessStreamable ); //Framebuffer
-end;
-
-constructor TP3DPlotCommandFramebuffer.Create(AFramebuffer: TP3DFrameBuffer; const AOwner: IP3DStreamableContainer);
-begin
-  Create( AOwner );
-  Framebuffer:= AFramebuffer;
-end;
-
-procedure TP3DPlotCommandFramebuffer.Execute;
-begin
-  if ( Assigned( Framebuffer )) then
-    Framebuffer.BindAll();
-end;
-
-{ TP3DPlotCommandFramebufferTarget }
-
-constructor TP3DPlotCommandFramebufferTarget.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-  Properties.Add( TP3DPropAccessInt.CreateField( 'TargetIndex', @FTargetIndex, smText ));
-end;
-
-constructor TP3DPlotCommandFramebufferTarget.Create(AFramebuffer: TP3DFrameBuffer; ATargetIndex: Integer;
-  const AOwner: IP3DStreamableContainer);
-begin
-  Create( AOwner );
-  Framebuffer:= AFramebuffer;
-  TargetIndex:= ATargetIndex;
-end;
-
-procedure TP3DPlotCommandFramebufferTarget.Execute;
-begin
-  if ( Assigned( Framebuffer )) then
-    Framebuffer.Bind( TargetIndex );
-end;
-
-
-{ TP3DPlotCommandFramebufferUnbind }
-
-constructor TP3DPlotCommandFramebufferUnbind.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-end;
-
-constructor TP3DPlotCommandFramebufferUnbind.Create(AFramebuffer: TP3DFrameBuffer;
-  const AOwner: IP3DStreamableContainer; const AUpdateMipMaps: Boolean);
-begin
-  Create( AOwner );
-  Framebuffer:= AFramebuffer;
-  FUpdateMipMaps:= AUpdateMipMaps;
-end;
-
-procedure TP3DPlotCommandFramebufferUnbind.Execute;
-var
-  i: Integer;
-begin
-  if ( Assigned( Framebuffer )) then begin
-    Framebuffer.Unbind();
-    if ( UpdateMipMaps ) then
-      for i:= 0 to Framebuffer.Maps.Count - 1 do
-        Framebuffer.Maps[ i ].UpdateMipMaps;
-  end;
-end;
-
-
-{ TP3DPlotCommandSetActiveMat }
-
-function TP3DPlotCommandSetActiveMat.GetMaterial: TP3DMaterial;
-begin
-  Result:= TP3DMaterial( FMaterial.AsValue );
-end;
-
-procedure TP3DPlotCommandSetActiveMat.SetMaterial(AValue: TP3DMaterial);
-begin
-  FMaterial.AsValue:= AValue;
-end;
-
-constructor TP3DPlotCommandSetActiveMat.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-  FMaterial:= TP3DStreamablePointer.Create( 'Material', TP3DMaterial, smText );
-  Properties.Add( FMaterial );
-end;
-
-constructor TP3DPlotCommandSetActiveMat.Create(AMaterial: TP3DMaterial; const AOwner: IP3DStreamableContainer);
-begin
-  Create( AOwner );
-  Material:= AMaterial;
-end;
-
-procedure TP3DPlotCommandSetActiveMat.Execute;
-begin
-  if ( Assigned( Material )) then
-    Material.PassToShader();
-end;
-
-{ TP3DPlotCommandPopVP }
-
-procedure TP3DPlotCommandPopVP.Execute;
-begin
-  P3DViewports.Pop;
-end;
-
-{ TP3DPlotCommandPushVP }
-
-constructor TP3DPlotCommandPushVP.Create(const AOwner: IP3DStreamableContainer);
-begin
-  inherited Create(AOwner);
-  Properties.Add( TP3DPropAccessVec4.CreateField( 'Rect', @FRect, smText ));
-end;
-
-constructor TP3DPlotCommandPushVP.Create(ARect: TP3DRect; AOwner: IP3DStreamableContainer);
-begin
-  Create( AOwner );
-  FRect:= ARect;
-end;
-
-procedure TP3DPlotCommandPushVP.Execute;
-begin
-  P3DViewports.Push( FRect );
-end;
-
-class operator gP3DPlotList.Initialize(var aRec: specialize gP3DPlotList<T>);
-begin
-  aRec.FItems := nil;
-  //SetLength( aRec.FItems, 0 );
-  WriteLn( 'class operator Initialize: ', IntToHex( Integer( Pointer( @aRec )), 8 ));
-end;
-
-class operator gP3DPlotList.Finalize(var aRec: specialize gP3DPlotList<T>);
-begin
-  WriteLn( 'class operator Finalize: ', IntToHex( Integer( Pointer( @aRec )), 8 ));
-  aRec.SmartFinalize();
-end;
-
-class operator gP3DPlotList.AddRef(var aRec: specialize gP3DPlotList<T>);
-var
-  i: Integer;
-begin
-  WriteLn( 'class operator gP3DPlotList.AddRef(var aRec: specialize gP3DPlotList<T>);' );
-  for i:= low( aRec.FItems ) to high( aRec.FItems ) do
-    aRec.FItems[ i ].AddRef;
-  //if aRec.RefCount <> nil then
-  //  InterLockedIncrement(aRec.RefCount^);
-end;
-
-class operator gP3DPlotList.Copy(constref aSource: specialize gP3DPlotList<T>; var aDest: specialize gP3DPlotList<T>);
-var
-  i: Integer;
-begin
-  WriteLn( 'class operator gP3DPlotList.Copy(constref aSource: specialize gP3DPlotList<T>; var aDest: specialize gP3DPlotList<T>);' );
-  for i:= low( aSource.FItems ) to high( aSource.FItems ) do
-    aDest.Append( aSource.FItems[ i ]);
-  //if aDest.RefCount <> nil then
-  //  aDest.SmartFinalize();
-  //if aSource.RefCount <> nil then
-  //  InterLockedIncrement(aSource.RefCount^);
-  //aDest.RefCount := aSource.RefCount;
-  //aDest.FItems := aSource.FItems;
-end;
-
-}
 { gP3DPlotList }
 
 function gP3DPlotList.GetCount: Integer;
@@ -596,7 +212,10 @@ end;
 
 function gP3DPlotList.GetItems( AIndex: Integer ): T;
 begin
-  Result:= FItems[ AIndex ];
+  if ( InRange( AIndex, 0, high( FItems ))) then
+    Result:= FItems[ AIndex ]
+  else
+    Result:= default( T );
 end;
 
 constructor gP3DPlotList.CreateTemporary;
@@ -696,13 +315,39 @@ begin
   Item.AddRef;
 end;
 
-procedure gP3DPlotList.Append(List: TPlotList);
+procedure gP3DPlotList.AppendList(List: TPlotList);
 var
   l: Integer;
 begin
   if ( Assigned( List )) then
     for l:= 0 to high( List.FItems ) do
       Append( List.FItems[ l ]);
+end;
+
+function gP3DPlotList.FindLast(Start: Integer; Category: String): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= Start downto 0 do
+    if ( Items[ i ].Category = Category ) then
+      begin
+        Result:= i;
+        break;
+      end;
+end;
+
+function gP3DPlotList.FindNext(Start: Integer; Category: String): Integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:= Start to Count - 1 do
+    if ( Items[ i ].Category = Category ) then
+      begin
+        Result:= i;
+        break;
+      end;
 end;
 
 procedure gP3DPlotList.Clear;
@@ -761,6 +406,16 @@ end;
 function TP3DPlotCommandSetting.Debug: String;
 begin
   Result:= '  ' + ClassName;
+end;
+
+procedure TP3DPlotCommandSetting.GetExtensions(Extension: TStringList);
+begin
+
+end;
+
+procedure TP3DPlotCommandSetting.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+begin
+
 end;
 
 { TP3DPlotCommandLayer }

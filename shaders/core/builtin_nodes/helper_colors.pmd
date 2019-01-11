@@ -1,152 +1,140 @@
 ---
-node: mix
-input: { name:"Color1", type:"color4", default:"1,1,1,1" }
-input: { name:"Color2", type:"color4", default:"1,1,1,1" }
-input: { name:"Factor", type:"float", default:"0.5" }
+node mix
+input color4 Color1 = "1,1,1,1"
+input color4 Color2 = "1,1,1,1"
+input float Factor = "0.5"
 ---
 
-``` { name:"add", type:"color4" }
-mix( $Color1:assign$, $Color1:assign$ + $Color2:assign$, $Factor:assign$ )
-```
+output color4 add
+'mix( 'select Color1:assign', 'select Color1:assign' + 'select Color2:assign', 'select Factor:assign' )'
 
-``` { name:"sub", type:"color4" }
-mix( $Color1:assign$, $Color1:assign$ - $Color2:assign$, $Factor:assign$ )
-```
+output color4 sub
+'mix( 'select Color1:assign', 'select Color1:assign' - 'select Color2:assign', 'select Factor:assign' )'
 
-``` { name:"mul", type:"color4" }
-mix( $Color1:assign$, $Color1:assign$ * $Color2:assign$, $Factor:assign$ )
-```
+output color4 mul
+'mix( 'select Color1:assign', 'select Color1:assign' * 'select Color2:assign', 'select Factor:assign' )'
 
-``` { name:"mix", type:"color4" }
-mix( $Color1:assign$, $Color2:assign$, $Factor:assign$ )
-```
+output color4 mix
+'mix( 'select Color1:assign', 'select Color1:assign', 'select Factor:assign' )'
 
 ---
-node: brightness_contrast
-input: { name:"Color", type:"color4", default:"1,1,1,1" }
-input: { name:"Brightness", type:"float", default:"0" }
-input: { name:"Contrast", type:"float", default:"1" }
+node brightness_contrast
+input color4 Color = "1,1,1,1"
+input float Brightness = "0"
+input float Contrast = "1"
 ---
 
-``` { name:"Color", type:"color4" }
-vec4( $Color:assign$.rgb * $Contrast:assign$ + $Brightness:assign$, $Color:assign$.a )
-```
+output color4 Color
+'vec4( 'select Color:assign'.rgb * 'select Contrast:assign' + 'select Brightness:assign', 'select Color:assign'.a )'
 
 ---
-node: mix_simple
-input: { name:"Color1", type:"color4", default:"1,1,1,1" }
-input: { name:"Color2", type:"color4", default:"1,1,1,1" }
+node mix_simple
+input color4 Color1 = "1,1,1,1"
+input color4 Color2 = "1,1,1,1"
 ---
 
-``` { name:"add", type:"color4" }
-( $Color1:assign$ + $Color2:assign$ )
-```
+output color4 add
+'( 'select Color1:assign' + 'select Color2:assign' )'
 
-``` { name:"sub", type:"color4" }
-( $Color1:assign$ - $Color2:assign$ )
-```
+output color4 sub
+'( 'select Color1:assign' - 'select Color2:assign' )'
 
-``` { name:"mul", type:"color4" }
-( $Color1:assign$ * $Color2:assign$ )
-```
+output color4 mul
+'( 'select Color1:assign' * 'select Color2:assign' )'
 
-``` { name:"mix", type:"color4" }
-mix( $Color1:assign$, $Color2:assign$, 0.5 )
-```
+output color4 mix
+'mix( 'select Color1:assign', 'select Color2:assign', 0.5 )'
 
 ---
-node: mix_alpha
-input: { name:"Color1", type:"color4", default:"1,1,1,1" }
-input: { name:"Color2", type:"color4", default:"1,1,1,1" }
+node mix_alpha
+input color4 Color1 = "1,1,1,1"
+input color4 Color2 = "1,1,1,1"
 ---
 
-``` { name:"Color", type:"color4" }
-mix( $Color1:assign$, $Color2:assign$, $Color2:assign$.a )
-```
+output color4 Color
+'mix( 'select Color1:assign', 'select Color2:assign', 'select Color2:assign'.a )'
 
 ---
-node: color_split
-input: { name:"Color", type:"color4", default:"1,1,1,1" }
+node color_split
+input color4 Color = "1,1,1,1"
 ---
 
-```{ name:"R", type:"float" }
-$Color:assign$.r
-```
+output float R
+select Color:assign'.r'
 
-```{ name:"G", type:"float" }
-$Color:assign$.g
-```
+output float G
+select Color:assign'.g'
 
-```{ name:"B", type:"float" }
-$Color:assign$.b
-```
 
-```{ name:"A", type:"float" }
-$Color:assign$.a
-```
+output float B
+select Color:assign'.b'
 
-```{ name:"RG", type:"vec2" }
-$Color:assign$.rg
-```
 
-```{ name:"GB", type:"vec2" }
-$Color:assign$.gb
-```
+output float A
+select Color:assign'.a'
 
-```{ name:"RGB", type:"vec3" }
-$Color:assign$.rgb
-```
 
----
-node: color_join
-input: { name:"R", type:"float", default:"1" }
-input: { name:"G", type:"float", default:"1" }
-input: { name:"B", type:"float", default:"1" }
-input: { name:"A", type:"float", default:"1" }
----
+output float RG
+select Color:assign'.rg'
 
-```{ name:"RGB", type:"color4" }
-vec4( $R:assign$, $G:assign$, $B:assign$, 1 )
-```
 
-```{ name:"RGBA", type:"color4" }
-vec4( $R:assign$, $G:assign$, $B:assign$, $A:assign$ )
-```
+output float GB
+select Color:assign'.gb'
+
+
+output float RGB
+select Color:assign'.rgb'
+
 
 ---
-node: gamma_correction
-input: { name:"Color", type:"color4", default:"1,1,1,1" }
-input: { name:"Gamma", type:"float", default:"2.2" }
+node color_join
+input float R = "1"
+input float G = "1"
+input float B = "1"
+input float A = "1"
 ---
 
-```{name:"Declaration", type:"color4", visible:false}
+output color4 RGB
+'vec4( 'select R:assign', 'select G:assign', 'select B:assign', 1 )'
+
+output color4 RGBA
+'vec4( 'select R:assign', 'select G:assign', 'select B:assign', 'select A:assign' )'
+
+
+---
+node gamma_correction
+input color4 Color = "1,1,1,1"
+input float Gamma = "2.2"
+---
+
+output text __Declaration
+'
   vec4 Gamma_Correction( vec4 Color, float Gamma ){
     vec3 OutColor = Color.rgb / ( Color.rgb + vec3( 1.0 ));
     return vec4( pow( OutColor, vec3( 1.0 / max( 1, Gamma ))), Color.a ); 
   }
-```
+'
 
-```{ name:"Color", type:"color4" }
-Gamma_Correction( $Color:assign$, $Gamma:assign$ )
-```
+output color4 Color
+'Gamma_Correction( 'select Color:assign', 'select Gamma:assign' )'
 
----
-node: step
-input: { name:"Color", type:"color4", default:"1,1,1,1"}
-input: { name:"Threshhold", type:"float", default:"0.5"}
----
-
-```{name:"Color", type:"color4" }
-step( $Threshhold:assign$, $Color:assign$ )
-```
 
 ---
-node: smoothstep
-input: { name:"Color", type:"color4", default:"1,1,1,1"}
-input: { name:"Threshhold1", type:"float", default:"0.4"}
-input: { name:"Threshhold2", type:"float", default:"0.6"}
+node step
+input color4 Color = "1,1,1,1"
+input float Threshold = "0.5"
 ---
 
-```{name:"Color", type:"color4" }
-smoothstep( $Threshhold1:assign$, $Threshhold2:assign$, $Color:assign$ )
-```
+output color4 Color
+'step( 'select Threshold:assign', 'select Color:assign' )'
+
+---
+node smoothstep
+input color4 Color = "1,1,1,1"
+input float Threshold1 = "0.4"
+input float Threshold2 = "0.6"
+---
+
+output color4 Color
+'smoothstep( 'select Threshold1:assign', 'select Threshold2:assign', 'select Color:assign' )'
+

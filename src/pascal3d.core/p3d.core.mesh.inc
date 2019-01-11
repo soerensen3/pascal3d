@@ -970,10 +970,19 @@ var
   i: Integer;
   newSettings: TP3DPlotListSetting;
 begin
-  newSettings:= settings([ uniform_material( Material ), attrib( P3DAttribNormal, Normals )]);
+  newSettings:= settings([ {uniform_material( Material ), }attrib( P3DAttribNormal, Normals )]);
+  if ( Tangents.Count > 0 ) then
+    newSettings.Append( attrib( P3DAttribTangent, Tangents ));
+  if ( Cotangents.Count > 0 ) then
+    newSettings.Append( attrib( P3DAttribCotangent, Cotangents ));
   for i:= 0 to TexCoords.Count - 1 do
-    newSettings.Append( attrib( 'TexCoord' + i.ToString, TexCoords[ i ]));
-  WriteLn( ASettings.Debug );
+    newSettings.Append( texcoord( 'TexCoord' + i.ToString, TexCoords[ i ]));
+
+  if ( VertexWeights.Count > 0 ) then
+    newSettings.Append( attrib( 'jointWeight', VertexWeights ));
+  if ( VertexWeightIndices.Count > 0 ) then
+    newSettings.Append( attrib( 'fjointID', VertexWeightIndices ));
+
 
   Result:= geom_polygon( Positions, Indices, settings_join([ newSettings, ASettings ]));
 end;

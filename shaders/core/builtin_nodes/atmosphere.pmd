@@ -1,29 +1,19 @@
 ---
-node: atmosphere
-input: { name: "SunDir", type: "vec3", default: "0,0,1"}
-input: { name: "Position", type: "vec3", default: "0,0,0"}
-input: { name: "SunIntensity", type: "float", default: "55.0"}
-input: { name: "PlanetRadius", type: "float", default: "6371e3"}
-input: { name: "AtmosphereRadius", type: "float", default: "6471e3"}
-input: { name: "RayleighScattering", type: "vec4", default: "5.5e-6, 13.0e-6, 22.4e-6,0"}
-input: { name: "MieScattering", type: "float", default: "21e-6"}
-input: { name: "RayleighScale", type: "float", default: "8e3"}
-input: { name: "MieScale", type: "float", default: "1.2e3"}
+node atmosphere
+input vec3 SunDir = "0,0,1"
+input vec3 Position = "0,0,0"
+input float SunIntensity = "55.0"
+input float PlanetRadius = "6371e3"
+input float AtmosphereRadius = "6471e3"
+input vec4 RayleighScattering = "5.5e-6, 13.0e-6, 22.4e-6,0"
+input float MieScattering = "21e-6"
+input float RayleighScale = "8e3"
+input float MieScale = "1.2e3"
 ---
-#        transpose( mat3( view )) * normalize( $Position:assign$.xyz ),// normalized ray direction
-#        vec3( 0,6372e3,0 ),               // ray origin
-#        $SunDir:assign$.xyz,              // position of the sun
-#        55.0,                             // intensity of the sun
-#        6371e3,                           // radius of the planet in meters
-#        6471e3,                           // radius of the atmosphere in meters
-#        vec3( 5.5e-6, 13.0e-6, 22.4e-6 ), // Rayleigh scattering coefficient
-#        21e-6,                            // Mie scattering coefficient
-#        8e3,                              // Rayleigh scale height
-#        1.2e3,                            // Mie scale height
-#        0.758                             // Mie preferred scattering direction
 
-```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
-
+output text __Declaration
+ifdef "fshader"
+'
 #define PI 3.141592
 #define iSteps 16
 #define jSteps 8
@@ -136,23 +126,26 @@ vec3 atmosphere(vec3 r, vec3 r0, vec3 pSun, float iSun, float rPlanet, float rAt
 
 ```{name:"Initialization", type:"text", restrict:"fshader", visible:false}
     vec4 atmosphere_color = vec4( atmosphere(
-        normalize( $Position:assign$ ),// normalized ray direction
-        vec3( 0,$PlanetRadius:assign$+1e3,0 ),               // ray origin
-        $SunDir:assign$,              // position of the sun
-        $SunIntensity:assign$,                             // intensity of the sun
-        $PlanetRadius:assign$,                           // radius of the planet in meters
-        $AtmosphereRadius:assign$,                           // radius of the atmosphere in meters
-        $RayleighScattering:assign$.xyz, // Rayleigh scattering coefficient
-        $MieScattering:assign$,                            // Mie scattering coefficient
-        $RayleighScale:assign$,                              // Rayleigh scale height
-        $MieScale:assign$,                            // Mie scale height
+        normalize( 'select Position:assign' ),// normalized ray direction
+        vec3( 0,'select PlanetRadius:assign'+1e3,0 ),               // ray origin
+        'select SunDir:assign',              // position of the sun
+        'select SunIntensity:assign',                             // intensity of the sun
+        'select PlanetRadius:assign',                           // radius of the planet in meters
+        'select AtmosphereRadius:assign',                           // radius of the atmosphere in meters
+        'select RayleighScattering:assign'.xyz, // Rayleigh scattering coefficient
+        'select MieScattering:assign',                            // Mie scattering coefficient
+        'select RayleighScale:assign',                              // Rayleigh scale height
+        'select MieScale:assign',                            // Mie scale height
         0.758                             // Mie preferred scattering direction   
     ), 1 );
 
     // Apply exposure.
     atmosphere_color.rgb = 1.0 - exp( -1.0 * atmosphere_color.rgb );
-```
+'
+endif
 
-```{name:"Color", type:"color4", restrict:"fshader"}
-atmosphere_color
-```
+output color4 Color
+ifdef "fshader,assign"
+'atmosphere_color'
+endif
+

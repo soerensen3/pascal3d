@@ -1,0 +1,24 @@
+regex
+input\s*\{\s*name:\s*"([a-zA-Z]*)",\s*type:\s*"([a-zA-Z][a-zA-Z0-9]*)"\s\}
+->input $2 $1\n
+
+input\s*\{\s*name:\s*"([a-zA-Z]*)"\s*,\s*type:\s*"([a-zA-Z][a-zA-Z0-9]*)"\s*,\s*default:\s*"([a-zA-Z0-9.,]*)"\s*\}
+-> input $2 $1 = "$3"
+
+```\s*\{\s*name:\s*"([a-zA-Z]*)",\s*type:\s*"([a-zA-Z][a-zA-Z0-9]*)"\s\}
+->output $2 $1\n
+
+```\s*\{\s*name:\s*"([a-zA-Z]*)",\s*type:\s*"([a-zA-Z][a-zA-Z0-9]*)"\s*,\s*restrict:\s*"([a-zA-Z][,a-zA-Z0-9]*)"\s*\}
+-> output $2 $1\nifdef "$3"
+
+```\s*\{\s*name:\s*"([a-zA-Z]*)",\s*type:\s*"([a-zA-Z][a-zA-Z0-9]*)"\s*,\s*restrict:\s*"([a-zA-Z][,a-zA-Z0-9]*)"\s*,\s*visible:\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}
+-> output $2 __$1\nifdef "$3"
+
+\s*\{\s*name:\s*"([a-zA-Z]*)",\s*type:\s*"([a-zA-Z][a-zA-Z0-9]*)"\s*,\s*visible:\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}
+-> output $2 __$1
+
+\$\s*([a-zA-Z]*(:[a-zA-Z,]*){0,1})\$
+->'select $1'
+
+```
+-> '

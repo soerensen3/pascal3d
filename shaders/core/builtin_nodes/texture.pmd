@@ -1,97 +1,106 @@
 ---
-node: texture2D
-input: { name: "Map", type: "sampler2D", visible: false }
-input: { name: "UV",  type: "vec2" }
+node texture2D
+input sampler2D Map
+input vec2 UV
 ---
 
-#```{ name:"Declaration", type:"text", visible: false}
-#uniform sampler2D tex$texture:assign$;
-#
-#```
 
-```{ name:"Initialization", type:"text", restrict:"fshader", visible: false}
-  vec4 $Map:assign$_val = texture2D( $Map:assign$, $UV:assign$.xy );
-
-```
+output text __Initialization
+ifdef "fshader"
+'
+  vec4 'select Map:assign'_val = texture2D( 'select Map:assign', 'select UV:assign' );
+'
+endif
 
 #Color 
-```{name:"Color", type:"color4", restrict:"fshader,assign"}
-$Map:assign$_val
-```
+output color4 Color
+ifdef "fshader,assign"
+select Map:assign'_val'
+endif
 
-```{name:"Color", type:"color4", restrict:"vshader,assign"}
-texture2D( $Map:assign$, $UV:assign$.xy )
-```
+ifdef "vshader,assign"
+'texture2D( 'select Map:assign', 'select UV:assign' )'
+endif
 #Normal
- 
-```{name:"Normal", type:"vec4", restrict:"fshader,assign"}
-vec4( 2.0 * $Map:assign$_val.rgb - vec3(1.0, 1.0, 1.0), 1 )
-```
 
-```{name:"Normal", type:"vec4", restrict:"vshader,assign"}
-vec4( 2.0 * texture2D( $Map:assign$, $UV:assign$.xy ).rgb - vec3(1.0, 1.0, 1.0), 1 )
-```
-```{name:"Texture", type:"sampler2D", restrict:"assign"}
-$Map:assign$
-```
+output vec3 Normal
+ifdef "fshader,assign"
+'2.0 * 'select Map:assign'_val.rgb - vec3( 1 )'
+endif
+
+ifdef "vshader,assign"
+'2.0 * texture2D( 'select Map:assign', 'select UV:assign'.xy ).rgb - vec3( 1 )'
+endif
+
+output sampler2D Texture
+ifdef "assign"
+select Map:assign
+endif
 
 ---
-node: texture2DLod
-input: { name: "Map",    type: "sampler2D", visible: false }
-input: { name: "UV",     type: "vec2" }
-input: { name: "Level",  type: "float" }
+node texture2DLod
+input sampler2D Map
+input vec2 UV
+input float Level
 ---
 
-#```{ name:"Declaration", type:"text", visible: false}
-#uniform sampler2D tex$texture:assign$;
-#
-#```
+output text __Initialization
 
-```{ name:"Initialization", type:"text", restrict:"fshader", visible: false}
-  vec4 $Map:assign$_val = textureLod( $Map:assign$, $UV:assign$.xy, $Level:assign$ );
-
-```
+ifdef "fshader"
+'
+  vec4 'select Map:assign'_val = textureLod( 'select Map:assign', 'select UV:assign'.xy, 'select Level:assign' );
+'
+endif
 
 #Color 
-```{name:"Color", type:"color4", restrict:"fshader,assign"}
-$Map:assign$_val
-```
+output color4 Color
+ifdef "fshader,assign"
+select Map:assign'_val'
+endif
 
-```{name:"Color", type:"color4", restrict:"vshader,assign"}
-textureLod( $Map:assign$, $UV:assign$.xy, $Level:assign$ )
-```
+ifdef "vshader,assign"
+'textureLod( 'select Map:assign', 'select UV:assign', 'select Level:assign' )'
+endif
+
 #Normal
  
-```{name:"Normal", type:"vec4", restrict:"fshader,assign"}
-vec4( 2.0 * $Map:assign$_val.rgb - vec3(1.0, 1.0, 1.0), 1 )
-```
+output vec3 Normal
+ifdef "fshader,assign"
+'2.0 * 'select Map:assign'_val.rgb - vec3( 1 )'
+endif
 
-```{name:"Normal", type:"vec4", restrict:"vshader,assign"}
-vec4( 2.0 * textureLod( $Map:assign$, $UV:assign$.xy, $Level:assign$ ).rgb - vec3(1.0, 1.0, 1.0), 1 )
-```
-```{name:"Texture", type:"sampler2D", restrict:"assign"}
-$Map:assign$
-```
+ifdef "vshader,assign"
+'vec4( 2.0 * textureLod( 'select Map:assign', 'select UV:assign', 'select Level:assign' ).rgb - vec3(1.0, 1.0, 1.0), 1 )'
+endif
+
+output sampler2D Texture
+ifdef "assign"
+select Map:assign
+endif
+
 ---
-node: perturb_normal_world
-input: { name:"Normal", type:"vec3" }
+node perturb_normal_world
+input vec3 Normal
 ---
 
 #Normal
-```{name:"Normal", type:"vec3", restrict:"assign"}
-CalcBumpedNormal( vWorldNormal.xyz, vWorldTangent.xyz, vWorldCotangent.xyz, $Normal:assign$ )
-```
+output vec3 Normal
+ifdef "assign"
+'CalcBumpedNormal( vWorldNormal.xyz, vWorldTangent.xyz, vWorldCotangent.xyz, 'select Normal:assign' )'
+endif
 
-```{name:"Initialization", restrict:"vshader", visible:false}
+output text __Initialization 
+ifdef "vshader"
+'
   vWorldTangent = world * vec4( Tangent.xyz, 0 );
   vWorldCotangent = world * vec4( Cotangent.xyz, 0 );
   vTangent = view * vec4( vWorldTangent.xyz, 0 );
   vCotangent = view * vec4( vWorldCotangent.xyz, 0 );
+'
+endif
 
-```
-
-```{name:"Declaration", type:"text", visible:false}
-
+output text __Declaration
+'
 vec3 CalcBumpedNormal( vec3 Normal, vec3 Tangent, vec3 Cotangent, vec3 BumpMapNormal )
 {
   vec4 NewNormal = normalize( vec4( BumpMapNormal.xyz, 0 ));
@@ -101,9 +110,11 @@ vec3 CalcBumpedNormal( vec3 Normal, vec3 Tangent, vec3 Cotangent, vec3 BumpMapNo
   return NewNormal.xyz;
 }
 
-```
+'
 
-```{restrict:"vshader"}
+ifdef "vshader"
+
+'
 #define tangent
 IN vec4 Tangent;
 IN vec4 Cotangent;
@@ -112,25 +123,28 @@ OUT vec4 vCotangent;
 OUT vec4 vWorldTangent;
 OUT vec4 vWorldCotangent;
 
+'
+endif
 
-```
-
-```{restrict:"fshader"}
+ifdef "fshader"
+'
 #define tangent
 IN vec4 vTangent;
 IN vec4 vCotangent;
 IN vec4 vWorldTangent;
 IN vec4 vWorldCotangent;
 
-```
+'
+endif
 
 ---
-node: spherical_mapping
-input: { name:"Normal", type:"vec3" }
+node spherical_mapping
+input vec3 Normal
 ---
 
 
-```{name:"Declaration", type:"text", visible:false}
+output text __Declaration
+'
 const vec2 invAtan = vec2(0.1591, 0.3183);
 vec4 SampleSphericalMap(vec3 v)
 {
@@ -140,19 +154,20 @@ vec4 SampleSphericalMap(vec3 v)
   return vec4( uv, 0, 0 );
 }
 
-```
+'
 
-```{name:"UV", type:"vec2"}
-SampleSphericalMap( normalize( $Normal:assign$.xyz ))
-```
+output vec2 UV
+'SampleSphericalMap( normalize( 'select Normal:assign'.xyz ))'
+
 
 ---
-node: inv_spherical_mapping
-input: { name:"UV", type:"vec2" }
+node inv_spherical_mapping
+input vec2 UV
 ---
 
 
-```{name:"Declaration", type:"text", visible:false}
+output text __Declaration
+'
 const float PI = 3.1415926535897932384626433832795028841971693993751058209749;
 
 vec2 toUV(in vec3 n)
@@ -182,17 +197,19 @@ vec3 toPolar(in vec2 uv)
     return n;
 }
 
-```
+'
 
-```{name:"Normal", type:"vec3"}
-toPolar( $UV:assign$ )
-```
+output vec3 Normal
+'toPolar( 'select UV:assign' )'
+
 ---
-node: convolute_environment
-input: { name:"texture", type:"sampler2D" }
+node convolute_environment
+input sampler2D texture
 ---
 
-```{name:"Initialization", type:"text", restrict:"fshader", visible:false}
+output text __Initialization
+ifdef "fshader"
+'
   const float PI = 3.14159265359;
   // The world vector acts as the normal of a tangent surface
   // from the origin, aligned to WorldPos. Given this normal, calculate all
@@ -218,7 +235,7 @@ input: { name:"texture", type:"sampler2D" }
   uv *= invAtan;
   uv += 0.5;
 
-  irradiance += texture2D( $texture:assign$, uv ).rgb;*/
+  irradiance += texture2D( 'select texture:assign', uv ).rgb;*/
   
   for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta)
   {
@@ -233,27 +250,32 @@ input: { name:"texture", type:"sampler2D" }
           //uv *= invAtan;
           //uv += 0.5;
 
-          irradiance += texture2D( $texture:assign$, uv ).rgb * cos(theta) * sin(theta);
+          irradiance += texture2D( 'select texture:assign', uv ).rgb * cos(theta) * sin(theta);
           nrSamples++;
       }
   }
   irradiance = PI * irradiance * (1.0 / float(nrSamples));
 
-```
+'
+endif
 
-```{name:"Color", type:"color4", restrict:"assign"}
-vec4( irradiance, 1 )
-```
+output color4 Color
+ifdef "assign"
+'vec4( irradiance, 1 )'
+endif
+
 
 ---
-node: convolute_environment_spherical
-input: { name:"Texture", type:"sampler2D" }
-input: { name:"UV", type: "vec2" }
-input: { name:"Size", type: "float", default: "0.5" }
-input: { name:"Resolution", type: "int", default: "512" }
+node convolute_environment_spherical
+input sampler2D Texture
+input vec2 UV
+input float Size = "0.5"
+input int Resolution = "512"
 ---
 
-```{name:"Declaration", type:"text", restrict:"fshader", visible:false}
+output text __Declaration
+ifdef "fshader"
+'
 const float PI = 3.14159265359;
 vec3 conv_environment( vec2 UV, float Size, int Resolution, sampler2D Texture ){
   float sampleDelta = max( 0.001, 1.0/ float( Resolution ));
@@ -272,25 +294,32 @@ vec3 conv_environment( vec2 UV, float Size, int Resolution, sampler2D Texture ){
   irradiance = irradiance * ( 1.0 / float( nrSamples ));
   return irradiance;
 }
-```
+'
+endif
 
-```{name:"Initialization", type:"text", restrict:"fshader", visible:false}
-  vec3 irradiance = conv_environment( $UV:assign$, $Size:assign$, $Resolution:assign$, $Texture:assign$ );
-```
+output text __Initialization
+ifdef "fshader"
+'
+  vec3 irradiance = conv_environment( 'select UV:assign', 'select Size:assign', 'select Resolution:assign', 'select Texture:assign' );
+'
+endif
 
-```{name:"Color", type:"color4", restrict:"assign"}
-vec4( irradiance, 1 )
-```
+output color4 Color
+ifdef "assign"
+'vec4( irradiance, 1 )'
+endif
 
 ---
-node: convolute_environment_spherical_mip
-input: { name:"Texture", type:"sampler2D" }
-input: { name:"UV", type: "vec2" }
-input: { name:"Roughness", type: "float", default: "0.0" }
-input: { name:"Resolution", type: "int", default: "128" }
+node convolute_environment_spherical_mip
+input sampler2D Texture
+input vec2 UV
+input float Roughness = "0.0"
+input int Resolution = "128"
 ---
 
-```{name:"Declaration", type:"text", restrict:"fshader", visible: false}
+output text __Declaration
+ifdef "fshader"
+'
 // ----------------------------------------------------------------------------
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
@@ -370,7 +399,7 @@ vec3 conv_environment_mip( vec2 UV, sampler2D Texture, uint resolution, float ro
   
   for( uint i = 0u; i < SAMPLE_COUNT; ++i )
   {
-      // generates a sample vector that's biased towards the preferred alignment direction (importance sampling).
+      // generates a sample vector that`s biased towards the preferred alignment direction (importance sampling).
       vec2 Xi = Hammersley(i, SAMPLE_COUNT);
       vec3 H = ImportanceSampleGGX(Xi, N, roughness);
       vec3 L  = normalize(2.0 * dot(V, H) * H - V);
@@ -383,7 +412,7 @@ vec3 conv_environment_mip( vec2 UV, sampler2D Texture, uint resolution, float ro
       float NdotL = max(dot(N, L), 0.0);
       if(NdotL > 0.0)
       {
-          // sample from the environment's mip level based on roughness/pdf
+          // sample from the environment`s mip level based on roughness/pdf
           float D   = DistributionGGX(N, H, roughness);
           float NdotH = max(dot(N, H), 0.0);
           float HdotV = max(dot(H, V), 0.0);
@@ -423,13 +452,19 @@ gl_FragColor=r/max(w,1e-4)
 
   return prefilteredColor;
 }*/
-```
+'
+endif
 
-```{name:"Initialization", type:"text", restrict:"fshader", visible: false}
-  vec3 irradiance = conv_environment_mip( $UV:assign$, $Texture:assign$, $Resolution:assign$, $Roughness:assign$ );
-```
+output text __Initialization
+ifdef "fshader"
+'
+  vec3 irradiance = conv_environment_mip( 'select UV:assign', 'select Texture:assign', 'select Resolution:assign', 'select Roughness:assign' );
+'
+endif
 
-```{name:"Color", type:"color4", restrict:"assign"}
-vec4( irradiance, 1 )
-```
+output color4 Color
+ifdef "assign"
+'vec4( irradiance, 1 )'
+endif
+
 
