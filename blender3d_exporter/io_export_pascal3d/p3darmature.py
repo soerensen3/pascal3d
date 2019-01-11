@@ -65,7 +65,7 @@ class P3DArmature( p3ddatablock.P3DDataBlock ):
                      'Position' : list( bone.parent.matrix_local.inverted() * bone.head_local if ( bone.parent ) else bone.head_local ), },
                  'Parent' : path % bone.parent.name if ( bone.parent ) else None,
                  'Children': [ path % child.name for child in bone.children ],
-                 'Tail' : list( bone.parent.matrix_local.inverted() * bone.tail_local if ( bone.parent ) else bone.tail_local ),
+                 'Tail' : list( bone.tail_local ), #bone.parent.matrix_local.inverted() * bone.tail_local if ( bone.parent ) else bone.tail_local ),
                  'ClassName': 'TP3DRestJoint' }
 
 

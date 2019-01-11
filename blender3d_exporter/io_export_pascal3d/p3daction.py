@@ -13,7 +13,7 @@ prop_blender_to_p3d = { 'diffuse_color': 'Diff',
                         'energy': 'Energy',
                         'offset': 'Position',
                         'texture_slots': 'Maps',
-                        'pose.bones': 'Data.Joints' }
+                        'pose.bones': 'Modifiers[ 0 ].Pose' }
 
 quat_blender_to_p3d =         { 0: 3,
                                 1: 0,

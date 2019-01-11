@@ -725,7 +725,7 @@ begin
     //p1:= ( m * vec4( vec3( 0 ), 1 )).xyz;
     //p2:= p1 + ( m * vec4( Joint.Tail, 1 )).xyz;
     p1:= Joint.RestJoint.Transform.Position;
-    p2:= p1 + ( Joint.RestJoint.Transform.Matrix * vec4( Joint.RestJoint.Tail, 1 )).xyz;
+    p2:= Joint.RestJoint.Tail; //p1 + ( Joint.RestJoint.Transform.MatrixInv * vec4( Joint.RestJoint.Tail, 1 )).xyz;
     Lines.Add(( m * vec4( p1, 1 )).xyz );
     Lines.Add(( m * vec4( p2, 1 )).xyz );
   end;
