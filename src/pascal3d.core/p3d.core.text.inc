@@ -205,8 +205,8 @@ procedure TP3DText.ApplyShader;
 begin
   if ( not Assigned( P3DMaterialActive )) then
     exit;
-  if ( P3DMaterialActive.Maps.Count = 0 ) then
-    P3DMaterialActive.Maps.AddCopy( 'texture2D' );
+  //if ( P3DMaterialActive.Maps.Count = 0 ) then
+  //  P3DMaterialActive.Maps.AddCopy( 'texture2D' );
     //TP3DMaterialMap.Create( P3DMaterialActive.Maps );
   P3DMaterialActive.Maps[ 0 ].Map:= Texture;
 end;

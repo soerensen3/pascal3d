@@ -7,7 +7,7 @@ function layers( ALayers: array of TP3DPlotCommandLayer ): TP3DPlotListLayer;
 
 function layers_join( lists: array of TP3DPlotListLayer ): TP3DPlotListLayer;
 
-function layer_default( Settings: TP3DPlotListSetting ): TP3DPlotCommandLayer;
+function settings_default( Layers: TP3DPlotListLayer; Settings: TP3DPlotListSetting ): TP3DPlotListLayer;
 
 function settings( ASetting: TP3DPlotCommandSetting ): TP3DPlotListSetting;
 function settings( ASettings: array of TP3DPlotCommandSetting ): TP3DPlotListSetting;
@@ -57,10 +57,6 @@ function attrib( AName: String; AAttrib: TVec3Array ): TP3DPlotCommandSetting;
 function attrib( AName: String; AAttrib: TP3DVec4BufferGL ): TP3DPlotCommandSetting;
 function attrib( AName: String; AAttrib: TVec4Array ): TP3DPlotCommandSetting;
 
-function uniform_material( AMaterial: TP3DMaterial ): TP3DPlotCommandSetting;
-function uniform_light( ALightObj: TP3DObject ): TP3DPlotCommandSetting;
-function uniform( AName: String; ATexture: TP3DTexture ): TP3DPlotCommandSetting;
-function uniform( ALocation: GLint; ATexture: TP3DTexture ): TP3DPlotCommandSetting;
 function uniform( ALocation: GLint; ATransform: TP3DTransform ): TP3DPlotCommandSetting;
 function uniform( AName: String; ATransform: TP3DTransform ): TP3DPlotCommandSetting;
 function uniform( AName: String; AValue: Integer ): TP3DPlotCommandSetting;
@@ -78,6 +74,9 @@ function uniform( ALocation: GLint; AValue: TMat3 ): TP3DPlotCommandSetting;
 function uniform( AName: String; AValue: TMat3 ): TP3DPlotCommandSetting;
 function uniform( ALocation: GLint; AValue: TMat4 ): TP3DPlotCommandSetting;
 function uniform( AName: String; AValue: TMat4 ): TP3DPlotCommandSetting;
+
+function uniform( AName: String; ATexture: TP3DTexture ): TP3DPlotCommandSetting;
+function uniform( ALocation: GLint; ATexture: TP3DTexture ): TP3DPlotCommandSetting;
 
 function sample( AName: String; ATexture: TP3DTexture ): TP3DPlotCommandSetting;
 
@@ -243,9 +242,11 @@ begin
   Result:= TP3DPlotCommandExtensions.Create( AExtensions );
 end;
 
-function layer_default(Settings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+function settings_default(Layers: TP3DPlotListLayer; Settings: TP3DPlotListSetting): TP3DPlotListLayer;
 begin
-  Result:= TP3DPlotCommandDefault.Create( Settings );
+  Result:= layer( TP3DPlotCommandPushDefault.Create( Settings ));
+  Result.AppendList( Layers );
+  Result.Append( TP3DPlotCommandPopDefault.Create );
 end;
 
 function geom_lines(APoints: TVec3Array; ASettings: TP3DPlotListSetting; const PrimitiveMode: TP3DPrimitiveMode): TP3DPlotCommandLayer;
@@ -386,16 +387,6 @@ end;
 function attrib(AName: String; AAttrib: TVec4Array): TP3DPlotCommandSetting;
 begin
   Result:= TP3DPlotCommandAttribVec4Array.CreateArray( AName, AAttrib );
-end;
-
-function uniform_material(AMaterial: TP3DMaterial): TP3DPlotCommandSetting;
-begin
-  Result:= TP3DPlotCommandMaterial.Create( AMaterial );
-end;
-
-function uniform_light(ALightObj: TP3DObject): TP3DPlotCommandSetting;
-begin
-  Result:= TP3DPlotCommandUniformLight.Create( -1, ALightObj );
 end;
 
 function uniform(AName: String; ATexture: TP3DTexture): TP3DPlotCommandSetting;

@@ -41,7 +41,6 @@ var
 implementation
 
 
-
 {$DEFINE IMPLEMENTATION}
   {$INCLUDE p3d.utils_lib.inc}
 {$UNDEF IMPLEMENTATION}

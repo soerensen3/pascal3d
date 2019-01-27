@@ -36,54 +36,6 @@ type
       property Index: Integer read FIndex write FIndex;
   end;
 
-  { TP3DPlotCommandRenderToTexture}
-
-  TP3DPlotCommandRenderToTexture = class ( TP3DPlotCommandLayer )
-    private
-      FFrameBuffer: TP3DFrameBuffer;
-      FFrameBufferProp: TP3DStreamableContainer;
-      FLayers: TP3DPlotListLayer;
-      FTexture: TP3DTexture;
-
-    public
-      constructor Create( ATexture: TP3DTexture; ALayers: TP3DPlotListLayer );
-      destructor Destroy; override;
-
-      procedure Execute( AContext: TP3DPlotCommandContext ); override;
-      function Clone: TP3DPlotCommandLayer; override;
-
-      property Texture: TP3DTexture read FTexture;
-      property Layers: TP3DPlotListLayer read FLayers;
-  end;
-
-  { TP3DPlotCommandRestoreFB }
-
-  TP3DPlotCommandRestoreFB = class ( TP3DPlotCommandLayer )
-    public
-      procedure Execute( AContext: TP3DPlotCommandContext ); override;
-      function Clone: TP3DPlotCommandLayer; override;
-  end;
-
-  { TP3DPlotCommandUniformTexture }
-
-  TP3DPlotCommandUniformTexture = class ( specialize TP3DPlotCommandShaderDecl < TP3DTexture >)
-    procedure Execute( AContext: TP3DPlotCommandContext ); override;
-    function Clone: TP3DPlotCommandSetting; override;
-  end;
-
-  { TP3DPlotCommandUniformSampleTexture }
-
-  TP3DPlotCommandUniformSampleTexture = class ( TP3DPlotCommandUniformTexture, IP3DPlotCommandSettingNode )
-    protected
-      FNoConnectToColor: Boolean;
-      function GetShaderNode: TP3DNodeClone;
-
-    public
-      procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder ); override;
-
-      property ShaderNode: TP3DNodeClone read GetShaderNode;
-      property NoConnectToColor: Boolean read FNoConnectToColor write FNoConnectToColor;
-  end;
 
   { TP3DPlotCommandUniformLight }
 
@@ -92,15 +44,10 @@ type
     function Clone: TP3DPlotCommandSetting; override;
   end;
 
-  { TP3DPlotCommandUniformTransform }
-
-  TP3DPlotCommandUniformTransform = class ( specialize TP3DPlotCommandShaderDecl < TP3DTransform >)
-    procedure Execute( AContext: TP3DPlotCommandContext ); override;
-  end;
 
   { TP3DPlotCommandMaterial }
 
-  TP3DPlotCommandMaterial = class ( TP3DPlotCommandSettingShader )
+  {TP3DPlotCommandMaterial = class ( TP3DPlotCommandSettingShader )
     private
       FMaterial: TP3DMaterial;
 
@@ -113,7 +60,7 @@ type
       procedure BuildShader(AOwner: TP3DStreamableContainer); override;
 
       function Clone: TP3DPlotCommandSetting; override;
-  end;
+  end;}
 
   { TP3DPlotCommandScene }
 
@@ -124,6 +71,7 @@ type
     public
       constructor Create( AScene: TP3DScene );
 
+      function Debug(LevelIndent: Integer): String; override;
       property Scene: TP3DScene read FScene write FScene;
       procedure Execute( AContext: TP3DPlotCommandContext ); override;
   end;
@@ -160,59 +108,7 @@ type
       procedure Execute(AContext: TP3DPlotCommandContext); override;
   end;
 
-  { TP3DPlotCommandTexCoord }
 
-  generic TP3DPlotCommandTexCoord < T; VecArray > = class ( specialize TP3DPlotCommandAttribArray < T, VecArray >, IP3DPlotCommandSettingNode )
-    protected
-      FShaderNode: TP3DNodeClone;
-
-      function GetShaderNode: TP3DNodeClone;
-
-    public
-      property ShaderNode: TP3DNodeClone read GetShaderNode;
-  end;
-
-  { TP3DPlotCommandTexCoordVec2 }
-
-  TP3DPlotCommandTexCoordVec2 = class ( TP3DPlotCommandAttribVec2Array, IP3DPlotCommandSettingNode )
-    protected
-      FShaderNode: TP3DNodeClone;
-
-      function GetShaderNode: TP3DNodeClone;
-
-    public
-      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
-
-      property ShaderNode: TP3DNodeClone read GetShaderNode;
-  end;
-
-  { TP3DPlotCommandTexCoordVec3 }
-
-  TP3DPlotCommandTexCoordVec3 = class ( TP3DPlotCommandAttribVec3Array, IP3DPlotCommandSettingNode )
-    protected
-      FShaderNode: TP3DNodeClone;
-
-      function GetShaderNode: TP3DNodeClone;
-
-    public
-      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
-
-      property ShaderNode: TP3DNodeClone read GetShaderNode;
-  end;
-
-  { TP3DPlotCommandTexCoordVec4 }
-
-  TP3DPlotCommandTexCoordVec4 = class ( TP3DPlotCommandAttribVec4Array, IP3DPlotCommandSettingNode )
-    protected
-      FShaderNode: TP3DNodeClone;
-
-      function GetShaderNode: TP3DNodeClone;
-
-    public
-      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
-
-      property ShaderNode: TP3DNodeClone read GetShaderNode;
-  end;
 
 
 
@@ -298,7 +194,7 @@ begin
 end;
 
 { TP3DPlotCommandMaterial }
-
+{
 constructor TP3DPlotCommandMaterial.Create(AMaterial: TP3DMaterial);
 begin
   inherited Create;
@@ -326,6 +222,172 @@ end;
 function TP3DPlotCommandMaterial.Clone: TP3DPlotCommandSetting;
 begin
   Result:= TP3DPlotCommandMaterial.Create( FMaterial );
+end;}
+
+{ TP3DPlotCommandMaterialPBR }
+
+constructor TP3DPlotCommandMaterialPBR.Create();
+begin
+  inherited Create;
+  FCategory:= 'PBR';
 end;
+
+procedure TP3DPlotCommandMaterialPBR.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+var
+  setting: TP3DPlotCommandSetting;
+  Outp: TP3DNodeSocketClone;
+  mat: TP3DNodeClone;
+begin
+  inherited MakeShaderModifications(ASender, ASenderIdx, ABuilder);
+  mat:= ABuilder.Uniforms.AddCopy( 'material_pbr' );
+  with ( mat ) do begin
+    FindInput( 'Albedo' ).Connected:= ABuilder.RootNode.FindInput( 'Color' ).Connected;
+    FindOutput( 'Color' ).Connected:= ABuilder.RootNode.FindInput( 'Color' );
+
+    setting:= ASender.Items[ ASender.FindLast( ASenderIdx, 'pbr_roughness' )];
+    if (( setting is IP3DPlotCommandSettingNode ) and
+        ( Assigned(( setting as IP3DPlotCommandSettingNode ).ShaderNode ))) then begin
+      Outp:= ( setting as IP3DPlotCommandSettingNode ).ShaderNode.FindOutputFirst([ 'Value', 'Color' ]);
+      FindInput( 'Roughness' ).Connected:= outp;
+    end;
+
+    setting:= ASender.Items[ ASender.FindLast( ASenderIdx, 'pbr_metalness' )];
+    if (( setting is IP3DPlotCommandSettingNode ) and
+        ( Assigned(( setting as IP3DPlotCommandSettingNode ).ShaderNode ))) then begin
+      FindInput( 'Metalness' ).Connected:= ( setting as IP3DPlotCommandSettingNode ).ShaderNode.FindOutputFirst([ 'Value', 'Color' ]);
+    end;
+
+    setting:= ASender.Items[ ASender.FindLast( ASenderIdx, 'pbr_occlusion' )];
+    if (( setting is IP3DPlotCommandSettingNode ) and
+        ( Assigned(( setting as IP3DPlotCommandSettingNode ).ShaderNode ))) then begin
+      FindInput( 'Occlusion' ).Connected:= ( setting as IP3DPlotCommandSettingNode ).ShaderNode.FindOutputFirst([ 'Value', 'Color' ]);
+    end;
+
+    setting:= ASender.Items[ ASender.FindLast( ASenderIdx, 'normal_map' )];
+    if (( setting is IP3DPlotCommandSettingNode ) and
+        ( Assigned(( setting as IP3DPlotCommandSettingNode ).ShaderNode ))) then begin
+      Outp:= ( setting as IP3DPlotCommandSettingNode ).ShaderNode.FindOutput( 'Normal' );
+      if ( Assigned( Outp )) then
+        //mat.FindInput( 'WorldNormal' ).Connected:= Outp;
+        with ( ABuilder.Uniforms.AddCopy( 'perturb_normal_world' )) do begin
+          FindInput( 'Normal' ).Connected:= Outp;
+          mat.FindInput( 'WorldNormal' ).Connected:= FindOutput( 'Normal' );
+        end;
+    end;
+
+  end;
+end;
+
+procedure TP3DPlotCommandMaterialPBR.Execute(AContext: TP3DPlotCommandContext);
+begin
+
+end;
+
+{ TP3DPlotCommandSDF }
+
+constructor TP3DPlotCommandSDF.Create(const Color: TP3DPlotCommandSetting; const UV: TP3DPlotCommandSetting; const sdf_bias: Float;
+  const sdf_smoothing: Float; const sdf_basealpha: Float);
+begin
+  inherited Create;
+  Bias:= sdf_bias;
+  Smoothing:= sdf_smoothing;
+  BaseAlpha:= sdf_basealpha;
+end;
+
+procedure TP3DPlotCommandSDF.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+begin
+  with ( ABuilder.Uniforms.AddCopy( 'signed_distance_field' )) do begin
+    {FindInput( 'uv' ).ValueProp.AsString:= Name;
+    texture2D:= ABuilder.Uniforms.AddCopy( 'texture2D' );
+    texture2D.FindInput( 'Map' ).Connected:= FindOutput( 'Value' );
+
+    with ( ABuilder.Uniforms.AddCopy( 'texcoord' )) do begin
+      texture2D.FindInput( 'UV' ).Connected:= FindOutput( 'UV' );
+    end;
+
+    texture2D.FindOutput( 'Color' ).Connected:= ABuilder.RootNode.FindInput( 'Color' );}
+  end;
+end;
+
+{ TP3DPlotCommandScene }
+
+constructor TP3DPlotCommandScene.Create(AScene: TP3DScene);
+begin
+  inherited Create;
+  FScene:= AScene;
+end;
+
+function TP3DPlotCommandScene.Debug(LevelIndent: Integer): String;
+begin
+  Result:= inherited Debug( LevelIndent ) + FScene.FPlotList.Debug( LevelIndent + 1 );
+end;
+
+procedure TP3DPlotCommandScene.Execute(AContext: TP3DPlotCommandContext);
+begin
+  //inherited Execute(AContext);
+  //AContext.LayerDefault;
+  if ( Assigned( FScene )) then
+    FScene.FPlotList.Execute( AContext );
+end;
+
+{ TP3DPlotCommandUniformLight }
+
+procedure TP3DPlotCommandUniformLight.Execute(AContext: TP3DPlotCommandContext);
+var
+  l: String;
+  pos: TVec4;
+  Light: TP3DLight;
+  Index: Integer;
+begin
+  if ( not Assigned( Value ) or ( not ( Value.Data is TP3DLight )) or not Assigned( P3DShaderActive )) then
+    exit;
+  Light:= TP3DLight( Value.Data );
+  case Light.LightType of
+    ltPoint: begin
+      Index:= AContext.NumPointLights;
+      l:= 'PointLights[' + IntToStr( Index ) + ']';
+
+      //Color
+      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Color' ), Light.Color.R, Light.Color.G, Light.Color.B, Light.Energy );
+
+      //linear Attenuation
+      glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.linearAttenuation' ), Light.LinearAttenuation );
+
+      //quadratic Attenuation
+      glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.quadraticAttenuation' ), Light.QuadraticAttenuation );
+
+      //position in view space
+      //pos:= matView * vec4( Value.Transform.Position, 1 );
+      //glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Position' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
+
+      //position in world space
+      pos:= vec4( Value.Transform.Position, 1 );
+      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.WorldPosition' ), pos.X, pos.Y, pos.Z, pos.W );
+      Inc( AContext.FNumPointLights );
+      glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'numPointLights' ), AContext.NumPointLights );
+    end;
+    ltSun: begin
+      Index:= AContext.NumDirectionalLights;
+      l:= 'DirectionalLights[' + IntToStr( Index ) + ']';
+
+      //Color
+      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Color' ), Light.Color.R, Light.Color.G, Light.Color.B, Light.Energy );
+
+      //pos:= vec4( normalize( mat3( matView ) * Items[ i ].Matrices[ j ].Row[ 2 ].XYZ ), 0 );
+      //glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Direction' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
+
+      pos:= vec4( normalize( Value.Transform.Matrix.Row[ 2 ].XYZ ), 0 );
+      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.WorldDirection' ), pos.X, pos.Y, pos.Z, pos.W );
+      Inc( AContext.FNumDirectionalLights );
+      glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'numDirectionalLights' ), AContext.NumDirectionalLights );
+    end;
+  end;
+end;
+
+function TP3DPlotCommandUniformLight.Clone: TP3DPlotCommandSetting;
+begin
+
+end;
+
 {$ENDIF}
 

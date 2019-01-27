@@ -461,7 +461,7 @@ procedure TP3DRenderList.SetupMaterial(Material: TP3DMaterial; Camera: TP3DObjec
 var
   decl: TP3DShaderDecl;
 begin
-  Material.PassToShader( ActiveSubset );
+  {Material.PassToShader( ActiveSubset );
   if ( not Assigned( P3DShaderActive )) then
     exit;
   TP3DCamera( Camera.Data ).PassToShader();
@@ -489,7 +489,7 @@ begin
       glActiveTexture( GL_TEXTURE0 + Material.Maps.Count + 2 );
       glBindTexture( GL_TEXTURE_2D, IBLIntegrateBRDF.GLTexture );
       decl.AsInt:= Material.Maps.Count + 2;
-    end;
+    end;}
 end;
 
 procedure TP3DRenderList.RenderMesh(Idx: Integer; Camera: TP3DObject; const AFlags: TP3DRenderListFlags);

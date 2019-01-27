@@ -61,6 +61,59 @@ type
   TP3DPlotCommandAttribVec3Array = specialize TP3DPlotCommandAttribArray < TP3DVec3BufferGLAuto, TVec3Array >;
   TP3DPlotCommandAttribVec4Array = specialize TP3DPlotCommandAttribArray < TP3DVec4BufferGLAuto, TVec4Array >;
 
+    { TP3DPlotCommandTexCoord }
+
+  generic TP3DPlotCommandTexCoord < T; VecArray > = class ( specialize TP3DPlotCommandAttribArray < T, VecArray >, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
+  { TP3DPlotCommandTexCoordVec2 }
+
+  TP3DPlotCommandTexCoordVec2 = class ( TP3DPlotCommandAttribVec2Array, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
+  { TP3DPlotCommandTexCoordVec3 }
+
+  TP3DPlotCommandTexCoordVec3 = class ( TP3DPlotCommandAttribVec3Array, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
+
+  { TP3DPlotCommandTexCoordVec4 }
+
+  TP3DPlotCommandTexCoordVec4 = class ( TP3DPlotCommandAttribVec4Array, IP3DPlotCommandSettingNode )
+    protected
+      FShaderNode: TP3DNodeClone;
+
+      function GetShaderNode: TP3DNodeClone;
+
+    public
+      procedure MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder); override;
+
+      property ShaderNode: TP3DNodeClone read GetShaderNode;
+  end;
 
 {$ENDIF}
 
@@ -205,6 +258,58 @@ begin
     Result:= ( specialize TP3DPlotCommandAttribArray< T, VecArray >).Create( FName, FPoints )
   else
     Result:= ( specialize TP3DPlotCommandAttribArray< T, VecArray >).Create( FLocation, FPoints );
+end;
+
+{ TP3DPlotCommandTexCoordVec4 }
+
+function TP3DPlotCommandTexCoordVec4.GetShaderNode: TP3DNodeClone;
+begin
+  Result:= FShaderNode;
+end;
+
+procedure TP3DPlotCommandTexCoordVec4.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+begin
+  if ( Name > '' ) then begin
+    FShaderNode:= ABuilder.Uniforms.AddCopy( 'attrib_vec4' );
+    FShaderNode.FindInput( 'Name' ).ValueProp.AsString:= Name;
+  end;
+end;
+
+{ TP3DPlotCommandTexCoordVec3 }
+
+function TP3DPlotCommandTexCoordVec3.GetShaderNode: TP3DNodeClone;
+begin
+  Result:= FShaderNode;
+end;
+
+procedure TP3DPlotCommandTexCoordVec3.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+begin
+  if ( Name > '' ) then begin
+    FShaderNode:= ABuilder.Uniforms.AddCopy( 'attrib_vec3' );
+    FShaderNode.FindInput( 'Name' ).ValueProp.AsString:= Name;
+  end;
+end;
+
+{ TP3DPlotCommandTexCoordVec2 }
+
+function TP3DPlotCommandTexCoordVec2.GetShaderNode: TP3DNodeClone;
+begin
+  Result:= FShaderNode;
+end;
+
+procedure TP3DPlotCommandTexCoordVec2.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+begin
+  if ( Name > '' ) then begin
+    FShaderNode:= ABuilder.Uniforms.AddCopy( 'attrib_vec2' );
+    FShaderNode.FindInput( 'Name' ).ValueProp.AsString:= Name;
+  end;
+end;
+
+{ TP3DPlotCommandTexCoord }
+
+function TP3DPlotCommandTexCoord.GetShaderNode: TP3DNodeClone;
+begin
+  Result:= FShaderNode;
 end;
 
 

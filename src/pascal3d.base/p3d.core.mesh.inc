@@ -970,7 +970,7 @@ var
   i: Integer;
   newSettings: TP3DPlotListSetting;
 begin
-  newSettings:= settings([ {uniform_material( Material ), }attrib( P3DAttribNormal, Normals )]);
+  newSettings:= settings([ attrib( P3DAttribNormal, Normals )]);
   if ( Tangents.Count > 0 ) then
     newSettings.Append( attrib( P3DAttribTangent, Tangents ));
   if ( Cotangents.Count > 0 ) then
@@ -983,6 +983,8 @@ begin
   if ( VertexWeightIndices.Count > 0 ) then
     newSettings.Append( attrib( 'fjointID', VertexWeightIndices ));
 
+  if ( Assigned( Material )) then
+    newSettings:= settings_join([ newSettings, Material.GetSettings ]);
 
   Result:= geom_polygon( Positions, Indices, settings_join([ newSettings, ASettings ]));
 end;

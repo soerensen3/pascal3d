@@ -3,16 +3,28 @@
 {$IFDEF INTERFACE}
 type
   TP3DPlotCommandSetting = class;
-  TP3DPlotCommandDefault = class;
+  TP3DPlotCommandPushDefault = class;
+  TP3DDefaultStack = class;
 
   { TP3DPlotCommandContext }
 
   TP3DPlotCommandContext = class
-    LayerDefault: TP3DPlotCommandDefault;
-    NumTextures: Integer;
-    NumPointLights: Integer;
-    NumDirectionalLights: Integer;
-    Shader: TP3DShader;
+    private
+      FSettingsDefault: TP3DDefaultStack;
+      FNumDirectionalLights: Integer;
+      FNumPointLights: Integer;
+      FNumTextures: Integer;
+      FShader: TP3DShader;
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+
+      property SettingsDefault: TP3DDefaultStack read FSettingsDefault;
+      property NumTextures: Integer read FNumTextures write FNumTextures;
+      property NumPointLights: Integer read FNumPointLights write FNumPointLights;
+      property NumDirectionalLights: Integer read FNumDirectionalLights write FNumDirectionalLights;
+      property Shader: TP3DShader read FShader write FShader;
   end;
 
   TP3DPlotCommand = class ( TPersistent )
@@ -27,7 +39,7 @@ type
       constructor Create;
       destructor Destroy; override;
       procedure Execute( AContext: TP3DPlotCommandContext ); virtual; abstract;
-      function Debug: String; virtual abstract;
+      function Debug( LevelIndent: Integer ): String; virtual abstract;
       property Category: String read FCategory write FCategory;
   end;
 
@@ -75,14 +87,13 @@ type
       FOwnedByUser: Boolean;
       function GetCount: Integer;
       function GetItems( AIndex: Integer ): T;
-      {%H-}constructor CreateTemporary;
 
     public
       constructor Create( const AOwnedByUser: Boolean = True );
       destructor Destroy; override;
       function CheckDestroy: Boolean;
 
-      function Debug: String;
+      function Debug( const LevelIndent: Integer = 0 ): String;
       procedure Execute;
       procedure Execute( AContext: TP3DPlotCommandContext );
       procedure Append( Item: T ); virtual;
@@ -102,7 +113,7 @@ type
 
   TP3DPlotCommandSetting = class ( TP3DPlotCommand )
     public
-      function Debug: String; override;
+      function Debug( LevelIndent: Integer ): String; override;
       procedure GetExtensions( Extension: TStringList ); virtual;
       procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder ); virtual;
 
@@ -115,9 +126,14 @@ type
     procedure BuildShader( AOwner: TP3DStreamableContainer ); virtual; abstract;
   end;
 
-  { TP3DPlotCommandSettingNode }
+  { TP3DDefaultStack }
 
-  { IP3DPlotCommandSettingNode }
+  TP3DDefaultStack = class ( specialize gP3DCustomObjectStack < TP3DPlotCommandPushDefault >)
+    public
+      procedure Execute( AContext: TP3DPlotCommandContext );
+      procedure GetExtensions( Extension: TStringList ); virtual;
+      procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder ); virtual;
+  end;
 
   IP3DPlotCommandSettingNode = interface
     ['{CCFBAF96-E769-4B2C-B306-37B615C9A7B6}']
@@ -141,8 +157,10 @@ type
 
       procedure Append(Item: TP3DPlotCommandSetting); override;
       procedure Clear; override;
-      procedure UpdateShader;
-      procedure Execute(AContext: TP3DPlotCommandContext);
+      procedure UpdateShader( AContext: TP3DPlotCommandContext );
+      procedure GetExtensions( Extension: TStringList ); virtual;
+      procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder ); virtual;
+      procedure ExecuteAndBuildShader(AContext: TP3DPlotCommandContext);
 
       property BuildShader: TP3DPlotCommandSettingShader read FBuildShader;
       property Shader: TP3DShader read GetShader;
@@ -161,7 +179,7 @@ type
 
       procedure Execute( AContext: TP3DPlotCommandContext ); override;
       function Clone: TP3DPlotCommandLayer; virtual; abstract;
-      function Debug: String; override;
+      function Debug( LevelIndent: Integer ): String; override;
 
       property ShaderSettings: TP3DPlotListSetting read FShaderSettings write SetShaderSettings;
   end;
@@ -182,14 +200,24 @@ type
     function GetSettings: TP3DPlotListSetting;
   end;
 
-  { TP3DPlotCommandDefault }
+  { TP3DPlotCommandPushDefault }
 
-  TP3DPlotCommandDefault = class ( TP3DPlotCommandLayer )
+  TP3DPlotCommandPushDefault = class ( TP3DPlotCommandLayer )
     public
       constructor Create( AShaderSettings: TP3DPlotListSetting );
 
       procedure Execute(AContext: TP3DPlotCommandContext); override;
+      procedure GetExtensions( Extension: TStringList );
+      procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder );
+
       function Clone: TP3DPlotCommandLayer; override;
+  end;
+
+  { TP3DPlotCommandPopDefault }
+
+  TP3DPlotCommandPopDefault = class ( TP3DPlotCommandLayer )
+    public
+      procedure Execute(AContext: TP3DPlotCommandContext); override;
   end;
 
   //operator := ( a: TP3DPlotCommandSetting ): TP3DPlotListSetting;
@@ -218,12 +246,6 @@ begin
     Result:= default( T );
 end;
 
-constructor gP3DPlotList.CreateTemporary;
-begin
-  Create;
-  OwnedByUser:= False;
-end;
-
 constructor gP3DPlotList.Create( const AOwnedByUser: Boolean = True );
 begin
   Inc( GlobalPlotListCount );
@@ -233,8 +255,6 @@ begin
 end;
 
 destructor gP3DPlotList.Destroy;
-var
-  i: Integer;
 begin
   Dec( GlobalPlotListCount );
   WriteLn( 'Destroying PlotList: ', ClassName );
@@ -252,7 +272,7 @@ begin
     Free;
 end;
 
-function gP3DPlotList.Debug: String;
+function gP3DPlotList.Debug(const LevelIndent: Integer): String;
 var
   i: Integer;
 begin
@@ -260,7 +280,8 @@ begin
   if ( not Assigned( Self )) then
     exit;
   for i:= 0 to Count - 1 do begin
-    Result+= FItems[ i ].Debug + LineEnding;
+    WriteLn( FItems[ i ].ClassName );
+    Result+= FItems[ i ].Debug( LevelIndent ) + LineEnding;
   end;
 end;
 
@@ -403,9 +424,9 @@ end;
 
 { TP3DPlotCommandSetting }
 
-function TP3DPlotCommandSetting.Debug: String;
+function TP3DPlotCommandSetting.Debug(LevelIndent: Integer): String;
 begin
-  Result:= '  ' + ClassName;
+  Result:= StringOfChar( ' ', LevelIndent * 2 ) + ClassName;
 end;
 
 procedure TP3DPlotCommandSetting.GetExtensions(Extension: TStringList);
@@ -436,32 +457,40 @@ begin
   AContext.NumDirectionalLights:= 0;
   AContext.NumPointLights:= 0;
   AContext.NumTextures:= 0;
-  ShaderSettings.Execute( AContext );
+  ShaderSettings.ExecuteAndBuildShader( AContext );
 end;
 
-function TP3DPlotCommandLayer.Debug: String;
+function TP3DPlotCommandLayer.Debug(LevelIndent: Integer): String;
 begin
-  Result:= ClassName + LineEnding + ShaderSettings.Debug;
+  Result:= StringOfChar( ' ', LevelIndent * 2 ) + ClassName + LineEnding + ShaderSettings.Debug( LevelIndent + 1 );
 end;
 
-{ TP3DPlotCommandDefault }
+{ TP3DPlotCommandPushDefault }
 
-constructor TP3DPlotCommandDefault.Create(AShaderSettings: TP3DPlotListSetting);
+constructor TP3DPlotCommandPushDefault.Create(AShaderSettings: TP3DPlotListSetting);
 begin
   inherited Create;
   ShaderSettings:= AShaderSettings;
 end;
 
-procedure TP3DPlotCommandDefault.Execute(AContext: TP3DPlotCommandContext);
+procedure TP3DPlotCommandPushDefault.Execute(AContext: TP3DPlotCommandContext);
 begin
-  AContext.LayerDefault:= nil;
-  inherited Execute(AContext);
-  AContext.LayerDefault:= Self;
+  AContext.SettingsDefault.Push( Self );
 end;
 
-function TP3DPlotCommandDefault.Clone: TP3DPlotCommandLayer;
+procedure TP3DPlotCommandPushDefault.GetExtensions(Extension: TStringList);
 begin
-  Result:= TP3DPlotCommandDefault.Create( ShaderSettings );
+  ShaderSettings.GetExtensions( Extension );
+end;
+
+procedure TP3DPlotCommandPushDefault.MakeShaderModifications(ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder);
+begin
+  ShaderSettings.MakeShaderModifications( ASender, ASenderIdx, ABuilder );
+end;
+
+function TP3DPlotCommandPushDefault.Clone: TP3DPlotCommandLayer;
+begin
+  Result:= TP3DPlotCommandPushDefault.Create( ShaderSettings );
 end;
 
 { TP3DPlotCommand }
@@ -489,6 +518,7 @@ end;
 
 destructor TP3DPlotCommand.Destroy;
 begin
+  WriteLn( ClassName + '.Destroy Refcount= ', RefCount );
   Dec( GlobalPlotCount );
   inherited Destroy;
 end;

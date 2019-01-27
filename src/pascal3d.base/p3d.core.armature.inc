@@ -209,7 +209,7 @@ type
 
   { TP3DObjectModifierArmature }
 
-  TP3DObjectModifierArmature = class ( TP3DObjectModifier, IP3DPlottableSettings )
+  TP3DObjectModifierArmature = class ( TP3DObjectModifier )
     private
       FArmature: TP3DStreamablePointer;
       FInitialized: Boolean;
@@ -234,7 +234,7 @@ type
       procedure UpdateJointTex( ARoot: TP3DObject );
       procedure UpdateLines(ARoot: TP3DObject);
 
-      function GetSettings: TP3DPlotListSetting;
+      function GetSettings: TP3DPlotListSetting; override;
 
       property Initialized: Boolean read FInitialized;
 
@@ -751,11 +751,11 @@ begin
   if ( Assigned( Obj ) and ( Obj.Data is TP3DMesh )) then
     begin
       Mesh:= TP3DMesh( Obj.Data );
-      if ( Mesh.Material is TP3DMaterialBase ) then
+      {if ( Mesh.Material is TP3DMaterialBase ) then
         begin
           //TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierArmature.Create( Self ));
           TP3DMaterialBase( Mesh.Material ).BuildShaderSubset( Obj.Modifiers, Obj.Owner.GetFullPath );
-        end;
+        end;}
 
       {for i:= 0 to Mesh.MaterialGroups.Count -1 do
         if ( Mesh.MaterialGroups[ i ].Material is TP3DMaterialBase ) then

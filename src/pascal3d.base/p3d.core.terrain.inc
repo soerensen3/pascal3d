@@ -56,11 +56,11 @@ begin
         TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).Modifiers.Add( TP3DMaterialModifierTerrain.Create( Self ));
         TP3DMaterialBase( Mesh.MaterialGroups[ i ].Material ).BuildShader();
       end;}
-  if ( Mesh.Material is TP3DMaterialBase ) then
+  {if ( Mesh.Material is TP3DMaterialBase ) then
     begin
       TP3DMaterialBase( Mesh.Material ).Modifiers.Add( TP3DMaterialModifierTerrain.Create( Self ));
       TP3DMaterialBase( Mesh.Material ).BuildShader();
-    end;
+    end;}
 end;
 
 destructor TP3DMeshModifierTerrain.Destroy;

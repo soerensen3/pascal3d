@@ -106,6 +106,17 @@
         property OwnsObjects: Boolean read GetOwnsObjects write SetOwnsObjects;
     end;
 
+    { TP3DUIViewerBaseStack }
+
+    { gP3DCustomObjectStack }
+
+    generic gP3DCustomObjectStack < T > = class( specialize gP3DCustomObjectList < T >)
+      public
+        function Push( Item: T ): Integer;
+        function Pop: T;
+        function Peek: T;
+    end;
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -345,6 +356,35 @@ begin
   Result:= FItems.IndexOf( AItem );
 end;
 
+{ gP3DCustomObjectStack }
+
+function gP3DCustomObjectStack.Push(Item: T): Integer;
+begin
+  Result:= Add( Item );
+end;
+
+function gP3DCustomObjectStack.Pop: T;
+var
+  _Last: Integer;
+begin
+  _Last:= Count - 1;
+  if ( _Last >= 0 ) then begin
+    Result:= Items[ _Last ];
+    Delete( _Last );
+  end else
+    Result:= nil;
+end;
+
+function gP3DCustomObjectStack.Peek: T;
+var
+  _Last: Integer;
+begin
+  _Last:= Count - 1;
+  if ( _Last >= 0 ) then
+    Result:= Items[ _Last ]
+  else
+    Result:= nil;
+end;
 
 {$ENDIF}
 

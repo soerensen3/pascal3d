@@ -8,7 +8,7 @@ unit pascal3d;
 interface
 
 uses
-  p3d.core, p3d.events, p3d.utils, LazarusPackageIntf;
+  p3d.core, p3d.events, p3d.utils, p3d.base, LazarusPackageIntf;
 
 implementation
 

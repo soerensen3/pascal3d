@@ -86,7 +86,7 @@ type
 
   { TP3DShaderNodeLibrary }
 
-  TP3DShaderNodeLibrary = class( TP3DStreamable )
+  TP3DShaderNodeLibrary = class( TP3DJSONRoot )
     private
       FFiles: TP3DMarkdownFileContainerList;
       FPaths: TP3DFilePointerList;
@@ -221,7 +221,7 @@ type
 
   { TP3DShaderBuilder }
 
-  TP3DShaderBuilder = class ( TPersistent )
+  TP3DShaderBuilder = class ( TP3DJSONRoot )
     private
       FLibraries: TP3DShaderNodeTree;
       FNodeMaster: TP3DNodeMaster;
@@ -336,7 +336,7 @@ function gP3DShaderNodeTree.AddCopy(AName: String): T;
 var
   Node: TP3DNode;
 begin
-  Node:= P3DData.P3DShaderNodeLib.FindNode( AName );
+  Node:= P3DShaderNodeLib.FindNode( AName );
   if ( not Assigned( Node )) then
     raise Exception.Create( 'Cannot add copy of shader node: Node "' + AName + '" not found!' );
   Result:= AddCopy( Node );
@@ -605,7 +605,7 @@ begin
         'text':
           Result:= ACloneSocket.ValueProp.AsString
         else
-          Result:= P3DData.P3DShaderNodeLib.GetOutputAsType( Buffer, ACloneSocket );
+          Result:= P3DShaderNodeLib.GetOutputAsType( Buffer, ACloneSocket );
       end;
     end
   else if ( Assigned( ACloneSocket.Connected )) then begin
@@ -615,7 +615,7 @@ begin
       else
         raise Exception.CreateFmt( 'Cannot get output of socket "%s". The connected socket is not inherited from TP3DShaderNodeSocket!', [ Name ]);
     end else begin
-      Result:= P3DData.P3DShaderNodeLib.GetOutputAsType( Buffer, ACloneSocket, ACloneSocket.Connected.CloneOf.SocketType );
+      Result:= P3DShaderNodeLib.GetOutputAsType( Buffer, ACloneSocket, ACloneSocket.Connected.CloneOf.SocketType );
     end;
   end;
 end;
@@ -676,7 +676,7 @@ procedure TP3DShaderNodeSocket.GetAllInputs(Buffer: TP3DShaderBuffer; ACloneSock
     T: TP3DShaderNodeType;
     S: TP3DShaderNodeSocket;
   begin
-    T:= P3DData.P3DShaderNodeLib.FindType( Socket.CloneOf.SocketType );
+    T:= P3DShaderNodeLib.FindType( Socket.CloneOf.SocketType );
     if ( Assigned( T )) then begin
       S:= TP3DShaderNodeSocket( T.Outputs.GetByName( AFilter ));
       if ( Assigned( S )) then

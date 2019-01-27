@@ -346,7 +346,7 @@ begin
           TP3DShaderNodeSocketClone( Socket ).GetAllInputs( Buffer, OutputOverride, Inputs, Types, Libs );
         for Socket in Types.Reversed do
           begin
-            T:= P3DData.P3DShaderNodeLib.FindType( TP3DShaderNodeSocket( Socket.CloneOf ).SocketType );
+            T:= P3DShaderNodeLib.FindType( TP3DShaderNodeSocket( Socket.CloneOf ).SocketType );
             if ( Assigned( T )) then
               Result+= T.GetOutputAsType( Buffer, Socket, OutputOverride );
           end;

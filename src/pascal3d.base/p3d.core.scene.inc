@@ -22,6 +22,8 @@ type
       procedure SetCam( AValue: TP3DObject );
       procedure RenderCallback( world: TMat4; AObject: TP3DObject ); virtual;
       procedure OnObjChange( Sender: TObject; Item: TP3DStreamable; AAction: TP3DListOnChangeAction );
+
+    public
       procedure UpdatePlotList;
 
     protected
@@ -54,10 +56,13 @@ type
       property Cam: TP3DObject read GetCam write SetCam;
       property IsDesignTime: Boolean read FIsDesignTime write FIsDesignTime;
       property OnRenderCallback: TP3DSceneRenderCallback read FOnRenderCallback write FOnRenderCallback;
+      property PlotList: TP3DPlotListLayer read FPlotList;
+      property LightList: TP3DPlotListSetting read FLightList;
 
       //IP3DPlottableLayer -->
     public
       function GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+      function GetLayers(ASettings: TP3DPlotListSetting): TP3DPlotListLayer;
       //<-- IP3DPlottableLayer
   end;
 
@@ -118,8 +123,16 @@ var
   Obj: TP3DObject;
 begin
   FPlotList.Clear;
-  for Obj in Objects do
-    FPlotList.Append( Obj.GetLayer( nil ));
+  FLightList.Clear;
+  for Obj in Objects do begin
+    WriteLn( Obj.Data.ClassName, IfThen( Obj.Data is IP3DPlottableLayer, ' is ', ' is no ' ), 'IP3DPlottableLayer' );
+    FPlotList.AppendList( Obj.GetLayers( nil ));
+    if ( Obj.Data is TP3DLight ) then
+      FLightList.Append( uniform_light( Obj ));
+  end;
+
+  WriteLn( FPlotList.Debug );
+  WriteLn( FLightList.Debug );
 end;
 
 class function TP3DScene.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
@@ -141,6 +154,8 @@ begin
   Properties.Add( FLights );
   FPlotList:= TP3DPlotListLayer.Create();
   FLightList:= TP3DPlotListSetting.Create();
+  FPlotList.OwnedByUser:= True;
+  FLightList.OwnedByUser:= True;
 end;
 
 destructor TP3DScene.Destroy;
@@ -269,14 +284,14 @@ end;
 
 procedure TP3DScene.PassToShader;
 var
-  LightList: TP3DLightPointerList;
+  ALightList: TP3DLightPointerList;
 begin
   if ( Assigned( ActiveCam )) then
     begin
       if ( Assigned( RootScene )) then
-        LightList:= RootScene.Lights
+        ALightList:= RootScene.Lights
       else
-        LightList:= Lights;
+        ALightList:= Lights;
 
       if ( ActiveCam.Data is TP3DCamera ) then
         begin
@@ -290,6 +305,17 @@ end;
 function TP3DScene.GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
 begin
   Result:= TP3DPlotCommandScene.Create( Self );
+end;
+
+function TP3DScene.GetLayers(ASettings: TP3DPlotListSetting): TP3DPlotListLayer;
+var
+  l: TP3DPlotCommandScene;
+begin
+  l:= TP3DPlotCommandScene.Create( Self );
+  if ( Assigned( ASettings )) then
+    Result:= settings_default( layer( l ), settings_join([ FLightList, ASettings ]))
+  else
+    Result:= settings_default( layer( l ), FLightList );
 end;
 
 {

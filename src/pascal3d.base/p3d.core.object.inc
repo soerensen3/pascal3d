@@ -44,7 +44,7 @@ type
 
   { TP3DObjectModifier }
 
-  TP3DObjectModifier = class( TP3DStreamable )
+  TP3DObjectModifier = class( TP3DStreamable, IP3DPlottableSettings )
     private
       FObject: TP3DObject;
 
@@ -53,6 +53,7 @@ type
     public
       procedure PassToShader( Material: TP3DMaterial; var world: TMat4 ); virtual; abstract;
       procedure AddPass( ShaderTree: TP3DShaderNodeTree; Material: TP3DMaterialBase ); virtual; abstract;
+      function GetSettings: TP3DPlotListSetting; virtual; abstract;
 
     published
       property Obj: TP3DObject read FObject write SetObj;
@@ -65,12 +66,13 @@ type
   }
   { TP3DObjectModifierContainerList }
 
-  TP3DObjectModifierContainerList = class( specialize gP3DStreamableContainerList < TP3DObjectModifier >)
+  TP3DObjectModifierContainerList = class( specialize gP3DStreamableContainerList < TP3DObjectModifier >, IP3DPlottableSettings )
     private
       FParentObject: TP3DObject;
 
     public
       procedure Notify(ASender: TObject; AItem: TP3DStreamable; AAction: TP3DListOnChangeAction); override;
+      function GetSettings: TP3DPlotListSetting;
 
       property ParentObject: TP3DObject read FParentObject;
   end;
@@ -83,7 +85,6 @@ type
       FChildren: TP3DObjectPointerList;
       FCollision: TP3DObjectCollision;
       FData: TP3DStreamablePointer;
-      FMatrixFinal: TMat4;
       FModifiers: TP3DObjectModifierContainerList;
       FParent: TP3DDataBlock;
       FScene: TP3DScene;
@@ -162,18 +163,23 @@ type
       //IP3DTransform -->
     private
       FTransform: TP3DStreamableContainer;
+      FTransformFinal: TP3DStreamableContainer;
 
       function GetTransform: TP3DTransform;
+      function GetTransformFinal: TP3DTransform;
       procedure SetTransform(AValue: TP3DTransform);
+      procedure SetTransformFinal(AValue: TP3DTransform);
 
     public
       property Transform: TP3DTransform read GetTransform write SetTransform;
+      property TransformFinal: TP3DTransform read GetTransformFinal write SetTransformFinal;
 
       //<-- IP3DTransform
 
       //IP3DPlottableLayer -->
     public
       function GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
+      function GetLayers(ASettings: TP3DPlotListSetting): TP3DPlotListLayer;
       //<-- IP3DPlottableLayer
   end;
 
@@ -224,6 +230,7 @@ end;
 procedure TP3DObject.OnTransformChange(ASender: TP3DStreamable);
 begin
   P3DData.ChangeObject( Self );
+  TP3DTransform( FTransformFinal.AsValue ).Matrix:= CalculateParentMatrix * Transform.Matrix;
 end;
 
 function TP3DObject.GetData: TP3DDataBlock;
@@ -265,9 +272,12 @@ begin
 
   FTransform:= TP3DStreamableContainer.Create( 'Transform', TP3DTransform, smText );
   FTransform.OnChange:= @OnTransformChange;
+  FTransformFinal:= TP3DStreamableContainer.Create( 'TransformFinal', TP3DTransform, smText );
   Properties.Add( FTransform, 'Transform' );
+  Properties.Add( FTransformFinal, 'Transform' );
   //WriteLn( 'FTransform: ', Assigned( FTransform ));
   TP3DTransform.Create( FTransform );
+  TP3DTransform.Create( FTransformFinal );
 
   FModifiers:= TP3DObjectModifierContainerList.Create( 'Modifiers', smText );
   FModifiers.FParentObject:= Self;
@@ -463,16 +473,50 @@ begin
   Result:= TP3DTransform( FTransform.AsValue );
 end;
 
+function TP3DObject.GetTransformFinal: TP3DTransform;
+begin
+  Result:= TP3DTransform( FTransformFinal.AsValue );
+end;
+
 procedure TP3DObject.SetTransform(AValue: TP3DTransform);
 begin
   FTransform.AsValue:= AValue;
 end;
 
+procedure TP3DObject.SetTransformFinal(AValue: TP3DTransform);
+begin
+  FTransformFinal.AsValue:= AValue;
+end;
+
+
 function TP3DObject.GetLayer(ASettings: TP3DPlotListSetting): TP3DPlotCommandLayer;
 begin
+  Result:= nil;
   if ( Data is IP3DPlottableLayer ) then begin
-    Result:= ( Data as IP3DPlottableLayer ).GetLayer( settings_join([ settings( uniform( 'world', Transform )), ASettings ]));
+    Result:= ( Data as IP3DPlottableLayer ).GetLayer( settings_join([ settings( uniform( 'world', TransformFinal )), ASettings ]));
   end;
+
+  //else
+  //  raise Exception.Create( 'Cannot plot data of type: "' + Data.ClassName + '"' );
+end;
+
+function TP3DObject.GetLayers(ASettings: TP3DPlotListSetting): TP3DPlotListLayer;
+var
+  Obj: TP3DObject;
+begin
+  Result:= nil;
+  if ( Data is IP3DPlottableLayer ) then begin
+    Result:= settings_default(
+               layer(( Data as IP3DPlottableLayer ).GetLayer(
+                 settings_join([
+                   settings( uniform( 'world', TransformFinal )), ASettings ]
+                 )
+               )),
+               Modifiers.GetSettings
+             );
+  end;
+  for Obj in Children do
+    Result:= layers_join([ Result, Obj.GetLayers( ASettings )]);
 end;
 
 procedure TP3DObject.Render( AWorld: TMat4; AScene: TP3DScene; ARenderObject: TP3DObject);
@@ -495,7 +539,6 @@ begin
   if ( not Visible ) then
     exit;
   mat:= AWorld * Transform.Matrix;
-  FMatrixFinal:= mat;
   AList.ActiveSubset:= Owner.GetFullPath;
   if (( CheckShadowAgainstFlags ) or ( Data is TP3DScene )) then begin
     if ( rlfObjects in AFlags ) then
@@ -647,6 +690,15 @@ procedure TP3DObjectModifierContainerList.Notify(ASender: TObject; AItem: TP3DSt
 begin
   inherited Notify(ASender, AItem, AAction);
   TP3DObjectModifier( AItem ).Obj:= ParentObject;
+end;
+
+function TP3DObjectModifierContainerList.GetSettings: TP3DPlotListSetting;
+var
+  i: Integer;
+begin
+  Result:= TP3DPlotListSetting.Create( False );
+  for i:= 0 to Count - 1 do
+    Result.AppendList( AsValues[ i ].GetSettings );
 end;
 
 { TP3DObjectModifier }

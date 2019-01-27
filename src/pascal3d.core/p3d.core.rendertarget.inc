@@ -47,7 +47,7 @@ type
       procedure Unbind();
 
       procedure CreateAndAttachMulti(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType;
-        ADepth: Boolean; ANames: array of String; const AData: TP3DLibrary = nil);
+        ADepth: Boolean; ANames: array of String; const ATexOwner: IP3DStreamableContainer=nil);
       procedure AttachColor( Tex: TP3DTexture; const MipLevel: Integer = 0 );
       procedure AttachDepth( Tex: TP3DTexture );
       procedure AttachDepth( AWidth, AHeight: Integer );
@@ -178,14 +178,13 @@ begin
   glBindFramebuffer( GL_FRAMEBUFFER, 0 ); cle( Self, 'Error unbinding frame buffer: ' );
 end;
 
-procedure TP3DFrameBuffer.CreateAndAttachMulti(AWidth, AHeight: Integer; ANumChannels: Integer;
-  ADataType: TP3DTextureDataType; ADepth: Boolean; ANames: array of String; const AData: TP3DLibrary);
+procedure TP3DFrameBuffer.CreateAndAttachMulti(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ADepth: Boolean; ANames: array of String; const ATexOwner: IP3DStreamableContainer);
 var
   Name: String;
   Tx: TP3DTexture;
 begin
   for Name in ANames do begin
-    Tx:= TP3DTexture.CreateFromEmpty( AWidth, AHeight, ANumChannels, ADataType, AData );
+    Tx:= TP3DTexture.CreateFromEmpty( AWidth, AHeight, ANumChannels, ADataType, ATexOwner );
     Tx.Name:= Name;
     AttachColor( Tx );
   end;

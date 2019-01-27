@@ -31,7 +31,7 @@ const
 type
   { TP3DTexture }
 
-  TP3DTexture = class ( TP3DNamedStreamable, IP3DPlottableLayer )
+  TP3DTexture = class ( TP3DDataBlock, IP3DPlottableLayer )
     private
       FDataType: TP3DTextureDataType;
       FFileWatch: TP3DFilePointer;
@@ -62,17 +62,20 @@ type
       procedure FileNameChanged( Sender: TP3DFilePointer; ANewFileName: String );
       function GetFile( FN: String ): String;
 
+   public
+      class function GetContainer( ALib: TP3DLibrary): TP3DPropertyAccess; override;
+
     public
       constructor Create(const AOwner: IP3DStreamableContainer=nil); override; overload;
-      constructor CreateFromFile( AFileName: String; const AOwner: IP3DStreamableContainer=nil );
-      constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AOwner: IP3DStreamableContainer=nil);
-      constructor CreateFromSurface( ASurface: PSDL_Surface; const AOwner: IP3DStreamableContainer=nil );
-      constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AOwner: IP3DStreamableContainer=nil );
-      constructor CreateFromGLTexture( Tex: GLint; const AOwner: IP3DStreamableContainer=nil );
-      constructor CreateFromGLTextureCube( PX, NX, PY, NY, PZ, NZ: GLint; const AOwner: IP3DStreamableContainer=nil );
-      constructor CreateFromFileCube( PX, NX, PY, NY, PZ, NZ: String; const AOwner: IP3DStreamableContainer=nil );
-      constructor CreateFromBufferCube( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; PX, NX, PY, NY, PZ, NZ: Pointer; const AOwner: IP3DStreamableContainer=nil );
-      constructor CreateFromSurfaceCube(PX, NX, PY, NY, PZ, NZ: PSDL_Surface; const AOwner: IP3DStreamableContainer=nil );
+      constructor CreateFromFile( AFileName: String; const AData: TP3DLibrary = nil );
+      constructor CreateFromBuffer( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType:TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary = nil);
+      constructor CreateFromSurface( ASurface: PSDL_Surface; const AData: TP3DLibrary = nil );
+      constructor CreateFromEmpty( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary = nil );
+      constructor CreateFromGLTexture( Tex: GLint; const AData: TP3DLibrary = nil );
+      constructor CreateFromGLTextureCube( PX, NX, PY, NY, PZ, NZ: GLint; const AData: TP3DLibrary = nil );
+      constructor CreateFromFileCube( PX, NX, PY, NY, PZ, NZ: String; const AData: TP3DLibrary = nil );
+      constructor CreateFromBufferCube( AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; PX, NX, PY, NY, PZ, NZ: Pointer; const AData: TP3DLibrary = nil );
+      constructor CreateFromSurfaceCube(PX, NX, PY, NY, PZ, NZ: PSDL_Surface; const AData: TP3DLibrary = nil );
 
       procedure LoadMipMapFromSurface( level: Integer; ASurface: PSDL_Surface; const ATarget: GLenum = GL_TEXTURE_2D );
 
@@ -530,6 +533,11 @@ begin
     Result:= FN;
 end;
 
+class function TP3DTexture.GetContainer(ALib: TP3DLibrary): TP3DPropertyAccess;
+begin
+  Result:= ALib.Properties.GetPropByName( 'Textures' );
+end;
+
 constructor TP3DTexture.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
@@ -572,21 +580,21 @@ begin
 end;
 
 
-constructor TP3DTexture.CreateFromFile(AFileName: String; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromFile(AFileName: String; const AData: TP3DLibrary);
 var
   FileName: String;
 begin
   FileName:= GetFile( AFileName );
   if ( FileName = '' ) then
     raise Exception.Create( Format( 'The specified file "%s" was not found!', [ AFileName ]));
-  Create( AOwner );
+  CreateBlock( AData );
   FGLTexture:= CreateNewTexAndBind();
   LoadFromBinary( FileName );
 end;
 
-constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromBuffer(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; ABuffer: Pointer; const AData: TP3DLibrary);
 begin
-  Create( AOwner );
+  CreateBlock( AData );
   FGLTexture:= CreateNewTexAndBind();
   LoadFromBuffer( AWidth, AHeight, ANumChannels, ADataType, ABuffer );
   FWidth:= AWidth;
@@ -594,11 +602,11 @@ begin
   FNumChannels:= ANumChannels;
 end;
 
-constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromSurface(ASurface: PSDL_Surface; const AData: TP3DLibrary);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  Create( AOwner );
+  CreateBlock( AData );
 
   FGLTexture:= CreateNewTexAndBind();
   LoadFromSurface( ASurface );
@@ -608,11 +616,11 @@ begin
   FNumChannels:= ASurface^.format^.BytesPerPixel;
 end;
 
-constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromEmpty(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; const AData: TP3DLibrary);
 begin
   if ( not Assigned( glGenTextures )) then
     exit;
-  Create( AOwner );
+  CreateBlock( AData );
 
   FGLTexture:= CreateNewTexAndBind();
   LoadEmpty( AWidth, AHeight, ANumChannels, ADataType );
@@ -622,9 +630,9 @@ begin
   FNumChannels:= ANumChannels;
 end;
 
-constructor TP3DTexture.CreateFromGLTexture(Tex: GLint; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromGLTexture(Tex: GLint; const AData: TP3DLibrary);
 begin
-  Create( AOwner );
+  CreateBlock( AData );
   //FFileWatch:= TP3DFilePointer.Create( '' );
   LoadFromGLTexture( Tex );
   glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, @FWidth ); cle( Self );
@@ -632,7 +640,7 @@ begin
   Unbind();
 end;
 
-constructor TP3DTexture.CreateFromGLTextureCube(PX, NX, PY, NY, PZ, NZ: GLint; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromGLTextureCube(PX, NX, PY, NY, PZ, NZ: GLint; const AData: TP3DLibrary);
 const
   P3DCubeMapSideToGL: array [ TP3DCubeMapSides ] of GLenum = ( GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
                                                                GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
@@ -652,7 +660,7 @@ const
   end;
 
 begin
-  Create( AOwner );
+  CreateBlock( AData );
   FTarget:= GL_TEXTURE_CUBE_MAP;
   FGLTexture:= CreateNewTexAndBind( Target );
 
@@ -669,7 +677,7 @@ begin
   UpdateFiltering( Target );
 end;
 
-constructor TP3DTexture.CreateFromFileCube(PX, NX, PY, NY, PZ, NZ: String; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromFileCube(PX, NX, PY, NY, PZ, NZ: String; const AData: TP3DLibrary);
 const
   P3DCubeMapSideToGL: array [ TP3DCubeMapSides ] of GLenum = ( GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
                                                                GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
@@ -691,7 +699,7 @@ const
   end;
 
 begin
-  Create( AOwner );
+  CreateBlock( AData );
   FTarget:= GL_TEXTURE_CUBE_MAP;
   FGLTexture:= CreateNewTexAndBind( Target );
 
@@ -704,7 +712,8 @@ begin
   UpdateFiltering( Target );
 end;
 
-constructor TP3DTexture.CreateFromBufferCube(AWidth, AHeight: Integer; ANumChannels: Integer; ADataType: TP3DTextureDataType; PX, NX, PY, NY, PZ, NZ: Pointer; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromBufferCube(AWidth, AHeight: Integer; ANumChannels: Integer;
+  ADataType: TP3DTextureDataType; PX, NX, PY, NY, PZ, NZ: Pointer; const AData: TP3DLibrary);
 const
   P3DCubeMapSideToGL: array [ TP3DCubeMapSides ] of GLenum = ( GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
                                                                GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
@@ -716,7 +725,7 @@ const
   end;
 
 begin
-  Create( AOwner );
+  CreateBlock( AData );
   FTarget:= GL_TEXTURE_CUBE_MAP;
   FGLTexture:= CreateNewTexAndBind( Target );
 
@@ -733,7 +742,7 @@ begin
   UpdateFiltering( Target );
 end;
 
-constructor TP3DTexture.CreateFromSurfaceCube(PX, NX, PY, NY, PZ, NZ: PSDL_Surface; const AOwner: IP3DStreamableContainer);
+constructor TP3DTexture.CreateFromSurfaceCube(PX, NX, PY, NY, PZ, NZ: PSDL_Surface; const AData: TP3DLibrary);
 const
   P3DCubeMapSideToGL: array [ TP3DCubeMapSides ] of GLenum = ( GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
                                                                GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
@@ -748,7 +757,7 @@ const
   end;
 
 begin
-  Create( AOwner );
+  CreateBlock( AData );
   FTarget:= GL_TEXTURE_CUBE_MAP;
   FGLTexture:= CreateNewTexAndBind( Target );
 

@@ -89,6 +89,7 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
 
         mapobj.Map = p3dexporthelper.export_data_path( tex_slot.texture, root )
 
+
         '''if ( tex_slot.use_map_color_diffuse ):
             mapobj.DiffuseFactor = tex_slot.diffuse_color_factor
         else:
@@ -128,7 +129,7 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
     def __init__( self, block, root = None, path='', obj = None ):
         self.Name = block.name
         super().__init__( block, root, p3dexporthelper.indexedprop.format( 'Materials', self.Name ))
-        self.ClassName = 'TP3DMaterialNode'
+        self.ClassName = 'TP3DMaterialPBR'
         #self.Diff = list( block.diffuse_color * block.diffuse_intensity )
         #self.Spec = list( block.specular_color * block.specular_intensity )
         #self.Spec_Hardness = block.specular_hardness
@@ -152,6 +153,11 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
             root.Exporter.report({ 'INFO' }, map.name )
             self.Maps.append( self.ExportMap( map, root ))
 
+        self.Albedo = list( block.diffuse_color * block.diffuse_intensity )
+        self.Albedo.append( 1.0 )
+        self.Roughness = 1-block.specular_hardness / 512
+
+        '''
         self.NodeTree = [{ "CloneOf" : "P3DShaderNodeLib.Nodes[ \"material_pbr\" ]",
             "Inputs" : [{
               "Name" : "WorldNormal",
@@ -171,6 +177,7 @@ class P3DMaterial( p3ddatablock.P3DDataBlock ):
         self.GeometryNode = {
             "CloneOf" : "P3DShaderNodeLib.Nodes[ \"geometry\" ]",
             "ClassName" : "TP3DNodeClone" }
+        '''
 
     @staticmethod
     def find_storage( root ):

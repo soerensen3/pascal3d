@@ -64,7 +64,7 @@ type
       destructor Destroy; override;
 
       procedure InitSDL;
-      procedure Initialize; virtual; //calls InitSDL
+      procedure Initialize; virtual;
       procedure Finalize; virtual;
       procedure Run;
 
@@ -320,9 +320,11 @@ end;
 
 procedure TP3DApplication.AfterRun;
 begin
-  MainWindow.Hide;
-  if ( Assigned( MainWindow.OnClose )) then
-    MainWindow.OnClose( MainWindow );
+  if ( Assigned( MainWindow )) then begin
+    MainWindow.Hide;
+    if ( Assigned( MainWindow.OnClose )) then
+      MainWindow.OnClose( MainWindow );
+  end;
 end;
 
 procedure TP3DApplication.DropFile(Event: TSDL_DropEvent);
@@ -339,21 +341,32 @@ end;
 constructor TP3DApplication.Create(const AOwner: IP3DStreamableContainer);
 begin
   inherited Create( AOwner );
+  if ( not Assigned( P3DApplication )) then
+    P3DApplication:= Self;
   P3DUtilsInit;
   P3DEventsInit;
+  P3DCoreInit;
   MainWindow:= nil;
   FWindows:= TP3DWindowContainerList.Create( 'Windows', smText );
   Properties.Add( FWindows );
   if ( Assigned( P3DConfig )) then
     P3DConfig.AddStreamable( 'P3DApplication', Self );
+  if ( not SDLInitialized ) then
+    InitSDL;
+  Initialize;
 end;
 
 destructor TP3DApplication.Destroy;
 begin
   if ( Assigned( P3DConfig )) then
     P3DConfig.RemoveStreamable( 'P3DApplication' );
+  if ( Self = P3DApplication ) then
+    P3DApplication:= nil;
   Finalize;
   SDL_Quit();
+  P3DCoreFinish;
+  P3DEventsFinish;
+  P3DUtilsFinish;
   inherited Destroy;
 end;
 
@@ -368,8 +381,6 @@ end;
 procedure TP3DApplication.Initialize;
 begin
   log_info( message_header( Self ) + 'initializing application', attributes([ attribute( 'function', 'Initialize' )]));
-  if ( not SDLInitialized ) then
-    InitSDL;
   if ( Assigned( OnInit )) then
     OnInit( Self );
 end;
@@ -384,16 +395,19 @@ begin
   try
     log_info( message_header( Self ) + 'Running application', attributes([ attribute( 'function', 'Run' )]));
 
-    Running := True;
+    Running := Assigned( MainWindow );
     while Running do
       begin                // Mainloop
+        P3DFilePointers.CheckForChange;
+
         Events;
         Render;
         if ( Assigned( MainWindow )) then
-          MainWindow.Render;
+          MainWindow.Render
+        else
+          Running:= False;
 
         P3DInput.NextCycle;
-        P3DFilePointers.CheckForChange;
 
         SDL_Delay( 10 );
       end;

@@ -60,6 +60,20 @@ type
     function Clone: TP3DPlotCommandSetting; override;
   end;
 
+  { TP3DPlotCommandUniformTransform }
+
+  TP3DPlotCommandUniformTransform = class ( specialize TP3DPlotCommandShaderDecl < TP3DTransform >)
+    procedure Execute( AContext: TP3DPlotCommandContext ); override;
+  end;
+
+  { TP3DPlotCommandUniformTransformView }
+
+  TP3DPlotCommandUniformTransformView = class ( TP3DPlotCommandUniformTransform )
+    public
+      constructor Create( AValue: TP3DTransform );
+
+      procedure GetExtensions(Extension: TStringList); override;
+  end;
 
 {$ENDIF}
 
@@ -229,6 +243,7 @@ begin
 end;
 
 
+
 { TP3DPlotCommandUniformTexture }
 
 procedure TP3DPlotCommandUniformTexture.Execute(AContext: TP3DPlotCommandContext);
@@ -244,7 +259,7 @@ begin
     else
       exit;
   TexIndex:= AContext.NumTextures;
-  Inc( AContext.NumTextures );
+  Inc( AContext.FNumTextures );
   FValue.Bind( TexIndex );
   glUniform1i( FLocation, TexIndex );
 end;
@@ -310,64 +325,6 @@ begin
   end;
 end;
 
-{ TP3DPlotCommandUniformLight }
-
-procedure TP3DPlotCommandUniformLight.Execute(AContext: TP3DPlotCommandContext);
-var
-  l: String;
-  pos: TVec4;
-  Light: TP3DLight;
-  Index: Integer;
-begin
-  if ( not Assigned( Value ) or ( not ( Value.Data is TP3DLight )) or not Assigned( P3DShaderActive )) then
-    exit;
-  Light:= TP3DLight( Value.Data );
-  case Light.LightType of
-    ltPoint: begin
-      Index:= AContext.NumPointLights;
-      l:= 'PointLights[' + IntToStr( Index ) + ']';
-
-      //Color
-      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Color' ), Light.Color.R, Light.Color.G, Light.Color.B, Light.Energy );
-
-      //linear Attenuation
-      glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.linearAttenuation' ), Light.LinearAttenuation );
-
-      //quadratic Attenuation
-      glUniform1f( P3DShaderActive.Uniforms.AddrByName( l + '.quadraticAttenuation' ), Light.QuadraticAttenuation );
-
-      //position in view space
-      //pos:= matView * vec4( Value.Transform.Position, 1 );
-      //glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Position' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
-
-      //position in world space
-      pos:= vec4( Value.Transform.Position, 1 );
-      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.WorldPosition' ), pos.X, pos.Y, pos.Z, pos.W );
-      Inc( AContext.NumPointLights );
-      glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'numPointLights' ), AContext.NumPointLights );
-    end;
-    ltSun: begin
-      Index:= AContext.NumDirectionalLights;
-      l:= 'DirectionalLights[' + IntToStr( Index ) + ']';
-
-      //Color
-      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Color' ), Light.Color.R, Light.Color.G, Light.Color.B, Light.Energy );
-
-      //pos:= vec4( normalize( mat3( matView ) * Items[ i ].Matrices[ j ].Row[ 2 ].XYZ ), 0 );
-      //glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.Direction' ), pos.X, pos.Y, pos.Z, pos.W ); cle( Self );
-
-      pos:= vec4( normalize( Value.Transform.Matrix.Row[ 2 ].XYZ ), 0 );
-      glUniform4f( P3DShaderActive.Uniforms.AddrByName( l + '.WorldDirection' ), pos.X, pos.Y, pos.Z, pos.W );
-      Inc( AContext.NumDirectionalLights );
-      glUniform1i( P3DShaderActive.Uniforms.AddrByName( 'numDirectionalLights' ), AContext.NumDirectionalLights );
-    end;
-  end;
-end;
-
-function TP3DPlotCommandUniformLight.Clone: TP3DPlotCommandSetting;
-begin
-
-end;
 
 {$ENDIF}
 

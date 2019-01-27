@@ -382,9 +382,9 @@ begin
     exit;
 
   P3DMaterialActive.Maps[ 0 ].Map:= Texture;
-  if ( not Assigned( P3DMaterialActive.Shader )) then
-    P3DMaterialActive.BuildShader();
-  P3DMaterialActive.PassToShader();
+  //if ( not Assigned( P3DMaterialActive.Shader )) then
+  //  P3DMaterialActive.BuildShader();
+  //P3DMaterialActive.PassToShader();
 end;
 
 function TP3DFontBmp.GetTexture: TP3DTexture;

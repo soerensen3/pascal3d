@@ -442,7 +442,7 @@ procedure TP3DNodeClone.FindAllSockets(AFilter: String; AInputs: TP3DNodeSocketC
     T: TP3DShaderNodeType;
     S: TP3DShaderNodeSocket;
   begin
-    T:= P3DData.P3DShaderNodeLib.FindType( Socket.CloneOf.SocketType );
+    T:= P3DShaderNodeLib.FindType( Socket.CloneOf.SocketType );
 
     WriteLn( Socket.CloneOf.SocketType );
     if ( Assigned( T )) then begin
@@ -782,7 +782,7 @@ function TP3DNodeSocketCloneLib.GetLibNode: TP3DNode;
 begin
   Result:= TP3DNode( FLibNode.AsValue );
   if ( not Assigned( Result )) then begin
-    Result:= P3DData.P3DShaderNodeLib.FindNode( LibName );
+    Result:= P3DShaderNodeLib.FindNode( LibName );
     FLibNode.AsValue:= Result;
   end;
 end;

@@ -1,26 +1,27 @@
 ![Logo](https://github.com/soerensen3/pascal3d/blob/master/art/icons/mipmap-xxxhdpi/ic_launcher.png)
 # What is Pascal3D
-## Pascal3D (p3d) is a open source game engine for Free Pascal/Lazarus
 
+Pascal3D (p3d) is an open source cross platform game engine for Free Pascal/Lazarus. It is focussed on ease of use while trying to be flexible enough to support advanced features and being extendable.
 
 # Features
 * Object oriented
-* Game data is organized in datablocks similar to blender
-    * Saving and loading
-    * Blender export script (Python)
-    * Garbage collector
-    * Scenes that can be rendered separately
-    * Instancing
-    * Properties are streamed from/to file automatically
+* Game data is organized in data blocks similar to Blender
+  * Saving and loading
+  * Blender export script (Python)
+  * Garbage collector
+  * Scenes that can be rendered separately
+  * Instancing
+  * Properties are streamed from/to file automatically
 * Materials
-    * Custom Shader Materials with GLSL (very basic)
-    * Node Based Materials 
-        * You can define your own nodes in P3D Markdown with GLSL
-        * PBR and Blinn/Phong nodes
-        * Image based lightning - can be generated from environment maps on the fly
+  * Custom Shader Materials with GLSL (very basic)
+  * Node Based Materials 
+    * You can define your own nodes in P3D Markdown with GLSL
+    * PBR and Blinn/Phong nodes
+    * Image based lightning - can be generated from environment maps on the fly
         * Simple ocean shader
 * Graphical User Interface
     * A GUI similar to Lazarus' LCL
+    * Form editor for visually designing your interface (Planned)
 * Prerendered bitmap texts and SDF fonts
     * Signed distance field for Bitmap Fonts
     * TTF fonts can be easily converted to Bitmap Fonts

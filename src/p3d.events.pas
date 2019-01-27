@@ -13,9 +13,9 @@ uses
   Classes,
   SysUtils,
 
-  XMLWrite,
+  {XMLWrite,
   XMLRead,
-  DOM,
+  DOM,}
   fpjson,
 
   p3d.utils,

@@ -92,6 +92,7 @@
     protected
       FItemClass: TP3DStreamableClass;
       FItemProp: TP3DPropertyAccessClass;
+
       function Add( Item: TP3DStreamable ): Integer; virtual;
       procedure Remove( AItem: TP3DStreamable ); virtual;
       procedure Delete( Index: Integer ); virtual;

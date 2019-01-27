@@ -62,6 +62,56 @@ type
       property Extensions: TStringList read FExtensions;
   end;
 
+  { TP3DPlotCommandRenderToTexture}
+
+   TP3DPlotCommandRenderToTexture = class ( TP3DPlotCommandLayer )
+     private
+       FFrameBuffer: TP3DFrameBuffer;
+       FFrameBufferProp: TP3DStreamableContainer;
+       FLayers: TP3DPlotListLayer;
+       FTexture: TP3DTexture;
+
+     public
+       constructor Create( ATexture: TP3DTexture; ALayers: TP3DPlotListLayer );
+       destructor Destroy; override;
+
+       procedure Execute( AContext: TP3DPlotCommandContext ); override;
+       function Clone: TP3DPlotCommandLayer; override;
+
+       property Texture: TP3DTexture read FTexture;
+       property Layers: TP3DPlotListLayer read FLayers;
+   end;
+
+   { TP3DPlotCommandRestoreFB }
+
+   TP3DPlotCommandRestoreFB = class ( TP3DPlotCommandLayer )
+     public
+       procedure Execute( AContext: TP3DPlotCommandContext ); override;
+       function Clone: TP3DPlotCommandLayer; override;
+   end;
+
+   { TP3DPlotCommandUniformTexture }
+
+   TP3DPlotCommandUniformTexture = class ( specialize TP3DPlotCommandShaderDecl < TP3DTexture >)
+     procedure Execute( AContext: TP3DPlotCommandContext ); override;
+     function Clone: TP3DPlotCommandSetting; override;
+   end;
+
+   { TP3DPlotCommandUniformSampleTexture }
+
+   TP3DPlotCommandUniformSampleTexture = class ( TP3DPlotCommandUniformTexture, IP3DPlotCommandSettingNode )
+     protected
+       FNoConnectToColor: Boolean;
+       function GetShaderNode: TP3DNodeClone;
+
+     public
+       procedure MakeShaderModifications( ASender: TP3DPlotListSetting; ASenderIdx: Integer; ABuilder: TP3DShaderBuilder ); override;
+
+       property ShaderNode: TP3DNodeClone read GetShaderNode;
+       property NoConnectToColor: Boolean read FNoConnectToColor write FNoConnectToColor;
+   end;
+
+
 {$ENDIF}
 
 {$IFDEF IMPLEMENTATION}
@@ -112,7 +162,7 @@ constructor TP3DPlotCommandRenderToTexture.Create(ATexture: TP3DTexture; ALayers
 begin
   inherited Create;
   FFrameBufferProp:= TP3DStreamableContainer.Create( 'FrameBuffer', TP3DFrameBuffer );
-  FFrameBufferProp.Root:= P3DData;
+  FFrameBufferProp.Root:= P3DUtilsContainers; // TODO: Change this
   FTexture:= ATexture;
   FLayers:= ALayers;
 end;
@@ -143,9 +193,6 @@ function TP3DPlotCommandRenderToTexture.Clone: TP3DPlotCommandLayer;
 begin
   Result:= TP3DPlotCommandRenderToTexture.Create( Texture, FLayers );
 end;
-
-
-
 
 { TP3DPlotCommandShaderDecl }
 
