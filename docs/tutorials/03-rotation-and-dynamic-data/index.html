@@ -1,0 +1,743 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.2.0">
+    
+    
+      
+        <title>Rotating the triangle and dynamic data</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.572ca0f0.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.8c900955.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#rotating-the-triangle-and-dynamic-data" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Pascal3D" class="md-header-nav__button md-logo">
+          
+            <img src="../../img/logo.svg" width="24" height="24">
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                Pascal3D
+              </span>
+              <span class="md-header-nav__topic">
+                Rotating the triangle and dynamic data
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Pascal3D" class="md-nav__button md-logo">
+      
+        <img src="../../img/logo.svg" width="48" height="48">
+      
+    </a>
+    Pascal3D
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="About" class="md-nav__link">
+      About
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../getting-started/" title="Getting started" class="md-nav__link">
+      Getting started
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Reference
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../reference/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../reference/pascal3d_base_overview/" title="pascal3d_base" class="md-nav__link">
+      pascal3d_base
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../reference/pascal3d_overview/" title="pascal3d_core" class="md-nav__link">
+      pascal3d_core
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Tutorials
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../01-first-project/" title="Your first project" class="md-nav__link">
+      Your first project
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../02-first-triangle/" title="Rendering a triangle" class="md-nav__link">
+      Rendering a triangle
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Rotating the triangle and dynamic data
+      </label>
+    
+    <a href="./" title="Rotating the triangle and dynamic data" class="md-nav__link md-nav__link--active">
+      Rotating the triangle and dynamic data
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-transform-class" title="The transform class" class="md-nav__link">
+    The transform class
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transforming-the-triangle" title="Transforming the triangle" class="md-nav__link">
+    Transforming the triangle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-the-content-adapt-to-a-resize-of-the-window" title="Making the content adapt to a resize of the window" class="md-nav__link">
+    Making the content adapt to a resize of the window
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handling-dynamic-data" title="Handling dynamic data" class="md-nav__link">
+    Handling dynamic data
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-transform-class" title="The transform class" class="md-nav__link">
+    The transform class
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transforming-the-triangle" title="Transforming the triangle" class="md-nav__link">
+    Transforming the triangle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-the-content-adapt-to-a-resize-of-the-window" title="Making the content adapt to a resize of the window" class="md-nav__link">
+    Making the content adapt to a resize of the window
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handling-dynamic-data" title="Handling dynamic data" class="md-nav__link">
+    Handling dynamic data
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="rotating-the-triangle-and-dynamic-data">Rotating the triangle and dynamic data</h1>
+<p>In the last example we learned how to render a static scene with a triangle. We will start with that and implement a rotation. Subsequently you will learn how to render dynamic data.</p>
+<p><img alt="Rendering a rotated triangle and dynamic data" src="img/tutorial-3.png" /></p>
+<h2 id="the-transform-class">The transform class</h2>
+<p>For describing the rotation a matrix is used. For a general introduction on vectors, matrices and transforms I can recommend <a href="https://learnopengl.com/Getting-started/Transformations">this tutorial</a>. For Pascal3D you do not necessarily understand how matrices are composed, though it helps. In Pascal3D a transform can be described with the <strong>TP3DTransform</strong> class. It is a frontend for all the common transformations (Translation, rotation, scale) which are then assembled to a matrix. In 3D math rotations can be described by matrices, euler angles or by quaternions (There are even more methods).</p>
+<div class="codehilite"><pre><span></span><span class="n">TP3DTransform</span> <span class="o">=</span> <span class="k">class</span><span class="p">(</span> <span class="n">TP3DStreamable</span> <span class="p">)</span>
+  <span class="o">...</span>
+  <span class="c1">// Common translations --&gt;</span>
+  <span class="k">property</span> <span class="py">Position</span><span class="o">:</span> <span class="n">TVec3</span><span class="o">;</span> <span class="c1">// Translation for moving the scene</span>
+  <span class="k">property</span> <span class="py">Scale</span><span class="o">:</span> <span class="n">TVec3</span><span class="o">;</span> <span class="c1">// Scaling the scene along the global axes</span>
+    <span class="c1">// for rotation use</span>
+  <span class="k">property</span> <span class="py">Rotation</span><span class="o">:</span> <span class="n">TVec3</span><span class="o">;</span> <span class="c1">// Rotation with euler angles around the global axes (XYZ)</span>
+    <span class="c1">// or</span>
+  <span class="k">property</span> <span class="py">Quaternion</span><span class="o">:</span> <span class="n">TQuat</span><span class="o">;</span> <span class="c1">// Rotation in quaternion style (useful for bones, not prone to gimbal lock)</span>
+    <span class="c1">// the other is then updated automatically</span>
+  <span class="c1">// &lt;-- Common translations</span>
+
+  <span class="k">property</span> <span class="py">Direction</span><span class="o">:</span> <span class="n">TVec3</span><span class="o">;</span>  <span class="c1">// Where is the transformed object pointing (useful for cameras or lights) [readonly]</span>
+
+  <span class="k">property</span> <span class="py">Matrix</span><span class="o">:</span> <span class="n">TMat4</span><span class="o">;</span>  <span class="c1">// Matrix that contains all the above transforms</span>
+  <span class="k">property</span> <span class="py">MatrixInv</span><span class="o">:</span> <span class="n">TMat4</span><span class="o">;</span>  <span class="c1">// Inverse matrix to undo the transformation</span>
+  <span class="k">property</span> <span class="py">RotationOrder</span><span class="o">:</span> <span class="n">TRotationOrder</span><span class="o">;</span> <span class="c1">// Determines in which order the transforms are applied</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>The above listing shows the important properties of a TP3DTransform object in pseudo code. You can edit any of these and the others are automatically updated if necessary. Use the <strong>Position</strong> property if you want to shift the scene, the <strong>Scale</strong> property to for applying a scale and one of the two rotation types (<strong>Rotation</strong> or <strong>Quaternion</strong>) to rotate the scene.
+You can also set the <strong>Matrix</strong> property if you prefer to.</p>
+<p>The transformations are typically distinguished between <strong>World</strong>, <strong>View</strong> and <strong>Projection</strong>. In the former the scene is transformed, in the second the camera. The difference is that to get the same visual results a <strong>View</strong> transform has to be opposite or inverse of the world transform. A camera that moves to the right, for example, causes the scene to shift optically to the left. The <strong>Projection</strong> transform decides how the three-dimensional scene is displayed on the screen. This can be either orthogonal or perspective.</p>
+<p>Finally there is the <strong>RotationOrder</strong>. This determines which transformation is applied first. First moving a scene and then rotating it results in a different effect than the other way round.</p>
+<h2 id="transforming-the-triangle">Transforming the triangle</h2>
+<p>In this tutorial we use a world transform to rotate the triangle itself.
+Extending the code from the previous tutorial we can pass our <code>World: TP3DTransform</code> object in the settings of our triangle.
+However we first have to create our World transform object.</p>
+<div class="codehilite"><pre><span></span><span class="n">TMyApplication</span> <span class="o">=</span> <span class="k">class</span> <span class="p">(</span> <span class="n">TP3DApplication</span> <span class="p">)</span>
+  <span class="kp">private</span>
+    <span class="n">FWorld</span><span class="o">:</span> <span class="n">TP3DTransform</span><span class="o">;</span>
+    <span class="o">...</span>
+
+  <span class="kp">public</span>
+    <span class="o">...</span>
+    <span class="k">property</span> <span class="py">World</span><span class="o">:</span> <span class="n">TP3DTransform</span> <span class="kp">read</span> <span class="nf">FWorld</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>And in our <strong>Initialize</strong> method we have to create the object on initialization. We create a P3D property that is the owner of the World object. We don't need to free it ourselves then as this is done automatically when the program terminates.</p>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">Initialize</span><span class="o">;</span>
+<span class="k">var</span>
+  <span class="n">Prop</span><span class="o">:</span> <span class="n">TP3DStreamableContainer</span><span class="o">;</span> <span class="c1">// Use a local variable for the property as we do not need to keep track of it</span>
+<span class="k">begin</span>
+  <span class="o">...</span>
+  <span class="n">Prop</span><span class="o">:=</span> <span class="n">TP3DStreamableContainer</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span> <span class="s">&#39;World&#39;</span><span class="o">,</span> <span class="n">TP3DTransform</span> <span class="p">)</span><span class="o">;</span> <span class="c1">// Creating a P3D property that owns our transform object</span>
+  <span class="n">Properties</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">Prop</span> <span class="p">)</span><span class="o">;</span>  <span class="c1">// Add the property to the property list of the application. This way both the property and the object are freed automatically on termination</span>
+  <span class="n">FWorld</span><span class="o">:=</span> <span class="n">TP3DTransform</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span> <span class="n">Prop</span> <span class="p">)</span><span class="o">;</span>  <span class="c1">// Create the object itself and specify it&#39;s owner: the property</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>In the <strong>SetupTriangle</strong> method we then pass the the transform object in the settings of our geometry. Optionally we also change the coordiates to that of an equilateral triangle with a center at the origin which is also used as a center for the rotation.</p>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">SetupTriangle</span><span class="o">;</span>
+<span class="k">var</span>
+  <span class="n">h</span><span class="o">:</span> <span class="n">Float</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="n">h</span><span class="o">:=</span> <span class="nb">sqrt</span><span class="p">(</span> <span class="mi">3</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">FTriangleList</span><span class="o">:=</span>
+    <span class="n">layers</span><span class="p">([</span>
+      <span class="n">command_clear</span><span class="p">([</span> <span class="n">cfColor</span><span class="o">,</span> <span class="n">cfDepth</span> <span class="p">]</span><span class="o">,</span> <span class="n">Grey500</span> <span class="p">)</span><span class="o">,</span> <span class="c1">// Clear the background and depth buffer</span>
+
+      <span class="n">geom_polygon</span><span class="p">([</span> <span class="n">vec3</span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="o">,-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)]</span><span class="o">,</span> <span class="c1">// will form an equilateral triangle with a center at the origin</span>
+        <span class="n">settings</span><span class="p">([</span>
+          <span class="n">uniform_world</span><span class="p">(</span> <span class="n">World</span> <span class="p">)</span><span class="o">,</span>
+          <span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="p">[</span> <span class="n">Red500</span><span class="o">,</span> <span class="n">Green500</span><span class="o">,</span> <span class="n">Blue500</span> <span class="p">])</span>
+        <span class="p">])</span>
+      <span class="p">)</span>
+    <span class="p">)</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>In the render procedure we do our rotation for each frame.</p>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">Render</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="k">inherited</span> <span class="n">Render</span><span class="o">;</span>
+  <span class="n">World</span><span class="o">.</span><span class="n">Rotation</span><span class="o">:=</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">GetTickCount64</span> <span class="o">/</span> <span class="mi">10</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">World</span><span class="o">.</span><span class="n">Scale</span><span class="o">:=</span> <span class="n">vec3</span><span class="p">(</span> <span class="nb">sin</span><span class="p">(</span> <span class="n">GetTickCount64</span> <span class="o">/</span> <span class="mi">1000</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="p">)</span><span class="o">;</span>
+  <span class="c1">// or by equivalently setting the matrix property</span>
+  <span class="c1">// World.Matrix:= mat4rotate( vec3_Axis_PZ, GetTickCount64 / 1000 ) * mat4scale( vec4( vec3( sin( GetTickCount64 / 1000 ) / 4 + 0.25 ), 1 ));</span>
+  <span class="c1">// The rotation is performed before the scale, which does however not matter in this case</span>
+
+  <span class="n">FTriangleList</span><span class="o">.</span><span class="n">Execute</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<h2 id="making-the-content-adapt-to-a-resize-of-the-window">Making the content adapt to a resize of the window</h2>
+<p>When we resize the window depending on the ratio of width and height the content might look stretched and thus our triangle is not equilateral on the screen anymore. To prevent this we are going to use a <strong>Projection</strong> transform that covers the ratio of width and height. By default an identity matrix is used that assumes that the ratio of width and height is 1:1. This is however normally not the case.</p>
+<p>We add the <strong>Projection</strong> transform similar to the <strong>World</strong> transform by adding it to the application ...</p>
+<div class="codehilite"><pre><span></span><span class="n">TMyApplication</span> <span class="o">=</span> <span class="k">class</span> <span class="p">(</span> <span class="n">TP3DApplication</span> <span class="p">)</span>
+  <span class="kp">private</span>
+    <span class="n">FProj</span><span class="o">:</span> <span class="n">TP3DTransform</span><span class="o">;</span>
+    <span class="o">...</span>
+
+  <span class="kp">public</span>
+    <span class="o">...</span>
+    <span class="k">property</span> <span class="py">Proj</span><span class="o">:</span> <span class="n">TP3DTransform</span> <span class="kp">read</span> <span class="nf">FProj</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>... and to the <strong>SetupTriangle</strong> and <strong>Initialize</strong> method.</p>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">SetupTriangle</span><span class="o">;</span>
+<span class="k">var</span>
+  <span class="n">h</span><span class="o">:</span> <span class="n">Float</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="n">h</span><span class="o">:=</span> <span class="nb">sqrt</span><span class="p">(</span> <span class="mi">3</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">FTriangleList</span><span class="o">:=</span>
+    <span class="n">layers</span><span class="p">([</span>
+      <span class="n">command_clear</span><span class="p">([</span> <span class="n">cfColor</span><span class="o">,</span> <span class="n">cfDepth</span> <span class="p">]</span><span class="o">,</span> <span class="n">Grey500</span> <span class="p">)</span><span class="o">,</span> <span class="c1">// Clear the background and depth buffer</span>
+
+      <span class="n">geom_polygon</span><span class="p">([</span> <span class="n">vec3</span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="o">,-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)]</span><span class="o">,</span>
+        <span class="n">settings</span><span class="p">([</span>
+<span class="hll">          <span class="n">uniform</span><span class="p">(</span> <span class="s">&#39;proj&#39;</span><span class="o">,</span> <span class="n">Proj</span> <span class="p">)</span><span class="o">,</span>
+</span>          <span class="n">uniform_world</span><span class="p">(</span> <span class="n">World</span> <span class="p">)</span><span class="o">,</span>
+          <span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="p">[</span> <span class="n">Red500</span><span class="o">,</span> <span class="n">Green500</span><span class="o">,</span> <span class="n">Blue500</span> <span class="p">])</span>
+        <span class="p">])</span>
+      <span class="p">)</span><span class="o">,</span>
+
+      <span class="n">geom_lines</span><span class="p">(</span> <span class="n">SineWave</span><span class="o">,</span>
+        <span class="n">settings</span><span class="p">([</span>
+          <span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="n">SineWaveColors</span> <span class="p">)</span>
+        <span class="p">])</span>
+      <span class="p">)</span>
+    <span class="p">])</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+
+<span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">Initialize</span><span class="o">;</span>
+<span class="k">var</span>
+  <span class="n">Prop</span><span class="o">:</span> <span class="n">TP3DStreamableContainer</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="o">...</span>
+  <span class="n">Prop</span><span class="o">:=</span> <span class="n">TP3DStreamableContainer</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span> <span class="s">&#39;Proj&#39;</span><span class="o">,</span> <span class="n">TP3DTransform</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">Properties</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span> <span class="n">Prop</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">FProj</span><span class="o">:=</span> <span class="n">TP3DTransform</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span> <span class="n">Prop</span> <span class="p">)</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>We then override the ResizeWindow method that is called whenever the window is resized.</p>
+<div class="codehilite"><pre><span></span><span class="n">TMyApplication</span> <span class="o">=</span> <span class="k">class</span> <span class="p">(</span> <span class="n">TP3DApplication</span> <span class="p">)</span>
+  <span class="kp">public</span>
+    <span class="o">...</span>
+    <span class="k">procedure</span> <span class="nf">ResizeWindow</span><span class="p">(</span><span class="n">Sender</span><span class="o">:</span> <span class="n">TP3DWindow</span><span class="o">;</span> <span class="n">Event</span><span class="o">:</span> <span class="n">TSDL_WindowEvent</span><span class="p">)</span><span class="o">;</span> <span class="kp">override</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+<span class="o">...</span>
+
+<span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">ResizeWindow</span><span class="p">(</span> <span class="n">Sender</span><span class="o">:</span> <span class="n">TP3DWindow</span><span class="o">;</span> <span class="n">Event</span><span class="o">:</span> <span class="n">TSDL_WindowEvent</span> <span class="p">)</span><span class="o">;</span>
+<span class="k">var</span>
+  <span class="n">Aspect</span><span class="o">:</span> <span class="kt">Extended</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="k">inherited</span> <span class="n">ResizeWindow</span><span class="p">(</span> <span class="n">Sender</span><span class="o">,</span> <span class="n">Event</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">Aspect</span><span class="o">:=</span> <span class="n">P3DViewports</span><span class="o">.</span><span class="n">Screen</span><span class="o">.</span><span class="n">Width</span> <span class="c1">// P3DViewports.Screen.Height; Calculate the ratio of width and height</span>
+  <span class="n">Proj</span><span class="o">.</span><span class="n">Scale</span><span class="o">:=</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">1</span><span class="o">/</span><span class="n">Aspect</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">1</span> <span class="p">)</span><span class="o">;</span> <span class="c1">// and apply a scale to the visualization</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<h2 id="handling-dynamic-data">Handling dynamic data</h2>
+<p>Another advantage of a TP3DTransform object is that we don't have to update the render list in every frame although the visualization is different. P3DPlot is even capable of handling dynamic data that change their vertices or colors in every frame. To demonstrate that in the next step we are creating a scrolling sine wave with varying colors.</p>
+<p>In the main class of our application we have to add two new buffer objects. That of the coordinates and that of the colors. For the triangle we passed our coordiates in an array. We could have used buffers there as well. If we choose to use an array P3DPlot will create the buffer object behind the scene. With dynamic data however we have are restricted to buffers. The buffer object is however similar to an array and works like a TList object. The objects can have several types depending on the underlying data (eg. TP3DVec3BufferGL for a list of three component vectors). The auto suffix that has to be used with P3DPlot determines that the object is managed by the engine and is freed when there are no references to it anymore. This happens if when the object holding the variable is freed and it is not referenced by the plot list anymore. We chose a three component vector for the positions and a four component vector for the colors (RGBA).</p>
+<div class="codehilite"><pre><span></span><span class="n">TMyApplication</span> <span class="o">=</span> <span class="k">class</span> <span class="p">(</span> <span class="n">TP3DApplication</span> <span class="p">)</span>
+  <span class="kp">private</span>
+    <span class="n">FSineWave</span><span class="o">:</span> <span class="n">TP3DVec3BufferGLAuto</span><span class="o">;</span>
+    <span class="n">FSineWaveColors</span><span class="o">:</span> <span class="n">TP3DVec4BufferGLAuto</span><span class="o">;</span>
+    <span class="o">...</span>
+
+  <span class="kp">public</span>
+    <span class="o">...</span>
+    <span class="k">property</span> <span class="py">SineWave</span><span class="o">:</span> <span class="n">TP3DVec3BufferGLAuto</span> <span class="kp">read</span> <span class="nf">FSineWave</span><span class="o">;</span>
+    <span class="k">property</span> <span class="py">SineWaveColors</span><span class="o">:</span> <span class="n">TP3DVec4BufferGLAuto</span> <span class="kp">read</span> <span class="nf">FSineWaveColors</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>As you can see the implementation is very straight forward. We add these lines to our SetupTriangle method.</p>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">SetupTriangle</span><span class="o">;</span>
+<span class="k">var</span>
+  <span class="n">h</span><span class="o">:</span> <span class="n">Float</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="n">h</span><span class="o">:=</span> <span class="nb">sqrt</span><span class="p">(</span> <span class="mi">3</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">FTriangleList</span><span class="o">:=</span>
+    <span class="n">layers</span><span class="p">([</span>
+      <span class="n">command_clear</span><span class="p">([</span> <span class="n">cfColor</span><span class="o">,</span> <span class="n">cfDepth</span> <span class="p">]</span><span class="o">,</span> <span class="n">Grey500</span> <span class="p">)</span><span class="o">,</span> <span class="c1">// Clear the background and depth buffer</span>
+
+      <span class="n">geom_polygon</span><span class="p">([</span> <span class="n">vec3</span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="o">,-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">h</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)]</span><span class="o">,</span>
+        <span class="n">settings</span><span class="p">([</span>
+          <span class="n">uniform</span><span class="p">(</span> <span class="s">&#39;proj&#39;</span><span class="o">,</span> <span class="n">Proj</span> <span class="p">)</span><span class="o">,</span>
+          <span class="n">uniform_world</span><span class="p">(</span> <span class="n">World</span> <span class="p">)</span><span class="o">,</span>
+          <span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="p">[</span> <span class="n">Red500</span><span class="o">,</span> <span class="n">Green500</span><span class="o">,</span> <span class="n">Blue500</span> <span class="p">])</span>
+        <span class="p">])</span>
+<span class="hll">      <span class="p">)</span><span class="o">,</span>
+</span>
+<span class="hll">      <span class="n">geom_lines</span><span class="p">(</span> <span class="n">SineWave</span><span class="o">,</span>
+</span><span class="hll">        <span class="n">settings</span><span class="p">([</span>
+</span><span class="hll">          <span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="n">SineWaveColors</span> <span class="p">)</span>
+</span><span class="hll">        <span class="p">])</span>
+</span><span class="hll">      <span class="p">)</span>
+</span>    <span class="p">])</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>In the render procedure we have to fill the data. We set the count of the Buffers to 250 points for that but you can play with the number. I will not go into very much detail about the formula for the points. The color is composed by an <a href="https://en.wikipedia.org/wiki/HSL_and_HSV">HSV</a> color model where we use the scaled looping variable to determine the hue of the vertex.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>When working with dynamic data don't forget to call the <strong>PushData</strong> method after modifying it to transfer it to the OpenGL object of the buffer.</p>
+</div>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">Render</span><span class="o">;</span>
+<span class="hll"><span class="k">const</span>
+</span><span class="hll">  <span class="n">NumPoints</span> <span class="o">=</span> <span class="mi">250</span><span class="o">;</span>
+</span><span class="hll"><span class="k">var</span>
+</span><span class="hll">  <span class="n">i</span><span class="o">:</span> <span class="kt">Integer</span><span class="o">;</span>
+</span><span class="k">begin</span>
+  <span class="k">inherited</span> <span class="n">Render</span><span class="o">;</span>
+  <span class="n">View</span><span class="o">.</span><span class="n">Rotation</span><span class="o">:=</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">GetTickCount64</span> <span class="o">/</span> <span class="mi">10</span> <span class="p">)</span><span class="o">;</span>
+  <span class="n">View</span><span class="o">.</span><span class="n">Scale</span><span class="o">:=</span> <span class="n">vec3</span><span class="p">(</span> <span class="nb">sin</span><span class="p">(</span> <span class="n">GetTickCount64</span> <span class="o">/</span> <span class="mi">1000</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="p">)</span><span class="o">;</span>
+
+<span class="hll">  <span class="n">FSineWave</span><span class="o">.</span><span class="n">I</span><span class="o">.</span><span class="n">Count</span><span class="o">:=</span> <span class="n">NumPoints</span><span class="o">;</span>
+</span><span class="hll">  <span class="n">FSineWaveColors</span><span class="o">.</span><span class="n">I</span><span class="o">.</span><span class="n">Count</span><span class="o">:=</span> <span class="n">NumPoints</span><span class="o">;</span>
+</span>
+<span class="hll">  <span class="k">for</span> <span class="n">i</span><span class="o">:=</span> <span class="mi">0</span> <span class="k">to</span> <span class="n">NumPoints</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">do</span> <span class="k">begin</span>
+</span><span class="hll">    <span class="n">SineWave</span><span class="o">.</span><span class="n">I</span><span class="p">[</span> <span class="n">i</span> <span class="p">]</span><span class="o">:=</span> <span class="n">vec3</span><span class="p">(</span> <span class="n">i</span> <span class="o">/</span> <span class="n">NumPoints</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="o">,</span> <span class="nb">sin</span><span class="p">(</span> <span class="n">i</span> <span class="o">/</span> <span class="n">NumPoints</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="n">GetTickCount64</span> <span class="o">/</span> <span class="mi">100</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">20</span><span class="o">,</span> <span class="mf">0.5</span> <span class="p">)</span><span class="o">;</span>
+</span><span class="hll">    <span class="n">SineWaveColors</span><span class="o">.</span><span class="n">I</span><span class="p">[</span> <span class="n">i</span> <span class="p">]</span><span class="o">:=</span> <span class="n">vec4</span><span class="p">(</span> <span class="n">P3DHSVToRGB</span><span class="p">(</span> <span class="n">vec3</span><span class="p">(</span> <span class="nb">sin</span><span class="p">(</span> <span class="n">i</span> <span class="o">/</span> <span class="n">NumPoints</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">GetTickCount64</span> <span class="o">/</span> <span class="mi">100</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">,</span> <span class="nb">sin</span><span class="p">(</span> <span class="n">GetTickCount64</span> <span class="o">/</span> <span class="mi">1000</span> <span class="p">)</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">+</span> <span class="mf">0.75</span><span class="o">,</span> <span class="mi">1</span> <span class="p">))</span><span class="o">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span> <span class="n">i</span> <span class="o">/</span> <span class="n">NumPoints</span> <span class="p">))</span><span class="o">;</span>
+</span><span class="hll">  <span class="k">end</span><span class="o">;</span>
+</span>
+<span class="hll">  <span class="n">FSineWave</span><span class="o">.</span><span class="n">I</span><span class="o">.</span><span class="n">PushData</span><span class="o">;</span>
+</span><span class="hll">  <span class="n">FSineWaveColors</span><span class="o">.</span><span class="n">I</span><span class="o">.</span><span class="n">PushData</span><span class="o">;</span>
+</span>
+  <span class="n">FTriangleList</span><span class="o">.</span><span class="n">Execute</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../02-first-triangle/" title="Rendering a triangle" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Rendering a triangle
+              </span>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.b41f3d20.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+    
+      
+    
+  </body>
+</html>

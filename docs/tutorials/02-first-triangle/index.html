@@ -1,0 +1,581 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.2.0">
+    
+    
+      
+        <title>Rendering a triangle</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.572ca0f0.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.8c900955.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#rendering-a-triangle" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Pascal3D" class="md-header-nav__button md-logo">
+          
+            <img src="../../img/logo.svg" width="24" height="24">
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                Pascal3D
+              </span>
+              <span class="md-header-nav__topic">
+                Rendering a triangle
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Pascal3D" class="md-nav__button md-logo">
+      
+        <img src="../../img/logo.svg" width="48" height="48">
+      
+    </a>
+    Pascal3D
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="About" class="md-nav__link">
+      About
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../getting-started/" title="Getting started" class="md-nav__link">
+      Getting started
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Reference
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../reference/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../reference/pascal3d_base_overview/" title="pascal3d_base" class="md-nav__link">
+      pascal3d_base
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../reference/pascal3d_overview/" title="pascal3d_core" class="md-nav__link">
+      pascal3d_core
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Tutorials
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../01-first-project/" title="Your first project" class="md-nav__link">
+      Your first project
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Rendering a triangle
+      </label>
+    
+    <a href="./" title="Rendering a triangle" class="md-nav__link md-nav__link--active">
+      Rendering a triangle
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-short-introduction-to-graphic-functions-of-pascal3d" title="A short introduction to graphic functions of Pascal3D" class="md-nav__link">
+    A short introduction to graphic functions of Pascal3D
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preparing-the-app-for-the-rendering" title="Preparing the app for the rendering" class="md-nav__link">
+    Preparing the app for the rendering
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../03-rotation-and-dynamic-data/" title="Rotating the triangle and dynamic data" class="md-nav__link">
+      Rotating the triangle and dynamic data
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-short-introduction-to-graphic-functions-of-pascal3d" title="A short introduction to graphic functions of Pascal3D" class="md-nav__link">
+    A short introduction to graphic functions of Pascal3D
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preparing-the-app-for-the-rendering" title="Preparing the app for the rendering" class="md-nav__link">
+    Preparing the app for the rendering
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="rendering-a-triangle">Rendering a triangle</h1>
+<p>The most prominent example for OpenGL is probably that of rendering a colored triangle. This tutorial shows how this is done using Pascal3D.
+Though nothing keeps you from using OpenGL directly Pascal3D provides a powerful API that greatly simplifies rendering. Many basic OpenGL tutorials use the so called immediate mode because it is very simple to use. This has however been <a href="https://www.khronos.org/opengl/wiki/Legacy_OpenGL">deprecated</a> in OpenGL 3.x in favor of buffer objects because of it's poor performance and for compatibility reasons. While being more efficient it is a harder to understand for a beginner. The P3DPlot library (in p3d.core) aims for simplicity while at the same time using buffer objects.</p>
+<p><img alt="Rendering a colored triangle" src="img/tutorial-2.png" /></p>
+<h2 id="a-short-introduction-to-graphic-functions-of-pascal3d">A short introduction to graphic functions of Pascal3D</h2>
+<p>Rendering a red triangle is described through the following command.</p>
+<div class="codehilite"><pre><span></span><span class="n">geom_polygon</span><span class="p">([</span> <span class="n">vec3</span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="o">,-</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)]</span><span class="o">,</span>
+  <span class="n">settings</span><span class="p">([</span>
+    <span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="n">vec4</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span> <span class="p">))</span> <span class="c1">// Red</span>
+  <span class="p">])</span>
+</pre></div>
+
+
+<p>The name of the function determines what type of geometry we want to draw (geom_points, geom_lines, geom_polygon). The first parameter is an array of coordinates and determines where we want to draw. The lower left corner is at -1,-1,0 and the upper right is at 1, 1. The coordinates have three dimensions but for now we can ignore the last coordinate. We use the vec3 constructor for a three dimensional vector defined in p3d.math which syntax is similar to that of <a href="https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)">GLSL</a>.</p>
+<p>P3DPlot distinguishes between two types of commands, layers and settings. The former represents a drawing operation while the latter determines how it is performed.
+With the second parameter is of type setting. We can pass our <a href="http://www.lighthouse3d.com/tutorials/glsl-tutorial/attribute-variables/">attributes</a> and <a href="https://www.khronos.org/opengl/wiki/Uniform_(GLSL)">uniforms</a> there. It is possible to pass more than one setting which is why we need to enclose them in a settings block. This will turn an array of settings into a list class that can be used for rendering. With attrib we say we want to pass an attribute. The location parameter is set to the color attribute and the color is passed as a four dimensional vector (the components correspond to the channels Red, Green, Blue, Alpha). So <code>vec4( 1, 0, 0, 1 )</code> is red with an alpha value of 1. This results in the whole triangle becoming red.
+It is also possible to define one color for each vertex.</p>
+<div class="codehilite"><pre><span></span><span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="p">[</span> <span class="n">vec4</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec4</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec4</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">1</span> <span class="p">)])</span>
+</pre></div>
+
+
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>If we pass nil the color attribute will remain undefined. This sometimes makes sense but when using geom_points/geom_lines/geom_polygon you should always define a color because otherwise the color of the triangle will depend on what the attribute was previously set to or even on the OpenGL implementation. E.g. the triangle will by default be black on Intel and white on NVidia hardware.</p>
+</div>
+<p>For efficiency the polygon is not rendered directly. A call to the geometry functions will create a list of function calls that can be executed later. We therefore store the this list in a variable so this list has to be generated only once. Similar to the settings it is possible to store more than one function call in the list. We might want to clear the color buffer before rendering our triangle with command_clear first. We therefore have to pass a list of the function calls to the layers function to make a plot list that can be rendered later. The complete function call will then be:</p>
+<div class="codehilite"><pre><span></span><span class="n">TriangleList</span><span class="o">:=</span>
+  <span class="n">layers</span><span class="p">([</span>
+    <span class="n">command_clear</span><span class="p">([</span> <span class="n">cfColor</span><span class="o">,</span> <span class="n">cfDepth</span> <span class="p">]</span><span class="o">,</span> <span class="n">vec4</span><span class="p">(</span> <span class="mf">0.5</span><span class="o">,</span> <span class="mf">0.5</span><span class="o">,</span> <span class="mf">0.5</span><span class="o">,</span> <span class="mi">1</span> <span class="p">))</span><span class="o">,</span> <span class="c1">// Clear the background and depth buffer with grey</span>
+
+    <span class="n">geom_polygon</span><span class="p">([</span> <span class="n">vec3</span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="o">,-</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec3</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span> <span class="p">)]</span><span class="o">,</span>
+    <span class="c1">// draws a triangle from the passed coordinates</span>
+      <span class="n">settings</span><span class="p">([</span>
+        <span class="n">attrib</span><span class="p">(</span> <span class="n">P3DAttribColor</span><span class="o">,</span> <span class="p">[</span> <span class="n">vec4</span><span class="p">(</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec4</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span> <span class="p">)</span><span class="o">,</span> <span class="n">vec4</span><span class="p">(</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">1</span> <span class="p">)])</span>
+        <span class="c1">// sets the color attribute for each vertex</span>
+      <span class="p">])</span>
+    <span class="p">)</span>
+  <span class="p">])</span><span class="o">;</span>
+</pre></div>
+
+
+<p>And for rendering we call the Execute method.</p>
+<div class="codehilite"><pre><span></span><span class="n">TriangleList</span><span class="o">.</span><span class="n">Execute</span><span class="o">;</span>
+</pre></div>
+
+
+<h2 id="preparing-the-app-for-the-rendering">Preparing the app for the rendering</h2>
+<p>We start with the project from the last tutorial. To store our render calls we add a field FTriangleList of type TP3DPlotListLayer. Since we it is not freed automatically we override the Finalize method. The render method is called from the application's main loop. This is where we execute our triangle list. To generate the list we make a SetupTriangle method that is called from initialize.</p>
+<div class="codehilite"><pre><span></span><span class="n">TMyApplication</span> <span class="o">=</span> <span class="k">class</span> <span class="p">(</span> <span class="n">TP3DApplication</span> <span class="p">)</span>
+  <span class="kp">private</span>
+<span class="hll">    <span class="n">FTriangleList</span><span class="o">:</span> <span class="n">TP3DPlotListLayer</span><span class="o">;</span>
+</span>
+  <span class="kp">public</span>
+    <span class="k">procedure</span> <span class="nf">Initialize</span><span class="o">;</span> <span class="kp">override</span><span class="o">;</span> <span class="c1">// Override the initialize procedure to</span>
+                                    <span class="c1">// allow custom initializations</span>
+<span class="hll">    <span class="k">procedure</span> <span class="nf">Finalize</span><span class="o">;</span> <span class="kp">override</span><span class="o">;</span>
+</span><span class="hll">    <span class="k">procedure</span> <span class="nf">Render</span><span class="o">;</span> <span class="kp">override</span><span class="o">;</span>
+</span><span class="hll">    <span class="k">procedure</span> <span class="nf">SetupTriangle</span><span class="o">;</span>
+</span><span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Since P3DPlot relies on shader nodes we need to define where our shaders are located. This is in the pascal3d/shaders/ directory. For your own projects you may want to copy these files to your project directory.</p>
+</div>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">Initialize</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="k">inherited</span> <span class="nb">Initialize</span><span class="o">;</span>
+  <span class="n">TP3DWindow</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span> <span class="n">Windows</span> <span class="p">)</span><span class="o">;</span> <span class="c1">// Create the main window. Note that this is freed</span>
+                                <span class="c1">// automatically when the application terminates</span>
+  <span class="n">MainWindow</span><span class="o">.</span><span class="n">Title</span><span class="o">:=</span> <span class="s">&#39;Rendering a triangle&#39;</span><span class="o">;</span> <span class="c1">// Set the title</span>
+
+<span class="hll">  <span class="n">P3DShaderNodeLib</span><span class="o">.</span><span class="n">LoadLibraryPath</span><span class="p">(</span> <span class="s">&#39;../../../shaders/&#39;</span> <span class="p">)</span><span class="o">;</span>
+</span>
+<span class="hll">  <span class="n">SetupTriangle</span><span class="o">;</span>
+</span><span class="k">end</span><span class="o">;</span>
+
+<span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">Finalize</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="nb">FreeAndNil</span><span class="p">(</span> <span class="n">FTriangleList</span> <span class="p">)</span><span class="o">;</span> <span class="c1">// Free the triangle list</span>
+  <span class="k">inherited</span> <span class="nb">Finalize</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+
+
+<p>The Render method that is executed on each frame is very simple. We just execute our triangle list.</p>
+<div class="codehilite"><pre><span></span><span class="k">procedure</span> <span class="nc">TMyApplication</span><span class="o">.</span><span class="nf">Render</span><span class="o">;</span>
+<span class="k">begin</span>
+  <span class="k">inherited</span> <span class="n">Render</span><span class="o">;</span>
+  <span class="n">FTriangleList</span><span class="o">.</span><span class="n">Execute</span><span class="o">;</span>
+<span class="k">end</span><span class="o">;</span>
+</pre></div>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../01-first-project/" title="Your first project" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Your first project
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../03-rotation-and-dynamic-data/" title="Rotating the triangle and dynamic data" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Rotating the triangle and dynamic data
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.b41f3d20.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+    
+      
+    
+  </body>
+</html>
