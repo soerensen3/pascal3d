@@ -1,4 +1,8 @@
 ![Logo](https://github.com/soerensen3/pascal3d/blob/master/art/icons/mipmap-xxxhdpi/ic_launcher.png)
+# Website and documentation
+
+Please visit https://soerensen3.github.io/pascal3d-docs/ for the website and documentation of Pascal3D.
+
 # What is Pascal3D
 
 Pascal3D (p3d) is an open source cross platform game engine for Free Pascal/Lazarus. It is focussed on ease of use while trying to be flexible enough to support advanced features and being extendable.
