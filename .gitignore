@@ -31,7 +31,16 @@ backup/
 !*.blend
 !*.js
 !*.sh
+!*.svg
+!*.gz
+!*.ico
+!*.json
+!*.woff
+!*.woff2
+!*.xml
+
 !reference
 !pascal3d
 !gtksourceview
 !.gitignore
+!docs
